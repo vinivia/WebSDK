@@ -1,0 +1,109 @@
+<!--
+© 2015 PhenixP2P LLC. Confidential and Proprietary. All rights reserved.
+ -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Phenix PCast Example</title>
+
+    <link rel="stylesheet" href="/bootstrap/dist/css/bootstrap.min.css">
+
+    <style>
+        .round {
+            position: relative;
+            border: solid thin grey;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        object {
+            z-index: -1;
+        }
+
+        video {
+            z-index: -2;
+        }
+    </style>
+
+    <script data-main="phenix-sdk-app"
+            src="/requirejs/require.js"></script>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row text-center">
+        <table class="table table-bordered">
+            <tr>
+                <td>
+                    <h1><span id="browser"></span>
+                        <small id="browserVersion"></small>
+                    </h1>
+                </td>
+                <td id="webrtc">
+                    <h1>WebRTC</h1>
+                </td>
+                <td id="phenix">
+                    <h1>
+                        PhenixRTC
+                        <small id="phenixRTCVersion"></small>
+                    </h1>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="row text-center">
+        <h2>PCast</h2>
+
+        <div class="row">
+            <div class="form-group">
+                <label for="environment">Environment:</label>
+                <select class="from-control" id="environment">
+                    <option value="pcast.phenixp2p.com">PCast Global</option>
+                    <option value="phenixp2p.local:8443">Local PCast Server</option>
+                    <option value="pcast-stg-us-central.phenixp2p.com">US Central Staging</option>
+                    <option value="pcast-stg-europe-west.phenixp2p.com">EU West Staging</option>
+                    <option value="pcast-asia-east.phenixp2p.com">APAC West</option>
+                    <option value="pcast-us-central.phenixp2p.com">US Central</option>
+                    <option value="pcast-us-east.phenixp2p.com">US East</option>
+                    <option value="pcast-europe-west.phenixp2p.com">EU West</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <input id="applicationId" type="text" placeholder="applicationId"/>
+            <input id="secret" type="password" placeholder="secret"/>
+            <input id="createAuthToken" type="button" value="Create Authentication Token"/>
+        </div>
+        <div class="row">
+            <div class="form-group">
+                <label for="stream">Stream:</label>
+                <select class="from-control" id="stream">
+                </select>
+                <input id="stream-refresh" type="button" value="Refresh" for="stream"/>
+            </div>
+        </div>
+        <div class="row">
+            <input id="authToken" type="text" placeholder="authenticationToken"/>
+            <input id="start" type="button" value="Authenticate"/>
+            <input id="stop" type="button" value="Stop"/>
+        </div>
+        <div class="row">
+            <input id="originStreamId" type="text" placeholder="originStreamId"/>
+            <input id="sessionId" type="text" placeholder="sessionId"/>
+            <input id="createStreamToken" type="button" value="Create Stream Token"/>
+        </div>
+        <div class="row">
+            <input id="streamToken" type="text" placeholder="streamToken"/>
+            <input id="subscribe" type="button" value="Subscribe To Stream"/>
+        </div>
+    </div>
+    <div class="row text-center">
+        <div class="col-md-8 col-md-offset-2 text-center">
+            <video id="remoteVideo" class="round" width="640" height="480"></video>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
