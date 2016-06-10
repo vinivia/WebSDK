@@ -13,13 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const moment = require('moment');
+const version = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+
+console.log('Using version', version);
+
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-sed');
 
     grunt.registerTask('default', [ ]);
-    grunt.registerTask('build', [ 'default', 'clean', 'concat', 'uglify' ]);
+    grunt.registerTask('build', [ 'default', 'clean', 'concat', 'sed', 'uglify' ]);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -28,6 +34,14 @@ module.exports = function (grunt) {
             rtc: {
                 src: [ 'src/sdk/**/*.js', 'src/main.js' ],
                 dest: 'dist/phenix-web-sdk.js'
+            }
+        },
+        sed: {
+            version: {
+                pattern: '%VERSION%',
+                replacement: version,
+                recursive: true,
+                path: 'dist'
             }
         },
         uglify: {
