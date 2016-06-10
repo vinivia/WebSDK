@@ -43,7 +43,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             }
         };
 
-        var enabledSteps = [ 'step-1' ];
+        var enabledSteps = ['step-1'];
 
         var enableSteps = function enableSteps() {
             $('.step').addClass('step-disabled');
@@ -203,6 +203,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 setTimeout(function () {
                     enableStep('step-5');
                 }, 1500);
+                $('#stop').removeClass('disabled');
             }, function offlineCallback(pcast) {
                 $.notify({
                     icon: 'glyphicon glyphicon-log-out',
@@ -221,6 +222,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                         exit: 'animated fadeOutDown'
                     }
                 });
+                $('#stop').addClass('disabled');
             });
         };
 
@@ -379,6 +381,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 }
 
                 publisher = phenixPublisher;
+                $('#stopPublisher').removeClass('disabled');
 
                 publisher.setPublisherEndedCallback(function (publisher, reason, description) {
                     $.notify({
@@ -429,14 +432,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             if (publisher) {
                 publisher.stop();
                 publisher = null;
+                $('#stopPublisher').addClass('disabled');
             }
         };
 
         var onStreamSelected = function onStreamSelected() {
             var streamId = $('#stream option:selected').text();
 
-            $('#originStreamId').val(streamId);
-            enableStep('step-6');
+            if (streamId) {
+                $('#originStreamId').val(streamId);
+                enableStep('step-6');
+            }
         };
 
         var listStreams = function listStreams() {
