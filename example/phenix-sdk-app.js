@@ -193,6 +193,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
 
         var start = function start() {
             pcast.start($('#authToken').val(), function authenticateCallback(pcast, status, sessionId) {
+                $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
             }, function onlineCallback(pcast) {
                 $.notify({
@@ -216,7 +217,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 setTimeout(function () {
                     activateStep('step-5');
                 }, 1500);
-                $('#stop').removeClass('disabled');
             }, function offlineCallback(pcast) {
                 $.notify({
                     icon: 'glyphicon glyphicon-log-out',
@@ -235,12 +235,13 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                         exit: 'animated fadeOutDown'
                     }
                 });
-                $('#stop').addClass('disabled');
             });
         };
 
         var stop = function stop() {
             pcast.stop();
+            $('.sessionId').val('');
+            $('#stop').addClass('disabled');
         };
 
         var updateOptions = function updateOptions() {
@@ -307,6 +308,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 localVideoEl = rtc.attachMediaStream(localVideoEl, stream);
 
                 userMediaStream = stream;
+                $('#stopUserMedia').removeClass('disabled');
 
                 $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
                 activateStep('step-5-2');
@@ -317,6 +319,20 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                     audio: true,
                     video: true
                 }, onUserMediaSuccess, onUserMediaFailure);
+            }
+        };
+
+        var stopUserMedia = function () {
+            if (userMediaStream) {
+                var tracks = userMediaStream.getTracks();
+
+                for (var i = 0; i < tracks.length; i++) {
+                    tracks[i].stop();
+                }
+
+                userMediaStream = null;
+
+                $('#stopUserMedia').addClass('disabled');
             }
         };
 
@@ -450,6 +466,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 publisher.stop();
                 publisher = null;
                 $('#stopPublisher').addClass('disabled');
+                $('.streamIdForPublishing').val('');
             }
         };
 
@@ -691,6 +708,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
         $('#stop').click(stop);
 
         $('#getUserMedia').click(getUserMedia);
+        $('#stopUserMedia').click(stopUserMedia);
         $('#createStreamTokenForPublishing').click(createStreamTokenForPublishing);
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);
