@@ -56,6 +56,10 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
 
             $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
             $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
+
+            $('html, body').animate({
+                scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)
+            }, 1000);
         };
 
         var activateStep = function activateStep(step) {
@@ -691,7 +695,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);
         $('#stream').change(onStreamSelected);
-        $('#stream').click(onStreamSelected);
         $('#stream-refresh').click(listStreams);
 
         $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
