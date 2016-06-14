@@ -108,14 +108,16 @@
             <div class="form-group">
                 <label for="environment">PCast&trade;</label>
                 <select class="form-control" id="environment">
-                    <option value="pcast.phenixp2p.com">Global Anycast</option>
-                    <option value="pcast-asia-east.phenixp2p.com">APAC West</option>
-                    <option value="pcast-us-central.phenixp2p.com">US Central</option>
-                    <option value="pcast-us-east.phenixp2p.com">US East</option>
-                    <option value="pcast-europe-west.phenixp2p.com">EU West</option>
-                    <option value="pcast-stg-us-central.phenixp2p.com">US Central Staging</option>
-                    <option value="pcast-stg-europe-west.phenixp2p.com">EU West Staging</option>
-                    <option value="phenixp2p.local:8443">Local</option>
+                    <option value="https://pcast.phenixp2p.com">Anycast (Closest Data Center)</option>
+                    <option value="wss://pcast-asia-east.phenixp2p.com">APAC West</option>
+                    <option value="wss://pcast-us-central.phenixp2p.com">US Central</option>
+                    <option value="wss://pcast-us-east.phenixp2p.com">US East</option>
+                    <option value="wss://pcast-europe-west.phenixp2p.com">EU West</option>
+                    <option value="https://pcast-stg.phenixp2p.com">Anycast - Staging</option>
+                    <option value="wss://pcast-stg-us-central.phenixp2p.com">US Central - Staging</option>
+                    <option value="wss://pcast-stg-europe-west.phenixp2p.com">EU West - Staging</option>
+                    <option value="https://phenixp2p.local:8443">Anycast - Local</option>
+                    <option value="wss://phenixp2p.local:8443">Local</option>
                 </select>
             </div>
         </div>
@@ -123,11 +125,11 @@
     <div class="row page-header">
         <div class="col-md-4 col-md-offset-1 text-center server">
             <h1><strong>Backend</strong></h1>
-            <p>Operations require your application's <strong>secret</strong>.</p>
+            <p>Operations require your application's <strong>secret</strong>. Thus they must be performed on your backend.</p>
         </div>
         <div class="col-md-4 col-md-offset-2 text-center client">
             <h1><strong>Client</strong></h1>
-            <p>Operations require session specific <strong>tokens</strong>.</p>
+            <p>Operations require session-specific <strong>tokens</strong>.</p>
         </div>
     </div>
     <div class="row step step-1">
@@ -269,6 +271,26 @@
         </div>
         <div class="col-md-1 text-center">
             <span class="badge">B5.4</span>
+        </div>
+    </div>
+    <div class="row step step-5-5 option-B">
+        <div class="col-md-1 text-center">
+            <span class="badge">B5.5</span>
+        </div>
+        <div class="col-md-4 text-center server">
+            <p>Pass <strong>streamId</strong> to server.</p>
+            <input class="streamIdForPublishing" type="text" placeholder="streamId" readonly/>
+        </div>
+        <div class="col-md-2 text-center action">
+            <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"
+                  aria-label="Pass streamId to server"></span>
+        </div>
+        <div class="col-md-4 text-center client">
+            <input id="streamIdForPublishing" class="streamIdForPublishing" type="text"
+                   placeholder="streamId"/>
+        </div>
+        <div class="col-md-1 text-center">
+            <span class="badge">B5.5</span>
         </div>
     </div>
     <div class="row step step-6">

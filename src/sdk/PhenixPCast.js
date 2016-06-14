@@ -65,12 +65,12 @@ define('sdk/PhenixPCast', [
     };
 
     function PhenixPCast(optionalUri) {
-        this._uri = optionalUri || 'wss://pcast-europe-west.phenixp2p.com/ws';
+        this._baseUri = optionalUri || 'https://pcast.phenixp2p.com';
         this._status = 'offline';
     }
 
-    PhenixPCast.prototype.getUri = function () {
-        return this._uri;
+    PhenixPCast.prototype.getBaseUri = function () {
+        return this._baseUri;
     };
 
     PhenixPCast.prototype.getStatus = function () {
@@ -103,24 +103,47 @@ define('sdk/PhenixPCast', [
         this._offlineCallback = offlineCallback;
         this._status = 'connecting';
 
-        this._protocol = new PhenixProtocol(this._uri);
-
-        this._protocol.on('connected', connected.bind(this));
-        this._protocol.on('disconnected', disconnected.bind(this));
-        this._protocol.on('streamEnded', streamEnded.bind(this));
-
         this._peerConnections = {};
         this._mediaStreams = {};
         this._publishers = {};
+
+        var that = this;
+
+        resolveUri.call(that, that._baseUri, function (err, uri) {
+            if (err) {
+                logError('Failed to connect to ' + that._baseUri, err);
+
+                transitionToStatus.call(that, 'offline');
+                that._authenticationCallback.call(that, that, 'failed', '');
+
+                that._stopped = true;
+                that._started = false;
+
+                return;
+            }
+
+            log('Discovered end point "' + uri + '"');
+
+            that._protocol = new PhenixProtocol(uri);
+
+            that._protocol.on('connected', connected.bind(that));
+            that._protocol.on('disconnected', disconnected.bind(that));
+            that._protocol.on('streamEnded', streamEnded.bind(that));
+        });
     };
 
     PhenixPCast.prototype.stop = function () {
         if (!this._started) {
             return;
         }
+
         this._stopped = true;
         this._started = false;
-        this._protocol.disconnect();
+
+        if (this._protocol) {
+            this._protocol.disconnect();
+        }
+
         delete this._authenticationCallback;
 
         for (var streamId in this._peerConnections) {
@@ -519,6 +542,82 @@ define('sdk/PhenixPCast', [
                     break;
             }
         }
+    }
+
+    function resolveUri(baseUri, callback) {
+        var that = this;
+
+        if (baseUri.lastIndexOf('wss:', 0) === 0) {
+            // WSS - Specific web socket end point
+            callback.call(that, undefined, baseUri + '/ws');
+        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
+            // HTTP - Resolve closest end point
+            httpGetWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
+                if (err) {
+                    callback(new Error('Failed to resolve an end point', err));
+                    return callback(err);
+                }
+
+                var endPoints = responseText.split(',');
+
+                if (endPoints.length < 1) {
+                    callback(new Error('Failed to discover end points'));
+                }
+
+                var resolved = false;
+                var pending = endPoints.length;
+
+                for (var i = 0; i < endPoints.length; i++) {
+                    var endPoint = endPoints[i];
+
+                    log('Checking end Point "' + endPoint + '"');
+
+                    httpGetWithRetry(endPoint, function (err, responseText) {
+                        if (err) {
+                            log('Failed to resolve endPoint "' + endPoint + '": ' + err);
+                        } else {
+                            if (!resolved) {
+                                resolved = true;
+                                callback(undefined, responseText);
+                            }
+                        }
+
+                        pending--;
+
+                        if (pending === 0 && !resolved) {
+                            callback(new Error('Failed to resolve an end point'));
+                        }
+                    });
+                }
+            });
+        } else {
+            // Not supported
+            callback.call(that, new Error('Uri not supported'));
+        }
+    }
+
+    var maxAttempts = 3;
+
+    function httpGetWithRetry(url, callback, attempt) {
+        if (attempt === undefined) {
+            attempt = 1;
+        }
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open('GET', url, true);
+        xhr.addEventListener('readystatechange', function (e) {
+            if (xhr.readyState === 4 /* DONE */) {
+                if (xhr.status === 200) {
+                    callback(undefined, xhr.responseText);
+                } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
+                    httpGetWithRetry(url, callback, attempt + 1);
+                } else {
+                    log('HTTP GET "' + url + '" failed with "' + xhr.status + '" "' + xhr.statusText + '"');
+                }
+            }
+        });
+        xhr.send();
     }
 
     return PhenixPCast;

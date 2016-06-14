@@ -31,7 +31,7 @@ define([
             pcast = new PCast();
 
             var parser = document.createElement('a');
-            parser.href = pcast.getUri();
+            parser.href = pcast.getBaseUri();
 
             var applicationId = window.__env__['PHENIX_APPLICATION_ID'];
             var secret = window.__env__['PHENIX_SECRET'];

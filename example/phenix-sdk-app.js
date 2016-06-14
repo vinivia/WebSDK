@@ -58,7 +58,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
         };
 
-        var enableStep = function enableStep(step) {
+        var activateStep = function activateStep(step) {
             enabledSteps.push(step);
             enableSteps();
         };
@@ -125,7 +125,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             $('#originStreamId').val(getUrlParameter('streamId'));
         }
 
-        var url;
+        var adminBaseUri;
         var pcast;
 
         var createPCast = function createPCast() {
@@ -133,8 +133,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 pcast.stop();
             }
 
-            url = $('#environment option:selected').val();
-            pcast = new sdk.PCast('wss://' + url + '/ws');
+            var url = $('#environment option:selected').val();
+            var parser = document.createElement('a');
+            parser.href = url;
+
+            adminBaseUri = 'https:' + parser.hostname;
+
+            if (parser.port) {
+                adminBaseUri += ':' + parser.port;
+            }
+
+            pcast = new sdk.PCast(url);
         };
 
         var createAuthToken = function createAuthToken() {
@@ -146,16 +155,16 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             };
 
             $.ajax({
-                url: 'https://' + url + '/pcast/auth',
+                url: adminBaseUri + '/pcast/auth',
                 accepts: 'application/json',
                 contentType: 'application/json',
                 method: 'POST',
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $('.authToken').val(result.authenticationToken);
-                enableStep('step-2');
+                activateStep('step-2');
                 setTimeout(function () {
-                    enableStep('step-3');
+                    activateStep('step-3');
                 }, 1500);
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $.notify({
@@ -199,9 +208,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                         exit: 'animated fadeOutDown'
                     }
                 });
-                enableStep('step-4');
+                activateStep('step-4');
                 setTimeout(function () {
-                    enableStep('step-5');
+                    activateStep('step-5');
                 }, 1500);
                 $('#stop').removeClass('disabled');
             }, function offlineCallback(pcast) {
@@ -296,7 +305,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 userMediaStream = stream;
 
                 $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
-                enableStep('step-5-2');
+                activateStep('step-5-2');
             };
 
             if (!userMediaStream || userMediaStream.ended) {
@@ -421,8 +430,12 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                     }
                 });
 
+                $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
-                enableStep('step-6');
+                activateStep('step-5-5');
+                setTimeout(function () {
+                    activateStep('step-6');
+                }, 1500);
             };
 
             pcast.publish(streamToken, userMediaStream, publishCallback, tags);
@@ -441,7 +454,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
 
             if (streamId) {
                 $('#originStreamId').val(streamId);
-                enableStep('step-6');
+                activateStep('step-6');
             }
         };
 
@@ -460,18 +473,22 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             };
 
             $.ajax({
-                url: 'https://' + url + '/pcast/streams',
+                url: adminBaseUri + '/pcast/streams',
                 accepts: 'application/json',
                 contentType: 'application/json',
                 method: 'PUT',
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $('#stream').find('option').remove().end();
-                _.forEach(result.streams, function (stream) {
-                    $('#stream').append($('<option></option>').attr('value', stream.streamId).text(stream.streamId));
-                });
+
                 if (result.streams.length > 0) {
-                    $('#stream').val(result.streams[0].streamId);
+                    $('#stream').append($('<option></option>').attr('value', '').text('Please select a stream'));
+
+                    _.forEach(result.streams, function (stream) {
+                        $('#stream').append($('<option></option>').attr('value', stream.streamId).text(stream.streamId));
+                    });
+                } else {
+                    $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $.notify({
@@ -504,7 +521,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             };
 
             $.ajax({
-                url: 'https://' + url + '/pcast/stream',
+                url: adminBaseUri + '/pcast/stream',
                 accepts: 'application/json',
                 contentType: 'application/json',
                 method: 'POST',
@@ -557,9 +574,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             var originStreamId = '';
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, function () {
-                enableStep('step-5-3');
+                activateStep('step-5-3');
                 setTimeout(function () {
-                    enableStep('step-5-4');
+                    activateStep('step-5-4');
                 }, 1500);
             });
         };
@@ -571,9 +588,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             var originStreamId = $('#originStreamId').val();
 
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, function () {
-                enableStep('step-7');
+                activateStep('step-7');
                 setTimeout(function () {
-                    enableStep('step-8');
+                    activateStep('step-8');
                 }, 1500);
             });
         };
