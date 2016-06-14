@@ -753,7 +753,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-06-12T18:33:05Z',
+            clientVersion: '2016-06-14T16:38:42Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
@@ -781,13 +781,15 @@ define('sdk/PhenixProtocol', [
             throw new Error('"callback" must be a function');
         }
 
+        var browser = phenixRTC.browser || 'UnknownBrowser';
+        var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
         var setupStream = {
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
                 createOfferDescription: {
                     streamId: '',
-                    options: ['download', 'SRTP'],
+                    options: ['download', 'SRTP', browser, browserWithVersion],
                     apiVersion: this._mqProtocol.getApiVersion()
                 }
             }
@@ -804,13 +806,15 @@ define('sdk/PhenixProtocol', [
             throw new Error('"callback" must be a function');
         }
 
+        var browser = phenixRTC.browser || 'UnknownBrowser';
+        var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
         var setupStream = {
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
                 createOfferDescription: {
                     streamId: '',
-                    options: ['upload', 'SRTP'],
+                    options: ['upload', 'SRTP', browser, browserWithVersion],
                     apiVersion: this._mqProtocol.getApiVersion()
                 }
             }
