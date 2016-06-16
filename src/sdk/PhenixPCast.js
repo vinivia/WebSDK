@@ -159,6 +159,17 @@ define('sdk/PhenixPCast', [
         this._peerConnections = {};
     };
 
+    PhenixPCast.prototype.getUserMedia = function (options, callback) {
+        if (typeof options !== 'object') {
+            throw new Error('"options" must be an object');
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('"callback" must be a function');
+        }
+
+        return getUserMedia.call(this, options, callback);
+    };
+
     PhenixPCast.prototype.publish = function (streamToken, mediaStreamToPublish, callback, tags) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
@@ -227,6 +238,23 @@ define('sdk/PhenixPCast', [
     PhenixPCast.prototype.toString = function () {
         return 'PhenixPCast[' + this._sessionId + ',' + this._protocol.toString() + ']';
     };
+
+    function getUserMedia(options, callback) {
+        var that = this;
+
+        var onUserMediaSuccess = function onUserMediaSuccess(stream) {
+            callback(this, 'ok', stream);
+        };
+
+        var onUserMediaFailure = function onUserMediaFailure(e) {
+            callback(this, 'failed', undefined, e);
+        };
+
+        phenixRTC.getUserMedia({
+            audio: options.audio || false,
+            video: options.video || false
+        }, onUserMediaSuccess, onUserMediaFailure);
+    }
 
     function connected() {
         var that = this;

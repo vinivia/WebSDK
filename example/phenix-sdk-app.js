@@ -59,7 +59,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
 
             $('html, body').animate({
                 scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)
-            }, 1000);
+            }, 'slow');
         };
 
         var activateStep = function activateStep(step) {
@@ -261,64 +261,64 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
         var getUserMedia = function getUserMedia() {
             var localVideoEl = $('#localVideo')[0];
 
-            var onUserMediaFailure = function onUserMediaFailure(e) {
-                $.notify({
-                    icon: 'glyphicon glyphicon-facetime-video',
-                    title: '<strong>User Media</strong>',
-                    message: 'Failed to get user media (' + e + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false,
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
-                $('#userMediaInfo').text('Failed: ' + e.message);
-            };
+            var callback = function callback(pcast, status, stream, e) {
+                if (status !== 'ok') {
+                    $.notify({
+                        icon: 'glyphicon glyphicon-facetime-video',
+                        title: '<strong>User Media</strong>',
+                        message: 'Failed to get user media (' + e + ')'
+                    }, {
+                        type: 'danger',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 5000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
+                    $('#userMediaInfo').text('Failed: ' + e.message);
+                } else {
+                    console.log('Got user media stream');
+                    $.notify({
+                        icon: 'glyphicon glyphicon-facetime-video',
+                        title: '<strong>User Media</strong>',
+                        message: 'Acquired user media stream'
+                    }, {
+                        type: 'info',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 3000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
 
-            var onUserMediaSuccess = function onUserMediaSuccess(stream) {
-                console.log('Got user media stream');
-                $.notify({
-                    icon: 'glyphicon glyphicon-facetime-video',
-                    title: '<strong>User Media</strong>',
-                    message: 'Acquired user media stream'
-                }, {
-                    type: 'info',
-                    allow_dismiss: false,
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
+                    // **********
+                    // IMPORTANT: update reference to element as some RTC implementation will replace the element in the DOM
+                    // **********
+                    localVideoEl = rtc.attachMediaStream(localVideoEl, stream);
 
-                // **********
-                // IMPORTANT: update reference to element as some RTC implementation will replace the element in the DOM
-                // **********
-                localVideoEl = rtc.attachMediaStream(localVideoEl, stream);
+                    userMediaStream = stream;
+                    $('#stopUserMedia').removeClass('disabled');
 
-                userMediaStream = stream;
-                $('#stopUserMedia').removeClass('disabled');
-
-                $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
-                activateStep('step-5-2');
+                    $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
+                    activateStep('step-5-2');
+                }
             };
 
             if (!userMediaStream || userMediaStream.ended) {
-                rtc.getUserMedia({
+                pcast.getUserMedia({
                     audio: true,
                     video: true
-                }, onUserMediaSuccess, onUserMediaFailure);
+                }, callback);
             }
         };
 
