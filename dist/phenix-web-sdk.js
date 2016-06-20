@@ -161,10 +161,10 @@ define('sdk/PhenixPCast', [
             throw new Error('"authenticationCallback" must be a function');
         }
         if (typeof onlineCallback !== 'function') {
-            throw new Error('"authenticationCallback" must be a function');
+            throw new Error('"onlineCallback" must be a function');
         }
         if (typeof offlineCallback !== 'function') {
-            throw new Error('"authenticationCallback" must be a function');
+            throw new Error('"offlineCallback" must be a function');
         }
 
         if (this._started) {
@@ -190,7 +190,7 @@ define('sdk/PhenixPCast', [
                 logError('Failed to connect to ' + that._baseUri, err);
 
                 transitionToStatus.call(that, 'offline');
-                that._authenticationCallback.call(that, that, 'failed', '');
+                that._authenticationCallback.call(that, that, 'unauthorized', '');
 
                 that._stopped = true;
                 that._started = false;
@@ -343,7 +343,7 @@ define('sdk/PhenixPCast', [
                     if (error) {
                         logError('Failed to authenticate: ' + JSON.stringify(error));
                         transitionToStatus.call(that, 'offline');
-                        that._authenticationCallback.call(that, that, 'failed', '');
+                        that._authenticationCallback.call(that, that, 'unauthorized', '');
                     } else {
                         transitionToStatus.call(that, 'online');
                         that._authenticationCallback.call(that, that, result.status, result.sessionId);
@@ -359,7 +359,26 @@ define('sdk/PhenixPCast', [
     }
 
     function getStreamEndedReason(value) {
-        return value;
+        switch (value) {
+            case '':
+            case 'none':
+            case 'ended':
+                return 'ended';
+            case 'server-error':
+            case 'not-ready':
+            case 'error':
+                return 'failed';
+            case 'censored':
+                return 'censored';
+            case 'maintenance':
+                return 'maintenance';
+            case 'capacity':
+                return 'capacity';
+            case 'app-background':
+                return 'app-background';
+            default:
+                return 'custom';
+        }
     }
 
     function streamEnded(event) {
@@ -530,6 +549,27 @@ define('sdk/PhenixPCast', [
             console.log('Got a remote stream');
 
             var mediaStream = {
+                createRenderer: function () {
+                    return {
+                        start: function start(elementToAttachTo) {
+                            this.element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
+
+                            return this.element;
+                        },
+                        stop: function stop() {
+                            if (this.element) {
+                                this.element.pause();
+                            }
+                        }
+                    }
+                },
+                setStreamEndedCallback: function (callback) {
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    this.streamEnded = callback;
+                },
                 stop: function (reason) {
                     if (pc.signalingState !== 'closed') {
                         pc.close();
@@ -544,23 +584,6 @@ define('sdk/PhenixPCast', [
                         log('[' + streamId + '] destroyed stream');
                     });
 
-                },
-                setStreamEndedCallback: function (callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamEnded = callback;
-                },
-                createRenderer: function () {
-                    return {
-                        start: function start(elementToAttachTo) {
-                            return phenixRTC.attachMediaStream(elementToAttachTo, stream);
-                        },
-                        stop: function stop() {
-                            // nop
-                        }
-                    }
                 }
             };
 
@@ -781,7 +804,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-06-16T14:26:57Z',
+            clientVersion: '2016-06-20T16:24:03Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
