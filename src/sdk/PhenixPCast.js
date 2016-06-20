@@ -247,7 +247,11 @@ define('sdk/PhenixPCast', [
         };
 
         var onUserMediaFailure = function onUserMediaFailure(e) {
-            callback(this, 'failed', undefined, e);
+            if (e.code === 'unavailable') {
+                callback(this, 'conflict', undefined, e);
+            } else {
+                callback(this, 'failed', undefined, e);
+            }
         };
 
         phenixRTC.getUserMedia({
