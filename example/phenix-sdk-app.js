@@ -412,7 +412,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 publisher = phenixPublisher;
                 $('#stopPublisher').removeClass('disabled');
 
-                publisher.setPublisherEndedCallback(function (publisher, reason, description) {
+                publisher.setPublisherEndedCallback(function (publisher, reason, reasonDescription) {
                     $.notify({
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
@@ -641,7 +641,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                     return;
                 }
 
-                mediaStream.setStreamEndedCallback(function (mediaStream, reason, description) {
+                mediaStream.setStreamEndedCallback(function (mediaStream, reason, reasonDescription) {
                     $.notify({
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Stream</strong>',
