@@ -380,10 +380,11 @@ define('sdk/PhenixPCast', [
                             },
 
                             hasEnded: function () {
-                                switch (pc.connectionState) {
+                                switch (pc.iceConnectionState) {
                                     case 'new':
-                                    case 'connecting':
+                                    case 'checking':
                                     case 'connected':
+                                    case 'completed':
                                         return false;
                                     case 'disconnected':
                                     case 'failed':

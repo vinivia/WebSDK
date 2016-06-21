@@ -323,7 +323,11 @@ define('sdk/PhenixPCast', [
         };
 
         var onUserMediaFailure = function onUserMediaFailure(e) {
-            callback(this, 'failed', undefined, e);
+            if (e.code === 'unavailable') {
+                callback(this, 'conflict', undefined, e);
+            } else {
+                callback(this, 'failed', undefined, e);
+            }
         };
 
         phenixRTC.getUserMedia({
@@ -452,10 +456,11 @@ define('sdk/PhenixPCast', [
                             },
 
                             hasEnded: function () {
-                                switch (pc.connectionState) {
+                                switch (pc.iceConnectionState) {
                                     case 'new':
-                                    case 'connecting':
+                                    case 'checking':
                                     case 'connected':
+                                    case 'completed':
                                         return false;
                                     case 'disconnected':
                                     case 'failed':
@@ -804,7 +809,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-06-20T16:24:03Z',
+            clientVersion: '2016-06-21T16:04:56Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
