@@ -146,6 +146,32 @@ define('sdk/PhenixPCast', [
 
         delete this._authenticationCallback;
 
+        var reason = '';
+
+        for (var streamId in this._mediaStreams) {
+            if (this._mediaStreams.hasOwnProperty(streamId)) {
+                var mediaStream = this._mediaStreams[streamId];
+
+                if (mediaStream && typeof mediaStream.streamEnded === 'function') {
+                    mediaStream.streamEnded(mediaStream, getStreamEndedReason(reason), reason);
+                }
+            }
+        }
+
+        this._mediaStreams = {};
+
+        for (var streamId in this._publishers) {
+            if (this._publishers.hasOwnProperty(streamId)) {
+                var publisher = this._publishers[streamId];
+
+                if (publisher && typeof publisher.publisherEndedCallback === 'function') {
+                    publisher.publisherEndedCallback(publisher, getStreamEndedReason(reason), reason);
+                }
+            }
+        }
+
+        this._publishers = {};
+
         for (var streamId in this._peerConnections) {
             if (this._peerConnections.hasOwnProperty(streamId)) {
                 var peerConnection = this._peerConnections[streamId];
