@@ -317,7 +317,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             if (!userMediaStream || userMediaStream.ended) {
                 pcast.getUserMedia({
                     audio: true,
-                    video: true
+                    video: {
+                        optional: [
+                            {minHeight: 720}
+                        ]
+                    }
                 }, callback);
             }
         };
