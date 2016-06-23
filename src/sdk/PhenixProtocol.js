@@ -87,6 +87,22 @@ define('sdk/PhenixProtocol', [
         return this._webSocket.close(1000, 'byebye');
     };
 
+    PhenixProtocol.prototype.bye = function (reason, callback) {
+        if (typeof reason !== 'string') {
+            throw new Error('"reason" must be a string');
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('"callback" must be a function');
+        }
+
+        var bye = {
+            sessionId: this._sessionId,
+            reason: reason
+        };
+
+        return sendRequest.call(this, 'pcast.Bye', bye, callback);
+    };
+
     PhenixProtocol.prototype.createDownloader = function (streamToken, callback) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
