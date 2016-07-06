@@ -27,7 +27,7 @@ define('sdk/MQProtocol', [
         } || log;
 
     var mqProto = '{"package":"mq","messages":[{"name":"Request","fields":[{"rule":"optional","type":"string","name":"sessionId","id":1},{"rule":"optional","type":"string","name":"requestId","id":2},{"rule":"required","type":"string","name":"type","id":3},{"rule":"optional","type":"string","name":"encoding","id":4},{"rule":"required","type":"bytes","name":"payload","id":5}]},{"name":"Response","fields":[{"rule":"optional","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"requestId","id":2},{"rule":"required","type":"string","name":"type","id":3},{"rule":"optional","type":"string","name":"encoding","id":4},{"rule":"required","type":"bytes","name":"payload","id":5},{"rule":"repeated","type":"double","name":"wallTime","id":6}]},{"name":"Error","fields":[{"rule":"required","type":"string","name":"reason","id":1}]},{"name":"PingPong","fields":[{"rule":"required","type":"uint64","name":"originTimestamp","id":1},{"rule":"optional","type":"uint64","name":"count","id":2}]}]}';
-    var pcastProto = '{"package": "pcast","messages": [{"name": "Authenticate","fields": [{"rule": "optional","type": "uint32","name": "apiVersion","id": 9,"options": {"default": 0}},{"rule": "required","type": "string","name": "clientVersion","id": 1},{"rule": "required","type": "string","name": "deviceId","id": 2},{"rule": "required","type": "string","name": "platform","id": 3},{"rule": "required","type": "string","name": "platformVersion","id": 4},{"rule": "required","type": "string","name": "authenticationToken","id": 5},{"rule": "optional","type": "string","name": "connectionId","id": 6},{"rule": "optional","type": "string","name": "connectionRouteKey","id": 10},{"rule": "optional","type": "string","name": "sessionId","id": 7},{"rule": "optional","type": "string","name": "applicationId","id": 8}]},{"name": "AuthenticateResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1},{"rule": "optional","type": "string","name": "sessionId","id": 2},{"rule": "optional","type": "string","name": "redirect","id": 3}]},{"name": "Bye","fields": [{"rule": "required","type": "string","name": "sessionId","id": 1},{"rule": "required","type": "string","name": "reason","id": 2}]},{"name": "ByeResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1}]},{"name": "SessionDescription","fields": [{"rule": "required","type": "Type","name": "type","id": 1,"options": {"default": "Offer"}},{"rule": "required","type": "string","name": "sdp","id": 2}],"enums": [{"name": "Type","values": [{"name": "Offer","id": 0},{"name": "Answer","id": 1}]}]},{"name": "CreateStream","fields": [{"rule": "required","type": "string","name": "sessionId","id": 1},{"rule": "optional","type": "string","name": "originStreamId","id": 2},{"rule": "repeated","type": "string","name": "options","id": 3},{"rule": "repeated","type": "string","name": "tags","id": 4},{"rule": "optional","type": "SetRemoteDescription","name": "setRemoteDescription","id": 5},{"rule": "optional","type": "CreateOfferDescription","name": "createOfferDescription","id": 6}]},{"name": "CreateStreamResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1},{"rule": "optional","type": "string","name": "streamId","id": 2},{"rule": "optional","type": "string","name": "instanceRouteKey","id": 5},{"rule": "optional","type": "SetRemoteDescriptionResponse","name": "setRemoteDescriptionResponse","id": 3},{"rule": "optional","type": "CreateOfferDescriptionResponse","name": "createOfferDescriptionResponse","id": 4}]},{"name": "SetRemoteDescription","fields": [{"rule": "required","type": "string","name": "streamId","id": 1},{"rule": "required","type": "SessionDescription","name": "sessionDescription","id": 2},{"rule": "optional","type": "uint32","name": "apiVersion","id": 3,"options": {"default": 0}}]},{"name": "SetRemoteDescriptionResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1},{"rule": "optional","type": "SessionDescription","name": "sessionDescription","id": 2}]},{"name": "CreateOfferDescription","fields": [{"rule": "required","type": "string","name": "streamId","id": 1},{"rule": "repeated","type": "string","name": "options","id": 2},{"rule": "optional","type": "uint32","name": "apiVersion","id": 3,"options": {"default": 0}}]},{"name": "CreateOfferDescriptionResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1},{"rule": "required","type": "SessionDescription","name": "sessionDescription","id": 2}]},{"name": "UpdateStreamState","fields": [{"rule": "required","type": "string","name": "streamId","id": 1},{"rule": "required","type": "string","name": "signalingState","id": 2},{"rule": "required","type": "string","name": "iceGatheringState","id": 3},{"rule": "required","type": "string","name": "iceConnectionState","id": 4}]},{"name": "DestroyStream","fields": [{"rule": "required","type": "string","name": "streamId","id": 1},{"rule": "optional","type": "string","name": "reason","id": 2}]},{"name": "DestroyStreamResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1}]},{"name": "StreamStarted","fields": [{"rule": "required","type": "string","name": "sessionId","id": 1},{"rule": "required","type": "string","name": "streamId","id": 2},{"rule": "repeated","type": "string","name": "tags","id": 3}]},{"name": "StreamEnded","fields": [{"rule": "required","type": "string","name": "sessionId","id": 1},{"rule": "required","type": "string","name": "streamId","id": 2},{"rule": "required","type": "string","name": "reason","id": 3}]},{"name": "SetupStream","fields": [{"rule": "required","type": "string","name": "streamToken","id": 1},{"rule": "required","type": "CreateStream","name": "createStream","id": 2}]},{"name": "SetupStreamResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1},{"rule": "optional","type": "CreateStreamResponse","name": "createStreamResponse","id": 2}]},{"name": "EndStream","fields": [{"rule": "required","type": "string","name": "streamId","id": 1},{"rule": "optional","type": "string","name": "reason","id": 2,"options": {"default": "ended"}}]},{"name": "EndStreamResponse","fields": [{"rule": "required","type": "string","name": "status","id": 1}]}]}';
+    var pcastProto = '{"package":"pcast","messages":[{"name":"Authenticate","fields":[{"rule":"optional","type":"uint32","name":"apiVersion","id":9,"options":{"default":0}},{"rule":"required","type":"string","name":"clientVersion","id":1},{"rule":"optional","type":"string","name":"device","id":12},{"rule":"required","type":"string","name":"deviceId","id":2},{"rule":"optional","type":"string","name":"manufacturer","id":13},{"rule":"required","type":"string","name":"platform","id":3},{"rule":"required","type":"string","name":"platformVersion","id":4},{"rule":"required","type":"string","name":"authenticationToken","id":5},{"rule":"optional","type":"string","name":"connectionId","id":6},{"rule":"optional","type":"string","name":"connectionRouteKey","id":10},{"rule":"optional","type":"string","name":"remoteAddress","id":11},{"rule":"optional","type":"string","name":"sessionId","id":7},{"rule":"optional","type":"string","name":"applicationId","id":8}]},{"name":"AuthenticateResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"sessionId","id":2},{"rule":"optional","type":"string","name":"redirect","id":3}]},{"name":"Bye","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"reason","id":2}]},{"name":"ByeResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"SessionDescription","fields":[{"rule":"required","type":"Type","name":"type","id":1,"options":{"default":"Offer"}},{"rule":"required","type":"string","name":"sdp","id":2}],"enums":[{"name":"Type","values":[{"name":"Offer","id":0},{"name":"Answer","id":1}]}]},{"name":"CreateStream","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"optional","type":"string","name":"originStreamId","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"repeated","type":"string","name":"tags","id":4},{"rule":"optional","type":"SetRemoteDescription","name":"setRemoteDescription","id":5},{"rule":"optional","type":"CreateOfferDescription","name":"createOfferDescription","id":6},{"rule":"optional","type":"CreateAnswerDescription","name":"createAnswerDescription","id":7}]},{"name":"CreateStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"streamId","id":2},{"rule":"optional","type":"string","name":"instanceRouteKey","id":5},{"rule":"optional","type":"SetRemoteDescriptionResponse","name":"setRemoteDescriptionResponse","id":3},{"rule":"optional","type":"CreateOfferDescriptionResponse","name":"createOfferDescriptionResponse","id":4},{"rule":"optional","type":"CreateAnswerDescriptionResponse","name":"createAnswerDescriptionResponse","id":6}]},{"name":"SetLocalDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"SetLocalDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"SetRemoteDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"SetRemoteDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2}]},{"name":"CreateOfferDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"string","name":"options","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"CreateOfferDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2}]},{"name":"CreateAnswerDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"string","name":"options","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"CreateAnswerDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2}]},{"name":"UpdateStreamState","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"string","name":"signalingState","id":2},{"rule":"required","type":"string","name":"iceGatheringState","id":3},{"rule":"required","type":"string","name":"iceConnectionState","id":4}]},{"name":"DestroyStream","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"optional","type":"string","name":"reason","id":2}]},{"name":"DestroyStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"StreamStarted","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"repeated","type":"string","name":"tags","id":3}]},{"name":"StreamEnded","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"string","name":"reason","id":3}]},{"name":"StreamEndedResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"StreamArchived","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"string","name":"uri","id":3}]},{"name":"SessionEnded","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"reason","id":2},{"rule":"required","type":"float","name":"duration","id":3}]},{"name":"IssueAuthenticationToken","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"repeated","type":"string","name":"capabilities","id":3}]},{"name":"IssueAuthenticationTokenResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"authenticationToken","id":2}]},{"name":"IssueStreamToken","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"required","type":"string","name":"sessionId","id":3},{"rule":"optional","type":"string","name":"originStreamId","id":4},{"rule":"repeated","type":"string","name":"capabilities","id":5}]},{"name":"IssueStreamTokenResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"streamToken","id":2}]},{"name":"Stream","fields":[{"rule":"required","type":"string","name":"streamId","id":1}]},{"name":"ListStreams","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"optional","type":"string","name":"start","id":3},{"rule":"required","type":"uint32","name":"length","id":4}]},{"name":"ListStreamsResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"start","id":2},{"rule":"optional","type":"uint32","name":"length","id":3},{"rule":"repeated","type":"Stream","name":"streams","id":4}]},{"name":"TerminateStream","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"required","type":"string","name":"streamId","id":3},{"rule":"optional","type":"string","name":"reason","id":4}]},{"name":"TerminateStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"SetupStream","fields":[{"rule":"required","type":"string","name":"streamToken","id":1},{"rule":"required","type":"CreateStream","name":"createStream","id":2}]},{"name":"SetupStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"CreateStreamResponse","name":"createStreamResponse","id":2}]},{"name":"EndStream","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"optional","type":"string","name":"reason","id":2,"options":{"default":"ended"}}]},{"name":"EndStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"StreamDataQuality","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"uint64","name":"timestamp","id":3},{"rule":"required","type":"DataQualityStatus","name":"status","id":4},{"rule":"required","type":"DataQualityReason","name":"reason","id":5}],"enums":[{"name":"DataQualityStatus","values":[{"name":"NoData","id":0},{"name":"AudioOnly","id":1},{"name":"All","id":2}]},{"name":"DataQualityReason","values":[{"name":"None","id":0},{"name":"UploadLimited","id":1},{"name":"DownloadLimited","id":2},{"name":"PublisherLimited","id":3},{"name":"NetworkLimited","id":4}]}]},{"name":"StreamDataQualityResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]}]}';
 
     function MQProtocol() {
         var builder = ProtoBuf.loadJson(mqProto);
@@ -62,7 +62,7 @@ define('sdk/MQProtocol', [
 
         var builder = getBuilder.call(this, type);
 
-        return builder.decode(value);
+        return stringifyEnums(builder.decode(value));
     };
 
     function getBuilder(type) {
@@ -84,6 +84,35 @@ define('sdk/MQProtocol', [
         }
 
         return builder;
+    }
+
+    function stringifyEnums(message) {
+        if (message && message.$type && message.$type.children) {
+            for (var key in message.$type.children) {
+                var child = message.$type.children[key];
+                var value = message[child.name];
+                var type = child && child.element ? child.element.resolvedType : null;
+
+                if (type && type.className === 'Message' && type.children) {
+                    message[child.name] = stringifyEnums(value);
+                } else if (type && type.className === 'Enum' && type.children) {
+                    var metaValue = null;
+
+                    for (var i = 0; i < type.children.length; i++) {
+                        if (type.children[i].id === value) {
+                            metaValue = type.children[i];
+                            break;
+                        }
+                    }
+
+                    if (metaValue && metaValue.name) {
+                        message[child.name] = metaValue.name;
+                    }
+                }
+            }
+        }
+
+        return message;
     }
 
     return MQProtocol;
@@ -144,19 +173,11 @@ define('sdk/PhenixPCast', [
         this._baseUri = optionalUri || 'https://pcast.phenixp2p.com';
         this._status = 'offline';
 
-        if (typeof window.addEventListener === 'function') {
-            window.addEventListener('unload', function (pcast) {
-                return function () {
-                    pcast.stop();
-                }
-            }(this));
-        } else {
-            window.onunload = function (pcast) {
-                return function () {
-                    pcast.stop();
-                }
-            }(this);
-        }
+        phenixRTC.addEventListener(window, 'unload', function (pcast) {
+            return function () {
+                pcast.stop();
+            }
+        }(this));
     }
 
     PhenixPCast.prototype.getBaseUri = function () {
@@ -195,6 +216,7 @@ define('sdk/PhenixPCast', [
 
         this._peerConnections = {};
         this._mediaStreams = {};
+        this._renderer = {};
         this._publishers = {};
         this._gumStreams = [];
 
@@ -220,6 +242,7 @@ define('sdk/PhenixPCast', [
             that._protocol.on('connected', connected.bind(that));
             that._protocol.on('disconnected', disconnected.bind(that));
             that._protocol.on('streamEnded', streamEnded.bind(that));
+            that._protocol.on('dataQuality', dataQuality.bind(that));
         });
     };
 
@@ -243,6 +266,14 @@ define('sdk/PhenixPCast', [
                     endStream.call(this, streamId, reason);
 
                     mediaStream.stop(reason);
+                }
+            }
+
+            for (var streamId in this._renderer) {
+                if (this._renderer.hasOwnProperty(streamId)) {
+                    var renderer = this._renderer[streamId];
+
+                    renderer.stop(reason);
                 }
             }
 
@@ -435,6 +466,24 @@ define('sdk/PhenixPCast', [
         return endStream.call(this, streamId, reason);
     }
 
+    function dataQuality(event) {
+        var streamId = event.streamId;
+        var status = event.status;
+        var reason = event.reason;
+
+        var renderer = this._renderer[streamId];
+
+        if (renderer && typeof renderer.dataQualityChangedCallback === 'function') {
+            renderer.dataQualityChangedCallback(renderer, status, reason);
+        }
+
+        var publisher = this._publishers[streamId];
+
+        if (publisher && typeof publisher.dataQualityChangedCallback === 'function') {
+            publisher.dataQualityChangedCallback(renderer, status, reason);
+        }
+    }
+
     function endStream(streamId, reason) {
         var mediaStream = this._mediaStreams[streamId];
 
@@ -443,6 +492,14 @@ define('sdk/PhenixPCast', [
         }
 
         delete this._mediaStreams[streamId];
+
+        var renderer = this._renderer[streamId];
+
+        if (renderer) {
+            mediaStream.stop();
+        }
+
+        delete this._renderer[streamId];
 
         var publisher = this._publishers[streamId];
 
@@ -504,11 +561,11 @@ define('sdk/PhenixPCast', [
                         log('Set local description (answer)');
 
                         var publisher = {
-                            getStreamId: function () {
+                            getStreamId: function getStreamId() {
                                 return streamId;
                             },
 
-                            hasEnded: function () {
+                            hasEnded: function hasEnded() {
                                 switch (pc.iceConnectionState) {
                                     case 'new':
                                     case 'checking':
@@ -524,7 +581,7 @@ define('sdk/PhenixPCast', [
                                 }
                             },
 
-                            stop: function (reason) {
+                            stop: function stop(reason) {
                                 if (pc.signalingState !== 'closed') {
                                     pc.close();
                                 }
@@ -545,7 +602,7 @@ define('sdk/PhenixPCast', [
                                 stopped = true;
                             },
 
-                            setPublisherEndedCallback: function (callback) {
+                            setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
@@ -553,7 +610,7 @@ define('sdk/PhenixPCast', [
                                 this.publisherEndedCallback = callback;
                             },
 
-                            setDataQualityChangedCallback: function (callback) {
+                            setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
@@ -619,23 +676,34 @@ define('sdk/PhenixPCast', [
                         start: function start(elementToAttachTo) {
                             this.element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
+                            that._renderer[streamId] = this;
+
                             return this.element;
                         },
                         stop: function stop() {
                             if (this.element) {
                                 this.element.pause();
                             }
+
+                            delete that._renderer[streamId];
+                        },
+                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
+                            if (typeof callback !== 'function') {
+                                throw new Error('"callback" must be a function');
+                            }
+
+                            this.dataQualityChangedCallback = callback;
                         }
-                    }
+                    };
                 },
-                setStreamEndedCallback: function (callback) {
+                setStreamEndedCallback: function setStreamEndedCallback(callback) {
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
 
                     this.streamEnded = callback;
                 },
-                stop: function (reason) {
+                stop: function stop(reason) {
                     if (pc.signalingState !== 'closed') {
                         pc.close();
                     }
@@ -874,7 +942,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-06-23T22:41:54Z',
+            clientVersion: '2016-07-01T11:30:27Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
@@ -924,6 +992,7 @@ define('sdk/PhenixProtocol', [
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
+                options: ['data-quality-notifications'],
                 createOfferDescription: {
                     streamId: '',
                     options: ['download', 'SRTP', browser, browserWithVersion],
@@ -949,6 +1018,7 @@ define('sdk/PhenixProtocol', [
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
+                options: ['data-quality-notifications'],
                 createOfferDescription: {
                     streamId: '',
                     options: ['upload', 'SRTP', browser, browserWithVersion],
@@ -1061,6 +1131,8 @@ define('sdk/PhenixProtocol', [
             this._sessionId = message.sessionId;
         } else if (response.type === 'pcast.StreamEnded') {
             triggerEvent.call(this, 'streamEnded', [message]);
+        } else if (response.type === 'pcast.StreamDataQuality') {
+            triggerEvent.call(this, 'dataQuality', [message]);
         }
 
         var callback = this._requests[response.requestId];

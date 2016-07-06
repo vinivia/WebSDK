@@ -416,6 +416,26 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 publisher = phenixPublisher;
                 $('#stopPublisher').removeClass('disabled');
 
+                publisher.setDataQualityChangedCallback(function (publisher, status, reason) {
+                    $.notify({
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publish</strong>',
+                        message: 'Data quality update: sending ' + status + ' with limitation ' + reason
+                    }, {
+                        type: 'info',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 5000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
+                });
+
                 publisher.setPublisherEndedCallback(function (publisher, reason, reasonDescription) {
                     $.notify({
                         icon: 'glyphicon glyphicon-film',
@@ -666,6 +686,26 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 });
 
                 var renderer = mediaStream.createRenderer();
+
+                renderer.setDataQualityChangedCallback(function (renderer, status, reason) {
+                    $.notify({
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publish</strong>',
+                        message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
+                    }, {
+                        type: 'info',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 5000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
+                });
 
                 remoteVideoEl = renderer.start(remoteVideoEl);
 

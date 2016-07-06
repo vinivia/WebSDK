@@ -68,19 +68,11 @@ define('sdk/PhenixPCast', [
         this._baseUri = optionalUri || 'https://pcast.phenixp2p.com';
         this._status = 'offline';
 
-        if (typeof window.addEventListener === 'function') {
-            window.addEventListener('unload', function (pcast) {
-                return function () {
-                    pcast.stop();
-                }
-            }(this));
-        } else {
-            window.onunload = function (pcast) {
-                return function () {
-                    pcast.stop();
-                }
-            }(this);
-        }
+        phenixRTC.addEventListener(window, 'unload', function (pcast) {
+            return function () {
+                pcast.stop();
+            }
+        }(this));
     }
 
     PhenixPCast.prototype.getBaseUri = function () {
@@ -119,6 +111,7 @@ define('sdk/PhenixPCast', [
 
         this._peerConnections = {};
         this._mediaStreams = {};
+        this._renderer = {};
         this._publishers = {};
         this._gumStreams = [];
 
@@ -144,6 +137,7 @@ define('sdk/PhenixPCast', [
             that._protocol.on('connected', connected.bind(that));
             that._protocol.on('disconnected', disconnected.bind(that));
             that._protocol.on('streamEnded', streamEnded.bind(that));
+            that._protocol.on('dataQuality', dataQuality.bind(that));
         });
     };
 
@@ -167,6 +161,14 @@ define('sdk/PhenixPCast', [
                     endStream.call(this, streamId, reason);
 
                     mediaStream.stop(reason);
+                }
+            }
+
+            for (var streamId in this._renderer) {
+                if (this._renderer.hasOwnProperty(streamId)) {
+                    var renderer = this._renderer[streamId];
+
+                    renderer.stop(reason);
                 }
             }
 
@@ -359,6 +361,24 @@ define('sdk/PhenixPCast', [
         return endStream.call(this, streamId, reason);
     }
 
+    function dataQuality(event) {
+        var streamId = event.streamId;
+        var status = event.status;
+        var reason = event.reason;
+
+        var renderer = this._renderer[streamId];
+
+        if (renderer && typeof renderer.dataQualityChangedCallback === 'function') {
+            renderer.dataQualityChangedCallback(renderer, status, reason);
+        }
+
+        var publisher = this._publishers[streamId];
+
+        if (publisher && typeof publisher.dataQualityChangedCallback === 'function') {
+            publisher.dataQualityChangedCallback(renderer, status, reason);
+        }
+    }
+
     function endStream(streamId, reason) {
         var mediaStream = this._mediaStreams[streamId];
 
@@ -367,6 +387,14 @@ define('sdk/PhenixPCast', [
         }
 
         delete this._mediaStreams[streamId];
+
+        var renderer = this._renderer[streamId];
+
+        if (renderer) {
+            mediaStream.stop();
+        }
+
+        delete this._renderer[streamId];
 
         var publisher = this._publishers[streamId];
 
@@ -428,11 +456,11 @@ define('sdk/PhenixPCast', [
                         log('Set local description (answer)');
 
                         var publisher = {
-                            getStreamId: function () {
+                            getStreamId: function getStreamId() {
                                 return streamId;
                             },
 
-                            hasEnded: function () {
+                            hasEnded: function hasEnded() {
                                 switch (pc.iceConnectionState) {
                                     case 'new':
                                     case 'checking':
@@ -448,7 +476,7 @@ define('sdk/PhenixPCast', [
                                 }
                             },
 
-                            stop: function (reason) {
+                            stop: function stop(reason) {
                                 if (pc.signalingState !== 'closed') {
                                     pc.close();
                                 }
@@ -469,7 +497,7 @@ define('sdk/PhenixPCast', [
                                 stopped = true;
                             },
 
-                            setPublisherEndedCallback: function (callback) {
+                            setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
@@ -477,7 +505,7 @@ define('sdk/PhenixPCast', [
                                 this.publisherEndedCallback = callback;
                             },
 
-                            setDataQualityChangedCallback: function (callback) {
+                            setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
@@ -543,23 +571,34 @@ define('sdk/PhenixPCast', [
                         start: function start(elementToAttachTo) {
                             this.element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
+                            that._renderer[streamId] = this;
+
                             return this.element;
                         },
                         stop: function stop() {
                             if (this.element) {
                                 this.element.pause();
                             }
+
+                            delete that._renderer[streamId];
+                        },
+                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
+                            if (typeof callback !== 'function') {
+                                throw new Error('"callback" must be a function');
+                            }
+
+                            this.dataQualityChangedCallback = callback;
                         }
-                    }
+                    };
                 },
-                setStreamEndedCallback: function (callback) {
+                setStreamEndedCallback: function setStreamEndedCallback(callback) {
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
 
                     this.streamEnded = callback;
                 },
-                stop: function (reason) {
+                stop: function stop(reason) {
                     if (pc.signalingState !== 'closed') {
                         pc.close();
                     }

@@ -117,6 +117,7 @@ define('sdk/PhenixProtocol', [
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
+                options: ['data-quality-notifications'],
                 createOfferDescription: {
                     streamId: '',
                     options: ['download', 'SRTP', browser, browserWithVersion],
@@ -142,6 +143,7 @@ define('sdk/PhenixProtocol', [
             streamToken: streamToken,
             createStream: {
                 sessionId: this._sessionId,
+                options: ['data-quality-notifications'],
                 createOfferDescription: {
                     streamId: '',
                     options: ['upload', 'SRTP', browser, browserWithVersion],
@@ -254,6 +256,8 @@ define('sdk/PhenixProtocol', [
             this._sessionId = message.sessionId;
         } else if (response.type === 'pcast.StreamEnded') {
             triggerEvent.call(this, 'streamEnded', [message]);
+        } else if (response.type === 'pcast.StreamDataQuality') {
+            triggerEvent.call(this, 'dataQuality', [message]);
         }
 
         var callback = this._requests[response.requestId];
