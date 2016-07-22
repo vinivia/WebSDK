@@ -293,6 +293,8 @@ define('sdk/PhenixPCast', [
         var onUserMediaFailure = function onUserMediaFailure(e) {
             if (e.code === 'unavailable') {
                 callback(this, 'conflict', undefined, e);
+            } else if (e.name === 'PermissionDeniedError') {
+                callback(this, 'permission-denied', undefined, e);
             } else {
                 callback(this, 'failed', undefined, e);
             }
@@ -375,7 +377,7 @@ define('sdk/PhenixPCast', [
         var publisher = this._publishers[streamId];
 
         if (publisher && typeof publisher.dataQualityChangedCallback === 'function') {
-            publisher.dataQualityChangedCallback(renderer, status, reason);
+            publisher.dataQualityChangedCallback(publisher, status, reason);
         }
     }
 
