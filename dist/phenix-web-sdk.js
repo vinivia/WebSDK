@@ -402,6 +402,8 @@ define('sdk/PhenixPCast', [
                 callback(this, 'permission-denied', undefined, e);
             } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF
                 callback(this, 'conflict', undefined, e);
+            } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
+                callback(this, 'permission-denied', undefined, e);
             } else {
                 callback(this, 'failed', undefined, e);
             }
@@ -946,7 +948,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-07-24T15:36:22Z',
+            clientVersion: '2016-07-24T17:18:00Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),

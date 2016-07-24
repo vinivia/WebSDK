@@ -297,6 +297,8 @@ define('sdk/PhenixPCast', [
                 callback(this, 'permission-denied', undefined, e);
             } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF
                 callback(this, 'conflict', undefined, e);
+            } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
+                callback(this, 'permission-denied', undefined, e);
             } else {
                 callback(this, 'failed', undefined, e);
             }
