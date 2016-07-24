@@ -293,8 +293,10 @@ define('sdk/PhenixPCast', [
         var onUserMediaFailure = function onUserMediaFailure(e) {
             if (e.code === 'unavailable') {
                 callback(this, 'conflict', undefined, e);
-            } else if (e.name === 'PermissionDeniedError') {
+            } else if (e.name === 'PermissionDeniedError') { // Chrome
                 callback(this, 'permission-denied', undefined, e);
+            } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF
+                callback(this, 'conflict', undefined, e);
             } else {
                 callback(this, 'failed', undefined, e);
             }
