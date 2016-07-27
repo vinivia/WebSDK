@@ -141,7 +141,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             var parser = document.createElement('a');
             parser.href = url;
 
-            adminBaseUri = 'https:' + parser.hostname;
+            adminBaseUri = 'https://' + parser.hostname;
 
             if (parser.port) {
                 adminBaseUri += ':' + parser.port;
