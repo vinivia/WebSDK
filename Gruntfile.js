@@ -21,11 +21,13 @@ console.log('Using version', version);
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-sed');
+    grunt.loadNpmTasks('grunt-zip');
 
     grunt.registerTask('default', [ ]);
-    grunt.registerTask('build', [ 'default', 'clean', 'concat', 'sed', 'uglify' ]);
+    grunt.registerTask('build', [ 'default', 'clean', 'concat', 'copy:chrome-app', 'sed', 'uglify', 'zip' ]);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -34,6 +36,18 @@ module.exports = function (grunt) {
             rtc: {
                 src: [ 'src/sdk/**/*.js', 'src/main.js' ],
                 dest: 'dist/phenix-web-sdk.js'
+            }
+        },
+        copy: {
+            'chrome-app': {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'src/chrome/',
+                        src: ['**'],
+                        dest: 'dist/pcast-screen-sharing'
+                    }
+                ]
             }
         },
         sed: {
@@ -49,6 +63,13 @@ module.exports = function (grunt) {
                 files: {
                     'dist/phenix-web-sdk.min.js': [ 'dist/phenix-web-sdk.js' ]
                 }
+            }
+        },
+        zip: {
+            'dist/pcast-chrome-app.zip': {
+                cwd: 'dist/pcast-screen-sharing/',
+                src: ['dist/pcast-screen-sharing/**'],
+                dest: 'dist/pcast-screen-sharing.zip'
             }
         }
     });

@@ -5,6 +5,10 @@
       <env name="PHENIX_APPLICATION_ID" value="test" />
       <env name="PHENIX_SECRET" value="secret" />
     </envs>
+    <profiling v8-profiler-path="" />
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+      <profiling v8-profiler-path="" />
+    </EXTENSION>
     <method />
   </configuration>
 </component>

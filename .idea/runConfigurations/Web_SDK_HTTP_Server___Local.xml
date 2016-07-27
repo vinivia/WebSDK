@@ -3,7 +3,14 @@
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
-    <browser start="true" url="http://localhost:8888/PhenixSDK.html?url=https://phenixp2p.local:8443&amp;applicationId=test&amp;secret=secret" />
+    <browser start="true" url="http://localhost:8888/PhenixSDK.html?url=https://local.phenixp2p.com:8443&amp;applicationId=test&amp;secret=secret" />
+    <profiling v8-profiler-path="" />
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+      <profiling v8-profiler-path="" />
+    </EXTENSION>
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
+      <browser start="true" url="http://localhost:8888/PhenixSDK.html?url=https://local.phenixp2p.com:8443&amp;applicationId=test&amp;secret=secret" />
+    </EXTENSION>
     <method />
   </configuration>
 </component>

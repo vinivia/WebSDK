@@ -261,7 +261,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
         var getUserMedia = function getUserMedia() {
             var localVideoEl = $('#localVideo')[0];
 
-            var callback = function callback(pcast, status, stream, e) {
+            var userMediaCallback = function userMediaCallback(pcast, status, stream, e) {
                 if (status !== 'ok') {
                     $.notify({
                         icon: 'glyphicon glyphicon-facetime-video',
@@ -315,14 +315,36 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
             };
 
             if (!userMediaStream || userMediaStream.ended) {
-                pcast.getUserMedia({
-                    audio: true,
-                    video: {
-                        optional: [
-                            {minHeight: 720}
-                        ]
-                    }
-                }, callback);
+                var source = $('#gum-source option:selected').val();
+                var userMediaOptions = {};
+
+                switch (source) {
+                    case 'screen':
+                        userMediaOptions.screen = true;
+                        break;
+                    case 'microphone':
+                        userMediaOptions.audio = true;
+                        userMediaOptions.video = false;
+                        break;
+                    case 'camera':
+                        userMediaOptions.audio = false;
+                        userMediaOptions.video = {
+                            optional: [
+                                {minHeight: 720}
+                            ]
+                        };
+                        break;
+                    default:
+                        userMediaOptions.audio = true;
+                        userMediaOptions.video = {
+                            optional: [
+                                {minHeight: 720}
+                            ]
+                        };
+                        break;
+                }
+
+                pcast.getUserMedia(userMediaOptions, userMediaCallback);
             }
         };
 

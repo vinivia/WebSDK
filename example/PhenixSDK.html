@@ -38,7 +38,7 @@
             width: 240px;
         }
 
-        input[type="radio"] {
+        input[name="option"] {
             margin: 10px 0 0;
             width: inherit;
         }
@@ -118,8 +118,8 @@
                     <option value="https://pcast-stg.phenixp2p.com">Anycast - Staging</option>
                     <option value="wss://pcast-stg-us-central.phenixp2p.com">US Central - Staging</option>
                     <option value="wss://pcast-stg-europe-west.phenixp2p.com">EU West - Staging</option>
-                    <option value="https://phenixp2p.local:8443">Anycast - Local</option>
-                    <option value="wss://phenixp2p.local:8443">Local</option>
+                    <option value="https://local.phenixp2p.com:8443">Anycast - Local</option>
+                    <option value="wss://local.phenixp2p.com:8443">Local</option>
                 </select>
             </div>
         </div>
@@ -127,7 +127,8 @@
     <div class="row page-header">
         <div class="col-md-4 col-md-offset-1 text-center server">
             <h1><strong>Backend</strong></h1>
-            <p>Operations require your application's <strong>secret</strong>. Thus they must be performed on your backend.</p>
+            <p>Operations require your application's <strong>secret</strong>. Thus they must be performed on your
+                backend.</p>
         </div>
         <div class="col-md-4 col-md-offset-2 text-center client">
             <h1><strong>Client</strong></h1>
@@ -203,7 +204,8 @@
         </div>
         <div class="col-md-4 col-md-offset-2">
             <label class="radio">
-                <h2><input type="radio" name="option" id="option-B" value="option-B" checked> Option B: Publish a stream</h2>
+                <h2><input type="radio" name="option" id="option-B" value="option-B" checked> Option B: Publish a stream
+                </h2>
             </label>
         </div>
     </div>
@@ -223,14 +225,17 @@
     </div>
     <div class="row step step-5 option-B">
         <div class="col-md-4 col-md-offset-7 text-center client">
-            <div class="row">
-                <p>Get local user media from camera.</p>
-                <video controls id="localVideo" class="local" width="160" height="120" muted="true"></video>
-                <br/>
-                <input id="getUserMedia" type="button" value="Get User Media"/>
-                <input id="stopUserMedia" class="disabled" type="button" value="Stop User Media"/>
-                <h3 id="userMediaInfo"></h3>
-            </div>
+            <p>Get local user media from camera.</p>
+            <video controls id="localVideo" class="local" width="160" height="120" muted="true"></video>
+            <select class="form-control" id="gum-source">
+                <option value="cameraAndMicrophone">Camera & Microphone</option>
+                <option value="screen">Screen</option>
+                <option value="camera">Camera</option>
+                <option value="microphone">Microphone</option>
+            </select>
+            <input id="getUserMedia" type="button" value="Get User Media"/>
+            <input id="stopUserMedia" class="disabled" type="button" value="Stop User Media"/>
+            <h3 id="userMediaInfo"></h3>
         </div>
         <div class="col-md-1 text-center">
             <span class="badge">B5.1</span>

@@ -1,0 +1,32 @@
+{
+    "manifest_version" : 2,
+    "name" : "__MSG_extName__",
+    "version" : "1.0.8",
+
+    "default_locale": "en",
+    "description" : "__MSG_extDescription__",
+    "icons": {
+        "16": "pcast16.png",
+        "32": "pcast32.png",
+        "48": "pcast48.png",
+        "128": "pcast128.png"
+    },
+
+    "author": "PhenixP2P Inc",
+    "background": {
+        "scripts": ["screenSharing.js"],
+        "persistent": false
+    },
+    "externally_connectable": {
+        "matches": [
+            "*://phenixp2p.com/*",
+            "*://*.phenixp2p.com/*"
+        ]
+    },
+    "homepage_url": "https://phenixp2p.com/",
+    "minimum_chrome_version": "34",
+    "permissions": [
+        "desktopCapture"
+    ],
+    "short_name": "__MSG_extShortName__"
+}

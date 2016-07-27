@@ -168,10 +168,18 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
+    var defaultPCastUri = 'https://pcast.phenixp2p.com';
+    var defaultPCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 
-    function PhenixPCast(optionalUri) {
-        this._baseUri = optionalUri || 'https://pcast.phenixp2p.com';
+    function PhenixPCast(optionalUri, screenSharingExtensionId) {
+        this._baseUri = optionalUri || defaultPCastUri;
+        this._screenSharingExtensionId = screenSharingExtensionId || defaultPCastScreenSharingExtensionId;
+        this._screenSharingEnabled = false;
         this._status = 'offline';
+
+        if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
+            addLinkHeaderElement.call(this);
+        }
 
         phenixRTC.addEventListener(window, 'unload', function (pcast) {
             return function () {
@@ -222,27 +230,31 @@ define('sdk/PhenixPCast', [
 
         var that = this;
 
-        resolveUri.call(that, that._baseUri, function (err, uri) {
-            if (err) {
-                logError('Failed to connect to ' + that._baseUri, err);
+        checkForScreenSharingExtension.call(that, function (screenSharingEnabled) {
+            that._screenSharingEnabled = screenSharingEnabled;
 
-                transitionToStatus.call(that, 'offline');
-                that._authenticationCallback.call(that, that, 'unauthorized', '');
+            resolveUri.call(that, that._baseUri, function (err, uri) {
+                if (err) {
+                    logError('Failed to connect to ' + that._baseUri, err);
 
-                that._stopped = true;
-                that._started = false;
+                    transitionToStatus.call(that, 'offline');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
 
-                return;
-            }
+                    that._stopped = true;
+                    that._started = false;
 
-            log('Discovered end point "' + uri + '"');
+                    return;
+                }
 
-            that._protocol = new PhenixProtocol(uri);
+                log('Discovered end point "' + uri + '"');
 
-            that._protocol.on('connected', connected.bind(that));
-            that._protocol.on('disconnected', disconnected.bind(that));
-            that._protocol.on('streamEnded', streamEnded.bind(that));
-            that._protocol.on('dataQuality', dataQuality.bind(that));
+                that._protocol = new PhenixProtocol(uri);
+
+                that._protocol.on('connected', connected.bind(that));
+                that._protocol.on('disconnected', disconnected.bind(that));
+                that._protocol.on('streamEnded', streamEnded.bind(that));
+                that._protocol.on('dataQuality', dataQuality.bind(that));
+            });
         });
     };
 
@@ -387,6 +399,155 @@ define('sdk/PhenixPCast', [
         return 'PhenixPCast[' + this._sessionId + ',' + this._protocol.toString() + ']';
     };
 
+    function checkForScreenSharingExtension(callback) {
+        var that = this;
+
+        if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
+            try {
+                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) {
+                    if (response && response.status === 'ok') {
+                        log('Screen sharing enabled using version "' + response.version + '"');
+                        callback(true);
+                    } else {
+                        log('Screen sharing NOT available');
+                        callback(false);
+                    }
+                });
+            } catch (e) {
+                if (e.message) {
+                    logError(e.message);
+                }
+
+                callback(false);
+            }
+        } else {
+            callback(false);
+        }
+    }
+
+    function getChromeWebStoreLink() {
+        return 'https://chrome.google.com/webstore/detail/' + this._screenSharingExtensionId;
+    }
+
+    function addLinkHeaderElement() {
+        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
+
+        var links = document.getElementsByTagName('link');
+
+        for (var i = 0; i < links.length; i++) {
+            if (links[i].href === chromeWebStoreUrl) {
+                // Link already present
+                return;
+            }
+        }
+
+        log('Adding Chrome Web Store link "' + chromeWebStoreUrl + '"');
+
+        var link = document.createElement('link');
+
+        link.rel = 'chrome-webstore-item';
+        link.href = chromeWebStoreUrl;
+
+        document.getElementsByTagName('head')[0].appendChild(link);
+    }
+
+    function tryInstallScreenSharingExtension(callback) {
+        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
+
+        try {
+            chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
+                callback('ok');
+            }, function failureCallback(reason) {
+                if (reason) {
+                    logError(reason);
+                }
+
+                callback('failed', new Error(reason || 'failed'));
+            });
+        } catch (e) {
+            if (e.message) {
+                logError(e.message);
+            }
+
+            callback('failed', e);
+        }
+    }
+
+    function getScreenSharingConstraints(callback) {
+        var that = this;
+
+        switch (phenixRTC.browser) {
+            case 'Chrome':
+                try {
+                    chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) {
+                        if (response.status !== 'ok') {
+                            return callback(response.status, undefined, new Error(response.status));
+                        }
+
+                        var constraints = {
+                            video: {
+                                mandatory: {
+                                    chromeMediaSource: 'desktop',
+                                    chromeMediaSourceId: response.streamId
+                                }
+                            }
+                        };
+
+                        callback('ok', constraints, undefined);
+                    });
+                } catch (e) {
+                    if (e.message) {
+                        logError(e.message);
+                    }
+                    callback('failed', undefined, e);
+                }
+                break;
+            default:
+                callback('not-supported', undefined, new Error('not-supported'));
+                break;
+        }
+    }
+
+    function getUserMediaConstraints(options, callback) {
+        var that = this;
+
+        if (options.screen) {
+            if (!that._screenSharingEnabled) {
+                switch (phenixRTC.browser) {
+                    case 'Chrome':
+                        tryInstallScreenSharingExtension.call(that, function (status) {
+                            if (status !== 'ok') {
+                                return callback(status, undefined, new Error('screen-sharing-installation-failed'));
+                            }
+
+                            checkForScreenSharingExtension.call(that, function (screenSharingEnabled) {
+                                that._screenSharingEnabled = screenSharingEnabled;
+
+                                if (!that._screenSharingEnabled) {
+                                    return callback(status, undefined, new Error('screen-sharing-installation-failed'));
+                                }
+
+                                getScreenSharingConstraints.call(that, callback);
+                            });
+                        });
+                        break;
+                    default:
+                        callback('not-supported', undefined, new Error('not-supported'));
+                        break;
+                }
+            } else {
+                getScreenSharingConstraints.call(that, callback);
+            }
+        } else {
+            var constraints = {
+                audio: options.audio || false,
+                video: options.video || false
+            };
+
+            callback('ok', constraints, undefined);
+        }
+    }
+
     function getUserMedia(options, callback) {
         var that = this;
 
@@ -398,6 +559,8 @@ define('sdk/PhenixPCast', [
         var onUserMediaFailure = function onUserMediaFailure(e) {
             if (e.code === 'unavailable') {
                 callback(this, 'conflict', undefined, e);
+            } else if (e.message === 'permission-denied') {
+                callback(this, 'permission-denied', undefined, e);
             } else if (e.name === 'PermissionDeniedError') { // Chrome
                 callback(this, 'permission-denied', undefined, e);
             } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF
@@ -409,10 +572,17 @@ define('sdk/PhenixPCast', [
             }
         };
 
-        phenixRTC.getUserMedia({
-            audio: options.audio || false,
-            video: options.video || false
-        }, onUserMediaSuccess, onUserMediaFailure);
+        getUserMediaConstraints.call(that, options, function (status, constraints, error) {
+            if (status !== 'ok') {
+                return onUserMediaFailure(error);
+            }
+
+            try {
+                phenixRTC.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
+            } catch (e) {
+                onUserMediaFailure(e);
+            }
+        });
     }
 
     function connected() {
@@ -841,7 +1011,7 @@ define('sdk/PhenixPCast', [
                 for (var i = 0; i < endPoints.length; i++) {
                     var endPoint = endPoints[i];
 
-                    log('Checking end Point "' + endPoint + '"');
+                    log('Checking end point "' + endPoint + '"');
 
                     httpGetWithRetry(endPoint, function (err, responseText) {
                         if (err) {
@@ -948,7 +1118,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-07-24T17:18:00Z',
+            clientVersion: '2016-07-27T20:18:31Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
