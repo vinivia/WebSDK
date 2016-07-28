@@ -20,7 +20,9 @@
     "ci-test": "node scripts/ci-test.js",
     "ci-bundle": "node scripts/ci-bundle.js",
     "ci-coverage": "node scripts/ci-coverage.js",
-    "start": "node example/httpserver.js"
+    "start": "node example/httpserver.js",
+    "jpm-run": "jpm run --addon-dir src/firefox",
+    "jpm-xpi": "jpm xpi --addon-dir src/firefox"
   },
   "dependencies": {},
   "engines": {
@@ -38,6 +40,7 @@
     "grunt-sed": "0.1.1",
     "grunt-zip": "0.17.1",
     "istanbul": "0.4.3",
+    "jpm": "1.1.2",
     "karma": "0.13.22",
     "karma-chrome-launcher": "1.0.1",
     "karma-cli": "1.0.0",
