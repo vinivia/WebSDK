@@ -35,7 +35,7 @@ define('sdk/MQProtocol', [
         builder = ProtoBuf.loadJson(pcastProto, builder);
 
         this._builders = builder.build();
-        this._apiVersion = 1;
+        this._apiVersion = 2;
     }
 
     MQProtocol.prototype.getApiVersion = function () {

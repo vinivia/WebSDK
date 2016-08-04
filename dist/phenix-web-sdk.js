@@ -35,7 +35,7 @@ define('sdk/MQProtocol', [
         builder = ProtoBuf.loadJson(pcastProto, builder);
 
         this._builders = builder.build();
-        this._apiVersion = 1;
+        this._apiVersion = 2;
     }
 
     MQProtocol.prototype.getApiVersion = function () {
@@ -1198,7 +1198,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-07-28T23:39:12Z',
+            clientVersion: '2016-08-04T14:27:43Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
