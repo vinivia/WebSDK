@@ -903,7 +903,9 @@ define('sdk/PhenixPCast', [
                                     return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
                                 });
 
-                                pc.setRemoteDescription({type: remoteDescription.type, sdp: updatedSdp});
+                                var updatedRemoteDescription = new phenixRTC.RTCSessionDescription({type: remoteDescription.type, sdp: updatedSdp});
+
+                                pc.setRemoteDescription(updatedRemoteDescription);
 
                                 return {
                                     dispose: function () {
@@ -1236,7 +1238,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-08-11T20:02:59Z',
+            clientVersion: '2016-08-11T23:44:34Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),

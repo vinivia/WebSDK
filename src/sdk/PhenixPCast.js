@@ -796,7 +796,9 @@ define('sdk/PhenixPCast', [
                                     return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
                                 });
 
-                                pc.setRemoteDescription({type: remoteDescription.type, sdp: updatedSdp});
+                                var updatedRemoteDescription = new phenixRTC.RTCSessionDescription({type: remoteDescription.type, sdp: updatedSdp});
+
+                                pc.setRemoteDescription(updatedRemoteDescription);
 
                                 return {
                                     dispose: function () {
