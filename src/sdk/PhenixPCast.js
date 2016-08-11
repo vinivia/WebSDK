@@ -709,7 +709,17 @@ define('sdk/PhenixPCast', [
                     }
 
                     function onSetLocalDescriptionSuccess() {
+                        var bandwidthAttribute = /(b=AS:([0-9]*)[\n\r]*)/gi;
+                        var video = /(mid:video)([\n\r]*)/gi;
+
                         log('Set local description (answer)');
+
+                        var limit = 0;
+                        var bandwithAttribute = bandwidthAttribute.exec(offerSdp);
+
+                        if (bandwithAttribute && bandwithAttribute.length >= 3) {
+                            limit = bandwithAttribute[2] * 1000;
+                        }
 
                         var publisher = {
                             getStreamId: function getStreamId() {
@@ -767,6 +777,32 @@ define('sdk/PhenixPCast', [
                                 }
 
                                 this.dataQualityChangedCallback = callback;
+                            },
+
+                            limitBandwidth: function limitBandwidth(bandwidthLimit) {
+                                if (typeof bandwidthLimit !== 'number') {
+                                    throw new Error('"bandwidthLimit" must be a number');
+                                }
+
+                                var newLimit = limit ? Math.min(bandwidthLimit, limit) : bandwidthLimit;
+                                var remoteDescription = pc.remoteDescription;
+
+                                log('Changing bandwidth limit to', newLimit);
+
+                                var updatedSdp = remoteDescription.sdp.replace(bandwidthAttribute, '');
+
+                                // Add new limit in kbps
+                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) {
+                                    return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
+                                });
+
+                                pc.setRemoteDescription({type: remoteDescription.type, sdp: updatedSdp});
+
+                                return {
+                                    dispose: function () {
+                                        pc.setRemoteDescription(remoteDescription);
+                                    }
+                                }
                             }
                         };
 

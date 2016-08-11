@@ -478,6 +478,12 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                     });
                 });
 
+                var limit = publisher.limitBandwidth(400000);
+
+                setTimeout(function () {
+                    limit.dispose();
+                }, 10000);
+
                 $.notify({
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',
