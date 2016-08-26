@@ -253,7 +253,13 @@ define('sdk/PhenixPCast', [
         this._protocol.createUploader(streamToken, function (response, error) {
             if (error) {
                 logError('Failed to create uploader: ' + JSON.stringify(error));
-                callback.call(that, that, 'failed');
+
+                switch (error.status) {
+                    case 'capacity':
+                        return callback.call(that, that, error.status);
+                    default:
+                        return callback.call(that, that, 'failed');
+                }
             } else {
                 var streamId = response.createStreamResponse.streamId;
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -282,7 +288,15 @@ define('sdk/PhenixPCast', [
         this._protocol.createDownloader(streamToken, function (response, error) {
             if (error) {
                 logError('Failed to create downloader: ' + JSON.stringify(error));
-                callback.call(that, that, 'failed');
+
+                switch (error.status) {
+                    case 'capacity':
+                    case 'stream-ended':
+                    case 'origin-stream-ended':
+                        return callback.call(that, that, error.status);
+                    default:
+                        return callback.call(that, that, 'failed');
+                }
             } else {
                 var streamId = response.createStreamResponse.streamId;
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;

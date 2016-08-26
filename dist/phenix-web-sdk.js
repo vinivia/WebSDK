@@ -360,7 +360,13 @@ define('sdk/PhenixPCast', [
         this._protocol.createUploader(streamToken, function (response, error) {
             if (error) {
                 logError('Failed to create uploader: ' + JSON.stringify(error));
-                callback.call(that, that, 'failed');
+
+                switch (error.status) {
+                    case 'capacity':
+                        return callback.call(that, that, error.status);
+                    default:
+                        return callback.call(that, that, 'failed');
+                }
             } else {
                 var streamId = response.createStreamResponse.streamId;
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -389,7 +395,15 @@ define('sdk/PhenixPCast', [
         this._protocol.createDownloader(streamToken, function (response, error) {
             if (error) {
                 logError('Failed to create downloader: ' + JSON.stringify(error));
-                callback.call(that, that, 'failed');
+
+                switch (error.status) {
+                    case 'capacity':
+                    case 'stream-ended':
+                    case 'origin-stream-ended':
+                        return callback.call(that, that, error.status);
+                    default:
+                        return callback.call(that, that, 'failed');
+                }
             } else {
                 var streamId = response.createStreamResponse.streamId;
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -1238,7 +1252,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-08-11T23:44:34Z',
+            clientVersion: '2016-08-26T20:58:11Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
