@@ -175,7 +175,7 @@ define('sdk/PhenixPCast', [
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
         iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
-        hash: 'sha256:337cd01d283e0682e7560b3a8d7957e7139e19c4297d947bb284709a39fe7918'
+        hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
     };
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
@@ -552,7 +552,7 @@ define('sdk/PhenixPCast', [
         }
     }
 
-    function getScreenSharingConstraints(callback) {
+    function getScreenSharingConstraints(options, callback) {
         var that = this;
 
         switch (phenixRTC.browser) {
@@ -564,13 +564,19 @@ define('sdk/PhenixPCast', [
                         }
 
                         var constraints = {
-                            video: {
-                                mandatory: {
-                                    chromeMediaSource: 'desktop',
-                                    chromeMediaSourceId: response.streamId
-                                }
-                            }
+                            video: {}
                         };
+
+                        if (typeof options === 'object' && typeof options.screen === 'object') {
+                            constraints.video = options.screen;
+                        }
+
+                        if (typeof constraints.video.mandatory !== 'object') {
+                            constraints.video.mandatory = {};
+                        }
+
+                        constraints.video.mandatory.chromeMediaSource = 'desktop';
+                        constraints.video.mandatory.chromeMediaSourceId = response.streamId;
 
                         callback('ok', constraints, undefined);
                     });
@@ -584,10 +590,14 @@ define('sdk/PhenixPCast', [
                 break;
             case 'Firefox':
                 var constraints = {
-                    video: {
-                        mediaSource: 'window'
-                    }
+                    video: {}
                 };
+
+                if (typeof options === 'object' && typeof options.screen === 'object') {
+                    constraints.video = options.screen;
+                }
+
+                constraints.video.mediaSource = 'window';
 
                 callback('ok', constraints, undefined);
                 break;
@@ -614,7 +624,7 @@ define('sdk/PhenixPCast', [
                             return callback(status, undefined, new Error('screen-sharing-installation-failed'));
                         }
 
-                        getScreenSharingConstraints.call(that, callback);
+                        getScreenSharingConstraints.call(that, options, callback);
                     });
                 };
 
@@ -630,7 +640,7 @@ define('sdk/PhenixPCast', [
                         break;
                 }
             } else {
-                getScreenSharingConstraints.call(that, callback);
+                getScreenSharingConstraints.call(that, options, callback);
             }
         } else {
             var constraints = {
@@ -1252,7 +1262,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-08-26T20:58:11Z',
+            clientVersion: '2016-08-27T00:25:13Z',
             deviceId: '',
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
