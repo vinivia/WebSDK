@@ -180,10 +180,12 @@ define('sdk/PhenixPCast', [
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
 
-    function PhenixPCast(optionalUri, screenSharingExtensionId, screenSharingAddOn) {
-        this._baseUri = optionalUri || defaultPCastUri;
-        this._screenSharingExtensionId = screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
-        this._screenSharingAddOn = screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
+    function PhenixPCast(options) {
+        options = options || {};
+        this._baseUri = options.uri || defaultPCastUri;
+        this._deviceId = options.deviceId || undefined;
+        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
+        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
         this._status = 'offline';
 
@@ -258,7 +260,7 @@ define('sdk/PhenixPCast', [
 
                 log('Discovered end point "' + uri + '"');
 
-                that._protocol = new PhenixProtocol(uri);
+                that._protocol = new PhenixProtocol(uri, that._deviceId);
 
                 that._protocol.on('connected', connected.bind(that));
                 that._protocol.on('disconnected', disconnected.bind(that));
@@ -1223,8 +1225,9 @@ define('sdk/PhenixProtocol', [
             console.error.apply(console, arguments);
         } || log;
 
-    function PhenixProtocol(uri) {
+    function PhenixProtocol(uri, deviceId) {
         this._uri = uri;
+        this._deviceId = deviceId || '';
         this._mqProtocol = new MQProtocol();
 
         log('Connecting to ' + uri);
@@ -1262,8 +1265,8 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-08-27T00:25:13Z',
-            deviceId: '',
+            clientVersion: '2016-08-30T21:18:33Z',
+            deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
             authenticationToken: authToken

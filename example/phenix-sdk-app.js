@@ -22,13 +22,15 @@ requirejs.config({
         'bootstrap': '/bootstrap/dist/js/bootstrap.min',
         'protobuf': '/protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': '/remarkable-bootstrap-notify/dist/bootstrap-notify.min',
+        'fingerprintjs2': '/fingerprintjs2/dist/fingerprint2.min',
         'Long': '/long/dist/long.min',
         'ByteBuffer': '/bytebuffer/dist/ByteBufferAB.min'
     }
 });
 
-requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk'], function ($, _, bootstrapNotify, rtc, sdk) {
+requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk) {
     var init = function init() {
+        var fingerprint = new Fingerprint();
         var remoteVideoEl = $('#remoteVideo')[0];
 
         var getUrlParameter = function getUrlParameter(parameterName) {
@@ -137,9 +139,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 pcast.stop();
             }
 
-            var url = $('#environment option:selected').val();
+            var uri = $('#environment option:selected').val();
             var parser = document.createElement('a');
-            parser.href = url;
+            parser.href = uri;
 
             adminBaseUri = 'https://' + parser.hostname;
 
@@ -147,7 +149,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'phenix-rtc', 'phenix-web-sdk
                 adminBaseUri += ':' + parser.port;
             }
 
-            pcast = new sdk.PCast(url);
+            fingerprint.get(function (fingerprint) {
+                pcast = new sdk.PCast({uri: uri, deviceId: fingerprint});
+            });
         };
 
         var createAuthToken = function createAuthToken() {

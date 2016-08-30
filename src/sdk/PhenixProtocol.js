@@ -28,8 +28,9 @@ define('sdk/PhenixProtocol', [
             console.error.apply(console, arguments);
         } || log;
 
-    function PhenixProtocol(uri) {
+    function PhenixProtocol(uri, deviceId) {
         this._uri = uri;
+        this._deviceId = deviceId || '';
         this._mqProtocol = new MQProtocol();
 
         log('Connecting to ' + uri);
@@ -68,7 +69,7 @@ define('sdk/PhenixProtocol', [
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
             clientVersion: '%VERSION%',
-            deviceId: '',
+            deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
             authenticationToken: authToken

@@ -73,10 +73,12 @@ define('sdk/PhenixPCast', [
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
 
-    function PhenixPCast(optionalUri, screenSharingExtensionId, screenSharingAddOn) {
-        this._baseUri = optionalUri || defaultPCastUri;
-        this._screenSharingExtensionId = screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
-        this._screenSharingAddOn = screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
+    function PhenixPCast(options) {
+        options = options || {};
+        this._baseUri = options.uri || defaultPCastUri;
+        this._deviceId = options.deviceId || undefined;
+        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
+        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
         this._status = 'offline';
 
@@ -151,7 +153,7 @@ define('sdk/PhenixPCast', [
 
                 log('Discovered end point "' + uri + '"');
 
-                that._protocol = new PhenixProtocol(uri);
+                that._protocol = new PhenixProtocol(uri, that._deviceId);
 
                 that._protocol.on('connected', connected.bind(that));
                 that._protocol.on('disconnected', disconnected.bind(that));
