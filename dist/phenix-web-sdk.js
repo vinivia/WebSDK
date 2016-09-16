@@ -1131,6 +1131,9 @@ define('sdk/PhenixPCast', [
         }
     }
 
+    var measurementsPerEndPoint = 3;
+    var maxAttempts = 3;
+
     function resolveUri(baseUri, callback) {
         var that = this;
 
@@ -1152,55 +1155,82 @@ define('sdk/PhenixPCast', [
                 }
 
                 var resolved = false;
-                var pending = endPoints.length;
+                var minTime = Number.MAX_VALUE;
+                var minResponseText = '';
 
                 for (var i = 0; i < endPoints.length; i++) {
-                    var endPoint = endPoints[i];
+                    var measurement = 1;
 
-                    log('Checking end point "' + endPoint + '"');
+                    var nextMeasurement = function nextMeasurement(endPoint) {
+                        log('[' + measurement + '] Checking end point "' + endPoint + '"');
 
-                    httpGetWithRetry(endPoint, function (err, responseText) {
-                        if (err) {
-                            log('Failed to resolve endPoint "' + endPoint + '": ' + err);
-                        } else {
-                            if (!resolved) {
-                                resolved = true;
-                                callback(undefined, responseText);
+                        var maxAttempts = 1;
+                        var start = new Date().getTime();
+
+                        httpGetWithRetry(endPoint, function (err, responseText) {
+                            var end = new Date().getTime();
+                            var time = end - start;
+
+                            if (resolved) {
+                                return;
                             }
-                        }
 
-                        pending--;
+                            measurement++;
 
-                        if (pending === 0 && !resolved) {
-                            callback(new Error('Failed to resolve an end point'));
-                        }
-                    });
+                            if (!err) {
+                                if (time < minTime) {
+                                    log('Current closest end point is "' + responseText + '" with latency of ' + time + ' ms');
+                                    minTime = time;
+                                    minResponseText = responseText;
+                                }
+                            }
+
+                            if (measurement <= measurementsPerEndPoint) {
+                                if (err) {
+                                    log('Retrying after failure to resolve end point "' + endPoint + '": ' + err);
+                                }
+
+                                return nextMeasurement(endPoint);
+                            }
+
+                            resolved = true;
+
+                            if (minResponseText) {
+                                log('Closest end point discovered as "' + minResponseText + '" with latency of ' + minTime + ' ms');
+                                return callback.call(that, undefined, minResponseText);
+                            } else {
+                                return callback.call(that, new Error('Failed to resolve an end point'));
+                            }
+                        }, maxAttempts);
+                    };
+
+                    nextMeasurement(endPoints[i]);
                 }
-            });
+            }, maxAttempts);
         } else {
             // Not supported
             callback.call(that, new Error('Uri not supported'));
         }
     }
 
-    var maxAttempts = 3;
-
-    function httpGetWithRetry(url, callback, attempt) {
+    function httpGetWithRetry(url, callback, maxAttempts, attempt) {
         if (attempt === undefined) {
             attempt = 1;
         }
 
         var xhr = new XMLHttpRequest();
 
+        xhr.timeout = 15000;
         xhr.open('GET', url, true);
-        xhr.addEventListener('readystatechange', function (e) {
+        xhr.addEventListener('readystatechange', function () {
             if (xhr.readyState === 4 /* DONE */) {
                 if (xhr.status === 200) {
                     callback(undefined, xhr.responseText);
                 } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
-                    httpGetWithRetry(url, callback, attempt + 1);
+                    httpGetWithRetry(url, callback, maxAttempts, attempt + 1);
                 } else {
                     log('HTTP GET "' + url + '" failed with "' + xhr.status + '" "' + xhr.statusText + '"');
+                    callback(new Error(xhr.status === 0 ? 'timeout' : xhr.statusText));
                 }
             }
         });
@@ -1265,7 +1295,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-08-30T21:18:33Z',
+            clientVersion: '2016-09-16T23:11:06Z',
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
