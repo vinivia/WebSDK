@@ -769,6 +769,8 @@ define('sdk/PhenixPCast', [
     }
 
     function endStream(streamId, reason) {
+        log('[' + streamId + '] Stream ended with reason [' + reason + ']');
+
         var mediaStream = this._mediaStreams[streamId];
 
         if (mediaStream && typeof mediaStream.streamEnded === 'function') {
@@ -973,6 +975,15 @@ define('sdk/PhenixPCast', [
         };
 
         phenixRTC.addEventListener(pc, 'icecandidate', onIceCandidate);
+
+        monitorPeerConnection.call(that, pc, streamId, function onFailure() {
+            var publisher = that._publishers[streamId];
+
+            if (publisher) {
+                logError('[' + streamId + '] Publisher failed');
+                publisher.stop('client-side-failure');
+            }
+        });
     }
 
     function createViewerPeerConnection(streamId, offerSdp, callback) {
@@ -1112,6 +1123,16 @@ define('sdk/PhenixPCast', [
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
         pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
+
+        monitorPeerConnection.call(that, pc, streamId, function onFailure() {
+            var mediaStream = that._mediaStreams[streamId];
+
+            if (mediaStream) {
+                logError('[' + streamId + '] Stream failed');
+
+                mediaStream.stop('client-side-failure');
+            }
+        });
     }
 
     function transitionToStatus(newStatus) {
@@ -1257,6 +1278,201 @@ define('sdk/PhenixPCast', [
         xhr.send();
     }
 
+    var defaultMonitoringInterval = 3000;
+
+    function monitorPeerConnection(peerConnection, streamId, failureCallback) {
+        var that = this;
+        var frameRate = undefined;
+        var bitRate = undefined;
+        var lastBytesReceived = {time: now(), value: 0};
+        var frameRateFailureThreshold = 1;
+        var bitRateFailureThreshold = 10000;
+        var failureCount = 0;
+        var failureCountThreshold = 2;
+
+        function nextCheck() {
+            var selector = null;
+
+            getStats(peerConnection, selector, function successCallback(report) {
+                var hasFrameRate = false;
+                var hasBitRate = false;
+
+                function eachStats(stats, reportId) {
+                    switch (phenixRTC.browser) {
+                        case 'Firefox':
+                            if (stats.type === 'outboundrtp') {
+                                if (stats.framerateMean !== undefined) {
+                                    hasFrameRate = true;
+                                    frameRate = stats.framerateMean;
+
+                                    if (stats.bytesSent !== undefined) {
+                                        var currentBytesReceived = {
+                                            time: _.now(),
+                                            value: stats.bytesSent
+                                        };
+
+                                        hasBitRate = true;
+                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
+                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
+                                        lastBytesReceived = currentBytesReceived;
+                                    }
+                                }
+                            }
+                            if (stats.type === 'inboundrtp') {
+                                if (stats.framerateMean !== undefined) {
+                                    // Inbound frame rate is not calculated
+                                    if (stats.bytesReceived !== undefined) {
+                                        var currentBytesReceived = {
+                                            time: _.now(),
+                                            value: stats.bytesReceived
+                                        };
+
+                                        hasBitRate = true;
+                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
+                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
+                                        lastBytesReceived = currentBytesReceived;
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            if (stats.googFrameRateSent !== undefined) {
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateSent;
+
+                                if (stats.bytesSent !== undefined) {
+                                    var currentBytesReceived = {
+                                        time: _.now(),
+                                        value: stats.bytesSent
+                                    };
+
+                                    hasBitRate = true;
+                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
+                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
+                                    lastBytesReceived = currentBytesReceived;
+                                }
+                            } else if (stats.googFrameRateReceived !== undefined) {
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateReceived;
+
+                                if (stats.bytesReceived !== undefined) {
+                                    var currentBytesReceived = {
+                                        time: _.now(),
+                                        value: stats.bytesReceived
+                                    };
+
+                                    hasBitRate = true;
+                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
+                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
+                                    lastBytesReceived = currentBytesReceived;
+                                }
+                            }
+                            break;
+                    }
+                }
+
+                if (report.forEach) {
+                    report.forEach(eachStats);
+                } else {
+                    for (var reportId in report) {
+                        var stats = report[reportId];
+
+                        eachStats(stats, reportId);
+                    }
+                }
+
+                if (hasFrameRate) {
+                    log('[' + streamId + '] Current frame rate is ' + frameRate + ' FPS');
+                }
+                if (hasBitRate) {
+                    log('[' + streamId + '] Current bit rate is ' + Math.ceil(bitRate) + ' bps');
+                }
+
+                if (frameRate !== undefined && !hasFrameRate) {
+                    failureCount++;
+                } else if (hasFrameRate && frameRate <= frameRateFailureThreshold) {
+                    failureCount++;
+                } else if (bitRate !== undefined && !hasBitRate) {
+                    failureCount++;
+                } else if (hasBitRate && bitRate <= bitRateFailureThreshold) {
+                    failureCount++;
+                } else {
+                    failureCount = 0;
+                }
+
+                if (failureCount >= failureCountThreshold) {
+                    if (!failureCallback()) {
+                        logError('[' + streamId + '] Stream failure detected: ' + JSON.stringify(report));
+                    } else {
+                        // Failure is acknowledged
+                        failureCount = Number.MIN_VALUE;
+                        setTimeout(nextCheck, defaultMonitoringInterval);
+                    }
+                } else if (that._peerConnections[streamId] === peerConnection) {
+                    setTimeout(nextCheck, failureCount > 0 ? defaultMonitoringInterval / 3 : defaultMonitoringInterval);
+                } else {
+                    log('[' + streamId + '] Finished monitoring of peer connection');
+                }
+            }, function errorCallback(error) {
+                if (that._peerConnections[streamId] !== peerConnection) {
+                    log('[' + streamId + '] Finished monitoring of peer connection');
+                    return;
+                }
+
+                if (error) {
+                    logError(error.name + ': ' + error.message);
+                }
+
+                failureCallback();
+            });
+        }
+
+        setTimeout(nextCheck, defaultMonitoringInterval);
+    }
+
+    function normalizeStatsReport(response) {
+        if (phenixRTC.browser === 'Firefox') {
+            return response;
+        }
+
+        var normalizedReport = {};
+
+        response.result().forEach(function (report) {
+            var normalizedStatistics = {
+                id: report.id,
+                type: report.type
+            };
+
+            report.names().forEach(function (name) {
+                normalizedStatistics[name] = report.stat(name);
+            });
+
+            normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+        });
+
+        return normalizedReport;
+    }
+
+    function getStats(peerConnection, selector, successCallback, failureCallback) {
+        switch (phenixRTC.browser) {
+            case  'Firefox':
+                return peerConnection.getStats(selector)
+                    .then(function (response) {
+                        var report = normalizeStatsReport(response);
+
+                        successCallback(report);
+                    }).catch(function (e) {
+                        failureCallback();
+                    });
+            default:
+                return peerConnection.getStats(function (response) {
+                    var report = normalizeStatsReport(response);
+
+                    successCallback(report);
+                }, selector, failureCallback);
+        }
+    }
+
     return PhenixPCast;
 });
 
@@ -1315,7 +1531,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-09-19T03:22:37Z',
+            clientVersion: '2016-09-19T17:43:19Z',
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
