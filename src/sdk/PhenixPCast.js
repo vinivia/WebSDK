@@ -1024,8 +1024,56 @@ define('sdk/PhenixPCast', [
         }
     }
 
-    var measurementsPerEndPoint = 3;
+    var measurementsPerEndPoint = 4;
     var maxAttempts = 3;
+
+    function now() {
+        if (!Date.now) {
+            return new Date().getTime();
+        }
+
+        return Date.now();
+    }
+
+    function resolveEndPoint(endPoint, measurements, measurementCallback, completeCallback) {
+        var measurement = 1;
+
+        var nextMeasurement = function nextMeasurement(endPoint) {
+
+            var maxAttempts = 1;
+            var start = now();
+
+            log('[' + measurement + '] Checking end point "' + endPoint + '"');
+
+            httpGetWithRetry(endPoint, function (err, responseText) {
+                var end = now();
+                var time = end - start;
+
+                log('[' + measurement + '] End point "' + endPoint + '" latency is ' + time + ' ms');
+
+                measurement++;
+
+                if (!err) {
+                    if (measurementCallback(endPoint, time, responseText)) {
+                        // done
+                        return;
+                    }
+                }
+
+                if (measurement <= measurements) {
+                    if (err) {
+                        log('Retrying after failure to resolve end point "' + endPoint + '": ' + err);
+                    }
+
+                    return nextMeasurement(endPoint);
+                } else {
+                    return completeCallback(endPoint);
+                }
+            }, maxAttempts);
+        };
+
+        nextMeasurement(endPoint);
+    }
 
     function resolveUri(baseUri, callback) {
         var that = this;
@@ -1047,57 +1095,29 @@ define('sdk/PhenixPCast', [
                     callback(new Error('Failed to discover end points'));
                 }
 
-                var resolved = false;
+                var done = false;
                 var minTime = Number.MAX_VALUE;
                 var minResponseText = '';
 
                 for (var i = 0; i < endPoints.length; i++) {
-                    var measurement = 1;
-
-                    var nextMeasurement = function nextMeasurement(endPoint) {
-                        log('[' + measurement + '] Checking end point "' + endPoint + '"');
-
-                        var maxAttempts = 1;
-                        var start = new Date().getTime();
-
-                        httpGetWithRetry(endPoint, function (err, responseText) {
-                            var end = new Date().getTime();
-                            var time = end - start;
-
-                            if (resolved) {
-                                return;
+                    resolveEndPoint.call(that,
+                        endPoints[i],
+                        measurementsPerEndPoint,
+                        function measurementCallback(endPoint, time, responseText) {
+                            if (time < minTime) {
+                                log('Current closest end point is "' + responseText + '" with latency of ' + time + ' ms');
+                                minTime = time;
+                                minResponseText = responseText;
                             }
 
-                            measurement++;
-
-                            if (!err) {
-                                if (time < minTime) {
-                                    log('Current closest end point is "' + responseText + '" with latency of ' + time + ' ms');
-                                    minTime = time;
-                                    minResponseText = responseText;
-                                }
-                            }
-
-                            if (measurement <= measurementsPerEndPoint) {
-                                if (err) {
-                                    log('Retrying after failure to resolve end point "' + endPoint + '": ' + err);
-                                }
-
-                                return nextMeasurement(endPoint);
-                            }
-
-                            resolved = true;
-
-                            if (minResponseText) {
-                                log('Closest end point discovered as "' + minResponseText + '" with latency of ' + minTime + ' ms');
+                            return done;
+                        },
+                        function completeCallback(endPoint) {
+                            if (minResponseText && minTime < Number.MAX_VALUE) {
+                                done = true;
                                 return callback.call(that, undefined, minResponseText);
-                            } else {
-                                return callback.call(that, new Error('Failed to resolve an end point'));
                             }
-                        }, maxAttempts);
-                    };
-
-                    nextMeasurement(endPoints[i]);
+                        });
                 }
             }, maxAttempts);
         } else {
@@ -1114,7 +1134,7 @@ define('sdk/PhenixPCast', [
         var xhr = new XMLHttpRequest();
 
         xhr.timeout = 15000;
-        xhr.open('GET', url, true);
+        xhr.open('GET', url + '?_=' + now(), true);
         xhr.addEventListener('readystatechange', function () {
             if (xhr.readyState === 4 /* DONE */) {
                 if (xhr.status === 200) {
