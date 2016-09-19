@@ -1079,7 +1079,6 @@ define('sdk/PhenixPCast', [
         var measurement = 1;
 
         var nextMeasurement = function nextMeasurement(endPoint) {
-
             var maxAttempts = 1;
             var start = now();
 
