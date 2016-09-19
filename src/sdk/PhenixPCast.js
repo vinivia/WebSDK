@@ -666,8 +666,8 @@ define('sdk/PhenixPCast', [
 
         var mediaStream = this._mediaStreams[streamId];
 
-        if (mediaStream && typeof mediaStream.streamEnded === 'function') {
-            mediaStream.streamEnded(mediaStream, getStreamEndedReason(reason), reason);
+        if (mediaStream && typeof mediaStream.streamEndedCallback === 'function') {
+            mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
         }
 
         delete this._mediaStreams[streamId];
@@ -799,6 +799,14 @@ define('sdk/PhenixPCast', [
                                 this.publisherEndedCallback = callback;
                             },
 
+                            setPublisherErrorCallback: function setPublisherErrorCallback(callback) {
+                                if (typeof callback !== 'function') {
+                                    throw new Error('"callback" must be a function');
+                                }
+
+                                this.publisherErrorCallback = callback;
+                            },
+
                             setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
@@ -874,7 +882,8 @@ define('sdk/PhenixPCast', [
 
             if (publisher) {
                 logError('[' + streamId + '] Publisher failed');
-                publisher.stop('client-side-failure');
+
+                publisher.publisherErrorCallback(publisher, 'client-side-failure');
             }
         });
     }
@@ -922,13 +931,23 @@ define('sdk/PhenixPCast', [
                         }
                     };
                 },
+
                 setStreamEndedCallback: function setStreamEndedCallback(callback) {
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
 
-                    this.streamEnded = callback;
+                    this.streamEndedCallback = callback;
                 },
+
+                setStreamErrorCallback: function setStreamErrorCallback(callback) {
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    this.streamErrorCallback = callback;
+                },
+
                 stop: function stop(reason) {
                     if (pc.signalingState !== 'closed') {
                         pc.close();
@@ -1023,7 +1042,7 @@ define('sdk/PhenixPCast', [
             if (mediaStream) {
                 logError('[' + streamId + '] Stream failed');
 
-                mediaStream.stop('client-side-failure');
+                mediaStream.streamErrorCallback(mediaStream, 'client-side-failure');
             }
         });
     }
