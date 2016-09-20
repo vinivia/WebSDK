@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+define('sdk/Time', [ ], function () {
+    'use strict';
 
-define('phenix-web-sdk', [
-    'sdk/PhenixPCast',
-    'sdk/Logger'
-], function (PhenixPCast, Logger) {
-    window.PhenixPCast = PhenixPCast;
+    function Time() {
+        this._version = version;
+        this._baseUri = baseUri;
+    }
 
-    return {
-        PCast: PhenixPCast,
-        Logger: Logger
-    };
+    Time.now = function () {
+        if (!Date.now) {
+            return function () {
+                return new Date().getTime();
+            }
+        }
+
+        return function () {
+            return Date.now();
+        }
+    }();
+
+    return Time;
 });

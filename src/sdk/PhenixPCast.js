@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 define('sdk/PhenixPCast', [
-        'sdk/PhenixProtocol',
+        'sdk/PCastProtocol',
+        'sdk/PCastEndPoint',
+        'sdk/PeerConnectionMonitor',
+        'sdk/Time',
+        'sdk/Logger',
         'phenix-rtc'
-    ], function (PhenixProtocol, phenixRTC) {
+], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
     'use strict';
-
-    var log = function () {
-            console.log.apply(console, arguments);
-        } || function () {
-        };
-    var logError = function () {
-            console.error.apply(console, arguments);
-        } || log;
 
     var peerConnectionConfig = {
         'iceServers': [
@@ -63,7 +59,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var defaultPCastUri = 'https://pcast.phenixp2p.com';
+    var sdkVersion = '%VERSION%';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -75,8 +71,11 @@ define('sdk/PhenixPCast', [
 
     function PhenixPCast(options) {
         options = options || {};
-        this._baseUri = options.uri || defaultPCastUri;
-        this._deviceId = options.deviceId || undefined;
+        this._logger = options.logger || new Logger();
+        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+        this._deviceId = options.deviceId || '';
+        this._version = sdkVersion;
+        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
@@ -94,7 +93,7 @@ define('sdk/PhenixPCast', [
     }
 
     PhenixPCast.prototype.getBaseUri = function () {
-        return this._baseUri;
+        return this._endPoint.getBaseUri();
     };
 
     PhenixPCast.prototype.getStatus = function () {
@@ -138,12 +137,23 @@ define('sdk/PhenixPCast', [
         checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
             that._screenSharingEnabled = screenSharingEnabled;
 
-            resolveUri.call(that, that._baseUri, function (err, uri) {
+            that._endPoint.resolveUri(function (err, uri) {
                 if (err) {
-                    logError('Failed to connect to ' + that._baseUri, err);
+                    that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
                     transitionToStatus.call(that, 'offline');
-                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+
+                    switch (err.code) {
+                        case 0:
+                            that._authenticationCallback.call(that, that, 'network-unavailable', '');
+                            break;
+                        case 503:
+                            that._authenticationCallback.call(that, that, 'capacity', '');
+                            break;
+                        default:
+                            that._authenticationCallback.call(that, that, 'failed', '');
+                            break;
+                    }
 
                     that._stopped = true;
                     that._started = false;
@@ -151,9 +161,9 @@ define('sdk/PhenixPCast', [
                     return;
                 }
 
-                log('Discovered end point "' + uri + '"');
+                that._logger.info('Discovered end point [%s]', uri);
 
-                that._protocol = new PhenixProtocol(uri, that._deviceId);
+                that._protocol = new PCastProtocol(uri, that._deviceId, that._version, that._logger);
 
                 that._protocol.on('connected', connected.bind(that));
                 that._protocol.on('disconnected', disconnected.bind(that));
@@ -254,7 +264,7 @@ define('sdk/PhenixPCast', [
 
         this._protocol.createUploader(streamToken, function (response, error) {
             if (error) {
-                logError('Failed to create uploader: ' + JSON.stringify(error));
+                that._logger.warn('Failed to create uploader', error);
 
                 switch (error.status) {
                     case 'capacity':
@@ -289,7 +299,7 @@ define('sdk/PhenixPCast', [
 
         this._protocol.createDownloader(streamToken, function (response, error) {
             if (error) {
-                logError('Failed to create downloader: ' + JSON.stringify(error));
+                that._logger.warn('Failed to create downloader', error);
 
                 switch (error.status) {
                     case 'capacity':
@@ -325,16 +335,16 @@ define('sdk/PhenixPCast', [
             try {
                 chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) {
                     if (response && response.status === 'ok') {
-                        log('Screen sharing enabled using version "' + response.version + '"');
+                        that._logger.info('Screen sharing enabled using version [%s]', response.version);
                         callback(true);
                     } else {
-                        log('Screen sharing NOT available');
+                        that._logger.warn('Screen sharing NOT available');
                         callback(false);
                     }
                 });
             } catch (e) {
                 if (e.message) {
-                    logError(e.message);
+                    that._logger.warn(e.message, e);
                 }
 
                 callback(false);
@@ -362,7 +372,7 @@ define('sdk/PhenixPCast', [
             }
         }
 
-        log('Adding Chrome Web Store link "' + chromeWebStoreUrl + '"');
+        this._logger.debug('Adding Chrome Web Store link [%s]', chromeWebStoreUrl);
 
         var link = document.createElement('link');
 
@@ -373,6 +383,7 @@ define('sdk/PhenixPCast', [
     }
 
     function tryInstallChromeScreenSharingExtension(callback) {
+        var that = this;
         var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
 
         try {
@@ -380,14 +391,14 @@ define('sdk/PhenixPCast', [
                 callback('ok');
             }, function failureCallback(reason) {
                 if (reason) {
-                    logError(reason);
+                    that._logger.warn(reason);
                 }
 
                 callback('failed', new Error(reason || 'failed'));
             });
         } catch (e) {
             if (e.message) {
-                logError(e.message);
+                that._logger.warn(e.message);
             }
 
             callback('failed', e);
@@ -440,7 +451,7 @@ define('sdk/PhenixPCast', [
             });
         } catch (e) {
             if (e.message) {
-                logError(e.message);
+                this._logger.warn(e.message);
             }
 
             callback('failed', e);
@@ -477,7 +488,7 @@ define('sdk/PhenixPCast', [
                     });
                 } catch (e) {
                     if (e.message) {
-                        logError(e.message);
+                        that._logger.warn(e.message);
                     }
 
                     callback('failed', undefined, e);
@@ -591,11 +602,11 @@ define('sdk/PhenixPCast', [
 
         this._connected = true;
 
-        if (!this._stopped) {
-            this._protocol.authenticate(this._authToken, function (result, error) {
+        if (!that._stopped) {
+            that._protocol.authenticate(that._authToken, function (result, error) {
                 if (that._authenticationCallback) {
                     if (error) {
-                        logError('Failed to authenticate: ' + JSON.stringify(error));
+                        that._logger.warn('Failed to authenticate', error);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
                         that.stop('unauthorized');
@@ -662,7 +673,7 @@ define('sdk/PhenixPCast', [
     }
 
     function endStream(streamId, reason) {
-        log('[' + streamId + '] Stream ended with reason [' + reason + ']');
+        this._logger.info('[%s] Stream ended with reason [%s]', streamId, reason);
 
         var mediaStream = this._mediaStreams[streamId];
 
@@ -675,7 +686,7 @@ define('sdk/PhenixPCast', [
         var renderer = this._renderer[streamId];
 
         if (renderer) {
-            log('[' + streamId + '] stop media stream');
+            this._logger.info('[%s] stop media stream', streamId);
             mediaStream.stop();
         }
 
@@ -692,7 +703,7 @@ define('sdk/PhenixPCast', [
         var peerConnection = this._peerConnections[streamId];
 
         if (peerConnection && peerConnection.signalingState !== 'closed') {
-            log('[' + streamId + '] close peer connection');
+            this._logger.info('[%s] close peer connection', streamId);
             peerConnection.close();
         }
 
@@ -727,14 +738,14 @@ define('sdk/PhenixPCast', [
         };
 
         function onSetRemoteDescriptionSuccess() {
-            log('Set remote description (offer)');
+            that._logger.info('Set remote description (offer)');
 
             function onCreateAnswerSuccess(answerSdp) {
-                log('Created answer: ' + answerSdp.sdp);
+                that._logger.info('Created answer [%s]', answerSdp.sdp);
 
                 that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
                     if (error) {
-                        logError('Failed to set answer description: ' + JSON.stringify(error));
+                        that._logger.warn('Failed to set answer description', error);
                         return onFailure();
                     }
 
@@ -742,7 +753,7 @@ define('sdk/PhenixPCast', [
                         var bandwidthAttribute = /(b=AS:([0-9]*)[\n\r]*)/gi;
                         var video = /(mid:video)([\n\r]*)/gi;
 
-                        log('Set local description (answer)');
+                        that._logger.info('Set local description (answer)');
 
                         var limit = 0;
                         var bandwithAttribute = bandwidthAttribute.exec(offerSdp);
@@ -783,11 +794,11 @@ define('sdk/PhenixPCast', [
 
                                 that._protocol.destroyStream(streamId, reason || '', function (value, error) {
                                     if (error) {
-                                        logError('[' + streamId + '] failed to destroy stream');
+                                        that._logger.error('[%s] failed to destroy stream', streamId);
                                         return;
                                     }
 
-                                    log('[' + streamId + '] destroyed stream');
+                                    that._logger.info('[%s] destroyed stream', streamId);
                                 });
 
                                 stopped = true;
@@ -799,14 +810,6 @@ define('sdk/PhenixPCast', [
                                 }
 
                                 this.publisherEndedCallback = callback;
-                            },
-
-                            setPublisherErrorCallback: function setPublisherErrorCallback(callback) {
-                                if (typeof callback !== 'function') {
-                                    throw new Error('"callback" must be a function');
-                                }
-
-                                this.publisherErrorCallback = callback;
                             },
 
                             setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
@@ -825,7 +828,7 @@ define('sdk/PhenixPCast', [
                                 var newLimit = limit ? Math.min(bandwidthLimit, limit) : bandwidthLimit;
                                 var remoteDescription = pc.remoteDescription;
 
-                                log('Changing bandwidth limit to', newLimit);
+                                that._logger.info('Changing bandwidth limit to [%s]', newLimit);
 
                                 var updatedSdp = remoteDescription.sdp.replace(bandwidthAttribute, '');
 
@@ -846,6 +849,27 @@ define('sdk/PhenixPCast', [
                                         pc.setRemoteDescription(remoteDescription);
                                     }
                                 }
+                            },
+
+                            monitor: function monitor(options, callback) {
+                                if (typeof options !== 'object') {
+                                    throw new Error('"options" must be an object');
+                                }
+                                if (typeof callback !== 'function') {
+                                    throw new Error('"callback" must be a function');
+                                }
+
+                                var monitor = new PeerConnectionMonitor(streamId, pc, that._logger);
+
+                                options.direction = 'outbound';
+
+                                monitor.start(options, function activeCallback() {
+                                    return that._publishers[streamId] === publisher;
+                                }, function monitorCallback(reason) {
+                                    that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, reason);
+
+                                    return callback(publisher, 'client-side-failure', reason);
+                                });
                             }
                         };
 
@@ -874,25 +898,13 @@ define('sdk/PhenixPCast', [
             var candidate = event.candidate;
 
             if (candidate) {
-                log('[' + streamId + '] ICE candidate (publisher): ' + candidate.sdpMid + ' ' + candidate.sdpMLineIndex + ' ' + candidate.candidate);
+                that._logger.debug('[%s] ICE candidate (publisher): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
-                log('[' + streamId + '] ICE candidate discovery complete (publisher)');
+                that._logger.info('[%s] ICE candidate discovery complete (publisher)', streamId);
             }
         };
 
         phenixRTC.addEventListener(pc, 'icecandidate', onIceCandidate);
-
-        monitorPeerConnection.call(that, pc, streamId, function onFailure() {
-            var publisher = that._publishers[streamId];
-
-            if (publisher) {
-                logError('[' + streamId + '] Publisher failed');
-
-                if (typeof publisher.publisherEndedCallback === 'function') {
-                    return publisher.publisherErrorCallback(publisher, 'client-side-failure');
-                }
-            }
-        });
     }
 
     function createViewerPeerConnection(streamId, offerSdp, callback) {
@@ -912,12 +924,12 @@ define('sdk/PhenixPCast', [
 
             if (!stream) {
                 failed = true;
-                logError('[' + streamId + '] No remote stream');
+                that._logger.warn('[%s] No remote stream', streamId);
 
                 return callback.call(that, undefined, 'failed');
             }
 
-            log('[' + streamId + '] Got a remote stream');
+            that._logger.info('[%s] Got remote stream', streamId);
 
             var mediaStream = {
                 createRenderer: function () {
@@ -969,15 +981,7 @@ define('sdk/PhenixPCast', [
 
                     var stream = event.stream;
 
-                    if (stream && typeof stream.getTracks === 'function') {
-                        var tracks = stream.getTracks();
-
-                        for (var i = 0; i < tracks.length; i++) {
-                            var stream = tracks[i];
-
-                            stream.stop();
-                        }
-                    }
+                    stopWebRTCStream(stream);
 
                     if (stopped) {
                         return;
@@ -985,14 +989,35 @@ define('sdk/PhenixPCast', [
 
                     that._protocol.destroyStream(streamId, reason || '', function (value, error) {
                         if (error) {
-                            logError('[' + streamId + '] failed to destroy stream');
+                            that._logger.error('[%s] failed to destroy stream', streamId);
                             return;
                         }
 
-                        log('[' + streamId + '] destroyed stream');
+                        that._logger.info('[%s] destroyed stream', streamId);
                     });
 
                     stopped = true;
+                },
+
+                monitor: function monitor(options, callback) {
+                    if (typeof options !== 'object') {
+                        throw new Error('"options" must be an object');
+                    }
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    var monitor = new PeerConnectionMonitor(streamId, pc, that._logger);
+
+                    options.direction = 'inbound';
+
+                    monitor.start(options, function activeCallback() {
+                        return that._mediaStreams[streamId] === mediaStream;
+                    }, function monitorCallback(reason) {
+                        that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
+
+                        return callback(mediaStream, 'client-side-failure', reason);
+                    });
                 }
             };
 
@@ -1019,19 +1044,20 @@ define('sdk/PhenixPCast', [
         phenixRTC.addEventListener(pc, 'addstream', onAddStream);
 
         function onSetRemoteDescriptionSuccess() {
-            log('Set remote description (offer)');
+            that._logger.debug('Set remote description (offer)');
 
             function onCreateAnswerSuccess(answerSdp) {
-                log('Created answer: ' + answerSdp.sdp);
+                that._logger.info('Created answer [%s]', answerSdp.sdp);
 
                 that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
                     if (error) {
-                        logError('Failed to set answer description: ' + JSON.stringify(error));
+                        that._logger.warn('Failed to set answer description', error);
+
                         return onFailure();
                     }
 
                     function onSetLocalDescriptionSuccess() {
-                        log('Set local description (answer)');
+                        that._logger.debug('Set local description (answer)');
                     }
 
                     var sessionDescription = new phenixRTC.RTCSessionDescription({
@@ -1050,9 +1076,9 @@ define('sdk/PhenixPCast', [
             var candidate = event.candidate;
 
             if (candidate) {
-                log('[' + streamId + '] ICE candidate (viewer): ' + candidate.sdpMid + ' ' + candidate.sdpMLineIndex + ' ' + candidate.candidate);
+                that._logger.debug('[%s] ICE candidate (viewer): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
-                log('[' + streamId + '] ICE candidate discovery complete (viewer)');
+                that._logger.info('[%s] ICE candidate discovery complete (viewer)', streamId);
             }
         };
 
@@ -1061,18 +1087,6 @@ define('sdk/PhenixPCast', [
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
         pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
-
-        monitorPeerConnection.call(that, pc, streamId, function onFailure() {
-            var mediaStream = that._mediaStreams[streamId];
-
-            if (mediaStream) {
-                logError('[' + streamId + '] Stream failed');
-
-                if (typeof mediaStream.streamErrorCallback === 'function') {
-                    return mediaStream.streamErrorCallback(mediaStream, 'client-side-failure');
-                }
-            }
-        });
     }
 
     function transitionToStatus(newStatus) {
@@ -1092,323 +1106,15 @@ define('sdk/PhenixPCast', [
         }
     }
 
-    var measurementsPerEndPoint = 4;
-    var maxAttempts = 3;
+    function stopWebRTCStream(stream) {
+        if (stream && typeof stream.getTracks === 'function') {
+            var tracks = stream.getTracks();
 
-    function now() {
-        if (!Date.now) {
-            return new Date().getTime();
-        }
+            for (var i = 0; i < tracks.length; i++) {
+                var track = tracks[i];
 
-        return Date.now();
-    }
-
-    function resolveEndPoint(endPoint, measurements, measurementCallback, completeCallback) {
-        var measurement = 1;
-
-        var nextMeasurement = function nextMeasurement(endPoint) {
-            var maxAttempts = 1;
-            var start = now();
-
-            log('[' + measurement + '] Checking end point "' + endPoint + '"');
-
-            httpGetWithRetry(endPoint, function (err, responseText) {
-                var end = now();
-                var time = end - start;
-
-                log('[' + measurement + '] End point "' + endPoint + '" latency is ' + time + ' ms');
-
-                measurement++;
-
-                if (!err) {
-                    if (measurementCallback(endPoint, time, responseText)) {
-                        // done
-                        return;
-                    }
-                }
-
-                if (measurement <= measurements) {
-                    if (err) {
-                        log('Retrying after failure to resolve end point "' + endPoint + '": ' + err);
-                    }
-
-                    return nextMeasurement(endPoint);
-                } else {
-                    return completeCallback(endPoint);
-                }
-            }, maxAttempts);
-        };
-
-        nextMeasurement(endPoint);
-    }
-
-    function resolveUri(baseUri, callback) {
-        var that = this;
-
-        if (baseUri.lastIndexOf('wss:', 0) === 0) {
-            // WSS - Specific web socket end point
-            callback.call(that, undefined, baseUri + '/ws');
-        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
-            // HTTP - Resolve closest end point
-            httpGetWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
-                if (err) {
-                    callback(new Error('Failed to resolve an end point', err));
-                    return callback(err);
-                }
-
-                var endPoints = responseText.split(',');
-
-                if (endPoints.length < 1) {
-                    callback(new Error('Failed to discover end points'));
-                }
-
-                var done = false;
-                var minTime = Number.MAX_VALUE;
-                var minResponseText = '';
-
-                for (var i = 0; i < endPoints.length; i++) {
-                    resolveEndPoint.call(that,
-                        endPoints[i],
-                        measurementsPerEndPoint,
-                        function measurementCallback(endPoint, time, responseText) {
-                            if (time < minTime) {
-                                log('Current closest end point is "' + responseText + '" with latency of ' + time + ' ms');
-                                minTime = time;
-                                minResponseText = responseText;
-                            }
-
-                            return done;
-                        },
-                        function completeCallback(endPoint) {
-                            if (minResponseText && minTime < Number.MAX_VALUE) {
-                                done = true;
-                                return callback.call(that, undefined, minResponseText);
-                            }
-                        });
-                }
-            }, maxAttempts);
-        } else {
-            // Not supported
-            callback.call(that, new Error('Uri not supported'));
-        }
-    }
-
-    function httpGetWithRetry(url, callback, maxAttempts, attempt) {
-        if (attempt === undefined) {
-            attempt = 1;
-        }
-
-        var xhr = new XMLHttpRequest();
-
-        xhr.timeout = 15000;
-        xhr.open('GET', url + '?_=' + now(), true);
-        xhr.addEventListener('readystatechange', function () {
-            if (xhr.readyState === 4 /* DONE */) {
-                if (xhr.status === 200) {
-                    callback(undefined, xhr.responseText);
-                } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
-                    httpGetWithRetry(url, callback, maxAttempts, attempt + 1);
-                } else {
-                    log('HTTP GET "' + url + '" failed with "' + xhr.status + '" "' + xhr.statusText + '"');
-                    callback(new Error(xhr.status === 0 ? 'timeout' : xhr.statusText));
-                }
+                track.stop();
             }
-        });
-        xhr.send();
-    }
-
-    var defaultMonitoringInterval = 4000;
-
-    function monitorPeerConnection(peerConnection, streamId, failureCallback) {
-        var that = this;
-        var frameRate = undefined;
-        var bitRate = undefined;
-        var lastBytesReceived = {time: now(), value: 0};
-        var frameRateFailureThreshold = 1;
-        var bitRateFailureThreshold = 10000;
-        var failureCount = 0;
-        var failureCountThreshold = 2;
-
-        function nextCheck() {
-            var selector = null;
-
-            getStats(peerConnection, selector, function successCallback(report) {
-                var hasFrameRate = false;
-                var hasBitRate = false;
-
-                function eachStats(stats, reportId) {
-                    switch (phenixRTC.browser) {
-                        case 'Firefox':
-                            if (stats.type === 'outboundrtp') {
-                                if (stats.framerateMean !== undefined) {
-                                    hasFrameRate = true;
-                                    frameRate = stats.framerateMean;
-
-                                    if (stats.bytesSent !== undefined) {
-                                        var currentBytesReceived = {
-                                            time: _.now(),
-                                            value: stats.bytesSent
-                                        };
-
-                                        hasBitRate = true;
-                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                        lastBytesReceived = currentBytesReceived;
-                                    }
-                                }
-                            }
-                            if (stats.type === 'inboundrtp') {
-                                if (stats.framerateMean !== undefined) {
-                                    // Inbound frame rate is not calculated
-                                    if (stats.bytesReceived !== undefined) {
-                                        var currentBytesReceived = {
-                                            time: _.now(),
-                                            value: stats.bytesReceived
-                                        };
-
-                                        hasBitRate = true;
-                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                        lastBytesReceived = currentBytesReceived;
-                                    }
-                                }
-                            }
-                            break;
-                        default:
-                            if (stats.googFrameRateSent !== undefined) {
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent;
-
-                                if (stats.bytesSent !== undefined) {
-                                    var currentBytesReceived = {
-                                        time: _.now(),
-                                        value: stats.bytesSent
-                                    };
-
-                                    hasBitRate = true;
-                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                    lastBytesReceived = currentBytesReceived;
-                                }
-                            } else if (stats.googFrameRateReceived !== undefined) {
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived;
-
-                                if (stats.bytesReceived !== undefined) {
-                                    var currentBytesReceived = {
-                                        time: _.now(),
-                                        value: stats.bytesReceived
-                                    };
-
-                                    hasBitRate = true;
-                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                    lastBytesReceived = currentBytesReceived;
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                if (report.forEach) {
-                    report.forEach(eachStats);
-                } else {
-                    for (var reportId in report) {
-                        var stats = report[reportId];
-
-                        eachStats(stats, reportId);
-                    }
-                }
-
-                if (hasFrameRate) {
-                    log('[' + streamId + '] Current frame rate is ' + frameRate + ' FPS');
-                }
-                if (hasBitRate) {
-                    log('[' + streamId + '] Current bit rate is ' + Math.ceil(bitRate) + ' bps');
-                }
-
-                if (frameRate !== undefined && !hasFrameRate) {
-                    failureCount++;
-                } else if (hasFrameRate && frameRate <= frameRateFailureThreshold) {
-                    failureCount++;
-                } else if (bitRate !== undefined && !hasBitRate) {
-                    failureCount++;
-                } else if (hasBitRate && bitRate <= bitRateFailureThreshold) {
-                    failureCount++;
-                } else {
-                    failureCount = 0;
-                }
-
-                if (failureCount >= failureCountThreshold) {
-                    if (!failureCallback()) {
-                        logError('[' + streamId + '] Stream failure detected: ' + JSON.stringify(report));
-                    } else {
-                        // Failure is acknowledged
-                        failureCount = Number.MIN_VALUE;
-                        setTimeout(nextCheck, defaultMonitoringInterval);
-                    }
-                } else if (that._peerConnections[streamId] === peerConnection) {
-                    setTimeout(nextCheck, failureCount > 0 ? defaultMonitoringInterval / 2 : defaultMonitoringInterval);
-                } else {
-                    log('[' + streamId + '] Finished monitoring of peer connection');
-                }
-            }, function errorCallback(error) {
-                if (that._peerConnections[streamId] !== peerConnection) {
-                    log('[' + streamId + '] Finished monitoring of peer connection');
-                    return;
-                }
-
-                if (error) {
-                    logError(error.name + ': ' + error.message);
-                }
-
-                failureCallback();
-            });
-        }
-
-        setTimeout(nextCheck, defaultMonitoringInterval);
-    }
-
-    function normalizeStatsReport(response) {
-        if (phenixRTC.browser === 'Firefox') {
-            return response;
-        }
-
-        var normalizedReport = {};
-
-        response.result().forEach(function (report) {
-            var normalizedStatistics = {
-                id: report.id,
-                type: report.type
-            };
-
-            report.names().forEach(function (name) {
-                normalizedStatistics[name] = report.stat(name);
-            });
-
-            normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-        });
-
-        return normalizedReport;
-    }
-
-    function getStats(peerConnection, selector, successCallback, failureCallback) {
-        switch (phenixRTC.browser) {
-            case  'Firefox':
-                return peerConnection.getStats(selector)
-                    .then(function (response) {
-                        var report = normalizeStatsReport(response);
-
-                        successCallback(report);
-                    }).catch(function (e) {
-                        failureCallback();
-                    });
-            default:
-                return peerConnection.getStats(function (response) {
-                    var report = normalizeStatsReport(response);
-
-                    successCallback(report);
-                }, selector, failureCallback);
         }
     }
 

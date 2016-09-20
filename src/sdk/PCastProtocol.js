@@ -13,27 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PhenixProtocol', [
+define('sdk/PCastProtocol', [
         'sdk/MQProtocol',
         'ByteBuffer',
         'phenix-rtc'
     ], function (MQProtocol, ByteBuffer, phenixRTC) {
     'use strict';
 
-    var log = function () {
-            console.log.apply(console, arguments);
-        } || function () {
-        };
-    var logError = function () {
-            console.error.apply(console, arguments);
-        } || log;
-
-    function PhenixProtocol(uri, deviceId) {
+    function PCastProtocol(uri, deviceId, version, logger) {
+        if (typeof uri !== 'string') {
+            throw new Error('Must pass a valid "uri"');
+        }
+        if (typeof deviceId !== 'string') {
+            throw new Error('Must pass a valid "deviceId"');
+        }
+        if (typeof version !== 'string') {
+            throw new Error('Must pass a valid "version"');
+        }
+        if (typeof logger !== 'object') {
+            throw new Error('Must pass a valid "logger"');
+        }
         this._uri = uri;
-        this._deviceId = deviceId || '';
-        this._mqProtocol = new MQProtocol();
+        this._deviceId = deviceId;
+        this._version = version;
+        this._logger = logger;
+        this._mqProtocol = new MQProtocol(this._logger);
 
-        log('Connecting to ' + uri);
+        this._logger.info('Connecting to [%s]', uri);
         this._webSocket = new WebSocket(uri);
         this._webSocket.onopen = onOpen.bind(this);
         this._webSocket.onclose = onClose.bind(this);
@@ -45,7 +51,7 @@ define('sdk/PhenixProtocol', [
         this._requests = {};
     }
 
-    PhenixProtocol.prototype.on = function (eventName, handler) {
+    PCastProtocol.prototype.on = function (eventName, handler) {
         if (typeof eventName !== 'string') {
             throw new Error('"eventName" must be a string');
         }
@@ -58,7 +64,7 @@ define('sdk/PhenixProtocol', [
         handlers.push(handler);
     };
 
-    PhenixProtocol.prototype.authenticate = function (authToken, callback) {
+    PCastProtocol.prototype.authenticate = function (authToken, callback) {
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
         }
@@ -68,7 +74,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '%VERSION%',
+            clientVersion: this._version,
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),
@@ -82,13 +88,13 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
     };
 
-    PhenixProtocol.prototype.disconnect = function () {
+    PCastProtocol.prototype.disconnect = function () {
         delete this._sessionId;
 
         return this._webSocket.close(1000, 'byebye');
     };
 
-    PhenixProtocol.prototype.bye = function (reason, callback) {
+    PCastProtocol.prototype.bye = function (reason, callback) {
         if (typeof reason !== 'string') {
             throw new Error('"reason" must be a string');
         }
@@ -104,7 +110,7 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.Bye', bye, callback);
     };
 
-    PhenixProtocol.prototype.createDownloader = function (streamToken, callback) {
+    PCastProtocol.prototype.createDownloader = function (streamToken, callback) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -130,7 +136,7 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
     };
 
-    PhenixProtocol.prototype.createUploader = function (streamToken, callback) {
+    PCastProtocol.prototype.createUploader = function (streamToken, callback) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -156,7 +162,7 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
     };
 
-    PhenixProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
+    PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
@@ -179,7 +185,7 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
-    PhenixProtocol.prototype.destroyStream = function (streamId, reason, callback) {
+    PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
@@ -198,8 +204,8 @@ define('sdk/PhenixProtocol', [
         return sendRequest.call(this, 'pcast.DestroyStream', destroyStream, callback);
     };
 
-    PhenixProtocol.prototype.toString = function () {
-        return 'PhenixProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
+    PCastProtocol.prototype.toString = function () {
+        return 'PCastProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
     };
 
     function sendRequest(type, message, callback) {
@@ -236,20 +242,20 @@ define('sdk/PhenixProtocol', [
     }
 
     function onOpen(evt) {
-        log('Connected');
+        this._logger.info('Connected');
         triggerEvent.call(this, 'connected');
     }
 
     function onClose(evt) {
-        log('Disconnected [' + evt.code + ']: ' + evt.reason);
+        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
         triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
     }
 
     function onMessage(evt) {
-        log('>> ' + evt.data);
+        this._logger.debug('>> [%s]', evt.data);
 
         var response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
-        log('>> ' + response.type);
+        this._logger.info('>> [%s]', response.type);
 
         var message = this._mqProtocol.decode(response.type, response.payload);
 
@@ -275,8 +281,8 @@ define('sdk/PhenixProtocol', [
     }
 
     function onError(evt) {
-        logError('Error: ' + evt.data);
+        this._logger.error('An error occurred', evt.data);
     }
 
-    return PhenixProtocol;
+    return PCastProtocol;
 });
