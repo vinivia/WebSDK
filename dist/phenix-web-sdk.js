@@ -521,7 +521,7 @@ define('sdk/PhenixPCast', [
                 }
                 callback('ok');
             };
-            var failure = function failure(){
+            var failure = function failure() {
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
@@ -782,6 +782,7 @@ define('sdk/PhenixPCast', [
         var renderer = this._renderer[streamId];
 
         if (renderer) {
+            log('[' + streamId + '] stop media stream');
             mediaStream.stop();
         }
 
@@ -798,6 +799,7 @@ define('sdk/PhenixPCast', [
         var peerConnection = this._peerConnections[streamId];
 
         if (peerConnection && peerConnection.signalingState !== 'closed') {
+            log('[' + streamId + '] close peer connection');
             peerConnection.close();
         }
 
@@ -939,7 +941,10 @@ define('sdk/PhenixPCast', [
                                     return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
                                 });
 
-                                var updatedRemoteDescription = new phenixRTC.RTCSessionDescription({type: remoteDescription.type, sdp: updatedSdp});
+                                var updatedRemoteDescription = new phenixRTC.RTCSessionDescription({
+                                    type: remoteDescription.type,
+                                    sdp: updatedSdp
+                                });
 
                                 pc.setRemoteDescription(updatedRemoteDescription);
 
@@ -990,7 +995,9 @@ define('sdk/PhenixPCast', [
             if (publisher) {
                 logError('[' + streamId + '] Publisher failed');
 
-                publisher.publisherErrorCallback(publisher, 'client-side-failure');
+                if (typeof publisher.publisherEndedCallback === 'function') {
+                    return publisher.publisherErrorCallback(publisher, 'client-side-failure');
+                }
             }
         });
     }
@@ -1010,7 +1017,14 @@ define('sdk/PhenixPCast', [
 
             var stream = event.stream;
 
-            console.log('Got a remote stream');
+            if (!stream) {
+                failed = true;
+                logError('[' + streamId + '] No remote stream');
+
+                return callback.call(that, undefined, 'failed');
+            }
+
+            log('[' + streamId + '] Got a remote stream');
 
             var mediaStream = {
                 createRenderer: function () {
@@ -1058,6 +1072,18 @@ define('sdk/PhenixPCast', [
                 stop: function stop(reason) {
                     if (pc.signalingState !== 'closed') {
                         pc.close();
+                    }
+
+                    var stream = event.stream;
+
+                    if (stream && typeof stream.getTracks === 'function') {
+                        var tracks = stream.getTracks();
+
+                        for (var i = 0; i < tracks.length; i++) {
+                            var stream = tracks[i];
+
+                            stream.stop();
+                        }
                     }
 
                     if (stopped) {
@@ -1149,7 +1175,9 @@ define('sdk/PhenixPCast', [
             if (mediaStream) {
                 logError('[' + streamId + '] Stream failed');
 
-                mediaStream.streamErrorCallback(mediaStream, 'client-side-failure');
+                if (typeof mediaStream.streamErrorCallback === 'function') {
+                    return mediaStream.streamErrorCallback(mediaStream, 'client-side-failure');
+                }
             }
         });
     }
@@ -1186,7 +1214,6 @@ define('sdk/PhenixPCast', [
         var measurement = 1;
 
         var nextMeasurement = function nextMeasurement(endPoint) {
-
             var maxAttempts = 1;
             var start = now();
 
@@ -1297,7 +1324,7 @@ define('sdk/PhenixPCast', [
         xhr.send();
     }
 
-    var defaultMonitoringInterval = 3000;
+    var defaultMonitoringInterval = 4000;
 
     function monitorPeerConnection(peerConnection, streamId, failureCallback) {
         var that = this;
@@ -1428,7 +1455,7 @@ define('sdk/PhenixPCast', [
                         setTimeout(nextCheck, defaultMonitoringInterval);
                     }
                 } else if (that._peerConnections[streamId] === peerConnection) {
-                    setTimeout(nextCheck, failureCount > 0 ? defaultMonitoringInterval / 3 : defaultMonitoringInterval);
+                    setTimeout(nextCheck, failureCount > 0 ? defaultMonitoringInterval / 2 : defaultMonitoringInterval);
                 } else {
                     log('[' + streamId + '] Finished monitoring of peer connection');
                 }
@@ -1550,7 +1577,7 @@ define('sdk/PhenixProtocol', [
 
         var authenticate = {
             apiVersion: this._mqProtocol.getApiVersion(),
-            clientVersion: '2016-09-19T18:51:50Z',
+            clientVersion: '2016-09-20T03:16:26Z',
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
             platformVersion: phenixRTC.browserVersion.toString(),

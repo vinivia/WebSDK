@@ -40,8 +40,8 @@ hooks:
     handle-sigint: false
 check:
     global:
-        statements: 35
-        lines: 35
+        statements: 30
+        lines: 30
         branches: 15
         functions: 30
         excludes: []
