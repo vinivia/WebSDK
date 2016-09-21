@@ -54,6 +54,21 @@ define('sdk/Logger', [ ], function () {
     return Logger;
 });
 
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/MQProtocol', [
         'sdk/Logger',
         'protobuf'
@@ -155,6 +170,21 @@ define('sdk/MQProtocol', [
     return MQProtocol;
 });
 
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/PCastEndPoint', [
     'sdk/Time'
 ], function (Time) {
@@ -320,6 +350,21 @@ define('sdk/PCastEndPoint', [
     return PCastEndPoint;
 });
 
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/PCastProtocol', [
         'sdk/MQProtocol',
         'ByteBuffer',
@@ -594,6 +639,21 @@ define('sdk/PCastProtocol', [
     return PCastProtocol;
 });
 
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/PeerConnectionMonitor', [
         'sdk/Time',
         'phenix-rtc'
@@ -660,9 +720,9 @@ define('sdk/PeerConnectionMonitor', [
         var conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
         var monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
         var conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
-        var monitorFrameRate = options.monitorFrameRate || true;
-        var monitorBitRate = options.monitorBitRate || true;
-        var monitorState = options.monitorState || true;
+        var monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
+        var monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
+        var monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
 
         function nextCheck() {
             var selector = null;
@@ -850,6 +910,21 @@ define('sdk/PeerConnectionMonitor', [
 
     return PeerConnectionMonitor;
 });
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/PhenixPCast', [
         'sdk/PCastProtocol',
         'sdk/PCastEndPoint',
@@ -896,7 +971,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var sdkVersion = '2016-09-20T21:27:34Z';
+    var sdkVersion = '2016-09-21T17:53:46Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1957,6 +2032,21 @@ define('sdk/PhenixPCast', [
 
     return PhenixPCast;
 });
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 define('sdk/Time', [ ], function () {
     'use strict';
 
@@ -1980,6 +2070,21 @@ define('sdk/Time', [ ], function () {
     return Time;
 });
 
+/**
+ * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 'use strict';
 
 define('phenix-web-sdk', [

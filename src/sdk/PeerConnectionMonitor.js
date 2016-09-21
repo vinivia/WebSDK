@@ -79,9 +79,9 @@ define('sdk/PeerConnectionMonitor', [
         var conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
         var monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
         var conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
-        var monitorFrameRate = options.monitorFrameRate || true;
-        var monitorBitRate = options.monitorBitRate || true;
-        var monitorState = options.monitorState || true;
+        var monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
+        var monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
+        var monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
 
         function nextCheck() {
             var selector = null;
