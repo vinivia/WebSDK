@@ -54,21 +54,6 @@ define('sdk/Logger', [ ], function () {
     return Logger;
 });
 
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/MQProtocol', [
         'sdk/Logger',
         'protobuf'
@@ -170,21 +155,6 @@ define('sdk/MQProtocol', [
     return MQProtocol;
 });
 
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/PCastEndPoint', [
     'sdk/Time'
 ], function (Time) {
@@ -350,21 +320,6 @@ define('sdk/PCastEndPoint', [
     return PCastEndPoint;
 });
 
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/PCastProtocol', [
         'sdk/MQProtocol',
         'ByteBuffer',
@@ -639,21 +594,6 @@ define('sdk/PCastProtocol', [
     return PCastProtocol;
 });
 
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/PeerConnectionMonitor', [
         'sdk/Time',
         'phenix-rtc'
@@ -910,21 +850,6 @@ define('sdk/PeerConnectionMonitor', [
 
     return PeerConnectionMonitor;
 });
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/PhenixPCast', [
         'sdk/PCastProtocol',
         'sdk/PCastEndPoint',
@@ -971,7 +896,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var sdkVersion = '2016-09-21T17:53:46Z';
+    var sdkVersion = '2016-09-26T15:43:08Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1250,7 +1175,7 @@ define('sdk/PhenixPCast', [
                         that._logger.info('Screen sharing enabled using version [%s]', response.version);
                         callback(true);
                     } else {
-                        that._logger.warn('Screen sharing NOT available');
+                        that._logger.info('Screen sharing NOT available');
                         callback(false);
                     }
                 });
@@ -1300,13 +1225,19 @@ define('sdk/PhenixPCast', [
 
         try {
             chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
-                callback('ok');
+                return callback('ok');
             }, function failureCallback(reason) {
                 if (reason) {
+                    if (reason.match(/cancelled/ig)) {
+                        that._logger.info('User cancelled screen sharing');
+
+                        return callback('cancelled', new Error(reason));
+                    }
+
                     that._logger.warn(reason);
                 }
 
-                callback('failed', new Error(reason || 'failed'));
+                return callback('failed', new Error(reason || 'failed'));
             });
         } catch (e) {
             if (e.message) {
@@ -1431,6 +1362,9 @@ define('sdk/PhenixPCast', [
         if (options.screen) {
             if (!that._screenSharingEnabled) {
                 var installCallback = function installCallback(status) {
+                    if (status === 'cancelled') {
+                        return callback(status, 'cancelled');
+                    }
                     if (status !== 'ok') {
                         return callback(status, undefined, new Error('screen-sharing-installation-failed'));
                     }
@@ -1475,28 +1409,36 @@ define('sdk/PhenixPCast', [
 
         var onUserMediaSuccess = function onUserMediaSuccess(stream) {
             that._gumStreams.push(stream);
-            callback(this, 'ok', stream);
+            callback(that, 'ok', stream);
+        };
+
+        var onUserMediaCancelled = function onUserMediaCancelled() {
+            callback(that, 'cancelled', null);
         };
 
         var onUserMediaFailure = function onUserMediaFailure(e) {
             if (e.code === 'unavailable') {
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.message === 'permission-denied') {
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else if (e.name === 'PermissionDeniedError') { // Chrome
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF (old getUserMedia API)
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.name === 'SourceUnavailableError') { // FF
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else {
-                callback(this, 'failed', undefined, e);
+                callback(that, 'failed', undefined, e);
             }
         };
 
         getUserMediaConstraints.call(that, options, function (status, constraints, error) {
+            if (status === 'cancelled') {
+                return onUserMediaCancelled();
+            }
+
             if (status !== 'ok') {
                 return onUserMediaFailure(error);
             }
@@ -2032,21 +1974,6 @@ define('sdk/PhenixPCast', [
 
     return PhenixPCast;
 });
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 define('sdk/Time', [ ], function () {
     'use strict';
 
@@ -2070,21 +1997,6 @@ define('sdk/Time', [ ], function () {
     return Time;
 });
 
-/**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 'use strict';
 
 define('phenix-web-sdk', [

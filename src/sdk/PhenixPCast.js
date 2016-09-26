@@ -338,7 +338,7 @@ define('sdk/PhenixPCast', [
                         that._logger.info('Screen sharing enabled using version [%s]', response.version);
                         callback(true);
                     } else {
-                        that._logger.warn('Screen sharing NOT available');
+                        that._logger.info('Screen sharing NOT available');
                         callback(false);
                     }
                 });
@@ -388,13 +388,19 @@ define('sdk/PhenixPCast', [
 
         try {
             chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
-                callback('ok');
+                return callback('ok');
             }, function failureCallback(reason) {
                 if (reason) {
+                    if (reason.match(/cancelled/ig)) {
+                        that._logger.info('User cancelled screen sharing');
+
+                        return callback('cancelled', new Error(reason));
+                    }
+
                     that._logger.warn(reason);
                 }
 
-                callback('failed', new Error(reason || 'failed'));
+                return callback('failed', new Error(reason || 'failed'));
             });
         } catch (e) {
             if (e.message) {
@@ -519,6 +525,9 @@ define('sdk/PhenixPCast', [
         if (options.screen) {
             if (!that._screenSharingEnabled) {
                 var installCallback = function installCallback(status) {
+                    if (status === 'cancelled') {
+                        return callback(status, 'cancelled');
+                    }
                     if (status !== 'ok') {
                         return callback(status, undefined, new Error('screen-sharing-installation-failed'));
                     }
@@ -563,28 +572,36 @@ define('sdk/PhenixPCast', [
 
         var onUserMediaSuccess = function onUserMediaSuccess(stream) {
             that._gumStreams.push(stream);
-            callback(this, 'ok', stream);
+            callback(that, 'ok', stream);
+        };
+
+        var onUserMediaCancelled = function onUserMediaCancelled() {
+            callback(that, 'cancelled', null);
         };
 
         var onUserMediaFailure = function onUserMediaFailure(e) {
             if (e.code === 'unavailable') {
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.message === 'permission-denied') {
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else if (e.name === 'PermissionDeniedError') { // Chrome
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF (old getUserMedia API)
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.name === 'SourceUnavailableError') { // FF
-                callback(this, 'conflict', undefined, e);
+                callback(that, 'conflict', undefined, e);
             } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
-                callback(this, 'permission-denied', undefined, e);
+                callback(that, 'permission-denied', undefined, e);
             } else {
-                callback(this, 'failed', undefined, e);
+                callback(that, 'failed', undefined, e);
             }
         };
 
         getUserMediaConstraints.call(that, options, function (status, constraints, error) {
+            if (status === 'cancelled') {
+                return onUserMediaCancelled();
+            }
+
             if (status !== 'ok') {
                 return onUserMediaFailure(error);
             }
