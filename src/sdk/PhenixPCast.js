@@ -1172,17 +1172,26 @@ define('sdk/PhenixPCast', [
                     },
                     stop: function stop() {
                         if (this.player) {
+                            var streamEndedTriggered = false;
+                            var notifyStreamEnded = function notifyStreamEnded() {
+                                if (!streamEndedTriggered && mediaStream.streamEndedCallback) {
+                                    streamEndedTriggered = true;
+
+                                    var reason = '';
+
+                                    mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
+                                }
+                            };
+
                             var destroy = this.player.destroy()
                                 .then(function () {
                                     that._logger.info('[%s] Live stream has been destroyed', streamId);
-                                }).finally(function () {
-                                    if (mediaStream.streamEndedCallback) {
-                                        var reason = '';
-
-                                        mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
-                                    }
+                                }).then(function () {
+                                    notifyStreamEnded();
                                 }).catch(function (e) {
                                     that._logger.error('[%s] Error while destroying live stream [%s]', streamId, e.code, e);
+
+                                    notifyStreamEnded();
 
                                     if (mediaStream.streamErrorCallback) {
                                         mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);

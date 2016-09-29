@@ -896,7 +896,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var sdkVersion = '2016-09-29T04:16:07Z';
+    var sdkVersion = '2016-09-29T19:29:37Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -2009,17 +2009,26 @@ define('sdk/PhenixPCast', [
                     },
                     stop: function stop() {
                         if (this.player) {
+                            var streamEndedTriggered = false;
+                            var notifyStreamEnded = function notifyStreamEnded() {
+                                if (!streamEndedTriggered && mediaStream.streamEndedCallback) {
+                                    streamEndedTriggered = true;
+
+                                    var reason = '';
+
+                                    mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
+                                }
+                            };
+
                             var destroy = this.player.destroy()
                                 .then(function () {
                                     that._logger.info('[%s] Live stream has been destroyed', streamId);
-                                }).finally(function () {
-                                    if (mediaStream.streamEndedCallback) {
-                                        var reason = '';
-
-                                        mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
-                                    }
+                                }).then(function () {
+                                    notifyStreamEnded();
                                 }).catch(function (e) {
                                     that._logger.error('[%s] Error while destroying live stream [%s]', streamId, e.code, e);
+
+                                    notifyStreamEnded();
 
                                     if (mediaStream.streamErrorCallback) {
                                         mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);
