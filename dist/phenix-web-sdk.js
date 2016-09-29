@@ -292,8 +292,6 @@ define('sdk/PCastEndPoint', [
         var that = this;
         var xhr = new XMLHttpRequest();
 
-        xhr.timeout = 15000;
-
         xhr.open('GET', url + '?version=' + encodeURIComponent(that._version) + '&_=' + Time.now(), true);
 
         xhr.addEventListener('readystatechange', function () {
@@ -303,7 +301,7 @@ define('sdk/PCastEndPoint', [
                 } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
                     httpGetWithRetry.call(that, url, callback, maxAttempts, attempt + 1);
                 } else {
-                    that._logger.info('HTTP GET [%s] failed with [%s] [%s]', url, xhr.status. xhr.statusText);
+                    that._logger.info('HTTP GET [%s] failed with [%s] [%s]', url, xhr.status, xhr.statusText);
 
                     var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
 
@@ -313,6 +311,8 @@ define('sdk/PCastEndPoint', [
                 }
             }
         });
+
+        xhr.timeout = 15000;
 
         xhr.send();
     }
@@ -896,7 +896,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var sdkVersion = '2016-09-29T19:29:37Z';
+    var sdkVersion = '2016-09-29T22:07:31Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
