@@ -80,6 +80,7 @@ define('sdk/PhenixPCast', [
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
         this._shaka = options.shaka || window.shaka;
+        this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
 
         if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
@@ -1116,8 +1117,25 @@ define('sdk/PhenixPCast', [
     function createLiveViewer(streamId, offerSdp, callback) {
         var that = this;
 
+        var dashMatch = offerSdp.match('a=x-playlist:([^\n]*[.]mpd)');
+        var hlsMatch = offerSdp.match('a=x-playlist:([^\n]*[.]m3u8)');
+
+        if (dashMatch && dashMatch.length == 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
+            return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback);
+        } else if (hlsMatch && hlsMatch.length == 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
+            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback);
+        } else {
+            that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
+
+            return callback.call(that, undefined, 'failed');
+        }
+    }
+
+    function createShakaLiveViewer(streamId, uri, callback){
+        var that = this;
+
         if (!that._shaka) {
-            that._logger.warn('[%s] No live player available, e.g. Shaka 2', streamId);
+            that._logger.warn('[%s] Shaka player not available', streamId);
 
             return callback.call(that, undefined, 'live-player-missing');
         }
@@ -1128,40 +1146,36 @@ define('sdk/PhenixPCast', [
             return callback.call(that, undefined, 'browser-unsupported');
         }
 
-        var match = offerSdp.match('a=x-playlist:([^\n]*[.]mpd)');
-
-        if (!match || match.length < 2) {
-            that._logger.warn('[%s] Offer does not contain a DASH manifest', streamId, offerSdp);
-
-            return callback.call(that, undefined, 'failed');
-        }
-
         var shaka = that._shaka;
-        var manifestUri = encodeURI(match[1]).replace(/[#]/g, '%23');
+        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
         var stopped = false;
 
         var onPlayerError = function onPlayerError(event) {
-            that._logger.error('[%s] Live stream error event [%s]', streamId, event.detail);
+            if (!mediaStream.streamErrorCallback) {
+                that._logger.error('[%s] DASH live stream error event [%s]', streamId, event.detail);
+            } else {
+                that._logger.debug('[%s] DASH live stream error event [%s]', streamId, event.detail);
 
-            if (mediaStream.streamErrorCallback) {
                 mediaStream.streamErrorCallback(mediaStream, 'shaka', event.detail);
             }
         };
 
         var mediaStream = {
             createRenderer: function () {
+                var player = null;
+
                 return {
                     start: function start(elementToAttachTo) {
-                        this.player = new shaka.Player(elementToAttachTo);
+                        player = new shaka.Player(elementToAttachTo);
 
                         that._renderer[streamId] = this;
 
-                        this.player.addEventListener('error', onPlayerError);
+                        player.addEventListener('error', onPlayerError);
 
-                        var load = this.player.load(manifestUri).then(function () {
-                            that._logger.info('[%s] Live stream has been loaded', streamId);
+                        var load = player.load(manifestUri).then(function () {
+                            that._logger.info('[%s] DASH live stream has been loaded', streamId);
                         }).catch(function (e) {
-                            that._logger.error('[%s] Error while loading live stream [%s]', streamId, e.code, e);
+                            that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
 
                             if (mediaStream.streamErrorCallback) {
                                 mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);
@@ -1171,9 +1185,9 @@ define('sdk/PhenixPCast', [
                         return elementToAttachTo;
                     },
                     stop: function stop() {
-                        if (this.player) {
+                        if (player) {
                             var streamEndedTriggered = false;
-                            var notifyStreamEnded = function notifyStreamEnded() {
+                            var finalizeStreamEnded = function finalizeStreamEnded() {
                                 if (!streamEndedTriggered && mediaStream.streamEndedCallback) {
                                     streamEndedTriggered = true;
 
@@ -1181,22 +1195,154 @@ define('sdk/PhenixPCast', [
 
                                     mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
                                 }
+
+                                player = null;
                             };
 
-                            var destroy = this.player.destroy()
+                            var destroy = player.destroy()
                                 .then(function () {
-                                    that._logger.info('[%s] Live stream has been destroyed', streamId);
+                                    that._logger.info('[%s] DASH live stream has been destroyed', streamId);
                                 }).then(function () {
-                                    notifyStreamEnded();
+                                    finalizeStreamEnded();
                                 }).catch(function (e) {
-                                    that._logger.error('[%s] Error while destroying live stream [%s]', streamId, e.code, e);
+                                    that._logger.error('[%s] Error while destroying DASH live stream [%s]', streamId, e.code, e);
 
-                                    notifyStreamEnded();
+                                    finalizeStreamEnded();
 
                                     if (mediaStream.streamErrorCallback) {
                                         mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);
                                     }
                                 });
+                        }
+
+                        delete that._renderer[streamId];
+                    },
+                    setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
+                        if (typeof callback !== 'function') {
+                            throw new Error('"callback" must be a function');
+                        }
+
+                        this.dataQualityChangedCallback = callback;
+                    }
+                };
+            },
+
+            setStreamEndedCallback: function setStreamEndedCallback(callback) {
+                if (typeof callback !== 'function') {
+                    throw new Error('"callback" must be a function');
+                }
+
+                this.streamEndedCallback = callback;
+            },
+
+            setStreamErrorCallback: function setStreamErrorCallback(callback) {
+                if (typeof callback !== 'function') {
+                    throw new Error('"callback" must be a function');
+                }
+
+                this.streamErrorCallback = callback;
+            },
+
+            stop: function stop(reason) {
+                if (stopped) {
+                    return;
+                }
+
+                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                    if (error) {
+                        that._logger.error('[%s] failed to destroy stream', streamId);
+                        return;
+                    }
+
+                    that._logger.info('[%s] destroyed stream', streamId);
+                });
+
+                stopped = true;
+            },
+
+            monitor: function monitor(options, callback) {
+                if (typeof options !== 'object') {
+                    throw new Error('"options" must be an object');
+                }
+                if (typeof callback !== 'function') {
+                    throw new Error('"callback" must be a function');
+                }
+            }
+        };
+
+        callback.call(that, mediaStream);
+    }
+
+    function createHlsLiveViewer(streamId, uri, callback){
+        var that = this;
+
+        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
+        var stopped = false;
+
+        var onPlayerError = function onPlayerError(event) {
+            if (!mediaStream.streamErrorCallback) {
+                that._logger.error('[%s] HLS live stream error event [%s]', streamId, event.detail);
+            } else {
+                that._logger.debug('[%s] HLS live stream error event [%s]', streamId, event.detail);
+                mediaStream.streamErrorCallback(mediaStream, 'hls', event.detail);
+            }
+        };
+
+        var mediaStream = {
+            createRenderer: function () {
+                var element = null;
+
+                return {
+                    start: function start(elementToAttachTo) {
+                        try {
+                            elementToAttachTo.src = manifestUri;
+
+                            that._renderer[streamId] = this;
+
+                            elementToAttachTo.addEventListener('error', onPlayerError);
+
+                            elementToAttachTo.play();
+                            element = elementToAttachTo;
+
+                            return elementToAttachTo;
+                        } catch (e) {
+                            that._logger.error('[%s] Error while loading HLS live stream [%s]', streamId, e.code, e);
+
+                            if (mediaStream.streamErrorCallback) {
+                                mediaStream.streamErrorCallback(mediaStream, 'hls', e.code, e);
+                            }
+                        }
+                    },
+                    stop: function stop() {
+                        if (element) {
+                            var streamEndedTriggered = false;
+                            var finalizeStreamEnded = function finalizeStreamEnded() {
+                                if (!streamEndedTriggered && mediaStream.streamEndedCallback) {
+                                    streamEndedTriggered = true;
+
+                                    var reason = '';
+
+                                    mediaStream.streamEndedCallback(mediaStream, getStreamEndedReason(reason), reason);
+                                }
+
+                                element = null;
+                            };
+
+                            try {
+                                element.pause();
+
+                                that._logger.info('[%s] HLS live stream has been destroyed', streamId);
+
+                                finalizeStreamEnded();
+                            } catch (e) {
+                                that._logger.error('[%s] Error while destroying HLS live stream [%s]', streamId, e.code, e);
+
+                                finalizeStreamEnded();
+
+                                if (mediaStream.streamErrorCallback) {
+                                    mediaStream.streamErrorCallback(mediaStream, 'hls', e.code, e);
+                                }
+                            }
                         }
 
                         delete that._renderer[streamId];

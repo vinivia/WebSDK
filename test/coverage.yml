@@ -43,7 +43,7 @@ check:
         statements: 30
         lines: 30
         branches: 15
-        functions: 30
+        functions: 25
         excludes: []
     each:
         statements: 0
