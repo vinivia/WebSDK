@@ -149,8 +149,24 @@ define('sdk/PCastEndPoint', [
 
         var that = this;
         var xhr = new XMLHttpRequest();
+        var requestMethod = 'GET';
+        var requestUrl = url + '?version=' + encodeURIComponent(that._version) + '&_=' + Time.now();
 
-        xhr.open('GET', url + '?version=' + encodeURIComponent(that._version) + '&_=' + Time.now(), true);
+        if ('withCredentials' in xhr) {
+            // Most browsers.
+            xhr.open(requestMethod, requestUrl, true);
+        } else if (typeof XDomainRequest != 'undefined') {
+            // IE8 & IE9
+            xhr = new XDomainRequest();
+            xhr.open(requestMethod, requestUrl);
+        } else {
+            // CORS not supported.
+            var err = new Error('unsupported');
+
+            err.code = 'unsupported';
+
+            callback(err);
+        }
 
         xhr.addEventListener('readystatechange', function () {
             if (xhr.readyState === 4 /* DONE */) {
