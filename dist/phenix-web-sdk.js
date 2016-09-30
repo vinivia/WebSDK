@@ -863,15 +863,15 @@ define('sdk/PhenixPCast', [
     var peerConnectionConfig = {
         'iceServers': [
             {
-                url: 'stun:stun.l.google.com:19302'
+                urls: 'stun:stun.l.google.com:19302'
             }, {
-                url: 'stun:stun1.l.google.com:19302'
+                urls: 'stun:stun1.l.google.com:19302'
             }, {
-                url: 'stun:stun2.l.google.com:19302'
+                urls: 'stun:stun2.l.google.com:19302'
             }, {
-                url: 'stun:stun3.l.google.com:19302'
+                urls: 'stun:stun3.l.google.com:19302'
             }, {
-                url: 'stun:stun4.l.google.com:19302'
+                urls: 'stun:stun4.l.google.com:19302'
             }
         ]
     };
@@ -896,7 +896,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     };
-    var sdkVersion = '2016-09-29T22:07:31Z';
+    var sdkVersion = '2016-09-30T00:06:51Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = {
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
