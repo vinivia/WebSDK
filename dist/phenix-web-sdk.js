@@ -876,7 +876,20 @@ define('sdk/PhenixPCast', [
 ], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
     'use strict';
 
-    var peerConnectionConfig = {
+    var freeze = function freeze(obj) {
+        if ('freeze' in Object) {
+            return Object.freeze(obj);
+        }
+
+        return obj;
+    };
+    var NetworkStates = freeze({
+        'NETWORK_EMPTY': 0,
+        'NETWORK_IDLE': 1,
+        'NETWORK_LOADING': 2,
+        'NETWORK_NO_SOURCE': 3
+    });
+    var peerConnectionConfig = freeze({
         'iceServers': [
             {
                 urls: 'stun:stun.l.google.com:19302'
@@ -890,8 +903,8 @@ define('sdk/PhenixPCast', [
                 urls: 'stun:stun4.l.google.com:19302'
             }
         ]
-    };
-    var peerConnectionConstraints = {
+    });
+    var peerConnectionConstraints = freeze({
         'optional': [
             {
                 DtlsSrtpKeyAgreement: false
@@ -899,26 +912,26 @@ define('sdk/PhenixPCast', [
                 RtpDataChannels: false
             }
         ]
-    };
-    var sendingConstraints = {
+    });
+    var sendingConstraints = freeze({
         mandatory: {
             OfferToReceiveVideo: false,
             OfferToReceiveAudio: false
         }
-    };
-    var receivingConstraints = {
+    });
+    var receivingConstraints = freeze({
         mandatory: {
             OfferToReceiveVideo: true,
             OfferToReceiveAudio: true
         }
-    };
-    var sdkVersion = '2016-09-30T21:29:09Z';
+    });
+    var sdkVersion = '2016-10-05T00:01:16Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
-    var defaultFirefoxPCastScreenSharingAddOn = {
+    var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
         iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
         hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
-    };
+    });
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
 
@@ -1811,20 +1824,41 @@ define('sdk/PhenixPCast', [
 
             var mediaStream = {
                 createRenderer: function () {
+                    var element = null;
+
                     return {
                         start: function start(elementToAttachTo) {
-                            this.element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
+                            element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
                             that._renderer[streamId] = this;
 
-                            return this.element;
+                            return element;
                         },
                         stop: function stop() {
-                            if (this.element) {
-                                this.element.pause();
+                            if (element) {
+                                element.pause();
                             }
 
                             delete that._renderer[streamId];
+
+                            element = null;
+                        },
+                        getStats: function getStats() {
+                            if (!element) {
+                                return {
+                                    width: 0,
+                                    height: 0,
+                                    currentTime: 0.0,
+                                    networkState: NetworkStates.NETWORK_NO_SOURCE
+                                }
+                            }
+
+                            return {
+                                width: element.videoWidth || element.width,
+                                height: element.videoHeight || element.height,
+                                currentTime: element.currentTime,
+                                networkState: element.networkState
+                            }
                         },
                         setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                             if (typeof callback !== 'function') {
@@ -2031,7 +2065,7 @@ define('sdk/PhenixPCast', [
                             that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
 
                             if (mediaStream.streamErrorCallback) {
-                                mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);
+                                mediaStream.streamErrorCallback(mediaStream, 'shaka', e);
                             }
                         });
 
@@ -2063,12 +2097,38 @@ define('sdk/PhenixPCast', [
                                     finalizeStreamEnded();
 
                                     if (mediaStream.streamErrorCallback) {
-                                        mediaStream.streamErrorCallback(mediaStream, 'shaka', e.code, e);
+                                        mediaStream.streamErrorCallback(mediaStream, 'shaka', e);
                                     }
                                 });
                         }
 
                         delete that._renderer[streamId];
+                    },
+                    getStats: function getStats() {
+                        if (!player) {
+                            return {
+                                width: 0,
+                                height: 0,
+                                currentTime: 0.0,
+                                networkState: NetworkStates.NETWORK_NO_SOURCE
+                            };
+                        }
+
+                        var stat = player.getStats();
+
+                        stat.currentTime = stat.playTime + stat.bufferingTime;
+
+                        if (stat.estimatedBandwidth > 0) {
+                            stat.networkState = NetworkStates.NETWORK_LOADING;
+                        } else if (stat.playTime > 0) {
+                            stat.networkState = NetworkStates.NETWORK_IDLE;
+                        } else if (stat.video) {
+                            stat.networkState = NetworkStates.NETWORK_EMPTY;
+                        } else {
+                            stat.networkState = NetworkStates.NETWORK_NO_SOURCE;
+                        }
+
+                        return stat;
                     },
                     setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                         if (typeof callback !== 'function') {
@@ -2162,7 +2222,7 @@ define('sdk/PhenixPCast', [
                             that._logger.error('[%s] Error while loading HLS live stream [%s]', streamId, e.code, e);
 
                             if (mediaStream.streamErrorCallback) {
-                                mediaStream.streamErrorCallback(mediaStream, 'hls', e.code, e);
+                                mediaStream.streamErrorCallback(mediaStream, 'hls', e);
                             }
                         }
                     },
@@ -2193,12 +2253,29 @@ define('sdk/PhenixPCast', [
                                 finalizeStreamEnded();
 
                                 if (mediaStream.streamErrorCallback) {
-                                    mediaStream.streamErrorCallback(mediaStream, 'hls', e.code, e);
+                                    mediaStream.streamErrorCallback(mediaStream, 'hls', e);
                                 }
                             }
                         }
 
                         delete that._renderer[streamId];
+                    },
+                    getStats: function getStats() {
+                        if (!element) {
+                            return {
+                                width: 0,
+                                height: 0,
+                                currentTime: 0.0,
+                                networkState: NetworkStates.NETWORK_NO_SOURCE
+                            };
+                        }
+
+                        return {
+                            width: element.videoWidth || element.width,
+                            height: element.videoHeight || element.height,
+                            currentTime: element.currentTime,
+                            networkState: element.networkState
+                        }
                     },
                     setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                         if (typeof callback !== 'function') {
