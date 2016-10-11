@@ -925,7 +925,7 @@ define('sdk/PhenixPCast', [
             OfferToReceiveAudio: true
         }
     });
-    var sdkVersion = '2016-10-05T00:01:16Z';
+    var sdkVersion = '2016-10-11T17:41:53Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1823,7 +1823,7 @@ define('sdk/PhenixPCast', [
             that._logger.info('[%s] Got remote stream', streamId);
 
             var mediaStream = {
-                createRenderer: function () {
+                createRenderer: function createRenderer() {
                     var element = null;
 
                     return {
@@ -1930,6 +1930,10 @@ define('sdk/PhenixPCast', [
 
                         return callback(mediaStream, 'client-side-failure', reason);
                     });
+                },
+
+                getStream: function getStream() {
+                    return stream;
                 }
             };
 
@@ -2007,9 +2011,9 @@ define('sdk/PhenixPCast', [
         var dashMatch = offerSdp.match('a=x-playlist:([^\n]*[.]mpd)');
         var hlsMatch = offerSdp.match('a=x-playlist:([^\n]*[.]m3u8)');
 
-        if (dashMatch && dashMatch.length == 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
+        if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
             return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback);
-        } else if (hlsMatch && hlsMatch.length == 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
+        } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
             return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback);
         } else {
             that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -2048,7 +2052,7 @@ define('sdk/PhenixPCast', [
         };
 
         var mediaStream = {
-            createRenderer: function () {
+            createRenderer: function createRenderer() {
                 var player = null;
 
                 return {
@@ -2136,6 +2140,9 @@ define('sdk/PhenixPCast', [
                         }
 
                         this.dataQualityChangedCallback = callback;
+                    },
+                    getPlayer: function getPlayer() {
+                        return player;
                     }
                 };
             },
@@ -2202,7 +2209,7 @@ define('sdk/PhenixPCast', [
         };
 
         var mediaStream = {
-            createRenderer: function () {
+            createRenderer: function createRenderer() {
                 var element = null;
 
                 return {
