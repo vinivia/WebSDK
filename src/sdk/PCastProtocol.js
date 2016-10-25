@@ -110,7 +110,10 @@ define('sdk/PCastProtocol', [
         return sendRequest.call(this, 'pcast.Bye', bye, callback);
     };
 
-    PCastProtocol.prototype.createDownloader = function (streamToken, callback) {
+    PCastProtocol.prototype.setupStream = function (streamType, streamToken, callback) {
+        if (typeof streamType !== 'string') {
+            throw new Error('"streamType" must be a string');
+        }
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -127,33 +130,7 @@ define('sdk/PCastProtocol', [
                 options: ['data-quality-notifications'],
                 createOfferDescription: {
                     streamId: '',
-                    options: ['download', 'SRTP', browser, browserWithVersion],
-                    apiVersion: this._mqProtocol.getApiVersion()
-                }
-            }
-        };
-
-        return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
-    };
-
-    PCastProtocol.prototype.createUploader = function (streamToken, callback) {
-        if (typeof streamToken !== 'string') {
-            throw new Error('"streamToken" must be a string');
-        }
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
-        var browser = phenixRTC.browser || 'UnknownBrowser';
-        var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
-        var setupStream = {
-            streamToken: streamToken,
-            createStream: {
-                sessionId: this._sessionId,
-                options: ['data-quality-notifications'],
-                createOfferDescription: {
-                    streamId: '',
-                    options: ['upload', 'SRTP', browser, browserWithVersion],
+                    options: [streamType, 'SRTP', browser, browserWithVersion],
                     apiVersion: this._mqProtocol.getApiVersion()
                 }
             }
@@ -183,6 +160,79 @@ define('sdk/PCastProtocol', [
         };
 
         return sendRequest.call(this, 'pcast.SetRemoteDescription', setRemoteDescription, callback);
+    };
+
+    PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
+        if (typeof streamId !== 'string') {
+            throw new Error('"streamId" must be a string');
+        }
+        if (!(candidates instanceof Array)) {
+            throw new Error('"candidates" must be an array');
+        }
+        if (!(options instanceof Array)) {
+            throw new Error('"options" must be an array');
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('"callback" must be a function');
+        }
+
+        var sanitizedCandidates = [];
+        for (var i = 0; i < candidates.length; i++) {
+            var candidate = candidates[i];
+
+            if (typeof candidate.candidate !== 'string') {
+                throw new Error('"candidates[' + i + '].candidate" must be a string');
+            }
+            if (typeof candidate.sdpMLineIndex !== 'number') {
+                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a string');
+            }
+            if (typeof candidate.sdpMid !== 'string') {
+                throw new Error('"candidates[' + i + '].sdpMid" must be a string');
+            }
+
+            sanitizedCandidates.push({
+                candidate: candidate.candidate,
+                sdpMLineIndex: candidate.sdpMLineIndex,
+                sdpMid: candidate.sdpMid
+            });
+        }
+
+        var addIceCandidates = {
+            streamId: streamId,
+            candidates: sanitizedCandidates,
+            options: options,
+            apiVersion: this._mqProtocol.getApiVersion()
+        };
+
+        return sendRequest.call(this, 'pcast.AddIceCandidates', addIceCandidates, callback);
+    };
+
+    PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
+        if (typeof streamId !== 'string') {
+            throw new Error('"streamId" must be a string');
+        }
+        if (typeof signalingState !== 'string') {
+            throw new Error('"signalingState" must be a string');
+        }
+        if (typeof iceGatheringState !== 'string') {
+            throw new Error('"iceGatheringState" must be a string');
+        }
+        if (typeof iceConnectionState !== 'string') {
+            throw new Error('"iceConnectionState" must be a string');
+        }
+        if (typeof callback !== 'function') {
+            throw new Error('"callback" must be a function');
+        }
+
+        var updateStreamState = {
+            streamId: streamId,
+            signalingState: signalingState,
+            iceGatheringState: iceGatheringState,
+            iceConnectionState: iceConnectionState,
+            apiVersion: this._mqProtocol.getApiVersion()
+        };
+
+        return sendRequest.call(this, 'pcast.UpdateStreamState', updateStreamState, callback);
     };
 
     PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {

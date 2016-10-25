@@ -51,27 +51,6 @@ define('sdk/PhenixPCast', [
             }
         ]
     });
-    var peerConnectionConstraints = freeze({
-        'optional': [
-            {
-                DtlsSrtpKeyAgreement: false
-            }, {
-                RtpDataChannels: false
-            }
-        ]
-    });
-    var sendingConstraints = freeze({
-        mandatory: {
-            OfferToReceiveVideo: false,
-            OfferToReceiveAudio: false
-        }
-    });
-    var receivingConstraints = freeze({
-        mandatory: {
-            OfferToReceiveVideo: true,
-            OfferToReceiveAudio: true
-        }
-    });
     var sdkVersion = '%VERSION%';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
@@ -260,7 +239,7 @@ define('sdk/PhenixPCast', [
         return getUserMedia.call(this, options, callback);
     };
 
-    PhenixPCast.prototype.publish = function (streamToken, mediaStreamToPublish, callback, tags) {
+    PhenixPCast.prototype.publish = function (streamToken, mediaStreamToPublish, callback, tags, options) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -274,10 +253,14 @@ define('sdk/PhenixPCast', [
         if (!Array.isArray(tags)) {
             throw new Error('"tags" must be an array');
         }
+        options = options || {};
+        if (typeof options !== 'object') {
+            throw new Error('"options" must be an object');
+        }
 
         var that = this;
 
-        this._protocol.createUploader(streamToken, function (response, error) {
+        this._protocol.setupStream('upload', streamToken, function (response, error) {
             if (error) {
                 that._logger.warn('Failed to create uploader', error);
 
@@ -297,22 +280,26 @@ define('sdk/PhenixPCast', [
                     } else {
                         callback.call(that, that, 'ok', phenixPublisher);
                     }
-                });
+                }, options);
             }
-        })
+        });
     };
 
-    PhenixPCast.prototype.subscribe = function (streamToken, callback) {
+    PhenixPCast.prototype.subscribe = function (streamToken, callback, options) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
+        options = options || {};
+        if (typeof options !== 'object') {
+            throw new Error('"options" must be an object');
+        }
 
         var that = this;
 
-        this._protocol.createDownloader(streamToken, function (response, error) {
+        this._protocol.setupStream('download', streamToken, function (response, error) {
             if (error) {
                 that._logger.warn('Failed to create downloader', error);
 
@@ -340,7 +327,7 @@ define('sdk/PhenixPCast', [
                     } else {
                         callback.call(that, that, 'ok', phenixMediaStream);
                     }
-                });
+                }, options);
             }
         });
     };
@@ -748,23 +735,200 @@ define('sdk/PhenixPCast', [
         delete this._peerConnections[streamId];
     }
 
-    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback) {
+    function setupStreamAddedListener(streamId, state, peerConnection, callback, options) {
         var that = this;
-        var stopped = false;
-        var failed = false;
-        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, peerConnectionConstraints);
+        var onAddStream = function onAddStream(event) {
+            if (state.failed) {
+                return;
+            }
+
+            var stream = event.stream;
+
+            if (!stream) {
+                state.failed = true;
+                that._logger.warn('[%s] No remote stream', streamId);
+
+                return callback.call(that, undefined, 'failed');
+            }
+
+            that._logger.info('[%s] Got remote stream', streamId);
+
+            var mediaStream = {
+                createRenderer: function createRenderer() {
+                    var element = null;
+
+                    return {
+                        start: function start(elementToAttachTo) {
+                            element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
+
+                            if (options.receiveAudio === false) {
+                                elementToAttachTo.muted = true;
+                            }
+
+                            that._renderer[streamId] = this;
+
+                            return element;
+                        },
+                        stop: function stop() {
+                            if (element) {
+                                element.pause();
+                            }
+
+                            delete that._renderer[streamId];
+
+                            element = null;
+                        },
+                        getStats: function getStats() {
+                            if (!element) {
+                                return {
+                                    width: 0,
+                                    height: 0,
+                                    currentTime: 0.0,
+                                    networkState: NetworkStates.NETWORK_NO_SOURCE
+                                }
+                            }
+
+                            return {
+                                width: element.videoWidth || element.width,
+                                height: element.videoHeight || element.height,
+                                currentTime: element.currentTime,
+                                networkState: element.networkState
+                            }
+                        },
+                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
+                            if (typeof callback !== 'function') {
+                                throw new Error('"callback" must be a function');
+                            }
+
+                            this.dataQualityChangedCallback = callback;
+                        }
+                    };
+                },
+
+                setStreamEndedCallback: function setStreamEndedCallback(callback) {
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    this.streamEndedCallback = callback;
+                },
+
+                setStreamErrorCallback: function setStreamErrorCallback(callback) {
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    this.streamErrorCallback = callback;
+                },
+
+                stop: function stop(reason) {
+                    if (peerConnection.signalingState !== 'closed') {
+                        peerConnection.close();
+                    }
+
+                    var stream = event.stream;
+
+                    stopWebRTCStream(stream);
+
+                    if (state.stopped) {
+                        return;
+                    }
+
+                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                        if (error) {
+                            that._logger.error('[%s] failed to destroy stream', streamId);
+                            return;
+                        }
+
+                        that._logger.info('[%s] destroyed stream', streamId);
+                    });
+
+                    state.stopped = true;
+                },
+
+                monitor: function monitor(options, callback) {
+                    if (typeof options !== 'object') {
+                        throw new Error('"options" must be an object');
+                    }
+                    if (typeof callback !== 'function') {
+                        throw new Error('"callback" must be a function');
+                    }
+
+                    var monitor = new PeerConnectionMonitor(streamId, peerConnection, that._logger);
+
+                    options.direction = 'inbound';
+
+                    monitor.start(options, function activeCallback() {
+                        return that._mediaStreams[streamId] === mediaStream;
+                    }, function monitorCallback(reason) {
+                        that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
+
+                        return callback(mediaStream, 'client-side-failure', reason);
+                    });
+                },
+
+                getStream: function getStream() {
+                    return stream;
+                }
+            };
+
+            that._mediaStreams[streamId] = mediaStream;
+
+            callback.call(that, mediaStream);
+        };
+
+        phenixRTC.addEventListener(peerConnection, 'addstream', onAddStream);
+    }
+
+    function setupIceCandidateListener(streamId, peerConnection, callback) {
+        var that = this;
+        var onIceCandidate = function onIceCandidate(event) {
+            var candidate = event.candidate;
+
+            if (candidate) {
+                that._logger.debug('[%s] ICE candidate (publisher): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+            } else {
+                that._logger.info('[%s] ICE candidate discovery complete (publisher)', streamId);
+            }
+
+            if (callback) {
+                callback(candidate);
+            }
+        };
+
+        phenixRTC.addEventListener(peerConnection, 'icecandidate', onIceCandidate);
+    }
+
+    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options) {
+        var that = this;
+        var state = {
+            failed: false,
+            stopped: false
+        };
+        var hasCrypto = offerSdp.match(/a=crypto:/i);
+        var hasDataChannel = offerSdp.match(/m=application /i);
+        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
+            'optional': [
+                {
+                    DtlsSrtpKeyAgreement: !hasCrypto
+                }, {
+                    RtpDataChannels: hasDataChannel
+                }
+            ]
+        });
+        var onIceCandidateCallback = null;
 
         that._peerConnections[streamId] = pc;
 
         pc.addStream(mediaStream);
 
         var onFailure = function onFailure() {
-            if (failed) {
+            if (state.failed) {
                 return;
             }
 
-            failed = true;
-            stopped = true;
+            state.failed = true;
+            state.stopped = true;
 
             delete that._peerConnections[streamId];
 
@@ -826,7 +990,7 @@ define('sdk/PhenixPCast', [
                                     pc.close();
                                 }
 
-                                if (stopped) {
+                                if (state.stopped) {
                                     return;
                                 }
 
@@ -839,7 +1003,7 @@ define('sdk/PhenixPCast', [
                                     that._logger.info('[%s] destroyed stream', streamId);
                                 });
 
-                                stopped = true;
+                                state.stopped = true;
                             },
 
                             setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
@@ -908,12 +1072,48 @@ define('sdk/PhenixPCast', [
 
                                     return callback(publisher, 'client-side-failure', reason);
                                 });
+                            },
+
+                            onRemoteMediaStream: function onRemoteMediaStream(callback) {
+                                if (typeof callback !== 'function') {
+                                    throw new Error('"callback" must be a function');
+                                }
+
+                                this.onRemoteMediaStreamCallback = callback;
+
+                                if (this.remoteMediaStream) {
+                                    callback(this.remoteMediaStream);
+                                }
                             }
                         };
 
                         that._publishers[streamId] = publisher;
 
                         callback.call(that, publisher);
+                    }
+
+                    if (includes(response.options, 'ice-candidates')) {
+                        onIceCandidateCallback = function (candidate) {
+                            var candidates = [];
+                            var options = [];
+
+                            if (candidate) {
+                                candidates.push(candidate);
+                            } else {
+                                options.push('completed');
+                            }
+
+                            that._protocol.addIceCandidates(streamId, candidates, options, function (response, error) {
+                                if (error) {
+                                    that._logger.warn('Failed to add ICE candidate', error);
+                                    return;
+                                }
+
+                                if (includes(response.options, 'cancel')) {
+                                    onIceCandidateCallback = null;
+                                }
+                            });
+                        };
                     }
 
                     var sessionDescription = new phenixRTC.RTCSessionDescription({
@@ -925,176 +1125,66 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, sendingConstraints);
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
+                mandatory: {
+                    OfferToReceiveVideo: options.receiveVideo === true,
+                    OfferToReceiveAudio: options.receiveAudio === true
+                }
+            });
         }
+
+        setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
+            var publisher = that._publishers[streamId];
+
+            if (publisher) {
+                publisher.remoteMediaStream = mediaStream;
+
+                if (publisher.onRemoteMediaStreamCallback) {
+                    publisher.onRemoteMediaStreamCallback(mediaStream);
+                }
+            }
+        }, options);
+
+        setupIceCandidateListener.call(that, streamId, pc, function onIceCandidate(candidate) {
+            if (onIceCandidateCallback) {
+                onIceCandidateCallback(candidate);
+            }
+        });
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
         pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
-
-        var onIceCandidate = function onIceCandidate(event) {
-            var candidate = event.candidate;
-
-            if (candidate) {
-                that._logger.debug('[%s] ICE candidate (publisher): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
-            } else {
-                that._logger.info('[%s] ICE candidate discovery complete (publisher)', streamId);
-            }
-        };
-
-        phenixRTC.addEventListener(pc, 'icecandidate', onIceCandidate);
     }
 
-    function createViewerPeerConnection(streamId, offerSdp, callback) {
+    function createViewerPeerConnection(streamId, offerSdp, callback, options) {
         var that = this;
-        var failed = false;
-        var stopped = false;
-        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, peerConnectionConstraints);
+        var state = {
+            failed: false,
+            stopped: false
+        };
+        var hasCrypto = offerSdp.match(/a=crypto:/i);
+        var hasDataChannel = offerSdp.match(/m=application /i);
+        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
+            'optional': [
+                {
+                    DtlsSrtpKeyAgreement: !hasCrypto
+                }, {
+                    RtpDataChannels: hasDataChannel
+                }
+            ]
+        });
+        var onIceCandidateCallback = null;
 
         that._peerConnections[streamId] = pc;
 
-        var onAddStream = function onAddStream(event) {
-            if (failed) {
-                return;
-            }
-
-            var stream = event.stream;
-
-            if (!stream) {
-                failed = true;
-                that._logger.warn('[%s] No remote stream', streamId);
-
-                return callback.call(that, undefined, 'failed');
-            }
-
-            that._logger.info('[%s] Got remote stream', streamId);
-
-            var mediaStream = {
-                createRenderer: function createRenderer() {
-                    var element = null;
-
-                    return {
-                        start: function start(elementToAttachTo) {
-                            element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
-
-                            that._renderer[streamId] = this;
-
-                            return element;
-                        },
-                        stop: function stop() {
-                            if (element) {
-                                element.pause();
-                            }
-
-                            delete that._renderer[streamId];
-
-                            element = null;
-                        },
-                        getStats: function getStats() {
-                            if (!element) {
-                                return {
-                                    width: 0,
-                                    height: 0,
-                                    currentTime: 0.0,
-                                    networkState: NetworkStates.NETWORK_NO_SOURCE
-                                }
-                            }
-
-                            return {
-                                width: element.videoWidth || element.width,
-                                height: element.videoHeight || element.height,
-                                currentTime: element.currentTime,
-                                networkState: element.networkState
-                            }
-                        },
-                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            this.dataQualityChangedCallback = callback;
-                        }
-                    };
-                },
-
-                setStreamEndedCallback: function setStreamEndedCallback(callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamEndedCallback = callback;
-                },
-
-                setStreamErrorCallback: function setStreamErrorCallback(callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamErrorCallback = callback;
-                },
-
-                stop: function stop(reason) {
-                    if (pc.signalingState !== 'closed') {
-                        pc.close();
-                    }
-
-                    var stream = event.stream;
-
-                    stopWebRTCStream(stream);
-
-                    if (stopped) {
-                        return;
-                    }
-
-                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
-                        if (error) {
-                            that._logger.error('[%s] failed to destroy stream', streamId);
-                            return;
-                        }
-
-                        that._logger.info('[%s] destroyed stream', streamId);
-                    });
-
-                    stopped = true;
-                },
-
-                monitor: function monitor(options, callback) {
-                    if (typeof options !== 'object') {
-                        throw new Error('"options" must be an object');
-                    }
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    var monitor = new PeerConnectionMonitor(streamId, pc, that._logger);
-
-                    options.direction = 'inbound';
-
-                    monitor.start(options, function activeCallback() {
-                        return that._mediaStreams[streamId] === mediaStream;
-                    }, function monitorCallback(reason) {
-                        that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
-
-                        return callback(mediaStream, 'client-side-failure', reason);
-                    });
-                },
-
-                getStream: function getStream() {
-                    return stream;
-                }
-            };
-
-            that._mediaStreams[streamId] = mediaStream;
-
-            callback.call(that, mediaStream);
-        };
-
         var onFailure = function onFailure() {
-            if (failed) {
+            if (state.failed) {
                 return;
             }
 
-            failed = true;
+            state.failed = true;
+            state.stopped = true;
+
             delete that._peerConnections[streamId];
 
             if (pc.signalingState !== 'closed') {
@@ -1103,8 +1193,6 @@ define('sdk/PhenixPCast', [
 
             callback.call(that, undefined, 'failed');
         };
-
-        phenixRTC.addEventListener(pc, 'addstream', onAddStream);
 
         function onSetRemoteDescriptionSuccess() {
             that._logger.debug('Set remote description (offer)');
@@ -1123,6 +1211,30 @@ define('sdk/PhenixPCast', [
                         that._logger.debug('Set local description (answer)');
                     }
 
+                    if (includes(response.options, 'ice-candidates')) {
+                        onIceCandidateCallback = function (candidate) {
+                            var candidates = [];
+                            var options = [];
+
+                            if (candidate) {
+                                candidates.push(candidate);
+                            } else {
+                                options.push('completed');
+                            }
+
+                            that._protocol.addIceCandidates(streamId, candidate, options, function (response, error) {
+                                if (error) {
+                                    that._logger.warn('Failed to add ICE candidate', error);
+                                    return;
+                                }
+
+                                if (includes(response.options, 'cancel')) {
+                                    onIceCandidateCallback = null;
+                                }
+                            });
+                        };
+                    }
+
                     var sessionDescription = new phenixRTC.RTCSessionDescription({
                         type: 'answer',
                         sdp: response.sessionDescription.sdp
@@ -1132,36 +1244,36 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, receivingConstraints);
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
+                mandatory: {
+                    OfferToReceiveVideo: options.receiveVideo !== false,
+                    OfferToReceiveAudio: options.receiveAudio !== false
+                }
+            });
         }
 
-        var onIceCandidate = function onIceCandidate(event) {
-            var candidate = event.candidate;
-
-            if (candidate) {
-                that._logger.debug('[%s] ICE candidate (viewer): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
-            } else {
-                that._logger.info('[%s] ICE candidate discovery complete (viewer)', streamId);
+        setupStreamAddedListener.call(that, streamId, state, pc, callback, options);
+        setupIceCandidateListener.call(that, streamId, pc, function onIceCandidate(candidate) {
+            if (onIceCandidateCallback) {
+                onIceCandidateCallback(candidate);
             }
-        };
-
-        phenixRTC.addEventListener(pc, 'icecandidate', onIceCandidate);
+        });
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
         pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, callback) {
+    function createLiveViewer(streamId, offerSdp, callback, options) {
         var that = this;
 
         var dashMatch = offerSdp.match('a=x-playlist:([^\n]*[.]mpd)');
         var hlsMatch = offerSdp.match('a=x-playlist:([^\n]*[.]m3u8)');
 
         if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback);
+            return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback);
+            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback, options);
         } else {
             that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
 
@@ -1169,7 +1281,7 @@ define('sdk/PhenixPCast', [
         }
     }
 
-    function createShakaLiveViewer(streamId, uri, callback){
+    function createShakaLiveViewer(streamId, uri, callback, options){
         var that = this;
 
         if (!that._shaka) {
@@ -1205,6 +1317,10 @@ define('sdk/PhenixPCast', [
                 return {
                     start: function start(elementToAttachTo) {
                         player = new shaka.Player(elementToAttachTo);
+
+                        if (options.receiveAudio === false) {
+                            elementToAttachTo.muted = true;
+                        }
 
                         that._renderer[streamId] = this;
 
@@ -1340,7 +1456,7 @@ define('sdk/PhenixPCast', [
         callback.call(that, mediaStream);
     }
 
-    function createHlsLiveViewer(streamId, uri, callback){
+    function createHlsLiveViewer(streamId, uri, callback, options){
         var that = this;
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -1363,6 +1479,10 @@ define('sdk/PhenixPCast', [
                     start: function start(elementToAttachTo) {
                         try {
                             elementToAttachTo.src = manifestUri;
+
+                            if (options.receiveAudio === false) {
+                                elementToAttachTo.muted = true;
+                            }
 
                             that._renderer[streamId] = this;
 
@@ -1513,6 +1633,24 @@ define('sdk/PhenixPCast', [
 
                 track.stop();
             }
+        }
+    }
+
+    function includes(array, value) {
+        if (!array) {
+            return false;
+        }
+
+        if (typeof array.indexOf === 'function') {
+            return array.indexOf(value) !== -1;
+        } else {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] === value) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
