@@ -1125,12 +1125,17 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
-                mandatory: {
-                    OfferToReceiveVideo: options.receiveVideo === true,
-                    OfferToReceiveAudio: options.receiveAudio === true
-                }
-            });
+            var mediaConstraints = {mandatory: {}};
+
+            if (phenixRTC.browser === 'Chrome') {
+                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo === true;
+                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio === true;
+            } else {
+                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo === true;
+                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio === true;
+            }
+
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
         setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
@@ -1244,12 +1249,17 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
-                mandatory: {
-                    OfferToReceiveVideo: options.receiveVideo !== false,
-                    OfferToReceiveAudio: options.receiveAudio !== false
-                }
-            });
+            var mediaConstraints = {mandatory: {}};
+
+            if (phenixRTC.browser === 'Chrome') {
+                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo !== false;
+                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio !== false;
+            } else {
+                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo !== false;
+                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio !== false;
+            }
+
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
         setupStreamAddedListener.call(that, streamId, state, pc, callback, options);

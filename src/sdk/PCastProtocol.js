@@ -184,7 +184,7 @@ define('sdk/PCastProtocol', [
                 throw new Error('"candidates[' + i + '].candidate" must be a string');
             }
             if (typeof candidate.sdpMLineIndex !== 'number') {
-                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a string');
+                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
             }
             if (typeof candidate.sdpMid !== 'string') {
                 throw new Error('"candidates[' + i + '].sdpMid" must be a string');

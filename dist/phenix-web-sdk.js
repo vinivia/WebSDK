@@ -507,7 +507,7 @@ define('sdk/PCastProtocol', [
                 throw new Error('"candidates[' + i + '].candidate" must be a string');
             }
             if (typeof candidate.sdpMLineIndex !== 'number') {
-                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a string');
+                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
             }
             if (typeof candidate.sdpMid !== 'string') {
                 throw new Error('"candidates[' + i + '].sdpMid" must be a string');
@@ -954,7 +954,7 @@ define('sdk/PhenixPCast', [
             }
         ]
     });
-    var sdkVersion = '2016-10-23T19:21:21Z';
+    var sdkVersion = '2016-10-25T15:46:00Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -2028,12 +2028,17 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
-                mandatory: {
-                    OfferToReceiveVideo: options.receiveVideo === true,
-                    OfferToReceiveAudio: options.receiveAudio === true
-                }
-            });
+            var mediaConstraints = {mandatory: {}};
+
+            if (phenixRTC.browser === 'Chrome') {
+                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo === true;
+                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio === true;
+            } else {
+                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo === true;
+                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio === true;
+            }
+
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
         setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
@@ -2147,12 +2152,17 @@ define('sdk/PhenixPCast', [
                 });
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, {
-                mandatory: {
-                    OfferToReceiveVideo: options.receiveVideo !== false,
-                    OfferToReceiveAudio: options.receiveAudio !== false
-                }
-            });
+            var mediaConstraints = {mandatory: {}};
+
+            if (phenixRTC.browser === 'Chrome') {
+                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo !== false;
+                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio !== false;
+            } else {
+                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo !== false;
+                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio !== false;
+            }
+
+            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
         setupStreamAddedListener.call(that, streamId, state, pc, callback, options);
