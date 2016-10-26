@@ -954,7 +954,7 @@ define('sdk/PhenixPCast', [
             }
         ]
     });
-    var sdkVersion = '2016-10-25T15:46:00Z';
+    var sdkVersion = '2016-10-26T17:03:41Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1819,6 +1819,7 @@ define('sdk/PhenixPCast', [
                 }
             ]
         });
+        var remoteMediaStream = null;
         var onIceCandidateCallback = null;
 
         that._peerConnections[streamId] = pc;
@@ -1977,15 +1978,15 @@ define('sdk/PhenixPCast', [
                                 });
                             },
 
-                            onRemoteMediaStream: function onRemoteMediaStream(callback) {
+                            setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
 
-                                this.onRemoteMediaStreamCallback = callback;
+                                this.remoteMediaStreamCallback = callback;
 
-                                if (this.remoteMediaStream) {
-                                    callback(this.remoteMediaStream);
+                                if (remoteMediaStream) {
+                                    callback(publisher, remoteMediaStream);
                                 }
                             }
                         };
@@ -2044,12 +2045,10 @@ define('sdk/PhenixPCast', [
         setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
-            if (publisher) {
-                publisher.remoteMediaStream = mediaStream;
+            remoteMediaStream = mediaStream;
 
-                if (publisher.onRemoteMediaStreamCallback) {
-                    publisher.onRemoteMediaStreamCallback(mediaStream);
-                }
+            if (publisher && publisher.remoteMediaStreamCallback) {
+                publisher.remoteMediaStreamCallback(publisher, mediaStream);
             }
         }, options);
 

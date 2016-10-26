@@ -916,6 +916,7 @@ define('sdk/PhenixPCast', [
                 }
             ]
         });
+        var remoteMediaStream = null;
         var onIceCandidateCallback = null;
 
         that._peerConnections[streamId] = pc;
@@ -1074,15 +1075,15 @@ define('sdk/PhenixPCast', [
                                 });
                             },
 
-                            onRemoteMediaStream: function onRemoteMediaStream(callback) {
+                            setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
 
-                                this.onRemoteMediaStreamCallback = callback;
+                                this.remoteMediaStreamCallback = callback;
 
-                                if (this.remoteMediaStream) {
-                                    callback(this.remoteMediaStream);
+                                if (remoteMediaStream) {
+                                    callback(publisher, remoteMediaStream);
                                 }
                             }
                         };
@@ -1141,12 +1142,10 @@ define('sdk/PhenixPCast', [
         setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
-            if (publisher) {
-                publisher.remoteMediaStream = mediaStream;
+            remoteMediaStream = mediaStream;
 
-                if (publisher.onRemoteMediaStreamCallback) {
-                    publisher.onRemoteMediaStreamCallback(mediaStream);
-                }
+            if (publisher && publisher.remoteMediaStreamCallback) {
+                publisher.remoteMediaStreamCallback(publisher, mediaStream);
             }
         }, options);
 
