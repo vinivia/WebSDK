@@ -17,7 +17,7 @@ const preferencesService = require('sdk/preferences/service');
 const pageMod = require('sdk/page-mod');
 const allowedDomainsPreferenceKey = 'media.getusermedia.screensharing.allowed_domains';
 const include = /.*phenixp2p.*/;
-const whiteListedDomains = ['phenixp2p.com', '*.phenixp2p.com'];
+const whiteListedDomains = ['phenixp2p.com', '*.phenixp2p.com', '*.jetwebinar.com'];
 
 function addWhiteListedDomainsToPreferences() {
     const domains = preferencesService.get(allowedDomainsPreferenceKey).replace(/\s/g, '').split(',');
