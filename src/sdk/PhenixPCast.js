@@ -859,7 +859,7 @@ define('sdk/PhenixPCast', [
                     options.direction = 'inbound';
 
                     monitor.start(options, function activeCallback() {
-                        return that._mediaStreams[streamId] === mediaStream;
+                        return that._mediaStreams[streamId] === mediaStream && !state.stopped;
                     }, function monitorCallback(reason) {
                         that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
 
@@ -869,6 +869,14 @@ define('sdk/PhenixPCast', [
 
                 getStream: function getStream() {
                     return stream;
+                },
+
+                isActive: function isActive() {
+                    return !state.stopped;
+                },
+
+                getStreamId: function getStreamId() {
+                    return streamId;
                 }
             };
 
@@ -970,6 +978,10 @@ define('sdk/PhenixPCast', [
                                 return streamId;
                             },
 
+                            isActive: function isActive() {
+                                return !state.stopped;
+                            },
+
                             hasEnded: function hasEnded() {
                                 switch (pc.iceConnectionState) {
                                     case 'new':
@@ -1067,7 +1079,7 @@ define('sdk/PhenixPCast', [
                                 options.direction = 'outbound';
 
                                 monitor.start(options, function activeCallback() {
-                                    return that._publishers[streamId] === publisher;
+                                    return that._publishers[streamId] === publisher && !state.stopped;
                                 }, function monitorCallback(reason) {
                                     that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, reason);
 
@@ -1347,6 +1359,7 @@ define('sdk/PhenixPCast', [
 
                         return elementToAttachTo;
                     },
+
                     stop: function stop() {
                         if (player) {
                             var streamEndedTriggered = false;
@@ -1380,6 +1393,7 @@ define('sdk/PhenixPCast', [
 
                         delete that._renderer[streamId];
                     },
+
                     getStats: function getStats() {
                         if (!player) {
                             return {
@@ -1406,6 +1420,7 @@ define('sdk/PhenixPCast', [
 
                         return stat;
                     },
+
                     setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                         if (typeof callback !== 'function') {
                             throw new Error('"callback" must be a function');
@@ -1413,8 +1428,17 @@ define('sdk/PhenixPCast', [
 
                         this.dataQualityChangedCallback = callback;
                     },
+
                     getPlayer: function getPlayer() {
                         return player;
+                    },
+
+                    isActive: function isActive() {
+                        return !stopped;
+                    },
+
+                    getStreamId: function getStreamId() {
+                        return streamId;
                     }
                 };
             },
@@ -1509,6 +1533,7 @@ define('sdk/PhenixPCast', [
                             }
                         }
                     },
+
                     stop: function stop() {
                         if (element) {
                             var streamEndedTriggered = false;
@@ -1543,6 +1568,7 @@ define('sdk/PhenixPCast', [
 
                         delete that._renderer[streamId];
                     },
+
                     getStats: function getStats() {
                         if (!element) {
                             return {
@@ -1560,6 +1586,7 @@ define('sdk/PhenixPCast', [
                             networkState: element.networkState
                         }
                     },
+
                     setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                         if (typeof callback !== 'function') {
                             throw new Error('"callback" must be a function');
@@ -1610,6 +1637,14 @@ define('sdk/PhenixPCast', [
                 if (typeof callback !== 'function') {
                     throw new Error('"callback" must be a function');
                 }
+            },
+
+            isActive: function isActive() {
+                return !stopped;
+            },
+
+            getStreamId: function getStreamId() {
+                return streamId;
             }
         };
 
