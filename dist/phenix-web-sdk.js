@@ -954,7 +954,7 @@ define('sdk/PhenixPCast', [
             }
         ]
     });
-    var sdkVersion = '2016-10-29T18:46:57Z';
+    var sdkVersion = '2016-10-31T22:28:11Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1630,10 +1630,7 @@ define('sdk/PhenixPCast', [
 
         var peerConnection = this._peerConnections[streamId];
 
-        if (peerConnection && peerConnection.signalingState !== 'closed') {
-            this._logger.info('[%s] close peer connection', streamId);
-            peerConnection.close();
-        }
+        closePeerConnection.call(this, streamId, peerConnection, 'ended');
 
         delete this._peerConnections[streamId];
     }
@@ -1725,10 +1722,6 @@ define('sdk/PhenixPCast', [
                 },
 
                 stop: function stop(reason) {
-                    if (peerConnection.signalingState !== 'closed') {
-                        peerConnection.close();
-                    }
-
                     var stream = event.stream;
 
                     stopWebRTCStream(stream);
@@ -1736,6 +1729,8 @@ define('sdk/PhenixPCast', [
                     if (state.stopped) {
                         return;
                     }
+
+                    closePeerConnection.call(that, streamId, peerConnection, 'stop');
 
                     that._protocol.destroyStream(streamId, reason || '', function (value, error) {
                         if (error) {
@@ -1818,7 +1813,7 @@ define('sdk/PhenixPCast', [
         };
         var hasCrypto = offerSdp.match(/a=crypto:/i);
         var hasDataChannel = offerSdp.match(/m=application /i);
-        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
+        var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
             'optional': [
                 {
                     DtlsSrtpKeyAgreement: !hasCrypto
@@ -1830,9 +1825,9 @@ define('sdk/PhenixPCast', [
         var remoteMediaStream = null;
         var onIceCandidateCallback = null;
 
-        that._peerConnections[streamId] = pc;
+        that._peerConnections[streamId] = peerConnection;
 
-        pc.addStream(mediaStream);
+        peerConnection.addStream(mediaStream);
 
         var onFailure = function onFailure() {
             if (state.failed) {
@@ -1844,9 +1839,7 @@ define('sdk/PhenixPCast', [
 
             delete that._peerConnections[streamId];
 
-            if (pc.signalingState !== 'closed') {
-                pc.close();
-            }
+            closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
             callback.call(that, undefined, 'failed');
         };
@@ -1886,7 +1879,7 @@ define('sdk/PhenixPCast', [
                             },
 
                             hasEnded: function hasEnded() {
-                                switch (pc.iceConnectionState) {
+                                switch (peerConnection.iceConnectionState) {
                                     case 'new':
                                     case 'checking':
                                     case 'connected':
@@ -1902,13 +1895,11 @@ define('sdk/PhenixPCast', [
                             },
 
                             stop: function stop(reason) {
-                                if (pc.signalingState !== 'closed') {
-                                    pc.close();
-                                }
-
                                 if (state.stopped) {
                                     return;
                                 }
+
+                                closePeerConnection.call(that, streamId, peerConnection, 'closed');
 
                                 that._protocol.destroyStream(streamId, reason || '', function (value, error) {
                                     if (error) {
@@ -1944,7 +1935,7 @@ define('sdk/PhenixPCast', [
                                 }
 
                                 var newLimit = limit ? Math.min(bandwidthLimit, limit) : bandwidthLimit;
-                                var remoteDescription = pc.remoteDescription;
+                                var remoteDescription = peerConnection.remoteDescription;
 
                                 that._logger.info('Changing bandwidth limit to [%s]', newLimit);
 
@@ -1960,11 +1951,11 @@ define('sdk/PhenixPCast', [
                                     sdp: updatedSdp
                                 });
 
-                                pc.setRemoteDescription(updatedRemoteDescription);
+                                peerConnection.setRemoteDescription(updatedRemoteDescription);
 
                                 return {
                                     dispose: function () {
-                                        pc.setRemoteDescription(remoteDescription);
+                                        peerConnection.setRemoteDescription(remoteDescription);
                                     }
                                 }
                             },
@@ -1977,7 +1968,7 @@ define('sdk/PhenixPCast', [
                                     throw new Error('"callback" must be a function');
                                 }
 
-                                var monitor = new PeerConnectionMonitor(streamId, pc, that._logger);
+                                var monitor = new PeerConnectionMonitor(streamId, peerConnection, that._logger);
 
                                 options.direction = 'outbound';
 
@@ -2037,7 +2028,7 @@ define('sdk/PhenixPCast', [
                         sdp: response.sessionDescription.sdp
                     });
 
-                    pc.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
                 });
             }
 
@@ -2051,10 +2042,10 @@ define('sdk/PhenixPCast', [
                 mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio === true;
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
+            peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, pc, function (mediaStream) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
             remoteMediaStream = mediaStream;
@@ -2064,7 +2055,7 @@ define('sdk/PhenixPCast', [
             }
         }, options);
 
-        setupIceCandidateListener.call(that, streamId, pc, function onIceCandidate(candidate) {
+        setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
             }
@@ -2072,7 +2063,7 @@ define('sdk/PhenixPCast', [
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
-        pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
+        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
     function createViewerPeerConnection(streamId, offerSdp, callback, options) {
@@ -2083,7 +2074,7 @@ define('sdk/PhenixPCast', [
         };
         var hasCrypto = offerSdp.match(/a=crypto:/i);
         var hasDataChannel = offerSdp.match(/m=application /i);
-        var pc = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
+        var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
             'optional': [
                 {
                     DtlsSrtpKeyAgreement: !hasCrypto
@@ -2094,7 +2085,7 @@ define('sdk/PhenixPCast', [
         });
         var onIceCandidateCallback = null;
 
-        that._peerConnections[streamId] = pc;
+        that._peerConnections[streamId] = peerConnection;
 
         var onFailure = function onFailure() {
             if (state.failed) {
@@ -2106,9 +2097,7 @@ define('sdk/PhenixPCast', [
 
             delete that._peerConnections[streamId];
 
-            if (pc.signalingState !== 'closed') {
-                pc.close();
-            }
+            closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
             callback.call(that, undefined, 'failed');
         };
@@ -2159,7 +2148,7 @@ define('sdk/PhenixPCast', [
                         sdp: response.sessionDescription.sdp
                     });
 
-                    pc.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
                 });
             }
 
@@ -2173,11 +2162,11 @@ define('sdk/PhenixPCast', [
                 mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio !== false;
             }
 
-            pc.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
+            peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, pc, callback, options);
-        setupIceCandidateListener.call(that, streamId, pc, function onIceCandidate(candidate) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, callback, options);
+        setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
             }
@@ -2185,7 +2174,7 @@ define('sdk/PhenixPCast', [
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
-        pc.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
+        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
     function createLiveViewer(streamId, offerSdp, callback, options) {
@@ -2598,6 +2587,14 @@ define('sdk/PhenixPCast', [
             }
 
             return false;
+        }
+    }
+
+    function closePeerConnection(streamId, peerConnection, reason) {
+        if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
+            this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
+            peerConnection.close();
+            peerConnection.__closing = true;
         }
     }
 
