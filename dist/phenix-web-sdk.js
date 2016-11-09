@@ -669,7 +669,8 @@ define('sdk/PeerConnectionMonitor', [
     var defaultMonitoringInterval = 4000;
     var defaultConditionMonitoringInterval = 1500;
     var defaultFrameRateThreshold = 2;
-    var defaultBitRateThreshold = 10000;
+    var defaultAudioBitRateThreshold = 5000;
+    var defaultVideoBitRateThreshold = 10000;
     var defaultConditionCountForNotificationThreshold = 3;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {
@@ -719,10 +720,13 @@ define('sdk/PeerConnectionMonitor', [
         var that = this;
         var conditionCount = 0;
         var frameRate = undefined;
-        var bitRate = undefined;
-        var lastBytesReceived = {time: Time.now(), value: 0};
+        var videoBitRate = undefined;
+        var audioBitRate = undefined;
+        var lastVideoBytes = {time: Time.now(), value: 0};
+        var lastAudioBytes = {time: Time.now(), value: 0};
         var frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
-        var bitRateFailureThreshold = options.bitRateThreshold || defaultBitRateThreshold;
+        var videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
+        var audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
         var conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
         var monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
         var conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
@@ -735,76 +739,126 @@ define('sdk/PeerConnectionMonitor', [
 
             getStats(peerConnection, selector, function successCallback(report) {
                 var hasFrameRate = false;
-                var hasBitRate = false;
+                var hasVideoBitRate = false;
+                var hasAudioBitRate = false;
+                var readable = false;
+                var writable = false;
 
                 function eachStats(stats, reportId) {
                     switch (phenixRTC.browser) {
                         case 'Firefox':
+                            writable = readable |= stats.selected && stats.state === 'succeeded';
+
                             if (options.direction === 'outbound' && stats.type === 'outboundrtp') {
-                                if (stats.framerateMean !== undefined) {
-                                    hasFrameRate = true;
-                                    frameRate = stats.framerateMean;
+                                var currentBytes = {
+                                    time: Time.now(),
+                                    value: stats.bytesSent || 0
+                                };
 
-                                    if (stats.bytesSent !== undefined) {
-                                        var currentBytesReceived = {
-                                            time: Time.now(),
-                                            value: stats.bytesSent
-                                        };
-
-                                        hasBitRate = true;
-                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                        lastBytesReceived = currentBytesReceived;
-                                    }
+                                switch (stats.mediaType) {
+                                    case 'video':
+                                        that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+                                            name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+                                        hasFrameRate = true;
+                                        frameRate = stats.framerateMean || 0;
+                                        hasVideoBitRate = true;
+                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
+                                        lastVideoBytes = currentBytes;
+                                        break;
+                                    case 'audio':
+                                        that._logger.debug('[%s] Outbound [%s] [%s]',
+                                            name, stats.mediaType, stats.ssrc);
+                                        hasAudioBitRate = true;
+                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
+                                        lastAudioBytes = currentBytes;
+                                        break;
                                 }
                             }
                             if (options.direction === 'inbound' && stats.type === 'inboundrtp') {
-                                if (stats.framerateMean !== undefined) {
-                                    // Inbound frame rate is not calculated
-                                    if (stats.bytesReceived !== undefined) {
-                                        var currentBytesReceived = {
-                                            time: Time.now(),
-                                            value: stats.bytesReceived
-                                        };
+                                var currentBytes = {
+                                    time: Time.now(),
+                                    value: stats.bytesReceived || 0
+                                };
 
-                                        hasBitRate = true;
-                                        bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                            / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                        lastBytesReceived = currentBytesReceived;
-                                    }
+                                switch (stats.mediaType) {
+                                    case 'video':
+                                        that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
+                                            name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+
+                                        // Inbound frame rate is not calculated correctly
+                                        // hasFrameRate = true;
+                                        // frameRate = stats.framerateMean || 0;
+                                        hasVideoBitRate = true;
+                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
+                                        lastVideoBytes = currentBytes;
+                                        break;
+                                    case 'audio':
+                                        that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
+                                            name, stats.mediaType, stats.ssrc, stats.jitter);
+                                        hasAudioBitRate = true;
+                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
+                                        lastAudioBytes = currentBytes;
+                                        break;
                                 }
                             }
                             break;
                         default:
-                            if (options.direction === 'outbound' && stats.googFrameRateSent !== undefined) {
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent;
+                            if (stats.googWritable === 'true') {
+                                writable = true;
+                            }
+                            if (stats.googReadable === 'true') {
+                                readable = true;
+                            }
+                            if (stats.type !== 'ssrc') {
+                                return;
+                            }
+                            if (options.direction === 'outbound') {
+                                var currentBytes = {
+                                    time: Time.now(),
+                                    value: stats.bytesSent || 0
+                                };
 
-                                if (stats.bytesSent !== undefined) {
-                                    var currentBytesReceived = {
-                                        time: Time.now(),
-                                        value: stats.bytesSent
-                                    };
-
-                                    hasBitRate = true;
-                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                    lastBytesReceived = currentBytesReceived;
+                                switch (stats.mediaType) {
+                                    case 'video':
+                                        that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+                                            name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+                                        hasFrameRate = true;
+                                        frameRate = stats.googFrameRateSent || 0;
+                                        hasVideoBitRate = true;
+                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
+                                        lastVideoBytes = currentBytes;
+                                        break;
+                                    case 'audio':
+                                        that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+                                            name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+                                        hasAudioBitRate = true;
+                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
+                                        lastAudioBytes = currentBytes;
+                                        break;
                                 }
-                            } else if (options.direction === 'inbound' && stats.googFrameRateReceived !== undefined) {
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived;
+                            } else if (options.direction === 'inbound') {
+                                var currentBytes = {
+                                    time: Time.now(),
+                                    value: stats.bytesReceived || 0
+                                };
 
-                                if (stats.bytesReceived !== undefined) {
-                                    var currentBytesReceived = {
-                                        time: Time.now(),
-                                        value: stats.bytesReceived
-                                    };
-
-                                    hasBitRate = true;
-                                    bitRate = (8 * (currentBytesReceived.value - lastBytesReceived.value))
-                                        / ((currentBytesReceived.time - lastBytesReceived.time) / 1000.0);
-                                    lastBytesReceived = currentBytesReceived;
+                                switch (stats.mediaType) {
+                                    case 'video':
+                                        that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+                                            name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+                                        hasFrameRate = true;
+                                        frameRate = stats.googFrameRateReceived || 0;
+                                        hasVideoBitRate = true;
+                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
+                                        lastVideoBytes = currentBytes;
+                                        break;
+                                    case 'audio':
+                                        that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+                                            name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+                                        hasAudioBitRate = true;
+                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
+                                        lastAudioBytes = currentBytes;
+                                        break;
                                 }
                             }
                             break;
@@ -821,11 +875,20 @@ define('sdk/PeerConnectionMonitor', [
                     }
                 }
 
-                if (hasFrameRate) {
-                    that._logger.debug('[%s] Current frame rate is [%s] FPS', name, frameRate);
+                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
+                    var medias = getMedias.call(that, peerConnection);
+
+                    hasVideoBitRate = hasVideoBitRate && medias.video && medias.video.enabled !== false;
+                    hasAudioBitRate = hasAudioBitRate && medias.audio && medias.audio.enabled !== false;
+                    hasFrameRate = hasFrameRate && medias.video && medias.video.enabled !== false;
+
+                    readable = readable || !(medias.video && medias.video.enabled !== false || medias.audio && medias.audio.enabled !== false);
+                    writable = writable || !(medias.video && medias.video.enabled !== false || medias.audio && medias.audio.enabled !== false);
                 }
-                if (hasBitRate) {
-                    that._logger.debug('[%s] Current bit rate is [%s] bps', name, Math.ceil(bitRate));
+
+                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
+                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
+                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
                 }
 
                 if (!activeCallback()) {
@@ -837,22 +900,41 @@ define('sdk/PeerConnectionMonitor', [
                     && (peerConnection.connectionState === 'closed'
                     || peerConnection.connectionState === 'failed'
                     || peerConnection.iceConnectionState === 'failed')) {
-                    conditionCount++;
-                } else if (monitorFrameRate && frameRate !== undefined && !hasFrameRate) {
+                    var medias = getMedias.call(that, peerConnection);
+                    var active = 0;
+                    var inactive = 0;
+
+                    for (var id in medias) {
+                        var media = medias[id];
+
+                        if (media && media.enabled !== false) {
+                            active++;
+                        } else {
+                            inactive++;
+                        }
+                    }
+
+                    if (active === 0 && inactive > 0) {
+                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, inactive);
+                        return;
+                    }
+
                     conditionCount++;
                 } else if (monitorFrameRate && hasFrameRate && frameRate <= frameRateFailureThreshold) {
                     conditionCount++;
-                } else if (monitorBitRate && bitRate !== undefined && !hasBitRate) {
+                } else if (monitorBitRate && hasAudioBitRate && audioBitRate <= audioBitRateFailureThreshold) {
                     conditionCount++;
-                } else if (monitorBitRate && hasBitRate && bitRate <= bitRateFailureThreshold) {
+                } else if (monitorBitRate && hasVideoBitRate && videoBitRate <= videoBitRateFailureThreshold) {
+                    conditionCount++;
+                } else if (!readable || !writable) {
                     conditionCount++;
                 } else {
                     conditionCount = 0;
                 }
 
                 if (conditionCount >= conditionCountForNotificationThreshold) {
-                    if (!monitorCallback('condition', frameRate, bitRate)) {
-                        that._logger.error('[%s] Failure detected with frame rate [%s] FPS and bit rate [%s] bps: [%s]', name, frameRate, bitRate, report);
+                    if (!monitorCallback('condition', frameRate, videoBitRate, audioBitRate)) {
+                        that._logger.error('[%s] Failure detected with frame rate [%s] FPS and bit rate [%s/%s] bps: [%s]', name, frameRate, audioBitRate, videoBitRate, report);
                     } else {
                         // Failure is acknowledged and muted
                         conditionCount = Number.MIN_VALUE;
@@ -914,6 +996,37 @@ define('sdk/PeerConnectionMonitor', [
         }
     }
 
+    function getMedias(peerConnection) {
+        var medias = {};
+        var localSections = peerConnection.localDescription.sdp.split('m=');
+        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
+
+        if (localSections.length !== remoteSections.length) {
+            return {};
+        }
+
+        for (var i = 1; i < localSections.length; i++) {
+            var section = localSections[i];
+
+            if (section.startsWith('audio')) {
+                medias.audio = {
+                    enabled: section.indexOf('a=inactive') === -1 && remoteSections[i].indexOf('a=inactive') === -1
+                }
+            } else if (section.startsWith('video')) {
+                medias.video = {
+                    enabled: section.indexOf('a=inactive') === -1 && remoteSections[i].indexOf('a=inactive') === -1
+                }
+            }
+        }
+
+        return medias;
+    }
+
+    function calculateBitRate(currentBytes, lastBytes) {
+        return (8 * (currentBytes.value - lastBytes.value))
+            / ((currentBytes.time - lastBytes.time) / 1000.0);
+    }
+
     return PeerConnectionMonitor;
 });
 define('sdk/PhenixPCast', [
@@ -954,7 +1067,7 @@ define('sdk/PhenixPCast', [
             }
         ]
     });
-    var sdkVersion = '2016-11-09T03:31:35Z';
+    var sdkVersion = '2016-11-09T21:37:15Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
