@@ -889,9 +889,9 @@ define('sdk/PhenixPCast', [
             var candidate = event.candidate;
 
             if (candidate) {
-                that._logger.debug('[%s] ICE candidate (publisher): [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+                that._logger.debug('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
-                that._logger.info('[%s] ICE candidate discovery complete (publisher)', streamId);
+                that._logger.info('[%s] ICE candidate discovery complete', streamId);
             }
 
             if (callback) {
@@ -900,6 +900,31 @@ define('sdk/PhenixPCast', [
         };
 
         phenixRTC.addEventListener(peerConnection, 'icecandidate', onIceCandidate);
+    }
+
+    function setupStateListener(streamId, peerConnection) {
+        var that = this;
+        var onNegotiationNeeded = function onNegotiationNeeded(event) {
+            that._logger.info('[%s] Negotiation needed');
+        };
+        var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) {
+            that._logger.info('[%s] ICE connection state changed [%s]', streamId, peerConnection.iceConnectionState);
+        };
+        var onIceGatheringStateChanged = function onIceGatheringStateChanged(event) {
+            that._logger.info('[%s] ICE gathering state changed [%s]', streamId, peerConnection.iceGatheringState);
+        };
+        var onSignalingStateChanged = function onSignalingStateChanged(event) {
+            that._logger.info('[%s] Signaling state changed [%s]', streamId, peerConnection.signalingState);
+        };
+        var onConnectionStateChanged = function onConnectionStateChanged(event) {
+            that._logger.info('[%s] Connection state changed [%s]', streamId, peerConnection.connectionState);
+        };
+
+        phenixRTC.addEventListener(peerConnection, 'negotiationneeded', onNegotiationNeeded);
+        phenixRTC.addEventListener(peerConnection, 'iceconnectionstatechange', onIceConnectionStateChanged);
+        phenixRTC.addEventListener(peerConnection, 'icegatheringstatechange ', onIceGatheringStateChanged);
+        phenixRTC.addEventListener(peerConnection, 'signalingstatechange', onSignalingStateChanged);
+        phenixRTC.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
     }
 
     function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options) {
@@ -1151,12 +1176,12 @@ define('sdk/PhenixPCast', [
                 publisher.remoteMediaStreamCallback(publisher, mediaStream);
             }
         }, options);
-
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
             }
         });
+        setupStateListener.call(that, streamId, peerConnection);
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
@@ -1268,6 +1293,7 @@ define('sdk/PhenixPCast', [
                 onIceCandidateCallback(candidate);
             }
         });
+        setupStateListener.call(that, streamId, peerConnection);
 
         var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
 
