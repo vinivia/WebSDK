@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PeerConnectionMonitor', [
-        'sdk/Time',
+define([
+        './Time',
         'phenix-rtc'
 ], function (Time, phenixRTC) {
     'use strict';

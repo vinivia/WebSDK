@@ -20,24 +20,19 @@ console.log('Using version', version);
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-sed');
+    grunt.loadNpmTasks('grunt-webpack');
     grunt.loadNpmTasks('grunt-zip');
 
-    grunt.registerTask('default', [ ]);
-    grunt.registerTask('build', [ 'default', 'clean', 'concat', 'copy:chrome-app', 'sed', 'uglify', 'zip' ]);
+    grunt.registerTask('default', []);
+    grunt.registerTask('pack', ['uglify', 'zip']);
+    grunt.registerTask('build', ['default', 'clean', 'copy:chrome-app', 'webpack', 'sed', 'pack']);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        clean: [ 'build' ],
-        concat: {
-            rtc: {
-                src: [ 'src/sdk/**/*.js', 'src/main.js' ],
-                dest: 'dist/phenix-web-sdk.js'
-            }
-        },
+        clean: ['build'],
         copy: {
             'chrome-app': {
                 files: [
@@ -58,18 +53,63 @@ module.exports = function (grunt) {
                 path: 'dist'
             }
         },
-        uglify: {
-            minify: {
-                files: {
-                    'dist/phenix-web-sdk.min.js': [ 'dist/phenix-web-sdk.js' ]
-                }
-            }
-        },
         zip: {
             'dist/pcast-chrome-app.zip': {
                 cwd: 'dist/pcast-screen-sharing/',
                 src: ['dist/pcast-screen-sharing/**'],
                 dest: 'dist/pcast-screen-sharing.zip'
+            }
+        },
+        webpack: {
+            'phenix-web-sdk': {
+                context: __dirname + '/src',
+                entry: './web-sdk',
+                externals: [
+                    {
+                        'phenix-rtc': true,
+                        'protobuf': true,
+                        'ByteBuffer': true
+                    }
+                ],
+                output: {
+                    libraryTarget: 'umd',
+                    path: __dirname + '/dist',
+                    filename: 'phenix-web-sdk.js'
+                },
+                resolve: {
+                    modulesDirectories: ['3p', 'node_modules']
+                }
+            },
+            'phenix-web-sdk-full': {
+                context: __dirname + '/src',
+                entry: './web-sdk',
+                externals: [
+                    {
+                        'ByteBuffer': {
+                            root: 'bytebuffer'
+                        },
+                        'Long': {
+                            root: 'long'
+                        },
+			'fs': undefined
+                    }
+                ],
+                output: {
+                    libraryTarget: 'umd',
+                    path: __dirname + '/dist',
+                    filename: 'phenix-web-sdk-full.js'
+                },
+                resolve: {
+                    modulesDirectories: ['3p', 'node_modules']
+                }
+            }
+        },
+        uglify: {
+            minify: {
+                files: {
+                    'dist/phenix-web-sdk.min.js': ['dist/phenix-web-sdk.js'],
+                    'dist/phenix-web-sdk-full.min.js': ['dist/phenix-web-sdk-full.js']
+                }
             }
         }
     });

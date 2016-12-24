@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PCastEndPoint', [
-    'sdk/Time'
+define([
+    './Time'
 ], function (Time) {
     'use strict';
 
