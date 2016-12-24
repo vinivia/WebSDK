@@ -16,8 +16,8 @@
 'use strict';
 
 define('phenix-web-sdk', [
-    'sdk/PhenixPCast',
-    'sdk/Logger'
+    './sdk/PhenixPCast',
+    './sdk/Logger'
 ], function (PhenixPCast, Logger) {
     window.PhenixPCast = PhenixPCast;
 
