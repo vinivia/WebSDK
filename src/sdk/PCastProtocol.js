@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PCastProtocol', [
-        'sdk/MQProtocol',
+define([
+        './MQProtocol',
         'ByteBuffer',
         'phenix-rtc'
     ], function (MQProtocol, ByteBuffer, phenixRTC) {
