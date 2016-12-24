@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PhenixPCast', [
-        'sdk/PCastProtocol',
-        'sdk/PCastEndPoint',
-        'sdk/PeerConnectionMonitor',
-        'sdk/Time',
-        'sdk/Logger',
+define([
+        './PCastProtocol',
+        './PCastEndPoint',
+        './PeerConnectionMonitor',
+        './Time',
+        './Logger',
         'phenix-rtc'
 ], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
     'use strict';
