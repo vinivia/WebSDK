@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PhenixPCast', [
-        'sdk/PCastProtocol',
-        'sdk/PCastEndPoint',
-        'sdk/PeerConnectionMonitor',
-        'sdk/Time',
-        'sdk/Logger',
+define([
+        './PCastProtocol',
+        './PCastEndPoint',
+        './PeerConnectionMonitor',
+        './Time',
+        './Logger',
         'phenix-rtc'
 ], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
     'use strict';
@@ -333,7 +333,7 @@ define('sdk/PhenixPCast', [
     };
 
     PhenixPCast.prototype.toString = function () {
-        return 'PhenixPCast[' + this._sessionId + ',' + this._protocol.toString() + ']';
+        return 'PhenixPCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
     };
 
     function checkForScreenSharingCapability(callback) {
