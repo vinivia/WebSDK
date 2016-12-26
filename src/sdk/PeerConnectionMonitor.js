@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define('sdk/PeerConnectionMonitor', [
-        'sdk/Time',
+define([
+        './Time',
         'phenix-rtc'
 ], function (Time, phenixRTC) {
     'use strict';
@@ -23,7 +23,7 @@ define('sdk/PeerConnectionMonitor', [
     var defaultConditionMonitoringInterval = 1500;
     var defaultFrameRateThreshold = 2;
     var defaultAudioBitRateThreshold = 5000;
-    var defaultVideoBitRateThreshold = 10000;
+    var defaultVideoBitRateThreshold = 6000;
     var defaultConditionCountForNotificationThreshold = 3;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {

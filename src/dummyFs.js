@@ -15,14 +15,6 @@
  */
 'use strict';
 
-define('phenix-web-sdk', [
-    'sdk/PhenixPCast',
-    'sdk/Logger'
-], function (PhenixPCast, Logger) {
-    window.PhenixPCast = PhenixPCast;
-
-    return {
-        PCast: PhenixPCast,
-        Logger: Logger
-    };
+define('fs', [], function () {
+    return {};
 });
