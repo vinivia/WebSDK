@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web SDK Tests" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$USER_HOME$/.nvm/v4.4.5/bin/node" path-to-js-file="scripts/ci-test.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Web SDK Tests" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$USER_HOME$/.nvm/v6.9.4/bin/node" path-to-js-file="scripts/ci-test.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="NODE_ENV" value="development" />
       <env name="PHENIX_APPLICATION_ID" value="test" />
