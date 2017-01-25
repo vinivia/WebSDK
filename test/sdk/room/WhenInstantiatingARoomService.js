@@ -1,0 +1,560 @@
+/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+define([
+    'sdk/room/RoomService',
+    'sdk/room/Room',
+    'sdk/room/Member',
+    'sdk/room/room.json',
+    'sdk/room/member.json',
+    'sdk/room/stream.json',
+    'sdk/room/track.json',
+    '../../../test/mock/mockPCast'
+], function (RoomService, Room, Member, room, member, stream, track, MockPCast) {
+    var pcast;
+    var mockProtocol;
+    var roomService;
+    var response;
+    var baseURI;
+
+    var mockTrack = { enabled: 'true', state:track.states.trackEnabled.name };
+    var stream1 = {type: stream.types.user.name, uri: baseURI+'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name, getTracks: function () { return [mockTrack]; }};
+    var member1 = {state: member.states.passive.name, sessionId: 'member1',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'first'};
+    var mockRoom = {roomId:'TestRoom123',alias:'',name:'',description:'',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, getRoomId:function () { return room.roomId; }, members:[member1]};
+    var self = {state: member.states.passive.name, sessionId: 'mockSessionId',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'self'};
+
+    var name = 'testRoom';
+    var type = room.types.multiPartyChat.name;
+    var description = 'MyRoom';
+    var screenName = 'MyRoom';
+    var roomId = '';
+    var alias = '';
+    var role = member.roles.presenter.name;
+
+    describe('When instantiating a RoomService', function () {
+        beforeEach(function () {
+            pcast = new MockPCast();
+
+            mockProtocol = pcast.getProtocol();
+            mockProtocol.getSessionId = function(){ return 'mockSessionId'; };
+
+            baseURI = pcast._baseUri;
+
+            roomService = new RoomService(pcast);
+
+            response = {
+                status: 'ok',
+                room: mockRoom,
+                members: [member1,self]
+            };
+
+            mockProtocol.enterRoom.restore();
+            mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                callback(response, null);
+            });
+
+            mockProtocol.leaveRoom.restore();
+            mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
+                callback(response, null);
+            });
+
+            mockProtocol.createRoom.restore();
+            mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom', function (roomName, type, description, callback) {
+                callback(response, null);
+            });
+
+            mockProtocol.updateMember.restore();
+            mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                callback(response, null);
+            });
+
+            mockProtocol.updateRoom.restore();
+            mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (room, timestamp, callback) {
+                callback(response, null);
+            });
+        });
+
+        afterEach(function () {
+            if (roomService) {
+                roomService.stop();
+            }
+
+            self.sessionId = 'mockSessionId';
+        });
+
+        it('Has property createRoom that is a function', function () {
+            expect(roomService.createRoom).to.be.a('function');
+        });
+
+        it('Has property enterRoom that is a function', function () {
+            expect(roomService.enterRoom).to.be.a('function');
+        });
+
+        it('Has property leaveRoom that is a function', function () {
+            expect(roomService.leaveRoom).to.be.a('function');
+        });
+
+        it('Room is successfully initialized on init', function () {
+            roomService.start(role, screenName);
+
+            expect(roomService._self).to.be.a('object');
+        });
+
+        describe('When Room does not exist', function () {
+            it('Returns no roomChatService', function () {
+                var roomChatService = roomService.getRoomChatService();
+
+                expect(roomChatService).to.be.equal(null);
+            });
+
+            it('No Error thrown on getRoomInfo', function () {
+                mockProtocol.getRoomInfo = function (roomId, alias, callback) {
+                    response.status = 'no-room';
+                    response.reason = 'failure';
+
+                    callback(response, null);
+                };
+
+                roomService.getRoomInfo('', 'alias', function (room, status, reason) {
+                    expect(room).to.be.a('object');
+                    expect(status).to.be.equal('no-room');
+                    expect(reason).to.be.equal('failure');
+                });
+            });
+
+            it('Room is successfully created on createRoom', function () {
+                roomService.start(role, screenName);
+
+                roomService.createRoom(name, type, description, function (createdRoom) {
+                    expect(createdRoom).to.be.equal(mockRoom);
+                }, screenName);
+            });
+
+            it('Error thrown on createRoom when protocol returns error status', function () {
+                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                    response.status = 'error';
+                    response.reason = 'Error creating room';
+
+                    callback(response, null);
+                };
+
+                roomService.start(role, screenName);
+
+                expect(function () {
+                    roomService.createRoom(name, type, description, function () { }, screenName)
+                }).to.throw(Error);
+            });
+
+            it('Error thrown on enterRoom', function () {
+                mockProtocol.enterRoom = function (roomId, alias, selfForRequest, timestamp, callback) {
+                    response.status = 'Error: room does not exist';
+
+                    callback(response, null);
+                };
+
+                roomService.start(role, screenName);
+
+                expect(function () {
+                    roomService.enterRoom(roomId, alias, function () {})
+                }).to.throw(Error);
+            });
+
+            it('Error thrown on leaveRoom', function () {
+                mockProtocol.leaveRoom = function (roomId, timestamp, callback) {
+                    response.status = 'Error: room does not exist';
+
+                    callback(response, null);
+                };
+
+                roomService.start(role, screenName);
+
+                expect(function () {
+                    roomService.enterRoom('', '', function () {
+                        roomService.leaveRoom(function () {})
+                    })
+                }).to.throw(Error);
+            });
+        });
+
+        describe('When Room does exist', function () {
+            it('Returns room on getRoomInfo', function () {
+                mockProtocol.getRoomInfo = function (roomId, alias, callback) {
+                    response.status = 'ok';
+
+                    callback(response, null);
+                };
+
+                roomService.getRoomInfo('', 'alias', function (room, status) {
+                    expect(room).to.be.a('object');
+                    expect(status).to.be.equal('ok');
+                });
+            });
+
+            it('No Error thrown on createRoom', function () {
+                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                    response.status = 'already-exists';
+
+                    callback(response, null);
+                };
+
+                roomService.start(role, screenName);
+
+                expect(function () {
+                    roomService.createRoom(name, type, description, function () { }, screenName)
+                }).to.not.throw();
+            });
+
+            it('Return new Room model with response.room values', function () {
+                roomService.start(role, screenName);
+
+                roomService.enterRoom(roomId, alias, function (enteredRoom) {
+                    expect(enteredRoom.getRoomId()).to.be.equal(mockRoom.roomId);
+                    expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
+                });
+            });
+
+            it('Self in enterRoomRequest should have all values', function () {
+                mockProtocol.enterRoom.restore();
+                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                    expect(selfForRequest.sessionId).to.be.a('string');
+                    expect(selfForRequest.screenName).to.be.a('string');
+                    expect(selfForRequest.role).to.be.a('string');
+                    expect(selfForRequest.state).to.be.a('string');
+                    expect(selfForRequest.streams).to.be.a('array');
+                    expect(selfForRequest.lastUpdate).to.be.a('number');
+                });
+
+                roomService.start(role, screenName);
+
+                roomService.enterRoom(roomId, alias, function (enteredRoom) {
+                    expect(enteredRoom.getRoomId()).to.be.equal(mockRoom.roomId);
+                    expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
+                });
+            });
+
+            describe('When already in room', function () {
+                var onRoomEvent;
+                var on;
+
+                var member2 = {state: member.states.passive.name, sessionId: 'member2', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'second'};
+
+                beforeEach(function (done) {
+                    response.members = [member1, member2, self];
+                    response.room.members = [member1, member2, self];
+
+                    mockProtocol.on.restore();
+                    mockProtocol.on = sinon.stub(mockProtocol, 'on', function (eventName, roomEventHandler) {
+                        onRoomEvent = roomEventHandler;
+                    });
+
+                    roomService.start(role, screenName);
+
+                    roomService.enterRoom(roomId, alias, function () {
+                        done();
+                    });
+                });
+
+                it('Success on leaveRoom', function () {
+                    roomService.leaveRoom(function (status) {
+                        expect(status).to.be.equal('ok');
+                    });
+                });
+
+                it('Self is the same in members list', function () {
+                    var self = roomService.getSelf();
+                    var room = roomService.getObservableActiveRoom().getValue();
+                    var memberListSelf = room.getObservableMembers().getValue()[2];
+
+                    expect(self).to.be.equal(memberListSelf);
+                });
+
+                describe('When onRoomEvent occurs', function () {
+                    it('MemberJoined event adds member to room', function () {
+                        var member3 = {state: member.states.passive.name, sessionId: 'member3', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'third'};
+                        var event = {eventType: room.events.memberJoined.name, roomId: 'TestRoom123', members: [member1, member2, member3]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(4);
+                    });
+
+                    it('MemberLeft event handled removes member from room', function () {
+                        var event = {eventType: room.events.memberLeft.name, roomId: 'TestRoom123', members: [member2]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
+                    });
+
+                    it('MemberLeft event for self removes member from room', function () {
+                        var event = {eventType: room.events.memberLeft.name, roomId: 'TestRoom123', members: [self]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
+                    });
+
+                    it('MemberUpdated event updates room member screenName', function () {
+                        var updatedMember2 = {state: member.states.passive.name, sessionId: 'member2', screenName: 'James', role: member.roles.participant.name, streams: [stream1], lastUpdate: 125};
+                        var event = {eventType: room.events.memberUpdated.name, roomId: 'TestRoom123', members: [updatedMember2]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(3);
+
+                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function (member) {
+                            return member.getSessionId() === 'member2';
+                        });
+
+                        expect(updatedMemberModel._screenName.getValue()).to.be.equal('James');
+                    });
+
+                    it('MemberUpdated event updates self screenName', function () {
+                        var newSelf = {state: member.states.passive.name, sessionId: mockProtocol.getSessionId(), screenName: 'NewScreenName', role: member.roles.participant.name, streams: [stream1], lastUpdate: 125};
+                        var event = {eventType: room.events.memberUpdated.name, roomId: 'TestRoom123', members: [newSelf]};
+
+                        onRoomEvent(event);
+
+                        var self = roomService.getSelf();
+
+                        expect(self._screenName.getValue()).to.be.equal('NewScreenName');
+                    });
+
+                    it('Updated (room) event updates room name', function () {
+                        var updatedRoom = {roomId: 'TestRoom123', alias: '', name: 'TestRoom', description: '', bridgeId: '', pin: '', type: ''};
+                        var event = {eventType: room.events.roomUpdated.name, roomId: 'TestRoom123', room: updatedRoom, members: [member1, member2]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom._name.getValue()).to.be.equal('TestRoom');
+                    });
+
+                    it('DISABLED: Ended (room) event handled successfully', function () {
+                        this.skip();
+                        var event = {eventType: room.events.roomEnded.name, roomId: 'TestRoom123', room: mockRoom, members: [member1, member2]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+
+                        expect(currentRoom._name.getValue()).to.be.equal('TestRoom');
+                    });
+                });
+
+                describe('When Member Updated (memberUpdate) triggered', function () {
+                    var publishedStream1 = {type:'User', uri: 'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name};
+                    var publishedStream2 = {type:'User', uri: 'Stream2', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name};
+                    var self;
+
+                    beforeEach(function () {
+                        self = roomService.getSelf();
+
+                        self.setStreams([publishedStream1]);
+                    });
+
+                    it('Published Streams updated with 2 streams results in request with 2 streams', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                            expect(member.streams.length).to.be.equal(2);
+                            callback(response, null);
+                            done();
+                        });
+
+                        var publishedStreams = self.getStreams();
+
+                        publishedStreams.push(publishedStream2);
+                        self.setStreams(publishedStreams);
+
+                        roomService.updateSelf(function () {});
+                    });
+
+                    it('Published Streams updated with no streams results in request with no streams', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                            expect(member.streams.length).to.be.equal(0);
+                            callback(response, null);
+                            done();
+                        });
+
+                        self.setStreams([]);
+
+                        roomService.updateSelf(function () {});
+                    });
+
+                    it('Screen Name Updated results in request with updated screen name', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                            expect(member.screenName).to.be.equal('MyNewScreenName');
+                            callback(response, null);
+                            done();
+                        });
+
+                        var screenNameObs = self.getObservableScreenName();
+
+                        screenNameObs.setValue('MyNewScreenName');
+
+                        roomService.updateSelf(function () {});
+                    });
+
+                    it('Screen Name Updated does not include state property when state has not changed', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                            expect(member.state).to.be.undefined;
+                            done();
+                        });
+
+                        var screenNameObs = self.getObservableScreenName();
+
+                        screenNameObs.setValue('MyNewScreenName');
+
+                        roomService.updateSelf(function () {});
+                    });
+
+                    it('Role Updated results in request with updated role when valid role passed in', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
+                            expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
+                            callback(response, null);
+                            done();
+                        });
+
+                        var roleObs = self.getObservableRole();
+
+                        roleObs.setValue(member.roles.presenter.name);
+
+                        roomService.updateSelf(function () {});
+                    });
+
+                    it('Role Updated results in exception when invalid role passed in', function () {
+                        var stateObs = self.getObservableRole();
+
+                        expect(function () {
+                            stateObs.setValue('MasterOfNone');
+
+                            roomService.updateSelf(function () {});
+                        }).to.throw(Error);
+                    });
+                });
+
+                describe('When reverting changes on member', function () {
+                    it('Changes to member screenName are reverted successfully to cached value', function () {
+                        var room = roomService.getObservableActiveRoom().getValue();
+                        var cachedRoom = roomService._cachedRoom.getValue();
+
+                        var member = room.getObservableMembers().getValue()[0];
+                        var cachedMember = cachedRoom.getObservableMembers().getValue()[0];
+
+                        member.getObservableScreenName().setValue('newScreenName');
+
+                        roomService.revertMemberChanges(member);
+
+                        expect(member.getObservableScreenName().getValue()).to.be.equal(cachedMember.getObservableScreenName().getValue());
+                    })
+                });
+
+                describe('When Updating Room', function () {
+                    var room;
+
+                    beforeEach(function () {
+                        room = roomService.getObservableActiveRoom().getValue();
+                    });
+
+                    it('Update description yields change in description value on cached room', function () {
+                        mockProtocol.updateRoom.restore();
+                        mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (roomToUpdate, timestamp, callback) {
+                            expect(roomToUpdate.description).to.be.equal('newDescription');
+
+                            callback(response, null);
+                        });
+
+                        var descriptionObs = room.getObservableDescription();
+
+                        descriptionObs.setValue('newDescription');
+                        response.room.description = 'newDescription';
+
+                        roomService.updateRoom(function (status, error) {});
+                    });
+                });
+
+                describe('When reverting Room Changes', function () {
+                    var room;
+
+                    beforeEach(function () {
+                        room = roomService.getObservableActiveRoom().getValue();
+                    });
+
+                    it('Changes to description are reverted to cached value', function () {
+                        var descriptionObs = room.getObservableDescription();
+
+                        descriptionObs.setValue('newDescription');
+
+                        roomService.revertRoomChanges();
+
+                        expect(descriptionObs.getValue()).to.be.equal(mockRoom.description);
+                    })
+                });
+
+                describe('When Streams updated', function () {
+                    it('Role Updated results in request with updated role when valid role passed in', function (done) {
+                        mockProtocol.updateMember.restore();
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
+                            expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
+                            callback(response, null);
+                            done();
+                        });
+
+                        var roleObs = roomService.getSelf().getObservableRole();
+
+                        roleObs.setValue(member.roles.presenter.name);
+
+                        roomService.updateSelf(function () {});
+                    });
+                });
+
+                describe('When Session Id updated', function () {
+                    it('Session Id update causes member to leave and then enter room', function (done) {
+                        mockProtocol.enterRoom.restore();
+                        mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                            sinon.assert.calledOnce(mockProtocol.leaveRoom);
+                            sinon.assert.calledOnce(mockProtocol.enterRoom);
+                            callback(response, null);
+                            done();
+                        });
+
+                        mockProtocol.leaveRoom.restore();
+                        mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
+                            callback(response, null);
+                        });
+
+                        response.members[2].sessionId = 'NewSessionId';
+                        response.room.members[2].sessionId = 'NewSessionId';
+
+                        pcast.getProtocol().getSessionId = function() {return 'NewSessionId';};
+                    });
+                });
+            });
+        });
+    });
+});

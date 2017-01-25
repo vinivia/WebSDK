@@ -53,6 +53,7 @@ module.exports = function (config) {
             {pattern: '3p/**/*.js', included: false},
             {pattern: 'src/**/*.js', included: false},
             {pattern: 'test/**/When*.js', included: false},
+            {pattern: 'test/mock/*.js', included: false},
             'test/test-runner.js'
         ],
 

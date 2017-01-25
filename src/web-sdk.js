@@ -18,12 +18,18 @@
 define('phenix-web-sdk', [
     'phenix-rtc',
     './sdk/PhenixPCast',
+    './sdk/room/RoomService',
+    './sdk/audio/AudioSpeakerDetector',
+    './sdk/bandwidth/BandwidthMonitor',
     './sdk/Logger'
-], function (rtc, PhenixPCast, Logger) {
+], function (rtc, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, Logger) {
     window.PhenixPCast = PhenixPCast;
 
     return {
         PCast: PhenixPCast,
+        RoomService: RoomService,
+        AudioSpeakerDetector: AudioSpeakerDetector,
+        BandwidthMonitor: BandwidthMonitor,
         Logger: Logger,
         RTC: rtc
     };

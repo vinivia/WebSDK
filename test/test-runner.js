@@ -18,11 +18,11 @@
 var tests = [];
 var TEST_REGEXP = /\/When[^\/].*\.js$/i;
 
-var pathToModule = function(path) {
+var pathToModule = function (path) {
     return '../' + path.replace(/^\/base\//, '').replace(/\.js$/, '');
 };
 
-Object.keys(window.__karma__.files).forEach(function(file) {
+Object.keys(window.__karma__.files).forEach(function (file) {
     if (TEST_REGEXP.test(file)) {
         // Normalize paths to RequireJS module names.
         tests.push(pathToModule(file));
@@ -44,13 +44,12 @@ require.config({
         'chai-as-promised': '../3p/chai-as-promised/lib/chai-as-promised',
         jquery: '../3p/jquery/dist/jquery.min',
         lodash: '../3p/lodash/dist/lodash.min',
-        long: '../3p/long/dist/long',
+        Long: '../3p/long/dist/long',
         'phenix-rtc': '../3p/phenix-rtc/dist/phenix-rtc',
         protobuf: '../3p/protobuf/dist/ProtoBuf',
         'sinon': '../3p/sinon/lib/sinon',
         'sinon-chai': '../3p/sinon-chai/lib/sinon-chai',
         ByteBuffer: '../3p/bytebuffer/dist/ByteBufferAB',
-        Long: '../3p/long/dist/long'
     },
 
     map: {

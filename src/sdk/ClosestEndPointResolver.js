@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 define([
-    './Http',
-    './Time'
-], function (Http, Time) {
+    './LodashLight',
+    './Http'
+], function (_, Http) {
     'use strict';
 
     var measurementsPerEndPoint = 4;
@@ -64,12 +64,12 @@ define([
 
         var nextMeasurement = function nextMeasurement(endPoint) {
             var maxAttempts = 1;
-            var start = Time.now();
+            var start = _.now();
 
             that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
             that._http.httpGetWithRetry.call(that, endPoint, function (err, responseText) {
-                var end = Time.now();
+                var end = _.now();
                 var time = end - start;
 
                 that._logger.info('[%s] End point [%s] latency is [%s] ms', measurement, endPoint, time);

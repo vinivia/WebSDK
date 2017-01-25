@@ -13,25 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define([ ], function () {
+define([
+], function () {
     'use strict';
 
-    function Time() {
-        this._version = version;
-        this._baseUri = baseUri;
-    }
-
-    Time.now = function () {
-        if (!Date.now) {
-            return function () {
-                return new Date().getTime();
-            }
+    var trackEnums = {
+        states: {
+            trackEnabled: { id: 0, name: 'TrackEnabled' },
+            trackDisabled: { id: 1, name: 'TrackDisabled' },
+            trackEnded: { id: 2, name: 'TrackEnded' },
         }
+    };
 
-        return function () {
-            return Date.now();
-        }
-    }();
-
-    return Time;
+    return trackEnums;
 });

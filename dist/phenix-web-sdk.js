@@ -22,7 +22,7 @@
 		var a = typeof exports === 'object' ? factory(require("phenix-rtc"), require("protobuf"), require("ByteBuffer")) : factory(root["phenix-rtc"], root["protobuf"], root["ByteBuffer"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_12__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -89,27 +89,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(1),
 	    __webpack_require__(2),
-	    __webpack_require__(5)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, PhenixPCast, Logger) {
+	    __webpack_require__(18),
+	    __webpack_require__(32),
+	    __webpack_require__(36),
+	    __webpack_require__(4)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, Logger) {
 	    window.PhenixPCast = PhenixPCast;
 
 	    return {
 	        PCast: PhenixPCast,
+	        RoomService: RoomService,
+	        AudioSpeakerDetector: AudioSpeakerDetector,
+	        BandwidthMonitor: BandwidthMonitor,
 	        Logger: Logger,
 	        RTC: rtc
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -128,29 +134,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(3),
-	    __webpack_require__(8),
-	    __webpack_require__(12),
-	    __webpack_require__(13),
-	    __webpack_require__(11),
+	    __webpack_require__(4),
 	    __webpack_require__(5),
+	    __webpack_require__(13),
+	    __webpack_require__(16),
+	    __webpack_require__(17),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, Time, Logger, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, Logger, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
 	    'use strict';
 
-	    var freeze = function freeze(obj) {
-	        if ('freeze' in Object) {
-	            return Object.freeze(obj);
-	        }
-
-	        return obj;
-	    };
-	    var NetworkStates = freeze({
+	    var NetworkStates = _.freeze({
 	        'NETWORK_EMPTY': 0,
 	        'NETWORK_IDLE': 1,
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var peerConnectionConfig = freeze({
+	    var peerConnectionConfig = _.freeze({
 	        'iceServers': [
 	            {
 	                urls: 'stun:stun.l.google.com:19302'
@@ -165,9 +164,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-04-20T15:21:15Z';
+	    var sdkVersion = '2017-05-03T14:47:09Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
-	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
+	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
 	        iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
 	        hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
@@ -272,10 +271,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                that._protocol = new PCastProtocol(uri, that._deviceId, that._version, that._logger);
 
-	                that._protocol.on('connected', connected.bind(that));
-	                that._protocol.on('disconnected', disconnected.bind(that));
-	                that._protocol.on('streamEnded', streamEnded.bind(that));
-	                that._protocol.on('dataQuality', dataQuality.bind(that));
+	                that._protocol.on('connected', _.bind(connected, that));
+	                that._protocol.on('disconnected', _.bind(disconnected, that));
+	                that._protocol.on('streamEnded', _.bind(streamEnded, that));
+	                that._protocol.on('dataQuality', _.bind(dataQuality, that));
 	            });
 	        });
 	    };
@@ -305,7 +304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    endStream.call(this, streamId, reason);
 
-	                    if (!includes(publisher.getOptions(), 'detached')) {
+	                    if (!_.includes(publisher.getOptions(), 'detached')) {
 	                        publisher.stop(reason);
 	                    }
 	                }
@@ -462,6 +461,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }, options);
 	            }
 	        });
+	    };
+
+	    PhenixPCast.prototype.getProtocol = function () {
+	        return this._protocol;
+	    };
+
+	    PhenixPCast.prototype.getLogger = function () {
+	        return this._logger;
+	    };
+
+	    PhenixPCast.prototype.getStatus = function () {
+	        return this._status;
 	    };
 
 	    PhenixPCast.prototype.toString = function () {
@@ -1426,6 +1437,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                this.dataQualityChangedCallback = callback;
 	                            },
 
+	                            setDetectSpeakingCallback: function setDetectSpeakingCallback() {
+
+	                            },
+
 	                            limitBandwidth: function limitBandwidth(bandwidthLimit) {
 	                                if (typeof bandwidthLimit !== 'number') {
 	                                    throw new Error('"bandwidthLimit" must be a number');
@@ -1500,7 +1515,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        callback.call(that, publisher);
 	                    }
 
-	                    if (includes(response.options, 'ice-candidates')) {
+	                    if (_.includes(response.options, 'ice-candidates')) {
 	                        onIceCandidateCallback = function (candidate) {
 	                            var candidates = [];
 	                            var options = [];
@@ -1517,7 +1532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    return;
 	                                }
 
-	                                if (includes(response.options, 'cancel')) {
+	                                if (_.includes(response.options, 'cancel')) {
 	                                    onIceCandidateCallback = null;
 	                                }
 	                            });
@@ -1620,7 +1635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        that._logger.debug('Set local description (answer)');
 	                    }
 
-	                    if (includes(response.options, 'ice-candidates')) {
+	                    if (_.includes(response.options, 'ice-candidates')) {
 	                        onIceCandidateCallback = function (candidate) {
 	                            var candidates = [];
 	                            var options = [];
@@ -1637,7 +1652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    return;
 	                                }
 
-	                                if (includes(response.options, 'cancel')) {
+	                                if (_.includes(response.options, 'cancel')) {
 	                                    onIceCandidateCallback = null;
 	                                }
 	                            });
@@ -2232,24 +2247,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return track.readyState === 'ended';
 	    }
 
-	    function includes(array, value) {
-	        if (!array) {
-	            return false;
-	        }
-
-	        if (typeof array.indexOf === 'function') {
-	            return array.indexOf(value) !== -1;
-	        } else {
-	            for (var i = 0; i < array.length; i++) {
-	                if (array[i] === value) {
-	                    return true;
-	                }
-	            }
-
-	            return false;
-	        }
-	    }
-
 	    function closePeerConnection(streamId, peerConnection, reason) {
 	        if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
 	            this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
@@ -2262,9 +2259,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -2282,10 +2279,432 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(4),
-	        __webpack_require__(7),
-	        __webpack_require__(1)
-	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (MQProtocol, ByteBuffer, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var _ = function() {};
+
+	    _.bind = function bind(callback, that) {
+	        var argsAfterContext = Array.prototype.slice.call(arguments, 2);
+
+	        return function boundFunction() {
+	            if (!_.isFunction(callback)) {
+	                throw new TypeError('_.bind - callback must be a function');
+	            }
+
+	            var combinedArguments = argsAfterContext.concat(Array.prototype.slice.call(arguments));
+
+	            return callback.apply(that, combinedArguments);
+	        };
+	    };
+
+	    _.now = function now() {
+	        return new Date().getTime();
+	    };
+
+	    _.utc = function utc(date) {
+	        if (_.isNumber(date)) {
+	            return date;
+	        }
+
+	        return Math.floor(date);
+	    };
+
+	    _.map = function map(collection, callback) {
+	        if (!_.isObject(collection)) {
+	            throw new Error('Collection must be an object or array.');
+	        }
+
+	        var newArray = [];
+
+	        if (collection.constructor === Array) {
+	            _.forEach(collection, function mapCollection(item) {
+	                if (_.isString(callback) && _.isObject(item)) {
+	                    newArray.push(item[callback]);
+	                } else if (_.isFunction(callback)) {
+	                    newArray.push(callback(item));
+	                }
+	            });
+	        } else {
+	            _.forOwn(collection, function mapCollection(value) {
+	                if (_.isFunction(callback)) {
+	                    newArray.push(callback(value));
+	                }
+	            });
+	        }
+
+	        return newArray;
+	    };
+
+	    _.forEach = function forEach(collection, callback) {
+	        if (!_.isFunction(callback)) {
+	            throw new Error('Callback must be a function');
+	        }
+	        assertIsArray(collection);
+
+	        for (var i = 0; i < collection.length; i++) {
+	            callback(collection[i], i);
+	        }
+	    };
+
+	    _.forOwn = function forOwn(objectWithProperties, callback) {
+	        if (!_.isFunction(callback)) {
+	            throw new Error('Callback must be a function');
+	        }
+	        if (!_.isObject(objectWithProperties)) {
+	            throw new Error('objectWithProperties must be an object.');
+	        }
+
+	        var keys = Object.keys(objectWithProperties);
+
+	        for (var i = 0; i < keys.length; i++) {
+	            var key = keys[i];
+
+	            if (objectWithProperties.hasOwnProperty(key)) {
+	                callback(objectWithProperties[key], key);
+	            }
+	        }
+	    };
+
+	    _.includes = function includes(collection, value) {
+	        if (!_.isObject(collection)) {
+	            throw new Error('collection type not supported. Collection must be an array or object.');
+	        }
+
+	        var hasValue = false;
+
+	        var checkCollection = function checkCollection(currentValue) {
+	            if (currentValue === value) {
+	                hasValue = true;
+	            }
+	        };
+
+	        if (collection.constructor === Array) {
+	            _.forEach(collection, checkCollection);
+	        } else {
+	            _.forOwn(collection, checkCollection);
+	        }
+
+	        return hasValue;
+	    };
+
+	    _.reduce = function reduce(collection, callback, initialValue) {
+	        if (!_.isObject(collection)) {
+	            throw new Error('collection type not supported. Collection must be an array or object.');
+	        }
+
+	        var result = initialValue || null;
+
+	        if (collection.constructor === Array) {
+	            _.forEach(collection, function (item) {
+	                result = callback(result, item);
+	            });
+	        } else {
+	            _.forOwn(collection, function (value, key) {
+	                result = callback(result, value, key);
+	            });
+	        }
+
+	        return result;
+	    };
+
+	    _.sample = function sample(collection) {
+	        assertIsArray(collection);
+
+	        return collection[Math.floor(Math.random()*collection.length)];
+	    };
+
+	    _.uniqueId = function() {
+	        return (_.now() * Math.random()).toString();
+	    };
+
+	    _.find = function find(collection, callback, initialIndex) {
+	        assertIsArray(collection);
+
+	        var hasItem;
+
+	        _.forEach(collection, function findInCollection(value, index) {
+	            if (callback(value) && index >= (initialIndex || 0)) {
+	                hasItem = value;
+	                return hasItem;
+	            }
+	        });
+
+	        return hasItem;
+	    };
+
+	    _.findIndex = function find(collection, callback, initialIndex) {
+	        assertIsArray(collection);
+
+	        var hasItem;
+
+	        _.forEach(collection, function findInCollection(value, index) {
+	            if (callback(value) && index >= (initialIndex || 0)) {
+	                hasItem = index;
+	                return hasItem;
+	            }
+	        });
+
+	        return hasItem;
+	    };
+
+	    _.filter = function filter(collection, callback) {
+	        assertIsArray(collection);
+
+	        var newCollection = [];
+
+	        _.forEach(collection, function findInCollection(value) {
+	            if (callback(value)) {
+	                newCollection.push(value);
+	            }
+	        });
+
+	        return newCollection;
+	    };
+
+	    _.remove = function remove(collection, callback) {
+	        assertIsArray(collection);
+
+	        var filterCallback = function filterCallback(value) {
+	            return !callback(value);
+	        };
+
+	        return _.filter(collection, filterCallback);
+	    };
+
+	    _.hasDifferences = function hasDifferences(collectionA, collectionB, deep) {
+	        return _.findDifferences(collectionA, collectionB, deep).length > 0;
+	    };
+
+	    _.findDifferences = function findDifferences(collectionA, collectionB, deep) {
+	        var differences = [];
+	        var visitedKeys = {};
+
+	        function getDifferences(value, indexOrKey) {
+	            visitedKeys[indexOrKey] = 1;
+
+	            if ((_.isObject(value) || _.isArray(value)) && deep) {
+	                if (!_.hasIndexOrKey(collectionB, indexOrKey)) {
+	                    differences.push(indexOrKey);
+	                } else if (!_.sameTypes(collectionA[indexOrKey], collectionB[indexOrKey])) {
+	                    differences.push(indexOrKey);
+	                } else if (_.hasDifferences(collectionA[indexOrKey], collectionB[indexOrKey], deep)) {
+	                    differences.push(indexOrKey);
+	                }
+	            } else if (collectionA[indexOrKey] !== collectionB[indexOrKey]) {
+	                differences.push(indexOrKey);
+	            }
+	        }
+
+	        if (_.isArray(collectionA) && _.isArray(collectionB)) {
+	            if (collectionA.length > collectionB.length) {
+	                _.forEach(collectionA, getDifferences);
+	            } else {
+	                _.forEach(collectionB, getDifferences);
+	            }
+	        } else if (_.isObject(collectionA) && _.isObject(collectionB) && !_.isArray(collectionA) && !_.isArray(collectionB)) {
+	            _.forOwn(collectionA, getDifferences);
+
+	            _.forOwn(collectionB, function(value, key) {
+	                if (!visitedKeys.hasOwnProperty(key)) {
+	                    differences.push(key);
+	                }
+	            });
+	        } else {
+	            throw new Error('Object types do not match');
+	        }
+
+	        return differences;
+	    };
+
+	    _.hasIndexOrKey = function hasIndexOrKey(collection, indexOrKey) {
+	        if (_.isArray(collection)) {
+	            return collection.length > parseInt(indexOrKey);
+	        } else if (_.isObject(collection)) {
+	            return collection.hasOwnProperty(indexOrKey)
+	        }
+	        return false;
+	    };
+
+	    _.sameTypes = function sameTypes(first, second) {
+	        if (_.isNullOrUndefined(first) || _.isNullOrUndefined(second)) {
+	            return _.isNullOrUndefined(first) && _.isNullOrUndefined(second);
+	        }
+	        if (_.isArray(first) || _.isArray(second)) {
+	            return _.isArray(first) && _.isArray(second);
+	        }
+
+	        return typeof first === typeof second;
+	    };
+
+	    _.freeze = function freeze(obj) {
+	        if ('freeze' in Object) {
+	            return Object.freeze(obj);
+	        }
+
+	        return obj;
+	    };
+
+	    _.noop = function() {
+	        return undefined;
+	    };
+
+	    _.isObject = function isObject(obj) {
+	        if (obj === null) {
+	            return false;
+	        }
+
+	        return typeof obj === 'object';
+	    };
+
+	    _.isArray = function isArray(array) {
+	        if (!_.isObject(array)) {
+	            return false;
+	        }
+
+	        return array.constructor === Array;
+	    };
+
+	    _.isString = function isString(string) {
+	        return typeof string === 'string';
+	    };
+
+	    _.isNumber = function isNumber(number) {
+	        if (isNaN(number)) {
+	            return false;
+	        }
+
+	        return typeof number === 'number';
+	    };
+
+	    _.isFunction = function isFunction(func) {
+	        return typeof func === 'function';
+	    };
+
+	    _.isNullOrUndefined = function isNullOrUndefined(value) {
+	        return value === null || value === undefined;
+	    };
+
+	    _.getEnumName = function getEnumName(enums, nameOrId) {
+	        var enumObject = null;
+
+	        var enumArray = _.map(enums, function(value) {
+	            return value;
+	        });
+
+	        if (_.isNumber(nameOrId)) {
+	            enumObject = _.find(enumArray, function(current) {
+	                return current.id === nameOrId;
+	            });
+	        } else if (_.isString(nameOrId)) {
+	            enumObject = _.find(enumArray, function(current) {
+	                return current.name.toLowerCase() === nameOrId.toLowerCase();
+	            });
+	        }
+
+	        if (enumObject) {
+	            return enumObject.name;
+	        }
+
+	        return null;
+	    };
+
+	    var assertIsArray = function isArray(collection) {
+	        if (!_.isArray(collection)) {
+	            throw new Error('Array must be an array.');
+	        }
+	    };
+
+	    return _;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var log = function () {
+	            console.log.apply(console, arguments);
+	        } || function () {
+	        };
+	    var logError = function () {
+	            console.error.apply(console, arguments);
+	        } || log;
+
+	    function Logger() {
+	    }
+
+	    Logger.prototype.trace = function (/*formatStr, [parameter], ...*/) {
+	        return log(arguments);
+	    };
+
+	    Logger.prototype.debug = function (/*formatStr, [parameter], ...*/) {
+	        return log(arguments);
+	    };
+
+	    Logger.prototype.info = function (/*formatStr, [parameter], ...*/) {
+	        return log(arguments);
+	    };
+
+	    Logger.prototype.warn = function (/*formatStr, [parameter], ...*/) {
+	        return logError(arguments);
+	    };
+
+	    Logger.prototype.error = function (/*formatStr, [parameter], ...*/) {
+	        return logError(arguments);
+	    };
+
+	    Logger.prototype.fatal = function (/*formatStr, [parameter], ...*/) {
+	        return logError(arguments);
+	    };
+
+	    return Logger;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(7),
+	    __webpack_require__(12),
+	    __webpack_require__(1)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, MQProtocol, ByteBuffer, phenixRTC) {
 	    'use strict';
 
 	    function PCastProtocol(uri, deviceId, version, logger) {
@@ -2309,10 +2728,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._logger.info('Connecting to [%s]', uri);
 	        this._webSocket = new WebSocket(uri);
-	        this._webSocket.onopen = onOpen.bind(this);
-	        this._webSocket.onclose = onClose.bind(this);
-	        this._webSocket.onmessage = onMessage.bind(this);
-	        this._webSocket.onerror = onError.bind(this);
+	        this._webSocket.onopen = _.bind(onOpen, this);
+	        this._webSocket.onclose = _.bind(onClose, this);
+	        this._webSocket.onmessage = _.bind(onMessage, this);
+	        this._webSocket.onerror = _.bind(onError, this);
 
 	        this._nextRequestId = 0;
 	        this._events = {};
@@ -2330,6 +2749,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var handlers = getEventHandlers.call(this, eventName);
 
 	        handlers.push(handler);
+
+	        return _.bind(removeEventHandler, this, eventName, handler);
 	    };
 
 	    PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -2354,6 +2775,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
+	    };
+
+	    PCastProtocol.prototype.getSessionId = function () {
+	        return this._sessionId;
 	    };
 
 	    PCastProtocol.prototype.disconnect = function () {
@@ -2530,6 +2955,195 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return sendRequest.call(this, 'pcast.DestroyStream', destroyStream, callback);
 	    };
 
+	    PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
+	        if (roomId) {
+	            assert.isString(roomId, 'roomId');
+	        } else {
+	            assert.isString(alias, 'alias');
+	        }
+	        assert.isFunction(callback, 'callback');
+
+	        var getRoomInfo = {
+	            roomId: roomId,
+	            alias: alias,
+	            sessionId: this._sessionId
+	        };
+
+	        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, function(message, response) {
+	            if (message) {
+	                if (message.status) {
+	                    return callback(message);
+	                }
+	            }
+
+	            callback(response);
+	        });
+	    };
+
+	    PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
+	        assert.isString(roomName, 'roomName');
+	        assert.isString(type, 'type');
+	        assert.isString(description, 'description');
+	        assert.isFunction(callback, 'callback');
+
+	        var createRoom = {
+	            sessionId: this._sessionId,
+	            room: {
+	                name: roomName,
+	                description: description,
+	                type: type
+	            }
+	        };
+
+	        return sendRequest.call(this, 'chat.CreateRoom', createRoom, function(message, response) {
+	            if (message) {
+	                if (message.status) {
+	                    return callback(message);
+	                }
+	            }
+
+	            callback(response);
+	        });
+	    };
+
+	    PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
+	        if (roomId) {
+	            assert.isString(roomId, 'roomId');
+	        } else {
+	            assert.isString(alias, 'alias');
+	        }
+	        assert.isObject(member, 'member');
+	        assert.isNumber(timestamp, 'timestamp');
+	        assert.isFunction(callback, 'callback');
+
+	        var joinRoom = {
+	            roomId: roomId,
+	            alias: alias,
+	            sessionId: this._sessionId,
+	            member: member,
+	            timestamp: timestamp
+	        };
+
+	        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, function(message, response) {
+	            if (message) {
+	                if (message.status) {
+	                    return callback(message);
+	                }
+	            }
+
+	            callback(response);
+	        });
+	    };
+
+	    PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
+	        assert.isString(roomId, 'roomId');
+	        assert.isNumber(timestamp, 'timestamp');
+	        assert.isFunction(callback, 'callback');
+
+	        var leaveRoom = {
+	            roomId: roomId,
+	            sessionId: this._sessionId,
+	            timestamp: timestamp
+	        };
+
+	        return sendRequest.call(this, 'chat.LeaveRoom', leaveRoom, callback);
+	    };
+
+	    PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
+	        assert.isObject(member, 'member');
+	        assert.isNumber(timestamp, 'timestamp');
+	        assert.isFunction(callback, 'callback');
+
+	        member.updateStreams = member.hasOwnProperty('streams');
+
+	        var updateMember = {
+	            sessionId: this._sessionId,
+	            member: member,
+	            timestamp: timestamp
+	        };
+
+	        return sendRequest.call(this, 'chat.UpdateMember', updateMember, function(message, response) {
+	            if (message) {
+	                if (message.status) {
+	                    return callback(message);
+	                }
+	            }
+
+	            callback(response);
+	        });
+	    };
+
+	    PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
+	        assert.isObject(room, 'room');
+	        assert.isNumber(timestamp, 'timestamp');
+	        assert.isFunction(callback, 'callback');
+
+	        var updateRoom = {
+	            sessionId: this._sessionId,
+	            room: room,
+	            timestamp: timestamp
+	        };
+
+	        return sendRequest.call(this, 'chat.UpdateRoom', updateRoom, callback);
+	    };
+
+	    PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
+	        assert.stringNotEmpty(roomId, 'roomId');
+	        assert.isObject(chatMessage, 'chatMessage');
+
+	        var sendMessage = {
+	            roomId: roomId,
+	            chatMessage: chatMessage
+	        };
+
+	        return sendRequest.call(this, 'chat.SendMessageToRoom', sendMessage, callback);
+	    };
+
+	    PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
+	        assert.stringNotEmpty(sessionId, 'sessionId');
+	        assert.stringNotEmpty(roomId, 'roomId');
+	        assert.isNumber(batchSize, 'batchSize');
+
+	        var fetchRoomConversation = {
+	            sessionId: sessionId,
+	            roomId: roomId,
+	            limit: batchSize,
+	            options: ['Subscribe']
+	        };
+
+	        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+	    };
+
+	    PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
+	        assert.stringNotEmpty(sessionId, 'sessionId');
+	        assert.stringNotEmpty(roomId, 'roomId');
+
+	        if (!beforeMessageId || !afterMessageId) {
+	            assert.isNumber(batchSize, 'batchSize');
+	        }
+
+	        var fetchRoomConversation = {
+	            sessionId: sessionId,
+	            roomId: roomId,
+	            limit: batchSize || 0,
+	            options: []
+	        };
+
+	        if (beforeMessageId) {
+	            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+
+	            fetchRoomConversation.beforeMessageId = beforeMessageId;
+	        }
+
+	        if (afterMessageId) {
+	            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+
+	            fetchRoomConversation.afterMessageId = afterMessageId;
+	        }
+
+	        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+	    };
+
 	    PCastProtocol.prototype.toString = function () {
 	        return 'PCastProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
 	    };
@@ -2555,6 +3169,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return handlers;
+	    }
+
+	    function removeEventHandler(eventName, handler) {
+	        var handlers = this._events[eventName];
+
+	        _.remove(handlers, function removeHandler(currentHandler) {
+	            return currentHandler === handler;
+	        });
+
+	        this._events[eventName] = handlers;
 	    }
 
 	    function triggerEvent(eventName, args) {
@@ -2591,6 +3215,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            triggerEvent.call(this, 'streamEnded', [message]);
 	        } else if (response.type === 'pcast.StreamDataQuality') {
 	            triggerEvent.call(this, 'dataQuality', [message]);
+	        } else if (response.type === 'chat.RoomEvent') {
+	            triggerEvent.call(this, 'roomEvent', [message]);
+	        } else if (response.type === 'chat.RoomConversationEvent') {
+	            triggerEvent.call(this, 'roomChatEvent', [message]);
 	        }
 
 	        var callback = this._requests[response.requestId];
@@ -2614,9 +3242,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -2634,14 +3262,92 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(5),
-	        __webpack_require__(6)
-	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ProtoBuf) {
+	    __webpack_require__(3)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
 	    'use strict';
 
-	    var mqProto = '{"package":"mq","messages":[{"name":"Request","fields":[{"rule":"optional","type":"string","name":"sessionId","id":1},{"rule":"optional","type":"string","name":"requestId","id":2},{"rule":"required","type":"string","name":"type","id":3},{"rule":"optional","type":"string","name":"encoding","id":4},{"rule":"required","type":"bytes","name":"payload","id":5}]},{"name":"Response","fields":[{"rule":"optional","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"requestId","id":2},{"rule":"required","type":"string","name":"type","id":3},{"rule":"optional","type":"string","name":"encoding","id":4},{"rule":"required","type":"bytes","name":"payload","id":5},{"rule":"repeated","type":"double","name":"wallTime","id":6}]},{"name":"Error","fields":[{"rule":"required","type":"string","name":"reason","id":1}]},{"name":"PingPong","fields":[{"rule":"required","type":"uint64","name":"originTimestamp","id":1},{"rule":"optional","type":"uint64","name":"count","id":2}]}]}';
-	    var pcastProto = '{"package":"pcast","messages":[{"name":"Authenticate","fields":[{"rule":"optional","type":"uint32","name":"apiVersion","id":9,"options":{"default":0}},{"rule":"required","type":"string","name":"clientVersion","id":1},{"rule":"optional","type":"string","name":"device","id":12},{"rule":"required","type":"string","name":"deviceId","id":2},{"rule":"optional","type":"string","name":"manufacturer","id":13},{"rule":"required","type":"string","name":"platform","id":3},{"rule":"required","type":"string","name":"platformVersion","id":4},{"rule":"required","type":"string","name":"authenticationToken","id":5},{"rule":"optional","type":"string","name":"connectionId","id":6},{"rule":"optional","type":"string","name":"connectionRouteKey","id":10},{"rule":"optional","type":"string","name":"remoteAddress","id":11},{"rule":"optional","type":"string","name":"sessionId","id":7},{"rule":"optional","type":"string","name":"applicationId","id":8}]},{"name":"AuthenticateResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"sessionId","id":2},{"rule":"optional","type":"string","name":"redirect","id":3},{"rule":"repeated","type":"string","name":"roles","id":4}]},{"name":"Bye","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"reason","id":2}]},{"name":"ByeResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"SessionDescription","fields":[{"rule":"required","type":"Type","name":"type","id":1,"options":{"default":"Offer"}},{"rule":"required","type":"string","name":"sdp","id":2}],"enums":[{"name":"Type","values":[{"name":"Offer","id":0},{"name":"Answer","id":1}]}]},{"name":"CreateStream","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"optional","type":"string","name":"originStreamId","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"optional","type":"string","name":"connectUri","id":8},{"rule":"repeated","type":"string","name":"connectOptions","id":9},{"rule":"repeated","type":"string","name":"tags","id":4},{"rule":"optional","type":"SetRemoteDescription","name":"setRemoteDescription","id":5},{"rule":"optional","type":"CreateOfferDescription","name":"createOfferDescription","id":6},{"rule":"optional","type":"CreateAnswerDescription","name":"createAnswerDescription","id":7}]},{"name":"CreateStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"streamId","id":2},{"rule":"optional","type":"string","name":"instanceRouteKey","id":5},{"rule":"optional","type":"SetRemoteDescriptionResponse","name":"setRemoteDescriptionResponse","id":3},{"rule":"optional","type":"CreateOfferDescriptionResponse","name":"createOfferDescriptionResponse","id":4},{"rule":"optional","type":"CreateAnswerDescriptionResponse","name":"createAnswerDescriptionResponse","id":6},{"rule":"repeated","type":"string","name":"options","id":7}]},{"name":"SetLocalDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"SetLocalDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"repeated","type":"string","name":"options","id":2}]},{"name":"SetRemoteDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"SetRemoteDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"repeated","type":"string","name":"options","id":3}]},{"name":"CreateOfferDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"string","name":"options","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"CreateOfferDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"repeated","type":"string","name":"options","id":3}]},{"name":"CreateAnswerDescription","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"string","name":"options","id":2},{"rule":"optional","type":"uint32","name":"apiVersion","id":3,"options":{"default":0}}]},{"name":"CreateAnswerDescriptionResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"SessionDescription","name":"sessionDescription","id":2},{"rule":"repeated","type":"string","name":"options","id":3}]},{"name":"IceCandidate","fields":[{"rule":"required","type":"string","name":"candidate","id":1},{"rule":"required","type":"uint32","name":"sdpMLineIndex","id":2},{"rule":"required","type":"string","name":"sdpMid","id":3}]},{"name":"AddIceCandidates","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"IceCandidate","name":"candidates","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"optional","type":"uint32","name":"apiVersion","id":4,"options":{"default":0}}]},{"name":"AddIceCandidatesResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"repeated","type":"string","name":"options","id":2}]},{"name":"UpdateStreamState","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"required","type":"string","name":"signalingState","id":2},{"rule":"required","type":"string","name":"iceGatheringState","id":3},{"rule":"required","type":"string","name":"iceConnectionState","id":4},{"rule":"optional","type":"uint32","name":"apiVersion","id":5,"options":{"default":0}}]},{"name":"UpdateStreamStateResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"repeated","type":"string","name":"options","id":2}]},{"name":"DestroyStream","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"optional","type":"string","name":"reason","id":2},{"rule":"repeated","type":"string","name":"options","id":3}]},{"name":"DestroyStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"ArchiveStream","fields":[{"rule":"required","type":"string","name":"streamId","id":1},{"rule":"repeated","type":"string","name":"options","id":2}]},{"name":"ArchiveStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"uri","id":2}]},{"name":"ConnectionDisconnected","fields":[{"rule":"required","type":"string","name":"connectionId","id":1},{"rule":"required","type":"uint32","name":"reasonCode","id":2},{"rule":"optional","type":"string","name":"description","id":3}]},{"name":"ConnectionDisconnectedResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"StreamStarted","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"repeated","type":"string","name":"tags","id":3}]},{"name":"SourceStreamStarted","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"repeated","type":"string","name":"capabilities","id":3},{"rule":"repeated","type":"string","name":"tags","id":4}]},{"name":"StreamEnded","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"string","name":"reason","id":3},{"rule":"repeated","type":"string","name":"tags","id":4}]},{"name":"SourceStreamEnded","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"string","name":"reason","id":3},{"rule":"repeated","type":"string","name":"capabilities","id":4},{"rule":"repeated","type":"string","name":"tags","id":5}]},{"name":"StreamEndedResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"StreamIdle","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"repeated","type":"string","name":"tags","id":4}]},{"name":"StreamArchived","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"string","name":"uri","id":3}]},{"name":"SessionEnded","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"reason","id":2},{"rule":"required","type":"float","name":"duration","id":3}]},{"name":"ForwardToClient","fields":[{"rule":"required","type":"string","name":"connectionId","id":1},{"rule":"required","type":"string","name":"type","id":2},{"rule":"required","type":"bytes","name":"payload","id":3}]},{"name":"ForwardToClientResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"SetupStream","fields":[{"rule":"required","type":"string","name":"streamToken","id":1},{"rule":"required","type":"CreateStream","name":"createStream","id":2}]},{"name":"SetupStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"CreateStreamResponse","name":"createStreamResponse","id":2}]},{"name":"SetupPlaylistStream","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamToken","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"repeated","type":"string","name":"tags","id":4}]},{"name":"PlaylistStreamManifest","fields":[{"rule":"required","type":"string","name":"manifest","id":1}]},{"name":"SetupPlaylistStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"repeated","type":"PlaylistStreamManifest","name":"manifests","id":2}]},{"name":"StreamDataQuality","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"streamId","id":2},{"rule":"required","type":"uint64","name":"timestamp","id":3},{"rule":"required","type":"DataQualityStatus","name":"status","id":4},{"rule":"required","type":"DataQualityReason","name":"reason","id":5}],"enums":[{"name":"DataQualityStatus","values":[{"name":"NoData","id":0},{"name":"AudioOnly","id":1},{"name":"All","id":2}]},{"name":"DataQualityReason","values":[{"name":"None","id":0},{"name":"UploadLimited","id":1},{"name":"DownloadLimited","id":2},{"name":"PublisherLimited","id":3},{"name":"NetworkLimited","id":4}]}]},{"name":"StreamDataQualityResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"CallbackEvent","fields":[{"rule":"optional","type":"uint32","name":"apiVersion","id":1,"options":{"default":0}},{"rule":"required","type":"string","name":"entity","id":2},{"rule":"required","type":"string","name":"what","id":3},{"rule":"required","type":"string","name":"data","id":4},{"rule":"optional","type":"string","name":"sessionId","id":5}]},{"name":"Uri","fields":[{"rule":"optional","type":"string","name":"protocol","id":1,"options":{"default":"http"}},{"rule":"required","type":"string","name":"host","id":2},{"rule":"optional","type":"uint32","name":"port","id":3,"options":{"default":80}},{"rule":"optional","type":"string","name":"method","id":4,"options":{"default":"POST"}},{"rule":"optional","type":"string","name":"path","id":5,"options":{"default":"/"}}]},{"name":"SetApplicationCallback","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"required","type":"Uri","name":"callback","id":3}]},{"name":"SetApplicationCallbackResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"IssueAuthenticationToken","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"repeated","type":"string","name":"capabilities","id":3}]},{"name":"IssueAuthenticationTokenResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"authenticationToken","id":2}]},{"name":"IssueStreamToken","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"required","type":"string","name":"sessionId","id":3},{"rule":"optional","type":"string","name":"originStreamId","id":4},{"rule":"repeated","type":"string","name":"capabilities","id":5}]},{"name":"IssueStreamTokenResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"streamToken","id":2}]},{"name":"TerminateStream","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"required","type":"string","name":"streamId","id":3},{"rule":"optional","type":"string","name":"reason","id":4}]},{"name":"TerminateStreamResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"Stream","fields":[{"rule":"required","type":"string","name":"streamId","id":1}]},{"name":"ListStreams","fields":[{"rule":"required","type":"string","name":"applicationId","id":1},{"rule":"required","type":"string","name":"secret","id":2},{"rule":"optional","type":"string","name":"start","id":3},{"rule":"required","type":"uint32","name":"length","id":4},{"rule":"repeated","type":"string","name":"options","id":5}]},{"name":"ListStreamsResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"start","id":2},{"rule":"optional","type":"uint32","name":"length","id":3},{"rule":"repeated","type":"Stream","name":"streams","id":4}]}]}';
-	    var chatProto = '{"package":"chat","messages":[{"name":"Room","fields":[{"rule":"optional","type":"string","name":"roomId","id":1},{"rule":"required","type":"string","name":"name","id":2},{"rule":"required","type":"string","name":"description","id":3},{"rule":"required","type":"RoomType","name":"type","id":4},{"rule":"repeated","type":"string","name":"options","id":5}]},{"name":"Stream","fields":[{"rule":"required","type":"StreamType","name":"type","id":1},{"rule":"required","type":"string","name":"uri","id":2},{"rule":"required","type":"TrackState","name":"audioState","id":3},{"rule":"required","type":"TrackState","name":"videoState","id":4}]},{"name":"Member","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"screenName","id":2},{"rule":"required","type":"MemberRole","name":"role","id":3},{"rule":"repeated","type":"Stream","name":"streams","id":4},{"rule":"required","type":"uint64","name":"lastUpdate","id":7}]},{"name":"CreateRoom","fields":[{"rule":"required","type":"Room","name":"room","id":1}]},{"name":"CreateRoomResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"string","name":"roomId","id":2}]},{"name":"JoinRoom","fields":[{"rule":"required","type":"string","name":"roomId","id":1},{"rule":"required","type":"string","name":"sessionId","id":2},{"rule":"required","type":"Member","name":"member","id":3},{"rule":"repeated","type":"string","name":"options","id":4},{"rule":"required","type":"uint64","name":"timestamp","id":5}]},{"name":"JoinRoomResponse","fields":[{"rule":"required","type":"string","name":"status","id":1},{"rule":"optional","type":"Room","name":"room","id":2},{"rule":"repeated","type":"Member","name":"members","id":3},{"rule":"repeated","type":"string","name":"options","id":4}]},{"name":"UpdateRoom","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"Room","name":"room","id":2},{"rule":"required","type":"uint64","name":"timestamp","id":3}]},{"name":"UpdateRoomResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"UpdateMember","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"Member","name":"member","id":2},{"rule":"repeated","type":"string","name":"options","id":3},{"rule":"required","type":"uint64","name":"timestamp","id":4}]},{"name":"UpdateMemberResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"LeaveRoom","fields":[{"rule":"required","type":"string","name":"roomId","id":1},{"rule":"required","type":"string","name":"sessionId","id":2},{"rule":"required","type":"uint64","name":"timestamp","id":3}]},{"name":"LeaveRoomResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"DestroyRoom","fields":[{"rule":"required","type":"string","name":"roomId","id":1}]},{"name":"DestroyRoomResponse","fields":[{"rule":"required","type":"string","name":"status","id":1}]},{"name":"RoomEvent","fields":[{"rule":"required","type":"string","name":"sessionId","id":1},{"rule":"required","type":"string","name":"roomId","id":2},{"rule":"required","type":"RoomEventType","name":"eventType","id":3},{"rule":"repeated","type":"Member","name":"members","id":4},{"rule":"optional","type":"Room","name":"room","id":5},{"rule":"repeated","type":"string","name":"options","id":6},{"rule":"required","type":"uint64","name":"timestamp","id":7}]}],"enums":[{"name":"RoomType","values":[{"name":"DirectChat","id":0},{"name":"MultiPartyChat","id":1},{"name":"ModeratedChat","id":2},{"name":"TownHall","id":3}]},{"name":"MemberRole","values":[{"name":"Participant","id":0},{"name":"Moderator","id":1},{"name":"Presenter","id":2},{"name":"Audience","id":3}]},{"name":"RoomEventType","values":[{"name":"MemberJoined","id":0},{"name":"MemberLeft","id":1},{"name":"MemberUpdated","id":2},{"name":"Updated","id":3},{"name":"Ended","id":4}]},{"name":"TrackState","values":[{"name":"Enabled","id":0},{"name":"Disabled","id":1},{"name":"Ended","id":2}]},{"name":"StreamType","values":[{"name":"User","id":0},{"name":"Presentation","id":1}]}]}';
+	    var Assert = function() {};
+
+	    Assert.prototype.isObject = function isObject(obj, name) {
+	        var error = '"' + name + '" must be an object';
+
+	        if (!_.isObject(obj)) {
+	            throw new Error(error);
+	        }
+	    };
+
+	    Assert.prototype.isArray = function isArray(array, name) {
+	        var error = '"' + name + '" must be an array';
+
+	        if (!_.isArray(array)) {
+	            throw new Error(error);
+	        }
+	    };
+
+	    Assert.prototype.isString = function isString(string, name) {
+	        var error = '"' + name + '" must be a string';
+
+	        if (!_.isString(string)) {
+	            throw new Error(error);
+	        }
+	    };
+
+	    Assert.prototype.isNumber = function isNumber(number, name) {
+	        var error = '"' + name + '" must be a number';
+
+	        if (!_.isNumber(number)) {
+	            throw new Error(error);
+	        }
+	    };
+
+	    Assert.prototype.isFunction = function isFunction(callback, name) {
+	        var error = '"' + name + '" must be a function';
+
+	        if (!_.isFunction(callback)) {
+	            throw new Error(error);
+	        }
+	    };
+
+	    Assert.prototype.stringNotEmpty = function stringNotEmpty(string, name) {
+	        var error = '"' + name + '" must not be empty';
+
+	        this.isString(string, name);
+
+	        if (string === '') {
+	            throw new Error(error);
+	        }
+	    };
+
+	    return new Assert();
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(8),
+	    __webpack_require__(9),
+	    __webpack_require__(10),
+	    __webpack_require__(11)
+	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ProtoBuf, mqProto, pcastProto, chatProto) {
+	    'use strict';
 
 	    function MQProtocol(logger) {
 	        this._logger = logger || new Logger();
@@ -2735,82 +3441,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	    'use strict';
-
-	    var log = function () {
-	            console.log.apply(console, arguments);
-	        } || function () {
-	        };
-	    var logError = function () {
-	            console.error.apply(console, arguments);
-	        } || log;
-
-	    function Logger() {
-	    }
-
-	    Logger.prototype.trace = function (/*formatStr, [parameter], ...*/) {
-	        return log(arguments);
-	    };
-
-	    Logger.prototype.debug = function (/*formatStr, [parameter], ...*/) {
-	        return log(arguments);
-	    };
-
-	    Logger.prototype.info = function (/*formatStr, [parameter], ...*/) {
-	        return log(arguments);
-	    };
-
-	    Logger.prototype.warn = function (/*formatStr, [parameter], ...*/) {
-	        return logError(arguments);
-	    };
-
-	    Logger.prototype.error = function (/*formatStr, [parameter], ...*/) {
-	        return logError(arguments);
-	    };
-
-	    Logger.prototype.fatal = function (/*formatStr, [parameter], ...*/) {
-	        return logError(arguments);
-	    };
-
-	    return Logger;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_6__;
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
-
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -2828,9 +3467,2520 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(9),
-	    __webpack_require__(10)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (ClosestEndPointResolver, Http) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var mqProto = {
+	        "package": "mq",
+	        "messages": [
+	            {
+	                "name": "Request",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "requestId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "type",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "encoding",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "bytes",
+	                        "name": "payload",
+	                        "id": 5
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Response",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "requestId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "type",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "encoding",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "bytes",
+	                        "name": "payload",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "double",
+	                        "name": "wallTime",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Error",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "PingPong",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "originTimestamp",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "count",
+	                        "id": 2
+	                    }
+	                ]
+	            }
+	        ]
+	    };
+
+	    return mqProto;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var pcastProto = {
+	        "package": "pcast",
+	        "messages": [
+	            {
+	                "name": "Authenticate",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 9,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "clientVersion",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "device",
+	                        "id": 12
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "deviceId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "manufacturer",
+	                        "id": 13
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "platform",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "platformVersion",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "authenticationToken",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "connectionId",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "connectionRouteKey",
+	                        "id": 10
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "remoteAddress",
+	                        "id": 11
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 7
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 8
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "AuthenticateResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "redirect",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "roles",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Bye",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ByeResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SessionDescription",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "Type",
+	                        "name": "type",
+	                        "id": 1,
+	                        "options": {
+	                            "default": "Offer"
+	                        }
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sdp",
+	                        "id": 2
+	                    }
+	                ],
+	                "enums": [
+	                    {
+	                        "name": "Type",
+	                        "values": [
+	                            {
+	                                "name": "Offer",
+	                                "id": 0
+	                            },
+	                            {
+	                                "name": "Answer",
+	                                "id": 1
+	                            }
+	                        ]
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "originStreamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "connectUri",
+	                        "id": 8
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "connectOptions",
+	                        "id": 9
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "SetRemoteDescription",
+	                        "name": "setRemoteDescription",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "CreateOfferDescription",
+	                        "name": "createOfferDescription",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "CreateAnswerDescription",
+	                        "name": "createAnswerDescription",
+	                        "id": 7
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "instanceRouteKey",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "streamUris",
+	                        "id": 8
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "SetRemoteDescriptionResponse",
+	                        "name": "setRemoteDescriptionResponse",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "CreateOfferDescriptionResponse",
+	                        "name": "createOfferDescriptionResponse",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "CreateAnswerDescriptionResponse",
+	                        "name": "createAnswerDescriptionResponse",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 7
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetLocalDescription",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "SessionDescription",
+	                        "name": "sessionDescription",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 3,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetLocalDescriptionResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetRemoteDescription",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "SessionDescription",
+	                        "name": "sessionDescription",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 3,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetRemoteDescriptionResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "SessionDescription",
+	                        "name": "sessionDescription",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateOfferDescription",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 3,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateOfferDescriptionResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "SessionDescription",
+	                        "name": "sessionDescription",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateAnswerDescription",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 3,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateAnswerDescriptionResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "SessionDescription",
+	                        "name": "sessionDescription",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IceCandidate",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "candidate",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint32",
+	                        "name": "sdpMLineIndex",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sdpMid",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "AddIceCandidates",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "IceCandidate",
+	                        "name": "candidates",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 4,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "AddIceCandidatesResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateStreamState",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "signalingState",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "iceGatheringState",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "iceConnectionState",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 5,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateStreamStateResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "DestroyStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "DestroyStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ArchiveStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ArchiveStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "uri",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ConnectionDisconnected",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "connectionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint32",
+	                        "name": "reasonCode",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "description",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ConnectionDisconnectedResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamStarted",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SourceStreamStarted",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "capabilities",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamEnded",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SourceStreamEnded",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "capabilities",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 5
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamEndedResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamIdle",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamArchived",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "uri",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SessionEnded",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "float",
+	                        "name": "duration",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ForwardToClient",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "connectionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "type",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "bytes",
+	                        "name": "payload",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ForwardToClientResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetupStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamToken",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "CreateStream",
+	                        "name": "createStream",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetupStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "CreateStreamResponse",
+	                        "name": "createStreamResponse",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetupPlaylistStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamToken",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "tags",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "PlaylistStreamManifest",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "manifest",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetupPlaylistStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "PlaylistStreamManifest",
+	                        "name": "manifests",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamDataQuality",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "DataQualityStatus",
+	                        "name": "status",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "DataQualityReason",
+	                        "name": "reason",
+	                        "id": 5
+	                    }
+	                ],
+	                "enums": [
+	                    {
+	                        "name": "DataQualityStatus",
+	                        "values": [
+	                            {
+	                                "name": "NoData",
+	                                "id": 0
+	                            },
+	                            {
+	                                "name": "AudioOnly",
+	                                "id": 1
+	                            },
+	                            {
+	                                "name": "All",
+	                                "id": 2
+	                            }
+	                        ]
+	                    },
+	                    {
+	                        "name": "DataQualityReason",
+	                        "values": [
+	                            {
+	                                "name": "None",
+	                                "id": 0
+	                            },
+	                            {
+	                                "name": "UploadLimited",
+	                                "id": 1
+	                            },
+	                            {
+	                                "name": "DownloadLimited",
+	                                "id": 2
+	                            },
+	                            {
+	                                "name": "PublisherLimited",
+	                                "id": 3
+	                            },
+	                            {
+	                                "name": "NetworkLimited",
+	                                "id": 4
+	                            }
+	                        ]
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamDataQualityResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CallbackEvent",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "apiVersion",
+	                        "id": 1,
+	                        "options": {
+	                            "default": 0
+	                        }
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "entity",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "what",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "data",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 5
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Uri",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "protocol",
+	                        "id": 1,
+	                        "options": {
+	                            "default": "http"
+	                        }
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "host",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "port",
+	                        "id": 3,
+	                        "options": {
+	                            "default": 80
+	                        }
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "method",
+	                        "id": 4,
+	                        "options": {
+	                            "default": "POST"
+	                        }
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "path",
+	                        "id": 5,
+	                        "options": {
+	                            "default": "/"
+	                        }
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetApplicationCallback",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "Uri",
+	                        "name": "callback",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SetApplicationCallbackResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IssueAuthenticationToken",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "capabilities",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IssueAuthenticationTokenResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "authenticationToken",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IssueStreamToken",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "originStreamId",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "capabilities",
+	                        "id": 5
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IssueStreamTokenResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "streamToken",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "TerminateStream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "reason",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "TerminateStreamResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Stream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ListStreams",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "start",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint32",
+	                        "name": "length",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 5
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ListStreamsResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "start",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "length",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Stream",
+	                        "name": "streams",
+	                        "id": 4
+	                    }
+	                ]
+	            }
+	        ]
+	    };
+
+	    return pcastProto;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var chatProto = {
+	        "package": "chat",
+	        "messages": [
+	            {
+	                "name": "Room",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "alias",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "name",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "description",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "RoomType",
+	                        "name": "type",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "bridgeId",
+	                        "id": 7
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "pin",
+	                        "id": 8
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Stream",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "StreamType",
+	                        "name": "type",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "uri",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "TrackState",
+	                        "name": "audioState",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "TrackState",
+	                        "name": "videoState",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "Member",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "screenName",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "MemberRole",
+	                        "name": "role",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Stream",
+	                        "name": "streams",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "MemberState",
+	                        "name": "state",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "lastUpdate",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "MemberUpdate",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "screenName",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "MemberRole",
+	                        "name": "role",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "bool",
+	                        "name": "updateStreams",
+	                        "id": 7,
+	                        "options": {
+	                            "default": false
+	                        }
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Stream",
+	                        "name": "streams",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "MemberState",
+	                        "name": "state",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "lastUpdate",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ChatUser",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "screenName",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "MemberRole",
+	                        "name": "role",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "lastUpdate",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "ChatMessage",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "messageId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "ChatUser",
+	                        "name": "from",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "message",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateRoom",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "CreateRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "JoinRoom",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "alias",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "Member",
+	                        "name": "member",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "JoinRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Member",
+	                        "name": "members",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateRoom",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateMember",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "MemberUpdate",
+	                        "name": "member",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "UpdateMemberResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "lastUpdate",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "LeaveRoom",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "LeaveRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "DestroyRoom",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "DestroyRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "GetRoomInfo",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "alias",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "GetRoomInfoResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Member",
+	                        "name": "members",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RoomEvent",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "RoomEventType",
+	                        "name": "eventType",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "Member",
+	                        "name": "members",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "Room",
+	                        "name": "room",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "options",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "timestamp",
+	                        "id": 7
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SendMessageToRoom",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "ChatMessage",
+	                        "name": "chatMessage",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SendMessageToRoomResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "FetchRoomConversation",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "afterMessageId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "beforeMessageId",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint32",
+	                        "name": "limit",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "RoomConversationOption",
+	                        "name": "options",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "FetchRoomConversationResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "ChatMessage",
+	                        "name": "chatMessages",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RoomConversationEvent",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "roomId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "RoomConversationEventType",
+	                        "name": "eventType",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "ChatMessage",
+	                        "name": "chatMessages",
+	                        "id": 4
+	                    }
+	                ]
+	            }
+	        ],
+	        "enums": [
+	            {
+	                "name": "RoomType",
+	                "values": [
+	                    {
+	                        "name": "DirectChat",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "MultiPartyChat",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "ModeratedChat",
+	                        "id": 2
+	                    },
+	                    {
+	                        "name": "TownHall",
+	                        "id": 3
+	                    },
+	                    {
+	                        "name": "Channel",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "MemberRole",
+	                "values": [
+	                    {
+	                        "name": "Participant",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "Moderator",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "Presenter",
+	                        "id": 2
+	                    },
+	                    {
+	                        "name": "Audience",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "MemberState",
+	                "values": [
+	                    {
+	                        "name": "Active",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "Passive",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "HandRaised",
+	                        "id": 2
+	                    },
+	                    {
+	                        "name": "Inactive",
+	                        "id": 3
+	                    },
+	                    {
+	                        "name": "Offline",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RoomEventType",
+	                "values": [
+	                    {
+	                        "name": "MemberJoined",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "MemberLeft",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "MemberUpdated",
+	                        "id": 2
+	                    },
+	                    {
+	                        "name": "RoomUpdated",
+	                        "id": 3
+	                    },
+	                    {
+	                        "name": "RoomEnded",
+	                        "id": 4
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "TrackState",
+	                "values": [
+	                    {
+	                        "name": "TrackEnabled",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "TrackDisabled",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "TrackEnded",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamType",
+	                "values": [
+	                    {
+	                        "name": "User",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "Presentation",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "Audio",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RoomConversationOption",
+	                "values": [
+	                    {
+	                        "name": "Subscribe",
+	                        "id": 0
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RoomConversationEventType",
+	                "values": [
+	                    {
+	                        "name": "Message",
+	                        "id": 0
+	                    }
+	                ]
+	            }
+	        ]
+	    };
+
+	    return chatProto;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(14),
+	    __webpack_require__(15)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Http, ClosestEndPointResolver) {
 	    'use strict';
 
 	    var maxAttempts = 3;
@@ -2909,9 +6059,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -2929,9 +6079,102 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(10),
-	    __webpack_require__(11)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Http, Time) {
+	    __webpack_require__(3)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
+	    'use strict';
+
+	    function Http(version, baseUri, logger) {
+	        if (typeof version !== 'string') {
+	            throw new Error('Must pass a valid "version"');
+	        }
+	        if (typeof baseUri !== 'string') {
+	            throw new Error('Must pass a valid "baseUri"');
+	        }
+	        if (typeof logger !== 'object') {
+	            throw new Error('Must pass a valid "logger"');
+	        }
+
+	        this._version = version;
+	        this._baseUri = baseUri;
+	        this._logger = logger;
+	    }
+
+	    Http.prototype.httpGetWithRetry = function httpGetWithRetry(url, callback, maxAttempts, attempt) {
+	        if (attempt === undefined) {
+	            attempt = 1;
+	        }
+
+	        var that = this;
+	        var xhr = new XMLHttpRequest();
+	        var requestMethod = 'GET';
+	        var requestUrl = url + '?version=' + encodeURIComponent(that._version) + '&_=' + _.now();
+
+	        if ('withCredentials' in xhr) {
+	            // Most browsers.
+	            xhr.open(requestMethod, requestUrl, true);
+	        } else if (typeof XDomainRequest != 'undefined') {
+	            // IE8 & IE9
+	            xhr = new XDomainRequest();
+	            xhr.open(requestMethod, requestUrl);
+	        } else {
+	            // CORS not supported.
+	            var err = new Error('unsupported');
+
+	            err.code = 'unsupported';
+
+	            callback(err);
+	        }
+
+	        xhr.addEventListener('readystatechange', function () {
+	            if (xhr.readyState === 4 /* DONE */) {
+	                if (xhr.status === 200) {
+	                    callback(undefined, xhr.responseText);
+	                } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
+	                    httpGetWithRetry.call(that, url, callback, maxAttempts, attempt + 1);
+	                } else {
+	                    that._logger.info('HTTP GET [%s] failed with [%s] [%s]', url, xhr.status, xhr.statusText);
+
+	                    var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
+
+	                    err.code = xhr.status;
+
+	                    callback(err);
+	                }
+	            }
+	        });
+
+	        xhr.timeout = 15000;
+
+	        xhr.send();
+	    };
+
+	    return Http;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(14)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, Http) {
 	    'use strict';
 
 	    var measurementsPerEndPoint = 4;
@@ -2979,12 +6222,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var nextMeasurement = function nextMeasurement(endPoint) {
 	            var maxAttempts = 1;
-	            var start = Time.now();
+	            var start = _.now();
 
 	            that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
 	            that._http.httpGetWithRetry.call(that, endPoint, function (err, responseText) {
-	                var end = Time.now();
+	                var end = _.now();
 	                var time = end - start;
 
 	                that._logger.info('[%s] End point [%s] latency is [%s] ms', measurement, endPoint, time);
@@ -3017,9 +6260,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -3037,145 +6280,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(11)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time) {
-	    'use strict';
-
-	    function Http(version, baseUri, logger) {
-	        if (typeof version !== 'string') {
-	            throw new Error('Must pass a valid "version"');
-	        }
-	        if (typeof baseUri !== 'string') {
-	            throw new Error('Must pass a valid "baseUri"');
-	        }
-	        if (typeof logger !== 'object') {
-	            throw new Error('Must pass a valid "logger"');
-	        }
-
-	        this._version = version;
-	        this._baseUri = baseUri;
-	        this._logger = logger;
-	    }
-
-	    Http.prototype.httpGetWithRetry = function httpGetWithRetry(url, callback, maxAttempts, attempt) {
-	        if (attempt === undefined) {
-	            attempt = 1;
-	        }
-
-	        var that = this;
-	        var xhr = new XMLHttpRequest();
-	        var requestMethod = 'GET';
-	        var requestUrl = url + '?version=' + encodeURIComponent(that._version) + '&_=' + Time.now();
-
-	        if ('withCredentials' in xhr) {
-	            // Most browsers.
-	            xhr.open(requestMethod, requestUrl, true);
-	        } else if (typeof XDomainRequest != 'undefined') {
-	            // IE8 & IE9
-	            xhr = new XDomainRequest();
-	            xhr.open(requestMethod, requestUrl);
-	        } else {
-	            // CORS not supported.
-	            var err = new Error('unsupported');
-
-	            err.code = 'unsupported';
-
-	            callback(err);
-	        }
-
-	        xhr.addEventListener('readystatechange', function () {
-	            if (xhr.readyState === 4 /* DONE */) {
-	                if (xhr.status === 200) {
-	                    callback(undefined, xhr.responseText);
-	                } else if (xhr.status >= 500 && xhr.status < 600 && attempt <= maxAttempts) {
-	                    httpGetWithRetry.call(that, url, callback, maxAttempts, attempt + 1);
-	                } else {
-	                    that._logger.info('HTTP GET [%s] failed with [%s] [%s]', url, xhr.status, xhr.statusText);
-
-	                    var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
-
-	                    err.code = xhr.status;
-
-	                    callback(err);
-	                }
-	            }
-	        });
-
-	        xhr.timeout = 15000;
-
-	        xhr.send();
-	    };
-
-	    return Http;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [ ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	    'use strict';
-
-	    function Time() {
-	        this._version = version;
-	        this._baseUri = baseUri;
-	    }
-
-	    Time.now = function () {
-	        if (!Date.now) {
-	            return function () {
-	                return new Date().getTime();
-	            }
-	        }
-
-	        return function () {
-	            return Date.now();
-	        }
-	    }();
-
-	    return Time;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(11),
-	        __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time, phenixRTC) {
+	    __webpack_require__(3),
+	    __webpack_require__(1)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, phenixRTC) {
 	    'use strict';
 
 	    var defaultMonitoringInterval = 4000;
@@ -3234,8 +6341,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var frameRate = undefined;
 	        var videoBitRate = undefined;
 	        var audioBitRate = undefined;
-	        var lastVideoBytes = {time: Time.now(), value: 0};
-	        var lastAudioBytes = {time: Time.now(), value: 0};
+	        var lastVideoBytes = {time: _.now(), value: 0};
+	        var lastAudioBytes = {time: _.now(), value: 0};
 	        var frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
 	        var videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
 	        var audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
@@ -3263,7 +6370,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            if (options.direction === 'outbound' && stats.type === 'outboundrtp') {
 	                                var currentBytes = {
-	                                    time: Time.now(),
+	                                    time: _.now(),
 	                                    value: stats.bytesSent || 0
 	                                };
 
@@ -3288,7 +6395,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            }
 	                            if (options.direction === 'inbound' && stats.type === 'inboundrtp') {
 	                                var currentBytes = {
-	                                    time: Time.now(),
+	                                    time: _.now(),
 	                                    value: stats.bytesReceived || 0
 	                                };
 
@@ -3326,7 +6433,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            }
 	                            if (options.direction === 'outbound') {
 	                                var currentBytes = {
-	                                    time: Time.now(),
+	                                    time: _.now(),
 	                                    value: stats.bytesSent || 0
 	                                };
 
@@ -3350,7 +6457,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                }
 	                            } else if (options.direction === 'inbound') {
 	                                var currentBytes = {
-	                                    time: Time.now(),
+	                                    time: _.now(),
 	                                    value: stats.bytesReceived || 0
 	                                };
 
@@ -3542,9 +6649,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PeerConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -3569,7 +6676,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var minimumPollFrequency = 15;
 
 	    function DimensionsChangedMonitor(logger) {
-	        if (!logger){
+	        if (!logger) {
 	            throw new Error("'logger' must be specified.");
 	        }
 	        this._logger = logger;
@@ -3641,7 +6748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        startInterval.call(this);
 	    }
 
-	    function startInterval(){
+	    function startInterval() {
 	        //return if either:
 	        // - start hasn't been called yet
 	        // - the interval is already running
@@ -3670,7 +6777,2736 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ }
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(21),
+	    __webpack_require__(4),
+	    __webpack_require__(28),
+	    __webpack_require__(19),
+	    __webpack_require__(22),
+	    __webpack_require__(30),
+	    __webpack_require__(27),
+	    __webpack_require__(26)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, Member, RoomChatService, room, member) {
+	    'use strict';
+
+	    function RoomService(pcast) {
+	        assert.isObject(pcast, 'pcast');
+	        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+	        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+	        this._pcast = pcast;
+	        this._logger = pcast.getLogger();
+	        this._protocol =  pcast.getProtocol();
+
+	        this._self = new Observable(null);
+	        this._activeRoom = new Observable(null);
+	        this._cachedRoom = new Observable(null);
+	        this._roomChatService = null;
+
+	        assert.isObject(this._logger, 'this._logger');
+	        assert.isObject(this._protocol, 'this._protocol');
+
+	        this._authService = new AuthenticationService(this._pcast);
+	    };
+
+	    RoomService.prototype.start = function start(role, screenName) {
+	        assert.stringNotEmpty(role, 'role');
+	        assert.stringNotEmpty(screenName, 'screenName');
+
+	        this._authService.start();
+
+	        var myState = member.states.passive.name;
+	        var mySessionId = this._authService.getPCastSessionId();
+	        var myScreenName = screenName;
+	        var myStreams = [];
+	        var myLastUpdate = _.now();
+
+	        var self = new Member(myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
+
+	        this._self = new Observable(self);
+	        this._disposables = [];
+
+	        var disposeOfRoomEventHandler = this._protocol.on('roomEvent', _.bind(onRoomEvent, this));
+
+	        this._disposables.push(disposeOfRoomEventHandler);
+
+	        setupSubscriptions.call(this);
+
+	        return self;
+	    };
+
+	    RoomService.prototype.getRoomInfo = function getRoomInfo(roomId, alias, callback) {
+	        if (roomId) {
+	            assert.stringNotEmpty('roomId', roomId);
+	        } else {
+	            assert.stringNotEmpty('alias', alias);
+	        }
+	        assert.isFunction(callback);
+
+	        getRoomInfoRequest.call(this, roomId, alias, callback);
+	    };
+
+	    RoomService.prototype.createRoom = function createRoom(name, type, description, callback) {
+	        assert.isString(name, 'name');
+	        assert.isString(type, 'type');
+	        assert.isString(description, 'description');
+	        assert.isFunction(callback);
+
+	        createRoomRequest.call(this, name, type, description,
+	            function createRoomSuccess(response) {
+	                callback(response.room);
+	            }
+	        );
+	    };
+
+	    RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
+	        if (roomId) {
+	            assert.stringNotEmpty('roomId', roomId);
+	        } else {
+	            assert.stringNotEmpty('alias', alias);
+	        }
+	        assert.isFunction(callback);
+
+	        enterRoomRequest.call(this, roomId, alias, _.bind(enterRoomSuccess, this, callback));
+	    };
+
+	    RoomService.prototype.leaveRoom = function leaveRoom(callback) {
+	        var that = this;
+
+	        return leaveRoomRequest.call(that,
+	            function leaveRoomSuccess(status) {
+	                if (that._roomChatService) {
+	                    that._roomChatService.stop();
+	                }
+
+	                that._roomChatService = null;
+
+	                that._activeRoom.setValue(null);
+	                that._cachedRoom.setValue(null);
+	                callback(status);
+	            }
+	        );
+	    };
+
+	    RoomService.prototype.getRoomChatService = function getRoomChatService() {
+	        if (!this._roomChatService && this._activeRoom.getValue()) {
+	            this._roomChatService = new RoomChatService(this);
+	        }
+
+	        return this._roomChatService;
+	    };
+
+	    RoomService.prototype.getSelf = function getSelf() {
+	        return this._self.getValue();
+	    };
+
+	    RoomService.prototype.getObservableActiveRoom = function getObservableActiveRoom() {
+	        return this._activeRoom;
+	    };
+
+	    RoomService.prototype.updateSelf = function updateSelf(callback) {
+	        assert.isFunction(callback);
+
+	        updateMemberRequest.call(this, this.getSelf(), callback);
+	    };
+
+	    RoomService.prototype.updateMember = function updateMember(member, callback) {
+	        assert.isFunction(callback);
+	        assert.isObject(member);
+
+	        updateMemberRequest.call(this, member, callback);
+	    };
+
+	    RoomService.prototype.updateRoom = function updateRoom(callback) {
+	        assert.isFunction(callback);
+
+	        updateRoomRequest.call(this, callback);
+	    };
+
+	    RoomService.prototype.revertRoomChanges = function revertRoomChanges() {
+	        var activeRoom = this._activeRoom.getValue();
+	        var cachedRoom = this._cachedRoom.getValue();
+
+	        if (!activeRoom || !cachedRoom) {
+	            return this._logger.warn('Unable to revert changes to room. Not currently in a room.');
+	        }
+
+	        activeRoom._update(cachedRoom.toJson());
+	    };
+
+	    RoomService.prototype.revertMemberChanges = function revertMemberChanges(member) {
+	        assert.isObject(member);
+
+	        var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
+	        var activeMember = findMemberInObservableRoom(member.getSessionId(), this._activeRoom);
+
+	        if (!cachedMember || !activeMember) {
+	            return this._logger.warn('Unable to revert changes to member. Member is currently not in room.');
+	        }
+
+	        activeMember._update(cachedMember.toJson());
+	    };
+
+	    RoomService.prototype.toString = function toString() {
+	        return 'RoomService';
+	    };
+
+	    RoomService.prototype.stop = function stop() {
+	        this._authService.stop();
+
+	        disposeOfArray(this._disposables);
+	    };
+
+	    function resetSelf(sessionId) {
+	        var self = this._self.getValue().toJson();
+
+	        this._self.setValue(new Member(self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate, this));
+	    }
+
+	    function resetRoom() {
+	        var that = this;
+
+	        var activeRoom = that._activeRoom.getValue();
+
+	        if (!_.isObject(activeRoom)) {
+	            return;
+	        }
+
+	        var roomId = activeRoom.getRoomId();
+	        var alias = activeRoom.getObservableAlias().getValue();
+
+	        that.leaveRoom(function() {
+	            that.enterRoom(roomId, alias, function() {
+	                that._logger.info('Room Reset Completed');
+	            });
+	        });
+	    }
+
+	    function enterRoomSuccess(callback, response) {
+	        var roomInfo = response.room;
+	        var members = response.members;
+
+	        var room = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
+	        var cachedRoom = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
+
+	        replaceSelfInstanceInRoom.call(this, room);
+
+	        this._activeRoom.setValue(room);
+	        this._cachedRoom.setValue(cachedRoom);
+
+	        callback(room, 'ok', null);
+	    }
+
+	    function replaceSelfInstanceInRoom(room) {
+	        var self = this._self.getValue();
+	        var members = room.getObservableMembers().getValue();
+
+	        var selfIndex = _.findIndex(members, function(member) {
+	            return self.getSessionId() === member.getSessionId();
+	        });
+
+	        if (!_.isNumber(selfIndex)) {
+	            throw new Error('Invalid Room State: Self member not in room list of members.');
+	        }
+
+	        self._update(members[selfIndex].toJson());
+
+	        members[selfIndex] = self;
+
+	        room.getObservableMembers().setValue(members);
+	    }
+
+	    // handle events
+	    function onRoomEvent(event) {
+	        assert.isObject(event, 'event');
+	        assert.isString(event.roomId, 'event.roomId');
+	        assert.isString(event.eventType, 'event.eventType');
+	        assert.isArray(event.members, 'event.members');
+
+	        _.forEach(event.members, function(member) {
+	            assert.isObject(member, 'member');
+	        });
+
+	        var that = this;
+
+	        switch (event.eventType) {
+	            case room.events.memberJoined.name:
+	                that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
+	                return onMembersJoinsRoom.call(that, event.roomId, event.members);
+	            case room.events.memberLeft.name:
+	                that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
+	                return onMembersLeavesRoom.call(that, event.roomId, event.members);
+	            case room.events.memberUpdated.name:
+	                that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
+	                return onMembersUpdated.call(that, event.roomId, event.members);
+	            case room.events.roomUpdated.name:
+	                that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
+	                return onRoomUpdated.call(that, event.roomId, event.room);
+	            case room.events.roomEnded.name:
+	                that._logger.info('[%s] Room ended', event.roomId);
+	                break;
+	            default:
+	                that._logger.warn('Unsupported room event [%s]', event.eventType);
+	        }
+	    }
+
+	    function onMembersJoinsRoom(roomId, members) {
+	        var room = this._activeRoom.getValue();
+	        var cachedRoom = this._cachedRoom.getValue();
+
+	        if (!room || room.getRoomId() !== roomId) {
+	            return;
+	        }
+
+	        room._removeMembers(members);
+	        room._addMembers(members);
+
+	        cachedRoom._removeMembers(members);
+	        cachedRoom._addMembers(members);
+
+	        this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
+	    }
+
+	    function onMembersLeavesRoom(roomId, members) {
+	        var room = this._activeRoom.getValue();
+	        var cachedRoom = this._cachedRoom.getValue();
+
+	        if (!room || room.getRoomId() !== roomId) {
+	            return;
+	        }
+
+	        room._removeMembers(members);
+	        cachedRoom._removeMembers(members);
+
+	        this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
+	    }
+
+	    function onMembersUpdated(roomId, members) {
+	        var room = this._activeRoom.getValue();
+	        var cachedRoom = this._cachedRoom.getValue();
+
+	        if (!room || room.getRoomId() !== roomId) {
+	            return;
+	        }
+
+	        room._updateMembers(members);
+	        cachedRoom._updateMembers(members);
+
+	        this._logger.info('[%s] Room has [%d] updated members', roomId, members.length);
+	    }
+
+	    function onRoomUpdated(roomId, room) {
+	        var activeRoom = this._activeRoom.getValue();
+	        var cachedRoom = this._cachedRoom.getValue();
+
+	        if (!activeRoom || activeRoom.getRoomId() !== roomId) {
+	            return;
+	        }
+
+	        cachedRoom._update(room);
+	        activeRoom._update(room);
+	    }
+
+	    function handlePCastSessionIdChanged(sessionId) {
+	        resetSelf.call(this, sessionId);
+	    }
+
+	    function findMemberInObservableRoom(sessionId, observableRoom) {
+	        var room = observableRoom.getValue();
+	        var members = room.getObservableMembers().getValue();
+	        return findMemberInMembers(sessionId, members);
+	    }
+
+	    function findMemberInMembers(sessionId, members) {
+	        return _.find(members, function(member) {
+	            return sessionId === member.getSessionId();
+	        });
+	    }
+
+	    function handlePCastStatusChange(status) {
+	        this._logger.info('PCast status changed to [%s]', status);
+
+	        if (status.toLowerCase() !== 'offline' && this._lastPcastStatus === 'offline') {
+	            // ToDo (dcy) disabled until we determine what to do when the client goes back online
+	            // resetRoom.call(this);
+	        } else if (status.toLowerCase() === 'offline' && this._lastPcastStatus !== 'offline' && !_.isNullOrUndefined(this._lastPcastStatus)) {
+	            // ToDo (dcy) disabled until we determine what to do when the client goes offline
+	        }
+
+	        this._lastPcastStatus = status;
+	    }
+
+	    function setupSubscriptions() {
+	        var selfSubscription = this._self.subscribe(_.bind(resetRoom, this));
+
+	        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
+	        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
+
+	        this._disposables.push(selfSubscription.dispose);
+	        this._disposables.push(pcastStatusSubscription.dispose);
+	        this._disposables.push(pcastSessionIdSubscription.dispose);
+	    }
+
+	    function disposeOfArray(arrayOfDisposables) {
+	        if (!_.isArray(arrayOfDisposables)) {
+	            return;
+	        }
+
+	        for (var i = 0; i < arrayOfDisposables.length; i++) {
+	            if (typeof arrayOfDisposables[i] === 'function') {
+	                arrayOfDisposables[i]();
+	            }
+	        }
+	    }
+
+	    // Requests to server
+	    function buildMemberForRequest(member, memberToCompare) {
+	        var memberForRequest = findDifferencesInSelf(member, memberToCompare);
+
+	        memberForRequest.sessionId = member.getSessionId();
+	        // last valid update from server. Handles collisions.
+	        memberForRequest.lastUpdate = memberToCompare ? memberToCompare.getLastUpdate() : _.now();
+
+	        return memberForRequest;
+	    }
+
+	    function findDifferencesInSelf(member, memberToCompare) {
+	        if (memberToCompare === null) {
+	            return member.toJson();
+	        }
+
+	        var memberForRequest = {};
+	        var newMember = member.toJson();
+	        var cachedMember = memberToCompare.toJson();
+	        var differences = _.findDifferences(newMember, cachedMember, true);
+
+	        _.forEach(differences, function(key) {
+	            memberForRequest[key] = newMember[key];
+	        });
+
+	        return memberForRequest;
+	    }
+
+	    function getRoomInfoRequest(roomId, alias, callback) {
+	        this._authService.assertAuthorized();
+
+	        this._protocol.getRoomInfo(roomId, alias,
+	            function handleCreateRoomResponse(response) {
+	                if (response.status !== 'ok') {
+	                    return callback(response.room, response.status, response.reason);
+	                }
+
+	                callback(response.room, response.status, null);
+	            }
+	        );
+	    }
+
+	    function createRoomRequest(roomName, type, description, callback) {
+	        this._authService.assertAuthorized();
+
+	        this._protocol.createRoom(roomName, type, description,
+	            function handleCreateRoomResponse(response) {
+	                if (response.status !== 'ok' && response.status !== 'already-exists') {
+	                    throw new Error(response.reason);
+	                }
+
+	                callback(response);
+	            }
+	        );
+	    }
+
+	    function enterRoomRequest(roomId, alias, callback) {
+	        this._authService.assertAuthorized();
+
+	        var self = this._self.getValue();
+
+	        var screenName = self.getObservableScreenName().getValue();
+	        var role = self.getObservableRole().getValue();
+	        var selfForRequest = buildMemberForRequest.call(this, self, null);
+	        var timestamp = _.now();
+
+	        this._logger.info('Enter room [%s]/[%s] with screen name [%s] and role [%s]', roomId, alias, screenName, role);
+
+	        this._protocol.enterRoom(roomId, alias, selfForRequest, timestamp,
+	            function handleEnterRoomResponse(response) {
+	                if (response.status !== 'ok') {
+	                    throw new Error('Joining of room failed: ' + response.status);
+	                }
+
+	                callback(response);
+	            }
+	        );
+	    }
+
+	    function leaveRoomRequest(callback) {
+	        if (!this._activeRoom.getValue()) {
+	            return this._logger.warn('Unable to leave room. Not currently in a room.');
+	        }
+
+	        this._authService.assertAuthorized();
+
+	        var roomId = this._activeRoom.getValue().getRoomId();
+	        var timestamp = _.now();
+
+	        this._logger.info('Leave room [%s]', roomId);
+
+	        this._protocol.leaveRoom(roomId, timestamp,
+	            function handleLeaveRoomResponse(response) {
+	                if (response.status !== 'ok') {
+	                    throw new Error('Leaving room failed: ' + response.status);
+	                }
+
+	                callback(response.status);
+	            }
+	        );
+	    }
+
+	    var notInRoomError = 'Not in a room. Please Enter a room before updating self.';
+
+	    function updateMemberRequest(member, callback) {
+	        if (!this._activeRoom.getValue()) {
+	            this._logger.warn('notInRoomError');
+
+	            return callback('not-in-room', notInRoomError);
+	        }
+
+	        this._authService.assertAuthorized();
+
+	        var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
+	        var memberForRequest = buildMemberForRequest.call(this, member, cachedMember);
+	        var timestamp = _.now();
+
+	        this._logger.info('Updating member info for active room');
+
+	        var that = this;
+
+	        this._protocol.updateMember(memberForRequest, timestamp,
+	            function handleUpdateMemberResponse(response) {
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Update of member failed: ' + response.status);
+
+	                    return callback('failed', 'Update of member failed: ' + response.status);
+	                }
+
+	                return callback('ok', null)
+	            }
+	        );
+	    }
+
+	    function updateRoomRequest(callback) {
+	        if (!this._activeRoom.getValue()) {
+	            this._logger.warn('notInRoomError');
+
+	            return callback('not-in-room', notInRoomError);
+	        }
+
+	        this._authService.assertAuthorized();
+
+	        var room = this._activeRoom.getValue();
+	        var timestamp = _.now();
+
+	        var that = this;
+
+	        this._protocol.updateRoom(room.toJson(), timestamp,
+	            function handleUpdateMemberResponse(response) {
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Update of room failed: ' + response.status);
+
+	                    return callback('failed', 'Update of member failed: ' + response.status);
+	                }
+
+	                return callback(response.status, null);
+	            }
+	        );
+	    }
+
+	    return RoomService;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(21),
+	    __webpack_require__(22),
+	    __webpack_require__(27)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Member, room) {
+	    'use strict';
+	    var roomTypes = room.types;
+
+	    function Room(id, alias, name, description, type, members, bridgeId, pin, roomService) {
+	        this.init(id, alias, name, description, type, members, bridgeId, pin, roomService);
+	    }
+
+	    Room.prototype.init = function init(id, alias, name, description, type, members, bridgeId, pin, roomService) {
+	        assert.isString(id, 'id');
+	        assert.isString(alias, 'alias');
+	        assert.isString(name, 'name');
+	        assert.isString(description, 'description');
+	        assert.isArray(members, 'members');
+
+	        if (bridgeId) {
+	            assert.isString(bridgeId, 'bridgeId');
+	        }
+	        if (pin) {
+	            assert.isString(pin, 'pin');
+	        }
+
+	        this._roomId = new Observable(id);
+	        this._alias = new Observable(alias);
+	        this._name = new Observable(name);
+	        this._description = new Observable(description);
+	        this._type = new Observable(type, assertIsValidRoomType);
+	        this._members = new ObservableArray([]).extend({ method: "notifyWhenChangesStop", timeout: 400 });
+	        this._options = new ObservableArray();
+	        this._bridgeId = new Observable(bridgeId);
+	        this._pin = new Observable(pin);
+	        this._roomService = roomService;
+
+	        setMembers.call(this, members);
+	    };
+
+	    Room.prototype.getRoomId = function getRoomId() {
+	        return this._roomId.getValue();
+	    };
+
+	    Room.prototype.getObservableAlias = function getObservableAlias() {
+	        return this._alias;
+	    };
+
+	    Room.prototype.getObservableName = function getObservableName() {
+	        return this._name;
+	    };
+
+	    Room.prototype.getObservableDescription = function getObservableDescription() {
+	        return this._description;
+	    };
+
+	    Room.prototype.getObservableType = function getObservableType() {
+	        return this._type;
+	    };
+
+	    Room.prototype.getObservableMembers = function getObservableMembers() {
+	        return this._members;
+	    };
+
+	    Room.prototype.getObservableBridgeId = function getObservableBridgeId() {
+	        return this._bridgeId;
+	    };
+
+	    Room.prototype.getObservablePin = function getObservablePin() {
+	        return this._pin;
+	    };
+
+	    Room.prototype.toString = function toString() {
+	        return this._type.getValue() + '[' + this._roomId.getValue() + ']';
+	    };
+
+	    Room.prototype.toJson = function toJson() {
+	        return {
+	            roomId: this._roomId.getValue(),
+	            alias: this._alias.getValue(),
+	            name: this._name.getValue(),
+	            description: this._description.getValue(),
+	            type: this._type.getValue(),
+	            pin: this._pin.getValue(),
+	            bridgeId: this._bridgeId.getValue()
+	        }
+	    };
+
+	    Room.prototype.commitChanges = function commitChanges(callback) {
+	        this._roomService.updateRoom(this, callback);
+	    };
+
+	    Room.prototype.reload = function reload() {
+	        this._roomService.revertRoomChanges(this);
+	    };
+
+	    Room.prototype._update = function update(room) {
+	        if (!_.isObject(room)) {
+	            return;
+	        }
+
+	        if (room.roomId) {
+	            this._roomId.setValue(room.roomId);
+	        }
+
+	        if (room.alias) {
+	            this._alias.setValue(room.alias);
+	        }
+
+	        if (room.name) {
+	            this._name.setValue(room.name);
+	        }
+
+	        if (room.description) {
+	            this._description.setValue(room.description);
+	        }
+
+	        if (room.type) {
+	            this._type.setValue(room.type);
+	        }
+
+	        if (room.options) {
+	            this._options.setValue(room.options);
+	        }
+
+	        if (room.bridgeId) {
+	            this._bridgeId.setValue(room.bridgeId);
+	        }
+
+	        if (room.pin) {
+	            this._pin.setValue(room.pin);
+	        }
+
+	        if (room.members) {
+	            // DO NOTHING -- members updated by member events
+	        }
+	    };
+
+	    Room.prototype._addMembers = function addMembers(members) {
+	        var that = this;
+
+	        var newMembers = mapMembers(members);
+
+	        _.forEach(newMembers, function (member) {
+	            that._members.push(member);
+	        });
+	    };
+
+	    Room.prototype._removeMembers = function removeMembers(members) {
+	        var that = this;
+
+	        _.forEach(members, function(member) {
+	            that._members.remove(function(observableMember) {
+	                return member.sessionId === observableMember.getSessionId()
+	                    && member.lastUpdate >= observableMember.getObservableLastUpdate().getValue();
+	            });
+	        });
+	    };
+
+	    Room.prototype._updateMembers = function updateMembers(members) {
+	        _.forEach(this._members.getValue(), function (observableMember) {
+	            var memberToUpdate = _.find(members, function(member) {
+	                return observableMember.getSessionId() === member.sessionId && member.lastUpdate > observableMember.getObservableLastUpdate().getValue();
+	            });
+
+	            if (memberToUpdate) {
+	                observableMember._update(memberToUpdate);
+	            }
+	        });
+	    };
+
+	    function setMembers(members) {
+	        var newMembers = mapMembers(members);
+
+	        this._members.setValue(newMembers);
+	    }
+
+	    function mapMembers(members) {
+	        return _.map(members, function(member) {
+	            return new Member(member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+	        });
+	    }
+
+	    function assertIsValidRoomType(type) {
+	        type = _.getEnumName(roomTypes, type);
+
+	        if (!type) {
+	            throw new Error('"type" must be a valid room type');
+	        }
+
+	        return type;
+	    }
+
+	    return Room;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    function Observable(initialValue, beforeChange) {
+	        this.latestValue = null;
+	        this.subscribeCallbacks = {};
+	        this.subscriptionTimeout = 100;
+	        this.subscriptionCount = 0;
+	        this.resetOnChange = false;
+	        this.lastChangeTime = 0;
+	        this.isPendingChanges = false;
+	        this.beforeChange = beforeChange;
+
+	        setLatestValue.call(this, initialValue);
+	    }
+
+	    Observable.prototype.getValue = function getValue() {
+	        return clone(this.latestValue);
+	    };
+
+	    Observable.prototype.setValue = function setValue(value) {
+	        if (value !== this.latestValue) {
+	            setLatestValue.call(this, value);
+	            onSubscribeCallback.call(this, this.subscriptionTimeout);
+	        }
+	    };
+
+	    Observable.prototype.subscribe = function subscribe(callback, options) {
+	        assert.isFunction(callback);
+
+	        if (options) {
+	            assert.isObject(options);
+	        }
+
+	        var that = this;
+	        var key = _.uniqueId();
+	        var listenForChanges;
+
+	        that.subscribeCallbacks[key] = callback;
+	        that.subscriptionCount += 1;
+
+	        if (options) {
+	            if (options.initial === 'notify') {
+	                onSubscribeCallback.call(that, that.subscriptionTimeout);
+	            }
+	            if (options.listenForChanges) {
+	                listenForChanges = setInterval(function() {
+	                    var valueAtInterval = options.listenForChanges.callback();
+
+	                    if (valueAtInterval !== that.latestValue) {
+	                        that.setValue(valueAtInterval);
+	                    }
+	                }, options.listenForChanges.timeout)
+	            }
+	        }
+
+	        function dispose() {
+	            delete that.subscribeCallbacks[key];
+
+	            if (listenForChanges) {
+	                clearInterval(listenForChanges);
+
+	                listenForChanges = null;
+	            }
+
+	            that.subscriptionCount -= 1;
+	        }
+
+	        return { dispose: dispose };
+	    };
+
+	    Observable.prototype.extend = function extend(options) {
+	        assert.isObject(options);
+
+	        switch (options.method) {
+	            case 'notifyWhenChangesStop':
+	                this.subscriptionTimeout = options.timeout;
+	                this.resetOnChange = true;
+	                break;
+	            case 'notifyAtFixedRate':
+	                this.subscriptionTimeout = options.timeout;
+	                break;
+	            default:
+	                break;
+	        }
+	        if (_.isNumber(options.rateLimit)) {
+	            this.subscriptionTimeout = options.rateLimit;
+	        }
+
+	        return this;
+	    };
+
+	    function clone(value) {
+	        if (typeof value === 'undefined' || value === null) {
+	            return value;
+	        }
+
+	        // necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
+	        if (_.isArray(value)) {
+	            return value.slice();
+	        } else {
+	            return value;
+	        }
+	    }
+
+	    function setLatestValue(value) {
+	        var valueToSet = value;
+
+	        if (this.beforeChange) {
+	            valueToSet = this.beforeChange(value);
+	        }
+
+	        this.latestValue = clone(valueToSet);
+	    }
+
+	    function onSubscribeCallback(timeoutLength) {
+	        this.lastChangeTime = _.now();
+
+	        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
+	            this.isPendingChanges = true;
+
+	            continueAfterTimeout.call(this, timeoutLength)
+	        }
+	    }
+
+	    function continueAfterTimeout(timeoutLength) {
+	        var that = this;
+
+	        setTimeout(function() {
+	            var timeElapsedSinceLastChange = _.now() - that.lastChangeTime;
+
+	            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
+	                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
+	            } else {
+	                try {
+	                    executeSubscriptionCallbacks.call(that);
+	                } finally {
+	                    that.isPendingChanges = false;
+	                }
+	            }
+	        }, timeoutLength);
+	    }
+
+	    function executeSubscriptionCallbacks() {
+	        var that = this;
+
+	        _.forOwn(that.subscribeCallbacks, function (callback) {
+	            if (_.isFunction(callback)) {
+	                callback(that.latestValue);
+	            }
+	        });
+	    }
+
+	    return Observable;
+
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
+	    'use strict';
+
+	    function ObservableArray(initialValues, beforeChange) {
+	        var valuesToSet = initialValues;
+
+	        if (valuesToSet === undefined || valuesToSet === null) {
+	            valuesToSet = [];
+	        }
+
+	        assert.isArray(valuesToSet);
+
+	        this.observableArray = new Observable(valuesToSet, beforeChange);
+	    }
+
+	    ObservableArray.prototype.getValue = function getValue() {
+	        return this.observableArray.getValue();
+	    };
+
+	    ObservableArray.prototype.setValue = function setValue(values) {
+	        if (values === undefined || values === null) {
+	            values = [];
+	        }
+
+	        if (values !== undefined) {
+	            assert.isArray(values);
+	        }
+
+	        return this.observableArray.setValue(values);
+	    };
+
+	    ObservableArray.prototype.subscribe = function subscribe(callback, options) {
+	        return this.observableArray.subscribe(callback, options);
+	    };
+
+	    ObservableArray.prototype.push = function push(value) {
+	        var array = this.observableArray.getValue();
+	        array.push(value);
+
+	        this.observableArray.setValue(array);
+	    };
+
+	    ObservableArray.prototype.pop = function pop() {
+	        var array = this.observableArray.getValue();
+	        var value = array.pop();
+
+	        this.observableArray.setValue(array);
+
+	        return value;
+	    };
+
+	    ObservableArray.prototype.remove = function remove(valueOrFunction) {
+	        var array = this.observableArray.getValue();
+
+	        var filterFunction = function (value) {
+	            return _.isFunction(valueOrFunction) ? valueOrFunction(value) : value === valueOrFunction;
+	        };
+
+	        var valuesToRemove = _.filter(array, filterFunction);
+
+	        if (valuesToRemove.length > 0) {
+	            this.observableArray.setValue(_.remove(array, filterFunction));
+	        }
+
+	        return valuesToRemove;
+	    };
+
+	    ObservableArray.prototype.removeAll = function removeAll() {
+	        var array = this.observableArray.getValue();
+
+	        this.observableArray.setValue([]);
+	        return array;
+	    };
+
+	    ObservableArray.prototype.extend = function extend(options) {
+	        this.observableArray.extend(options);
+
+	        return this;
+	    };
+
+	    function updateArray(array, valuesToRemove, i) {
+	        valuesToRemove.push(array[i]);
+	        array.splice(i, 1);
+	        i--;
+	        return i;
+	    }
+
+	    return ObservableArray;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(21),
+	    __webpack_require__(23),
+	    __webpack_require__(26)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Stream, member) {
+	    'use strict';
+	    var memberRoles = member.roles;
+	    var memberStates = member.states;
+
+	    function Member(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
+	        this.init(state, sessionId, screenName, role, streams, lastUpdate, roomService);
+	    }
+
+	    Member.prototype.init = function init(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
+	        assert.isString(sessionId, 'sessionId');
+	        assert.isString(screenName, 'screenName');
+	        assert.isArray(streams, 'streams');
+	        assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
+
+	        this._sessionId = new Observable(sessionId);
+	        this._screenName = new Observable(screenName);
+	        this._streams = new ObservableArray([]);
+
+	        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit:500});
+	        this._role = new Observable(role, assertIsValidMemberRole);
+	        this._lastUpdate = new Observable(lastUpdate, _.utc);
+	        this._roomService = roomService;
+
+	        this.setStreams(streams);
+	    };
+
+	    Member.prototype.getObservableState = function getObservableState() {
+	        return this._state;
+	    };
+
+	    Member.prototype.getSessionId = function getSessionId() {
+	        return this._sessionId.getValue();
+	    };
+
+	    Member.prototype.getObservableScreenName = function getObservableScreenName() {
+	        return this._screenName;
+	    };
+
+	    Member.prototype.getObservableRole = function getObservableRole() {
+	        return this._role;
+	    };
+
+	    Member.prototype.getObservableStreams = function getObservableStreams() {
+	        return this._streams;
+	    };
+
+	    Member.prototype.getObservableLastUpdate = function getObservableLastUpdate() {
+	        return this._lastUpdate;
+	    };
+
+	    Member.prototype.getLastUpdate = function getLastUpdate() {
+	        return this._lastUpdate.getValue();
+	    };
+
+	    Member.prototype.getStreams = function getStreams() {
+	        return _.map(this._streams.getValue(), function mapToJson(stream) {
+	            return stream.toJson();
+	        })
+	    };
+
+	    Member.prototype.commitChanges = function commitChanges(callback) {
+	        this._roomService.updateMember(this, callback);
+	    };
+
+	    Member.prototype.reload = function reload() {
+	        this._roomService.revertMemberChanges(this);
+	    };
+
+	    Member.prototype.setStreams = function setStreams(streams) {
+	        var newStreams = _.map(streams, function(stream) {
+	            return createNewObservableStream(stream);
+	        });
+
+	        this._streams.setValue(newStreams);
+	    };
+
+	    Member.prototype.toString = function toString() {
+	        return this.getObservableRole().getValue() + '[' + this.getObservableScreenName().getValue() + ',' + this.getSessionId() + ']';
+	    };
+
+	    Member.prototype.toJson = function toJson() {
+	        var member = {
+	            sessionId: this._sessionId.getValue(),
+	            screenName: this._screenName.getValue(),
+	            role: this._role.getValue(),
+	            state: this._state.getValue(),
+	            streams: [],
+	            lastUpdate: this._lastUpdate.getValue()
+	        };
+
+	        _.forEach(this._streams.getValue(), function(stream) {
+	            member.streams.push(stream.toJson());
+	        });
+
+	        return member;
+	    };
+
+	    Member.prototype._update = function update(member) {
+	        if (!_.isObject(member)) {
+	            return;
+	        }
+
+	        if (member.hasOwnProperty('state')) {
+	            this._state.setValue(member.state);
+	        }
+
+	        if (member.hasOwnProperty('screenName')) {
+	            this._screenName.setValue(member.screenName);
+	        }
+
+	        if (member.hasOwnProperty('role')) {
+	            this._role.setValue(member.role);
+	        }
+
+	        if (member.hasOwnProperty('lastUpdate')) {
+	            this._lastUpdate.setValue(member.lastUpdate);
+	        }
+
+	        if (member.hasOwnProperty('streams')) {
+	            updateStreams.call(this, member.streams);
+	        }
+	    };
+
+	    function createNewObservableStream(stream) {
+	        return new Stream(stream.uri, stream.type, stream.audioState, stream.videoState);
+	    }
+
+	    function updateStreams(streams) {
+	        // iterate through new streams object, update those that have changed, push new ones, remove old ones
+	        var oldObservableStreams = this._streams.getValue();
+	        var newObservableStreams = [];
+
+	        _.forEach(streams, function (stream) {
+	            var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
+	                return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
+	            });
+	            if (streamToUpdate) {
+	                streamToUpdate._update(stream);
+	            } else {
+	                streamToUpdate = createNewObservableStream(stream);
+	            }
+
+	            newObservableStreams.push(streamToUpdate);
+	        });
+
+	        this._streams.setValue(newObservableStreams);
+	    }
+
+	    function assertIsValidMemberRole(role) {
+	        role = _.getEnumName(memberRoles, role);
+
+	        if (!role) {
+	            throw new Error('"role" must be a valid member role');
+	        }
+
+	        return role;
+	    }
+
+	    function assertIsValidMemberState(state) {
+	        state = _.getEnumName(memberStates, state);
+
+	        if (!state) {
+	            throw new Error('"state" must be a valid member state');
+	        }
+
+	        return state;
+	    }
+
+	    return Member;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(21),
+	    __webpack_require__(24),
+	    __webpack_require__(25)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, stream, track) {
+	    'use strict';
+
+	    var streamTypes = stream.types;
+	    var trackStates = track.states;
+
+	    function Stream(uri, type, audioState, videoState) {
+	        this.init(uri, type, audioState, videoState);
+	    }
+
+	    Stream.prototype.init = function (uri, type, audioState, videoState) {
+	        assert.isString(uri, 'uri');
+
+	        this._uri = new Observable(uri);
+	        this._type = new Observable(type, assertIsValidStreamType);
+	        this._audioState = new Observable(audioState || trackStates.trackEnabled.name, assertIsValidTrackState);
+	        this._videoState = new Observable(videoState || trackStates.trackEnabled.name, assertIsValidTrackState);
+	    };
+
+	    Stream.prototype.getUri = function getUri() {
+	        return this._uri.getValue();
+	    };
+
+	    Stream.prototype.getType = function getType() {
+	        return this._type.getValue();
+	    };
+
+	    Stream.prototype.getObservableAudioState = function getObservableAudioState() {
+	        return this._audioState;
+	    };
+
+	    Stream.prototype.getObservableVideoState = function getObservableVideoState() {
+	        return this._videoState;
+	    };
+
+	    Stream.prototype.toJson = function toJson() {
+	        return {
+	            uri: this._uri.getValue(),
+	            type: this._type.getValue(),
+	            audioState: this._audioState.getValue(),
+	            videoState: this._videoState.getValue()
+	        };
+	    };
+
+	    Stream.prototype._update = function update(stream) {
+	        if (!_.isObject(stream)) {
+	            return;
+	        }
+
+	        if (stream.hasOwnProperty('audioState')) {
+	            this._audioState.setValue(stream.audioState);
+	        }
+
+	        if (stream.hasOwnProperty('videoState')) {
+	            this._videoState.setValue(stream.videoState);
+	        }
+	    };
+
+	    function assertIsValidStreamType(type) {
+	        type = _.getEnumName(streamTypes, type);
+
+	        if (!type) {
+	            throw new Error('"type" must be a valid stream type');
+	        }
+
+	        return type;
+	    }
+
+	    function assertIsValidTrackState(state) {
+	        state = _.getEnumName(trackStates, state);
+
+	        if (!state) {
+	            throw new Error('"state" must be a valid track state');
+	        }
+
+	        return state;
+	    }
+
+	    return Stream;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var streamEnums = {
+	        types: {
+	            user: { id: 0, name: 'User' },
+	            presentation: { id: 1, name: 'Presentation' },
+	            audio: { id: 2, name: 'Audio' },
+	        }
+	    };
+
+	    return streamEnums;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var trackEnums = {
+	        states: {
+	            trackEnabled: { id: 0, name: 'TrackEnabled' },
+	            trackDisabled: { id: 1, name: 'TrackDisabled' },
+	            trackEnded: { id: 2, name: 'TrackEnded' },
+	        }
+	    };
+
+	    return trackEnums;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var memberEnums = {
+	        roles: {
+	            participant: {id: 0, name: 'Participant'},
+	            moderator: {id: 1, name: 'Moderator'},
+	            presenter: {id: 2, name: 'Presenter'},
+	            audience: {id: 3, name: 'Audience'}
+	        },
+	        states: {
+	            active: {id: 0, name: 'Active'},
+	            passive: {id: 1, name: 'Passive'},
+	            handRaised: {id: 2, name: 'HandRaised'},
+	            inactive: {id: 3, name: 'Inactive'},
+	            offline: {id: 4, name: 'Offline'}
+	        }
+	    };
+
+	    return memberEnums;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var roomEnums = {
+	        types: {
+	            directChat: { id: 0, name: 'DirectChat' },
+	            multiPartyChat: { id: 1, name: 'MultiPartyChat' },
+	            moderatedChat: { id: 2, name: 'ModeratedChat' },
+	            townHall: { id: 3, name: 'TownHall' },
+	            channel: { id: 4, name: 'Channel' }
+	        },
+	        events: {
+	            memberJoined: { id: 0, name: 'MemberJoined' },
+	            memberLeft: { id: 1, name: 'MemberLeft' },
+	            memberUpdated: { id: 2, name: 'MemberUpdated' },
+	            roomUpdated: { id: 3, name: 'RoomUpdated' },
+	            roomEnded: { id: 4, name: 'RoomEnded' },
+	        }
+	    }
+
+	    return roomEnums;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(29)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableMonitor) {
+	    'use strict';
+
+	    function AuthenticationService(pcast) {
+	        this._sessionId = new Observable();
+	        this._status = new Observable();
+	        this._sessionIdMonitor = new ObservableMonitor(this._sessionId);
+	        this._statusMonitor = new ObservableMonitor(this._status);
+
+	        this.init(pcast);
+	    }
+
+	    AuthenticationService.prototype.init = function init(pcast) {
+	        assert.isObject(pcast, 'pcast');
+	        assert.isFunction(pcast.getStatus, 'pcast.getStatus');
+	        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+	        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+	        if (this._pcast === pcast) {
+	            return;
+	        }
+
+	        this._pcast = pcast;
+	        this._logger = pcast.getLogger();
+	        this._protocol = pcast.getProtocol();
+
+	        assert.isObject(this._logger, 'this._logger');
+	        assert.isObject(this._protocol, 'this._protocol');
+	        assert.isFunction(this._protocol.getSessionId, 'this._protocol.getSessionId');
+	        assert.isFunction(this._pcast.getStatus, 'this._pcast.getStatus');
+
+	        this._sessionId.setValue(this.getPCastSessionId());
+	        this._status.setValue(this.getPCastStatus());
+	    };
+
+	    AuthenticationService.prototype.start = function start() {
+	        if (!this._sessionIdMonitor.isEnabled()) {
+	            this._sessionIdMonitor.start(_.bind(this.getPCastSessionId, this));
+	        }
+
+	        if (!this._statusMonitor.isEnabled()) {
+	            this._statusMonitor.start(_.bind(this.getPCastStatus, this));
+	        }
+	    };
+
+	    AuthenticationService.prototype.stop = function stop() {
+	        if (this._sessionIdMonitor.isEnabled()) {
+	            this._sessionIdMonitor.stop();
+	        }
+	        if (this._statusMonitor.isEnabled()) {
+	            this._statusMonitor.stop();
+	        }
+	    };
+
+	    AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
+	        if (!validPCastStatus(this.getPCastStatus())) {
+	            throw new Error('Unable to perform action. Status [%s]. Please wait to reconnect.', this.getPCastStatus());
+	        }
+
+	        if (!validPCastSessionId(this.getPCastSessionId())) {
+	            throw new Error('Unable to perform action. Invalid sessionId [%s]', this.getPCastSessionId());
+	        }
+	    };
+
+	    AuthenticationService.prototype.getObservableSessionId = function getObservableSessionId() {
+	        return this._sessionId;
+	    };
+
+	    AuthenticationService.prototype.getObservableStatus = function getObservableStatus() {
+	        return this._status;
+	    };
+
+	    AuthenticationService.prototype.getPCastSessionId = function getPCastSessionId() {
+	        return this._protocol.getSessionId();
+	    };
+
+	    AuthenticationService.prototype.getPCastStatus = function getPCastStatus() {
+	        return this._pcast.getStatus();
+	    };
+
+	    function validPCastSessionId(sessionId) {
+	        return sessionId !== null && sessionId !== undefined && sessionId !== '';
+	    }
+
+	    function validPCastStatus(status) {
+	        return status !== null && status !== undefined && status !== '' && status.toLowerCase() !== 'offline';
+	    }
+
+	    return AuthenticationService;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    function ObservableMonitor(observable) {
+	        assert.isObject(observable, 'observable');
+
+	        this._observable = observable;
+	        this._listenerSubscription = null;
+	        this._isEnabled = false;
+	    }
+
+	    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
+	        this._isEnabled = true;
+
+	        this._listenerSubscription = this._observable.subscribe(_.noop, {
+	            listenForChanges: {
+	                callback: checkForChanges,
+	                timeout: timeout || 500
+	            }
+	        });
+	    };
+
+	    ObservableMonitor.prototype.stop = function stop() {
+	        this._isEnabled = false;
+
+	        if (this._listenerSubscription) {
+	            this._listenerSubscription.dispose();
+	        }
+
+	        this._listenerSubscription = null;
+	    };
+
+	    ObservableMonitor.prototype.isEnabled = function isEnabled() {
+	        return this._isEnabled;
+	    };
+
+	    return ObservableMonitor;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(21),
+	    __webpack_require__(31)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
+	    'use strict';
+
+	    var defaultBatchSize = 0;
+	    var maxCachedQueueSize = 100;
+
+	    function RoomChatService(roomService) {
+	        assert.isObject(roomService, 'roomService');
+	        assert.isObject(roomService._pcast, 'roomService._pcast');
+	        assert.isObject(roomService._logger, 'roomService._logger');
+
+	        this._roomService = roomService;
+	        this._pcast = roomService._pcast;
+	        this._logger = roomService._logger;
+	        this._chatService = new ChatService(this._pcast);
+	        this._chatMessages = new ObservableArray([]);
+	        this._latestMessageQueue = [];
+	        this._disposables = [];
+	    }
+
+	    RoomChatService.prototype.start = function start(batchSize) {
+	        this._batchSize = batchSize || defaultBatchSize;
+	        this._chatService.start();
+
+	        setupSubscriptions.call(this);
+	        setupMessageSubscription.call(this);
+	    };
+
+	    RoomChatService.prototype.stop = function stop() {
+	        this._chatService.stop();
+
+	        disposeOfMessageSubscription.call(this);
+
+	        disposeOfArray(this._disposables);
+	    };
+
+	    RoomChatService.prototype.getObservableChatMessages = function getObservableChatMessages() {
+	        return this._chatMessages;
+	    };
+
+	    RoomChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
+	        return this._chatService.getObservableChatEnabled();
+	    };
+
+	    RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message) {
+	        var room = this._roomService.getObservableActiveRoom().getValue();
+	        var roomId = room.getRoomId();
+	        var self = this._roomService._self.getValue();
+	        var screenName = self.getObservableScreenName().getValue();
+	        var role = self.getObservableRole().getValue();
+	        var lastUpdate = self.getLastUpdate();
+
+	        this._chatService.sendMessageToRoom(roomId, screenName, role, lastUpdate, message);
+	    };
+
+	    RoomChatService.prototype.getMessages = function getMessages(batchSize, afterMessageId, beforeMessageId, callback) {
+	        var room = this._roomService.getObservableActiveRoom().getValue();
+	        var roomId = room.getRoomId();
+
+	        return this._chatService.getMessages(roomId, batchSize, afterMessageId, beforeMessageId, function onReceiveMessages(chatMessages) {
+	            callback(chatMessages);
+	        })
+	    };
+
+	    RoomChatService.prototype.toString = function toString() {
+	        return 'RoomChatService';
+	    };
+
+	    function onRoomChange(room) {
+	        disposeOfMessageSubscription.call(this);
+
+	        if (room) {
+	            setupMessageSubscription.call(this);
+	        }
+	    }
+
+	    function setupSubscriptions() {
+	        var roomSubscription = this._roomService.getObservableActiveRoom().subscribe(_.bind(onRoomChange, this));
+
+	        this._disposables.push(roomSubscription.dispose);
+	    }
+
+	    function setupMessageSubscription() {
+	        disposeOfMessageSubscription.call(this);
+
+	        this._roomChatSubscriptionDispose = subscribeAndLoadMessages.call(this, this._batchSize);
+	    }
+
+	    function disposeOfMessageSubscription() {
+	        if (this._roomChatSubscriptionDispose) {
+	            this._roomChatSubscriptionDispose();
+	        }
+	    }
+
+	    function subscribeAndLoadMessages(batchSize) {
+	        var room = this._roomService.getObservableActiveRoom().getValue();
+	        var roomId = room.getRoomId();
+
+	        var that = this;
+
+	        this._chatMessages.setValue([]);
+
+	        return this._chatService.subscribeAndLoadMessages(roomId, batchSize, function onReceiveMessages(chatMessages) {
+	            var messages = that._chatMessages.getValue();
+
+	            _.forEach(chatMessages, function addMessage(message) {
+	                messages.push(message);
+	            });
+
+	            if (messages.length > maxCachedQueueSize) {
+	                messages.splice(0, messages.length - maxCachedQueueSize);
+	            }
+
+	            that._chatMessages.setValue(messages);
+	        });
+	    }
+
+	    function disposeOfArray(arrayOfDisposables) {
+	        if (!_.isArray(arrayOfDisposables)) {
+	            return;
+	        }
+
+	        for (var i = 0; i < arrayOfDisposables.length; i++) {
+	            if (typeof arrayOfDisposables[i] === 'function') {
+	                arrayOfDisposables[i]();
+	            }
+	        }
+	    }
+
+	    return RoomChatService;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(20),
+	    __webpack_require__(4),
+	    __webpack_require__(28)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, Logger, AuthenticationService) {
+	    'use strict';
+
+	    function ChatService(pcast) {
+	        assert.isObject(pcast, 'pcast');
+	        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+	        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+	        this._pcast = pcast;
+	        this._logger = pcast.getLogger();
+	        this._protocol =  pcast.getProtocol();
+	        this._enabled = new Observable(false);
+
+	        assert.isObject(this._logger, 'this._logger');
+	        assert.isObject(this._protocol, 'this._protocol');
+
+	        this._authService = new AuthenticationService(this._pcast);
+	    };
+
+	    ChatService.prototype.start = function start() {
+	        if (this._enabled.getValue()) {
+	            return;
+	        }
+
+	        this._disposables = [];
+	        this._roomMessagesListeners = {};
+
+	        this._enabled.setValue(true);
+	        this._authService.start();
+	        setupSubscriptions.call(this);
+
+	        var disposeOfConversationHandler = this._protocol.on('roomChatEvent', _.bind(onRoomConversationEvent, this));
+
+	        this._disposables.push(disposeOfConversationHandler);
+	    };
+
+	    ChatService.prototype.stop = function stop() {
+	        if (!this._enabled.getValue()) {
+	            return;
+	        }
+
+	        this._authService.stop();
+
+	        disposeOfArray(this._disposables);
+	    };
+
+	    ChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
+	        return this._enabled;
+	    };
+
+	    ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message) {
+	        sendMessageRequest.call(this, roomId, screenName, role, lastUpdate, message, _.bind(onSendMessageSuccess, this));
+	    };
+
+	    ChatService.prototype.subscribeAndLoadMessages = function subscribeAndLoadMessages(roomId, batchSize, onReceiveMessages) {
+	        var disposeOfListener = setupChatListener.call(this, roomId, onReceiveMessages);
+
+	        subscribeToRoomConversationRequest.call(this, roomId, batchSize,
+	            _.bind(onSubscribeToRoomConversationSuccess, this, roomId)
+	        );
+
+	        return disposeOfListener;
+	    };
+
+	    ChatService.prototype.getMessages = function getMessages(roomId, batchSize, afterMessageId, beforeMessageId, onReceiveMessages) {
+	        getMessagesRequest.call(this, roomId, batchSize, afterMessageId, beforeMessageId, onReceiveMessages);
+	    };
+
+	    ChatService.prototype.toString = function toString() {
+	        return 'ChatService';
+	    };
+
+	    function setupSubscriptions() {
+	        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
+	        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(onSessionIdChange, this));
+
+	        this._disposables.push(pcastStatusSubscription.dispose);
+	        this._disposables.push(pcastSessionIdSubscription.dispose);
+	    }
+
+	    function setupChatListener(roomId, onReceiveMessages) {
+	        var that = this;
+
+	        this._roomMessagesListeners[roomId] = onReceiveMessages;
+
+	        var disposeOfHandler = function() {
+	            if (that._roomMessagesListeners[roomId] === onReceiveMessages) {
+	                delete that._roomMessagesListeners[roomId];
+	            }
+	        };
+
+	        this._disposables.push(disposeOfHandler);
+
+	        return disposeOfHandler;
+	    }
+
+	    function onSendMessageSuccess() {
+
+	    }
+
+	    function onSubscribeToRoomConversationSuccess(roomId, chatMessages) {
+	        var onReceiveMessages = this._roomMessagesListeners[roomId];
+
+	        onReceiveMessages(chatMessages);
+	    }
+
+	    function onRoomConversationEvent(event) {
+	        assert.isObject(event, 'event');
+	        assert.stringNotEmpty(event.roomId, 'event.roomId');
+	        assert.stringNotEmpty(event.eventType, 'event.eventType');
+	        assert.isArray(event.chatMessages, 'event.chatMessages');
+
+	        switch (event.eventType) {
+	            case 'Message':
+	                this._logger.debug('[%s] Room messages [%s]', event.roomId, event.chatMessages);
+	                var listener = this._roomMessagesListeners[event.roomId];
+
+	                convertTimeFromLongInChatMessages(event.chatMessages);
+
+	                if (listener) {
+	                    listener(event.chatMessages);
+	                }
+	                break;
+	            default:
+	                this._logger.warn('Unsupported room conversation event [%s]', event.eventType)
+	        }
+	    }
+
+	    function onStatusChange(status) {
+	        switch (status.toLowerCase()) {
+	            case 'offline':
+	                return;
+	            case 'online':
+	                return refreshMessageSubscriptions.call(this);
+	        }
+	    }
+
+	    function onSessionIdChange() {
+	        refreshMessageSubscriptions.call(this);
+	    }
+
+	    function refreshMessageSubscriptions() {
+	        var that = this;
+
+	        _.forOwn(this._roomMessagesListeners, function(listener, roomId) {
+	            subscribeToRoomConversationRequest.call(that, roomId, 1, listener);
+	        });
+	    }
+
+	    function getMessagesRequest(roomId, batchSize, afterMessageId, beforeMessageId, callback) {
+	        assert.stringNotEmpty(roomId, 'roomId');
+	        assert.isFunction(callback, 'callback');
+
+	        if (!beforeMessageId || !afterMessageId) {
+	            assert.isNumber(batchSize, 'batchSize');
+	        }
+
+	        if (beforeMessageId) {
+	            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+	        }
+
+	        if (afterMessageId) {
+	            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+	        }
+
+	        assertEnabled.call(this);
+	        this._authService.assertAuthorized();
+
+	        var sessionId = this._authService.getPCastSessionId();
+
+	        this._protocol.getMessages(sessionId, roomId, batchSize, afterMessageId, beforeMessageId,
+	            function (response) {
+	                if (response.status !== 'ok') {
+	                    throw new Error('Fetch of room conversation failed: ' + response.status);
+	                }
+
+	                convertTimeFromLongInChatMessages(response.chatMessages);
+
+	                callback(response.chatMessages);
+	            }
+	        );
+	    }
+
+	    function subscribeToRoomConversationRequest(roomId, batchSize, callback) {
+	        assert.stringNotEmpty(roomId, 'roomId');
+	        assert.isNumber(batchSize, 'batchSize');
+	        assert.isFunction(callback, 'callback');
+
+	        assertEnabled.call(this);
+	        this._authService.assertAuthorized();
+
+	        var sessionId = this._authService.getPCastSessionId();
+
+	        var that = this;
+
+	        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (response) {
+	            if (response.status !== 'ok') {
+	                delete that._roomMessagesListeners[roomId];
+
+	                throw new Error('Fetch of room conversation failed: ' + response.status);
+	            }
+
+	            convertTimeFromLongInChatMessages(response.chatMessages);
+
+	            callback(response.chatMessages);
+	        });
+	    }
+
+	    function sendMessageRequest(roomId, screenName, role, lastUpdate, message, callback) {
+	        assert.stringNotEmpty(roomId, 'roomId');
+	        assert.stringNotEmpty(screenName, 'screenName');
+	        assert.stringNotEmpty(role, 'role');
+	        assert.isNumber(lastUpdate, 'lastUpdate');
+	        assert.stringNotEmpty(message, 'message');
+
+	        assertEnabled.call(this);
+	        this._authService.assertAuthorized();
+
+	        var sessionId = this._authService.getPCastSessionId();
+
+	        var chatMessage = {
+	            messageId: '',
+	            timestamp: 0,
+	            from: {
+	                sessionId: sessionId,
+	                screenName: screenName,
+	                role: role,
+	                lastUpdate: lastUpdate
+	            },
+	            message: message
+	        };
+
+	        return this._protocol.sendMessageToRoom(roomId, chatMessage, callback);
+	    }
+
+	    function assertEnabled() {
+	        if (!this._enabled.getValue()) {
+	            throw new Error('ChatService not Enabled. Please start before performing actions.');
+	        }
+	    }
+
+	    function convertTimeFromLongInChatMessages(chatMessages) {
+	        _.forEach(chatMessages, function(chatMessage) {
+	            convertTimeFromLongInChatMessage(chatMessage);
+	        });
+	    }
+
+	    function convertTimeFromLongInChatMessage(chatMessage) {
+	        if (chatMessage.timestamp) {
+	            chatMessage.timestamp = _.utc(chatMessage.timestamp);
+	        }
+	        if (chatMessage.from) {
+	            chatMessage.from.lastUpdate = _.utc(chatMessage.from.lastUpdate);
+	        }
+	    }
+
+	    function disposeOfArray(arrayOfDisposables) {
+	        if (!_.isArray(arrayOfDisposables)) {
+	            return;
+	        }
+
+	        for (var i = 0; i < arrayOfDisposables.length; i++) {
+	            if (typeof arrayOfDisposables[i] === 'function') {
+	                arrayOfDisposables[i]();
+	            }
+	        }
+	    }
+
+	    return ChatService;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(4),
+	    __webpack_require__(33),
+	    __webpack_require__(34),
+	    __webpack_require__(35)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
+	    'use strict';
+
+	    function AudioSpeakerDetector(userMediaStreams, options) {
+	        assert.isArray(userMediaStreams, 'userMediaStreams');
+
+	        options = options || {};
+
+	        this._logger = options.logger || new Logger();
+
+	        this._audioContext = options.audioContext || new AudioContext();
+	        this._nativeAudioContext = this._audioContext.getNativeAudioContext();
+	        this._audioVolumeMeters = [];
+	        this._onSpeakingChanged = null;
+	        this._userMediaStreams = userMediaStreams;
+	        this._disposeOfAudioContext = _.isObject(options.audioContext);
+	    }
+
+	    AudioSpeakerDetector.prototype.start = function start(options, callback) {
+	        assert.isFunction(callback, 'callback');
+
+	        this._onSpeakingChanged = callback;
+
+	        options = options || {};
+
+	        _.forEach(this._userMediaStreams, _.bind(setupSpeakingDetection, this, options));
+	    };
+
+	    AudioSpeakerDetector.prototype.stop = function stop() {
+	        _.forEach(this._audioVolumeMeters, function stopAudioVolumeMeters(meter) {
+	            meter.stop();
+	        });
+
+	        this._onSpeakingChanged = null;
+	    };
+
+	    AudioSpeakerDetector.prototype.dispose = function dispose() {
+	        if (this._disposeOfAudioContext) {
+	            this._nativeAudioContext.close();
+	        }
+
+	        this._userMediaStreams = null;
+	    };
+
+	    AudioSpeakerDetector.prototype.toString = function toString() {
+	        return 'AudioSpeakerDetector';
+	    };
+
+	    function setupSpeakingDetection(options, stream) {
+	        var audioVolumeMeter = new AudioVolumeMeter(this.logger);
+	        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this.logger);
+
+	        audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
+	        audioVolumeMeter.connect(stream);
+
+	        audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
+	        audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
+
+	        this._audioVolumeMeters.push(audioVolumeMeter)
+	    }
+
+	    return AudioSpeakerDetector;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    function AudioContext() {
+	        this.init();
+	    }
+
+	    AudioContext.prototype.init = function init() {
+	        if (!window.AudioContext) {
+	            throw new Error('Browser does not support AudioContext')
+	        }
+
+	        this._audioContext = new window.AudioContext();
+	    };
+
+	    AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {
+	        return this._audioContext;
+	    };
+
+	    AudioContext.prototype.toString = function toString() {
+	        return 'AudioContext';
+	    };
+
+	    return AudioContext;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    var defaultAlpha = 1/16;
+
+	    function AudioVolumeMeter(logger) {
+	        assert.isObject(logger);
+
+	        this._logger = logger;
+	    }
+
+	    AudioVolumeMeter.prototype.init = function init(context, alpha) {
+	        assert.isObject(context, 'context');
+	        assert.isFunction(context.createScriptProcessor, 'context.createScriptProcessor');
+
+	        alpha = parseFloat(alpha || defaultAlpha);
+	        assert.isNumber(alpha, 'alpha');
+
+	        this._context = context;
+	        this._alpha = alpha;
+	        this._value = 0.;
+	        this._smoothedValue = 0.;
+	        this._smoothedPeakValue = 0.;
+	        this._clipped = 0.;
+	        this._scriptProcessor = context.createScriptProcessor(4096, 1, 1);
+	        this._scriptProcessor.addEventListener('audioprocess', _.bind(onAudioProcess, this));
+	    };
+
+	    AudioVolumeMeter.prototype.onValue = function onValue(callback) {
+	        this._callback = callback;
+	    };
+
+	    AudioVolumeMeter.prototype.getValue = function getValue() {
+	        return this._value;
+	    };
+
+	    AudioVolumeMeter.prototype.getSmoothedValue = function getSmoothedValue() {
+	        return this._smoothedValue;
+	    };
+
+	    AudioVolumeMeter.prototype.getSmoothedPeakValue = function getSmoothedPeakValue() {
+	        return this._smoothedPeakValue;
+	    };
+
+	    AudioVolumeMeter.prototype.connect = function connect(stream) {
+	        var that = this;
+
+	        return connectToStream.call(that, stream);
+	    };
+
+	    AudioVolumeMeter.prototype.stop = function stop() {
+	        return stopConnections.call(this);
+	    };
+
+	    AudioVolumeMeter.prototype.toString = function toString() {
+	        return 'AudioVolumeMeter';
+	    };
+
+	    function onAudioProcess(event) {
+	        var input = event.inputBuffer.getChannelData(0);
+	        var sum = 0.;
+	        var clipped = 0;
+
+	        for (var i = 0; i < input.length; i++) {
+	            sum += input[i] * input[i];
+
+	            if (Math.abs(input[i]) > 0.99) {
+	                clipped++;
+	            }
+	        }
+
+	        this._value = Math.sqrt(sum / input.length);
+	        this._smoothedValue = this._alpha * this._value + (1. - this._alpha) * this._smoothedValue;
+	        this._smoothedPeakValue = Math.max(this._value, this._alpha * this._value + (1. - this._alpha) * this._smoothedPeakValue);
+	        this._clipped = clipped;
+
+	        if (this._callback) {
+	            this._callback.call(this, {
+	                date: _.now(),
+	                value: this._value,
+	                smoothedValue: this._smoothedValue,
+	                smoothedPeakValue: this._smoothedPeakValue,
+	                clipped: this._clipped
+	            });
+	        }
+	    }
+
+	    function connectToStream(stream) {
+	        assert.isObject(stream, 'stream');
+
+	        var that = this;
+
+	        if (stream.getAudioTracks().length > 0) {
+	            that._mediaStreamSource = that._context.createMediaStreamSource(stream);
+	            that._mediaStreamSource.connect(that._scriptProcessor);
+	            that._scriptProcessor.connect(that._context.destination);
+	        } else {
+	            that._logger.info('Stream has no audio tracks');
+	        }
+	    }
+
+	    function stopConnections() {
+	        if (this._mediaStreamSource) {
+	            this._mediaStreamSource.disconnect();
+	        }
+
+	        this._scriptProcessor.disconnect();
+	    }
+
+	    return AudioVolumeMeter;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    var defaultSpeakingHysteresisInterval = 50;
+	    var defaultSilenceHysteresisInterval = 1500;
+
+	    function AudioSpeakerDetectionAlgorithm(logger) {
+	        assert.isObject(logger);
+
+	        this._logger = logger;
+
+	        this.init();
+	    }
+
+	    AudioSpeakerDetectionAlgorithm.prototype.init = function init() {
+
+	    };
+
+	    AudioSpeakerDetectionAlgorithm.prototype.onValue = function onValue(callback) {
+	        this._callback = callback;
+	    };
+
+	    AudioSpeakerDetectionAlgorithm.prototype.startDetection = function startDetection(audioVolumeMeter, options) {
+	        var that = this;
+
+	        return startAudioDetection.call(that, audioVolumeMeter, options);
+	    };
+
+	    AudioSpeakerDetectionAlgorithm.prototype.toString = function toString() {
+	        return 'AudioSpeakerDetection';
+	    };
+
+	    function startAudioDetection(audioVolumeMeter, options) {
+	        assert.isObject(audioVolumeMeter, 'audioVolumeMeter');
+
+	        options = options || {};
+
+	        var that = this;
+	        var stopped = false;
+	        var speakingHysteresisInterval = options.speakingHysteresisInterval || defaultSpeakingHysteresisInterval;
+	        var silenceHysteresisInterval = options.silenceHysteresisInterval || defaultSilenceHysteresisInterval;
+
+	        assert.isNumber(speakingHysteresisInterval, 'options.speakingHysteresisInterval');
+	        assert.isNumber(silenceHysteresisInterval, 'options.silenceHysteresisInterval');
+
+	        var speaking = false;
+	        var nextSpeakingDeadline = _.now() + speakingHysteresisInterval;
+	        var nextSilenceDeadline = _.now() + silenceHysteresisInterval;
+
+	        audioVolumeMeter.onValue(function (value) {
+	            if (stopped) {
+	                return;
+	            }
+
+	            assert.isObject(audioVolumeMeter, 'audioVolumeMeter');
+	            assert.isNumber(value.date, 'value.date');
+	            assert.isNumber(value.value, 'value.value');
+	            assert.isNumber(value.smoothedValue, 'value.smoothedValue');
+	            assert.isNumber(value.smoothedPeakValue, 'value.smoothedPeakValue');
+	            assert.isNumber(value.clipped, 'value.clipped');
+
+	            var speakingThreshold = value.value > 0.01 && value.value > 2 * value.smoothedValue && value.value > 0.25 * value.smoothedPeakValue;
+	            var speakingContinuationThreshold = value.value > 0.8 * value.smoothedValue;
+	            var notSpeakingThreshold = value.value < 0.5 * value.smoothedValue;
+	            var notSpeakingContinuationThreshold = !speakingThreshold;
+
+	            if ((speakingThreshold || (speaking && speakingContinuationThreshold)) && nextSpeakingDeadline < value.date) {
+	                nextSilenceDeadline = _.utc(value.date) + silenceHysteresisInterval;
+	                if (!speaking) {
+	                    speaking = true;
+
+	                    that._logger.info('Speaking detected');
+
+	                    if (that._callback) {
+	                        that._callback('speaking');
+	                    }
+	                }
+	            } else if ((notSpeakingThreshold || (!speaking && notSpeakingContinuationThreshold)) && nextSilenceDeadline < value.date) {
+	                nextSpeakingDeadline = _.utc(value.date) + speakingHysteresisInterval;
+	                if (speaking) {
+	                    speaking = false;
+
+	                    that._logger.info('Silence detected');
+
+	                    if (that._callback) {
+	                        that._callback('silence');
+	                    }
+	                }
+	            }
+	        });
+	    }
+
+	    return AudioSpeakerDetectionAlgorithm;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(4),
+	    __webpack_require__(37)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, PublisherBandwidthAdjuster) {
+	    'use strict';
+
+	    function BandwidthMonitor(publishers, options) {
+	        assert.isArray(publishers, 'userMediaStreams');
+
+	        options = options || {};
+
+	        this._logger = options.logger || new Logger();
+	        this._publisherAdjusters = [];
+	        this._publishers = publishers;
+	    }
+
+	    BandwidthMonitor.prototype.start = function start(roomService, options) {
+	        options = options || {};
+
+	        _.forEach(this._publishers, _.bind(setupPublisherAdjusters, this, roomService, options));
+	    };
+
+	    BandwidthMonitor.prototype.stop = function stop() {
+	        _.forEach(this._publisherAdjusters, function closePublisherAdjusters(adjuster) {
+	            adjuster.close();
+	        });
+
+	        this._publisherAdjusters = [];
+	    };
+
+	    BandwidthMonitor.prototype.toString = function toString() {
+	        return 'BandwidthMonitor';
+	    };
+
+	    function setupPublisherAdjusters(roomService, options, publisher) {
+	        var publisherAdjuster = new PublisherBandwidthAdjuster(publisher);
+
+	        publisherAdjuster.connect(roomService, options);
+
+	        this._publisherAdjusters.push(publisherAdjuster)
+	    }
+
+	    return BandwidthMonitor;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	    'use strict';
+
+	    var defaultRoomBandwidthLimit = 5000000;
+
+	    function PublisherBandwidthAdjuster(publisher) {
+	        this.init(publisher);
+	    }
+
+	    PublisherBandwidthAdjuster.prototype.init = function init(publisher) {
+	        assert.isObject(publisher, 'publisher');
+
+	        this._publisher = publisher;
+	        this._roomMemberCount = 0;
+	        this._roomSubscription = null;
+	        this._membersSubscription = null;
+	    };
+
+	    PublisherBandwidthAdjuster.prototype.connect = function connect(roomService, options) {
+	        assert.isObject(roomService, 'roomService');
+
+	        options = options || {};
+
+	        var roomObservable = roomService.getObservableActiveRoom();
+	        var roomBandwidthLimit = options.roomBandwidthLimit || defaultRoomBandwidthLimit;
+
+	        this._roomSubscription = roomObservable.subscribe(_.bind(onRoomChange, this, roomBandwidthLimit), {initial:'notify'});
+	    };
+
+	    PublisherBandwidthAdjuster.prototype.close = function close() {
+	        if (this._roomSubscription) {
+	            this._roomSubscription.dispose()
+	        }
+	        if (this._membersSubscription) {
+	            this._membersSubscription.dispose()
+	        }
+
+	        this._roomSubscription = null;
+	        this._membersSubscription = null;
+	    };
+
+	    PublisherBandwidthAdjuster.prototype.toString = function toString() {
+	        return 'PublisherBandwidthAdjuster';
+	    };
+
+	    function onRoomChange(roomBandwidthLimit, room) {
+	        if (this._membersSubscription) {
+	            this._membersSubscription.dispose();
+	        }
+	        if (!room) {
+	            return this._publisher.limitBandwidth(roomBandwidthLimit);
+	        }
+
+	        var membersObservable = room.getObservableMembers();
+
+	        this._membersSubscription = membersObservable.subscribe(_.bind(onRoomMembersChanged, this, roomBandwidthLimit), {initial:'notify'});
+	    }
+
+	    function onRoomMembersChanged(roomBandwidthLimit, members) {
+	        if (members.length === this._roomMemberCount) {
+	            return;
+	        }
+
+	        this._roomMemberCount = members.length;
+
+	        var targetBitRate = roomBandwidthLimit / Math.max(1, this._roomMemberCount - 1);
+
+	        this._publisher.limitBandwidth(targetBitRate);
+	    }
+
+	    return PublisherBandwidthAdjuster;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ })
 /******/ ])
 });
 ;

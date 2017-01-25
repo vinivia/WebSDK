@@ -21,7 +21,7 @@ define([
     var minimumPollFrequency = 15;
 
     function DimensionsChangedMonitor(logger) {
-        if (!logger){
+        if (!logger) {
             throw new Error("'logger' must be specified.");
         }
         this._logger = logger;
@@ -93,7 +93,7 @@ define([
         startInterval.call(this);
     }
 
-    function startInterval(){
+    function startInterval() {
         //return if either:
         // - start hasn't been called yet
         // - the interval is already running

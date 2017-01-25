@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 define([
-    './Time'
-], function (Time) {
+    './LodashLight'
+], function (_) {
     'use strict';
 
     function Http(version, baseUri, logger) {
@@ -42,7 +42,7 @@ define([
         var that = this;
         var xhr = new XMLHttpRequest();
         var requestMethod = 'GET';
-        var requestUrl = url + '?version=' + encodeURIComponent(that._version) + '&_=' + Time.now();
+        var requestUrl = url + '?version=' + encodeURIComponent(that._version) + '&_=' + _.now();
 
         if ('withCredentials' in xhr) {
             // Most browsers.

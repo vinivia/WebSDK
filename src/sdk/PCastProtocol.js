@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 define([
-        './MQProtocol',
-        'ByteBuffer',
-        'phenix-rtc'
-    ], function (MQProtocol, ByteBuffer, phenixRTC) {
+    './LodashLight',
+    './assert',
+    './MQProtocol',
+    'ByteBuffer',
+    'phenix-rtc'
+], function (_, assert, MQProtocol, ByteBuffer, phenixRTC) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -41,10 +43,10 @@ define([
 
         this._logger.info('Connecting to [%s]', uri);
         this._webSocket = new WebSocket(uri);
-        this._webSocket.onopen = onOpen.bind(this);
-        this._webSocket.onclose = onClose.bind(this);
-        this._webSocket.onmessage = onMessage.bind(this);
-        this._webSocket.onerror = onError.bind(this);
+        this._webSocket.onopen = _.bind(onOpen, this);
+        this._webSocket.onclose = _.bind(onClose, this);
+        this._webSocket.onmessage = _.bind(onMessage, this);
+        this._webSocket.onerror = _.bind(onError, this);
 
         this._nextRequestId = 0;
         this._events = {};
@@ -62,6 +64,8 @@ define([
         var handlers = getEventHandlers.call(this, eventName);
 
         handlers.push(handler);
+
+        return _.bind(removeEventHandler, this, eventName, handler);
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -86,6 +90,10 @@ define([
         }
 
         return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
+    };
+
+    PCastProtocol.prototype.getSessionId = function () {
+        return this._sessionId;
     };
 
     PCastProtocol.prototype.disconnect = function () {
@@ -262,6 +270,195 @@ define([
         return sendRequest.call(this, 'pcast.DestroyStream', destroyStream, callback);
     };
 
+    PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
+        if (roomId) {
+            assert.isString(roomId, 'roomId');
+        } else {
+            assert.isString(alias, 'alias');
+        }
+        assert.isFunction(callback, 'callback');
+
+        var getRoomInfo = {
+            roomId: roomId,
+            alias: alias,
+            sessionId: this._sessionId
+        };
+
+        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, function(message, response) {
+            if (message) {
+                if (message.status) {
+                    return callback(message);
+                }
+            }
+
+            callback(response);
+        });
+    };
+
+    PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
+        assert.isString(roomName, 'roomName');
+        assert.isString(type, 'type');
+        assert.isString(description, 'description');
+        assert.isFunction(callback, 'callback');
+
+        var createRoom = {
+            sessionId: this._sessionId,
+            room: {
+                name: roomName,
+                description: description,
+                type: type
+            }
+        };
+
+        return sendRequest.call(this, 'chat.CreateRoom', createRoom, function(message, response) {
+            if (message) {
+                if (message.status) {
+                    return callback(message);
+                }
+            }
+
+            callback(response);
+        });
+    };
+
+    PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
+        if (roomId) {
+            assert.isString(roomId, 'roomId');
+        } else {
+            assert.isString(alias, 'alias');
+        }
+        assert.isObject(member, 'member');
+        assert.isNumber(timestamp, 'timestamp');
+        assert.isFunction(callback, 'callback');
+
+        var joinRoom = {
+            roomId: roomId,
+            alias: alias,
+            sessionId: this._sessionId,
+            member: member,
+            timestamp: timestamp
+        };
+
+        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, function(message, response) {
+            if (message) {
+                if (message.status) {
+                    return callback(message);
+                }
+            }
+
+            callback(response);
+        });
+    };
+
+    PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
+        assert.isString(roomId, 'roomId');
+        assert.isNumber(timestamp, 'timestamp');
+        assert.isFunction(callback, 'callback');
+
+        var leaveRoom = {
+            roomId: roomId,
+            sessionId: this._sessionId,
+            timestamp: timestamp
+        };
+
+        return sendRequest.call(this, 'chat.LeaveRoom', leaveRoom, callback);
+    };
+
+    PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
+        assert.isObject(member, 'member');
+        assert.isNumber(timestamp, 'timestamp');
+        assert.isFunction(callback, 'callback');
+
+        member.updateStreams = member.hasOwnProperty('streams');
+
+        var updateMember = {
+            sessionId: this._sessionId,
+            member: member,
+            timestamp: timestamp
+        };
+
+        return sendRequest.call(this, 'chat.UpdateMember', updateMember, function(message, response) {
+            if (message) {
+                if (message.status) {
+                    return callback(message);
+                }
+            }
+
+            callback(response);
+        });
+    };
+
+    PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
+        assert.isObject(room, 'room');
+        assert.isNumber(timestamp, 'timestamp');
+        assert.isFunction(callback, 'callback');
+
+        var updateRoom = {
+            sessionId: this._sessionId,
+            room: room,
+            timestamp: timestamp
+        };
+
+        return sendRequest.call(this, 'chat.UpdateRoom', updateRoom, callback);
+    };
+
+    PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
+        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isObject(chatMessage, 'chatMessage');
+
+        var sendMessage = {
+            roomId: roomId,
+            chatMessage: chatMessage
+        };
+
+        return sendRequest.call(this, 'chat.SendMessageToRoom', sendMessage, callback);
+    };
+
+    PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
+        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isNumber(batchSize, 'batchSize');
+
+        var fetchRoomConversation = {
+            sessionId: sessionId,
+            roomId: roomId,
+            limit: batchSize,
+            options: ['Subscribe']
+        };
+
+        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+    };
+
+    PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
+        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.stringNotEmpty(roomId, 'roomId');
+
+        if (!beforeMessageId || !afterMessageId) {
+            assert.isNumber(batchSize, 'batchSize');
+        }
+
+        var fetchRoomConversation = {
+            sessionId: sessionId,
+            roomId: roomId,
+            limit: batchSize || 0,
+            options: []
+        };
+
+        if (beforeMessageId) {
+            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+
+            fetchRoomConversation.beforeMessageId = beforeMessageId;
+        }
+
+        if (afterMessageId) {
+            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+
+            fetchRoomConversation.afterMessageId = afterMessageId;
+        }
+
+        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+    };
+
     PCastProtocol.prototype.toString = function () {
         return 'PCastProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
     };
@@ -287,6 +484,16 @@ define([
         }
 
         return handlers;
+    }
+
+    function removeEventHandler(eventName, handler) {
+        var handlers = this._events[eventName];
+
+        _.remove(handlers, function removeHandler(currentHandler) {
+            return currentHandler === handler;
+        });
+
+        this._events[eventName] = handlers;
     }
 
     function triggerEvent(eventName, args) {
@@ -323,6 +530,10 @@ define([
             triggerEvent.call(this, 'streamEnded', [message]);
         } else if (response.type === 'pcast.StreamDataQuality') {
             triggerEvent.call(this, 'dataQuality', [message]);
+        } else if (response.type === 'chat.RoomEvent') {
+            triggerEvent.call(this, 'roomEvent', [message]);
+        } else if (response.type === 'chat.RoomConversationEvent') {
+            triggerEvent.call(this, 'roomChatEvent', [message]);
         }
 
         var callback = this._requests[response.requestId];

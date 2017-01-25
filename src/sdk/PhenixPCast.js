@@ -14,30 +14,23 @@
  * limitations under the License.
  */
 define([
+    './LodashLight',
+    './Logger',
     './PCastProtocol',
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
-    './Time',
-    './Logger',
     'phenix-rtc'
-], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, Time, Logger, phenixRTC) {
+], function (_, Logger, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
-    var freeze = function freeze(obj) {
-        if ('freeze' in Object) {
-            return Object.freeze(obj);
-        }
-
-        return obj;
-    };
-    var NetworkStates = freeze({
+    var NetworkStates = _.freeze({
         'NETWORK_EMPTY': 0,
         'NETWORK_IDLE': 1,
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var peerConnectionConfig = freeze({
+    var peerConnectionConfig = _.freeze({
         'iceServers': [
             {
                 urls: 'stun:stun.l.google.com:19302'
@@ -54,7 +47,7 @@ define([
     });
     var sdkVersion = '%VERSION%';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
-    var defaultFirefoxPCastScreenSharingAddOn = freeze({
+    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
         iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
         hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
@@ -159,10 +152,10 @@ define([
 
                 that._protocol = new PCastProtocol(uri, that._deviceId, that._version, that._logger);
 
-                that._protocol.on('connected', connected.bind(that));
-                that._protocol.on('disconnected', disconnected.bind(that));
-                that._protocol.on('streamEnded', streamEnded.bind(that));
-                that._protocol.on('dataQuality', dataQuality.bind(that));
+                that._protocol.on('connected', _.bind(connected, that));
+                that._protocol.on('disconnected', _.bind(disconnected, that));
+                that._protocol.on('streamEnded', _.bind(streamEnded, that));
+                that._protocol.on('dataQuality', _.bind(dataQuality, that));
             });
         });
     };
@@ -192,7 +185,7 @@ define([
 
                     endStream.call(this, streamId, reason);
 
-                    if (!includes(publisher.getOptions(), 'detached')) {
+                    if (!_.includes(publisher.getOptions(), 'detached')) {
                         publisher.stop(reason);
                     }
                 }
@@ -349,6 +342,18 @@ define([
                 }, options);
             }
         });
+    };
+
+    PhenixPCast.prototype.getProtocol = function () {
+        return this._protocol;
+    };
+
+    PhenixPCast.prototype.getLogger = function () {
+        return this._logger;
+    };
+
+    PhenixPCast.prototype.getStatus = function () {
+        return this._status;
     };
 
     PhenixPCast.prototype.toString = function () {
@@ -1313,6 +1318,10 @@ define([
                                 this.dataQualityChangedCallback = callback;
                             },
 
+                            setDetectSpeakingCallback: function setDetectSpeakingCallback() {
+
+                            },
+
                             limitBandwidth: function limitBandwidth(bandwidthLimit) {
                                 if (typeof bandwidthLimit !== 'number') {
                                     throw new Error('"bandwidthLimit" must be a number');
@@ -1387,7 +1396,7 @@ define([
                         callback.call(that, publisher);
                     }
 
-                    if (includes(response.options, 'ice-candidates')) {
+                    if (_.includes(response.options, 'ice-candidates')) {
                         onIceCandidateCallback = function (candidate) {
                             var candidates = [];
                             var options = [];
@@ -1404,7 +1413,7 @@ define([
                                     return;
                                 }
 
-                                if (includes(response.options, 'cancel')) {
+                                if (_.includes(response.options, 'cancel')) {
                                     onIceCandidateCallback = null;
                                 }
                             });
@@ -1507,7 +1516,7 @@ define([
                         that._logger.debug('Set local description (answer)');
                     }
 
-                    if (includes(response.options, 'ice-candidates')) {
+                    if (_.includes(response.options, 'ice-candidates')) {
                         onIceCandidateCallback = function (candidate) {
                             var candidates = [];
                             var options = [];
@@ -1524,7 +1533,7 @@ define([
                                     return;
                                 }
 
-                                if (includes(response.options, 'cancel')) {
+                                if (_.includes(response.options, 'cancel')) {
                                     onIceCandidateCallback = null;
                                 }
                             });
@@ -2117,24 +2126,6 @@ define([
             throw new Error('Invalid track.');
         }
         return track.readyState === 'ended';
-    }
-
-    function includes(array, value) {
-        if (!array) {
-            return false;
-        }
-
-        if (typeof array.indexOf === 'function') {
-            return array.indexOf(value) !== -1;
-        } else {
-            for (var i = 0; i < array.length; i++) {
-                if (array[i] === value) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 
     function closePeerConnection(streamId, peerConnection, reason) {

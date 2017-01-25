@@ -68,7 +68,7 @@ define([
 
             before(function () {
                 return new Promise(function (resolve, reject) {
-                    pcast.start(authToken, function authenticateCallback(pcast, status, sessionId) {
+                    pcast.start(authToken, function authenticateCallback (pcast, status, sessionId) {
                         theSessionId = sessionId;
 
                         if (status !== 'ok') {
@@ -76,9 +76,9 @@ define([
                         } else {
                             resolve();
                         }
-                    }, function onlineCallback(pcast) {
+                    }, function onlineCallback (pcast) {
                         onlineCallbackInvocationCount++;
-                    }, function offlineCallback(pcast) {
+                    }, function offlineCallback (pcast) {
                         offlineCallbackInvocationCount++;
                     });
                 }).should.be.fulfilled;

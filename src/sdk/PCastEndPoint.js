@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 define([
-    './ClosestEndPointResolver',
-    './Http'
-], function (ClosestEndPointResolver, Http) {
+    './Http',
+    './ClosestEndPointResolver'
+], function (Http, ClosestEndPointResolver) {
     'use strict';
 
     var maxAttempts = 3;

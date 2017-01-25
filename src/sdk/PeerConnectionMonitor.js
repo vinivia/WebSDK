@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 define([
-        './Time',
-        'phenix-rtc'
-], function (Time, phenixRTC) {
+    './LodashLight',
+    'phenix-rtc'
+], function (_, phenixRTC) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -75,8 +75,8 @@ define([
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
-        var lastVideoBytes = {time: Time.now(), value: 0};
-        var lastAudioBytes = {time: Time.now(), value: 0};
+        var lastVideoBytes = {time: _.now(), value: 0};
+        var lastAudioBytes = {time: _.now(), value: 0};
         var frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
         var videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
         var audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
@@ -104,7 +104,7 @@ define([
 
                             if (options.direction === 'outbound' && stats.type === 'outboundrtp') {
                                 var currentBytes = {
-                                    time: Time.now(),
+                                    time: _.now(),
                                     value: stats.bytesSent || 0
                                 };
 
@@ -129,7 +129,7 @@ define([
                             }
                             if (options.direction === 'inbound' && stats.type === 'inboundrtp') {
                                 var currentBytes = {
-                                    time: Time.now(),
+                                    time: _.now(),
                                     value: stats.bytesReceived || 0
                                 };
 
@@ -167,7 +167,7 @@ define([
                             }
                             if (options.direction === 'outbound') {
                                 var currentBytes = {
-                                    time: Time.now(),
+                                    time: _.now(),
                                     value: stats.bytesSent || 0
                                 };
 
@@ -191,7 +191,7 @@ define([
                                 }
                             } else if (options.direction === 'inbound') {
                                 var currentBytes = {
-                                    time: Time.now(),
+                                    time: _.now(),
                                     value: stats.bytesReceived || 0
                                 };
 
