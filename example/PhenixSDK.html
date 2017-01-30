@@ -78,6 +78,10 @@
         .step-active {
             border: 2px solid #892b60;
         }
+
+        .hidden {
+            visibility: hidden;
+        }
     </style>
 
     <script data-main="phenix-sdk-app" src="/requirejs/require.js"></script>
@@ -233,6 +237,7 @@
                 <option value="screen">Screen</option>
                 <option value="camera">Camera</option>
                 <option value="microphone">Microphone</option>
+                <option value="cameraMicrophoneAndScreen">Camera & Microphone & Screen</option>
             </select>
             <input id="getUserMedia" type="button" value="Get User Media"/>
             <input id="stopUserMedia" class="disabled" type="button" value="Stop User Media"/>
@@ -345,8 +350,13 @@
     <div class="row text-center">
         <h1>Video Stream</h1>
         <p>The stream will be terminated automatically after 30 seconds.</p>
-        <div class="col-md-8 col-md-offset-2 text-center">
-            <video controls id="remoteVideo" class="remote" width="640" height="480"></video>
+        <div class="row text-center">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <div id="videoList" class="row text-center">
+                    <video controls id="remoteVideo" class="remote" width="640" height="480"></video>
+                    <video controls id="remoteVideoSecondary" class="remote hidden" width="640" height="480"></video>
+                </div>
+            </div>
         </div>
     </div>
 </div>

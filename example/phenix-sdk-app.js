@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,11 @@ requirejs.config({
 requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk) {
     var init = function init() {
         var fingerprint = new Fingerprint();
+        var localVideoEl = $('#localVideo')[0];
         var remoteVideoEl = $('#remoteVideo')[0];
+        var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
+
+        var userMediaStream = null;
 
         var getUrlParameter = function getUrlParameter(parameterName) {
             var queryParameters = window.location.search.substring(1).split('&');
@@ -90,12 +94,16 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 }
             });
 
-            video.width = video.videoWidth;
-            video.height = video.videoHeight;
+            video.width = video.videoWidth > 640 ? 640 : video.videoWidth;
+            video.height = video.videoHeight > 480 ? 480 : video.videoHeight;
         };
 
         remoteVideoEl.onloadedmetadata = function () {
             onLoadedMetaData(remoteVideoEl);
+        };
+
+        remoteVideoSecondaryEl.onloadedmetadata = function () {
+            onLoadedMetaData(remoteVideoSecondaryEl);
         };
 
         $('#phenixRTCVersion').text(rtc.phenixVersion);
@@ -260,11 +268,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             $('.' + option).removeClass('option-disabled');
         };
 
-        var userMediaStream;
-
         var getUserMedia = function getUserMedia() {
-            var localVideoEl = $('#localVideo')[0];
-
             var userMediaCallback = function userMediaCallback(pcast, status, stream, e) {
                 if (status !== 'ok') {
                     $.notify({
@@ -338,13 +342,25 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                             ]
                         };
                         break;
-                    default:
+                    case 'cameraAndMicrophone':
                         userMediaOptions.audio = true;
                         userMediaOptions.video = {
                             optional: [
                                 {minHeight: 720}
                             ]
                         };
+                        break;
+                    case 'cameraMicrophoneAndScreen':
+                        userMediaOptions.screen = true;
+                        userMediaOptions.audio = true;
+                        userMediaOptions.video = {
+                            optional: [
+                                {minHeight: 720}
+                            ]
+                        };
+                        break;
+                    default:
+                        throw new Error('Unsupported User Media Options');
                         break;
                 }
 
@@ -588,7 +604,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
         };
 
-        var createStreamToken = function createStreamToken(targetElementId, applicationId, secret, sessionId, originStreamId, callback) {
+        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, callback) {
             var data = {
                 applicationId: applicationId,
                 secret: secret,
@@ -604,7 +620,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 method: 'POST',
                 data: JSON.stringify(data)
             }).done(function (result) {
-                $(targetElementId).val(result.streamToken);
+                $(targetElementSelector).val(result.streamToken);
                 $.notify({
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
@@ -622,7 +638,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                         exit: 'animated fadeOutDown'
                     }
                 });
-                callback();
+                callback(result.streamToken);
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 $.notify({
                     icon: 'glyphicon glyphicon-remove-sign',
@@ -717,33 +733,20 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                     });
                 });
 
-                var renderer = mediaStream.createRenderer();
-
-                renderer.setDataQualityChangedCallback(function (renderer, status, reason) {
-                    $.notify({
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>Publish</strong>',
-                        message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
+                var primaryMediaStream = mediaStream.select(function(track, index) {
+                    return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                 });
 
-                remoteVideoEl = renderer.start(remoteVideoEl);
+                attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
 
-                setTimeout(function () {
-                    mediaStream.stop('stopped-by-client');
-                }, 30000);
+                if (mediaStream.getStream().getTracks().length > 2) {
+                    var secondaryMediaStream = mediaStream.select(function(track, index) {
+                        return track.kind === 'video' && index == 2;
+                    });
+
+                    displayVideoElementWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
+                    attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
+                }
 
                 $.notify({
                     icon: 'glyphicon glyphicon-film',
@@ -762,7 +765,49 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                         exit: 'animated fadeOutDown'
                     }
                 });
+
+                setTimeout(function () {
+                    mediaStream.stop('stopped-by-client');
+                }, 30000);
             });
+        };
+
+        var displayVideoElementWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(mediaStream, videoElement) {
+            var video = $(videoElement);
+
+            if (video.hasClass('hidden')) {
+                video.removeClass('hidden');
+
+                mediaStream.setStreamEndedCallback(function() {
+                    video.addClass('hidden');
+                });
+            }
+        };
+
+        var attachMediaStreamToVideoElement = function attachMediaStreamToVideoElement(mediaStream, element) {
+            var renderer = mediaStream.createRenderer();
+
+            renderer.setDataQualityChangedCallback(function (renderer, status, reason) {
+                $.notify({
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Publish</strong>',
+                    message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
+                }, {
+                    type: 'info',
+                    allow_dismiss: false,
+                    placement: {
+                        from: 'bottom',
+                        align: 'right'
+                    },
+                    delay: 5000,
+                    animate: {
+                        enter: 'animated fadeInUp',
+                        exit: 'animated fadeOutDown'
+                    }
+                });
+            });
+
+            element = renderer.start(element);
         };
 
         $('#environment').change(function () {
