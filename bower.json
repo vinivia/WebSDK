@@ -16,7 +16,7 @@
     "url": "git://github.com/PhenixP2P/WebSDK.git"
   },
   "dependencies": {
-    "phenix-rtc": "^1.0.7"
+    "phenix-rtc": "^1.0.8"
   },
   "devDependencies": {
     "chai": "3.5.0",

@@ -15,14 +15,14 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("protobuf"), require("ByteBuffer"), require("phenix-rtc"));
+		module.exports = factory(require("phenix-rtc"), require("protobuf"), require("ByteBuffer"));
 	else if(typeof define === 'function' && define.amd)
-		define(["protobuf", "ByteBuffer", "phenix-rtc"], factory);
+		define(["phenix-rtc", "protobuf", "ByteBuffer"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("protobuf"), require("ByteBuffer"), require("phenix-rtc")) : factory(root["protobuf"], root["ByteBuffer"], root["phenix-rtc"]);
+		var a = typeof exports === 'object' ? factory(require("phenix-rtc"), require("protobuf"), require("ByteBuffer")) : factory(root["phenix-rtc"], root["protobuf"], root["ByteBuffer"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE_5__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -88,19 +88,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(1),
-	    __webpack_require__(4)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PhenixPCast, Logger) {
+	    __webpack_require__(2),
+	    __webpack_require__(5)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, PhenixPCast, Logger) {
 	    window.PhenixPCast = PhenixPCast;
 
 	    return {
 	        PCast: PhenixPCast,
-	        Logger: Logger
+	        Logger: Logger,
+	        RTC: rtc
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ },
 /* 1 */
+/***/ function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -119,12 +127,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(2),
+	        __webpack_require__(3),
 	        __webpack_require__(8),
 	        __webpack_require__(10),
 	        __webpack_require__(9),
-	        __webpack_require__(4),
-	        __webpack_require__(7)
+	        __webpack_require__(5),
+	        __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
 	    'use strict';
 
@@ -156,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-02-04T00:14:41Z';
+	    var sdkVersion = '2017-02-06T15:20:22Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -2053,7 +2061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2072,9 +2080,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(3),
-	        __webpack_require__(6),
-	        __webpack_require__(7)
+	        __webpack_require__(4),
+	        __webpack_require__(7),
+	        __webpack_require__(1)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (MQProtocol, ByteBuffer, phenixRTC) {
 	    'use strict';
 
@@ -2397,7 +2405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2416,8 +2424,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(4),
-	        __webpack_require__(5)
+	        __webpack_require__(5),
+	        __webpack_require__(6)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ProtoBuf) {
 	    'use strict';
 
@@ -2518,7 +2526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2577,12 +2585,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Logger;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	module.exports = __WEBPACK_EXTERNAL_MODULE_5__;
 
 /***/ },
 /* 6 */
@@ -2861,7 +2863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	        __webpack_require__(9),
-	        __webpack_require__(7)
+	        __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time, phenixRTC) {
 	    'use strict';
 

@@ -16,13 +16,15 @@
 'use strict';
 
 define('phenix-web-sdk', [
+    'phenix-rtc',
     './sdk/PhenixPCast',
     './sdk/Logger'
-], function (PhenixPCast, Logger) {
+], function (rtc, PhenixPCast, Logger) {
     window.PhenixPCast = PhenixPCast;
 
     return {
         PCast: PhenixPCast,
-        Logger: Logger
+        Logger: Logger,
+        RTC: rtc
     };
 });

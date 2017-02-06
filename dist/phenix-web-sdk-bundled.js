@@ -88,19 +88,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(1),
-	    __webpack_require__(4)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PhenixPCast, Logger) {
+	    __webpack_require__(2),
+	    __webpack_require__(5)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, PhenixPCast, Logger) {
 	    window.PhenixPCast = PhenixPCast;
 
 	    return {
 	        PCast: PhenixPCast,
-	        Logger: Logger
+	        Logger: Logger,
+	        RTC: rtc
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!function(a,b){if(true)module.exports=b();else if("function"==typeof define&&define.amd)define([],b);else{var c=b();for(var d in c)("object"==typeof exports?exports:a)[d]=c[d]}}(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={exports:{},id:d,loaded:!1};return a[d].call(e.exports,e,e.exports,b),e.loaded=!0,e.exports}var c={};return b.m=a,b.c=c,b.p="",b(0)}([function(a,b,c){var d,e;d=[c(1),c(7)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2),c(3),c(4)],e=function(a,b,c){"use strict";var d=new a(navigator.userAgent).detect(),e={RTCPeerConnection:b.RTCPeerConnection,RTCSessionDescription:b.RTCSessionDescription,RTCIceCandidate:b.RTCIceCandidate,getSources:b.getSources,getUserMedia:b.getUserMedia,getStats:b.getStats,attachMediaStream:b.attachMediaStream,reattachMediaStream:b.reattachMediaStream,browser:d.browser,browserVersion:d.version,webrtcSupported:b.webrtcSupported,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0};if(c.isSupported()){e.phenixSupported=!0;var f=new c,g=function(){e.RTCPeerConnection=f.getRTCPeerConnectionConstructor(),e.RTCSessionDescription=f.getRTCSessionDescriptionConstructor(),e.RTCIceCandidate=f.getRTCIceCandidateConstructor(),e.getSources=f.getSourcesDelegate(),e.getUserMedia=f.getUserMediaDelegate(),e.getStats=f.getStatsDelegate(),Function.prototype.bind?(e.attachMediaStream=f.attachMediaStream.bind(f),e.reattachMediaStream=f.reattachMediaStream.bind(f),e.isPhenixEnabled=f.isEnabled.bind(f)):(e.attachMediaStream=function(){f.attachMediaStream.apply(f,arguments)},e.reattachMediaStream=function(){f.reattachMediaStream.apply(f,arguments)},e.isPhenixEnabled=function(){return f.isEnabled()}),e.webrtcSupported=!0,e.phenixSupported=!0,e.phenixVersion=f.getVersion(),e.onLoaded&&e.onLoaded.call()};f.isEnabled()?g():f.onReady(function(a){a&&(g(),e.onload&&"function"==typeof e.onload&&e.onload())}),f.onLoaded(function(){g()})}else e.phenixSupported=!1;return e.addEventListener=function(a,b,c,d){a.phenixSetEventListener?a.phenixSetEventListener(b,c):a.addEventListener?a.addEventListener(b,c,d===!0):a.attachEvent("on"+b,c)},e}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";function a(a){this._userAgent=a}return a.prototype.detect=function(){var a="Unknown",b="?",c=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),d=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return c&&c.length>=2?a=c[1]:this._userAgent.match(/^\(?Mozilla/)&&(a="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(a="IE",(d=this._userAgent.match(/MSIE ([0-9]+)/))?(b=parseInt(d[1],10),(d=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(b=parseInt(d[1],10))):(d=this._userAgent.match(/rv:([0-9]+)/))&&(b=parseInt(d[1],10)))),"Chrome"===a&&this._userAgent.match(/OPR\//)?(a="Opera",d=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===a&&this._userAgent.match(/Edge\//)?(a="Edge",d=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==a&&"IE"!==a||!this._userAgent.match(/Opera/)||(a="Opera",d=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==a&&d&&d.length>=3&&(b=parseInt(d[2],10)),{browser:a,version:b}},a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";var b=function(){console.log.apply(console,arguments)}||function(){},c=null,d=null,e=null,f=null,g=null,h=null,i=null,j=null,k=null,l=!1,m=function(a){navigator.mediaDevices.enumerateDevices().then(function(b){var c=[];b.forEach(function(a){"audioinput"===a.kind?c.push({kind:"audio",id:a.deviceId,label:a.label}):"videoinput"===a.kind&&c.push({kind:"video",id:a.deviceId,label:a.label})}),a(c)})};navigator.mozGetUserMedia?(b("Firefox detected",navigator.userAgent),c=mozRTCPeerConnection,d=mozRTCSessionDescription,e=mozRTCIceCandidate,g=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?function(a,b,c){navigator.mediaDevices.getUserMedia(a).then(b)["catch"](c)}:navigator.mozGetUserMedia.bind(navigator),h=function(a,b,c){var d=a.getStats(b).then(c);if("rejected"===d.state)throw new Error(d.message)},k=function(b,c,d){var e=null,f=b.split(":");if(0===f[0].indexOf("stun"))e={url:b};else if(0===f[0].indexOf("turn")){var g=new a(navigator.userAgent).detect();if(g.version<27){var h=b.split("?");0===h[1].indexOf("transport=udp")&&(e={url:h[0],credential:d,username:c})}else e={url:b,credential:d,username:c}}return e},i=function(a,c){b("Attaching media stream");var d=a.muted;return a.mozSrcObject=c,a.play(),d===!0&&(a.muted=!0),a},j=function(a,c){b("Reattaching media stream");var d=a.muted;return a.mozSrcObject=c.mozSrcObject,a.play(),d===!0&&(a.muted=!0),a},MediaStream.prototype.getVideoTracks||(MediaStream.prototype.getVideoTracks=function(){return[]}),MediaStream.prototype.getAudioTracks||(MediaStream.prototype.getAudioTracks=function(){return[]}),f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources?MediaStreamTrack.getSources.bind(MediaStreamTrack):function(a){setTimeout(function(){a([{kind:"audio",id:"default",label:"",facing:""},{kind:"video",id:"default",label:"",facing:""}])},0)},l=!0):navigator.webkitGetUserMedia?(b("Webkit detected",navigator.userAgent),k=function(a,b,c){var d=null,e=a.split(":");return 0===e[0].indexOf("stun")?d={url:a}:0===e[0].indexOf("turn")&&(d={url:a,credential:c,username:b}),d},c=window.webkitRTCPeerConnection,d=window.RTCSessionDescription,e=window.RTCIceCandidate,g=function(a,c,d){var e=function(a){setTimeout(function(){for(var e=a.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){b(a.timeStamp,"Track",g.id,g.label,"ended")},b("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState){try{var h=new Error("User media not available");h.code="unavailable",d(h)}finally{for(var i=0;i<e.length;i++)e[i].stop()}return}}c(a)},100)};navigator.webkitGetUserMedia(a,e,d)},h=function(a,b,c,d){a.getStats(c,b,d)},i=function(a,c){return"undefined"!=typeof a.srcObject?a.srcObject=c:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=c:"undefined"!=typeof a.src?a.src=URL.createObjectURL(c):b("Error attaching stream to element."),a.play(),a},j=function(a,b){return a.src=b.src,a},f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources.bind(MediaStreamTrack),l=!0):b("Browser does not appear to be WebRTC-capable",navigator.userAgent);var n={RTCPeerConnection:c,RTCSessionDescription:d,RTCIceCandidate:e,getSources:f,getUserMedia:g,getStats:h,attachMediaStream:i,reattachMediaStream:j,webrtcSupported:l};return n.exportGlobal=function(){window.RTCPeerConnection=n.RTCPeerConnection,window.RTCSessionDescription=n.RTCSessionDescription,window.RTCIceCandidate=n.RTCIceCandidate},n}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5),c(6)],e=function(a,b){"use strict";function c(){var b=this;this._root=e(),this._version="?";var c=function(a){b._loaded=!0,b._enabled=a===!0,b._version=b._phenixRTC.phenixVersion||"?.?.?.?",h(a?"Phenix RTC "+b._version:"No Phenix RTC"),b._onReady&&b._onReady(b._enabled)};try{this._phenixRTC=f(this._root),this._phenixRTC.onunload=function(){b._loaded=!1};var d=new a;d.waitForReady(this._phenixRTC,c)}catch(g){i("Error while loading Phenix RTC"+g),loaded(!1)}}function d(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function e(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function f(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function g(a,c){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=c,a;var d=new b(a,c);return d.getElement().phenixPresenter=d,d.getElement()}var h=function(){console.log.apply(console,arguments)}||function(){},i=function(){console.error.apply(console,arguments)}||h;return c.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},c.prototype.onLoaded=function(a){this._onLoaded=a},c.prototype.isLoaded=function(){return this._loaded===!0},c.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/))try{new ActiveXObject("PhenixP2P.RTC");return!0}catch(c){return!1}return!1},c.prototype.isEnabled=function(){return d.call(this),this._phenixRTC&&void 0!=this._phenixRTC.phenixVersion},c.prototype.getVersion=function(){return d.call(this),this._version},c.prototype.getRTCPeerConnectionConstructor=function(){return d.call(this),this._phenixRTC.RTCPeerConnection},c.prototype.getRTCSessionDescriptionConstructor=function(){return d.call(this),this._phenixRTC.RTCSessionDescription},c.prototype.getRTCIceCandidateConstructor=function(){return d.call(this),this._phenixRTC.RTCIceCandidate},c.prototype.getSourcesDelegate=function(){var a=this;return function(b){return d.call(a),a._phenixRTC.getSources(b)}},c.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,e){return d.call(a),a._phenixRTC.getUserMedia(b,c,e)}},c.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},c.prototype.attachMediaStream=function(a,b){return d.call(this),g.call(this,a,b)},c.prototype.reattachMediaStream=function(a,b){return d.call(this),this.attachMediaStream(a,b.src)},c}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5)],e=function(a){"use strict";function b(b,d){var e=this;this._ghost=b,this._stream=d,this._events={};var f=function(a){e._loaded=!0,e._enabled=a===!0,a?h.call(e):m("Failed to create Phenix video element"),e._onReady&&e._onReady(e._enabled)};try{this._video=c(),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){e._loaded=!1},j.call(this),document.body&&document.body.contains||l("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost);var g=new a;g.waitForReady(this._video,f)}catch(i){m("Error while loading Phenix RTC"+i),f(!1)}}function c(){var a=document.createElement("object");return a.type="application/x-phenix-video",a}function d(a,b,c){var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&f.call(this,a)),d.push(b)}function e(a,b,c){var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function f(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function g(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function h(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)f.call(this,a[b]);this.hookUpEvents(),i.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function i(){var a=this,b=["style"];if(window.MutationObserver){var c=new MutationObserver(function(c){c.forEach(function(c){"attributes"===c.type&&c.target===a._ghost&&b.indexOf(c.attributeName)===-1&&(a._video[c.attributeName]=a._ghost[c.attributeName])})}),d={attributes:!0};c.observe(a._ghost,d)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),a._ghost.addEventListener?a._ghost.addEventListener("DOMAttrModified",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]},!1):a._ghost.attachEvent("onpropertychange",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]})}function j(){var a=this;if(window.MutationObserver){var b=new MutationObserver(function(b){b.forEach(function(b){if("childList"===b.type)for(var c=0;c<b.addedNodes.length;c++){var d=b.addedNodes[c];b.target!==a._video&&(d===a._ghost?(b.target.replaceChild(a._video,a._ghost),h.call(a)):k(b.target,a._ghost)&&(a._ghost.parentNode.replaceChild(a._video,a._ghost),h.call(a)))}})}),c={childList:!0,attributes:!1,characterData:!1,subtree:!0};b.observe(document.body,c)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),d(a._ghost,"DOMNodeInserted",function(b){a._ghost.parentNode.replaceChild(a._video,a._ghost)},!1)}function k(a,b){for(var c=b.parentNode;null!=c;){if(c==a)return!0;c=c.parentNode}return!1}var l=function(){console.log.apply(console,arguments)}||function(){},m=function(){console.error.apply(console,arguments)}||l;return b.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){g(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,g(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,g(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,g(b,"ended")}),this.addEventListener("loadedmetadata",function(){l("Video loaded metadata",a._video.videoWidth,a._video.videoHeight),b.width=a._video.width,b.height=a._video.height,g(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,g(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,g(b,"resize")})},b.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},b.prototype.getElement=function(){return this._video},b.prototype.addEventListener=function(a,b,c){d.call(this,a,b,c)},b.prototype.removeEventListener=function(a,b,c){e.call(this,a,b,c)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(a){window.RTCPeerConnection=a.RTCPeerConnection,window.RTCSessionDescription=a.RTCSessionDescription,window.RTCIceCandidate=a.RTCIceCandidate};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
+
+/***/ },
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -119,12 +142,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(2),
+	        __webpack_require__(3),
 	        __webpack_require__(14),
 	        __webpack_require__(16),
 	        __webpack_require__(15),
-	        __webpack_require__(4),
-	        __webpack_require__(13)
+	        __webpack_require__(5),
+	        __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
 	    'use strict';
 
@@ -156,7 +179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-02-04T00:14:41Z';
+	    var sdkVersion = '2017-02-06T15:20:22Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -2053,7 +2076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 2 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2072,9 +2095,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(3),
-	        __webpack_require__(9),
-	        __webpack_require__(13)
+	        __webpack_require__(4),
+	        __webpack_require__(10),
+	        __webpack_require__(1)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (MQProtocol, ByteBuffer, phenixRTC) {
 	    'use strict';
 
@@ -2397,7 +2420,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 3 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2416,8 +2439,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(4),
-	        __webpack_require__(5)
+	        __webpack_require__(5),
+	        __webpack_require__(6)
 	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ProtoBuf) {
 	    'use strict';
 
@@ -2518,7 +2541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2579,7 +2602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, module) {/*
@@ -2605,10 +2628,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	(function(global, factory) {
 
-	    /* AMD */ if ("function" === 'function' && __webpack_require__(8)["amd"])
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    /* AMD */ if ("function" === 'function' && __webpack_require__(9)["amd"])
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(10)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    /* CommonJS */ else if ("function" === "function" && typeof module === "object" && module && module["exports"])
-	        module["exports"] = factory(__webpack_require__(9), true);
+	        module["exports"] = factory(__webpack_require__(10), true);
 	    /* Global */ else
 	        (global["dcodeIO"] = global["dcodeIO"] || {})["ProtoBuf"] = factory(global["dcodeIO"]["ByteBuffer"]);
 
@@ -2935,7 +2958,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (callback && typeof callback != 'function')
 	                callback = null;
 	            if (Util.IS_NODE) {
-	                var fs = __webpack_require__(11);
+	                var fs = __webpack_require__(12);
 	                if (callback) {
 	                    fs.readFile(path, function(err, data) {
 	                        if (err)
@@ -7156,7 +7179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (typeof filename === 'string') {
 
 	                if (ProtoBuf.Util.IS_NODE)
-	                    filename = __webpack_require__(12)['resolve'](filename);
+	                    filename = __webpack_require__(13)['resolve'](filename);
 	                if (this.files[filename] === true)
 	                    return this.reset();
 	                this.files[filename] = true;
@@ -7165,7 +7188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                var root = filename.root;
 	                if (ProtoBuf.Util.IS_NODE)
-	                    root = __webpack_require__(12)['resolve'](root);
+	                    root = __webpack_require__(13)['resolve'](root);
 	                if (root.indexOf("\\") >= 0 || filename.file.indexOf("\\") >= 0)
 	                    delim = '\\';
 	                var fname = root + delim + filename.file;
@@ -7758,10 +7781,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ProtoBuf;
 	});
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6), __webpack_require__(7)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7), __webpack_require__(8)(module)))
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -7947,7 +7970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -7963,17 +7986,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/**
+	 * Copyright 2016 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+	 */
+	/*
 	 Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
 
 	 Licensed under the Apache License, Version 2.0 (the "License");
@@ -11257,23 +11283,26 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /* CommonJS */ if ("function" === 'function' && typeof module === 'object' && module && typeof exports === 'object' && exports)
 	        module['exports'] = (function() {
-	            var Long; try { Long = __webpack_require__(10); } catch (e) {}
+	            var Long; try { Long = __webpack_require__(11); } catch (e) {}
 	            return loadByteBuffer(Long);
 	        })();
-	    /* AMD */ else if ("function" === 'function' && __webpack_require__(8)["amd"])
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Long) { return loadByteBuffer(Long); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    /* AMD */ else if ("function" === 'function' && __webpack_require__(9)["amd"])
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Long) { return loadByteBuffer(Long); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    /* Global */ else
 	        (global["dcodeIO"] = global["dcodeIO"] || {})["ByteBuffer"] = loadByteBuffer(global["dcodeIO"]["Long"]);
 
 	})(this);
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/**
+	 * Copyright 2016 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+	 */
+	/*
 	 Copyright 2013 Daniel Wirtz <dcode@dcode.io>
 	 Copyright 2009 The Closure Library Authors. All Rights Reserved.
 
@@ -11297,7 +11326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	(function(global, factory) {
 
-	    /* AMD */ if ("function" === 'function' && __webpack_require__(8)["amd"])
+	    /* AMD */ if ("function" === 'function' && __webpack_require__(9)["amd"])
 	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    /* CommonJS */ else if ("function" === 'function' && typeof module === "object" && module && module["exports"])
 	        module["exports"] = factory();
@@ -11322,18 +11351,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * The low 32 bits as a signed value.
 	         * @type {number}
+	         * @expose
 	         */
 	        this.low = low | 0;
 
 	        /**
 	         * The high 32 bits as a signed value.
 	         * @type {number}
+	         * @expose
 	         */
 	        this.high = high | 0;
 
 	        /**
 	         * Whether unsigned or not.
 	         * @type {boolean}
+	         * @expose
 	         */
 	        this.unsigned = !!unsigned;
 	    }
@@ -11359,9 +11391,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * An indicator used to reliably determine if an object is a Long or not.
 	     * @type {boolean}
 	     * @const
+	     * @expose
 	     * @private
 	     */
-	    Long.prototype.__isLong__;
+	    Long.__isLong__;
 
 	    Object.defineProperty(Long.prototype, "__isLong__", {
 	        value: true,
@@ -11384,6 +11417,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {*} obj Object
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    Long.isLong = isLong;
 
@@ -11440,6 +11474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} value The 32 bit integer in question
 	     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
 	     * @returns {!Long} The corresponding Long value
+	     * @expose
 	     */
 	    Long.fromInt = fromInt;
 
@@ -11474,6 +11509,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} value The number in question
 	     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
 	     * @returns {!Long} The corresponding Long value
+	     * @expose
 	     */
 	    Long.fromNumber = fromNumber;
 
@@ -11496,6 +11532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} highBits The high 32 bits
 	     * @param {boolean=} unsigned Whether unsigned or not, defaults to `false` for signed
 	     * @returns {!Long} The corresponding Long value
+	     * @expose
 	     */
 	    Long.fromBits = fromBits;
 
@@ -11565,6 +11602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {(boolean|number)=} unsigned Whether unsigned or not, defaults to `false` for signed
 	     * @param {number=} radix The radix in which the text is written (2-36), defaults to 10
 	     * @returns {!Long} The corresponding Long value
+	     * @expose
 	     */
 	    Long.fromString = fromString;
 
@@ -11590,6 +11628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string|!{low: number, high: number, unsigned: boolean}} val Value
 	     * @returns {!Long}
+	     * @expose
 	     */
 	    Long.fromValue = fromValue;
 
@@ -11647,6 +11686,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Signed zero.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.ZERO = ZERO;
 
@@ -11659,6 +11699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Unsigned zero.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.UZERO = UZERO;
 
@@ -11671,6 +11712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Signed one.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.ONE = ONE;
 
@@ -11683,6 +11725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Unsigned one.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.UONE = UONE;
 
@@ -11695,6 +11738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Signed negative one.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.NEG_ONE = NEG_ONE;
 
@@ -11707,6 +11751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Maximum signed value.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.MAX_VALUE = MAX_VALUE;
 
@@ -11719,6 +11764,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Maximum unsigned value.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.MAX_UNSIGNED_VALUE = MAX_UNSIGNED_VALUE;
 
@@ -11731,6 +11777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Minimum signed value.
 	     * @type {!Long}
+	     * @expose
 	     */
 	    Long.MIN_VALUE = MIN_VALUE;
 
@@ -11743,6 +11790,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Converts the Long to a 32 bit integer, assuming it is a 32 bit integer.
 	     * @returns {number}
+	     * @expose
 	     */
 	    LongPrototype.toInt = function toInt() {
 	        return this.unsigned ? this.low >>> 0 : this.low;
@@ -11751,6 +11799,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Converts the Long to a the nearest floating-point representation of this value (double, 53 bit mantissa).
 	     * @returns {number}
+	     * @expose
 	     */
 	    LongPrototype.toNumber = function toNumber() {
 	        if (this.unsigned)
@@ -11764,6 +11813,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @returns {string}
 	     * @override
 	     * @throws {RangeError} If `radix` is out of range
+	     * @expose
 	     */
 	    LongPrototype.toString = function toString(radix) {
 	        radix = radix || 10;
@@ -11806,6 +11856,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Gets the high 32 bits as a signed integer.
 	     * @returns {number} Signed high bits
+	     * @expose
 	     */
 	    LongPrototype.getHighBits = function getHighBits() {
 	        return this.high;
@@ -11814,6 +11865,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Gets the high 32 bits as an unsigned integer.
 	     * @returns {number} Unsigned high bits
+	     * @expose
 	     */
 	    LongPrototype.getHighBitsUnsigned = function getHighBitsUnsigned() {
 	        return this.high >>> 0;
@@ -11822,6 +11874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Gets the low 32 bits as a signed integer.
 	     * @returns {number} Signed low bits
+	     * @expose
 	     */
 	    LongPrototype.getLowBits = function getLowBits() {
 	        return this.low;
@@ -11830,6 +11883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Gets the low 32 bits as an unsigned integer.
 	     * @returns {number} Unsigned low bits
+	     * @expose
 	     */
 	    LongPrototype.getLowBitsUnsigned = function getLowBitsUnsigned() {
 	        return this.low >>> 0;
@@ -11838,6 +11892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Gets the number of bits needed to represent the absolute value of this Long.
 	     * @returns {number}
+	     * @expose
 	     */
 	    LongPrototype.getNumBitsAbs = function getNumBitsAbs() {
 	        if (this.isNegative()) // Unsigned Longs are never negative
@@ -11852,6 +11907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Tests if this Long's value equals zero.
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.isZero = function isZero() {
 	        return this.high === 0 && this.low === 0;
@@ -11860,6 +11916,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Tests if this Long's value is negative.
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.isNegative = function isNegative() {
 	        return !this.unsigned && this.high < 0;
@@ -11868,6 +11925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Tests if this Long's value is positive.
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.isPositive = function isPositive() {
 	        return this.unsigned || this.high >= 0;
@@ -11876,6 +11934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Tests if this Long's value is odd.
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.isOdd = function isOdd() {
 	        return (this.low & 1) === 1;
@@ -11884,6 +11943,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Tests if this Long's value is even.
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.isEven = function isEven() {
 	        return (this.low & 1) === 0;
@@ -11893,6 +11953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value equals the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.equals = function equals(other) {
 	        if (!isLong(other))
@@ -11907,6 +11968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.eq = LongPrototype.equals;
 
@@ -11914,6 +11976,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value differs from the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.notEquals = function notEquals(other) {
 	        return !this.eq(/* validates */ other);
@@ -11924,6 +11987,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.neq = LongPrototype.notEquals;
 
@@ -11931,6 +11995,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value is less than the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.lessThan = function lessThan(other) {
 	        return this.comp(/* validates */ other) < 0;
@@ -11941,6 +12006,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.lt = LongPrototype.lessThan;
 
@@ -11948,6 +12014,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value is less than or equal the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.lessThanOrEqual = function lessThanOrEqual(other) {
 	        return this.comp(/* validates */ other) <= 0;
@@ -11958,6 +12025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.lte = LongPrototype.lessThanOrEqual;
 
@@ -11965,6 +12033,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value is greater than the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.greaterThan = function greaterThan(other) {
 	        return this.comp(/* validates */ other) > 0;
@@ -11975,6 +12044,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.gt = LongPrototype.greaterThan;
 
@@ -11982,6 +12052,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Tests if this Long's value is greater than or equal the specified's.
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.greaterThanOrEqual = function greaterThanOrEqual(other) {
 	        return this.comp(/* validates */ other) >= 0;
@@ -11992,6 +12063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} other Other value
 	     * @returns {boolean}
+	     * @expose
 	     */
 	    LongPrototype.gte = LongPrototype.greaterThanOrEqual;
 
@@ -12000,6 +12072,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {!Long|number|string} other Other value
 	     * @returns {number} 0 if they are the same, 1 if the this is greater and -1
 	     *  if the given one is greater
+	     * @expose
 	     */
 	    LongPrototype.compare = function compare(other) {
 	        if (!isLong(other))
@@ -12025,12 +12098,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {!Long|number|string} other Other value
 	     * @returns {number} 0 if they are the same, 1 if the this is greater and -1
 	     *  if the given one is greater
+	     * @expose
 	     */
 	    LongPrototype.comp = LongPrototype.compare;
 
 	    /**
 	     * Negates this Long's value.
 	     * @returns {!Long} Negated Long
+	     * @expose
 	     */
 	    LongPrototype.negate = function negate() {
 	        if (!this.unsigned && this.eq(MIN_VALUE))
@@ -12042,6 +12117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Negates this Long's value. This is an alias of {@link Long#negate}.
 	     * @function
 	     * @returns {!Long} Negated Long
+	     * @expose
 	     */
 	    LongPrototype.neg = LongPrototype.negate;
 
@@ -12049,6 +12125,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the sum of this and the specified Long.
 	     * @param {!Long|number|string} addend Addend
 	     * @returns {!Long} Sum
+	     * @expose
 	     */
 	    LongPrototype.add = function add(addend) {
 	        if (!isLong(addend))
@@ -12085,6 +12162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the difference of this and the specified Long.
 	     * @param {!Long|number|string} subtrahend Subtrahend
 	     * @returns {!Long} Difference
+	     * @expose
 	     */
 	    LongPrototype.subtract = function subtract(subtrahend) {
 	        if (!isLong(subtrahend))
@@ -12097,6 +12175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} subtrahend Subtrahend
 	     * @returns {!Long} Difference
+	     * @expose
 	     */
 	    LongPrototype.sub = LongPrototype.subtract;
 
@@ -12104,6 +12183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the product of this and the specified Long.
 	     * @param {!Long|number|string} multiplier Multiplier
 	     * @returns {!Long} Product
+	     * @expose
 	     */
 	    LongPrototype.multiply = function multiply(multiplier) {
 	        if (this.isZero())
@@ -12171,6 +12251,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} multiplier Multiplier
 	     * @returns {!Long} Product
+	     * @expose
 	     */
 	    LongPrototype.mul = LongPrototype.multiply;
 
@@ -12179,6 +12260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     *  unsigned if this Long is unsigned.
 	     * @param {!Long|number|string} divisor Divisor
 	     * @returns {!Long} Quotient
+	     * @expose
 	     */
 	    LongPrototype.divide = function divide(divisor) {
 	        if (!isLong(divisor))
@@ -12189,8 +12271,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return this.unsigned ? UZERO : ZERO;
 	        var approx, rem, res;
 	        if (!this.unsigned) {
-	            // This section is only relevant for signed longs and is derived from the
-	            // closure library as a whole.
 	            if (this.eq(MIN_VALUE)) {
 	                if (divisor.eq(ONE) || divisor.eq(NEG_ONE))
 	                    return MIN_VALUE;  // recall that -MIN_VALUE == MIN_VALUE
@@ -12216,18 +12296,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return this.neg().div(divisor).neg();
 	            } else if (divisor.isNegative())
 	                return this.div(divisor.neg()).neg();
-	            res = ZERO;
-	        } else {
-	            // The algorithm below has not been made for unsigned longs. It's therefore
-	            // required to take special care of the MSB prior to running it.
-	            if (!divisor.unsigned)
-	                divisor = divisor.toUnsigned();
+	        } else if (!divisor.unsigned)
+	            divisor = divisor.toUnsigned();
+
+	        // The algorithm below has not been made for unsigned longs. It's therefore
+	        // required to take special care of the MSB prior to running it.
+	        if (this.unsigned) {
 	            if (divisor.gt(this))
 	                return UZERO;
 	            if (divisor.gt(this.shru(1))) // 15 >>> 1 = 7 ; with divisor = 8 ; true
 	                return UONE;
 	            res = UZERO;
-	        }
+	        } else
+	            res = ZERO;
 
 	        // Repeat the following until the remainder is less than other:  find a
 	        // floating-point that approximates remainder / other *from below*, add this
@@ -12271,6 +12352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} divisor Divisor
 	     * @returns {!Long} Quotient
+	     * @expose
 	     */
 	    LongPrototype.div = LongPrototype.divide;
 
@@ -12278,6 +12360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns this Long modulo the specified.
 	     * @param {!Long|number|string} divisor Divisor
 	     * @returns {!Long} Remainder
+	     * @expose
 	     */
 	    LongPrototype.modulo = function modulo(divisor) {
 	        if (!isLong(divisor))
@@ -12290,12 +12373,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {!Long|number|string} divisor Divisor
 	     * @returns {!Long} Remainder
+	     * @expose
 	     */
 	    LongPrototype.mod = LongPrototype.modulo;
 
 	    /**
 	     * Returns the bitwise NOT of this Long.
 	     * @returns {!Long}
+	     * @expose
 	     */
 	    LongPrototype.not = function not() {
 	        return fromBits(~this.low, ~this.high, this.unsigned);
@@ -12305,6 +12390,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the bitwise AND of this Long and the specified.
 	     * @param {!Long|number|string} other Other Long
 	     * @returns {!Long}
+	     * @expose
 	     */
 	    LongPrototype.and = function and(other) {
 	        if (!isLong(other))
@@ -12316,6 +12402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the bitwise OR of this Long and the specified.
 	     * @param {!Long|number|string} other Other Long
 	     * @returns {!Long}
+	     * @expose
 	     */
 	    LongPrototype.or = function or(other) {
 	        if (!isLong(other))
@@ -12327,6 +12414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns the bitwise XOR of this Long and the given one.
 	     * @param {!Long|number|string} other Other Long
 	     * @returns {!Long}
+	     * @expose
 	     */
 	    LongPrototype.xor = function xor(other) {
 	        if (!isLong(other))
@@ -12338,6 +12426,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns this Long with bits shifted to the left by the given amount.
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shiftLeft = function shiftLeft(numBits) {
 	        if (isLong(numBits))
@@ -12355,6 +12444,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shl = LongPrototype.shiftLeft;
 
@@ -12362,6 +12452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns this Long with bits arithmetically shifted to the right by the given amount.
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shiftRight = function shiftRight(numBits) {
 	        if (isLong(numBits))
@@ -12379,6 +12470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shr = LongPrototype.shiftRight;
 
@@ -12386,6 +12478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Returns this Long with bits logically shifted to the right by the given amount.
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shiftRightUnsigned = function shiftRightUnsigned(numBits) {
 	        if (isLong(numBits))
@@ -12410,12 +12503,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @function
 	     * @param {number|!Long} numBits Number of bits
 	     * @returns {!Long} Shifted Long
+	     * @expose
 	     */
 	    LongPrototype.shru = LongPrototype.shiftRightUnsigned;
 
 	    /**
 	     * Converts this Long to signed.
 	     * @returns {!Long} Signed long
+	     * @expose
 	     */
 	    LongPrototype.toSigned = function toSigned() {
 	        if (!this.unsigned)
@@ -12426,6 +12521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Converts this Long to unsigned.
 	     * @returns {!Long} Unsigned long
+	     * @expose
 	     */
 	    LongPrototype.toUnsigned = function toUnsigned() {
 	        if (this.unsigned)
@@ -12433,63 +12529,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return fromBits(this.low, this.high, true);
 	    };
 
-	    /**
-	     * Converts this Long to its byte representation.
-	     * @param {boolean=} le Whether little or big endian, defaults to big endian
-	     * @returns {!Array.<number>} Byte representation
-	     */
-	    LongPrototype.toBytes = function(le) {
-	        return le ? this.toBytesLE() : this.toBytesBE();
-	    }
-
-	    /**
-	     * Converts this Long to its little endian byte representation.
-	     * @returns {!Array.<number>} Little endian byte representation
-	     */
-	    LongPrototype.toBytesLE = function() {
-	        var hi = this.high,
-	            lo = this.low;
-	        return [
-	             lo         & 0xff,
-	            (lo >>>  8) & 0xff,
-	            (lo >>> 16) & 0xff,
-	            (lo >>> 24) & 0xff,
-	             hi         & 0xff,
-	            (hi >>>  8) & 0xff,
-	            (hi >>> 16) & 0xff,
-	            (hi >>> 24) & 0xff
-	        ];
-	    }
-
-	    /**
-	     * Converts this Long to its big endian byte representation.
-	     * @returns {!Array.<number>} Big endian byte representation
-	     */
-	    LongPrototype.toBytesBE = function() {
-	        var hi = this.high,
-	            lo = this.low;
-	        return [
-	            (hi >>> 24) & 0xff,
-	            (hi >>> 16) & 0xff,
-	            (hi >>>  8) & 0xff,
-	             hi         & 0xff,
-	            (lo >>> 24) & 0xff,
-	            (lo >>> 16) & 0xff,
-	            (lo >>>  8) & 0xff,
-	             lo         & 0xff
-	        ];
-	    }
-
 	    return Long;
 	});
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	/* (ignored) */
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ },
 /* 12 */
@@ -12499,1345 +12542,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	/**
-	 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	(function webpackUniversalModuleDefinition(root, factory) {
-		if(true)
-			module.exports = factory();
-		else if(typeof define === 'function' && define.amd)
-			define([], factory);
-		else {
-			var a = factory();
-			for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
-		}
-	})(this, function() {
-	return /******/ (function(modules) { // webpackBootstrap
-	/******/ 	// The module cache
-	/******/ 	var installedModules = {};
-
-	/******/ 	// The require function
-	/******/ 	function __webpack_require__(moduleId) {
-
-	/******/ 		// Check if module is in cache
-	/******/ 		if(installedModules[moduleId])
-	/******/ 			return installedModules[moduleId].exports;
-
-	/******/ 		// Create a new module (and put it into the cache)
-	/******/ 		var module = installedModules[moduleId] = {
-	/******/ 			exports: {},
-	/******/ 			id: moduleId,
-	/******/ 			loaded: false
-	/******/ 		};
-
-	/******/ 		// Execute the module function
-	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
-	/******/ 		// Flag the module as loaded
-	/******/ 		module.loaded = true;
-
-	/******/ 		// Return the exports of the module
-	/******/ 		return module.exports;
-	/******/ 	}
-
-
-	/******/ 	// expose the modules object (__webpack_modules__)
-	/******/ 	__webpack_require__.m = modules;
-
-	/******/ 	// expose the module cache
-	/******/ 	__webpack_require__.c = installedModules;
-
-	/******/ 	// __webpack_public_path__
-	/******/ 	__webpack_require__.p = "";
-
-	/******/ 	// Load entry module and return exports
-	/******/ 	return __webpack_require__(0);
-	/******/ })
-	/************************************************************************/
-	/******/ ([
-	/* 0 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		'use strict';
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		    __webpack_require__(1),
-		    __webpack_require__(7)
-		], __WEBPACK_AMD_DEFINE_RESULT__ = function (adapter, exportGlobal) {
-		    adapter.onLoaded = function () {
-		        exportGlobal(adapter);
-		    };
-
-		    adapter.onLoaded();
-
-		    return adapter;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 1 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		        __webpack_require__(2),
-		        __webpack_require__(3),
-		        __webpack_require__(4)
-		    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (DetectBrowser, webRTC, PhenixRTC) {
-		    'use strict';
-
-		    var browser = new DetectBrowser(navigator.userAgent).detect();
-		    var adapter = {
-		        RTCPeerConnection: webRTC.RTCPeerConnection,
-		        RTCSessionDescription: webRTC.RTCSessionDescription,
-		        RTCIceCandidate: webRTC.RTCIceCandidate,
-		        getSources: webRTC.getSources,
-		        getUserMedia: webRTC.getUserMedia,
-		        getStats: webRTC.getStats,
-		        attachMediaStream: webRTC.attachMediaStream,
-		        reattachMediaStream: webRTC.reattachMediaStream,
-		        browser: browser.browser,
-		        browserVersion: browser.version,
-		        webrtcSupported: webRTC.webrtcSupported,
-		        phenixSupported: false,
-		        isPhenixEnabled: function () {
-		            return false;
-		        },
-		        onLoaded: undefined
-		    };
-
-		    if (PhenixRTC.isSupported()) {
-		        adapter.phenixSupported = true;
-
-		        var phenixRTC = new PhenixRTC();
-
-		        var enablePhenix = function enablePhenix() {
-		            adapter.RTCPeerConnection = phenixRTC.getRTCPeerConnectionConstructor();
-		            adapter.RTCSessionDescription = phenixRTC.getRTCSessionDescriptionConstructor();
-		            adapter.RTCIceCandidate = phenixRTC.getRTCIceCandidateConstructor();
-		            adapter.getSources = phenixRTC.getSourcesDelegate();
-		            adapter.getUserMedia = phenixRTC.getUserMediaDelegate();
-		            adapter.getStats = phenixRTC.getStatsDelegate();
-
-		            if (Function.prototype.bind) {
-		                adapter.attachMediaStream = phenixRTC.attachMediaStream.bind(phenixRTC);
-		                adapter.reattachMediaStream = phenixRTC.reattachMediaStream.bind(phenixRTC);
-		                adapter.isPhenixEnabled = phenixRTC.isEnabled.bind(phenixRTC);
-		            } else {
-		                adapter.attachMediaStream = function () {
-		                    phenixRTC.attachMediaStream.apply(phenixRTC, arguments);
-		                };
-		                adapter.reattachMediaStream = function () {
-		                    phenixRTC.reattachMediaStream.apply(phenixRTC, arguments);
-		                };
-		                adapter.isPhenixEnabled = function () {
-		                    return phenixRTC.isEnabled();
-		                };
-		            }
-
-		            adapter.webrtcSupported = true;
-		            adapter.phenixSupported = true;
-		            adapter.phenixVersion = phenixRTC.getVersion();
-
-		            if (adapter.onLoaded) {
-		                adapter.onLoaded.call();
-		            }
-		        };
-
-
-		        if (phenixRTC.isEnabled()) {
-		            enablePhenix();
-		        } else {
-		            phenixRTC.onReady(function (enabled) {
-		                if (enabled) {
-		                    enablePhenix();
-
-		                    if (adapter.onload && typeof adapter.onload === 'function') {
-		                        adapter.onload();
-		                    }
-		                }
-		            });
-		        }
-
-		        phenixRTC.onLoaded(function () {
-		            enablePhenix();
-		        });
-		    } else {
-		        adapter.phenixSupported = false;
-		    }
-
-		    /**
-		     * All modern browsers including IE9+ support addEventListener
-		     * IE8 and less support attachEvent(...)
-		     * Phenix supports proprietary API to register events
-		     */
-		    adapter.addEventListener = function (target, name, listener, useCapture) {
-		        if (target.phenixSetEventListener) {
-		            target.phenixSetEventListener(name, listener);
-		        } else if (target.addEventListener) {
-		            target.addEventListener(name, listener, useCapture === true);
-		        } else {
-		            target.attachEvent('on' + name, listener);
-		        }
-		    };
-
-		    return adapter;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 2 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-		    'use strict';
-
-		    function DetectBrowser(userAgent) {
-		        this._userAgent = userAgent;
-		    }
-
-		    DetectBrowser.prototype.detect = function () {
-		        var browser = 'Unknown';
-		        var version = '?';
-		        var browserMatch = this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//);
-		        var versionMatch = this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);
-
-		        if (browserMatch && browserMatch.length >= 2) {
-		            browser = browserMatch[1];
-		        } else if (this._userAgent.match(/^\(?Mozilla/)) {
-		            browser = 'Mozilla';
-
-		            if (this._userAgent.match(/MSIE/)
-		                || this._userAgent.match(/; Trident\/.*rv:[0-9]+/)) {
-		                browser = 'IE';
-
-		                if (versionMatch = this._userAgent.match(/MSIE ([0-9]+)/)) {
-		                    version = parseInt(versionMatch[1], 10);
-		                    // compatibility view?
-		                    if (versionMatch = this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/)) {
-		                        version = parseInt(versionMatch[1], 10);
-		                    }
-		                } else if (versionMatch = this._userAgent.match(/rv:([0-9]+)/)) {
-		                    version = parseInt(versionMatch[1], 10);
-		                }
-		            }
-		        }
-
-		        if (browser === 'Chrome' && this._userAgent.match(/OPR\//)) {
-		            // Opera pretends to be Chrome
-		            browser = 'Opera';
-		            versionMatch = this._userAgent.match(/(OPR)\/([0-9]+)\./);
-		        } else if (browser === 'Chrome' && this._userAgent.match(/Edge\//)) {
-		            // Edge pretends to be Chrome
-		            browser = 'Edge';
-		            versionMatch = this._userAgent.match(/(Edge)\/([0-9]+)\./);
-		        } else if ((browser === 'Firefox' || browser === 'IE') && this._userAgent.match(/Opera/)) {
-		            // Opera pretends to be Firefox or IE
-		            browser = 'Opera';
-		            versionMatch = this._userAgent.match(/(Opera) ([0-9]+)\./);
-		        }
-
-		        if (browser !== 'IE' && versionMatch && versionMatch.length >= 3) {
-		            version = parseInt(versionMatch[2], 10);
-		        }
-
-		        return {
-		            browser: browser,
-		            version: version
-		        };
-		    };
-
-		    return DetectBrowser;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 3 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		        __webpack_require__(2)
-		    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (DetectBrowser) {
-		    'use strict';
-
-		    var log = function () {
-		            console.log.apply(console, arguments);
-		        } || function () {
-		        };
-
-		    var RTCPeerConnection = null;
-		    var RTCSessionDescription = null;
-		    var RTCIceCandidate = null;
-		    var getSources = null;
-		    var getUserMedia = null;
-		    var getStats = null;
-		    var attachMediaStream = null;
-		    var reattachMediaStream = null;
-		    var createIceServer = null;
-		    var webrtcSupported = false;
-		    var navigatorMediaDevicesEnumerateDevicesWrapper = function getSources(callback) {
-		        navigator.mediaDevices.enumerateDevices().then(function (devices) {
-		            var sources = [];
-
-		            devices.forEach(function (device) {
-		                if (device.kind === 'audioinput') {
-		                    sources.push({
-		                        kind: 'audio',
-		                        id: device.deviceId,
-		                        label: device.label
-		                    })
-		                } else if (device.kind === 'videoinput') {
-		                    sources.push({
-		                        kind: 'video',
-		                        id: device.deviceId,
-		                        label: device.label
-		                    })
-		                }
-		            });
-
-		            callback(sources);
-		        });
-		    };
-
-		    if (navigator.mozGetUserMedia) {
-		        log('Firefox detected', navigator.userAgent);
-
-		        // The RTCPeerConnection object.
-		        RTCPeerConnection = mozRTCPeerConnection;
-
-		        // The RTCSessionDescription object.
-		        RTCSessionDescription = mozRTCSessionDescription;
-
-		        // The RTCIceCandidate object.
-		        RTCIceCandidate = mozRTCIceCandidate;
-
-		        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-		            getUserMedia = function (constraints, onUserMediaSuccess, onUserMediaFailure) {
-		                // Make sure older browsers do not reject the syntax (e.g. 'catch')
-		                navigator.mediaDevices.getUserMedia(constraints)
-		                    ['then'](onUserMediaSuccess)['catch'](onUserMediaFailure);
-		            };
-		        } else {
-		            // Get UserMedia (only difference is the prefix).
-		            getUserMedia = navigator.mozGetUserMedia.bind(navigator);
-		        }
-
-		        getStats = function (pc, track, successCallback) {
-		            var promise = pc.getStats(track).then(successCallback);
-
-		            if (promise.state === 'rejected') {
-		                throw new Error(promise.message);
-		            }
-		        };
-
-		        // Creates iceServer from the url for FF.
-		        createIceServer = function (url, username, password) {
-		            var iceServer = null;
-		            var url_parts = url.split(':');
-		            // E.g. 'stun:stun.l.google.com:19302'
-		            if (url_parts[0].indexOf('stun') === 0) {
-		                // Create iceServer with stun url.
-		                iceServer = {'url': url};
-		                // E.g. 'turn:public@turn.phenixp2p.com:80'
-		            } else if (url_parts[0].indexOf('turn') === 0) {
-		                var browser = new DetectBrowser(navigator.userAgent).detect();
-
-		                if (browser.version < 27) {
-		                    // Create iceServer with turn url.
-		                    // Ignore the transport parameter from TURN url for FF version <=27.
-		                    var turn_url_parts = url.split('?');
-		                    // Return null for createIceServer if transport=tcp.
-		                    if (turn_url_parts[1].indexOf('transport=udp') === 0) {
-		                        iceServer = {
-		                            'url': turn_url_parts[0],
-		                            'credential': password,
-		                            'username': username
-		                        };
-		                    }
-		                } else {
-		                    // FF 27 and above supports transport parameters in TURN url,
-		                    // So passing in the full url to create iceServer.
-		                    iceServer = {
-		                        'url': url,
-		                        'credential': password,
-		                        'username': username
-		                    };
-		                }
-		            }
-		            return iceServer;
-		        };
-
-		        // Attach a media stream to an element.
-		        attachMediaStream = function (element, stream) {
-		            log('Attaching media stream');
-
-		            var muted = element.muted;
-
-		            element.mozSrcObject = stream;
-		            element.play();
-
-		            if (muted === true) {
-		                // FF unmutes upon play()
-		                element.muted = true;
-		            }
-
-		            return element;
-		        };
-
-		        reattachMediaStream = function (to, from) {
-		            log('Reattaching media stream');
-
-		            var muted = to.muted;
-
-		            to.mozSrcObject = from.mozSrcObject;
-		            to.play();
-
-		            if (muted === true) {
-		                // FF unmutes upon play()
-		                to.muted = true;
-		            }
-
-		            return to;
-		        };
-
-		        // Fake get{Video,Audio}Tracks
-		        if (!MediaStream.prototype.getVideoTracks) {
-		            MediaStream.prototype.getVideoTracks = function () {
-		                return [];
-		            };
-		        }
-
-		        if (!MediaStream.prototype.getAudioTracks) {
-		            MediaStream.prototype.getAudioTracks = function () {
-		                return [];
-		            };
-		        }
-
-		        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-		            getSources = navigatorMediaDevicesEnumerateDevicesWrapper;
-		        } else if (MediaStreamTrack.getSources) {
-		            getSources = MediaStreamTrack.getSources.bind(MediaStreamTrack);
-		        } else {
-		            getSources = function (callback) {
-		                setTimeout(function () {
-		                    callback([
-		                        {kind: 'audio', id: 'default', label: '', facing: ''},
-		                        {kind: 'video', id: 'default', label: '', facing: ''}
-		                    ]);
-		                }, 0);
-		            }
-		        }
-
-		        webrtcSupported = true;
-		    } else if (navigator.webkitGetUserMedia) {
-		        log('Webkit detected', navigator.userAgent);
-
-		        // Creates iceServer from the url for Chrome.
-		        createIceServer = function (url, username, password) {
-		            var iceServer = null;
-		            var url_parts = url.split(':');
-		            if (url_parts[0].indexOf('stun') === 0) {
-		                // Create iceServer with stun url.
-		                iceServer = {'url': url};
-		            } else if (url_parts[0].indexOf('turn') === 0) {
-		                // Chrome M28 & above uses below TURN format.
-		                iceServer = {
-		                    'url': url,
-		                    'credential': password,
-		                    'username': username
-		                };
-		            }
-		            return iceServer;
-		        };
-
-		        // The RTCPeerConnection object.
-		        RTCPeerConnection = webkitRTCPeerConnection;
-
-		        // The RTCSessionDescription object.
-		        RTCSessionDescription = window.RTCSessionDescription;
-
-		        // The RTCIceCandidate object.
-		        RTCIceCandidate = window.RTCIceCandidate;
-
-		        // Get UserMedia (only difference is the prefix).
-		        getUserMedia = function (constraints, successCallback, errorCallback) {
-		            var onSuccess = function (stream) {
-		                setTimeout(function () {
-		                    var tracks = stream.getTracks();
-
-		                    for (var i = 0; i < tracks.length; i++) {
-		                        var track = tracks[i];
-
-		                        track.onended = function (event) {
-		                            log(event.timeStamp, 'Track', track.id, track.label, 'ended');
-		                        };
-
-		                        log('Track', track.id, track.label, tracks[i].kind, 'readyState=', tracks[i].readyState);
-
-		                        if (track.readyState === 'ended') {
-		                            try {
-		                                var error = new Error('User media not available');
-
-		                                error.code = 'unavailable';
-
-		                                errorCallback(error);
-		                            } finally {
-		                                for (var j = 0; j < tracks.length; j++) {
-		                                    tracks[j].stop();
-		                                }
-		                            }
-
-		                            return;
-		                        }
-		                    }
-
-		                    successCallback(stream);
-		                }, 100);
-		            };
-
-		            navigator.webkitGetUserMedia(constraints, onSuccess, errorCallback);
-		        };
-
-		        getStats = function (pc, track, successCallback, errorCallback) {
-		            pc.getStats(successCallback, track, errorCallback);
-		        };
-
-		        // Attach a media stream to an element.
-		        attachMediaStream = function (element, stream) {
-		            if (typeof element.srcObject !== 'undefined') {
-		                element.srcObject = stream;
-		            } else if (typeof element.mozSrcObject !== 'undefined') {
-		                element.mozSrcObject = stream;
-		            } else if (typeof element.src !== 'undefined') {
-		                element.src = URL.createObjectURL(stream);
-		            } else {
-		                log('Error attaching stream to element.');
-		            }
-
-		            element.play();
-
-		            return element;
-		        };
-
-		        reattachMediaStream = function (to, from) {
-		            to.src = from.src;
-
-		            return to;
-		        };
-
-		        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-		            getSources = navigatorMediaDevicesEnumerateDevicesWrapper;
-		        } else {
-		            getSources = MediaStreamTrack.getSources.bind(MediaStreamTrack);
-		        }
-
-		        webrtcSupported = true;
-		    } else {
-		        log('Browser does not appear to be WebRTC-capable', navigator.userAgent);
-		    }
-
-		    var adapter = {
-		        RTCPeerConnection: RTCPeerConnection,
-		        RTCSessionDescription: RTCSessionDescription,
-		        RTCIceCandidate: RTCIceCandidate,
-		        getSources: getSources,
-		        getUserMedia: getUserMedia,
-		        getStats: getStats,
-		        attachMediaStream: attachMediaStream,
-		        reattachMediaStream: reattachMediaStream,
-		        webrtcSupported: webrtcSupported
-		    };
-
-		    adapter.exportGlobal = function () {
-		        window.RTCPeerConnection = adapter.RTCPeerConnection;
-		        window.RTCSessionDescription = adapter.RTCSessionDescription;
-		        window.RTCIceCandidate = adapter.RTCIceCandidate;
-		    };
-
-		    return adapter;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 4 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		        __webpack_require__(5),
-		        __webpack_require__(6)
-		    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (WaitFor, PhenixVideo) {
-		    'use strict';
-
-		    var log = function () {
-		            console.log.apply(console, arguments);
-		        } || function () {
-		        };
-		    var logError = function () {
-		            console.error.apply(console, arguments);
-		        } || log;
-
-		    function PhenixRTC() {
-		        var that = this;
-
-		        this._root = createInvisibleParentNode();
-		        this._version = '?';
-
-		        var ready = function ready(success) {
-		            that._loaded = true;
-		            that._enabled = success === true;
-		            that._version = that._phenixRTC.phenixVersion || '?.?.?.?';
-
-		            if (success) {
-		                log('Phenix RTC ' + that._version);
-		            } else {
-		                log('No Phenix RTC');
-		            }
-
-		            if (that._onReady) {
-		                that._onReady(that._enabled);
-		            }
-		        };
-
-		        try {
-		            this._phenixRTC = createPhenixRTC(this._root);
-
-		            this._phenixRTC.onunload = function () {
-		                that._loaded = false;
-		            };
-
-		            var waitFor = new WaitFor();
-
-		            waitFor.waitForReady(this._phenixRTC, ready);
-		        } catch (e) {
-		            logError('Error while loading Phenix RTC' + e);
-		            loaded(false);
-		        }
-		    }
-
-		    PhenixRTC.prototype.onReady = function (callback) {
-		        var that = this;
-
-		        if (this._loaded) {
-		            setTimeout(function () {
-		                callback(that._enabled);
-		            }, 1)
-		        } else {
-		            this._onReady = callback;
-		        }
-		    };
-
-		    PhenixRTC.prototype.onLoaded = function (callback) {
-		        this._onLoaded = callback;
-		    };
-
-		    PhenixRTC.prototype.isLoaded = function () {
-		        return this._loaded === true;
-		    };
-
-		    // static function
-		    PhenixRTC.isSupported = function () {
-		        if (navigator.plugins) {
-		            var plugins = navigator.plugins;
-
-		            for (var i = 0; i < plugins.length; i++) {
-		                if (plugins[i].name.indexOf('PhenixRTC') >= 0) {
-		                    return true;
-		                }
-		            }
-		        }
-
-		        if (navigator.userAgent.match(/MSIE/) || navigator.userAgent.match(/Trident/)) {
-		            try {
-		                var activeXObj = new ActiveXObject('PhenixP2P.RTC');
-
-		                return true;
-		            } catch (e) {
-		                return false;
-		            }
-		        }
-
-		        return false;
-		    };
-
-		    PhenixRTC.prototype.isEnabled = function () {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this._phenixRTC && this._phenixRTC.phenixVersion != undefined;
-		    };
-
-		    PhenixRTC.prototype.getVersion = function () {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this._version;
-		    };
-
-		    PhenixRTC.prototype.getRTCPeerConnectionConstructor = function () {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this._phenixRTC.RTCPeerConnection;
-		    };
-
-		    PhenixRTC.prototype.getRTCSessionDescriptionConstructor = function () {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this._phenixRTC.RTCSessionDescription;
-		    };
-
-		    PhenixRTC.prototype.getRTCIceCandidateConstructor = function () {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this._phenixRTC.RTCIceCandidate;
-		    };
-
-		    PhenixRTC.prototype.getSourcesDelegate = function () {
-		        var that = this;
-
-		        return function (sourcesInfoCallback) {
-		            verifyPhenixRTCInDOM.call(that);
-
-		            return that._phenixRTC.getSources(sourcesInfoCallback);
-		        };
-		    };
-
-		    PhenixRTC.prototype.getUserMediaDelegate = function () {
-		        var that = this;
-
-		        return function (constraints, successCallback, failureCallback) {
-		            verifyPhenixRTCInDOM.call(that);
-
-		            return that._phenixRTC.getUserMedia(constraints, successCallback, failureCallback);
-		        };
-		    };
-
-		    PhenixRTC.prototype.getStatsDelegate = function () {
-		        return function (pc, track, successCallback, errorCallback) {
-		            return pc.getStats(track, successCallback, errorCallback);
-		        };
-		    };
-
-		    PhenixRTC.prototype.attachMediaStream = function (element, stream) {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return attachMediaStream.call(this, element, stream);
-		    };
-
-		    PhenixRTC.prototype.reattachMediaStream = function (to, from) {
-		        verifyPhenixRTCInDOM.call(this);
-
-		        return this.attachMediaStream(to, from.src);
-		    };
-
-		    function verifyPhenixRTCInDOM() {
-		        if (this._root && document.getElementById('phenixRTC') !== this._root) {
-		            document.body.appendChild(this._root);
-
-		            if (this._onLoaded) {
-		                this._onLoaded.call(this);
-		            }
-		        }
-		    }
-
-		    function createInvisibleParentNode() {
-		        var node = document.createElement('div');
-
-		        node.id = 'phenixRTC';
-		        node.style.cssText = 'visibility:hidden !important;width:0px !important;height:0px !important;' +
-		            'margin:0px !important;padding:0px !important;' +
-		            'border-style:none !important;border-width:0px !important;' +
-		            'max-width:0px !important;max-height:0px !important;outline:none !important';
-
-		        document.body.appendChild(node);
-
-		        return node;
-		    }
-
-		    function createPhenixRTC(parent) {
-		        var phenixRTC = document.createElement('object');
-
-		        phenixRTC.type = 'application/x-phenix-rtc';
-
-		        parent.appendChild(phenixRTC);
-
-		        return phenixRTC;
-		    }
-
-		    function attachMediaStream(element, stream) {
-		        if (!element) {
-		            throw new Error('Can not attach a stream to a undefined element');
-		        }
-
-		        if (element.phenixVersion) {
-		            // It's one of ours
-		            element.src = stream;
-
-		            return element;
-		        }
-
-		        var phenixVideo = new PhenixVideo(element, stream);
-
-		        phenixVideo.getElement().phenixPresenter = phenixVideo;
-
-		        return phenixVideo.getElement();
-		    }
-
-
-		    return PhenixRTC;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 5 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		        __webpack_require__(2)
-		    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (DetectBrowser) {
-		    'use strict';
-
-		    var browser = new DetectBrowser(navigator.userAgent).detect();
-		    var ReadyStateComplete = 4;
-
-		    function WaitFor(timeout) {
-		        this._timeout = timeout || 15000;
-		    }
-
-		    var logError = function () {
-		            console.error.apply(console, arguments);
-		        } || log;
-
-		    WaitFor.prototype.waitForReadyWithTimeout = function (element, loaded, timeout) {
-		        var triggered = false;
-		        var waitFor = 1;
-		        var sum = waitFor;
-
-		        var guardedLoaded = function (success) {
-		            if (!triggered) {
-		                triggered = true;
-		                loaded(success);
-		            }
-		        };
-
-		        var checkLoaded = function checkLoaded() {
-		            if (element.readyState === ReadyStateComplete) { // IE
-		                guardedLoaded(true);
-		            } else if (element.phenixVersion) { // property is available
-		                guardedLoaded(true);
-		            } else {
-		                waitFor = Math.min(waitFor + 1000, 2 * waitFor);
-		                sum += waitFor;
-
-		                if (sum > timeout) {
-		                    logError('Timed out while waiting for <object> to load');
-		                    guardedLoaded(false);
-		                } else {
-		                    setTimeout(checkLoaded, waitFor);
-		                }
-		            }
-		        };
-
-		        if (!(element.hasOwnProperty && element.hasOwnProperty('onload'))) {
-		            //  There are no events in IE to detect when it is loaded
-		            if (browser.browser !== 'IE') {
-		                logError('No means of detecting when <object> is loaded');
-		            }
-		        }
-
-		        element.onload = function () {
-		            guardedLoaded(true);
-		        };
-
-		        checkLoaded();
-		    };
-
-		    WaitFor.prototype.waitForReady = function (element, loaded) {
-		        if (element.phenixVersion) { // Already loaded
-		            loaded(true);
-		        } else {
-		            this.waitForReadyWithTimeout(element, loaded, this._timeout);
-		        }
-		    };
-
-		    return WaitFor;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 6 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-		        __webpack_require__(5)
-		    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (WaitFor) {
-		    'use strict';
-
-		    var log = function () {
-		            console.log.apply(console, arguments);
-		        } || function () {
-		        };
-		    var logError = function () {
-		            console.error.apply(console, arguments);
-		        } || log;
-
-		    function PhenixVideo(ghost, stream) {
-		        var that = this;
-
-		        this._ghost = ghost;
-		        this._stream = stream;
-		        this._events = {};
-
-		        var loaded = function loaded(success) {
-		            that._loaded = true;
-		            that._enabled = success === true;
-
-		            if (success) {
-		                initialize.call(that);
-		            } else {
-		                logError('Failed to create Phenix video element');
-		            }
-
-		            if (that._onReady) {
-		                that._onReady(that._enabled);
-		            }
-		        };
-
-		        try {
-		            this._video = createPhenixVideoElement();
-		            this._video.className = this._ghost.className;
-		            this._video.height = this._ghost.height;
-		            this._video.width = this._ghost.width;
-
-		            this._ghost.style.cssText = 'visibility:hidden !important;width:0px !important;height:0px !important;' +
-		                'margin:0px !important;padding:0px !important;' +
-		                'border-style:none !important;border-width:0px !important;' +
-		                'max-width:0px !important;max-height:0px !important;outline:none !important';
-
-		            this._video.onunload = function () {
-		                that._loaded = false;
-		            };
-
-		            observeInsertion.call(this);
-
-		            if (!document.body || !document.body.contains) {
-		                log('document.body.contains is not supported');
-		            }
-
-		            if (document.body && document.body.contains && document.body.contains(this._ghost)) {
-		                this._ghost.parentNode.replaceChild(this._video, this._ghost);
-		            }
-
-		            var waitFor = new WaitFor();
-
-		            waitFor.waitForReady(this._video, loaded);
-		        } catch (e) {
-		            logError('Error while loading Phenix RTC' + e);
-		            loaded(false);
-		        }
-		    }
-
-		    PhenixVideo.prototype.hookUpEvents = function () {
-		        var that = this;
-		        var ghost = this._ghost;
-
-		        this.addEventListener('error', function () {
-		            dispatchEvent(ghost, 'error');
-		        });
-		        this.addEventListener('mute', function () {
-		            ghost.muted = that._video.muted;
-		            dispatchEvent(ghost, 'mute');
-		        });
-		        this.addEventListener('unmute', function () {
-		            ghost.muted = that._video.muted;
-		            dispatchEvent(ghost, 'unmute');
-		        });
-		        this.addEventListener('ended', function () {
-		            ghost.ended = that._video.ended;
-		            dispatchEvent(ghost, 'ended');
-		        });
-		        this.addEventListener('loadedmetadata', function () {
-		            log('Video loaded metadata', that._video.videoWidth, that._video.videoHeight);
-		            ghost.width = that._video.width;
-		            ghost.height = that._video.height;
-		            dispatchEvent(ghost, 'loadedmetadata');
-		        });
-		        this.addEventListener('loadeddata', function () {
-		            ghost.width = that._video.width;
-		            ghost.height = that._video.height;
-		            dispatchEvent(ghost, 'loadeddata');
-		        });
-		        this.addEventListener('resize', function () {
-		            ghost.width = that._video.width;
-		            ghost.height = that._video.height;
-		            dispatchEvent(ghost, 'resize');
-		        });
-		    };
-
-		    PhenixVideo.prototype.onReady = function (callback) {
-		        var that = this;
-
-		        if (this._loaded) {
-		            setTimeout(function () {
-		                callback(that._enabled);
-		            }, 1)
-		        } else {
-		            this._onReady = callback;
-		        }
-		    };
-
-		    PhenixVideo.prototype.getElement = function () {
-		        return this._video;
-		    };
-
-		    PhenixVideo.prototype.addEventListener = function (name, listener, useCapture) {
-		        addEventListener.call(this, name, listener, useCapture);
-		    };
-
-		    PhenixVideo.prototype.removeEventListener = function (name, listener, useCapture) {
-		        removeEventListener.call(this, name, listener, useCapture);
-		    };
-
-		    function createPhenixVideoElement() {
-		        var video = document.createElement('object');
-
-		        video.type = 'application/x-phenix-video';
-
-		        return video;
-		    }
-
-		    function addEventListener(name, listener, useCapture) {
-		        var listeners = this._events[name];
-
-		        if (!listeners) {
-		            listeners = this._events[name] = [];
-
-		            if (this._loaded) {
-		                registerEvent.call(this, name);
-		            }
-		        }
-
-		        listeners.push(listener);
-		    }
-
-		    function removeEventListener(name, listener, useCapture) {
-		        var listeners = this._events[name];
-
-		        if (listeners) {
-		            var idx = listeners.indexOf(listener);
-
-		            if (idx >= 0) {
-		                listeners = listeners.splice(idx, 1);
-
-		                if (listeners.length > 0) {
-		                    this._events[name] = listeners;
-		                } else {
-		                    delete this._events[name];
-		                }
-		            }
-		        }
-		    }
-
-		    function registerEvent(name) {
-		        var that = this;
-
-		        function listener() {
-		            var listeners = that._events[name];
-
-		            if (listeners) {
-		                for (var i = 0; i < listeners.length; i++) {
-		                    listeners[i].apply(that, arguments);
-		                }
-		            }
-		        }
-
-		        that._video.phenixSetEventListener(name, listener);
-		    }
-
-		    function dispatchEvent(source, name) {
-		        var event; // The custom event that will be created
-
-		        if (document.createEvent) {
-		            event = document.createEvent('HTMLEvents');
-		            event.initEvent(name, true, true);
-		        } else {
-		            event = document.createEventObject();
-		            event.eventType = name;
-		        }
-
-		        event.eventName = name;
-
-		        setTimeout(function () {
-		            if (document.createEvent) {
-		                source.dispatchEvent(event);
-		            } else {
-		                source.fireEvent('on' + event.eventType, event);
-		            }
-		        });
-		    }
-
-		    function initialize() {
-		        var events = Object.keys(this._events);
-
-		        for (var i = 0; i < events.length; i++) {
-		            registerEvent.call(this, events[i]);
-		        }
-
-		        this.hookUpEvents();
-
-		        propagateAttributeChanges.call(this);
-
-		        this._video.id = this._ghost.id;
-		        this._video.style.cssText = this._ghost.cssText;
-		        this._video.className = this._ghost.className;
-		        this._video.innerHtml = this._ghost.innerHtml;
-		        this._video.width = this._ghost.width;
-		        this._video.height = this._ghost.height;
-		        this._video.autoplay = this._ghost.autoplay;
-		        this._video.muted = this._ghost.muted;
-		        this._video.defaultMuted = this._ghost.defaultMuted;
-		        this._video.volume = this._ghost.volume;
-
-		        if (this._stream) {
-		            this._video.src = this._stream;
-		        }
-		    }
-
-		    function propagateAttributeChanges() {
-		        var that = this;
-		        var readonly = ['style'];
-
-		        if (window.MutationObserver) {
-		            // Newer browsers support an efficient way to observe DOM modifications
-		            var observer = new MutationObserver(function (mutations) {
-		                mutations.forEach(function (mutation) {
-		                    if (mutation.type === 'attributes' && mutation.target === that._ghost && readonly.indexOf(mutation.attributeName) === -1) {
-		                        that._video[mutation.attributeName] = that._ghost[mutation.attributeName];
-		                    }
-		                });
-		            });
-
-		            var configAttributes = {attributes: true};
-
-		            observer.observe(that._ghost, configAttributes);
-		        } else {
-		            // For older browsers. There is a significant performance overhead with this method.
-		            // See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
-		            log('Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.');
-
-		            if (that._ghost.addEventListener) {
-		                that._ghost.addEventListener('DOMAttrModified', function (event) {
-		                    that._video[event.target.tagName] = that._ghost[event.target.tagName];
-		                }, false);
-		            } else {
-		                that._ghost.attachEvent('onpropertychange', function (event) {
-		                    that._video[event.target.tagName] = that._ghost[event.target.tagName];
-		                });
-		            }
-		        }
-		    }
-
-		    function observeInsertion() {
-		        var that = this;
-
-		        if (window.MutationObserver) {
-		            // Newer browsers support an efficient way to observe DOM modifications
-		            var observer = new MutationObserver(function (mutations) {
-		                mutations.forEach(function (mutation) {
-		                    if (mutation.type === 'childList') {
-		                        for (var i = 0; i < mutation.addedNodes.length; i++) {
-		                            var node = mutation.addedNodes[i];
-
-		                            if (mutation.target !== that._video) {
-		                                if (node === that._ghost) {
-		                                    // Replace element with our video element
-		                                    mutation.target.replaceChild(that._video, that._ghost);
-		                                    initialize.call(that);
-		                                } else if (isDescendant(mutation.target, that._ghost)) {
-		                                    that._ghost.parentNode.replaceChild(that._video, that._ghost);
-		                                    initialize.call(that);
-		                                }
-		                            }
-		                        }
-		                    }
-		                });
-		            });
-
-		            var configMutations = {childList: true, attributes: false, characterData: false, subtree: true};
-
-		            observer.observe(document.body, configMutations);
-		        } else {
-		            // For older browsers. There is a significant performance overhead with this method.
-		            // See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events
-		            log('Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.');
-
-		            addEventListener(that._ghost, 'DOMNodeInserted', function (e) {
-		                that._ghost.parentNode.replaceChild(that._video, that._ghost);
-		                //that._video.appendChild(that._ghost);
-		            }, false);
-		        }
-		    }
-
-		    function isDescendant(parent, child) {
-		        var node = child.parentNode;
-
-		        while (node != null) {
-		            if (node == parent) {
-		                return true;
-		            }
-
-		            node = node.parentNode;
-		        }
-
-		        return false;
-		    }
-
-		    return PhenixVideo;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ },
-	/* 7 */
-	/***/ function(module, exports, __webpack_require__) {
-
-		var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-		 * Copyright 2016 PhenixP2P Inc. All Rights Reserved.
-		 *
-		 * Licensed under the Apache License, Version 2.0 (the "License");
-		 * you may not use this file except in compliance with the License.
-		 * You may obtain a copy of the License at
-		 *
-		 *     http://www.apache.org/licenses/LICENSE-2.0
-		 *
-		 * Unless required by applicable law or agreed to in writing, software
-		 * distributed under the License is distributed on an "AS IS" BASIS,
-		 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-		 * See the License for the specific language governing permissions and
-		 * limitations under the License.
-		 */
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-		    'use strict';
-
-		    var exportGlobal = function exportGlobal(adapter) {
-		        window.RTCPeerConnection = adapter.RTCPeerConnection;
-		        window.RTCSessionDescription = adapter.RTCSessionDescription;
-		        window.RTCIceCandidate = adapter.RTCIceCandidate;
-		    };
-
-		    return exportGlobal;
-		}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-	/***/ }
-	/******/ ])
-	});
-	;
+	/* (ignored) */
 
 /***/ },
 /* 14 */
@@ -14104,7 +12811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	        __webpack_require__(15),
-	        __webpack_require__(13)
+	        __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time, phenixRTC) {
 	    'use strict';
 
