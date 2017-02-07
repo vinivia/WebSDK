@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "1.4.10",
+  "version": "1.4.11",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk-bundled.min.js",
@@ -28,7 +28,7 @@
     "jpm-xpi": "jpm xpi --addon-dir src/firefox"
   },
   "dependencies": {
-    "phenix-rtc": "1.0.6"
+    "phenix-rtc": "1.0.8"
   },
   "engines": {
     "node": "6.9.2"
