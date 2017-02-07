@@ -959,7 +959,11 @@ define([
 
                         var renderer = internalMediaStream.renderer;
 
-                        if (renderer) {
+                        if (!renderer) {
+                            return;
+                        }
+
+                        if (typeof renderer.dataQualityChangedCallback === 'function') {
                             renderer.dataQualityChangedCallback(renderer, status, reason);
                         }
                     }
