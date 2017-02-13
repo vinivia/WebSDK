@@ -82,6 +82,19 @@
         .hidden {
             visibility: hidden;
         }
+
+        .fullscreen {
+            cursor: pointer;
+            right: 30px;
+            top: -4px;
+            padding: 4px;
+            background: grey;
+            border-radius: 6px;
+        }
+
+        .fullscreen:hover {
+            color:white;
+        }
     </style>
 
     <script data-main="phenix-sdk-app" src="/requirejs/require.js"></script>
@@ -231,7 +244,8 @@
     <div class="row step step-5 option-B">
         <div class="col-md-4 col-md-offset-7 text-center client">
             <p>Get local user media from camera.</p>
-            <video controls id="localVideo" class="local" width="160" height="120" muted="true"></video>
+            <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
+            <span class="glyphicon glyphicon-fullscreen fullscreen" aria-hidden="true" data-video-target="localVideo"></span>
             <select class="form-control" id="gum-source">
                 <option value="cameraAndMicrophone">Camera & Microphone</option>
                 <option value="screen">Screen</option>
@@ -353,8 +367,10 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2 text-center">
                 <div id="videoList" class="row text-center">
-                    <video controls id="remoteVideo" class="remote" width="640" height="480"></video>
-                    <video controls id="remoteVideoSecondary" class="remote hidden" width="640" height="480"></video>
+                    <video id="remoteVideo" class="remote" width="640" height="480"></video>
+                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                    <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480"></video>
+                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                 </div>
             </div>
         </div>

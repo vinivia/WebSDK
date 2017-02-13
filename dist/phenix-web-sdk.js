@@ -164,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-02-07T22:54:57Z';
+	    var sdkVersion = '2017-02-17T20:21:59Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -678,79 +678,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function getUserMedia(options, callback) {
 	        var that = this;
 
-	        var onUserMediaSuccess = function onUserMediaSuccess(stream) {
+	        var onUserMediaSuccess = function onUserMediaSuccess(status, stream) {
 	            that._gumStreams.push(stream);
-	            callback(that, 'ok', stream);
+	            callback(that, status, stream);
 	        };
 
+	        var onUserMediaFailure = function onUserMediaFailure(status, stream, error) {
+	            callback(that, status, stream, error);
+	        };
+
+	        var hasScreen = options.screen;
+	        var hasVideoOrAudio = options.video || options.audio;
+
+	        if (!(hasScreen && hasVideoOrAudio)) {
+	            return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
+	        }
+
+	        return getUserMediaStream.call(that, {audio: options.audio, video: options.video}, function success(status, stream) {
+	            return getUserMediaStream.call(that, {screen: options.screen}, function screenSuccess(status, screenStream) {
+	                addTracksToWebRTCStream(stream, screenStream.getTracks());
+
+	                onUserMediaSuccess(status, stream);
+	            }, function failure(status, screenStream, error) {
+	                stopWebRTCStream(stream);
+
+	                onUserMediaFailure(status, screenStream, error);
+	            });
+	        }, onUserMediaFailure);
+	    }
+
+	    function getUserMediaStream(options, successCallback, failureCallback) {
 	        var onUserMediaCancelled = function onUserMediaCancelled() {
-	            callback(that, 'cancelled', null);
+	            failureCallback('cancelled', null);
 	        };
 
 	        var onUserMediaFailure = function onUserMediaFailure(e) {
-	            if (e.code === 'unavailable') {
-	                callback(that, 'conflict', undefined, e);
-	            } else if (e.message === 'permission-denied') {
-	                callback(that, 'permission-denied', undefined, e);
-	            } else if (e.name === 'PermissionDeniedError') { // Chrome
-	                callback(that, 'permission-denied', undefined, e);
-	            } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF (old getUserMedia API)
-	                callback(that, 'conflict', undefined, e);
-	            } else if (e.name === 'SourceUnavailableError') { // FF
-	                callback(that, 'conflict', undefined, e);
-	            } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
-	                callback(that, 'permission-denied', undefined, e);
-	            } else {
-	                callback(that, 'failed', undefined, e);
-	            }
+	            failureCallback(getUserMediaErrorStatus(e), undefined, e);
 	        };
 
-	        if (!options.screen || !(options.video || options.audio)) {
-	            return getUserMediaConstraints.call(that, options, function (status, constraints, error) {
-	                if (status === 'cancelled') {
-	                    return onUserMediaCancelled();
-	                }
+	        var onUserMediaSuccess = function onUserMediaSuccess(stream) {
+	            successCallback('ok', stream);
+	        };
 
-	                if (status !== 'ok') {
-	                    return onUserMediaFailure(error);
-	                }
+	        return getUserMediaConstraints.call(this, options, function (status, constraints, error) {
+	            if (status === 'cancelled') {
+	                return onUserMediaCancelled();
+	            }
 
-	                try {
-	                    phenixRTC.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
-	                } catch (e) {
-	                    onUserMediaFailure(e);
-	                }
-	            });
-	        }
-
-	        return getUserMedia.call(that, {audio: options.audio, video: options.video}, function (pcast, status, stream) {
 	            if (status !== 'ok') {
 	                return onUserMediaFailure(error);
 	            }
 
-	            return getUserMedia.call(that, {screen: options.screen}, function (pcast, status, screenStream) {
-	                var tracks;
-
-	                if (status !== 'ok') {
-	                    tracks = stream.getTracks();
-
-	                    for (var i = 0; i < tracks.length; i++) {
-	                        tracks[i].stop();
-	                    }
-
-	                    return onUserMediaFailure(error);
-	                }
-
-	                tracks = screenStream.getTracks();
-
-	                for (var i = 0; i < tracks.length; i++) {
-	                    stream.addTrack(tracks[i]);
-	                }
-
-	                onUserMediaSuccess(stream);
-	            });
+	            try {
+	                phenixRTC.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
+	            } catch (e) {
+	                onUserMediaFailure(e);
+	            }
 	        });
 	    }
+
+
+	    var getUserMediaErrorStatus = function getUserMediaErrorStatus(e) {
+	        var status;
+
+	        if (e.code === 'unavailable') {
+	            status = 'conflict';
+	        } else if (e.message === 'permission-denied') {
+	            status = 'permission-denied';
+	        } else if (e.name === 'PermissionDeniedError') { // Chrome
+	            status = 'permission-denied';
+	        } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF (old getUserMedia API)
+	            status = 'conflict';
+	        } else if (e.name === 'SourceUnavailableError') { // FF
+	            status = 'conflict';
+	        } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
+	            status = 'permission-denied';
+	        } else {
+	            status = 'failed';
+	        }
+
+	        return status;
+	    };
 
 	    function connected() {
 	        var that = this;
@@ -974,11 +982,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            options.direction = 'inbound';
 
 	                            monitor.start(options, function activeCallback() {
-	                                return this.isActive();
+	                                return internalMediaStream.mediaStream.isActive();
 	                            }, function monitorCallback(reason) {
 	                                that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
 
-	                                return callback(this, 'client-side-failure', reason);
+	                                return callback(internalMediaStream.mediaStream, 'client-side-failure', reason);
 	                            });
 	                        },
 
@@ -2012,6 +2020,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    this._onlineCallback.call(this);
 	                    break;
 	            }
+	        }
+	    }
+
+	    function addTracksToWebRTCStream(stream, tracks) {
+	        if (typeof stream !== 'object') {
+	            return;
+	        }
+	        if (typeof tracks !== 'object') {
+	            return;
+	        }
+	        if (tracks.constructor !== Array) {
+	            return;
+	        }
+
+	        for (var i = 0; i < tracks.length; i++) {
+	            stream.addTrack(tracks[i]);
 	        }
 	    }
 

@@ -733,18 +733,21 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                     });
                 });
 
+                mediaStream.monitor({}, monitorStream);
+
                 var primaryMediaStream = mediaStream.select(function(track, index) {
                     return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                 });
 
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
+                displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
 
                 if (mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
                         return track.kind === 'video' && index == 2;
                     });
 
-                    displayVideoElementWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
+                    displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
                     attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
                 }
 
@@ -772,16 +775,69 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
         };
 
-        var displayVideoElementWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(mediaStream, videoElement) {
-            var video = $(videoElement);
-
-            if (video.hasClass('hidden')) {
-                video.removeClass('hidden');
-
-                mediaStream.setStreamEndedCallback(function() {
-                    video.addClass('hidden');
-                });
+        var monitorStream = function monitorStream(stream, reason, description) {
+            switch (reason) {
+                case  'client-side-failure':
+                    $.notify({
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Monitor</strong>',
+                        message: 'Stream Failure'
+                    }, {
+                        type: 'danger',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 3000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
+                    // handle failure event, redo stream
+                    break;
+                default:
+                    $.notify({
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Monitor</strong>',
+                        message: 'Stream Healthy'
+                    }, {
+                        type: 'success',
+                        allow_dismiss: false,
+                        placement: {
+                            from: 'bottom',
+                            align: 'right'
+                        },
+                        delay: 3000,
+                        animate: {
+                            enter: 'animated fadeInUp',
+                            exit: 'animated fadeOutDown'
+                        }
+                    });
+                    // no failure has occurred, handle monitor event
+                    break;
             }
+        };
+
+        var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(mediaStream, videoElement) {
+            var video = $(videoElement);
+            var videoControls = $('[data-video-target=' + videoElement.id + ']');
+            var shouldVideoBeHidden = video.hasClass('hidden');
+
+            if (shouldVideoBeHidden) {
+                video.removeClass('hidden');
+            }
+
+            videoControls.removeClass('hidden');
+
+            mediaStream.setStreamEndedCallback(function() {
+                if (shouldVideoBeHidden) {
+                    video.addClass('hidden');
+                }
+
+                videoControls.addClass('hidden');
+            });
         };
 
         var attachMediaStreamToVideoElement = function attachMediaStreamToVideoElement(mediaStream, element) {
@@ -808,6 +864,32 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
 
             element = renderer.start(element);
+        };
+
+        var handleFullscreenButtonClick = function handleFullscreenButtonClick() {
+            if (!this.dataset.videoTarget) {
+                throw new Error('Button Must Have Target');
+            }
+
+            var video = $('#' + this.dataset.videoTarget)[0];
+
+            requestFullscreen(video);
+        };
+
+        var requestFullscreen = function requestFullScreen(element) {
+            if (!element) {
+                throw new Error('Element required to request full screen');
+            }
+
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullScreen) {
+                element.webkitRequestFullScreen();
+            } else if (element.msRequestFullscreen) {
+                element.msRequestFullscreen();
+            }
         };
 
         $('#environment').change(function () {
@@ -839,6 +921,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
         $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
 
         $('#subscribe').click(subscribe);
+
+        $('.fullscreen').click(handleFullscreenButtonClick);
 
         createPCast();
         enableSteps();
