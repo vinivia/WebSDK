@@ -164,7 +164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-02-17T20:21:59Z';
+	    var sdkVersion = '2017-02-20T20:38:18Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -1710,6 +1710,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    };
 	                },
 
+	                select: function select(trackSelectCallback) {
+	                    that._logger.warn('[%s] selection of tracks not supported for shaka live streams', streamId);
+
+	                    return this;
+	                },
+
 	                setStreamEndedCallback: function setStreamEndedCallback(callback) {
 	                    if (typeof callback !== 'function') {
 	                        throw new Error('"callback" must be a function');
@@ -1905,6 +1911,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            this.dataQualityChangedCallback = callback;
 	                        }
 	                    };
+	                },
+
+	                select: function select(trackSelectCallback) {
+	                    that._logger.warn('[%s] selection of tracks not supported for HLS live streams', streamId);
+
+	                    return this;
 	                },
 
 	                setStreamEndedCallback: function setStreamEndedCallback(callback) {

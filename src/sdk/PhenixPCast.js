@@ -1597,6 +1597,12 @@ define([
                     };
                 },
 
+                select: function select(trackSelectCallback) {
+                    that._logger.warn('[%s] selection of tracks not supported for shaka live streams', streamId);
+
+                    return this;
+                },
+
                 setStreamEndedCallback: function setStreamEndedCallback(callback) {
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
@@ -1792,6 +1798,12 @@ define([
                             this.dataQualityChangedCallback = callback;
                         }
                     };
+                },
+
+                select: function select(trackSelectCallback) {
+                    that._logger.warn('[%s] selection of tracks not supported for HLS live streams', streamId);
+
+                    return this;
                 },
 
                 setStreamEndedCallback: function setStreamEndedCallback(callback) {

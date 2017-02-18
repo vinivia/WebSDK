@@ -24,11 +24,12 @@ requirejs.config({
         'bootstrap-notify': '/remarkable-bootstrap-notify/dist/bootstrap-notify.min',
         'fingerprintjs2': '/fingerprintjs2/dist/fingerprint2.min',
         'Long': '/long/dist/long.min',
-        'ByteBuffer': '/bytebuffer/dist/ByteBufferAB.min'
+        'ByteBuffer': '/bytebuffer/dist/ByteBufferAB.min',
+        'shaka-player': '/shaka-player/dist/shaka-player.compiled',
     }
 });
 
-requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk) {
+requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk, shaka) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localVideoEl = $('#localVideo')[0];
@@ -158,7 +159,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             }
 
             fingerprint.get(function (fingerprint) {
-                pcast = new sdk.PCast({uri: uri, deviceId: fingerprint});
+                pcast = new sdk.PCast({uri: uri, deviceId: fingerprint, shaka: shaka});
             });
         };
 
@@ -604,13 +605,13 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
         };
 
-        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, callback) {
+        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, capabilities, callback) {
             var data = {
                 applicationId: applicationId,
                 secret: secret,
                 sessionId: sessionId,
                 originStreamId: originStreamId,
-                capabilities: []
+                capabilities: capabilities
             };
 
             $.ajax({
@@ -665,8 +666,13 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForPublishing').val();
             var originStreamId = '';
+            var capabilities = [];
 
-            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, function () {
+            $('#publish-capabilities option:selected').each(function () {
+                capabilities.push($(this).val());
+            });
+
+            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
                 activateStep('step-5-3');
                 setTimeout(function () {
                     activateStep('step-5-4');
@@ -679,8 +685,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForViewing').val();
             var originStreamId = $('#originStreamId').val();
+            var capabilities = [];
 
-            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, function () {
+            capabilities.push($('#subscriber-mode option:selected').val());
+
+            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
                 activateStep('step-7');
                 setTimeout(function () {
                     activateStep('step-8');
@@ -739,10 +748,10 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                     return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                 });
 
-                attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
                 displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
+                attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
 
-                if (mediaStream.getStream().getTracks().length > 2) {
+                if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
                         return track.kind === 'video' && index == 2;
                     });

@@ -9,14 +9,21 @@
   "license": "Apache-2.0",
   "homepage": "https://phenixp2p.com/docs",
   "private": false,
-  "main": ["dist/phenix-web-sdk.min.js", "dist/phenix-web-sdk-bundled.min.js"],
-  "moduleType": ["globals", "amd"],
+  "main": [
+    "dist/phenix-web-sdk.min.js",
+    "dist/phenix-web-sdk-bundled.min.js"
+  ],
+  "moduleType": [
+    "globals",
+    "amd"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/PhenixP2P/WebSDK.git"
   },
   "dependencies": {
-    "phenix-rtc": "^1.0.8"
+    "phenix-rtc": "^1.0.8",
+    "shaka-player": "^2.0.5"
   },
   "devDependencies": {
     "chai": "3.5.0",
