@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 define([
-        './PCastProtocol',
-        './PCastEndPoint',
-        './PeerConnectionMonitor',
-        './Time',
-        './Logger',
-        'phenix-rtc'
-], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
+    './PCastProtocol',
+    './PCastEndPoint',
+    './PeerConnectionMonitor',
+    './DimensionsChangedMonitor',
+    './Time',
+    './Logger',
+    'phenix-rtc'
+], function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, Time, Logger, phenixRTC) {
     'use strict';
 
     var freeze = function freeze(obj) {
@@ -581,7 +582,10 @@ define([
             return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
         }
 
-        return getUserMediaStream.call(that, {audio: options.audio, video: options.video}, function success(status, stream) {
+        return getUserMediaStream.call(that, {
+            audio: options.audio,
+            video: options.video
+        }, function success(status, stream) {
             return getUserMediaStream.call(that, {screen: options.screen}, function screenSuccess(status, screenStream) {
                 addTracksToWebRTCStream(stream, screenStream.getTracks());
 
@@ -778,6 +782,7 @@ define([
                     mediaStream: {
                         createRenderer: function createRenderer() {
                             var element = null;
+                            var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
                             return {
                                 start: function start(elementToAttachTo) {
@@ -789,9 +794,14 @@ define([
 
                                     internalMediaStream.renderer = this;
 
+                                    dimensionsChangedMonitor.start(this, element);
+
                                     return element;
                                 },
+
                                 stop: function stop() {
+                                    dimensionsChangedMonitor.stop();
+
                                     if (element) {
                                         element.pause();
                                     }
@@ -799,6 +809,7 @@ define([
                                     element = null;
                                     internalMediaStream.renderer = null;
                                 },
+
                                 getStats: function getStats() {
                                     if (!element) {
                                         return {
@@ -816,12 +827,17 @@ define([
                                         networkState: element.networkState
                                     }
                                 },
+
                                 setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
                                     if (typeof callback !== 'function') {
                                         throw new Error('"callback" must be a function');
                                     }
 
                                     this.dataQualityChangedCallback = callback;
+                                },
+
+                                setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+                                    dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
                                 }
                             };
                         },
@@ -1459,7 +1475,7 @@ define([
         }
     }
 
-    function createShakaLiveViewer(streamId, uri, callback, options){
+    function createShakaLiveViewer(streamId, uri, callback, options) {
         var that = this;
 
         if (!that._shaka) {
@@ -1497,6 +1513,7 @@ define([
             mediaStream: {
                 createRenderer: function createRenderer() {
                     var player = null;
+                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
                     return {
                         start: function start(elementToAttachTo) {
@@ -1518,10 +1535,14 @@ define([
                                 internalMediaStream.streamErrorCallback('shaka', e);
                             });
 
+                            dimensionsChangedMonitor.start(this, elementToAttachTo);
+
                             return elementToAttachTo;
                         },
 
                         stop: function stop() {
+                            dimensionsChangedMonitor.stop();
+
                             if (player) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
                                     var reason = '';
@@ -1593,6 +1614,10 @@ define([
 
                         getStreamId: function getStreamId() {
                             return streamId;
+                        },
+
+                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
                         }
                     };
                 },
@@ -1694,7 +1719,7 @@ define([
         callback.call(that, internalMediaStream.mediaStream);
     }
 
-    function createHlsLiveViewer(streamId, uri, callback, options){
+    function createHlsLiveViewer(streamId, uri, callback, options) {
         var that = this;
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -1718,6 +1743,7 @@ define([
             mediaStream: {
                 createRenderer: function createRenderer() {
                     var element = null;
+                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
                     return {
                         start: function start(elementToAttachTo) {
@@ -1735,6 +1761,8 @@ define([
                                 elementToAttachTo.play();
                                 element = elementToAttachTo;
 
+                                dimensionsChangedMonitor.start(this, element);
+
                                 return elementToAttachTo;
                             } catch (e) {
                                 that._logger.error('[%s] Error while loading HLS live stream [%s]', streamId, e.code, e);
@@ -1744,6 +1772,8 @@ define([
                         },
 
                         stop: function stop() {
+                            dimensionsChangedMonitor.stop();
+
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
                                     element = null;
@@ -1796,6 +1826,10 @@ define([
                             }
 
                             this.dataQualityChangedCallback = callback;
+                        },
+
+                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
                         }
                     };
                 },

@@ -74,6 +74,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             enableSteps();
         };
 
+        var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
+            video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
+            video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
+        }
+
         var onLoadedMetaData = function onLoadedMetaData(video) {
             console.log('Meta data, width=' + video.videoWidth + ', height=' + video.videoHeight);
 
@@ -95,8 +100,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 }
             });
 
-            video.width = video.videoWidth > 640 ? 640 : video.videoWidth;
-            video.height = video.videoHeight > 480 ? 480 : video.videoHeight;
+            setVideoWidthAndHeight(video);
         };
 
         remoteVideoEl.onloadedmetadata = function () {
@@ -563,7 +567,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             var data = {
                 applicationId: applicationId,
                 secret: secret,
-                length: 256
+                length: 256,
+                options: ['global']
             };
 
             $.ajax({
@@ -873,6 +878,28 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
 
             element = renderer.start(element);
+
+            renderer.setVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
+                $.notify({
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Video Dimensions Changed</strong>',
+                    message: 'Video dimensions changed: new width = ' + dimensions.width + ', new height = ' + dimensions.height
+                }, {
+                    type: 'info',
+                    allow_dismiss: true,
+                    placement: {
+                        from: 'bottom',
+                        align: 'right'
+                    },
+                    delay: 3000,
+                    animate: {
+                        enter: 'animated fadeInUp',
+                        exit: 'animated fadeOutDown'
+                    }
+                });
+
+                setVideoWidthAndHeight(element);
+            });
         };
 
         var handleFullscreenButtonClick = function handleFullscreenButtonClick() {

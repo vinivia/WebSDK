@@ -142,13 +142,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(3),
-	        __webpack_require__(14),
-	        __webpack_require__(16),
-	        __webpack_require__(15),
-	        __webpack_require__(5),
-	        __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, Time, Logger, phenixRTC) {
+	    __webpack_require__(3),
+	    __webpack_require__(14),
+	    __webpack_require__(16),
+	    __webpack_require__(17),
+	    __webpack_require__(15),
+	    __webpack_require__(5),
+	    __webpack_require__(1)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, Time, Logger, phenixRTC) {
 	    'use strict';
 
 	    var freeze = function freeze(obj) {
@@ -179,7 +180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-02-20T20:38:18Z';
+	    var sdkVersion = '2017-03-13T19:57:35Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -709,7 +710,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
 	        }
 
-	        return getUserMediaStream.call(that, {audio: options.audio, video: options.video}, function success(status, stream) {
+	        return getUserMediaStream.call(that, {
+	            audio: options.audio,
+	            video: options.video
+	        }, function success(status, stream) {
 	            return getUserMediaStream.call(that, {screen: options.screen}, function screenSuccess(status, screenStream) {
 	                addTracksToWebRTCStream(stream, screenStream.getTracks());
 
@@ -906,6 +910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    mediaStream: {
 	                        createRenderer: function createRenderer() {
 	                            var element = null;
+	                            var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
 	                            return {
 	                                start: function start(elementToAttachTo) {
@@ -917,9 +922,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                                    internalMediaStream.renderer = this;
 
+	                                    dimensionsChangedMonitor.start(this, element);
+
 	                                    return element;
 	                                },
+
 	                                stop: function stop() {
+	                                    dimensionsChangedMonitor.stop();
+
 	                                    if (element) {
 	                                        element.pause();
 	                                    }
@@ -927,6 +937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    element = null;
 	                                    internalMediaStream.renderer = null;
 	                                },
+
 	                                getStats: function getStats() {
 	                                    if (!element) {
 	                                        return {
@@ -944,12 +955,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        networkState: element.networkState
 	                                    }
 	                                },
+
 	                                setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
 	                                    if (typeof callback !== 'function') {
 	                                        throw new Error('"callback" must be a function');
 	                                    }
 
 	                                    this.dataQualityChangedCallback = callback;
+	                                },
+
+	                                setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+	                                    dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
 	                                }
 	                            };
 	                        },
@@ -1587,7 +1603,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function createShakaLiveViewer(streamId, uri, callback, options){
+	    function createShakaLiveViewer(streamId, uri, callback, options) {
 	        var that = this;
 
 	        if (!that._shaka) {
@@ -1625,6 +1641,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            mediaStream: {
 	                createRenderer: function createRenderer() {
 	                    var player = null;
+	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
 	                    return {
 	                        start: function start(elementToAttachTo) {
@@ -1646,10 +1663,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                internalMediaStream.streamErrorCallback('shaka', e);
 	                            });
 
+	                            dimensionsChangedMonitor.start(this, elementToAttachTo);
+
 	                            return elementToAttachTo;
 	                        },
 
 	                        stop: function stop() {
+	                            dimensionsChangedMonitor.stop();
+
 	                            if (player) {
 	                                var finalizeStreamEnded = function finalizeStreamEnded() {
 	                                    var reason = '';
@@ -1721,6 +1742,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                        getStreamId: function getStreamId() {
 	                            return streamId;
+	                        },
+
+	                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+	                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
 	                        }
 	                    };
 	                },
@@ -1822,7 +1847,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback.call(that, internalMediaStream.mediaStream);
 	    }
 
-	    function createHlsLiveViewer(streamId, uri, callback, options){
+	    function createHlsLiveViewer(streamId, uri, callback, options) {
 	        var that = this;
 
 	        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -1846,6 +1871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            mediaStream: {
 	                createRenderer: function createRenderer() {
 	                    var element = null;
+	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 
 	                    return {
 	                        start: function start(elementToAttachTo) {
@@ -1863,6 +1889,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                elementToAttachTo.play();
 	                                element = elementToAttachTo;
 
+	                                dimensionsChangedMonitor.start(this, element);
+
 	                                return elementToAttachTo;
 	                            } catch (e) {
 	                                that._logger.error('[%s] Error while loading HLS live stream [%s]', streamId, e.code, e);
@@ -1872,6 +1900,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        },
 
 	                        stop: function stop() {
+	                            dimensionsChangedMonitor.stop();
+
 	                            if (element) {
 	                                var finalizeStreamEnded = function finalizeStreamEnded() {
 	                                    element = null;
@@ -1924,6 +1954,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            }
 
 	                            this.dataQualityChangedCallback = callback;
+	                        },
+
+	                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
+	                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
 	                        }
 	                    };
 	                },
@@ -13192,6 +13226,131 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return PeerConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	    'use strict';
+
+	    var defaultPollFrequency = 500;
+	    var minimumPollFrequency = 15;
+
+	    function DimensionsChangedMonitor(logger) {
+	        if (!logger){
+	            throw new Error("'logger' must be specified.");
+	        }
+	        this._logger = logger;
+	        this._dimensionsChangedIntervalId = null;
+	        this._videoDisplayDimensionsChangedCallback = null;
+	        this._toBeStarted = false;
+	        this._videoElement = null;
+	        this._dimensionsChangedData = {
+	            pollFrequency: defaultPollFrequency,
+	            previousWidth: 0,
+	            previousHeight: 0
+	        };
+	        this._renderer = null;
+	    }
+
+	    DimensionsChangedMonitor.prototype.start = function start(renderer, element) {
+	        startMonitor.call(this, renderer, element);
+	    };
+
+	    DimensionsChangedMonitor.prototype.stop = function stop() {
+	        stopMonitor.call(this);
+	    };
+
+	    DimensionsChangedMonitor.prototype.setVideoDisplayDimensionsChangedCallback = function setVideoDisplayDimensionsChangedCallback(callback, options) {
+	        updateVideoDisplayDimensionsChangedCallback.call(this, callback, options);
+	    };
+
+	    DimensionsChangedMonitor.prototype.toString = function () {
+	        return 'DimensionsChangedMonitor[]';
+	    };
+
+	    function startMonitor(renderer, element) {
+	        if (!element || element.videoWidth === undefined) {
+	            this._logger.warn("Attempting to start dimensions changed monitor without providing proper 'video' element.");
+	        }
+
+	        this._renderer = renderer;
+	        this._videoElement = element;
+	        this._toBeStarted = true;
+	        startInterval.call(this);
+	    }
+
+	    function stopMonitor() {
+	        this._toBeStarted = false;
+	        if (this._dimensionsChangedIntervalId) {
+	            clearInterval(this._dimensionsChangedIntervalId);
+	            this._dimensionsChangedIntervalId = null;
+	        }
+	    }
+
+	    function updateVideoDisplayDimensionsChangedCallback(callback, options) {
+	        if (callback === null) {
+	            this._videoDisplayDimensionsChangedCallback = null;
+	            stopMonitor.call(this);
+	            return;
+	        }
+
+	        if (typeof callback !== 'function') {
+	            throw new Error('"callback" must be a function');
+	        }
+
+	        this._videoDisplayDimensionsChangedCallback = callback;
+	        if (options && options.pollFrequency) {
+	            this._dimensionsChangedData.pollFrequency = options.pollFrequency >= minimumPollFrequency ? options.pollFrequency : minimumPollFrequency;
+	        }
+	        startInterval.call(this);
+	    }
+
+	    function startInterval(){
+	        //return if either:
+	        // - start hasn't been called yet
+	        // - the interval is already running
+	        // - there is no callback yet
+	        if (!this._toBeStarted || this._dimensionsChangedIntervalId || !this._videoDisplayDimensionsChangedCallback) {
+	            return;
+	        }
+
+	        var that = this;
+	        this._dimensionsChangedData.previousWidth = this._videoElement.videoWidth;
+	        this._dimensionsChangedData.previousHeight = this._videoElement.videoHeight;
+
+	        this._dimensionsChangedIntervalId = setInterval(function checkVideoDimensions() {
+	            if (that._videoElement.videoWidth !== that._dimensionsChangedData.previousWidth || that._videoElement.videoHeight !== that._dimensionsChangedData.previousHeight) {
+	                that._dimensionsChangedData.previousWidth = that._videoElement.videoWidth;
+	                that._dimensionsChangedData.previousHeight = that._videoElement.videoHeight;
+	                that._videoDisplayDimensionsChangedCallback(that._renderer, {
+	                    width: that._videoElement.videoWidth,
+	                    height: that._videoElement.videoHeight
+	                });
+	            }
+	        }, that._dimensionsChangedData.pollFrequency);
+	    }
+
+	    return DimensionsChangedMonitor;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }
 /******/ ])
