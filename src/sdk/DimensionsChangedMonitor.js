@@ -50,7 +50,10 @@ define([
     };
 
     DimensionsChangedMonitor.prototype.toString = function () {
-        return 'DimensionsChangedMonitor[]';
+        return 'DimensionsChangedMonitor[pollFrequency=' + this._dimensionsChangedData.pollFrequency +
+            ', previousHeight=' + this._dimensionsChangedData.previousHeight +
+            ', previousWidth=' + this._dimensionsChangedData.previousHeight +
+            ', state=' + (this._dimensionsChangedIntervalId ? 'running' : 'stopped') + ']';
     };
 
     function startMonitor(renderer, element) {
