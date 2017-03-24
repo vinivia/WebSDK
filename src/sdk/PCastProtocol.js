@@ -110,12 +110,15 @@ define([
         return sendRequest.call(this, 'pcast.Bye', bye, callback);
     };
 
-    PCastProtocol.prototype.setupStream = function (streamType, streamToken, callback) {
+    PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
         if (typeof streamType !== 'string') {
             throw new Error('"streamType" must be a string');
         }
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
+        }
+        if (typeof options !== 'object') {
+            throw new Error('"options" must be an object');
         }
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
@@ -128,9 +131,11 @@ define([
             createStream: {
                 sessionId: this._sessionId,
                 options: ['data-quality-notifications'],
+                connectUri: options.connectUri,
+                connectOptions: options.connectOptions || [],
                 createOfferDescription: {
                     streamId: '',
-                    options: [streamType, 'SRTP', browser, browserWithVersion],
+                    options: [streamType, browser, browserWithVersion],
                     apiVersion: this._mqProtocol.getApiVersion()
                 }
             }

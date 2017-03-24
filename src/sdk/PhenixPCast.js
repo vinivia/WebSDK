@@ -247,8 +247,13 @@ define([
         }
 
         var that = this;
+        var streamType = 'upload';
+        var setupStreamOptions = {
+            connectUri: options.connectUri,
+            connectOptions: options.connectOptions
+        };
 
-        this._protocol.setupStream('upload', streamToken, function (response, error) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
             if (error) {
                 that._logger.warn('Failed to create uploader', error);
 
@@ -286,8 +291,13 @@ define([
         }
 
         var that = this;
+        var streamType = 'download';
+        var setupStreamOptions = {
+            connectUri: options.connectUri,
+            connectOptions: options.connectOptions
+        };
 
-        this._protocol.setupStream('download', streamToken, function (response, error) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
             if (error) {
                 that._logger.warn('Failed to create downloader', error);
 
