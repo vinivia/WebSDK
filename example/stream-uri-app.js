@@ -32,11 +32,8 @@ requirejs.config({
 requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk, shaka) {
     var init = function init() {
         var fingerprint = new Fingerprint();
-        var localVideoEl = $('#localVideo')[0];
         var remoteVideoEl = $('#remoteVideo')[0];
         var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
-
-        var userMediaStream = null;
 
         var getUrlParameter = function getUrlParameter(parameterName) {
             var queryParameters = window.location.search.substring(1).split('&');
@@ -77,7 +74,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
         var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
             video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
             video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
-        }
+        };
 
         var onLoadedMetaData = function onLoadedMetaData(video) {
             console.log('Meta data, width=' + video.videoWidth + ', height=' + video.videoHeight);
@@ -273,128 +270,15 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             $('.' + option).removeClass('option-disabled');
         };
 
-        var getUserMedia = function getUserMedia() {
-            var userMediaCallback = function userMediaCallback(pcast, status, stream, e) {
-                if (status !== 'ok') {
-                    $.notify({
-                        icon: 'glyphicon glyphicon-facetime-video',
-                        title: '<strong>User Media</strong>',
-                        message: 'Failed to get user media (' + e + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
-                    $('#userMediaInfo').text('Failed: ' + e.message);
-                } else {
-                    console.log('Got user media stream');
-                    $.notify({
-                        icon: 'glyphicon glyphicon-facetime-video',
-                        title: '<strong>User Media</strong>',
-                        message: 'Acquired user media stream'
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 3000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
-
-                    // **********
-                    // IMPORTANT: update reference to element as some RTC implementation will replace the element in the DOM
-                    // **********
-                    localVideoEl = rtc.attachMediaStream(localVideoEl, stream);
-
-                    userMediaStream = stream;
-                    $('#stopUserMedia').removeClass('disabled');
-
-                    $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
-                    activateStep('step-5-2');
-                }
-            };
-
-            if (!userMediaStream || userMediaStream.ended) {
-                var source = $('#gum-source option:selected').val();
-                var userMediaOptions = {};
-
-                switch (source) {
-                    case 'screen':
-                        userMediaOptions.screen = true;
-                        break;
-                    case 'microphone':
-                        userMediaOptions.audio = true;
-                        userMediaOptions.video = false;
-                        break;
-                    case 'camera':
-                        userMediaOptions.audio = false;
-                        userMediaOptions.video = {
-                            optional: [
-                                {minHeight: 720}
-                            ]
-                        };
-                        break;
-                    case 'cameraAndMicrophone':
-                        userMediaOptions.audio = true;
-                        userMediaOptions.video = {
-                            optional: [
-                                {minHeight: 720}
-                            ]
-                        };
-                        break;
-                    case 'cameraMicrophoneAndScreen':
-                        userMediaOptions.screen = true;
-                        userMediaOptions.audio = true;
-                        userMediaOptions.video = {
-                            optional: [
-                                {minHeight: 720}
-                            ]
-                        };
-                        break;
-                    default:
-                        throw new Error('Unsupported User Media Options');
-                        break;
-                }
-
-                pcast.getUserMedia(userMediaOptions, userMediaCallback);
-            }
-        };
-
-        var stopUserMedia = function () {
-            if (userMediaStream) {
-                var tracks = userMediaStream.getTracks();
-
-                for (var i = 0; i < tracks.length; i++) {
-                    tracks[i].stop();
-                }
-
-                userMediaStream = null;
-
-                $('#stopUserMedia').addClass('disabled');
-            }
-        };
-
         var publisher;
 
         var publish = function publish() {
-            if (!userMediaStream) {
+            var sourceUri = $('#sourceUriForPublishing').val();
+            if (!sourceUri) {
                 $.notify({
-                    icon: 'glyphicon glyphicon-facetime-video',
-                    title: '<strong>User Media</strong>',
-                    message: 'Please acquire the user media before publishing'
+                    icon: 'glyphicon glyphicon-cd',
+                    title: '<strong>Source URI</strong>',
+                    message: 'Please provide a source URI before publishing'
                 }, {
                     type: 'danger',
                     allow_dismiss: false,
@@ -436,7 +320,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 return;
             }
 
-            var tags = ['my-stream-id'];
+            var tags = [];
 
             var publishCallback = function publishCallback(pcast, status, phenixPublisher) {
                 if (status !== 'ok') {
@@ -503,12 +387,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                     });
                 });
 
-                var limit = publisher.limitBandwidth(400000);
-
-                setTimeout(function () {
-                    limit.dispose();
-                }, 10000);
-
                 $.notify({
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',
@@ -529,13 +407,13 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
                 $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
-                activateStep('step-5-5');
+                activateStep('step-8');
                 setTimeout(function () {
-                    activateStep('step-6');
+                    activateStep('step-9');
                 }, 1500);
             };
 
-            pcast.publish(streamToken, userMediaStream, publishCallback, tags);
+            pcast.publish(streamToken, sourceUri, publishCallback, tags);
         };
 
         var stopPublisher = function () {
@@ -678,9 +556,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-5-3');
+                activateStep('step-6');
                 setTimeout(function () {
-                    activateStep('step-5-4');
+                    activateStep('step-7');
                 }, 1500);
             });
         };
@@ -695,9 +573,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             capabilities.push($('#subscriber-mode option:selected').val());
 
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-7');
+                activateStep('step-10');
                 setTimeout(function () {
-                    activateStep('step-8');
+                    activateStep('step-11');
                 }, 1500);
             });
         };
@@ -946,8 +824,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
         $('#start').click(start);
         $('#stop').click(stop);
 
-        $('#getUserMedia').click(getUserMedia);
-        $('#stopUserMedia').click(stopUserMedia);
         $('#createStreamTokenForPublishing').click(createStreamTokenForPublishing);
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);

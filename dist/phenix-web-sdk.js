@@ -165,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-03-24T21:01:53Z';
+	    var sdkVersion = '2017-03-29T02:10:45Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -340,12 +340,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return getUserMedia.call(this, options, callback);
 	    };
 
-	    PhenixPCast.prototype.publish = function (streamToken, mediaStreamToPublish, callback, tags, options) {
+	    PhenixPCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
-	        if (typeof mediaStreamToPublish !== 'object') {
-	            throw new Error('"mediaStreamToPublish" must be an object');
+	        if (typeof streamToPublish !== 'object' && typeof streamToPublish !== 'string') {
+	            throw new Error('"streamToPublish" must be an object or URI');
 	        }
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
@@ -362,9 +362,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var streamType = 'upload';
 	        var setupStreamOptions = {
-	            connectUri: options.connectUri,
+	            negotiate: true,
 	            connectOptions: options.connectOptions
 	        };
+
+	        if (typeof streamToPublish === 'string') {
+	            setupStreamOptions.negotiate = false;
+	            setupStreamOptions.connectUri = streamToPublish;
+	        } else {
+	            setupStreamOptions.connectUri = options.connectUri
+	        }
 
 	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
 	            if (error) {
@@ -378,15 +385,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            } else {
 	                var streamId = response.createStreamResponse.streamId;
-	                var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
 
-	                createPublisherPeerConnection.call(that, mediaStreamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
+	                if (setupStreamOptions.negotiate === true) {
+	                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
+
+	                    return createPublisherPeerConnection.call(that, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
+	                        if (error) {
+	                            callback.call(that, that, 'failed', null);
+	                        } else {
+	                            callback.call(that, that, 'ok', phenixPublisher);
+	                        }
+	                    }, options);
+	                }
+
+	                return createPublisher.call(that, streamId, function (phenixPublisher, error) {
 	                    if (error) {
 	                        callback.call(that, that, 'failed', null);
 	                    } else {
 	                        callback.call(that, that, 'ok', phenixPublisher);
 	                    }
-	                }, options);
+	                });
 	            }
 	        });
 	    };
@@ -406,6 +424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var streamType = 'download';
 	        var setupStreamOptions = {
+	            negotiate: options.negotiate !== false,
 	            connectUri: options.connectUri,
 	            connectOptions: options.connectOptions
 	        };
@@ -1206,6 +1225,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	        phenixRTC.addEventListener(peerConnection, 'icegatheringstatechange ', onIceGatheringStateChanged);
 	        phenixRTC.addEventListener(peerConnection, 'signalingstatechange', onSignalingStateChanged);
 	        phenixRTC.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
+	    }
+
+	    function createPublisher(streamId, callback) {
+	        var that = this;
+	        var state = {
+	            stopped: false
+	        };
+
+	        var publisher = {
+	            getStreamId: function getStreamId() {
+	                return streamId;
+	            },
+
+	            isActive: function isActive() {
+	                return !state.stopped;
+	            },
+
+	            hasEnded: function hasEnded() {
+	                return state.stopped;
+	            },
+
+	            stop: function stop(reason) {
+	                if (state.stopped) {
+	                    return;
+	                }
+
+	                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                    if (error) {
+	                        that._logger.error('[%s] failed to destroy stream', streamId);
+	                        return;
+	                    }
+
+	                    that._logger.info('[%s] destroyed stream', streamId);
+	                });
+
+	                state.stopped = true;
+	            },
+
+	            setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
+	                if (typeof callback !== 'function') {
+	                    throw new Error('"callback" must be a function');
+	                }
+
+	                this.publisherEndedCallback = callback;
+	            },
+
+	            setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
+	                if (typeof callback !== 'function') {
+	                    throw new Error('"callback" must be a function');
+	                }
+
+	                this.dataQualityChangedCallback = callback;
+	            }
+	        };
+
+	        that._publishers[streamId] = publisher;
+
+	        callback(publisher);
 	    }
 
 	    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options) {
@@ -2282,14 +2359,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                sessionId: this._sessionId,
 	                options: ['data-quality-notifications'],
 	                connectUri: options.connectUri,
-	                connectOptions: options.connectOptions || [],
-	                createOfferDescription: {
-	                    streamId: '',
-	                    options: [streamType, browser, browserWithVersion],
-	                    apiVersion: this._mqProtocol.getApiVersion()
-	                }
+	                connectOptions: options.connectOptions || []
 	            }
 	        };
+
+	        if (options.negotiate) {
+	            setupStream.createStream.createOfferDescription = {
+	                streamId: '',
+	                options: [streamType, browser, browserWithVersion],
+	                apiVersion: this._mqProtocol.getApiVersion()
+	            }
+	        }
 
 	        return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
 	    };

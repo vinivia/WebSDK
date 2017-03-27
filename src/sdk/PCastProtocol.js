@@ -132,14 +132,17 @@ define([
                 sessionId: this._sessionId,
                 options: ['data-quality-notifications'],
                 connectUri: options.connectUri,
-                connectOptions: options.connectOptions || [],
-                createOfferDescription: {
-                    streamId: '',
-                    options: [streamType, browser, browserWithVersion],
-                    apiVersion: this._mqProtocol.getApiVersion()
-                }
+                connectOptions: options.connectOptions || []
             }
         };
+
+        if (options.negotiate) {
+            setupStream.createStream.createOfferDescription = {
+                streamId: '',
+                options: [streamType, browser, browserWithVersion],
+                apiVersion: this._mqProtocol.getApiVersion()
+            }
+        }
 
         return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
     };
