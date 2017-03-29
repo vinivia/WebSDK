@@ -129,9 +129,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(3),
 	    __webpack_require__(8),
-	    __webpack_require__(10),
+	    __webpack_require__(12),
+	    __webpack_require__(13),
 	    __webpack_require__(11),
-	    __webpack_require__(9),
 	    __webpack_require__(5),
 	    __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, Time, Logger, phenixRTC) {
@@ -165,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-03-29T02:10:45Z';
+	    var sdkVersion = '2017-03-29T19:40:01Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -2787,9 +2787,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(9)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time) {
+	    __webpack_require__(9),
+	    __webpack_require__(10)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (ClosestEndPointResolver, Http) {
 	    'use strict';
+
+	    var maxAttempts = 3;
 
 	    function PCastEndPoint(version, baseUri, logger) {
 	        if (typeof version !== 'string') {
@@ -2805,6 +2808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._version = version;
 	        this._baseUri = baseUri;
 	        this._logger = logger;
+	        this._http = new Http(version, baseUri, logger);
 	    }
 
 	    PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
@@ -2822,60 +2826,113 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    function resolveUri(baseUri, callback /* (error, uri) */) {
-	        var that = this;
-
 	        if (baseUri.lastIndexOf('wss:', 0) === 0) {
 	            // WSS - Specific web socket end point
-	            callback.call(that, undefined, baseUri + '/ws');
+	            callback(undefined, baseUri + '/ws');
 	        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
 	            // HTTP - Resolve closest end point
-	            httpGetWithRetry.call(that, baseUri + '/pcast/endPoints', function (err, responseText) {
+	            var that = this;
+
+	            getEndpoints.call(that, baseUri, function(err, endPoints) {
 	                if (err) {
-	                    callback(new Error('Failed to resolve an end point', err));
 	                    return callback(err);
 	                }
 
-	                var endPoints = responseText.split(',');
+	                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger);
 
-	                if (endPoints.length < 1) {
-	                    callback(new Error('Failed to discover end points'));
-	                }
-
-	                var done = false;
-	                var minTime = Number.MAX_VALUE;
-	                var minResponseText = '';
-
-	                for (var i = 0; i < endPoints.length; i++) {
-	                    resolveEndPoint.call(that,
-	                        endPoints[i],
-	                        measurementsPerEndPoint,
-	                        function measurementCallback(endPoint, time, responseText) {
-	                            if (time < minTime) {
-	                                that._logger.info('Current closest end point is [%s] with latency of [%s] ms', responseText, time);
-	                                minTime = time;
-	                                minResponseText = responseText;
-	                            }
-
-	                            return done;
-	                        },
-	                        function completeCallback(endPoint) {
-	                            if (minResponseText && minTime < Number.MAX_VALUE) {
-	                                done = true;
-	                                return callback.call(that, undefined, minResponseText);
-	                            }
-	                        });
-	                }
-	            }, maxAttempts);
+	                closestEndPointResolver.resolveAll(endPoints);
+	            });
 	        } else {
 	            // Not supported
-	            callback.call(that, new Error('Uri not supported'));
+	            callback(new Error('Uri not supported'));
 	        }
 	    }
 
-	    var measurementsPerEndPoint = 4;
-	    var maxAttempts = 3;
+	    function getEndpoints(baseUri, callback) {
+	        this._http.httpGetWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
+	            if (err) {
+	                return callback(new Error('Failed to resolve an end point', err));
+	            }
 
-	    function resolveEndPoint(endPoint, measurements, measurementCallback, completeCallback) {
+	            var endPoints = responseText.split(',');
+
+	            if (endPoints.length < 1) {
+	                callback(new Error('Failed to discover end points'));
+	            }
+
+	            callback(undefined, endPoints);
+	        }, maxAttempts);
+	    }
+
+	    return PCastEndPoint;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(10),
+	    __webpack_require__(11)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Http, Time) {
+	    'use strict';
+
+	    var measurementsPerEndPoint = 4;
+
+	    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger) {
+	        this._done = false;
+	        this._minTime = Number.MAX_VALUE;
+	        this._minResponseText = '';
+	        this._onClosestEndpointFound = onClosestEndpointFound;
+	        this._logger = logger;
+	        this._version = version;
+	        this._http = new Http(version, baseUri, logger);
+	    }
+
+	    ClosestEndPointResolver.prototype.isResolved = function isResolved() {
+	        return this._done;
+	    };
+
+	    ClosestEndPointResolver.prototype.measurementCallback = function measurementCallback(endPoint, time, responseText) {
+	        if (time < this._minTime) {
+	            this._logger.info('Current closest end point is [%s] with latency of [%s] ms', responseText, time);
+	            this._minTime = time;
+	            this._minResponseText = responseText;
+	        }
+
+	        return this.isResolved();
+	    };
+
+	    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) {
+	        if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
+	            this._done = true;
+	            return this._onClosestEndpointFound(undefined, this._minResponseText);
+	        }
+	    };
+
+	    ClosestEndPointResolver.prototype.resolveAll = function resolveAll(endPoints) {
+	        for (var i = 0; i < endPoints.length; i++) {
+	            this.resolve(endPoints[i], measurementsPerEndPoint);
+	        }
+	    };
+
+	    ClosestEndPointResolver.prototype.resolve = function resolve(endPoint, measurements) {
 	        var that = this;
 	        var measurement = 1;
 
@@ -2885,7 +2942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
-	            httpGetWithRetry.call(that, endPoint, function (err, responseText) {
+	            that._http.httpGetWithRetry.call(that, endPoint, function (err, responseText) {
 	                var end = Time.now();
 	                var time = end - start;
 
@@ -2894,28 +2951,72 @@ return /******/ (function(modules) { // webpackBootstrap
 	                measurement++;
 
 	                if (!err) {
-	                    if (measurementCallback(endPoint, time, responseText)) {
+	                    if (that.measurementCallback(endPoint, time, responseText)) {
 	                        // done
 	                        return;
 	                    }
 	                }
 
-	                if (measurement <= measurements) {
+	                if (measurement <= measurements && !that.isResolved()) {
 	                    if (err) {
 	                        that._logger.info('Retrying after failure to resolve end point [%s]', endPoint, err);
 	                    }
 
 	                    return nextMeasurement(endPoint);
 	                } else {
-	                    return completeCallback(endPoint);
+	                    return that.completeCallback(endPoint);
 	                }
 	            }, maxAttempts);
 	        };
 
 	        nextMeasurement(endPoint);
+	    };
+
+	    return ClosestEndPointResolver;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(11)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time) {
+	    'use strict';
+
+	    function Http(version, baseUri, logger) {
+	        if (typeof version !== 'string') {
+	            throw new Error('Must pass a valid "version"');
+	        }
+	        if (typeof baseUri !== 'string') {
+	            throw new Error('Must pass a valid "baseUri"');
+	        }
+	        if (typeof logger !== 'object') {
+	            throw new Error('Must pass a valid "logger"');
+	        }
+
+	        this._version = version;
+	        this._baseUri = baseUri;
+	        this._logger = logger;
 	    }
 
-	    function httpGetWithRetry(url, callback, maxAttempts, attempt) {
+	    Http.prototype.httpGetWithRetry = function httpGetWithRetry(url, callback, maxAttempts, attempt) {
 	        if (attempt === undefined) {
 	            attempt = 1;
 	        }
@@ -2962,14 +3063,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        xhr.timeout = 15000;
 
 	        xhr.send();
-	    }
+	    };
 
-	    return PCastEndPoint;
+	    return Http;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3012,7 +3113,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3031,7 +3132,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	        __webpack_require__(9),
+	        __webpack_require__(11),
 	        __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Time, phenixRTC) {
 	    'use strict';
@@ -3401,7 +3502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**

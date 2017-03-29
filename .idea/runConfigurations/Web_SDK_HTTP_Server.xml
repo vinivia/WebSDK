@@ -1,9 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web SDK HTTP Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$USER_HOME$/.nvm/v6.9.4/bin/node" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Web SDK HTTP Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
     <browser start="true" url="http://localhost:8888/" />
+    <profiling v8-profiler-path="" />
+    <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+      <profiling v8-profiler-path="" />
+    </EXTENSION>
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
       <browser start="true" url="http://localhost:8888/" />
     </EXTENSION>
