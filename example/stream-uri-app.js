@@ -272,9 +272,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
         var publisher;
 
+        var parseArray = function parseArray(stringWithNewlineSeparator) {
+            if (!stringWithNewlineSeparator) {
+                return [];
+            }
+
+            return stringWithNewlineSeparator.split('\n');
+        };
+
         var publish = function publish() {
             var sourceUri = $('#sourceUriForPublishing').val();
-            var sourceOptions = $('#sourceOptionsForPublishing').val().split('\n');
+            var sourceOptions = parseArray($('#sourceOptionsForPublishing').val());
 
             if (!sourceUri) {
                 $.notify({

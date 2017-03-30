@@ -26,7 +26,7 @@ app.use(express.static(path.join(process.cwd(), 'src')));
 app.use(express.static(path.join(process.cwd(), '3p')));
 
 app.get('/', function (req, res) {
-    res.redirect('/PhenixSDK.html');
+    res.redirect('/GetUserMedia.html');
 });
 
 const httpServer = http.createServer(app);
