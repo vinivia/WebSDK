@@ -749,9 +749,13 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
                 mediaStream.monitor({}, monitorStream);
 
-                var primaryMediaStream = mediaStream.select(function(track, index) {
-                    return (track.kind === 'video' || track.kind === 'audio') && index < 2;
-                });
+                var primaryMediaStream = mediaStream;
+
+                if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
+                    primaryMediaStream = mediaStream.select(function (track, index) {
+                        return (track.kind === 'video' || track.kind === 'audio') && index < 2;
+                    });
+                }
 
                 displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);

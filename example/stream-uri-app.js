@@ -274,6 +274,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
         var publish = function publish() {
             var sourceUri = $('#sourceUriForPublishing').val();
+            var sourceOptions = $('#sourceOptionsForPublishing').val().split('\n');
+
             if (!sourceUri) {
                 $.notify({
                     icon: 'glyphicon glyphicon-cd',
@@ -413,7 +415,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 }, 1500);
             };
 
-            pcast.publish(streamToken, sourceUri, publishCallback, tags);
+            var options = {
+                connectOptions: sourceOptions
+            };
+
+            pcast.publish(streamToken, sourceUri, publishCallback, tags, options);
         };
 
         var stopPublisher = function () {
