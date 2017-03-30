@@ -192,7 +192,9 @@ define([
 
                     endStream.call(this, streamId, reason);
 
-                    publisher.stop(reason);
+                    if (!includes(publisher.getOptions(), 'detached')) {
+                        publisher.stop(reason);
+                    }
                 }
             }
 
@@ -282,7 +284,7 @@ define([
                         } else {
                             callback.call(that, that, 'ok', phenixPublisher);
                         }
-                    }, options);
+                    }, options, response.createStreamResponse.options);
                 }
 
                 return createPublisher.call(that, streamId, function (phenixPublisher, error) {
@@ -291,7 +293,7 @@ define([
                     } else {
                         callback.call(that, that, 'ok', phenixPublisher);
                     }
-                });
+                }, response.createStreamResponse.options);
             }
         });
     };
@@ -1114,7 +1116,7 @@ define([
         phenixRTC.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
     }
 
-    function createPublisher(streamId, callback) {
+    function createPublisher(streamId, callback, streamOptions) {
         var that = this;
         var state = {
             stopped: false
@@ -1164,6 +1166,10 @@ define([
                 }
 
                 this.dataQualityChangedCallback = callback;
+            },
+
+            getOptions: function getOptions() {
+                return streamOptions;
             }
         };
 
@@ -1172,7 +1178,7 @@ define([
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options) {
+    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1358,6 +1364,10 @@ define([
                                 if (remoteMediaStream) {
                                     callback(publisher, remoteMediaStream);
                                 }
+                            },
+
+                            getOptions: function getOptions() {
+                                return streamOptions;
                             }
                         };
 

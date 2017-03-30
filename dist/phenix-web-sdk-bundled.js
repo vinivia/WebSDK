@@ -180,7 +180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-03-29T19:40:01Z';
+	    var sdkVersion = '2017-03-30T21:46:21Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -320,7 +320,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    endStream.call(this, streamId, reason);
 
-	                    publisher.stop(reason);
+	                    if (!includes(publisher.getOptions(), 'detached')) {
+	                        publisher.stop(reason);
+	                    }
 	                }
 	            }
 
@@ -410,7 +412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        } else {
 	                            callback.call(that, that, 'ok', phenixPublisher);
 	                        }
-	                    }, options);
+	                    }, options, response.createStreamResponse.options);
 	                }
 
 	                return createPublisher.call(that, streamId, function (phenixPublisher, error) {
@@ -419,7 +421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    } else {
 	                        callback.call(that, that, 'ok', phenixPublisher);
 	                    }
-	                });
+	                }, response.createStreamResponse.options);
 	            }
 	        });
 	    };
@@ -1242,7 +1244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        phenixRTC.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
 	    }
 
-	    function createPublisher(streamId, callback) {
+	    function createPublisher(streamId, callback, streamOptions) {
 	        var that = this;
 	        var state = {
 	            stopped: false
@@ -1292,6 +1294,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                this.dataQualityChangedCallback = callback;
+	            },
+
+	            getOptions: function getOptions() {
+	                return streamOptions;
 	            }
 	        };
 
@@ -1300,7 +1306,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback(publisher);
 	    }
 
-	    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options) {
+	    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options, streamOptions) {
 	        var that = this;
 	        var state = {
 	            failed: false,
@@ -1486,6 +1492,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                if (remoteMediaStream) {
 	                                    callback(publisher, remoteMediaStream);
 	                                }
+	                            },
+
+	                            getOptions: function getOptions() {
+	                                return streamOptions;
 	                            }
 	                        };
 
