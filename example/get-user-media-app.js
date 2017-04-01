@@ -702,6 +702,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             });
         };
 
+        var subscriberMediaStream = null;
+
         var subscribe = function subscribe() {
             var streamToken = $('#streamTokenForViewing').val();
 
@@ -787,10 +789,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                     }
                 });
 
-                setTimeout(function () {
-                    mediaStream.stop('stopped-by-client');
-                }, 30000);
+                subscriberMediaStream = mediaStream;
+                $('#stopSubscriber').removeClass('disabled');
             });
+        };
+
+        var stopSubscriber = function (reason) {
+            if (subscriberMediaStream) {
+                subscriberMediaStream.stop(reason);
+                subscriberMediaStream = null;
+                $('#stopSubscriber').addClass('disabled');
+            }
         };
 
         var monitorStream = function monitorStream(stream, reason, description) {
@@ -961,6 +970,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
         $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
 
         $('#subscribe').click(subscribe);
+        $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
         $('.fullscreen').click(handleFullscreenButtonClick);
 

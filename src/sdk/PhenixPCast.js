@@ -1616,6 +1616,22 @@ define([
                         start: function start(elementToAttachTo) {
                             player = new shaka.Player(elementToAttachTo);
 
+                            player.configure({
+                                manifest: {
+                                    retryParameters: {
+                                        timeout: 10000
+                                    }
+                                },
+                                streaming: {
+                                    rebufferingGoal: 2,
+                                    bufferingGoal: 10,
+                                    bufferBehind: 30,
+                                    retryParameters: {
+                                        timeout: 10000
+                                    }
+                                }
+                            });
+
                             if (options.receiveAudio === false) {
                                 elementToAttachTo.muted = true;
                             }

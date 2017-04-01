@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "phenix-rtc": "^1.0.8",
-    "shaka-player": "^2.0.5"
+    "shaka-player": "^2.0.7"
   },
   "devDependencies": {
     "chai": "3.5.0",
