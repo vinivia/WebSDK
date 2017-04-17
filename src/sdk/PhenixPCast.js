@@ -820,7 +820,7 @@ define([
                                     element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
                                     if (options.receiveAudio === false) {
-                                        elementToAttachTo.muted = true;
+                                        element.muted = true;
                                     }
 
                                     internalMediaStream.renderer = this;
@@ -834,10 +834,21 @@ define([
                                     dimensionsChangedMonitor.stop();
 
                                     if (element) {
-                                        element.pause();
+                                        if (typeof element.pause === 'function') {
+                                            element.pause();
+                                        }
+
+                                        if (element.src) {
+                                            element.src = '';
+                                        }
+
+                                        if (element.srcObject) {
+                                            element.srcObject = null;
+                                        }
+
+                                        element = null;
                                     }
 
-                                    element = null;
                                     internalMediaStream.renderer = null;
                                 },
 
@@ -1642,6 +1653,10 @@ define([
 
                             var load = player.load(manifestUri).then(function () {
                                 that._logger.info('[%s] DASH live stream has been loaded', streamId);
+
+                                if (typeof elementToAttachTo.play === 'function') {
+                                    elementToAttachTo.play();
+                                }
                             }).catch(function (e) {
                                 that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
 
@@ -1870,8 +1885,8 @@ define([
                                 internalMediaStream.renderer = this;
 
                                 elementToAttachTo.addEventListener('error', onPlayerError);
-
                                 elementToAttachTo.play();
+
                                 element = elementToAttachTo;
 
                                 dimensionsChangedMonitor.start(this, element);
