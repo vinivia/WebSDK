@@ -677,6 +677,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
                 capabilities.push($(this).val());
             });
 
+            capabilities.push($('#publish-quality option:selected').val());
+
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
                 activateStep('step-5-3');
                 setTimeout(function () {
