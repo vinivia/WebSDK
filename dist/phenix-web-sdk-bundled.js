@@ -89,10 +89,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(1),
 	    __webpack_require__(2),
-	    __webpack_require__(24),
-	    __webpack_require__(31),
-	    __webpack_require__(46),
-	    __webpack_require__(50),
+	    __webpack_require__(25),
+	    __webpack_require__(32),
+	    __webpack_require__(47),
+	    __webpack_require__(51),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor) {
 	    window.PhenixPCast = PhenixPCast;
 
@@ -150,7 +150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(3),
 	    __webpack_require__(7),
-	    __webpack_require__(23),
+	    __webpack_require__(24),
 	    __webpack_require__(6)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, analytixAppenderFactory, ConsoleAppender, logging) {
 	    'use strict';
@@ -881,13 +881,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(9),
 	    __webpack_require__(10),
 	    __webpack_require__(14),
+	    __webpack_require__(23),
 	    __webpack_require__(1),
 	    __webpack_require__(6)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, rtc, logging) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
+
+	    var networkDisconnectHysteresisInterval = 0;
 
 	    function AnalytixAppender() {
 	        this._environmentName = 'development' || '?';
-	        this._environmentVersion = '2017-05-19T22:44:26Z' || '?';
+	        this._environmentVersion = '2017-05-19T22:45:31Z' || '?';
 	        this._loggingUrl = '/analytix/logs';
 	        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
 	        this._protocol = new MQProtocol();
@@ -900,6 +903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._baseUri = '';
 	        this._minLevel = logging.level.TRACE;
 	        this._isEnabled = true;
+	        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
 	    }
 
 	    AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
@@ -942,6 +946,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        sendBatchMessagesIfNonePending.call(this);
 	    };
 
+	    function createAndStartNetworkConnectionMonitor() {
+	        var that = this;
+	        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
+
+	        function onReconnect() {
+	            that._isOffline = false;
+
+	            sendBatchMessagesIfNonePending.call(that);
+	        }
+
+	        function onDisconnect() {
+	            that._isOffline = true;
+	        }
+
+	        networkConnectionMonitor.start(onReconnect, onDisconnect);
+
+	        return networkConnectionMonitor;
+	    }
+
 	    function addMessagesToRecords(since, level, category, messages, sessionId, userId) {
 	        var message = messages.join(' ');
 	        var record = {
@@ -981,7 +1004,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function sendBatchMessagesIfNonePending() {
-	        if (this._pending || !this._baseUri || !this._isEnabled) {
+	        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
 	            return;
 	        }
 
@@ -992,8 +1015,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._records = this._records.slice(this._maxBatchSize);
 	        this._pending = true;
 
+	        var that = this;
+
 	        try {
-	            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords);
+	            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords, function onTimeout() {
+	                setTimeout(function waitForDisconnectTimeout() {
+	                    if (!that._isOffline) {
+	                        return;
+	                    }
+
+	                    that._records = that._records.concat(storeLogRecords.records);
+	                }, networkDisconnectHysteresisInterval);
+	            });
 	        } catch (e) {
 	            this._pending = false;
 
@@ -1001,7 +1034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function sendEncodedHttpRequest(url, dataToEncode) {
+	    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
 	        var that = this;
 
 	        var data = this._protocol.encode('analytix.StoreLogRecords', dataToEncode).toBinary();
@@ -1010,6 +1043,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that._pending = false;
 
 	            if (error) {
+	                if (error.message === 'timeout') {
+	                    onTimeout();
+	                }
+
 	                return {storedRecords: 0, status: 'error'};
 	            }
 
@@ -1047,7 +1084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-05-19T22:44:26Z';
+	        this._version = '2017-05-19T22:45:31Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -13892,6 +13929,97 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
+	    __webpack_require__(1)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, phenixRTC) {
+	    'use strict';
+
+	    var defaultOfflineTimeoutLength = 15000;
+
+	    function NetworkConnectionMonitor(offlineTimeoutLength, logger) {
+	        this._logger = logger;
+	        this._timeout = null;
+	        this._onOnline = null;
+	        this._onOffline = null;
+	        this._offlineHysteresisTimeout = _.isNumber(offlineTimeoutLength) ? offlineTimeoutLength : defaultOfflineTimeoutLength;
+	    }
+
+	    NetworkConnectionMonitor.prototype.start = function start(onlineCallback, offlineCallback) {
+	        this._onOnline = _.bind(handleOnline, this, onlineCallback);
+	        this._onOffline = _.bind(handleOfflineWithHysteresis, this, offlineCallback);
+
+	        phenixRTC.addEventListener(window, 'online', this._onOnline, false);
+	        phenixRTC.addEventListener(window, 'offline', this._onOffline, false);
+	    };
+
+	    NetworkConnectionMonitor.prototype.stop = function stop() {
+	        phenixRTC.removeEventListener(window, 'online', this._onOnline, false);
+	        phenixRTC.removeEventListener(window, 'offline', this._onOffline, false);
+
+	        this._onOnline = null;
+	        this._onOffline = null;
+	    };
+
+	    function handleOfflineWithHysteresis(offlineCallback, event) {
+	        var that = this;
+
+	        if (that._logger) {
+	            that._logger.warn('Network Disconnect Detected. Waiting for reconnect.');
+	        }
+
+	        that.offlineTimeout = setTimeout(function() {
+	            if (!offlineCallback || !that._onOffline) {
+	                return;
+	            }
+
+	            if (that._logger) {
+	                that._logger.warn('Network not reconnected after [%s]. Going Offline.', that._offlineHysteresisTimeout);
+	            }
+
+	            offlineCallback();
+	        }, that._offlineHysteresisTimeout);
+	    }
+
+	    function handleOnline(onlineCallback, event) {
+	        if (this._logger) {
+	            this._logger.info('Network Reconnected.');
+	        }
+
+	        if (this.offlineTimeout) {
+	            clearTimeout(this.offlineTimeout);
+
+	            this.offlineTimeout = null;
+	        }
+
+	        if (onlineCallback && this._onOnline) {
+	            onlineCallback();
+	        }
+	    }
+
+	    return NetworkConnectionMonitor;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(6)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging) {
@@ -14041,7 +14169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14061,13 +14189,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
-	    __webpack_require__(25),
 	    __webpack_require__(26),
 	    __webpack_require__(27),
-	    __webpack_require__(29),
+	    __webpack_require__(28),
 	    __webpack_require__(30),
+	    __webpack_require__(31),
+	    __webpack_require__(23),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, NetworkConnectionMonitor, phenixRTC) {
 	    'use strict';
 
 	    var NetworkStates = _.freeze({
@@ -14091,7 +14220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-19T22:44:26Z';
+	    var sdkVersion = '2017-05-19T22:45:31Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14100,6 +14229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    var firefoxInstallationCheckInterval = 100;
 	    var firefoxMaxInstallationChecks = 450;
+	    var networkDisconnectHysteresisInterval = 15000;
 
 	    function PhenixPCast(options) {
 	        options = options || {};
@@ -14114,6 +14244,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._shaka = options.shaka || window.shaka;
 	        this._videojs = options.videojs || window.videojs;
 	        this._status = 'offline';
+	        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
 
 	        if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
 	            addLinkHeaderElement.call(this);
@@ -14166,6 +14297,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._gumStreams = [];
 
 	        var that = this;
+	        var waitForDisconnectEventTimeout = 5000;
 
 	        checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
 	            that._screenSharingEnabled = screenSharingEnabled;
@@ -14196,12 +14328,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                that._logger.info('Discovered end point [%s]', uri);
 
-	                that._protocol = new PCastProtocol(uri, that._deviceId, that._version, that._logger);
+	                instantiateProtocol.call(that, uri);
 
-	                that._protocol.on('connected', _.bind(connected, that));
-	                that._protocol.on('disconnected', _.bind(disconnected, that));
-	                that._protocol.on('streamEnded', _.bind(streamEnded, that));
-	                that._protocol.on('dataQuality', _.bind(dataQuality, that));
+	                that._networkConnectionMonitor.start(function onReconnect() {
+	                    setTimeout(function() {
+	                        reconnect.call(that);
+	                    }, waitForDisconnectEventTimeout);
+	                }, _.bind(disconnected, that));
 	            });
 	        });
 	    };
@@ -14250,9 +14383,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    tracks[j].stop();
 	                }
 	            }
+
+	            this._networkConnectionMonitor.stop();
 	        } finally {
 	            if (this._protocol) {
 	                this._protocol.disconnect();
+
+	                this._protocol = null;
 	            }
 	        }
 	    };
@@ -14743,6 +14880,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return status;
 	    };
 
+	    function instantiateProtocol(uri) {
+	        this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
+
+	        this._protocol.on('connected', _.bind(connected, this));
+	        this._protocol.on('disconnected', _.bind(reconnect, this));
+	        this._protocol.on('streamEnded', _.bind(streamEnded, this));
+	        this._protocol.on('dataQuality', _.bind(dataQuality, this));
+	    }
+
 	    function connected() {
 	        var that = this;
 
@@ -14773,6 +14919,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        }
+	    }
+
+	    function reconnect() {
+	        if (this._status === 'online' && this._protocol) {
+	            return;
+	        }
+
+	        if (!this._protocol || this._status === 'reconnecting') {
+	            return disconnected.call(this);
+	        }
+
+	        transitionToStatus.call(this, 'reconnecting');
+
+	        this._logger.info('Attempting to re-establish socket connection');
+
+	        var that = this;
+
+	        this._protocol.reconnect(this._authToken, function(result, error) {
+	            var suppressCallback = that._connected === true;
+
+	            if (error) {
+	                that._connected = false;
+
+	                return transitionToStatus.call(that, 'offline');
+	            }
+
+	            that._connected = true;
+
+	            return transitionToStatus.call(that, 'online', suppressCallback);
+	        });
 	    }
 
 	    function disconnected() {
@@ -16170,12 +16346,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback.call(that, internalMediaStream.mediaStream);
 	    }
 
-	    function transitionToStatus(newStatus) {
-	        if (this._status !== newStatus) {
+	    function transitionToStatus(newStatus, suppressCallback) {
+	        var oldStatus = this._status;
+
+	        if (oldStatus !== newStatus) {
 	            this._status = newStatus;
+
+	            if (suppressCallback) {
+	                return;
+	            }
 
 	            switch (newStatus) {
 	                case 'connecting':
+	                case 'reconnecting':
 	                    break;
 	                case 'offline':
 	                    this._offlineCallback.call(this);
@@ -16235,7 +16418,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16258,7 +16441,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(3),
 	    __webpack_require__(7),
-	    __webpack_require__(23),
+	    __webpack_require__(24),
 	    __webpack_require__(6)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
 	    'use strict';
@@ -16287,7 +16470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16314,6 +16497,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, MQProtocol, ByteBuffer, phenixRTC) {
 	    'use strict';
 
+	    var maxReconnectAttempt = 4;
+
 	    function PCastProtocol(uri, deviceId, version, logger) {
 	        if (typeof uri !== 'string') {
 	            throw new Error('Must pass a valid "uri"');
@@ -16334,15 +16519,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._mqProtocol = new MQProtocol(this._logger);
 
 	        this._logger.info('Connecting to [%s]', uri);
-	        this._webSocket = new WebSocket(uri);
-	        this._webSocket.onopen = _.bind(onOpen, this);
-	        this._webSocket.onclose = _.bind(onClose, this);
-	        this._webSocket.onmessage = _.bind(onMessage, this);
-	        this._webSocket.onerror = _.bind(onError, this);
 
 	        this._nextRequestId = 0;
 	        this._events = {};
 	        this._requests = {};
+
+	        this._webSocket = createWebSocket.call(this, onOpen);
 	    }
 
 	    PCastProtocol.prototype.on = function (eventName, handler) {
@@ -16378,7 +16560,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        if (this._sessionId) {
-	            auth.sessionId = this._sessionId;
+	            authenticate.sessionId = this._sessionId;
 	        }
 
 	        return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
@@ -16386,6 +16568,33 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    PCastProtocol.prototype.getSessionId = function () {
 	        return this._sessionId;
+	    };
+
+	    PCastProtocol.prototype.reconnect = function (authToken, callback, attempt) {
+	        this._webSocket.onclose = null;
+	        this._webSocket.onerror = null;
+	        this._webSocket.close(1000, 'byebye');
+
+	        var that = this;
+	        var backoffTimeout;
+
+	        if (attempt > maxReconnectAttempt) {
+	            return triggerEvent.call(this, 'disconnected', []);
+	        }
+
+	        try {
+	            this._webSocket = createWebsocket.call(that, function () {
+	                if (backoffTimeout) {
+	                    clearTimeout(backoffTimeout);
+	                }
+
+	                return that.authenticate(authToken, callback);
+	            });
+	        } catch(e) {
+	            // swallow error - we will alert client of failure after timeouts.
+	        }
+
+	        backoffTimeout = reconnectWithBackoff.call(this, authToken, callback, attempt)
 	    };
 
 	    PCastProtocol.prototype.disconnect = function () {
@@ -16766,6 +16975,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
+	    function createWebSocket(onOpenCallback) {
+	        var webSocket = new WebSocket(this._uri);
+
+	        webSocket.onopen = _.bind(onOpenCallback, this);
+	        webSocket.onclose = _.bind(onClose, this);
+	        webSocket.onmessage = _.bind(onMessage, this);
+	        webSocket.onerror = _.bind(onError, this);
+
+	        return webSocket;
+	    }
+
+	    function reconnectWithBackoff(authToken, callback, attempt) {
+	        var that = this;
+
+	        if (!_.isNumber(attempt)) {
+	            attempt = 1;
+	        }
+
+	        return setTimeout(function () {
+	            if (that._webSocket.readyState === 1) {
+	                return;
+	            }
+
+	            that.reconnect(authToken, callback, attempt + 1);
+	        }, attempt * attempt * 1000);
+	    }
+
 	    function onOpen(evt) {
 	        this._logger.info('Connected');
 	        triggerEvent.call(this, 'connected');
@@ -16820,7 +17056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16840,7 +17076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(9),
-	    __webpack_require__(28)
+	    __webpack_require__(29)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (http, ClosestEndPointResolver) {
 	    'use strict';
 
@@ -16920,7 +17156,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17027,7 +17263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17416,7 +17652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17544,7 +17780,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17565,15 +17801,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
 	    __webpack_require__(34),
-	    __webpack_require__(42),
 	    __webpack_require__(35),
-	    __webpack_require__(32),
+	    __webpack_require__(43),
 	    __webpack_require__(36),
-	    __webpack_require__(44),
-	    __webpack_require__(41),
-	    __webpack_require__(40)
+	    __webpack_require__(33),
+	    __webpack_require__(37),
+	    __webpack_require__(45),
+	    __webpack_require__(42),
+	    __webpack_require__(41)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
 	    'use strict';
 
@@ -18185,7 +18421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18206,9 +18442,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
 	    __webpack_require__(34),
 	    __webpack_require__(35),
+	    __webpack_require__(36),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
 	    'use strict';
 
@@ -18307,7 +18543,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18487,7 +18723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18508,7 +18744,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33)
+	    __webpack_require__(34)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
 	    'use strict';
 
@@ -18601,7 +18837,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18622,10 +18858,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
 	    __webpack_require__(34),
-	    __webpack_require__(36),
-	    __webpack_require__(41)
+	    __webpack_require__(35),
+	    __webpack_require__(37),
+	    __webpack_require__(42)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Member, room) {
 	    'use strict';
 	    var roomTypes = room.types;
@@ -18827,7 +19063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18848,10 +19084,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
 	    __webpack_require__(34),
-	    __webpack_require__(37),
-	    __webpack_require__(40)
+	    __webpack_require__(35),
+	    __webpack_require__(38),
+	    __webpack_require__(41)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Stream, member) {
 	    'use strict';
 	    var memberRoles = member.roles;
@@ -19034,7 +19270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19055,10 +19291,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
 	    __webpack_require__(34),
-	    __webpack_require__(38),
-	    __webpack_require__(39)
+	    __webpack_require__(35),
+	    __webpack_require__(39),
+	    __webpack_require__(40)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, stream, track) {
 	    'use strict';
 
@@ -19141,7 +19377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19175,7 +19411,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19209,7 +19445,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19251,7 +19487,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19294,7 +19530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19315,8 +19551,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
-	    __webpack_require__(43)
+	    __webpack_require__(34),
+	    __webpack_require__(44)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableMonitor) {
 	    'use strict';
 
@@ -19410,7 +19646,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19472,7 +19708,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19493,8 +19729,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(34),
-	    __webpack_require__(45)
+	    __webpack_require__(35),
+	    __webpack_require__(46)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
 	    'use strict';
 
@@ -19634,7 +19870,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19655,8 +19891,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(33),
-	    __webpack_require__(42)
+	    __webpack_require__(34),
+	    __webpack_require__(43)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, AuthenticationService) {
 	    'use strict';
 
@@ -19972,7 +20208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19993,11 +20229,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(25),
-	    __webpack_require__(27),
-	    __webpack_require__(47),
+	    __webpack_require__(26),
+	    __webpack_require__(28),
 	    __webpack_require__(48),
-	    __webpack_require__(49)
+	    __webpack_require__(49),
+	    __webpack_require__(50)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
@@ -20064,7 +20300,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20113,7 +20349,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20248,7 +20484,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20366,7 +20602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20387,9 +20623,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(25),
-	    __webpack_require__(27),
-	    __webpack_require__(51)
+	    __webpack_require__(26),
+	    __webpack_require__(28),
+	    __webpack_require__(52)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -20435,7 +20671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**

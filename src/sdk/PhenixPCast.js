@@ -20,8 +20,9 @@ define([
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
+    './NetworkConnectionMonitor',
     'phenix-rtc'
-], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, NetworkConnectionMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -54,6 +55,7 @@ define([
     });
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
+    var networkDisconnectHysteresisInterval = 15000;
 
     function PhenixPCast(options) {
         options = options || {};
@@ -68,6 +70,7 @@ define([
         this._shaka = options.shaka || window.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
+        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
 
         if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
             addLinkHeaderElement.call(this);
@@ -120,6 +123,7 @@ define([
         this._gumStreams = [];
 
         var that = this;
+        var waitForDisconnectEventTimeout = 5000;
 
         checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
             that._screenSharingEnabled = screenSharingEnabled;
@@ -150,12 +154,13 @@ define([
 
                 that._logger.info('Discovered end point [%s]', uri);
 
-                that._protocol = new PCastProtocol(uri, that._deviceId, that._version, that._logger);
+                instantiateProtocol.call(that, uri);
 
-                that._protocol.on('connected', _.bind(connected, that));
-                that._protocol.on('disconnected', _.bind(disconnected, that));
-                that._protocol.on('streamEnded', _.bind(streamEnded, that));
-                that._protocol.on('dataQuality', _.bind(dataQuality, that));
+                that._networkConnectionMonitor.start(function onReconnect() {
+                    setTimeout(function() {
+                        reconnect.call(that);
+                    }, waitForDisconnectEventTimeout);
+                }, _.bind(disconnected, that));
             });
         });
     };
@@ -204,9 +209,13 @@ define([
                     tracks[j].stop();
                 }
             }
+
+            this._networkConnectionMonitor.stop();
         } finally {
             if (this._protocol) {
                 this._protocol.disconnect();
+
+                this._protocol = null;
             }
         }
     };
@@ -697,6 +706,15 @@ define([
         return status;
     };
 
+    function instantiateProtocol(uri) {
+        this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
+
+        this._protocol.on('connected', _.bind(connected, this));
+        this._protocol.on('disconnected', _.bind(reconnect, this));
+        this._protocol.on('streamEnded', _.bind(streamEnded, this));
+        this._protocol.on('dataQuality', _.bind(dataQuality, this));
+    }
+
     function connected() {
         var that = this;
 
@@ -727,6 +745,36 @@ define([
                 }
             });
         }
+    }
+
+    function reconnect() {
+        if (this._status === 'online' && this._protocol) {
+            return;
+        }
+
+        if (!this._protocol || this._status === 'reconnecting') {
+            return disconnected.call(this);
+        }
+
+        transitionToStatus.call(this, 'reconnecting');
+
+        this._logger.info('Attempting to re-establish socket connection');
+
+        var that = this;
+
+        this._protocol.reconnect(this._authToken, function(result, error) {
+            var suppressCallback = that._connected === true;
+
+            if (error) {
+                that._connected = false;
+
+                return transitionToStatus.call(that, 'offline');
+            }
+
+            that._connected = true;
+
+            return transitionToStatus.call(that, 'online', suppressCallback);
+        });
     }
 
     function disconnected() {
@@ -2124,12 +2172,19 @@ define([
         callback.call(that, internalMediaStream.mediaStream);
     }
 
-    function transitionToStatus(newStatus) {
-        if (this._status !== newStatus) {
+    function transitionToStatus(newStatus, suppressCallback) {
+        var oldStatus = this._status;
+
+        if (oldStatus !== newStatus) {
             this._status = newStatus;
+
+            if (suppressCallback) {
+                return;
+            }
 
             switch (newStatus) {
                 case 'connecting':
+                case 'reconnecting':
                     break;
                 case 'offline':
                     this._offlineCallback.call(this);

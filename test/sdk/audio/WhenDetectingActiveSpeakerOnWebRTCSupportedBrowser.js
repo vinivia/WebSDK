@@ -15,114 +15,46 @@
  */
 define([
     'sdk/logging/Logger',
-    'sdk/audio/AudioSpeakerDetectionAlgorithm',
-    'sdk/audio/AudioVolumeMeter',
-    'sdk/logging/pcastLoggerFactory',
+    'sdk/audio/AudioSpeakerDetector',
     'phenix-rtc'
-], function (Logger, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, pcastLoggerFactory, rtc) {
+], function (Logger, AudioSpeakerDetector, rtc) {
     describe('When Detecting Active Speaker on WebRTC Supported Browser', function () {
-        var audioSpeakerDetectionAlgorithm;
-        var pcastLoggerStub;
+        var audioSpeakerDetector;
 
-        before(function() {
-            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
-                return sinon.createStubInstance(Logger);
-            }); //disable requests to external source
+        before(function () {
+            if (!rtc.webrtcSupported) {
+                this.skip();
+            }
         });
 
         beforeEach(function () {
-            audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(sinon.createStubInstance(Logger));
+            var streams = [new MediaStream()];
+
+            audioSpeakerDetector = new AudioSpeakerDetector(streams, {logger: sinon.createStubInstance(Logger)});
         });
 
-        after(function () {
-            pcastLoggerStub.restore();
+        afterEach(function() {
+            audioSpeakerDetector.dispose();
         });
 
         it('Has property onValue that is a function', function () {
-            expect(audioSpeakerDetectionAlgorithm.onValue).to.be.a('function');
+            expect(audioSpeakerDetector.start).to.be.a('function');
         });
 
         it('Has property startDetection that is a function', function () {
-            expect(audioSpeakerDetectionAlgorithm.startDetection).to.be.a('function');
+            expect(audioSpeakerDetector.stop).to.be.a('function');
         });
 
-        describe('When using WebRTC supported browsers', function () {
-            before(function () {
-                if (!rtc.webrtcSupported) {
-                    this.skip();
-                }
-            });
+        it('Expect start to not throw an error', function () {
+            expect(function () {
+                audioSpeakerDetector.start({}, function() {});
+            }).to.not.throw();
+        });
 
-            var audioVolumeMeter;
-            var audioContext;
-
-            beforeEach(function () {
-                audioContext = new window.AudioContext();
-                audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(Logger));
-
-                audioVolumeMeter.init(audioContext, 123);
-
-                audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, {silenceHysteresisInterval:1, speakingHysteresisInterval: 1})
-            });
-
-            afterEach(function () {
-                audioContext.close();
-            });
-
-            it('Speaking buffer yields speaking state', function () {
-                // ToDo (dcy) create speaking input buffer
-                audioSpeakerDetectionAlgorithm.onValue = function (state) {
-                    expect(state).to.be.equal('speaking');
-                };
-
-                var event = new Event('audioprocess');
-                event.inputBuffer = createBrowserAudioBuffer(audioContext, true);
-
-                audioVolumeMeter._scriptProcessor.dispatchEvent(event);
-            });
-
-            it('Non-Speaking buffer yields silence state', function () {
-                var speakingEvent = new Event('audioprocess');
-                speakingEvent.inputBuffer = createBrowserAudioBuffer(audioContext, true);
-
-                audioVolumeMeter._scriptProcessor.dispatchEvent(speakingEvent);
-
-                audioSpeakerDetectionAlgorithm.onValue = function (state) {
-                    expect(state).to.be.equal('silence');
-                };
-
-                var silenceEvent = new Event('audioprocess');
-                silenceEvent.inputBuffer = createBrowserAudioBuffer(audioContext, false);
-
-                audioVolumeMeter._scriptProcessor.dispatchEvent(silenceEvent);
-            });
+        it('Expect stop to not throw an error', function () {
+            expect(function () {
+                audioSpeakerDetector.stop();
+            }).to.not.throw();
         });
     });
 });
-
-function createBrowserAudioBuffer (audioContext, speaking) {
-    var channels = 2;
-
-    // Create an empty two second stereo buffer at the
-    // sample rate of the AudioContext
-    var frameCount = audioContext.sampleRate * 2.0;
-    var myArrayBuffer = audioContext.createBuffer(channels, frameCount, audioContext.sampleRate);
-
-    // Fill the buffer with white noise;
-    // just random values between -1.0 and 1.0
-    if (!speaking) {
-        return myArrayBuffer;
-    }
-
-    for (var channel = 0; channel < channels; channel++) {
-        // This gives us the actual array that contains the data
-        var nowBuffering = myArrayBuffer.getChannelData(channel);
-        for (var i = 0; i < frameCount; i++) {
-            // Math.random() is in [0; 1.0]
-            // audio needs to be in [-1.0; 1.0]
-            nowBuffering[i] = Math.random() * 2 - 1;
-        }
-    }
-
-    return myArrayBuffer;
-}

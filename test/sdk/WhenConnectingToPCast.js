@@ -107,6 +107,8 @@ define([
                             if (offlineCallbackInvocationCount > 0) {
                                 resolve();
                                 clearInterval(intervalId);
+                            } else {
+                                reject(new Error('Offline Callback not called'));
                             }
                         }, 100);
                     }).should.be.fulfilled;

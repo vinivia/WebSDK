@@ -19,9 +19,12 @@ define([
     '../http',
     'ByteBuffer',
     '../MQProtocol',
+    '../NetworkConnectionMonitor',
     'phenix-rtc',
     './logging.json'
-], function (_, assert, http, ByteBuffer, MQProtocol, rtc, logging) {
+], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
+
+    var networkDisconnectHysteresisInterval = 0;
 
     function AnalytixAppender() {
         this._environmentName = '%ENVIRONMENT%' || '?';
@@ -38,6 +41,7 @@ define([
         this._baseUri = '';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
+        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
     }
 
     AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
@@ -80,6 +84,25 @@ define([
         sendBatchMessagesIfNonePending.call(this);
     };
 
+    function createAndStartNetworkConnectionMonitor() {
+        var that = this;
+        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
+
+        function onReconnect() {
+            that._isOffline = false;
+
+            sendBatchMessagesIfNonePending.call(that);
+        }
+
+        function onDisconnect() {
+            that._isOffline = true;
+        }
+
+        networkConnectionMonitor.start(onReconnect, onDisconnect);
+
+        return networkConnectionMonitor;
+    }
+
     function addMessagesToRecords(since, level, category, messages, sessionId, userId) {
         var message = messages.join(' ');
         var record = {
@@ -119,7 +142,7 @@ define([
     }
 
     function sendBatchMessagesIfNonePending() {
-        if (this._pending || !this._baseUri || !this._isEnabled) {
+        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
             return;
         }
 
@@ -130,8 +153,18 @@ define([
         this._records = this._records.slice(this._maxBatchSize);
         this._pending = true;
 
+        var that = this;
+
         try {
-            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords);
+            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords, function onTimeout() {
+                setTimeout(function waitForDisconnectTimeout() {
+                    if (!that._isOffline) {
+                        return;
+                    }
+
+                    that._records = that._records.concat(storeLogRecords.records);
+                }, networkDisconnectHysteresisInterval);
+            });
         } catch (e) {
             this._pending = false;
 
@@ -139,7 +172,7 @@ define([
         }
     }
 
-    function sendEncodedHttpRequest(url, dataToEncode) {
+    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
         var that = this;
 
         var data = this._protocol.encode('analytix.StoreLogRecords', dataToEncode).toBinary();
@@ -148,6 +181,10 @@ define([
             that._pending = false;
 
             if (error) {
+                if (error.message === 'timeout') {
+                    onTimeout();
+                }
+
                 return {storedRecords: 0, status: 'error'};
             }
 
