@@ -165,7 +165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-03-30T21:46:21Z';
+	    var sdkVersion = '2017-04-20T15:21:15Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -933,7 +933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
 	                                    if (options.receiveAudio === false) {
-	                                        elementToAttachTo.muted = true;
+	                                        element.muted = true;
 	                                    }
 
 	                                    internalMediaStream.renderer = this;
@@ -947,10 +947,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    dimensionsChangedMonitor.stop();
 
 	                                    if (element) {
-	                                        element.pause();
+	                                        if (typeof element.pause === 'function') {
+	                                            element.pause();
+	                                        }
+
+	                                        if (element.src) {
+	                                            element.src = '';
+	                                        }
+
+	                                        if (element.srcObject) {
+	                                            element.srcObject = null;
+	                                        }
+
+	                                        element = null;
 	                                    }
 
-	                                    element = null;
 	                                    internalMediaStream.renderer = null;
 	                                },
 
@@ -1729,6 +1740,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        start: function start(elementToAttachTo) {
 	                            player = new shaka.Player(elementToAttachTo);
 
+	                            player.configure({
+	                                manifest: {
+	                                    retryParameters: {
+	                                        timeout: 10000
+	                                    }
+	                                },
+	                                streaming: {
+	                                    rebufferingGoal: 2,
+	                                    bufferingGoal: 10,
+	                                    bufferBehind: 30,
+	                                    retryParameters: {
+	                                        timeout: 10000
+	                                    }
+	                                }
+	                            });
+
 	                            if (options.receiveAudio === false) {
 	                                elementToAttachTo.muted = true;
 	                            }
@@ -1739,6 +1766,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            var load = player.load(manifestUri).then(function () {
 	                                that._logger.info('[%s] DASH live stream has been loaded', streamId);
+
+	                                if (typeof elementToAttachTo.play === 'function') {
+	                                    elementToAttachTo.play();
+	                                }
 	                            }).catch(function (e) {
 	                                that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
 
@@ -1967,8 +1998,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                internalMediaStream.renderer = this;
 
 	                                elementToAttachTo.addEventListener('error', onPlayerError);
-
 	                                elementToAttachTo.play();
+
 	                                element = elementToAttachTo;
 
 	                                dimensionsChangedMonitor.start(this, element);

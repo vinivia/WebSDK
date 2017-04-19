@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web SDK HTTP Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Web SDK HTTP Server" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="$USER_HOME$/.nvm/v6.10.2/bin/node" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
