@@ -15,8 +15,8 @@
  */
 define([
     './LodashLight',
-    './Http'
-], function (_, Http) {
+    './http'
+], function (_, http) {
     'use strict';
 
     var measurementsPerEndPoint = 4;
@@ -28,7 +28,6 @@ define([
         this._onClosestEndpointFound = onClosestEndpointFound;
         this._logger = logger;
         this._version = version;
-        this._http = new Http(version, baseUri, logger);
     }
 
     ClosestEndPointResolver.prototype.isResolved = function isResolved() {
@@ -68,7 +67,7 @@ define([
 
             that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
-            that._http.httpGetWithRetry.call(that, endPoint, function (err, responseText) {
+            http.getWithRetry.call(that, endPoint, function (err, responseText) {
                 var end = _.now();
                 var time = end - start;
 

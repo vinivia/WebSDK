@@ -17,9 +17,8 @@ define([
     '../LodashLight',
     '../assert',
     '../observable/Observable',
-    '../Logger',
     '../authentication/AuthenticationService'
-], function (_, assert, Observable, Logger, AuthenticationService) {
+], function (_, assert, Observable, AuthenticationService) {
     'use strict';
 
     function ChatService(pcast) {

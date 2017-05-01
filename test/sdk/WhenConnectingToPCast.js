@@ -17,17 +17,24 @@ define([
     'Promise',
     'jquery',
     'lodash',
-    'sdk/PhenixPCast'
-], function (Promise, $, _, PCast) {
+    'sdk/PhenixPCast',
+    'sdk/logging/pcastLoggerFactory',
+    'sdk/logging/Logger'
+], function (Promise, $, _, PCast, pcastLoggerFactory, Logger) {
     'use strict';
 
     describe('When connecting to PCast', function () {
+        var pcastLoggerStub;
         var pcast;
         var authToken;
 
         this.timeout(30000);
 
         before(function () {
+            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
+                return sinon.createStubInstance(Logger);
+            }); //disable requests to external source
+
             pcast = new PCast();
 
             var parser = document.createElement('a');
@@ -113,6 +120,7 @@ define([
             });
             after(function () {
                 pcast.stop();
+                pcastLoggerStub.restore();
             });
         });
     });

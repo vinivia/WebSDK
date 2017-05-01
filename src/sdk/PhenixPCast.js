@@ -15,13 +15,13 @@
  */
 define([
     './LodashLight',
-    './Logger',
+    './logging/pcastLoggerFactory',
     './PCastProtocol',
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     'phenix-rtc'
-], function (_, Logger, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -57,10 +57,10 @@ define([
 
     function PhenixPCast(options) {
         options = options || {};
-        this._logger = options.logger || new Logger();
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -717,6 +717,11 @@ define([
                         that.stop('unauthorized');
                     } else {
                         transitionToStatus.call(that, 'online');
+
+                        if (that._logger.isPCastLogger) {
+                            that._logger.setSessionId(response.sessionId);
+                        }
+
                         that._authenticationCallback.call(that, that, response.status, response.sessionId);
                     }
                 }

@@ -15,11 +15,10 @@
  */
 define([
     'sdk/observable/Observable',
-    'sdk/Logger',
     'sdk/chat/RoomChatService',
     'sdk/chat/ChatService',
     '../../../test/mock/mockRoomService'
-], function (Observable, Logger, RoomChatService, ChatService, MockRoomService) {
+], function (Observable, RoomChatService, ChatService, MockRoomService) {
     var stubRoomService;
     var stubChatService;
     var roomChatService;

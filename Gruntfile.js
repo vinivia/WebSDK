@@ -15,6 +15,7 @@
  */
 const moment = require('moment');
 const version = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+const environment = process.env.NODE_ENV;
 
 console.log('Using version', version);
 
@@ -59,6 +60,12 @@ module.exports = function (grunt) {
             version: {
                 pattern: '%VERSION%',
                 replacement: version,
+                recursive: true,
+                path: 'dist'
+            },
+            environment: {
+                pattern: '%ENVIRONMENT%',
+                replacement: environment || 'production',
                 recursive: true,
                 path: 'dist'
             }

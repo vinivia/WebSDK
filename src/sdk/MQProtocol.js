@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 define([
-    './Logger',
     'protobuf',
     './protocol/mqProto.json',
     './protocol/pcastProto.json',
-    './protocol/chatProto.json'
-    ], function (Logger, ProtoBuf, mqProto, pcastProto, chatProto) {
+    './protocol/chatProto.json',
+    './protocol/analytixProto.json',
+    ], function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
     'use strict';
 
     function MQProtocol(logger) {
-        this._logger = logger || new Logger();
+        this._logger = logger;
         var builder = ProtoBuf.loadJson(mqProto);
 
         builder = ProtoBuf.loadJson(pcastProto, builder);
         builder = ProtoBuf.loadJson(chatProto, builder);
+        builder = ProtoBuf.loadJson(analytixProto, builder);
 
         this._builders = builder.build();
         this._apiVersion = 3;

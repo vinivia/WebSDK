@@ -16,11 +16,12 @@
 define([
     '../LodashLight',
     '../assert',
-    '../Logger',
+    '../logging/pcastLoggerFactory',
+    '../PCastEndPoint',
     './AudioContext',
     './AudioVolumeMeter',
     './AudioSpeakerDetectionAlgorithm'
-], function (_, assert, Logger, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
+], function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
     function AudioSpeakerDetector(userMediaStreams, options) {
@@ -28,14 +29,14 @@ define([
 
         options = options || {};
 
-        this._logger = options.logger || new Logger();
-
+        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
         this._audioContext = options.audioContext || new AudioContext();
         this._nativeAudioContext = this._audioContext.getNativeAudioContext();
         this._audioVolumeMeters = [];
         this._onSpeakingChanged = null;
         this._userMediaStreams = userMediaStreams;
-        this._disposeOfAudioContext = _.isObject(options.audioContext);
+        this._disposeOfAudioContext = !_.isObject(options.audioContext);
     }
 
     AudioSpeakerDetector.prototype.start = function start(options, callback) {
@@ -69,8 +70,8 @@ define([
     };
 
     function setupSpeakingDetection(options, stream) {
-        var audioVolumeMeter = new AudioVolumeMeter(this.logger);
-        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this.logger);
+        var audioVolumeMeter = new AudioVolumeMeter(this._logger);
+        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
 
         audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
         audioVolumeMeter.connect(stream);

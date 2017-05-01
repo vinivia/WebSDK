@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/Logger',
+    'sdk/logging/Logger',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
 ], function (Logger, AudioVolumeMeter, rtc) {

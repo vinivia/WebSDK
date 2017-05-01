@@ -207,6 +207,12 @@ define([
         return _.filter(collection, filterCallback);
     };
 
+    _.take = function take(collection, size) {
+        assertIsArray(collection);
+
+        return collection.slice(0, size);
+    };
+
     _.hasDifferences = function hasDifferences(collectionA, collectionB, deep) {
         return _.findDifferences(collectionA, collectionB, deep).length > 0;
     };
@@ -310,6 +316,10 @@ define([
         }
 
         return typeof number === 'number';
+    };
+
+    _.isBoolean = function isBoolean(bool) {
+        return typeof bool === 'boolean';
     };
 
     _.isFunction = function isFunction(func) {

@@ -18,7 +18,6 @@ define([
     '../assert',
     '../observable/Observable',
     '../observable/ObservableArray',
-    '../Logger',
     '../authentication/AuthenticationService',
     './Room',
     './ImmutableRoom',
@@ -26,7 +25,7 @@ define([
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
+], function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
     function RoomService(pcast) {
@@ -88,8 +87,8 @@ define([
     };
 
     RoomService.prototype.createRoom = function createRoom(name, type, description, callback) {
-        assert.isString(name, 'name');
-        assert.isString(type, 'type');
+        assert.stringNotEmpty(name, 'name');
+        assert.stringNotEmpty(type, 'type');
         assert.isString(description, 'description');
         assert.isFunction(callback);
 

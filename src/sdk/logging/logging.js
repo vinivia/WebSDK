@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/Logger',
-    'sdk/PCastProtocol',
-    'sdk/PhenixPCast'
-], function (Logger, Protocol, PCast) {
-    return function MockPCast () {
-        var pcast = sinon.createStubInstance(PCast);
-        var logger = sinon.createStubInstance(Logger);
-        var protocol = sinon.createStubInstance(Protocol);
+    './Logger',
+    './analytixAppenderFactory',
+    './ConsoleAppender',
+    './logging.json'
+], function (Logger, analytixAppenderFactory, ConsoleAppender, logging) {
+    'use strict';
 
-        pcast.getLogger = function() { return logger; };
-        pcast.getProtocol = function() { return protocol; };
-        pcast.getStatus = function() { return 'online'; };
-        protocol.getSessionId = function() { return 'mockSessionId'; };
-
-        return pcast;
-    }
+    return {
+        createLogger: function() { return new Logger(); }, // base logger with nothing appended
+        ConsoleAppender: ConsoleAppender,
+        level: logging.level // object with log levels
+    };
 });

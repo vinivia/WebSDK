@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 define([
-    './Http',
+    './http',
     './ClosestEndPointResolver'
-], function (Http, ClosestEndPointResolver) {
+], function (http, ClosestEndPointResolver) {
     'use strict';
 
-    var maxAttempts = 3;
+    var maxAttempts = 4;
 
     function PCastEndPoint(version, baseUri, logger) {
         if (typeof version !== 'string') {
@@ -35,7 +35,6 @@ define([
         this._version = version;
         this._baseUri = baseUri;
         this._logger = logger;
-        this._http = new Http(version, baseUri, logger);
     }
 
     PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
@@ -76,7 +75,7 @@ define([
     }
 
     function getEndpoints(baseUri, callback) {
-        this._http.httpGetWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
+        http.getWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
             if (err) {
                 return callback(new Error('Failed to resolve an end point', err));
             }

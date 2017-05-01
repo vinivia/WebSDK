@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 define([
-    'sdk/Logger',
+    'sdk/logging/Logger',
     'sdk/audio/AudioSpeakerDetectionAlgorithm',
     'sdk/audio/AudioVolumeMeter',
+    'sdk/logging/pcastLoggerFactory',
     'phenix-rtc'
-], function (Logger, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc) {
+], function (Logger, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, pcastLoggerFactory, rtc) {
     describe('When Detecting Active Speaker on WebRTC Supported Browser', function () {
         var audioSpeakerDetectionAlgorithm;
+        var pcastLoggerStub;
+
+        before(function() {
+            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
+                return sinon.createStubInstance(Logger);
+            }); //disable requests to external source
+        });
 
         beforeEach(function () {
             audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(sinon.createStubInstance(Logger));
+        });
+
+        after(function () {
+            pcastLoggerStub.restore();
         });
 
         it('Has property onValue that is a function', function () {

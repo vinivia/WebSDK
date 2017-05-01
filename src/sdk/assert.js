@@ -44,6 +44,14 @@ define([
         }
     };
 
+    Assert.prototype.isBoolean = function isBoolean(bool, name) {
+        var error = '"' + name + '" must be a string';
+
+        if (!_.isBoolean(bool)) {
+            throw new Error(error);
+        }
+    };
+
     Assert.prototype.isNumber = function isNumber(number, name) {
         var error = '"' + name + '" must be a number';
 

@@ -16,9 +16,10 @@
 define([
     '../LodashLight',
     '../assert',
-    '../Logger',
+    '../logging/pcastLoggerFactory',
+    '../PCastEndPoint',
     './PublisherBandwidthAdjuster'
-], function (_, assert, Logger, PublisherBandwidthAdjuster) {
+], function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
     function BandwidthMonitor(publishers, options) {
@@ -26,7 +27,8 @@ define([
 
         options = options || {};
 
-        this._logger = options.logger || new Logger();
+        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
         this._publisherAdjusters = [];
         this._publishers = publishers;
     }

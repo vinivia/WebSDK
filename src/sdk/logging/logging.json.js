@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/Logger',
-    'sdk/PCastProtocol',
-    'sdk/PhenixPCast'
-], function (Logger, Protocol, PCast) {
-    return function MockPCast () {
-        var pcast = sinon.createStubInstance(PCast);
-        var logger = sinon.createStubInstance(Logger);
-        var protocol = sinon.createStubInstance(Protocol);
+    '../LodashLight'
+], function (_) {
+    'use strict';
 
-        pcast.getLogger = function() { return logger; };
-        pcast.getProtocol = function() { return protocol; };
-        pcast.getStatus = function() { return 'online'; };
-        protocol.getSessionId = function() { return 'mockSessionId'; };
+    var logging = {
+        level: {
+            TRACE: 0,
+            DEBUG: 1,
+            INFO: 2,
+            WARN: 3,
+            ERROR: 4,
+            FATAL: 5
+        }
+    };
 
-        return pcast;
-    }
+    return logging;
 });
