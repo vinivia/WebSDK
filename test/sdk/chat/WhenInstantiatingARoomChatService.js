@@ -160,7 +160,7 @@ define([
                     messages[1] = 1;
                     messages[99] = 99;
 
-                    newMessagesCallback(messages);
+                    newMessagesCallback(null, {status:'ok', chatMessages: messages});
                 });
 
                 it('new message yields array of size 100', function () {
@@ -168,7 +168,7 @@ define([
                         expect(messages.length).to.be.equal(100);
                     });
 
-                    newMessagesCallback([100]);
+                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
                 });
 
                 it('new message removes first element in array', function () {
@@ -176,7 +176,7 @@ define([
                         expect(messages[0]).to.be.equal(1);
                     });
 
-                    newMessagesCallback([100]);
+                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
                 });
 
                 it('new message is added at the end of array', function () {
@@ -184,7 +184,7 @@ define([
                         expect(messages[99]).to.be.equal(100);
                     });
 
-                    newMessagesCallback([100]);
+                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
                 });
 
                 it('multiple new messages returns fixed sized array of size 100 with new values at end', function () {
@@ -196,7 +196,7 @@ define([
                         expect(messages[1]).to.be.undefined;
                     });
 
-                    newMessagesCallback([100,101]);
+                    newMessagesCallback(null, {status:'ok', chatMessages:[100,101]});
                 });
             });
         });

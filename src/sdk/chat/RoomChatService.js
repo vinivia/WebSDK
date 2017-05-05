@@ -62,7 +62,7 @@ define([
         return this._chatService.getObservableChatEnabled();
     };
 
-    RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message) {
+    RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message, callback) {
         var room = this._roomService.getObservableActiveRoom().getValue();
         var roomId = room.getRoomId();
         var self = this._roomService._self.getValue();
@@ -70,16 +70,14 @@ define([
         var role = self.getObservableRole().getValue();
         var lastUpdate = self.getLastUpdate();
 
-        this._chatService.sendMessageToRoom(roomId, screenName, role, lastUpdate, message);
+        this._chatService.sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback);
     };
 
     RoomChatService.prototype.getMessages = function getMessages(batchSize, afterMessageId, beforeMessageId, callback) {
         var room = this._roomService.getObservableActiveRoom().getValue();
         var roomId = room.getRoomId();
 
-        return this._chatService.getMessages(roomId, batchSize, afterMessageId, beforeMessageId, function onReceiveMessages(chatMessages) {
-            callback(chatMessages);
-        })
+        return this._chatService.getMessages(roomId, batchSize, afterMessageId, beforeMessageId, callback);
     };
 
     RoomChatService.prototype.toString = function toString() {
@@ -120,10 +118,17 @@ define([
 
         this._chatMessages.setValue([]);
 
-        return this._chatService.subscribeAndLoadMessages(roomId, batchSize, function onReceiveMessages(chatMessages) {
+        return this._chatService.subscribeAndLoadMessages(roomId, batchSize, function onReceiveMessages(error, response) {
+            if (error) {
+                throw error;
+            }
+            if (response.status !== 'ok') {
+                throw new Error('Unable to subscribe to room chat. Status ' + status);
+            }
+
             var messages = that._chatMessages.getValue();
 
-            _.forEach(chatMessages, function addMessage(message) {
+            _.forEach(response.chatMessages, function addMessage(message) {
                 messages.push(message);
             });
 

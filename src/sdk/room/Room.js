@@ -24,11 +24,11 @@ define([
     'use strict';
     var roomTypes = room.types;
 
-    function Room(id, alias, name, description, type, members, bridgeId, pin, roomService) {
-        this.init(id, alias, name, description, type, members, bridgeId, pin, roomService);
+    function Room(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+        this.init(roomService, id, alias, name, description, type, members, bridgeId, pin);
     }
 
-    Room.prototype.init = function init(id, alias, name, description, type, members, bridgeId, pin, roomService) {
+    Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
         assert.isString(id, 'id');
         assert.isString(alias, 'alias');
         assert.isString(name, 'name');
@@ -40,6 +40,9 @@ define([
         }
         if (pin) {
             assert.isString(pin, 'pin');
+        }
+        if (roomService) {
+            assert.isObject(roomService);
         }
 
         this._roomId = new Observable(id);
@@ -105,10 +108,14 @@ define([
     };
 
     Room.prototype.commitChanges = function commitChanges(callback) {
+        assert.isObject(this._roomService);
+
         this._roomService.updateRoom(this, callback);
     };
 
     Room.prototype.reload = function reload() {
+        assert.isObject(this._roomService);
+
         this._roomService.revertRoomChanges(this);
     };
 
@@ -188,14 +195,14 @@ define([
     };
 
     function setMembers(members) {
-        var newMembers = mapMembers(members);
+        var newMembers = mapMembers(members, this._roomService);
 
         this._members.setValue(newMembers);
     }
 
-    function mapMembers(members) {
+    function mapMembers(members, roomService) {
         return _.map(members, function(member) {
-            return new Member(member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+            return new Member(roomService, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
         });
     }
 

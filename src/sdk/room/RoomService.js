@@ -21,11 +21,12 @@ define([
     '../Logger',
     '../authentication/AuthenticationService',
     './Room',
+    './ImmutableRoom',
     './Member',
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, Member, RoomChatService, room, member) {
+], function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
     function RoomService(pcast) {
@@ -46,7 +47,7 @@ define([
         assert.isObject(this._protocol, 'this._protocol');
 
         this._authService = new AuthenticationService(this._pcast);
-    };
+    }
 
     RoomService.prototype.start = function start(role, screenName) {
         assert.stringNotEmpty(role, 'role');
@@ -59,8 +60,9 @@ define([
         var myScreenName = screenName;
         var myStreams = [];
         var myLastUpdate = _.now();
+        var roomService = this;
 
-        var self = new Member(myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
+        var self = new Member(roomService, myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
 
         this._self = new Observable(self);
         this._disposables = [];
@@ -91,11 +93,7 @@ define([
         assert.isString(description, 'description');
         assert.isFunction(callback);
 
-        createRoomRequest.call(this, name, type, description,
-            function createRoomSuccess(response) {
-                callback(response.room);
-            }
-        );
+        createRoomRequest.call(this, name, type, description, callback);
     };
 
     RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
@@ -106,25 +104,13 @@ define([
         }
         assert.isFunction(callback);
 
-        enterRoomRequest.call(this, roomId, alias, _.bind(enterRoomSuccess, this, callback));
+        enterRoomRequest.call(this, roomId, alias, callback);
     };
 
     RoomService.prototype.leaveRoom = function leaveRoom(callback) {
         var that = this;
 
-        return leaveRoomRequest.call(that,
-            function leaveRoomSuccess(status) {
-                if (that._roomChatService) {
-                    that._roomChatService.stop();
-                }
-
-                that._roomChatService = null;
-
-                that._activeRoom.setValue(null);
-                that._cachedRoom.setValue(null);
-                callback(status);
-            }
-        );
+        return leaveRoomRequest.call(that, callback);
     };
 
     RoomService.prototype.getRoomChatService = function getRoomChatService() {
@@ -198,8 +184,9 @@ define([
 
     function resetSelf(sessionId) {
         var self = this._self.getValue().toJson();
+        var roomService = this;
 
-        this._self.setValue(new Member(self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate, this));
+        this._self.setValue(new Member(roomService, self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate));
     }
 
     function resetRoom() {
@@ -219,40 +206,6 @@ define([
                 that._logger.info('Room Reset Completed');
             });
         });
-    }
-
-    function enterRoomSuccess(callback, response) {
-        var roomInfo = response.room;
-        var members = response.members;
-
-        var room = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
-        var cachedRoom = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
-
-        replaceSelfInstanceInRoom.call(this, room);
-
-        this._activeRoom.setValue(room);
-        this._cachedRoom.setValue(cachedRoom);
-
-        callback(room, 'ok', null);
-    }
-
-    function replaceSelfInstanceInRoom(room) {
-        var self = this._self.getValue();
-        var members = room.getObservableMembers().getValue();
-
-        var selfIndex = _.findIndex(members, function(member) {
-            return self.getSessionId() === member.getSessionId();
-        });
-
-        if (!_.isNumber(selfIndex)) {
-            throw new Error('Invalid Room State: Self member not in room list of members.');
-        }
-
-        self._update(members[selfIndex].toJson());
-
-        members[selfIndex] = self;
-
-        room.getObservableMembers().setValue(members);
     }
 
     // handle events
@@ -429,13 +382,27 @@ define([
     function getRoomInfoRequest(roomId, alias, callback) {
         this._authService.assertAuthorized();
 
+        var that = this;
+
         this._protocol.getRoomInfo(roomId, alias,
-            function handleCreateRoomResponse(response) {
-                if (response.status !== 'ok') {
-                    return callback(response.room, response.status, response.reason);
+            function handleCreateRoomResponse(error, response) {
+                if (error) {
+                    that._logger.error('Request to get room info failed with error [%s]', error);
+
+                    return callback(error, null);
                 }
 
-                callback(response.room, response.status, null);
+                var result = {status: response.status};
+
+                if (response.status !== 'ok') {
+                    that._logger.warn('Request to get room info failed with status [%s]', response.status);
+
+                    return callback(null, result);
+                }
+
+                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+
+                callback(null, result);
             }
         );
     }
@@ -443,13 +410,27 @@ define([
     function createRoomRequest(roomName, type, description, callback) {
         this._authService.assertAuthorized();
 
+        var that = this;
+
         this._protocol.createRoom(roomName, type, description,
-            function handleCreateRoomResponse(response) {
-                if (response.status !== 'ok' && response.status !== 'already-exists') {
-                    throw new Error(response.reason);
+            function handleCreateRoomResponse(error, response) {
+                if (error) {
+                    that._logger.error('Creating room failed with error [%s]', error);
+
+                    return callback(error, null);
                 }
 
-                callback(response);
+                var result = {status: response.status};
+
+                if (response.status !== 'ok' && response.status !== 'already-exists') {
+                    that._logger.warn('Creating room failed with status [%s]', response.status);
+
+                    return callback(null, result);
+                }
+
+                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+
+                callback(null, result);
             }
         );
     }
@@ -466,13 +447,27 @@ define([
 
         this._logger.info('Enter room [%s]/[%s] with screen name [%s] and role [%s]', roomId, alias, screenName, role);
 
+        var that = this;
+
         this._protocol.enterRoom(roomId, alias, selfForRequest, timestamp,
-            function handleEnterRoomResponse(response) {
-                if (response.status !== 'ok') {
-                    throw new Error('Joining of room failed: ' + response.status);
+            function handleEnterRoomResponse(error, response) {
+                if (error) {
+                    that._logger.error('Joining of room failed with error [%s]', error);
+
+                    return callback(error, null);
                 }
 
-                callback(response);
+                var result = {status: response.status};
+
+                if (response.status !== 'ok') {
+                    that._logger.warn('Joining of room failed with status [%s]', response.status);
+
+                    return callback(null, result);
+                }
+
+                result.room = initializeRoomAndBuildCache.call(that, response);
+
+                callback(null, result)
             }
         );
     }
@@ -489,24 +484,43 @@ define([
 
         this._logger.info('Leave room [%s]', roomId);
 
+        var that = this;
+
         this._protocol.leaveRoom(roomId, timestamp,
-            function handleLeaveRoomResponse(response) {
-                if (response.status !== 'ok') {
-                    throw new Error('Leaving room failed: ' + response.status);
+            function handleLeaveRoomResponse(error, response) {
+                if (error) {
+                    that._logger.error('Leaving room failed with error [%s]', error);
+
+                    return callback(error, null);
                 }
 
-                callback(response.status);
+                var result = {status: response.status};
+
+                if (response.status !== 'ok') {
+                    that._logger.warn('Leaving room failed with status [%s]', response.status);
+
+                    return callback(null, result);
+                }
+
+                if (that._roomChatService) {
+                    that._roomChatService.stop();
+                }
+
+                that._roomChatService = null;
+
+                that._activeRoom.setValue(null);
+                that._cachedRoom.setValue(null);
+
+                callback(null, result);
             }
         );
     }
 
-    var notInRoomError = 'Not in a room. Please Enter a room before updating self.';
-
     function updateMemberRequest(member, callback) {
         if (!this._activeRoom.getValue()) {
-            this._logger.warn('notInRoomError');
+            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-            return callback('not-in-room', notInRoomError);
+            return callback('not-in-room');
         }
 
         this._authService.assertAuthorized();
@@ -520,23 +534,29 @@ define([
         var that = this;
 
         this._protocol.updateMember(memberForRequest, timestamp,
-            function handleUpdateMemberResponse(response) {
-                if (response.status !== 'ok') {
-                    that._logger.warn('Update of member failed: ' + response.status);
+            function handleUpdateMemberResponse(error, response) {
+                if (error) {
+                    that._logger.error('Update of member failed with error [%s]', error);
 
-                    return callback('failed', 'Update of member failed: ' + response.status);
+                    return callback(error, null);
                 }
 
-                return callback('ok', null)
+                var result = {status: response.status};
+
+                if (response.status !== 'ok') {
+                    that._logger.warn('Update of member failed with status [%s]', response.status);
+                }
+
+                callback(null, result);
             }
         );
     }
 
     function updateRoomRequest(callback) {
         if (!this._activeRoom.getValue()) {
-            this._logger.warn('notInRoomError');
+            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-            return callback('not-in-room', notInRoomError);
+            return callback('not-in-room');
         }
 
         this._authService.assertAuthorized();
@@ -547,16 +567,69 @@ define([
         var that = this;
 
         this._protocol.updateRoom(room.toJson(), timestamp,
-            function handleUpdateMemberResponse(response) {
-                if (response.status !== 'ok') {
-                    that._logger.warn('Update of room failed: ' + response.status);
+            function handleUpdateMemberResponse(error, response) {
+                if (error) {
+                    that._logger.error('Update of room failed with error [%s]', error);
 
-                    return callback('failed', 'Update of member failed: ' + response.status);
+                    return callback(error, null);
                 }
 
-                return callback(response.status, null);
+                var result = {status: response.status};
+
+                if (response.status !== 'ok') {
+                    that._logger.warn('Update of room failed with status [%s]', response.status);
+                }
+
+                callback(null, result);
             }
         );
+    }
+
+    function createImmutableRoomFromResponse(response) {
+        var roomInfo = response.room;
+        var members = response.members || [];
+        var roomService = this;
+
+        return new ImmutableRoom(roomService, roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin);
+    }
+
+    function createRoomFromResponse(response) {
+        var roomInfo = response.room;
+        var members = response.members;
+        var roomService = this;
+
+        return new Room(roomService, roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin);
+    }
+
+    function initializeRoomAndBuildCache(response) {
+        var room = createRoomFromResponse.call(this, response);
+        var cachedRoom = createRoomFromResponse.call(this, response);
+
+        replaceSelfInstanceInRoom.call(this, room);
+
+        this._activeRoom.setValue(room);
+        this._cachedRoom.setValue(cachedRoom);
+
+        return room;
+    }
+
+    function replaceSelfInstanceInRoom(room) {
+        var self = this._self.getValue();
+        var members = room.getObservableMembers().getValue();
+
+        var selfIndex = _.findIndex(members, function(member) {
+            return self.getSessionId() === member.getSessionId();
+        });
+
+        if (!_.isNumber(selfIndex)) {
+            throw new Error('Invalid Room State: Self member not in room list of members.');
+        }
+
+        self._update(members[selfIndex].toJson());
+
+        members[selfIndex] = self;
+
+        room.getObservableMembers().setValue(members);
     }
 
     return RoomService;

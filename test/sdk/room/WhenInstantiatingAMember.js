@@ -39,7 +39,7 @@ define([
         beforeEach(function () {
             stubRoomService = new MockRoomService();
 
-            testMember = new Member(member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], 123, stubRoomService);
+            testMember = new Member(stubRoomService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], 123);
         });
 
         it('Has property toJson that is a function', function () {
@@ -193,7 +193,8 @@ define([
 
             it('Should accept Long value on constructor', function () {
                 var myLong = Long.fromNumber(1488469432437);
-                var myMember = new Member(member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], myLong);
+                var roomService = null;
+                var myMember = new Member(roomService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], myLong);
 
                 expect(myMember.getLastUpdate()).to.be.equal(1488469432437);
             });

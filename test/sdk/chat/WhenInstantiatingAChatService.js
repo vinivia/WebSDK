@@ -41,12 +41,12 @@ define([
 
             mockProtocol.subscribeToRoomConversation.restore();
             mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
-                callback(response, null);
+                callback(null, response);
             });
 
             mockProtocol.sendMessageToRoom.restore();
             mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom', function (roomId, chatMessage, callback) {
-                callback(response, null);
+                callback(null, response);
             });
         });
 
@@ -88,11 +88,11 @@ define([
 
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
-                    callback(response, null);
+                    callback(null, response);
                 });
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (chatMessages) {
-                    expect(chatMessages[0].id).to.be.equal('1');
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    expect(response.chatMessages[0].id).to.be.equal('1');
                 });
             });
 
@@ -101,31 +101,56 @@ define([
 
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
-                    callback(response, null);
+                    callback(null, response);
                 });
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (chatMessages) {
-                    expect(chatMessages[0].timestamp).to.be.equal(1488469432437);
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                 });
             });
 
-            it('loadMessages throws error when status is not ok', function () {
+            it('loadMessages status other than ok with no chatMessages when status other than ok returned from protocol', function () {
                 response.status = 'no-room';
 
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
-                    callback(response, null);
+                    callback(null, response);
                 });
 
-                expect(function () {
-                    chatService.subscribeAndLoadMessages('roomId', 1, function () { });
-                }).to.throw(Error);
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    expect(response.status).to.not.be.equal('ok');
+                    expect(response.chatMessages).to.not.be.ok;
+                });
+            });
+
+            it('Expect loadMessages to return an error when error returned from protocol', function () {
+                mockProtocol.subscribeToRoomConversation.restore();
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                    callback(new Error('Error'), null);
+                });
+
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    expect(response).to.be.not.ok;
+                    expect(error).to.be.ok;
+                });
             });
 
             it('sendMessage results in request to send chat message', function () {
-                chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi');
+                chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function() {});
 
                 sinon.assert.calledOnce(mockProtocol.sendMessageToRoom);
+            });
+
+            it('Expect loadMessages to return an error when error returned from protocol', function () {
+                mockProtocol.sendMessageToRoom.restore();
+                mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom', function (roomId, chatService, callback) {
+                    callback(new Error('Error'), null);
+                });
+
+                chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function (error, response) {
+                    expect(response).to.be.not.ok;
+                    expect(error).to.be.ok;
+                });
             });
         });
 
@@ -149,12 +174,12 @@ define([
             it('Message event returns list of messages to handler', function () {
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
-                    callback(response, null);
+                    callback(null, response);
                 });
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (chatMessages) {
-                    if (chatMessages.length > 0) {
-                        expect(chatMessages[0].id).to.be.equal('1');
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    if (response.chatMessages.length > 0) {
+                        expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
 
@@ -163,9 +188,9 @@ define([
             });
 
             it('Chat Message timestamp Long values successfully converted', function () {
-                chatService.subscribeAndLoadMessages('roomId', 1, function (chatMessages) {
-                    if (chatMessages.length) {
-                        expect(chatMessages[0].timestamp).to.be.equal(1488469432437);
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                     }
                 });
 
@@ -174,9 +199,9 @@ define([
             });
 
             it('Chat Message From lastUpdate Long values successfully converted', function () {
-                chatService.subscribeAndLoadMessages('roomId', 1, function (chatMessages) {
-                    if (chatMessages.length) {
-                        expect(chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
+                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
                     }
                 });
 
@@ -203,58 +228,58 @@ define([
             });
 
             it('batchSize and toMessageId yields messages', function () {
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (chatMessages) {
-                    if (chatMessages.length > 0) {
-                        expect(chatMessages[0].id).to.be.equal('1');
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                    if (response.chatMessages.length > 0) {
+                        expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
 
                 var response = {status: 'ok', chatMessages: [{id:'1'}]};
-                messagesCallback(response);
+                messagesCallback(null, response);
             });
 
             it('batchSize and fromMessageId yields messages', function () {
-                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (chatMessages) {
-                    if (chatMessages.length > 0) {
-                        expect(chatMessages[0].id).to.be.equal('1');
+                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
+                    if (response.chatMessages.length > 0) {
+                        expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
 
                 var response = {status: 'ok', chatMessages: [{id:'1'}]};
-                messagesCallback(response);
+                messagesCallback(null, response);
             });
 
             it('toMessageId and fromMessageId yields messages', function () {
-                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (chatMessages) {
-                    if (chatMessages.length > 0) {
-                        expect(chatMessages[0].id).to.be.equal('1');
+                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
+                    if (response.chatMessages.length > 0) {
+                        expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
 
                 var response = {status: 'ok', chatMessages: [{id:'1'}]};
-                messagesCallback(response);
+                messagesCallback(null, response);
             });
 
             it('Message lastUpdates are successfully converted from Long', function () {
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (chatMessages) {
-                    if (chatMessages.length) {
-                        expect(chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
                     }
                 });
 
                 var response = {status: 'ok', chatMessages: [{id:'1', from: { lastUpdate: Long.fromNumber(1488469432437) }}]};
-                messagesCallback(response);
+                messagesCallback(null, response);
             });
 
             it('Message timestamps are successfully converted from Long', function () {
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (chatMessages) {
-                    if (chatMessages.length) {
-                        expect(chatMessages[0].timestamp).to.be.equal(1488469432437);
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                     }
                 });
 
                 var response = {status: 'ok', chatMessages: [{id:'1', timestamp: Long.fromNumber(1488469432437)}]};
-                messagesCallback(response);
+                messagesCallback(null, response);
             });
         });
 

@@ -16,13 +16,14 @@
 define([
     'sdk/room/RoomService',
     'sdk/room/Room',
+    'sdk/room/ImmutableRoom',
     'sdk/room/Member',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json',
     '../../../test/mock/mockPCast'
-], function (RoomService, Room, Member, room, member, stream, track, MockPCast) {
+], function (RoomService, Room, ImmutableRoom, Member, room, member, stream, track, MockPCast) {
     var pcast;
     var mockProtocol;
     var roomService;
@@ -62,27 +63,27 @@ define([
 
             mockProtocol.enterRoom.restore();
             mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
-                callback(response, null);
+                callback(null, response);
             });
 
             mockProtocol.leaveRoom.restore();
             mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
-                callback(response, null);
+                callback(null, response);
             });
 
             mockProtocol.createRoom.restore();
             mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom', function (roomName, type, description, callback) {
-                callback(response, null);
+                callback(null, response);
             });
 
             mockProtocol.updateMember.restore();
             mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
-                callback(response, null);
+                callback(null, response);
             });
 
             mockProtocol.updateRoom.restore();
             mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (room, timestamp, callback) {
-                callback(response, null);
+                callback(null, response);
             });
         });
 
@@ -119,108 +120,160 @@ define([
                 expect(roomChatService).to.be.equal(null);
             });
 
-            it('No Error thrown on getRoomInfo', function () {
+            it('Expect getRoomInfo to return a status other than "ok" and no room object', function () {
                 mockProtocol.getRoomInfo = function (roomId, alias, callback) {
                     response.status = 'no-room';
-                    response.reason = 'failure';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
-                roomService.getRoomInfo('', 'alias', function (room, status, reason) {
-                    expect(room).to.be.a('object');
-                    expect(status).to.be.equal('no-room');
-                    expect(reason).to.be.equal('failure');
+                roomService.getRoomInfo('', 'alias', function (error, response) {
+                    expect(response.room).to.be.not.ok;
+                    expect(response.status).to.not.be.equal('ok');
                 });
             });
 
-            it('Room is successfully created on createRoom', function () {
+            it('Expect getRoomInfo to return an error when error returned from protocol', function () {
+                mockProtocol.getRoomInfo = function (roomId, alias, callback) {
+                    callback(new Error('Error'), null);
+                };
+
+                roomService.getRoomInfo('', 'alias', function (error, response) {
+                    expect(response).to.be.not.ok;
+                    expect(error).to.be.ok;
+                });
+            });
+
+            it('Expect created room to be an immutable room', function () {
                 roomService.start(role, screenName);
 
-                roomService.createRoom(name, type, description, function (createdRoom) {
-                    expect(createdRoom).to.be.equal(mockRoom);
+                roomService.createRoom(name, type, description, function (error, response) {
+                    expect(response.room).to.be.an.instanceof(ImmutableRoom);
+                    expect(response.status).to.be.equal('ok');
                 }, screenName);
             });
 
-            it('Error thrown on createRoom when protocol returns error status', function () {
+            it('Expect room to be undefined when protocol returns error status', function () {
                 mockProtocol.createRoom = function (roomName, type, description, callback) {
                     response.status = 'error';
                     response.reason = 'Error creating room';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
                 roomService.start(role, screenName);
 
-                expect(function () {
-                    roomService.createRoom(name, type, description, function () { }, screenName)
-                }).to.throw(Error);
+                roomService.createRoom(name, type, description, function (error, response) {
+                    expect(response.status).to.not.be.equal('ok');
+                    expect(response.room).to.be.not.ok;
+                }, screenName);
             });
 
-            it('Error thrown on enterRoom', function () {
+            it('Expect createRoom to return an error when error returned from protocol', function () {
+                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                    callback(new Error('Error'), null);
+                };
+
+                roomService.createRoom(name, type, description, function (error, response) {
+                    expect(response).to.be.not.ok;
+                    expect(error).to.be.ok;
+                });
+            });
+
+            it('Expect enter room callback to return null for room and status', function () {
                 mockProtocol.enterRoom = function (roomId, alias, selfForRequest, timestamp, callback) {
                     response.status = 'Error: room does not exist';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
                 roomService.start(role, screenName);
 
-                expect(function () {
-                    roomService.enterRoom(roomId, alias, function () {})
-                }).to.throw(Error);
+                roomService.enterRoom(roomId, alias, function (error, response) {
+                    expect(response.status).to.not.be.equal('ok');
+                    expect(response.room).to.be.not.ok;
+                });
             });
 
-            it('Error thrown on leaveRoom', function () {
+            it('Expect enterRoom to return an error when error returned from protocol', function () {
+                mockProtocol.enterRoom = function (roomId, alias, selfForRequest, timestamp, callback) {
+                    callback(new Error('Error'), null);
+                };
+
+                roomService.start(role, screenName);
+
+                roomService.enterRoom(roomId, alias, function (error, response) {
+                    expect(response).to.be.not.ok;
+                    expect(error).to.be.ok;
+                });
+            });
+
+            it('Expect status to not be equal to ok', function () {
                 mockProtocol.leaveRoom = function (roomId, timestamp, callback) {
                     response.status = 'Error: room does not exist';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
                 roomService.start(role, screenName);
 
-                expect(function () {
-                    roomService.enterRoom('', '', function () {
-                        roomService.leaveRoom(function () {})
-                    })
-                }).to.throw(Error);
+                roomService.enterRoom('', '', function () {
+                    roomService.leaveRoom(function (error, response) {
+                        expect(response.status).to.not.be.equal('ok');
+                    });
+                });
+            });
+
+            it('Expect leaveRoom to return an error when error returned from protocol', function () {
+                mockProtocol.leaveRoom = function (roomId, timestamp, callback) {
+                    callback(new Error('Error'), null);
+                };
+
+                roomService.start(role, screenName);
+
+                roomService.enterRoom('', '', function () {
+                    roomService.leaveRoom(function (error, response) {
+                        expect(response).to.be.not.ok;
+                        expect(error).to.be.ok;
+                    });
+                });
             });
         });
 
         describe('When Room does exist', function () {
-            it('Returns room on getRoomInfo', function () {
+            it('Returns immutable room on getRoomInfo', function () {
                 mockProtocol.getRoomInfo = function (roomId, alias, callback) {
                     response.status = 'ok';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
-                roomService.getRoomInfo('', 'alias', function (room, status) {
-                    expect(room).to.be.a('object');
-                    expect(status).to.be.equal('ok');
+                roomService.getRoomInfo('', 'alias', function (error, response) {
+                    expect(response.room).to.be.an.instanceof(ImmutableRoom);
+                    expect(response.status).to.be.equal('ok');
                 });
             });
 
-            it('No Error thrown on createRoom', function () {
+            it('Expect createRoom to return status other than "ok"', function () {
                 mockProtocol.createRoom = function (roomName, type, description, callback) {
                     response.status = 'already-exists';
 
-                    callback(response, null);
+                    callback(null, response);
                 };
 
                 roomService.start(role, screenName);
 
-                expect(function () {
-                    roomService.createRoom(name, type, description, function () { }, screenName)
-                }).to.not.throw();
+
+                roomService.createRoom(name, type, description, function (error, response) {
+                    expect(response.status).to.not.be.equal('ok');
+                }, screenName);
             });
 
             it('Return new Room model with response.room values', function () {
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (enteredRoom) {
-                    expect(enteredRoom.getRoomId()).to.be.equal(mockRoom.roomId);
+                roomService.enterRoom(roomId, alias, function (error, response) {
+                    expect(response.room.getRoomId()).to.be.equal(mockRoom.roomId);
                     expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
                 });
             });
@@ -238,8 +291,8 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (enteredRoom) {
-                    expect(enteredRoom.getRoomId()).to.be.equal(mockRoom.roomId);
+                roomService.enterRoom(roomId, alias, function (error, response) {
+                    expect(response.room.getRoomId()).to.be.equal(mockRoom.roomId);
                     expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
                 });
             });
@@ -267,8 +320,8 @@ define([
                 });
 
                 it('Success on leaveRoom', function () {
-                    roomService.leaveRoom(function (status) {
-                        expect(status).to.be.equal('ok');
+                    roomService.leaveRoom(function (error, response) {
+                        expect(response.status).to.be.equal('ok');
                     });
                 });
 
@@ -378,7 +431,7 @@ define([
                         mockProtocol.updateMember.restore();
                         mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
                             expect(member.streams.length).to.be.equal(2);
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
@@ -394,7 +447,7 @@ define([
                         mockProtocol.updateMember.restore();
                         mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
                             expect(member.streams.length).to.be.equal(0);
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
@@ -407,7 +460,7 @@ define([
                         mockProtocol.updateMember.restore();
                         mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
                             expect(member.screenName).to.be.equal('MyNewScreenName');
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
@@ -436,7 +489,7 @@ define([
                         mockProtocol.updateMember.restore();
                         mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
                             expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
@@ -486,7 +539,7 @@ define([
                         mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (roomToUpdate, timestamp, callback) {
                             expect(roomToUpdate.description).to.be.equal('newDescription');
 
-                            callback(response, null);
+                            callback(null, response);
                         });
 
                         var descriptionObs = room.getObservableDescription();
@@ -494,7 +547,7 @@ define([
                         descriptionObs.setValue('newDescription');
                         response.room.description = 'newDescription';
 
-                        roomService.updateRoom(function (status, error) {});
+                        roomService.updateRoom(function () {});
                     });
                 });
 
@@ -521,7 +574,7 @@ define([
                         mockProtocol.updateMember.restore();
                         mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
                             expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
@@ -539,13 +592,13 @@ define([
                         mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
                             sinon.assert.calledOnce(mockProtocol.leaveRoom);
                             sinon.assert.calledOnce(mockProtocol.enterRoom);
-                            callback(response, null);
+                            callback(null, response);
                             done();
                         });
 
                         mockProtocol.leaveRoom.restore();
                         mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
-                            callback(response, null);
+                            callback(null, response);
                         });
 
                         response.members[2].sessionId = 'NewSessionId';

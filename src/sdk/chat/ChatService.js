@@ -36,7 +36,7 @@ define([
         assert.isObject(this._protocol, 'this._protocol');
 
         this._authService = new AuthenticationService(this._pcast);
-    };
+    }
 
     ChatService.prototype.start = function start() {
         if (this._enabled.getValue()) {
@@ -69,16 +69,14 @@ define([
         return this._enabled;
     };
 
-    ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message) {
-        sendMessageRequest.call(this, roomId, screenName, role, lastUpdate, message, _.bind(onSendMessageSuccess, this));
+    ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback) {
+        sendMessageRequest.call(this, roomId, screenName, role, lastUpdate, message, callback);
     };
 
     ChatService.prototype.subscribeAndLoadMessages = function subscribeAndLoadMessages(roomId, batchSize, onReceiveMessages) {
         var disposeOfListener = setupChatListener.call(this, roomId, onReceiveMessages);
 
-        subscribeToRoomConversationRequest.call(this, roomId, batchSize,
-            _.bind(onSubscribeToRoomConversationSuccess, this, roomId)
-        );
+        subscribeToRoomConversationRequest.call(this, roomId, batchSize);
 
         return disposeOfListener;
     };
@@ -115,16 +113,6 @@ define([
         return disposeOfHandler;
     }
 
-    function onSendMessageSuccess() {
-
-    }
-
-    function onSubscribeToRoomConversationSuccess(roomId, chatMessages) {
-        var onReceiveMessages = this._roomMessagesListeners[roomId];
-
-        onReceiveMessages(chatMessages);
-    }
-
     function onRoomConversationEvent(event) {
         assert.isObject(event, 'event');
         assert.stringNotEmpty(event.roomId, 'event.roomId');
@@ -139,7 +127,7 @@ define([
                 convertTimeFromLongInChatMessages(event.chatMessages);
 
                 if (listener) {
-                    listener(event.chatMessages);
+                    listener(null, {status: 'ok', chatMessages: event.chatMessages});
                 }
                 break;
             default:
@@ -164,7 +152,7 @@ define([
         var that = this;
 
         _.forOwn(this._roomMessagesListeners, function(listener, roomId) {
-            subscribeToRoomConversationRequest.call(that, roomId, 1, listener);
+            subscribeToRoomConversationRequest.call(that, roomId, 1);
         });
     }
 
@@ -189,41 +177,76 @@ define([
 
         var sessionId = this._authService.getPCastSessionId();
 
+        this._logger.info('Get messages from room [%s] conversation with batch size of [%s], after [%s], and before [%s]', roomId, batchSize, afterMessageId, beforeMessageId);
+
+        var that = this;
+
         this._protocol.getMessages(sessionId, roomId, batchSize, afterMessageId, beforeMessageId,
-            function (response) {
-                if (response.status !== 'ok') {
-                    throw new Error('Fetch of room conversation failed: ' + response.status);
+            function (error, response) {
+                if (error) {
+                    that._logger.error('Get messages from room conversation failed with error [%s]', error);
+
+                    return callback(error, null);
                 }
 
-                convertTimeFromLongInChatMessages(response.chatMessages);
+                var result = {status: response.status};
 
-                callback(response.chatMessages);
+                if (response.status !== 'ok') {
+                    that._logger.warn('Get messages from room conversation failed with status [%s]', response.status);
+
+                    return callback(null, result);
+                }
+
+                result.chatMessages = response.chatMessages;
+
+                convertTimeFromLongInChatMessages(result.chatMessages);
+
+                callback(null, result);
             }
         );
     }
 
-    function subscribeToRoomConversationRequest(roomId, batchSize, callback) {
+    function subscribeToRoomConversationRequest(roomId, batchSize) {
         assert.stringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
-        assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
         this._authService.assertAuthorized();
 
         var sessionId = this._authService.getPCastSessionId();
 
+        this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
+
         var that = this;
 
-        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (response) {
+        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (error, response) {
+            var onReceiveMessages = that._roomMessagesListeners[roomId];
+
+            if (!onReceiveMessages) {
+                return that._logger.warn('No subscription callback set for room [%s]', roomId);
+            }
+
+            if (error) {
+                that._logger.error('Subscribe to room conversation failed with error [%s]', error);
+
+                return onReceiveMessages(error, null);
+            }
+
+            var result = {status: response.status};
+
             if (response.status !== 'ok') {
                 delete that._roomMessagesListeners[roomId];
 
-                throw new Error('Fetch of room conversation failed: ' + response.status);
+                that._logger.warn('Subscribe to room conversation failed with status [%s]', response.status);
+
+                return onReceiveMessages(null, result);
             }
 
-            convertTimeFromLongInChatMessages(response.chatMessages);
+            result.chatMessages = response.chatMessages;
 
-            callback(response.chatMessages);
+            convertTimeFromLongInChatMessages(result.chatMessages);
+
+            onReceiveMessages(null, result);
         });
     }
 
@@ -233,6 +256,7 @@ define([
         assert.stringNotEmpty(role, 'role');
         assert.isNumber(lastUpdate, 'lastUpdate');
         assert.stringNotEmpty(message, 'message');
+        assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
         this._authService.assertAuthorized();
@@ -251,7 +275,25 @@ define([
             message: message
         };
 
-        return this._protocol.sendMessageToRoom(roomId, chatMessage, callback);
+        this._logger.info('Send message to room [%s] from [%s]', roomId, screenName);
+
+        var that = this;
+
+        return this._protocol.sendMessageToRoom(roomId, chatMessage, function (error, response) {
+            if (error) {
+                that._logger.error('Send message to room failed with error [%s]', error);
+
+                return callback(error, null);
+            }
+
+            var result = {status: response.status};
+
+            if (response.status !== 'ok') {
+                that._logger.warn('Send message to room failed with status [%s]', response.status);
+            }
+
+            callback(null, result);
+        });
     }
 
     function assertEnabled() {

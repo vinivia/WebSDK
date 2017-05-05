@@ -255,13 +255,17 @@ define([
             setupStreamOptions.connectUri = options.connectUri
         }
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
-                that._logger.warn('Failed to create uploader', error);
+                that._logger.error('Failed to create uploader [%s]', error);
 
-                switch (error.status) {
+                return callback.call(that, that, 'failed');
+            } else if (response.status !== 'ok') {
+                that._logger.warn('Failed to create uploader, status [%s]', response.status);
+
+                switch (response.status) {
                     case 'capacity':
-                        return callback.call(that, that, error.status);
+                        return callback.call(that, that, response.status);
                     default:
                         return callback.call(that, that, 'failed');
                 }
@@ -311,16 +315,20 @@ define([
             connectOptions: options.connectOptions
         };
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
-                that._logger.warn('Failed to create downloader', error);
+                that._logger.error('Failed to create downloader [%s]', error);
+
+                return callback.call(that, that, 'failed');
+            } else if (response.status !== 'ok') {
+                that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
                 switch (error.status) {
                     case 'capacity':
                     case 'stream-ended':
                     case 'origin-stream-ended':
                     case 'streaming-not-available':
-                        return callback.call(that, that, error.status);
+                        return callback.call(that, that, response.status);
                     default:
                         return callback.call(that, that, 'failed');
                 }
@@ -695,16 +703,21 @@ define([
         this._connected = true;
 
         if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function (result, error) {
+            that._protocol.authenticate(that._authToken, function (error, response) {
                 if (that._authenticationCallback) {
                     if (error) {
-                        that._logger.warn('Failed to authenticate', error);
+                        that._logger.error('Failed to authenticate [%s]', error);
+                        transitionToStatus.call(that, 'offline');
+                        that._authenticationCallback.call(that, that, 'unauthorized', '');
+                        that.stop('unauthorized');
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('Failed to authenticate, status [%s]', response.status);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
                         that.stop('unauthorized');
                     } else {
                         transitionToStatus.call(that, 'online');
-                        that._authenticationCallback.call(that, that, result.status, result.sessionId);
+                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
                     }
                 }
             });
@@ -1068,9 +1081,12 @@ define([
 
                 closePeerConnection.call(that, streamId, peerConnection, 'stop');
 
-                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                     if (error) {
-                        that._logger.error('[%s] failed to destroy stream', streamId);
+                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+                        return;
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
                         return;
                     }
 
@@ -1158,9 +1174,12 @@ define([
                     return;
                 }
 
-                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                     if (error) {
-                        that._logger.error('[%s] failed to destroy stream', streamId);
+                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+                        return;
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
                         return;
                     }
 
@@ -1241,9 +1260,12 @@ define([
             function onCreateAnswerSuccess(answerSdp) {
                 that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
+                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
                     if (error) {
-                        that._logger.warn('Failed to set answer description', error);
+                        that._logger.error('Failed to set answer description [%s]', error);
+                        return onFailure();
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('Failed to set answer description, status [%s]', response.status);
                         return onFailure();
                     }
 
@@ -1292,9 +1314,12 @@ define([
 
                                 closePeerConnection.call(that, streamId, peerConnection, 'closed');
 
-                                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                                     if (error) {
-                                        that._logger.error('[%s] failed to destroy stream', streamId);
+                                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+                                        return;
+                                    } else if (response.status !== 'ok') {
+                                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
                                         return;
                                     }
 
@@ -1409,9 +1434,12 @@ define([
                                 options.push('completed');
                             }
 
-                            that._protocol.addIceCandidates(streamId, candidates, options, function (response, error) {
+                            that._protocol.addIceCandidates(streamId, candidates, options, function (error, response) {
                                 if (error) {
-                                    that._logger.warn('Failed to add ICE candidate', error);
+                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+                                    return;
+                                } else if (response.status !== 'ok') {
+                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
                                     return;
                                 }
 
@@ -1507,9 +1535,13 @@ define([
             function onCreateAnswerSuccess(answerSdp) {
                 that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
+                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
                     if (error) {
-                        that._logger.warn('Failed to set answer description', error);
+                        that._logger.error('Failed to set answer description [%s]', error);
+
+                        return onFailure();
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('Failed to set answer description, status [%s]', response.status);
 
                         return onFailure();
                     }
@@ -1529,9 +1561,12 @@ define([
                                 options.push('completed');
                             }
 
-                            that._protocol.addIceCandidates(streamId, candidate, options, function (response, error) {
+                            that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
                                 if (error) {
-                                    that._logger.warn('Failed to add ICE candidate', error);
+                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+                                    return;
+                                } else if (response.status !== 'ok') {
+                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
                                     return;
                                 }
 
@@ -1790,9 +1825,12 @@ define([
 
                     that._logger.info('[%s] stop media stream', streamId);
 
-                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                         if (error) {
-                            that._logger.error('[%s] failed to destroy stream', streamId);
+                            that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+                            return;
+                        } else if (response.status !== 'ok') {
+                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
                             return;
                         }
 
@@ -2002,9 +2040,12 @@ define([
 
                     that._logger.info('[%s] stop media stream', streamId);
 
-                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                         if (error) {
-                            that._logger.error('[%s] failed to destroy stream', streamId);
+                            that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+                            return;
+                        } else if (response.status !== 'ok') {
+                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
                             return;
                         }
 

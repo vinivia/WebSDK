@@ -25,15 +25,19 @@ define([
     var memberRoles = member.roles;
     var memberStates = member.states;
 
-    function Member(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
-        this.init(state, sessionId, screenName, role, streams, lastUpdate, roomService);
+    function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+        this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
     }
 
-    Member.prototype.init = function init(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
+    Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
         assert.isString(sessionId, 'sessionId');
         assert.isString(screenName, 'screenName');
         assert.isArray(streams, 'streams');
         assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
+
+        if (roomService) {
+            assert.isObject(roomService);
+        }
 
         this._sessionId = new Observable(sessionId);
         this._screenName = new Observable(screenName);
@@ -82,10 +86,14 @@ define([
     };
 
     Member.prototype.commitChanges = function commitChanges(callback) {
+        assert.isObject(this._roomService);
+
         this._roomService.updateMember(this, callback);
     };
 
     Member.prototype.reload = function reload() {
+        assert.isObject(this._roomService);
+
         this._roomService.revertMemberChanges(this);
     };
 

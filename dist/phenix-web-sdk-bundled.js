@@ -90,8 +90,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(1),
 	    __webpack_require__(2),
 	    __webpack_require__(24),
-	    __webpack_require__(38),
-	    __webpack_require__(42),
+	    __webpack_require__(39),
+	    __webpack_require__(43),
 	    __webpack_require__(4)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, Logger) {
 	    window.PhenixPCast = PhenixPCast;
@@ -179,7 +179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-07T21:36:24Z';
+	    var sdkVersion = '2017-05-10T20:41:17Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -389,13 +389,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            setupStreamOptions.connectUri = options.connectUri
 	        }
 
-	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
+	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
 	            if (error) {
-	                that._logger.warn('Failed to create uploader', error);
+	                that._logger.error('Failed to create uploader [%s]', error);
 
-	                switch (error.status) {
+	                return callback.call(that, that, 'failed');
+	            } else if (response.status !== 'ok') {
+	                that._logger.warn('Failed to create uploader, status [%s]', response.status);
+
+	                switch (response.status) {
 	                    case 'capacity':
-	                        return callback.call(that, that, error.status);
+	                        return callback.call(that, that, response.status);
 	                    default:
 	                        return callback.call(that, that, 'failed');
 	                }
@@ -445,16 +449,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            connectOptions: options.connectOptions
 	        };
 
-	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (response, error) {
+	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
 	            if (error) {
-	                that._logger.warn('Failed to create downloader', error);
+	                that._logger.error('Failed to create downloader [%s]', error);
+
+	                return callback.call(that, that, 'failed');
+	            } else if (response.status !== 'ok') {
+	                that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
 	                switch (error.status) {
 	                    case 'capacity':
 	                    case 'stream-ended':
 	                    case 'origin-stream-ended':
 	                    case 'streaming-not-available':
-	                        return callback.call(that, that, error.status);
+	                        return callback.call(that, that, response.status);
 	                    default:
 	                        return callback.call(that, that, 'failed');
 	                }
@@ -829,16 +837,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._connected = true;
 
 	        if (!that._stopped) {
-	            that._protocol.authenticate(that._authToken, function (result, error) {
+	            that._protocol.authenticate(that._authToken, function (error, response) {
 	                if (that._authenticationCallback) {
 	                    if (error) {
-	                        that._logger.warn('Failed to authenticate', error);
+	                        that._logger.error('Failed to authenticate [%s]', error);
+	                        transitionToStatus.call(that, 'offline');
+	                        that._authenticationCallback.call(that, that, 'unauthorized', '');
+	                        that.stop('unauthorized');
+	                    } else if (response.status !== 'ok') {
+	                        that._logger.warn('Failed to authenticate, status [%s]', response.status);
 	                        transitionToStatus.call(that, 'offline');
 	                        that._authenticationCallback.call(that, that, 'unauthorized', '');
 	                        that.stop('unauthorized');
 	                    } else {
 	                        transitionToStatus.call(that, 'online');
-	                        that._authenticationCallback.call(that, that, result.status, result.sessionId);
+	                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
 	                    }
 	                }
 	            });
@@ -1202,9 +1215,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                closePeerConnection.call(that, streamId, peerConnection, 'stop');
 
-	                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                    if (error) {
-	                        that._logger.error('[%s] failed to destroy stream', streamId);
+	                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+	                        return;
+	                    } else if (response.status !== 'ok') {
+	                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 	                        return;
 	                    }
 
@@ -1292,9 +1308,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return;
 	                }
 
-	                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                    if (error) {
-	                        that._logger.error('[%s] failed to destroy stream', streamId);
+	                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+	                        return;
+	                    } else if (response.status !== 'ok') {
+	                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 	                        return;
 	                    }
 
@@ -1375,9 +1394,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            function onCreateAnswerSuccess(answerSdp) {
 	                that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-	                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
+	                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
 	                    if (error) {
-	                        that._logger.warn('Failed to set answer description', error);
+	                        that._logger.error('Failed to set answer description [%s]', error);
+	                        return onFailure();
+	                    } else if (response.status !== 'ok') {
+	                        that._logger.warn('Failed to set answer description, status [%s]', response.status);
 	                        return onFailure();
 	                    }
 
@@ -1426,9 +1448,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                                closePeerConnection.call(that, streamId, peerConnection, 'closed');
 
-	                                that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                                    if (error) {
-	                                        that._logger.error('[%s] failed to destroy stream', streamId);
+	                                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+	                                        return;
+	                                    } else if (response.status !== 'ok') {
+	                                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 	                                        return;
 	                                    }
 
@@ -1543,9 +1568,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                options.push('completed');
 	                            }
 
-	                            that._protocol.addIceCandidates(streamId, candidates, options, function (response, error) {
+	                            that._protocol.addIceCandidates(streamId, candidates, options, function (error, response) {
 	                                if (error) {
-	                                    that._logger.warn('Failed to add ICE candidate', error);
+	                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+	                                    return;
+	                                } else if (response.status !== 'ok') {
+	                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
 	                                    return;
 	                                }
 
@@ -1641,9 +1669,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            function onCreateAnswerSuccess(answerSdp) {
 	                that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-	                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (response, error) {
+	                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
 	                    if (error) {
-	                        that._logger.warn('Failed to set answer description', error);
+	                        that._logger.error('Failed to set answer description [%s]', error);
+
+	                        return onFailure();
+	                    } else if (response.status !== 'ok') {
+	                        that._logger.warn('Failed to set answer description, status [%s]', response.status);
 
 	                        return onFailure();
 	                    }
@@ -1663,9 +1695,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                options.push('completed');
 	                            }
 
-	                            that._protocol.addIceCandidates(streamId, candidate, options, function (response, error) {
+	                            that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
 	                                if (error) {
-	                                    that._logger.warn('Failed to add ICE candidate', error);
+	                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+	                                    return;
+	                                } else if (response.status !== 'ok') {
+	                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
 	                                    return;
 	                                }
 
@@ -1924,9 +1959,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    that._logger.info('[%s] stop media stream', streamId);
 
-	                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                        if (error) {
-	                            that._logger.error('[%s] failed to destroy stream', streamId);
+	                            that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+	                            return;
+	                        } else if (response.status !== 'ok') {
+	                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 	                            return;
 	                        }
 
@@ -2136,9 +2174,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    that._logger.info('[%s] stop media stream', streamId);
 
-	                    that._protocol.destroyStream(streamId, reason || '', function (value, error) {
+	                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                        if (error) {
-	                            that._logger.error('[%s] failed to destroy stream', streamId);
+	                            that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+	                            return;
+	                        } else if (response.status !== 'ok') {
+	                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 	                            return;
 	                        }
 
@@ -2986,15 +3027,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            sessionId: this._sessionId
 	        };
 
-	        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, function(message, response) {
-	            if (message) {
-	                if (message.status) {
-	                    return callback(message);
-	                }
-	            }
-
-	            callback(response);
-	        });
+	        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
 	    };
 
 	    PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
@@ -3012,15 +3045,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        };
 
-	        return sendRequest.call(this, 'chat.CreateRoom', createRoom, function(message, response) {
-	            if (message) {
-	                if (message.status) {
-	                    return callback(message);
-	                }
-	            }
-
-	            callback(response);
-	        });
+	        return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);
 	    };
 
 	    PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -3041,15 +3066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            timestamp: timestamp
 	        };
 
-	        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, function(message, response) {
-	            if (message) {
-	                if (message.status) {
-	                    return callback(message);
-	                }
-	            }
-
-	            callback(response);
-	        });
+	        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, callback);
 	    };
 
 	    PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -3079,15 +3096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            timestamp: timestamp
 	        };
 
-	        return sendRequest.call(this, 'chat.UpdateMember', updateMember, function(message, response) {
-	            if (message) {
-	                if (message.status) {
-	                    return callback(message);
-	                }
-	            }
-
-	            callback(response);
-	        });
+	        return sendRequest.call(this, 'chat.UpdateMember', updateMember, callback);
 	    };
 
 	    PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -3243,10 +3252,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (callback) {
 	            delete this._requests[response.requestId];
 
-	            if (response.type === 'mq.Error' || message.status !== 'ok') {
-	                callback(undefined, message);
+	            if (response.type === 'mq.Error') {
+	                var error = message;
+
+	                callback(error, null);
 	            } else {
-	                callback(message);
+	                callback(null, message);
 	            }
 	        }
 	    }
@@ -16732,11 +16743,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(34),
 	    __webpack_require__(25),
-	    __webpack_require__(28),
 	    __webpack_require__(36),
+	    __webpack_require__(28),
+	    __webpack_require__(37),
 	    __webpack_require__(33),
 	    __webpack_require__(32)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, Member, RoomChatService, room, member) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Logger, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
 	    'use strict';
 
 	    function RoomService(pcast) {
@@ -16757,7 +16769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(this._protocol, 'this._protocol');
 
 	        this._authService = new AuthenticationService(this._pcast);
-	    };
+	    }
 
 	    RoomService.prototype.start = function start(role, screenName) {
 	        assert.stringNotEmpty(role, 'role');
@@ -16770,8 +16782,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var myScreenName = screenName;
 	        var myStreams = [];
 	        var myLastUpdate = _.now();
+	        var roomService = this;
 
-	        var self = new Member(myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
+	        var self = new Member(roomService, myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
 
 	        this._self = new Observable(self);
 	        this._disposables = [];
@@ -16802,11 +16815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isString(description, 'description');
 	        assert.isFunction(callback);
 
-	        createRoomRequest.call(this, name, type, description,
-	            function createRoomSuccess(response) {
-	                callback(response.room);
-	            }
-	        );
+	        createRoomRequest.call(this, name, type, description, callback);
 	    };
 
 	    RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
@@ -16817,25 +16826,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        assert.isFunction(callback);
 
-	        enterRoomRequest.call(this, roomId, alias, _.bind(enterRoomSuccess, this, callback));
+	        enterRoomRequest.call(this, roomId, alias, callback);
 	    };
 
 	    RoomService.prototype.leaveRoom = function leaveRoom(callback) {
 	        var that = this;
 
-	        return leaveRoomRequest.call(that,
-	            function leaveRoomSuccess(status) {
-	                if (that._roomChatService) {
-	                    that._roomChatService.stop();
-	                }
-
-	                that._roomChatService = null;
-
-	                that._activeRoom.setValue(null);
-	                that._cachedRoom.setValue(null);
-	                callback(status);
-	            }
-	        );
+	        return leaveRoomRequest.call(that, callback);
 	    };
 
 	    RoomService.prototype.getRoomChatService = function getRoomChatService() {
@@ -16909,8 +16906,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function resetSelf(sessionId) {
 	        var self = this._self.getValue().toJson();
+	        var roomService = this;
 
-	        this._self.setValue(new Member(self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate, this));
+	        this._self.setValue(new Member(roomService, self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate));
 	    }
 
 	    function resetRoom() {
@@ -16930,40 +16928,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._logger.info('Room Reset Completed');
 	            });
 	        });
-	    }
-
-	    function enterRoomSuccess(callback, response) {
-	        var roomInfo = response.room;
-	        var members = response.members;
-
-	        var room = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
-	        var cachedRoom = new Room(roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin, this);
-
-	        replaceSelfInstanceInRoom.call(this, room);
-
-	        this._activeRoom.setValue(room);
-	        this._cachedRoom.setValue(cachedRoom);
-
-	        callback(room, 'ok', null);
-	    }
-
-	    function replaceSelfInstanceInRoom(room) {
-	        var self = this._self.getValue();
-	        var members = room.getObservableMembers().getValue();
-
-	        var selfIndex = _.findIndex(members, function(member) {
-	            return self.getSessionId() === member.getSessionId();
-	        });
-
-	        if (!_.isNumber(selfIndex)) {
-	            throw new Error('Invalid Room State: Self member not in room list of members.');
-	        }
-
-	        self._update(members[selfIndex].toJson());
-
-	        members[selfIndex] = self;
-
-	        room.getObservableMembers().setValue(members);
 	    }
 
 	    // handle events
@@ -17140,13 +17104,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function getRoomInfoRequest(roomId, alias, callback) {
 	        this._authService.assertAuthorized();
 
+	        var that = this;
+
 	        this._protocol.getRoomInfo(roomId, alias,
-	            function handleCreateRoomResponse(response) {
-	                if (response.status !== 'ok') {
-	                    return callback(response.room, response.status, response.reason);
+	            function handleCreateRoomResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Request to get room info failed with error [%s]', error);
+
+	                    return callback(error, null);
 	                }
 
-	                callback(response.room, response.status, null);
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Request to get room info failed with status [%s]', response.status);
+
+	                    return callback(null, result);
+	                }
+
+	                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+
+	                callback(null, result);
 	            }
 	        );
 	    }
@@ -17154,13 +17132,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function createRoomRequest(roomName, type, description, callback) {
 	        this._authService.assertAuthorized();
 
+	        var that = this;
+
 	        this._protocol.createRoom(roomName, type, description,
-	            function handleCreateRoomResponse(response) {
-	                if (response.status !== 'ok' && response.status !== 'already-exists') {
-	                    throw new Error(response.reason);
+	            function handleCreateRoomResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Creating room failed with error [%s]', error);
+
+	                    return callback(error, null);
 	                }
 
-	                callback(response);
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok' && response.status !== 'already-exists') {
+	                    that._logger.warn('Creating room failed with status [%s]', response.status);
+
+	                    return callback(null, result);
+	                }
+
+	                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+
+	                callback(null, result);
 	            }
 	        );
 	    }
@@ -17177,13 +17169,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._logger.info('Enter room [%s]/[%s] with screen name [%s] and role [%s]', roomId, alias, screenName, role);
 
+	        var that = this;
+
 	        this._protocol.enterRoom(roomId, alias, selfForRequest, timestamp,
-	            function handleEnterRoomResponse(response) {
-	                if (response.status !== 'ok') {
-	                    throw new Error('Joining of room failed: ' + response.status);
+	            function handleEnterRoomResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Joining of room failed with error [%s]', error);
+
+	                    return callback(error, null);
 	                }
 
-	                callback(response);
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Joining of room failed with status [%s]', response.status);
+
+	                    return callback(null, result);
+	                }
+
+	                result.room = initializeRoomAndBuildCache.call(that, response);
+
+	                callback(null, result)
 	            }
 	        );
 	    }
@@ -17200,24 +17206,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._logger.info('Leave room [%s]', roomId);
 
+	        var that = this;
+
 	        this._protocol.leaveRoom(roomId, timestamp,
-	            function handleLeaveRoomResponse(response) {
-	                if (response.status !== 'ok') {
-	                    throw new Error('Leaving room failed: ' + response.status);
+	            function handleLeaveRoomResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Leaving room failed with error [%s]', error);
+
+	                    return callback(error, null);
 	                }
 
-	                callback(response.status);
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Leaving room failed with status [%s]', response.status);
+
+	                    return callback(null, result);
+	                }
+
+	                if (that._roomChatService) {
+	                    that._roomChatService.stop();
+	                }
+
+	                that._roomChatService = null;
+
+	                that._activeRoom.setValue(null);
+	                that._cachedRoom.setValue(null);
+
+	                callback(null, result);
 	            }
 	        );
 	    }
 
-	    var notInRoomError = 'Not in a room. Please Enter a room before updating self.';
-
 	    function updateMemberRequest(member, callback) {
 	        if (!this._activeRoom.getValue()) {
-	            this._logger.warn('notInRoomError');
+	            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-	            return callback('not-in-room', notInRoomError);
+	            return callback('not-in-room');
 	        }
 
 	        this._authService.assertAuthorized();
@@ -17231,23 +17256,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        this._protocol.updateMember(memberForRequest, timestamp,
-	            function handleUpdateMemberResponse(response) {
-	                if (response.status !== 'ok') {
-	                    that._logger.warn('Update of member failed: ' + response.status);
+	            function handleUpdateMemberResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Update of member failed with error [%s]', error);
 
-	                    return callback('failed', 'Update of member failed: ' + response.status);
+	                    return callback(error, null);
 	                }
 
-	                return callback('ok', null)
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Update of member failed with status [%s]', response.status);
+	                }
+
+	                callback(null, result);
 	            }
 	        );
 	    }
 
 	    function updateRoomRequest(callback) {
 	        if (!this._activeRoom.getValue()) {
-	            this._logger.warn('notInRoomError');
+	            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-	            return callback('not-in-room', notInRoomError);
+	            return callback('not-in-room');
 	        }
 
 	        this._authService.assertAuthorized();
@@ -17258,16 +17289,69 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        this._protocol.updateRoom(room.toJson(), timestamp,
-	            function handleUpdateMemberResponse(response) {
-	                if (response.status !== 'ok') {
-	                    that._logger.warn('Update of room failed: ' + response.status);
+	            function handleUpdateMemberResponse(error, response) {
+	                if (error) {
+	                    that._logger.error('Update of room failed with error [%s]', error);
 
-	                    return callback('failed', 'Update of member failed: ' + response.status);
+	                    return callback(error, null);
 	                }
 
-	                return callback(response.status, null);
+	                var result = {status: response.status};
+
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Update of room failed with status [%s]', response.status);
+	                }
+
+	                callback(null, result);
 	            }
 	        );
+	    }
+
+	    function createImmutableRoomFromResponse(response) {
+	        var roomInfo = response.room;
+	        var members = response.members || [];
+	        var roomService = this;
+
+	        return new ImmutableRoom(roomService, roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin);
+	    }
+
+	    function createRoomFromResponse(response) {
+	        var roomInfo = response.room;
+	        var members = response.members;
+	        var roomService = this;
+
+	        return new Room(roomService, roomInfo.roomId, roomInfo.alias, roomInfo.name, roomInfo.description, roomInfo.type, members, roomInfo.bridgeId, roomInfo.pin);
+	    }
+
+	    function initializeRoomAndBuildCache(response) {
+	        var room = createRoomFromResponse.call(this, response);
+	        var cachedRoom = createRoomFromResponse.call(this, response);
+
+	        replaceSelfInstanceInRoom.call(this, room);
+
+	        this._activeRoom.setValue(room);
+	        this._cachedRoom.setValue(cachedRoom);
+
+	        return room;
+	    }
+
+	    function replaceSelfInstanceInRoom(room) {
+	        var self = this._self.getValue();
+	        var members = room.getObservableMembers().getValue();
+
+	        var selfIndex = _.findIndex(members, function(member) {
+	            return self.getSessionId() === member.getSessionId();
+	        });
+
+	        if (!_.isNumber(selfIndex)) {
+	            throw new Error('Invalid Room State: Self member not in room list of members.');
+	        }
+
+	        self._update(members[selfIndex].toJson());
+
+	        members[selfIndex] = self;
+
+	        room.getObservableMembers().setValue(members);
 	    }
 
 	    return RoomService;
@@ -17304,11 +17388,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 	    var roomTypes = room.types;
 
-	    function Room(id, alias, name, description, type, members, bridgeId, pin, roomService) {
-	        this.init(id, alias, name, description, type, members, bridgeId, pin, roomService);
+	    function Room(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+	        this.init(roomService, id, alias, name, description, type, members, bridgeId, pin);
 	    }
 
-	    Room.prototype.init = function init(id, alias, name, description, type, members, bridgeId, pin, roomService) {
+	    Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
 	        assert.isString(id, 'id');
 	        assert.isString(alias, 'alias');
 	        assert.isString(name, 'name');
@@ -17320,6 +17404,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (pin) {
 	            assert.isString(pin, 'pin');
+	        }
+	        if (roomService) {
+	            assert.isObject(roomService);
 	        }
 
 	        this._roomId = new Observable(id);
@@ -17385,10 +17472,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    Room.prototype.commitChanges = function commitChanges(callback) {
+	        assert.isObject(this._roomService);
+
 	        this._roomService.updateRoom(this, callback);
 	    };
 
 	    Room.prototype.reload = function reload() {
+	        assert.isObject(this._roomService);
+
 	        this._roomService.revertRoomChanges(this);
 	    };
 
@@ -17468,14 +17559,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    function setMembers(members) {
-	        var newMembers = mapMembers(members);
+	        var newMembers = mapMembers(members, this._roomService);
 
 	        this._members.setValue(newMembers);
 	    }
 
-	    function mapMembers(members) {
+	    function mapMembers(members, roomService) {
 	        return _.map(members, function(member) {
-	            return new Member(member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+	            return new Member(roomService, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
 	        });
 	    }
 
@@ -17818,15 +17909,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var memberRoles = member.roles;
 	    var memberStates = member.states;
 
-	    function Member(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
-	        this.init(state, sessionId, screenName, role, streams, lastUpdate, roomService);
+	    function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+	        this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
 	    }
 
-	    Member.prototype.init = function init(state, sessionId, screenName, role, streams, lastUpdate, roomService) {
+	    Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
 	        assert.isString(sessionId, 'sessionId');
 	        assert.isString(screenName, 'screenName');
 	        assert.isArray(streams, 'streams');
 	        assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
+
+	        if (roomService) {
+	            assert.isObject(roomService);
+	        }
 
 	        this._sessionId = new Observable(sessionId);
 	        this._screenName = new Observable(screenName);
@@ -17875,10 +17970,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    Member.prototype.commitChanges = function commitChanges(callback) {
+	        assert.isObject(this._roomService);
+
 	        this._roomService.updateMember(this, callback);
 	    };
 
 	    Member.prototype.reload = function reload() {
+	        assert.isObject(this._roomService);
+
 	        this._roomService.revertMemberChanges(this);
 	    };
 
@@ -18446,8 +18545,130 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(3),
 	    __webpack_require__(6),
+	    __webpack_require__(26),
 	    __webpack_require__(27),
-	    __webpack_require__(37)
+	    __webpack_require__(25),
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
+	    'use strict';
+
+	    function ImmutableRoom(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+	        this.init(roomService, id, alias, name, description, type, members, bridgeId, pin);
+	    }
+
+	    ImmutableRoom.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+	        // don't pass roomService.
+	        this._room = new Room(null, id, alias, name, description, type, members, bridgeId, pin);
+
+	        makeArrayOrObjectObservablesImmutable(this._room);
+	    };
+
+	    ImmutableRoom.prototype.getRoomId = function getImmutableRoomId() {
+	        return this._room.getRoomId();
+	    };
+
+	    ImmutableRoom.prototype.getObservableAlias = function getObservableAlias() {
+	        return this._room.getObservableAlias();
+	    };
+
+	    ImmutableRoom.prototype.getObservableName = function getObservableName() {
+	        return this._room.getObservableName();
+	    };
+
+	    ImmutableRoom.prototype.getObservableDescription = function getObservableDescription() {
+	        return this._room.getObservableDescription();
+	    };
+
+	    ImmutableRoom.prototype.getObservableType = function getObservableType() {
+	        return this._room.getObservableType();
+	    };
+
+	    ImmutableRoom.prototype.getObservableMembers = function getObservableMembers() {
+	        return this._room.getObservableMembers();
+	    };
+
+	    ImmutableRoom.prototype.getObservableBridgeId = function getObservableBridgeId() {
+	        return this._room.getObservableBridgeId();
+	    };
+
+	    ImmutableRoom.prototype.getObservablePin = function getObservablePin() {
+	        return this._room.getObservablePin();
+	    };
+
+	    ImmutableRoom.prototype.toString = function toString() {
+	        return this._room.toString();
+	    };
+
+	    ImmutableRoom.prototype.toJson = function toJson() {
+	        return this._room.toJson();
+	    };
+
+	    ImmutableRoom.prototype.commitChanges = throwImmutableError;
+	    ImmutableRoom.prototype.reload = throwImmutableError;
+	    ImmutableRoom.prototype._update = throwImmutableError;
+	    ImmutableRoom.prototype._addMembers = throwImmutableError;
+	    ImmutableRoom.prototype._removeMembers = throwImmutableError;
+	    ImmutableRoom.prototype._updateMembers = throwImmutableError;
+
+	    function throwImmutableError() {
+	        throw new Error('ImmutableRoom is Immutable');
+	    }
+
+	    function makeArrayOrObjectObservablesImmutable(collection) {
+	        if (_.isArray(collection)) {
+	            _.forEach(collection, function (value, index) {
+	                wrapObservableAndAnyObservableProperties(value);
+	            });
+	        } else if (_.isObject(collection)) {
+	            _.forOwn(collection, function (value, key) {
+	                wrapObservableAndAnyObservableProperties(value);
+	            })
+	        }
+	    }
+
+	    function wrapObservableAndAnyObservableProperties(value) {
+	        wrapObservable(value);
+	        makeArrayOrObjectObservablesImmutable(value);
+	    }
+
+	    function wrapObservable(value) {
+	        if (value instanceof Observable || value instanceof ObservableArray) {
+	            value.setValue = throwImmutableError;
+	            value.subscribe = throwImmutableError;
+
+	            var observableValue = value.getValue();
+
+	            makeArrayOrObjectObservablesImmutable(observableValue);
+	        }
+	    }
+
+	    return ImmutableRoom;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(3),
+	    __webpack_require__(6),
+	    __webpack_require__(27),
+	    __webpack_require__(38)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
 	    'use strict';
 
@@ -18492,7 +18713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._chatService.getObservableChatEnabled();
 	    };
 
-	    RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message) {
+	    RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message, callback) {
 	        var room = this._roomService.getObservableActiveRoom().getValue();
 	        var roomId = room.getRoomId();
 	        var self = this._roomService._self.getValue();
@@ -18500,16 +18721,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var role = self.getObservableRole().getValue();
 	        var lastUpdate = self.getLastUpdate();
 
-	        this._chatService.sendMessageToRoom(roomId, screenName, role, lastUpdate, message);
+	        this._chatService.sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback);
 	    };
 
 	    RoomChatService.prototype.getMessages = function getMessages(batchSize, afterMessageId, beforeMessageId, callback) {
 	        var room = this._roomService.getObservableActiveRoom().getValue();
 	        var roomId = room.getRoomId();
 
-	        return this._chatService.getMessages(roomId, batchSize, afterMessageId, beforeMessageId, function onReceiveMessages(chatMessages) {
-	            callback(chatMessages);
-	        })
+	        return this._chatService.getMessages(roomId, batchSize, afterMessageId, beforeMessageId, callback);
 	    };
 
 	    RoomChatService.prototype.toString = function toString() {
@@ -18550,10 +18769,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._chatMessages.setValue([]);
 
-	        return this._chatService.subscribeAndLoadMessages(roomId, batchSize, function onReceiveMessages(chatMessages) {
+	        return this._chatService.subscribeAndLoadMessages(roomId, batchSize, function onReceiveMessages(error, response) {
+	            if (error) {
+	                throw error;
+	            }
+	            if (response.status !== 'ok') {
+	                throw new Error('Unable to subscribe to room chat. Status ' + status);
+	            }
+
 	            var messages = that._chatMessages.getValue();
 
-	            _.forEach(chatMessages, function addMessage(message) {
+	            _.forEach(response.chatMessages, function addMessage(message) {
 	                messages.push(message);
 	            });
 
@@ -18582,7 +18808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18623,7 +18849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(this._protocol, 'this._protocol');
 
 	        this._authService = new AuthenticationService(this._pcast);
-	    };
+	    }
 
 	    ChatService.prototype.start = function start() {
 	        if (this._enabled.getValue()) {
@@ -18656,16 +18882,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._enabled;
 	    };
 
-	    ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message) {
-	        sendMessageRequest.call(this, roomId, screenName, role, lastUpdate, message, _.bind(onSendMessageSuccess, this));
+	    ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback) {
+	        sendMessageRequest.call(this, roomId, screenName, role, lastUpdate, message, callback);
 	    };
 
 	    ChatService.prototype.subscribeAndLoadMessages = function subscribeAndLoadMessages(roomId, batchSize, onReceiveMessages) {
 	        var disposeOfListener = setupChatListener.call(this, roomId, onReceiveMessages);
 
-	        subscribeToRoomConversationRequest.call(this, roomId, batchSize,
-	            _.bind(onSubscribeToRoomConversationSuccess, this, roomId)
-	        );
+	        subscribeToRoomConversationRequest.call(this, roomId, batchSize);
 
 	        return disposeOfListener;
 	    };
@@ -18702,16 +18926,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return disposeOfHandler;
 	    }
 
-	    function onSendMessageSuccess() {
-
-	    }
-
-	    function onSubscribeToRoomConversationSuccess(roomId, chatMessages) {
-	        var onReceiveMessages = this._roomMessagesListeners[roomId];
-
-	        onReceiveMessages(chatMessages);
-	    }
-
 	    function onRoomConversationEvent(event) {
 	        assert.isObject(event, 'event');
 	        assert.stringNotEmpty(event.roomId, 'event.roomId');
@@ -18726,7 +18940,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                convertTimeFromLongInChatMessages(event.chatMessages);
 
 	                if (listener) {
-	                    listener(event.chatMessages);
+	                    listener(null, {status: 'ok', chatMessages: event.chatMessages});
 	                }
 	                break;
 	            default:
@@ -18751,7 +18965,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        _.forOwn(this._roomMessagesListeners, function(listener, roomId) {
-	            subscribeToRoomConversationRequest.call(that, roomId, 1, listener);
+	            subscribeToRoomConversationRequest.call(that, roomId, 1);
 	        });
 	    }
 
@@ -18776,41 +18990,76 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var sessionId = this._authService.getPCastSessionId();
 
+	        this._logger.info('Get messages from room [%s] conversation with batch size of [%s], after [%s], and before [%s]', roomId, batchSize, afterMessageId, beforeMessageId);
+
+	        var that = this;
+
 	        this._protocol.getMessages(sessionId, roomId, batchSize, afterMessageId, beforeMessageId,
-	            function (response) {
-	                if (response.status !== 'ok') {
-	                    throw new Error('Fetch of room conversation failed: ' + response.status);
+	            function (error, response) {
+	                if (error) {
+	                    that._logger.error('Get messages from room conversation failed with error [%s]', error);
+
+	                    return callback(error, null);
 	                }
 
-	                convertTimeFromLongInChatMessages(response.chatMessages);
+	                var result = {status: response.status};
 
-	                callback(response.chatMessages);
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Get messages from room conversation failed with status [%s]', response.status);
+
+	                    return callback(null, result);
+	                }
+
+	                result.chatMessages = response.chatMessages;
+
+	                convertTimeFromLongInChatMessages(result.chatMessages);
+
+	                callback(null, result);
 	            }
 	        );
 	    }
 
-	    function subscribeToRoomConversationRequest(roomId, batchSize, callback) {
+	    function subscribeToRoomConversationRequest(roomId, batchSize) {
 	        assert.stringNotEmpty(roomId, 'roomId');
 	        assert.isNumber(batchSize, 'batchSize');
-	        assert.isFunction(callback, 'callback');
 
 	        assertEnabled.call(this);
 	        this._authService.assertAuthorized();
 
 	        var sessionId = this._authService.getPCastSessionId();
 
+	        this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
+
 	        var that = this;
 
-	        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (response) {
+	        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (error, response) {
+	            var onReceiveMessages = that._roomMessagesListeners[roomId];
+
+	            if (!onReceiveMessages) {
+	                return that._logger.warn('No subscription callback set for room [%s]', roomId);
+	            }
+
+	            if (error) {
+	                that._logger.error('Subscribe to room conversation failed with error [%s]', error);
+
+	                return onReceiveMessages(error, null);
+	            }
+
+	            var result = {status: response.status};
+
 	            if (response.status !== 'ok') {
 	                delete that._roomMessagesListeners[roomId];
 
-	                throw new Error('Fetch of room conversation failed: ' + response.status);
+	                that._logger.warn('Subscribe to room conversation failed with status [%s]', response.status);
+
+	                return onReceiveMessages(null, result);
 	            }
 
-	            convertTimeFromLongInChatMessages(response.chatMessages);
+	            result.chatMessages = response.chatMessages;
 
-	            callback(response.chatMessages);
+	            convertTimeFromLongInChatMessages(result.chatMessages);
+
+	            onReceiveMessages(null, result);
 	        });
 	    }
 
@@ -18820,6 +19069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.stringNotEmpty(role, 'role');
 	        assert.isNumber(lastUpdate, 'lastUpdate');
 	        assert.stringNotEmpty(message, 'message');
+	        assert.isFunction(callback, 'callback');
 
 	        assertEnabled.call(this);
 	        this._authService.assertAuthorized();
@@ -18838,7 +19088,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	            message: message
 	        };
 
-	        return this._protocol.sendMessageToRoom(roomId, chatMessage, callback);
+	        this._logger.info('Send message to room [%s] from [%s]', roomId, screenName);
+
+	        var that = this;
+
+	        return this._protocol.sendMessageToRoom(roomId, chatMessage, function (error, response) {
+	            if (error) {
+	                that._logger.error('Send message to room failed with error [%s]', error);
+
+	                return callback(error, null);
+	            }
+
+	            var result = {status: response.status};
+
+	            if (response.status !== 'ok') {
+	                that._logger.warn('Send message to room failed with status [%s]', response.status);
+	            }
+
+	            callback(null, result);
+	        });
 	    }
 
 	    function assertEnabled() {
@@ -18879,7 +19147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18901,9 +19169,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(3),
 	    __webpack_require__(6),
 	    __webpack_require__(4),
-	    __webpack_require__(39),
 	    __webpack_require__(40),
-	    __webpack_require__(41)
+	    __webpack_require__(41),
+	    __webpack_require__(42)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
@@ -18970,7 +19238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19019,7 +19287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19154,7 +19422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19272,7 +19540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19294,7 +19562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(3),
 	    __webpack_require__(6),
 	    __webpack_require__(4),
-	    __webpack_require__(43)
+	    __webpack_require__(44)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -19339,7 +19607,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**

@@ -284,15 +284,7 @@ define([
             sessionId: this._sessionId
         };
 
-        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, function(message, response) {
-            if (message) {
-                if (message.status) {
-                    return callback(message);
-                }
-            }
-
-            callback(response);
-        });
+        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
     };
 
     PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
@@ -310,15 +302,7 @@ define([
             }
         };
 
-        return sendRequest.call(this, 'chat.CreateRoom', createRoom, function(message, response) {
-            if (message) {
-                if (message.status) {
-                    return callback(message);
-                }
-            }
-
-            callback(response);
-        });
+        return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);
     };
 
     PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -339,15 +323,7 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, function(message, response) {
-            if (message) {
-                if (message.status) {
-                    return callback(message);
-                }
-            }
-
-            callback(response);
-        });
+        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, callback);
     };
 
     PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -377,15 +353,7 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.UpdateMember', updateMember, function(message, response) {
-            if (message) {
-                if (message.status) {
-                    return callback(message);
-                }
-            }
-
-            callback(response);
-        });
+        return sendRequest.call(this, 'chat.UpdateMember', updateMember, callback);
     };
 
     PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -541,10 +509,12 @@ define([
         if (callback) {
             delete this._requests[response.requestId];
 
-            if (response.type === 'mq.Error' || message.status !== 'ok') {
-                callback(undefined, message);
+            if (response.type === 'mq.Error') {
+                var error = message;
+
+                callback(error, null);
             } else {
-                callback(message);
+                callback(null, message);
             }
         }
     }
