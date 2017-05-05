@@ -619,17 +619,19 @@ define([
         }
 
         return getUserMediaStream.call(that, {
-            audio: options.audio,
-            video: options.video
-        }, function success(status, stream) {
-            return getUserMediaStream.call(that, {screen: options.screen}, function screenSuccess(status, screenStream) {
+            screen: options.screen
+        }, function success(status, screenStream) {
+            return getUserMediaStream.call(that, {
+                audio: options.audio,
+                video: options.video
+            }, function screenSuccess(status, stream) {
                 addTracksToWebRTCStream(stream, screenStream.getTracks());
 
                 onUserMediaSuccess(status, stream);
-            }, function failure(status, screenStream, error) {
-                stopWebRTCStream(stream);
+            }, function failure(status, stream, error) {
+                stopWebRTCStream(screenStream);
 
-                onUserMediaFailure(status, screenStream, error);
+                onUserMediaFailure(status, stream, error);
             });
         }, onUserMediaFailure);
     }

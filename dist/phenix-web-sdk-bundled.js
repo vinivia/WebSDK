@@ -179,7 +179,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-05T22:10:09Z';
+	    var sdkVersion = '2017-05-07T21:36:24Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -753,17 +753,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return getUserMediaStream.call(that, {
-	            audio: options.audio,
-	            video: options.video
-	        }, function success(status, stream) {
-	            return getUserMediaStream.call(that, {screen: options.screen}, function screenSuccess(status, screenStream) {
+	            screen: options.screen
+	        }, function success(status, screenStream) {
+	            return getUserMediaStream.call(that, {
+	                audio: options.audio,
+	                video: options.video
+	            }, function screenSuccess(status, stream) {
 	                addTracksToWebRTCStream(stream, screenStream.getTracks());
 
 	                onUserMediaSuccess(status, stream);
-	            }, function failure(status, screenStream, error) {
-	                stopWebRTCStream(stream);
+	            }, function failure(status, stream, error) {
+	                stopWebRTCStream(screenStream);
 
-	                onUserMediaFailure(status, screenStream, error);
+	                onUserMediaFailure(status, stream, error);
 	            });
 	        }, onUserMediaFailure);
 	    }
