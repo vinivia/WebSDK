@@ -28,7 +28,17 @@ module.exports = function (grunt) {
 
     grunt.registerTask('default', []);
     grunt.registerTask('pack', ['uglify', 'zip']);
-    grunt.registerTask('build', ['default', 'clean', 'copy:chrome-app', 'webpack', 'sed', 'pack']);
+    grunt.registerTask('release-package-json', 'Parse package.json and output for release.', function() {
+        const packageJson = grunt.file.readJSON('./package.json');
+
+        delete packageJson.scripts;
+        delete packageJson.dependencies;
+        delete packageJson.engines;
+        delete packageJson.devDependencies;
+
+        grunt.file.write('dist/package.json', JSON.stringify(packageJson, null, 2));
+    });
+    grunt.registerTask('build', ['default', 'clean', 'copy:chrome-app', 'webpack', 'sed', 'pack', 'release-package-json']);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),

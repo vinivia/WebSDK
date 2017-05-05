@@ -1,0 +1,11 @@
+{
+  "name": "phenix-web-sdk",
+  "version": "1.6.0",
+  "license": "Apache-2.0",
+  "private": false,
+  "main": "phenix-web-sdk-bundled.min.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PhenixP2P/WebSDK.git"
+  }
+}
