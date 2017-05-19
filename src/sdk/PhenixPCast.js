@@ -323,7 +323,7 @@ define([
             } else if (response.status !== 'ok') {
                 that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
-                switch (error.status) {
+                switch (response.status) {
                     case 'capacity':
                     case 'stream-ended':
                     case 'origin-stream-ended':
