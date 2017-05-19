@@ -201,7 +201,7 @@ define([
         var hasItem;
 
         _.forEach(collection, function findInCollection(value, index) {
-            if (callback(value) && index >= (initialIndex || 0)) {
+            if (callback(value, index) && index >= (initialIndex || 0)) {
                 hasItem = index;
                 return hasItem;
             }

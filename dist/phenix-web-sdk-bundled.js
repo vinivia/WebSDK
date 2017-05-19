@@ -191,7 +191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-01T17:46:20Z' || '?';
+	    var sdkVersion = '2017-06-02T12:52:50Z' || '?';
 	    var releaseVersion = '2017.2.2';
 
 	    function Logger(observableSessionId) {
@@ -573,7 +573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var hasItem;
 
 	        _.forEach(collection, function findInCollection(value, index) {
-	            if (callback(value) && index >= (initialIndex || 0)) {
+	            if (callback(value, index) && index >= (initialIndex || 0)) {
 	                hasItem = index;
 	                return hasItem;
 	            }
@@ -1256,7 +1256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-01T17:46:20Z';
+	        this._version = '2017-06-02T12:52:50Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14303,7 +14303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-01T17:46:20Z';
+	    var sdkVersion = '2017-06-02T12:52:50Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -17880,8 +17880,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var frameRate = undefined;
 	        var videoBitRate = undefined;
 	        var audioBitRate = undefined;
-	        var lastVideoBytes = {time: _.now(), value: 0};
-	        var lastAudioBytes = {time: _.now(), value: 0};
+	        var lastAudioBytes = {};
+	        var lastVideoBytes = {};
 	        var frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
 	        var videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
 	        var audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
@@ -17907,11 +17907,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        case 'Firefox':
 	                            writable = readable |= stats.selected && stats.state === 'succeeded';
 
-	                            if (options.direction === 'outbound' && stats.type === 'outboundrtp') {
-	                                var currentBytes = {
-	                                    time: _.now(),
-	                                    value: stats.bytesSent || 0
-	                                };
+	                            var trackId = stats.ssrc;
+
+	                            if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp')) {
+	                                var currentBytes = new StatsBytes(stats.bytesSent);
 
 	                                switch (stats.mediaType) {
 	                                    case 'video':
@@ -17920,23 +17919,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        hasFrameRate = true;
 	                                        frameRate = stats.framerateMean || 0;
 	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
-	                                        lastVideoBytes = currentBytes;
+	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                        lastVideoBytes[trackId] = currentBytes;
 	                                        break;
 	                                    case 'audio':
 	                                        that._logger.debug('[%s] Outbound [%s] [%s]',
 	                                            name, stats.mediaType, stats.ssrc);
 	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
-	                                        lastAudioBytes = currentBytes;
+	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                        lastAudioBytes[trackId] = currentBytes;
 	                                        break;
 	                                }
 	                            }
-	                            if (options.direction === 'inbound' && stats.type === 'inboundrtp') {
-	                                var currentBytes = {
-	                                    time: _.now(),
-	                                    value: stats.bytesReceived || 0
-	                                };
+	                            if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp')) {
+	                                var currentBytes = new StatsBytes(stats.bytesReceived);
 
 	                                switch (stats.mediaType) {
 	                                    case 'video':
@@ -17947,15 +17943,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        // hasFrameRate = true;
 	                                        // frameRate = stats.framerateMean || 0;
 	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
-	                                        lastVideoBytes = currentBytes;
+	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                        lastVideoBytes[trackId] = currentBytes;
 	                                        break;
 	                                    case 'audio':
 	                                        that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
 	                                            name, stats.mediaType, stats.ssrc, stats.jitter);
 	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
-	                                        lastAudioBytes = currentBytes;
+	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                        lastAudioBytes[trackId] = currentBytes;
 	                                        break;
 	                                }
 	                            }
@@ -17970,11 +17966,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            if (stats.type !== 'ssrc') {
 	                                return;
 	                            }
+
+	                            var trackId = stats.ssrc;
+
 	                            if (options.direction === 'outbound') {
-	                                var currentBytes = {
-	                                    time: _.now(),
-	                                    value: stats.bytesSent || 0
-	                                };
+	                                var currentBytes = new StatsBytes(stats.bytesSent);
 
 	                                switch (stats.mediaType) {
 	                                    case 'video':
@@ -17983,22 +17979,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        hasFrameRate = true;
 	                                        frameRate = stats.googFrameRateSent || 0;
 	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
-	                                        lastVideoBytes = currentBytes;
+	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                        lastVideoBytes[trackId] = currentBytes;
 	                                        break;
 	                                    case 'audio':
 	                                        that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
 	                                            name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
 	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
-	                                        lastAudioBytes = currentBytes;
+	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                        lastAudioBytes[trackId] = currentBytes;
 	                                        break;
 	                                }
 	                            } else if (options.direction === 'inbound') {
-	                                var currentBytes = {
-	                                    time: _.now(),
-	                                    value: stats.bytesReceived || 0
-	                                };
+	                                var currentBytes = new StatsBytes(stats.bytesReceived);
 
 	                                switch (stats.mediaType) {
 	                                    case 'video':
@@ -18007,15 +18000,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        hasFrameRate = true;
 	                                        frameRate = stats.googFrameRateReceived || 0;
 	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes);
-	                                        lastVideoBytes = currentBytes;
+	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                        lastVideoBytes[trackId] = currentBytes;
 	                                        break;
 	                                    case 'audio':
 	                                        that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
 	                                            name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
 	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes);
-	                                        lastAudioBytes = currentBytes;
+	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                        lastAudioBytes[trackId] = currentBytes;
 	                                        break;
 	                                }
 	                            }
@@ -18033,15 +18026,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                }
 
+	                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
+	                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
+
 	                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
-	                    var medias = getMedias.call(that, peerConnection);
+	                    hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
+	                    hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
+	                    hasFrameRate = hasFrameRate && hasActiveVideo;
 
-	                    hasVideoBitRate = hasVideoBitRate && medias.video && medias.video.enabled !== false;
-	                    hasAudioBitRate = hasAudioBitRate && medias.audio && medias.audio.enabled !== false;
-	                    hasFrameRate = hasFrameRate && medias.video && medias.video.enabled !== false;
-
-	                    readable = readable || !(medias.video && medias.video.enabled !== false || medias.audio && medias.audio.enabled !== false);
-	                    writable = writable || !(medias.video && medias.video.enabled !== false || medias.audio && medias.audio.enabled !== false);
+	                    readable = readable || !(hasActiveVideo || hasActiveAudio);
+	                    writable = writable || !(hasActiveVideo || hasActiveAudio);
 	                }
 
 	                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
@@ -18058,22 +18052,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    && (peerConnection.connectionState === 'closed'
 	                    || peerConnection.connectionState === 'failed'
 	                    || peerConnection.iceConnectionState === 'failed')) {
-	                    var medias = getMedias.call(that, peerConnection);
-	                    var active = 0;
-	                    var inactive = 0;
+	                    var active = hasActiveAudio && hasActiveVideo;
+	                    var tracks = getAllTracks.call(that, peerConnection);
 
-	                    for (var id in medias) {
-	                        var media = medias[id];
-
-	                        if (media && media.enabled !== false) {
-	                            active++;
-	                        } else {
-	                            inactive++;
-	                        }
-	                    }
-
-	                    if (active === 0 && inactive > 0) {
-	                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, inactive);
+	                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
+	                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
 	                        return;
 	                    }
 
@@ -18107,6 +18090,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        setTimeout(nextCheck, monitoringInterval);
+	    }
+
+	    function StatsBytes(value) {
+	        this.time = _.now();
+	        this.value = value || 0;
 	    }
 
 	    function normalizeStatsReport(response) {
@@ -18154,33 +18142,81 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function getMedias(peerConnection) {
-	        var medias = {};
+	    function getAllTracks(peerConnection) {
+	        var localStreams = peerConnection.getLocalStreams();
+	        var remoteStreams = peerConnection.getRemoteStreams();
+	        var localTracks = [];
+	        var remoteTracks = [];
+
+	        _.forEach(localStreams, function(stream) {
+	            localTracks = localTracks.concat(stream.getTracks());
+	        });
+
+	        _.forEach(remoteStreams, function(stream) {
+	            remoteTracks = remoteTracks.concat(stream.getTracks());
+	        });
+
+	        if (localTracks.length !== 0 && remoteTracks.length !== 0) {
+	            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
+
+	            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+	        } else if (localTracks.length !== 0) {
+	            return localTracks;
+	        } else if (remoteTracks.length !== 0) {
+	            return remoteTracks;
+	        }
+
+	        return [];
+	    }
+
+	    function hasMediaSectionsInSdp(peerConnection) {
+	        var indexOfSection = findInSdpSections(peerConnection, function(section) {
+	            return section.startsWith('video') || section.startsWith('audio');
+	        });
+
+	        return _.isNumber(indexOfSection);
+	    }
+
+	    function hasActiveAudioInSdp(peerConnection) {
+	        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+	            if (section.startsWith('audio')) {
+	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1
+	            }
+
+	            return false;
+	        });
+
+	        return _.isNumber(indexOfActiveVideo);
+	    }
+
+	    function hasActiveVideoInSdp(peerConnection) {
+	        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+	            if (section.startsWith('video')) {
+	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1
+	            }
+
+	            return false;
+	        });
+
+	        return _.isNumber(indexOfActiveVideo);
+	    }
+
+	    function findInSdpSections(peerConnection, callback) {
 	        var localSections = peerConnection.localDescription.sdp.split('m=');
 	        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
 
 	        if (localSections.length !== remoteSections.length) {
-	            return {};
+	            return false;
 	        }
 
-	        for (var i = 1; i < localSections.length; i++) {
-	            var section = localSections[i];
-
-	            if (section.startsWith('audio')) {
-	                medias.audio = {
-	                    enabled: section.indexOf('a=inactive') === -1 && remoteSections[i].indexOf('a=inactive') === -1
-	                }
-	            } else if (section.startsWith('video')) {
-	                medias.video = {
-	                    enabled: section.indexOf('a=inactive') === -1 && remoteSections[i].indexOf('a=inactive') === -1
-	                }
-	            }
-	        }
-
-	        return medias;
+	        return _.findIndex(localSections, function(section, index) {
+	            return callback(section, index, remoteSections);
+	        });
 	    }
 
 	    function calculateBitRate(currentBytes, lastBytes) {
+	        lastBytes = lastBytes || new StatsBytes();
+
 	        return (8 * (currentBytes.value - lastBytes.value))
 	            / ((currentBytes.time - lastBytes.time) / 1000.0);
 	    }
