@@ -889,8 +889,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var networkDisconnectHysteresisInterval = 0;
 
 	    function AnalytixAppender() {
-	        this._environmentName = 'development' || '?';
-	        this._environmentVersion = '2017-05-19T22:45:31Z' || '?';
+	        this._environmentName = 'production' || '?';
+	        this._environmentVersion = '2017-05-20T00:13:08Z' || '?';
 	        this._loggingUrl = '/analytix/logs';
 	        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
 	        this._protocol = new MQProtocol();
@@ -1084,7 +1084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-05-19T22:45:31Z';
+	        this._version = '2017-05-20T00:13:08Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14220,7 +14220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-19T22:45:31Z';
+	    var sdkVersion = '2017-05-20T00:13:08Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
