@@ -52,7 +52,11 @@ define([
             that._logger.warn('Network Disconnect Detected. Waiting for reconnect.');
         }
 
+        that._offlineHysteresisTimeoutElapsed = false;
+
         that.offlineTimeout = setTimeout(function() {
+            that._offlineHysteresisTimeoutElapsed = true;
+
             if (!offlineCallback || !that._onOffline) {
                 return;
             }
@@ -77,7 +81,7 @@ define([
         }
 
         if (onlineCallback && this._onOnline) {
-            onlineCallback();
+            onlineCallback(this._offlineHysteresisTimeoutElapsed);
         }
     }
 

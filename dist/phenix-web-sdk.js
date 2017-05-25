@@ -67,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -90,9 +90,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(1),
 	    __webpack_require__(2),
 	    __webpack_require__(19),
-	    __webpack_require__(26),
-	    __webpack_require__(41),
-	    __webpack_require__(45),
+	    __webpack_require__(27),
+	    __webpack_require__(42),
+	    __webpack_require__(46),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor) {
 	    window.PhenixPCast = PhenixPCast;
 
@@ -107,15 +107,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -147,9 +147,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -271,9 +271,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -640,9 +640,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -727,9 +727,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Assert();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -765,9 +765,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return logging;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -841,9 +841,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new AnalytixAppenderFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -875,7 +875,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function AnalytixAppender() {
 	        this._environmentName = 'production' || '?';
-	        this._environmentVersion = '2017-05-20T00:13:08Z' || '?';
+	        this._environmentVersion = '2017-05-30T19:39:00Z' || '?';
 	        this._loggingUrl = '/analytix/logs';
 	        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
 	        this._protocol = new MQProtocol();
@@ -1044,9 +1044,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AnalytixAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1069,7 +1069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-05-20T00:13:08Z';
+	        this._version = '2017-05-30T19:39:00Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -1192,15 +1192,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_10__;
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1319,15 +1319,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1461,9 +1461,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return mqProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -2945,9 +2945,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return pcastProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -3830,9 +3830,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return chatProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -3986,9 +3986,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return analytixProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -4044,7 +4044,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that._logger.warn('Network Disconnect Detected. Waiting for reconnect.');
 	        }
 
+	        that._offlineHysteresisTimeoutElapsed = false;
+
 	        that.offlineTimeout = setTimeout(function() {
+	            that._offlineHysteresisTimeoutElapsed = true;
+
 	            if (!offlineCallback || !that._onOffline) {
 	                return;
 	            }
@@ -4069,7 +4073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (onlineCallback && this._onOnline) {
-	            onlineCallback();
+	            onlineCallback(this._offlineHysteresisTimeoutElapsed);
 	        }
 	    }
 
@@ -4077,9 +4081,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -4246,9 +4250,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -4269,12 +4273,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(20),
 	    __webpack_require__(21),
-	    __webpack_require__(22),
-	    __webpack_require__(24),
+	    __webpack_require__(23),
 	    __webpack_require__(25),
-	    __webpack_require__(17),
+	    __webpack_require__(26),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, NetworkConnectionMonitor, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
 	    'use strict';
 
 	    var NetworkStates = _.freeze({
@@ -4298,7 +4301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-20T00:13:08Z';
+	    var sdkVersion = '2017-05-30T19:39:00Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -4307,7 +4310,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    var firefoxInstallationCheckInterval = 100;
 	    var firefoxMaxInstallationChecks = 450;
-	    var networkDisconnectHysteresisInterval = 15000;
 
 	    function PhenixPCast(options) {
 	        options = options || {};
@@ -4322,7 +4324,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._shaka = options.shaka || window.shaka;
 	        this._videojs = options.videojs || window.videojs;
 	        this._status = 'offline';
-	        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
 
 	        if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
 	            addLinkHeaderElement.call(this);
@@ -4375,7 +4376,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._gumStreams = [];
 
 	        var that = this;
-	        var waitForDisconnectEventTimeout = 5000;
 
 	        checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
 	            that._screenSharingEnabled = screenSharingEnabled;
@@ -4407,12 +4407,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._logger.info('Discovered end point [%s]', uri);
 
 	                instantiateProtocol.call(that, uri);
-
-	                that._networkConnectionMonitor.start(function onReconnect() {
-	                    setTimeout(function() {
-	                        reconnect.call(that);
-	                    }, waitForDisconnectEventTimeout);
-	                }, _.bind(disconnected, that));
 	            });
 	        });
 	    };
@@ -4461,8 +4455,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    tracks[j].stop();
 	                }
 	            }
-
-	            this._networkConnectionMonitor.stop();
 	        } finally {
 	            if (this._protocol) {
 	                this._protocol.disconnect();
@@ -4962,7 +4954,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
 
 	        this._protocol.on('connected', _.bind(connected, this));
-	        this._protocol.on('disconnected', _.bind(reconnect, this));
+	        this._protocol.on('reconnecting', _.bind(reconnecting, this));
+	        this._protocol.on('reconnected', _.bind(reconnected, this));
+	        this._protocol.on('disconnected', _.bind(disconnected, this));
 	        this._protocol.on('streamEnded', _.bind(streamEnded, this));
 	        this._protocol.on('dataQuality', _.bind(dataQuality, this));
 	    }
@@ -4999,34 +4993,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function reconnect() {
-	        if (this._status === 'online' && this._protocol) {
-	            return;
-	        }
-
-	        if (!this._protocol || this._status === 'reconnecting') {
-	            return disconnected.call(this);
-	        }
-
+	    function reconnecting() {
 	        transitionToStatus.call(this, 'reconnecting');
+	    }
 
-	        this._logger.info('Attempting to re-establish socket connection');
+	    function reconnected() {
+	        transitionToStatus.call(this, 'reconnected');
+
+	        this._logger.info('Attempting to re-authenticate after reconnect event');
 
 	        var that = this;
 
-	        this._protocol.reconnect(this._authToken, function(result, error) {
-	            var suppressCallback = that._connected === true;
+	        if (!that._stopped) {
+	            that._protocol.authenticate(that._authToken, function (error, response) {
+	                var suppressCallback = that._connected === true;
 
-	            if (error) {
-	                that._connected = false;
+	                if (error) {
+	                    that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
 
-	                return transitionToStatus.call(that, 'offline');
-	            }
+	                    return transitionToStatus.call(that, 'offline');
+	                }
 
-	            that._connected = true;
+	                if (response.status !== 'ok') {
+	                    that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
 
-	            return transitionToStatus.call(that, 'online', suppressCallback);
-	        });
+	                    return transitionToStatus.call(that, 'offline');
+	                }
+
+	                that._connected = true;
+
+	                that._logger.info('Successfully authenticated after reconnect to WebSocket');
+
+	                return transitionToStatus.call(that, 'online', suppressCallback);
+	            });
+	        }
 	    }
 
 	    function disconnected() {
@@ -6437,6 +6437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            switch (newStatus) {
 	                case 'connecting':
 	                case 'reconnecting':
+	                case 'reconnected':
 	                    break;
 	                case 'offline':
 	                    this._offlineCallback.call(this);
@@ -6495,9 +6496,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -6547,9 +6548,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new PCastLoggerFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -6570,12 +6571,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(11),
+	    __webpack_require__(22),
 	    __webpack_require__(10),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, MQProtocol, ByteBuffer, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
 	    'use strict';
-
-	    var maxReconnectAttempt = 4;
 
 	    function PCastProtocol(uri, deviceId, version, logger) {
 	        if (typeof uri !== 'string') {
@@ -6602,7 +6602,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._events = {};
 	        this._requests = {};
 
-	        this._webSocket = createWebSocket.call(this, onOpen);
+	        this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
+
+	        this._webSocket.onmessage = _.bind(onMessage, this);
+	        this._webSocket.onconnected = _.bind(onConnected, this);
+	        this._webSocket.onreconnecting = _.bind(onReconnecting, this);
+	        this._webSocket.onreconnected = _.bind(onReconnected, this);
+	        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
+	        this._webSocket.onerror = _.bind(onError, this);
+
 	    }
 
 	    PCastProtocol.prototype.on = function (eventName, handler) {
@@ -6618,6 +6626,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        handlers.push(handler);
 
 	        return _.bind(removeEventHandler, this, eventName, handler);
+	    };
+
+	    PCastProtocol.prototype.disconnect = function () {
+	        delete this._sessionId;
+
+	        return this._webSocket.disconnect();
 	    };
 
 	    PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -6646,39 +6660,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    PCastProtocol.prototype.getSessionId = function () {
 	        return this._sessionId;
-	    };
-
-	    PCastProtocol.prototype.reconnect = function (authToken, callback, attempt) {
-	        this._webSocket.onclose = null;
-	        this._webSocket.onerror = null;
-	        this._webSocket.close(1000, 'byebye');
-
-	        var that = this;
-	        var backoffTimeout;
-
-	        if (attempt > maxReconnectAttempt) {
-	            return triggerEvent.call(this, 'disconnected', []);
-	        }
-
-	        try {
-	            this._webSocket = createWebsocket.call(that, function () {
-	                if (backoffTimeout) {
-	                    clearTimeout(backoffTimeout);
-	                }
-
-	                return that.authenticate(authToken, callback);
-	            });
-	        } catch(e) {
-	            // swallow error - we will alert client of failure after timeouts.
-	        }
-
-	        backoffTimeout = reconnectWithBackoff.call(this, authToken, callback, attempt)
-	    };
-
-	    PCastProtocol.prototype.disconnect = function () {
-	        delete this._sessionId;
-
-	        return this._webSocket.close(1000, 'byebye');
 	    };
 
 	    PCastProtocol.prototype.bye = function (reason, callback) {
@@ -7007,7 +6988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    PCastProtocol.prototype.toString = function () {
-	        return 'PCastProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
+	        return 'PCastProtocol[' + this._webSocket.toString() + ']';
 	    };
 
 	    function sendRequest(type, message, callback) {
@@ -7053,46 +7034,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function createWebSocket(onOpenCallback) {
-	        var webSocket = new WebSocket(this._uri);
-
-	        webSocket.onopen = _.bind(onOpenCallback, this);
-	        webSocket.onclose = _.bind(onClose, this);
-	        webSocket.onmessage = _.bind(onMessage, this);
-	        webSocket.onerror = _.bind(onError, this);
-
-	        return webSocket;
-	    }
-
-	    function reconnectWithBackoff(authToken, callback, attempt) {
-	        var that = this;
-
-	        if (!_.isNumber(attempt)) {
-	            attempt = 1;
-	        }
-
-	        return setTimeout(function () {
-	            if (that._webSocket.readyState === 1) {
-	                return;
-	            }
-
-	            that.reconnect(authToken, callback, attempt + 1);
-	        }, attempt * attempt * 1000);
-	    }
-
-	    function onOpen(evt) {
-	        this._logger.info('Connected');
-	        triggerEvent.call(this, 'connected');
-	    }
-
-	    function onClose(evt) {
-	        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
-	        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
-	    }
-
 	    function onMessage(evt) {
-	        this._logger.debug('>> [%s]', evt.data);
-
 	        var response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
 	        this._logger.info('>> [%s]', response.type);
 
@@ -7125,17 +7067,334 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
+	    function onReconnecting(evt) {
+	        triggerEvent.call(this, 'reconnecting');
+	    }
+
+	    function onConnected(evt) {
+	        triggerEvent.call(this, 'connected');
+	    }
+
+	    function onReconnected(evt) {
+	        triggerEvent.call(this, 'reconnected');
+	    }
+
+	    function onDisconnected(evt) {
+	        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
+	    }
+
 	    function onError(evt) {
-	        this._logger.error('An error occurred', evt.data);
+	        triggerEvent.call(this, 'error', [evt.data]);
 	    }
 
 	    return PCastProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(5),
+	    __webpack_require__(17)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, NetworkConnectionMonitor) {
+	    'use strict';
+
+	    var networkDisconnectHysteresisInterval = 15000;
+	    var waitForDisconnectEventTimeout = 1000;
+	    var defaultReconnectBackoffInterval = 1000;
+	    var defaultMaxReconnectAttempts = 4;
+	    var closeReasons = {
+	        byebye: {
+	            code: 1000,
+	            reason: 'byebye',
+	            desc: 'Client closed'
+	        },
+	        backoffLimitReached: {
+	            code: 4000,
+	            reason: 'backoff-limit-reached',
+	            desc: 'Reached the limit in terms of the number of reconnects'
+	        },
+	        networkDisconnect: {
+	            code: 4001,
+	            reason: 'network-disconnect',
+	            desc: 'Network connection monitor determined loss to internet connectivity'
+	        },
+	        reconnecting: {
+	            code: 4002,
+	            reason: 'reconnecting',
+	            desc: 'Closing WebSocket in order to attempt to establish another connection'
+	        }
+	    };
+	    var readyStates = {
+	        connecting: {
+	            code: 0,
+	            state: 'CONNECTING',
+	            desc: 'The connection is not yet open'
+	        },
+	        open: {
+	            code: 1,
+	            state: 'OPEN',
+	            desc: 'The connection is open and ready to communicate'
+	        },
+	        closing: {
+	            code: 2,
+	            state: 'CLOSING',
+	            desc: 'The connection is in the process of closing'
+	        },
+	        closed: {
+	            code: 3,
+	            state: 'CLOSED',
+	            desc: 'The connection is closed or could not be opened'
+	        }
+	    };
+
+	    function ReconnectingWebSocket(uri, logger, maxReconnectAttempts, reconnectBackoffInterval) {
+	        assert.stringNotEmpty(uri, 'uri');
+	        assert.isObject(logger, 'logger');
+
+	        if (!_.isNullOrUndefined(maxReconnectAttempts)) {
+	            assert.isNumber(maxReconnectAttempts);
+	        } else {
+	            maxReconnectAttempts = defaultMaxReconnectAttempts;
+	        }
+
+	        this._uri = uri;
+	        this._logger = logger;
+	        this._maxReconnectAttempts = maxReconnectAttempts;
+	        this._reconnectBackoffInterval = reconnectBackoffInterval || defaultReconnectBackoffInterval;
+	        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
+	        this._hasAttemptedReconnect = false;
+	        this._stopped = false;
+
+	        this._logger.info('Connecting to [%s]', uri);
+
+	        this._webSocket = createWebSocket.call(this, onOpen, onClose);
+	        this._networkConnectionMonitor.start(_.bind(onNetworkReconnect, this), _.bind(onNetworkDisconnect, this));
+	    }
+
+	    ReconnectingWebSocket.prototype.onmessage = null;
+	    ReconnectingWebSocket.prototype.onconnected = null;
+	    ReconnectingWebSocket.prototype.onreconnecting = null;
+	    ReconnectingWebSocket.prototype.onreconnected = null;
+	    ReconnectingWebSocket.prototype.ondisconnected = null;
+	    ReconnectingWebSocket.prototype.onerror = null;
+
+	    ReconnectingWebSocket.prototype.send = function (message) {
+	        return this._webSocket.send(message);
+	    };
+
+	    ReconnectingWebSocket.prototype.reconnect = function (attempt) {
+	        this._webSocket.onclose = null;
+	        this._webSocket.onerror = null;
+	        this._hasAttemptedReconnect = true;
+
+	        var that = this;
+	        var backoffTimeout;
+
+	        if (!_.isNumber(attempt)) {
+	            attempt = 1;
+	        }
+
+	        if (this._stopped) {
+	            return this._logger.info('Client has stopped WebSocket after [%s] reconnect attempts', attempt - 1);
+	        }
+
+	        if (attempt > this._maxReconnectAttempts) {
+	            this._logger.warn('Unable to reconnect WebSocket after [%s] attempts', this._maxReconnectAttempts);
+
+	            return closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.backoffLimitReached);
+	        }
+
+	        closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.reconnecting);
+
+	        try {
+	            this._webSocket = createWebSocket.call(that, function onOpenEvent() {
+	                if (backoffTimeout) {
+	                    clearTimeout(backoffTimeout);
+	                }
+
+	                that._hasAttemptedReconnect = false;
+	                that._webSocket.onclose = _.bind(onClose, that);
+
+	                return onReconnect.call(that);
+	            }, function onCloseEvent() {
+	                if (attempt + 1 > that._maxReconnectAttempts) {
+	                    if (backoffTimeout) {
+	                        clearTimeout(backoffTimeout);
+	                    }
+
+	                    reconnectIfNotOpen.call(that, attempt);
+	                }
+	            });
+	        } catch(e) {
+	            this._logger.warn('Unable to create WebSocket connection [%s]', e);
+	            // swallow error - we will alert client of failure after timeouts.
+	        }
+
+	        backoffTimeout = reconnectWithBackoff.call(this, attempt)
+	    };
+
+	    ReconnectingWebSocket.prototype.disconnect = function () {
+	        this._networkConnectionMonitor.stop();
+	        this._stopped = true;
+
+	        return this._webSocket.close(closeReasons.byebye.code, closeReasons.byebye.reason);
+	    };
+
+	    ReconnectingWebSocket.prototype.toString = function () {
+	        return 'ReconnectedWebSocket[' + this._uri + ',' + this._webSocket.readyState + ']';
+	    };
+
+	    function closeWebSocketOrTriggerDisconnectEvent(evt) {
+	        if (this._webSocket.readyState === readyStates.closed.code) {
+	            return onClose.call(this, evt)
+	        }
+
+	        return this._webSocket.close(evt.code, evt.reason);
+	    }
+
+	    function createWebSocket(onOpenCallback, onCloseCallback) {
+	        var webSocket = new WebSocket(this._uri);
+
+	        webSocket.onopen = _.bind(onOpenCallback, this);
+	        webSocket.onclose = _.bind(onCloseCallback, this);
+	        webSocket.onmessage = _.bind(onMessage, this);
+	        webSocket.onerror = _.bind(onError, this);
+
+	        return webSocket;
+	    }
+
+	    function reconnectWithBackoff(attempt) {
+	        var that = this;
+
+	        return setTimeout(function () {
+	            reconnectIfNotOpen.call(that, attempt);
+	        }, attempt * attempt * this._reconnectBackoffInterval);
+	    }
+
+	    function reconnectIfNotOpen(attempt) {
+	        if (this._webSocket.readyState === readyStates.open.code) {
+	            return;
+	        }
+
+	        this.reconnect(attempt + 1);
+	    }
+
+	    function onClose(evt) {
+	        switch (evt.code) {
+	            case closeReasons.reconnecting.code:
+	                return;
+	            case closeReasons.byebye.code:
+	            case closeReasons.backoffLimitReached.code:
+	            case closeReasons.networkDisconnect.code:
+	                return onDisconnect.call(this, evt);
+	            default:
+	                if (this._hasAttemptedReconnect) {
+	                    return;
+	                }
+
+	                return onReconnecting.call(this, evt);
+	        }
+	    }
+
+	    function onReconnecting(evt) {
+	        this._logger.info('Attempting to re-establish socket connection after disconnect event with code [%s] and reason [%s]', evt.code, evt.reason);
+
+	        if (this.onreconnecting) {
+	            this.onreconnecting(evt);
+	        }
+
+	        this.reconnect();
+	    }
+
+	    function onOpen(evt) {
+	        this._logger.info('Connected');
+
+	        if (this.onconnected) {
+	            this.onconnected(evt);
+	        }
+	    }
+
+	    function onReconnect(evt) {
+	        this._logger.info('Successfully reconnected to WebSocket');
+
+	        if (this.onreconnected) {
+	            this.onreconnected(evt);
+	        }
+	    }
+
+	    function onDisconnect(evt) {
+	        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
+
+	        if (this.ondisconnected) {
+	            this.ondisconnected(evt);
+	        }
+	    }
+
+	    function onError(evt) {
+	        this._logger.error('An error occurred [%s]', evt.data);
+
+	        if (this.onerror) {
+	            this.onerror(evt);
+	        }
+	    }
+
+	    function onMessage(evt) {
+	        this._logger.debug('>> [%s]', evt.data);
+
+	        if (this.onmessage) {
+	            this.onmessage(evt);
+	        }
+	    }
+
+	    function onNetworkReconnect(didGoOffline) {
+	        var that = this;
+
+	        setTimeout(function() {
+	            if (that._stopped) {
+	                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.')
+	            }
+
+	            if (that._webSocket.readyState !== readyStates.open.code) {
+	                return that.reconnect();
+	            }
+
+	            if (didGoOffline) {
+	                return onOpen.call(that);
+	            }
+	        }, waitForDisconnectEventTimeout);
+	    }
+
+	    function onNetworkDisconnect() {
+	        // Don't close the WebSocket.
+	        onDisconnect.call(this, closeReasons.networkDisconnect);
+	    }
+
+	    return ReconnectingWebSocket;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -7154,7 +7413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(9),
-	    __webpack_require__(23)
+	    __webpack_require__(24)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (http, ClosestEndPointResolver) {
 	    'use strict';
 
@@ -7233,9 +7492,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -7340,9 +7599,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -7729,9 +7988,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PeerConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -7857,9 +8116,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -7879,15 +8138,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
 	    __webpack_require__(29),
-	    __webpack_require__(37),
 	    __webpack_require__(30),
-	    __webpack_require__(27),
+	    __webpack_require__(38),
 	    __webpack_require__(31),
-	    __webpack_require__(39),
-	    __webpack_require__(36),
-	    __webpack_require__(35)
+	    __webpack_require__(28),
+	    __webpack_require__(32),
+	    __webpack_require__(40),
+	    __webpack_require__(37),
+	    __webpack_require__(36)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
 	    'use strict';
 
@@ -8498,9 +8757,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -8520,9 +8779,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
 	    __webpack_require__(29),
 	    __webpack_require__(30),
+	    __webpack_require__(31),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
 	    'use strict';
 
@@ -8620,9 +8879,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -8800,9 +9059,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -8822,7 +9081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28)
+	    __webpack_require__(29)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
 	    'use strict';
 
@@ -8914,9 +9173,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -8936,10 +9195,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
 	    __webpack_require__(29),
-	    __webpack_require__(31),
-	    __webpack_require__(36)
+	    __webpack_require__(30),
+	    __webpack_require__(32),
+	    __webpack_require__(37)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Member, room) {
 	    'use strict';
 	    var roomTypes = room.types;
@@ -9140,9 +9399,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9162,10 +9421,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
 	    __webpack_require__(29),
-	    __webpack_require__(32),
-	    __webpack_require__(35)
+	    __webpack_require__(30),
+	    __webpack_require__(33),
+	    __webpack_require__(36)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Stream, member) {
 	    'use strict';
 	    var memberRoles = member.roles;
@@ -9347,9 +9606,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9369,10 +9628,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
 	    __webpack_require__(29),
-	    __webpack_require__(33),
-	    __webpack_require__(34)
+	    __webpack_require__(30),
+	    __webpack_require__(34),
+	    __webpack_require__(35)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, stream, track) {
 	    'use strict';
 
@@ -9454,9 +9713,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Stream;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9488,9 +9747,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return streamEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9522,9 +9781,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return trackEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9564,9 +9823,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return memberEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9607,9 +9866,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return roomEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9629,8 +9888,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
-	    __webpack_require__(38)
+	    __webpack_require__(29),
+	    __webpack_require__(39)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableMonitor) {
 	    'use strict';
 
@@ -9723,9 +9982,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9785,9 +10044,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9807,8 +10066,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
-	    __webpack_require__(40)
+	    __webpack_require__(30),
+	    __webpack_require__(41)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
 	    'use strict';
 
@@ -9947,9 +10206,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -9969,8 +10228,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(28),
-	    __webpack_require__(37)
+	    __webpack_require__(29),
+	    __webpack_require__(38)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, AuthenticationService) {
 	    'use strict';
 
@@ -10285,9 +10544,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10308,10 +10567,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(20),
-	    __webpack_require__(22),
-	    __webpack_require__(42),
+	    __webpack_require__(23),
 	    __webpack_require__(43),
-	    __webpack_require__(44)
+	    __webpack_require__(44),
+	    __webpack_require__(45)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
@@ -10377,9 +10636,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10426,9 +10685,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10561,9 +10820,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10679,9 +10938,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10702,8 +10961,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(20),
-	    __webpack_require__(22),
-	    __webpack_require__(46)
+	    __webpack_require__(23),
+	    __webpack_require__(47)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -10748,9 +11007,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -10844,7 +11103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

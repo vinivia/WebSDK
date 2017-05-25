@@ -17,12 +17,11 @@ define([
     './LodashLight',
     './assert',
     './MQProtocol',
+    './ReconnectingWebSocket',
     'ByteBuffer',
     'phenix-rtc'
-], function (_, assert, MQProtocol, ByteBuffer, phenixRTC) {
+], function (_, assert, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
     'use strict';
-
-    var maxReconnectAttempt = 4;
 
     function PCastProtocol(uri, deviceId, version, logger) {
         if (typeof uri !== 'string') {
@@ -49,7 +48,15 @@ define([
         this._events = {};
         this._requests = {};
 
-        this._webSocket = createWebSocket.call(this, onOpen);
+        this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
+
+        this._webSocket.onmessage = _.bind(onMessage, this);
+        this._webSocket.onconnected = _.bind(onConnected, this);
+        this._webSocket.onreconnecting = _.bind(onReconnecting, this);
+        this._webSocket.onreconnected = _.bind(onReconnected, this);
+        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
+        this._webSocket.onerror = _.bind(onError, this);
+
     }
 
     PCastProtocol.prototype.on = function (eventName, handler) {
@@ -65,6 +72,12 @@ define([
         handlers.push(handler);
 
         return _.bind(removeEventHandler, this, eventName, handler);
+    };
+
+    PCastProtocol.prototype.disconnect = function () {
+        delete this._sessionId;
+
+        return this._webSocket.disconnect();
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -93,39 +106,6 @@ define([
 
     PCastProtocol.prototype.getSessionId = function () {
         return this._sessionId;
-    };
-
-    PCastProtocol.prototype.reconnect = function (authToken, callback, attempt) {
-        this._webSocket.onclose = null;
-        this._webSocket.onerror = null;
-        this._webSocket.close(1000, 'byebye');
-
-        var that = this;
-        var backoffTimeout;
-
-        if (attempt > maxReconnectAttempt) {
-            return triggerEvent.call(this, 'disconnected', []);
-        }
-
-        try {
-            this._webSocket = createWebsocket.call(that, function () {
-                if (backoffTimeout) {
-                    clearTimeout(backoffTimeout);
-                }
-
-                return that.authenticate(authToken, callback);
-            });
-        } catch(e) {
-            // swallow error - we will alert client of failure after timeouts.
-        }
-
-        backoffTimeout = reconnectWithBackoff.call(this, authToken, callback, attempt)
-    };
-
-    PCastProtocol.prototype.disconnect = function () {
-        delete this._sessionId;
-
-        return this._webSocket.close(1000, 'byebye');
     };
 
     PCastProtocol.prototype.bye = function (reason, callback) {
@@ -454,7 +434,7 @@ define([
     };
 
     PCastProtocol.prototype.toString = function () {
-        return 'PCastProtocol[' + this._uri + ',' + this._webSocket.readyState + ']';
+        return 'PCastProtocol[' + this._webSocket.toString() + ']';
     };
 
     function sendRequest(type, message, callback) {
@@ -500,46 +480,7 @@ define([
         }
     }
 
-    function createWebSocket(onOpenCallback) {
-        var webSocket = new WebSocket(this._uri);
-
-        webSocket.onopen = _.bind(onOpenCallback, this);
-        webSocket.onclose = _.bind(onClose, this);
-        webSocket.onmessage = _.bind(onMessage, this);
-        webSocket.onerror = _.bind(onError, this);
-
-        return webSocket;
-    }
-
-    function reconnectWithBackoff(authToken, callback, attempt) {
-        var that = this;
-
-        if (!_.isNumber(attempt)) {
-            attempt = 1;
-        }
-
-        return setTimeout(function () {
-            if (that._webSocket.readyState === 1) {
-                return;
-            }
-
-            that.reconnect(authToken, callback, attempt + 1);
-        }, attempt * attempt * 1000);
-    }
-
-    function onOpen(evt) {
-        this._logger.info('Connected');
-        triggerEvent.call(this, 'connected');
-    }
-
-    function onClose(evt) {
-        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
-        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
-    }
-
     function onMessage(evt) {
-        this._logger.debug('>> [%s]', evt.data);
-
         var response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
         this._logger.info('>> [%s]', response.type);
 
@@ -572,8 +513,24 @@ define([
         }
     }
 
+    function onReconnecting(evt) {
+        triggerEvent.call(this, 'reconnecting');
+    }
+
+    function onConnected(evt) {
+        triggerEvent.call(this, 'connected');
+    }
+
+    function onReconnected(evt) {
+        triggerEvent.call(this, 'reconnected');
+    }
+
+    function onDisconnected(evt) {
+        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
+    }
+
     function onError(evt) {
-        this._logger.error('An error occurred', evt.data);
+        triggerEvent.call(this, 'error', [evt.data]);
     }
 
     return PCastProtocol;

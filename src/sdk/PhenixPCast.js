@@ -20,9 +20,8 @@ define([
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
-    './NetworkConnectionMonitor',
     'phenix-rtc'
-], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, NetworkConnectionMonitor, phenixRTC) {
+], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -55,7 +54,6 @@ define([
     });
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
-    var networkDisconnectHysteresisInterval = 15000;
 
     function PhenixPCast(options) {
         options = options || {};
@@ -70,7 +68,6 @@ define([
         this._shaka = options.shaka || window.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
-        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
 
         if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
             addLinkHeaderElement.call(this);
@@ -123,7 +120,6 @@ define([
         this._gumStreams = [];
 
         var that = this;
-        var waitForDisconnectEventTimeout = 5000;
 
         checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
             that._screenSharingEnabled = screenSharingEnabled;
@@ -155,12 +151,6 @@ define([
                 that._logger.info('Discovered end point [%s]', uri);
 
                 instantiateProtocol.call(that, uri);
-
-                that._networkConnectionMonitor.start(function onReconnect() {
-                    setTimeout(function() {
-                        reconnect.call(that);
-                    }, waitForDisconnectEventTimeout);
-                }, _.bind(disconnected, that));
             });
         });
     };
@@ -209,8 +199,6 @@ define([
                     tracks[j].stop();
                 }
             }
-
-            this._networkConnectionMonitor.stop();
         } finally {
             if (this._protocol) {
                 this._protocol.disconnect();
@@ -710,7 +698,9 @@ define([
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
 
         this._protocol.on('connected', _.bind(connected, this));
-        this._protocol.on('disconnected', _.bind(reconnect, this));
+        this._protocol.on('reconnecting', _.bind(reconnecting, this));
+        this._protocol.on('reconnected', _.bind(reconnected, this));
+        this._protocol.on('disconnected', _.bind(disconnected, this));
         this._protocol.on('streamEnded', _.bind(streamEnded, this));
         this._protocol.on('dataQuality', _.bind(dataQuality, this));
     }
@@ -747,34 +737,40 @@ define([
         }
     }
 
-    function reconnect() {
-        if (this._status === 'online' && this._protocol) {
-            return;
-        }
-
-        if (!this._protocol || this._status === 'reconnecting') {
-            return disconnected.call(this);
-        }
-
+    function reconnecting() {
         transitionToStatus.call(this, 'reconnecting');
+    }
 
-        this._logger.info('Attempting to re-establish socket connection');
+    function reconnected() {
+        transitionToStatus.call(this, 'reconnected');
+
+        this._logger.info('Attempting to re-authenticate after reconnect event');
 
         var that = this;
 
-        this._protocol.reconnect(this._authToken, function(result, error) {
-            var suppressCallback = that._connected === true;
+        if (!that._stopped) {
+            that._protocol.authenticate(that._authToken, function (error, response) {
+                var suppressCallback = that._connected === true;
 
-            if (error) {
-                that._connected = false;
+                if (error) {
+                    that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
 
-                return transitionToStatus.call(that, 'offline');
-            }
+                    return transitionToStatus.call(that, 'offline');
+                }
 
-            that._connected = true;
+                if (response.status !== 'ok') {
+                    that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
 
-            return transitionToStatus.call(that, 'online', suppressCallback);
-        });
+                    return transitionToStatus.call(that, 'offline');
+                }
+
+                that._connected = true;
+
+                that._logger.info('Successfully authenticated after reconnect to WebSocket');
+
+                return transitionToStatus.call(that, 'online', suppressCallback);
+            });
+        }
     }
 
     function disconnected() {
@@ -2185,6 +2181,7 @@ define([
             switch (newStatus) {
                 case 'connecting':
                 case 'reconnecting':
+                case 'reconnected':
                     break;
                 case 'offline':
                     this._offlineCallback.call(this);
