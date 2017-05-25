@@ -19,9 +19,9 @@ define([
     '../logging/pcastLoggerFactory',
     '../PCastEndPoint',
     './AudioContext',
-    './AudioVolumeMeter',
+    './AudioVolumeMeterFactory',
     './AudioSpeakerDetectionAlgorithm'
-], function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
+], function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
     function AudioSpeakerDetector(userMediaStreams, options) {
@@ -33,10 +33,12 @@ define([
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
         this._audioContext = options.audioContext || new AudioContext();
         this._nativeAudioContext = this._audioContext.getNativeAudioContext();
-        this._audioVolumeMeters = [];
         this._onSpeakingChanged = null;
         this._userMediaStreams = userMediaStreams;
         this._disposeOfAudioContext = !_.isObject(options.audioContext);
+        this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
+
+        _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
     }
 
     AudioSpeakerDetector.prototype.start = function start(options, callback) {
@@ -50,17 +52,29 @@ define([
     };
 
     AudioSpeakerDetector.prototype.stop = function stop() {
-        _.forEach(this._audioVolumeMeters, function stopAudioVolumeMeters(meter) {
-            meter.stop();
+        _.forEach(this.getAudioVolumeMeters(), function(meter) {
+            meter.onValue(function() {});
         });
 
         this._onSpeakingChanged = null;
+    };
+
+    AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
+        assert.isObject(stream, 'stream');
+
+        return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+    };
+
+    AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
+        return this._audioVolumeMeterFactory.getAudioVolumeMeters();
     };
 
     AudioSpeakerDetector.prototype.dispose = function dispose() {
         if (this._disposeOfAudioContext) {
             this._nativeAudioContext.close();
         }
+
+        this._audioVolumeMeterFactory.stopAllMeters();
 
         this._userMediaStreams = null;
     };
@@ -69,17 +83,29 @@ define([
         return 'AudioSpeakerDetector';
     };
 
-    function setupSpeakingDetection(options, stream) {
-        var audioVolumeMeter = new AudioVolumeMeter(this._logger);
-        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
+    function setupAudioVolumeMeter(options, stream) {
+        assert.isObject(stream, 'stream');
+        assert.isObject(options, 'options');
+
+        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
 
         audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
         audioVolumeMeter.connect(stream);
+    }
+
+    function setupSpeakingDetection(options, stream) {
+        assert.isObject(stream, 'stream');
+        assert.isObject(options, 'options');
+
+        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
+
+        if (options.alpha) {
+            audioVolumeMeter.setAlpha(options.alpha);
+        }
 
         audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
         audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
-
-        this._audioVolumeMeters.push(audioVolumeMeter)
     }
 
     return AudioSpeakerDetector;

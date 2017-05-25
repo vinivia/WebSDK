@@ -92,7 +92,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(19),
 	    __webpack_require__(27),
 	    __webpack_require__(42),
-	    __webpack_require__(46),
+	    __webpack_require__(47),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor) {
 	    window.PhenixPCast = PhenixPCast;
 
@@ -346,6 +346,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return newArray;
+	    };
+
+	    _.values = function(collection) {
+	        if (!_.isObject(collection) || _.isArray(collection)) {
+	            throw new Error('Collection must be an object.');
+	        }
+
+	        return _.map(collection, function(value) {
+	            return value;
+	        })
 	    };
 
 	    _.forEach = function forEach(collection, callback) {
@@ -875,7 +885,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function AnalytixAppender() {
 	        this._environmentName = 'production' || '?';
-	        this._environmentVersion = '2017-05-30T19:39:00Z' || '?';
+	        this._environmentVersion = '2017-05-30T22:40:44Z' || '?';
 	        this._loggingUrl = '/analytix/logs';
 	        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
 	        this._protocol = new MQProtocol();
@@ -1069,7 +1079,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-05-30T19:39:00Z';
+	        this._version = '2017-05-30T22:40:44Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -4301,7 +4311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-30T19:39:00Z';
+	    var sdkVersion = '2017-05-30T22:40:44Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -10570,8 +10580,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(23),
 	    __webpack_require__(43),
 	    __webpack_require__(44),
-	    __webpack_require__(45)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeter, AudioSpeakerDetectionAlgorithm) {
+	    __webpack_require__(46)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
 	    function AudioSpeakerDetector(userMediaStreams, options) {
@@ -10583,10 +10593,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
 	        this._audioContext = options.audioContext || new AudioContext();
 	        this._nativeAudioContext = this._audioContext.getNativeAudioContext();
-	        this._audioVolumeMeters = [];
 	        this._onSpeakingChanged = null;
 	        this._userMediaStreams = userMediaStreams;
 	        this._disposeOfAudioContext = !_.isObject(options.audioContext);
+	        this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
+
+	        _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
 	    }
 
 	    AudioSpeakerDetector.prototype.start = function start(options, callback) {
@@ -10600,17 +10612,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    AudioSpeakerDetector.prototype.stop = function stop() {
-	        _.forEach(this._audioVolumeMeters, function stopAudioVolumeMeters(meter) {
-	            meter.stop();
+	        _.forEach(this.getAudioVolumeMeters(), function(meter) {
+	            meter.onValue(function() {});
 	        });
 
 	        this._onSpeakingChanged = null;
+	    };
+
+	    AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
+	        assert.isObject(stream, 'stream');
+
+	        return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+	    };
+
+	    AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
+	        return this._audioVolumeMeterFactory.getAudioVolumeMeters();
 	    };
 
 	    AudioSpeakerDetector.prototype.dispose = function dispose() {
 	        if (this._disposeOfAudioContext) {
 	            this._nativeAudioContext.close();
 	        }
+
+	        this._audioVolumeMeterFactory.stopAllMeters();
 
 	        this._userMediaStreams = null;
 	    };
@@ -10619,17 +10643,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return 'AudioSpeakerDetector';
 	    };
 
-	    function setupSpeakingDetection(options, stream) {
-	        var audioVolumeMeter = new AudioVolumeMeter(this._logger);
-	        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
+	    function setupAudioVolumeMeter(options, stream) {
+	        assert.isObject(stream, 'stream');
+	        assert.isObject(options, 'options');
+
+	        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
 
 	        audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
 	        audioVolumeMeter.connect(stream);
+	    }
+
+	    function setupSpeakingDetection(options, stream) {
+	        assert.isObject(stream, 'stream');
+	        assert.isObject(options, 'options');
+
+	        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+	        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
+
+	        if (options.alpha) {
+	            audioVolumeMeter.setAlpha(options.alpha);
+	        }
 
 	        audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
 	        audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
-
-	        this._audioVolumeMeters.push(audioVolumeMeter)
 	    }
 
 	    return AudioSpeakerDetector;
@@ -10706,6 +10742,68 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
+	    __webpack_require__(5),
+	    __webpack_require__(45)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
+	    'use strict';
+
+	    function AudioVolumeMeterFactory(logger) {
+	        assert.isObject(logger, 'logger');
+
+	        this._logger = logger;
+	        this._audioVolumeMeters = {};
+	    }
+
+	    AudioVolumeMeterFactory.prototype.stopAllMeters = function stopAllMeters() {
+	        _.forOwn(this._audioVolumeMeters, function stopAudioVolumeMeters(meter) {
+	            meter.stop();
+	        });
+	    };
+
+	    AudioVolumeMeterFactory.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
+	        assert.isObject(stream, 'stream');
+	        assert.stringNotEmpty(stream.id, 'streamId');
+
+	        if (!this._audioVolumeMeters[stream.id]) {
+	            this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger)
+	        }
+
+	        return this._audioVolumeMeters[stream.id];
+	    };
+
+	    AudioVolumeMeterFactory.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
+	        return _.values(this._audioVolumeMeters);
+	    };
+
+	    AudioVolumeMeterFactory.prototype.toString = function toString() {
+	        return 'AudioVolumeMeterFactory';
+	    };
+
+	    return AudioVolumeMeterFactory;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
 	    __webpack_require__(5)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
 	    'use strict';
@@ -10749,6 +10847,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    AudioVolumeMeter.prototype.getSmoothedPeakValue = function getSmoothedPeakValue() {
 	        return this._smoothedPeakValue;
+	    };
+
+	    AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
+	        assert.isNumber(alpha);
+
+	        this._alpha = parseFloat(alpha);
 	    };
 
 	    AudioVolumeMeter.prototype.connect = function connect(stream) {
@@ -10821,7 +10925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10939,7 +11043,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10962,7 +11066,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(20),
 	    __webpack_require__(23),
-	    __webpack_require__(47)
+	    __webpack_require__(48)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -11008,7 +11112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**

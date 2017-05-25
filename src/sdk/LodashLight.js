@@ -71,6 +71,16 @@ define([
         return newArray;
     };
 
+    _.values = function(collection) {
+        if (!_.isObject(collection) || _.isArray(collection)) {
+            throw new Error('Collection must be an object.');
+        }
+
+        return _.map(collection, function(value) {
+            return value;
+        })
+    };
+
     _.forEach = function forEach(collection, callback) {
         if (!_.isFunction(callback)) {
             throw new Error('Callback must be a function');

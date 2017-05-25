@@ -16,10 +16,12 @@
 define([
     'sdk/logging/Logger',
     'sdk/audio/AudioSpeakerDetector',
+    'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
-], function (Logger, AudioSpeakerDetector, rtc) {
+], function (Logger, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
     describe('When Detecting Active Speaker on WebRTC Supported Browser', function () {
         var audioSpeakerDetector;
+        var streams = [];
 
         before(function () {
             if (!rtc.webrtcSupported) {
@@ -28,7 +30,7 @@ define([
         });
 
         beforeEach(function () {
-            var streams = [new MediaStream()];
+            streams = [new MediaStream()];
 
             audioSpeakerDetector = new AudioSpeakerDetector(streams, {logger: sinon.createStubInstance(Logger)});
         });
@@ -55,6 +57,27 @@ define([
             expect(function () {
                 audioSpeakerDetector.stop();
             }).to.not.throw();
+        });
+
+        it('Expect to have a audioVolumeMeter matching the stream id', function () {
+            var meter = audioSpeakerDetector.getAudioVolumeMeter(streams[0]);
+
+            expect(meter).to.be.an.instanceof(AudioVolumeMeter);
+        });
+
+        it('Expect to have a audioVolumeMeter matching the stream id after speaker detection has started', function () {
+            audioSpeakerDetector.start({}, function() {});
+
+            var meter = audioSpeakerDetector.getAudioVolumeMeter(streams[0]);
+
+            expect(meter).to.be.an.instanceof(AudioVolumeMeter);
+        });
+
+        it('Expect to have a list containing a single audioVolumeMeter', function () {
+            var meters = audioSpeakerDetector.getAudioVolumeMeters();
+
+            expect(meters.length).to.be.equal(1);
+            expect(meters[0]).to.be.an.instanceof(AudioVolumeMeter);
         });
     });
 });

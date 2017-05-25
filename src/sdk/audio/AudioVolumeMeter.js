@@ -60,6 +60,12 @@ define([
         return this._smoothedPeakValue;
     };
 
+    AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
+        assert.isNumber(alpha);
+
+        this._alpha = parseFloat(alpha);
+    };
+
     AudioVolumeMeter.prototype.connect = function connect(stream) {
         var that = this;
 
