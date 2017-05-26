@@ -45,6 +45,23 @@ define([
         return Math.floor(date);
     };
 
+    _.isoString = function isoString() {
+        var now = new Date();
+
+        if (now.toISOString) {
+            return now.toISOString();
+        }
+
+        return now.getUTCFullYear() +
+            '-' + _.pad(now.getUTCMonth() + 1, 2) +
+            '-' + _.pad(now.getUTCDate(), 2) +
+            'T' + _.pad(now.getUTCHours(), 2) +
+            ':' + _.pad(now.getUTCMinutes(), 2) +
+            ':' + _.pad(now.getUTCSeconds(), 2) +
+            '.' + (now.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+            'Z';
+    };
+
     _.map = function map(collection, callback) {
         if (!_.isObject(collection)) {
             throw new Error('Collection must be an object or array.');
@@ -78,7 +95,7 @@ define([
 
         return _.map(collection, function(value) {
             return value;
-        })
+        });
     };
 
     _.forEach = function forEach(collection, callback) {
@@ -364,9 +381,74 @@ define([
         return null;
     };
 
+    _.toString = function toString(data) {
+        if (_.isString(data)) {
+            return data;
+        }
+
+        if (_.isBoolean(data)) {
+            return data ? 'true' : 'false';
+        }
+
+        if (_.isNumber(data)) {
+            return data.toString();
+        }
+
+        var toStringStr = '';
+
+        if (data) {
+            if (_.isFunction(data.toString)) {
+                toStringStr = data.toString();
+            } else if (_.isObject(data.toString)) {
+                try {
+                    toStringStr = data.toString();
+                } catch (e) {
+                    toStringStr = '[object invalid toString()]';
+                }
+            }
+        }
+
+        if (toStringStr.indexOf('[object') !== 0) {
+            return toStringStr;
+        }
+
+        var cache = [];
+
+        return toStringStr + JSON.stringify(data, function (key, value) {
+                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
+                    if (_.includes(cache, value)) {
+                        return '<recursive>';
+                    }
+
+                    cache.push(value);
+                }
+
+                return key === '' ? value : _.toString(value);
+            });
+    };
+
+    _.pad = function padNumber(value, numberToPad) {
+        assertIsNumber(value);
+        assertIsNumber(numberToPad);
+
+        var valueLength = value.toString().length;
+
+        for (var i = 0; i < numberToPad - valueLength; i++) {
+            value = '0' + value.toString();
+        }
+
+        return value.toString();
+    };
+
     var assertIsArray = function isArray(collection) {
         if (!_.isArray(collection)) {
             throw new Error('Array must be an array.');
+        }
+    };
+
+    var assertIsNumber = function isArray(number) {
+        if (!_.isNumber(number)) {
+            throw new Error('Number must be a number.');
         }
     };
 

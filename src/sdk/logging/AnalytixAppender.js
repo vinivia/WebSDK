@@ -27,21 +27,19 @@ define([
     var networkDisconnectHysteresisInterval = 0;
 
     function AnalytixAppender() {
-        this._environmentName = '%ENVIRONMENT%' || '?';
-        this._environmentVersion = '%VERSION%' || '?';
         this._loggingUrl = '/analytix/logs';
-        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._domain = location.hostname;
         this._protocol = new MQProtocol();
         this._maxAttempts = 3;
         this._maxBufferedRecords = 1000;
         this._maxBatchSize = 100;
         this._records = [];
         this._pending = false;
-        this._userId = '';
         this._baseUri = '';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
+        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
     }
 
     AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
@@ -70,16 +68,16 @@ define([
         this._isEnabled = enabled;
     };
 
-    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, context) {
+    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
         if (context.level < this._minLevel) {
             return;
         }
 
         assert.isArray(messages);
 
-        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId);
+        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
 
-        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId);
+        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId, environment, version);
 
         sendBatchMessagesIfNonePending.call(this);
     };
@@ -103,39 +101,41 @@ define([
         return networkConnectionMonitor;
     }
 
-    function addMessagesToRecords(since, level, category, messages, sessionId, userId) {
+    function addMessagesToRecords(since, level, category, messages, sessionId, userId, environment, version) {
         var message = messages.join(' ');
         var record = {
             level: level,
-            timestamp: _.now().toString(),
+            timestamp: _.isoString(),
             category: category,
             message: message,
-            source: this._source,
+            source: this._browser,
+            fullQualifiedName: this._domain,
             sessionId: sessionId,
             userId: userId,
-            environment: this._environmentName,
-            version: this._environmentVersion,
+            environment: environment,
+            version: version,
             runtime: since
         };
 
         this._records.push(record);
     }
 
-    function deleteRecordsIfAtCapacity(since, sessionId, userId) {
+    function deleteRecordsIfAtCapacity(since, sessionId, userId, environment, version) {
         if (this._records.length > this._maxBufferedRecords) {
             var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
 
             this._records = this._records.slice(deleteRecords);
             this._records.unshift({
                 level: 'Warn',
-                timestamp: _.now().toString(),
+                timestamp: _.isoString(),
                 category: 'websdk/analytixLogger',
                 message: 'Deleted ' + deleteRecords + ' records',
-                source: 'Browser',
+                source: this._browser,
+                fullQualifiedName: this._domain,
                 sessionId: sessionId,
                 userId: userId,
-                environment: this._environmentName,
-                version: this._environmentVersion,
+                environment: environment,
+                version: version,
                 runtime: since
             });
         }

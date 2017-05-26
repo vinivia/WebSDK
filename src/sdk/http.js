@@ -19,7 +19,7 @@ define([
     'use strict';
 
     function Http() {
-        this._version = '%VERSION%';
+        this._version = '%SDKVERSION%';
     }
 
     Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {

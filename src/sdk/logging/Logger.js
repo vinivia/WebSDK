@@ -22,11 +22,22 @@ define([
 
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || _.now();
+    var defaultEnvironment = '%ENVIRONMENT%' || '?';
+    var sdkVersion = '%SDKVERSION%' || '?';
+    var releaseVersion = '%RELEASEVERSION%';
 
-    function Logger() {
+    function Logger(observableSessionId) {
         this._appenders = [];
         this._userId = null;
         this._sessionId = null;
+        this._environment = defaultEnvironment;
+        this._applicationVersion = sdkVersion;
+
+        if (observableSessionId) {
+            assert.isObject(observableSessionId);
+
+            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial:'notify'})
+        }
     }
 
     Logger.prototype.trace = function trace(/*formatStr, [parameter], ...*/) {
@@ -72,13 +83,31 @@ define([
         this._userId = userId;
     };
 
-    Logger.prototype.getSessionId = function getSessionId() {
-        return this._sessionId;
+    Logger.prototype.getEnvironment = function getEnvironment() {
+        return this._environment;
     };
 
-    Logger.prototype.setSessionId = function setSessionId(sessionId) {
-        this._sessionId = sessionId;
+    Logger.prototype.setEnvironment = function setEnvironment(environment) {
+        this._environment = environment;
     };
+
+    Logger.prototype.getApplicationVersion = function getApplicationVersion() {
+        return this._applicationVersion;
+    };
+
+    Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
+        this._applicationVersion = version;
+    };
+
+    function onSessionIdChange(sessionId) {
+        this._sessionId = sessionId;
+
+        if (!sessionId) {
+            this.info('Websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+        } else {
+            this.info('Session started on websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+        }
+    }
 
     function log(messages, context) {
         var now = _.now();
@@ -89,7 +118,7 @@ define([
 
         _.forEach(this._appenders, function(appender) {
             try {
-                appender.log(since, level, category, Array.prototype.slice.call(messages), that._sessionId, that._userId, context);
+                appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
             } catch (e) {
             }
         });
@@ -113,6 +142,57 @@ define([
 
         throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
     }
+
+    var stringify = function stringify(args) {
+        if (args.length === 0) {
+            return;
+        }
+
+        var newArgs = [];
+        var errorStacks = [];
+
+        _.forEach(args, function(arg) {
+            newArgs.push(_.toString(arg));
+
+            if (arg instanceof Error) {
+                errorStacks.push(arg.stack);
+            }
+        });
+
+        return format(newArgs.concat(errorStacks));
+    };
+
+    var format = function format(args) {
+        var fmt = args[0];
+        var idx = 0;
+
+        while (fmt.indexOf && args.length > 1 && idx >= 0) {
+            idx = fmt.indexOf('%', idx);
+
+            if (idx > 0) {
+                var type = fmt.substring(idx + 1, idx + 2);
+
+                switch (type) {
+                    case '%':
+                        // Escaped '%%' turns into '%'
+                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
+                        idx++;
+                        break;
+                    case 's':
+                    case 'd':
+                        // Replace '%d' or '%s' with the argument
+                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
+                        args.splice(1, 1);
+                        break;
+                    default:
+                        return args;
+                        break;
+                }
+            }
+        }
+
+        return args;
+    };
 
     return Logger;
 });

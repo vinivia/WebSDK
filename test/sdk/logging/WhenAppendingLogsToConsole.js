@@ -53,14 +53,14 @@ define([
         });
 
         it('Expect logging below Warn to trigger console log', function () {
-            consoleAppender.log(0, 'Trace', '', ['Message'], sessionId, '', {level: logging.level.TRACE});
+            consoleAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             sinon.assert.calledOnce(consoleLogStub);
             sinon.assert.notCalled(consoleErrorStub);
         });
 
         it('Expect logging at Warn or above to trigger console error', function () {
-            consoleAppender.log(0, 'Warn', '', ['Message'], sessionId, '', {level: logging.level.WARN});
+            consoleAppender.log(0, 'Warn', '', ['Message'], sessionId, '', '', '', {level: logging.level.WARN});
 
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.calledOnce(consoleErrorStub);
@@ -75,27 +75,27 @@ define([
         it('Expect only logs of level at the threshold to be logged', function () {
             consoleAppender.setThreshold(logging.level.WARN);
 
-            consoleAppender.log(0, 'Trace', '', ['Message'], sessionId, '', {level: logging.level.TRACE});
+            consoleAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.notCalled(consoleErrorStub);
 
-            consoleAppender.log(0, 'Debug', '', ['Message'], sessionId, '', {level: logging.level.DEBUG});
+            consoleAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.notCalled(consoleErrorStub);
 
-            consoleAppender.log(0, 'Info', '', ['Message'], sessionId, '', {level: logging.level.INFO});
+            consoleAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.notCalled(consoleErrorStub);
 
-            consoleAppender.log(0, 'Warn', '', ['Message'], sessionId, '', {level: logging.level.WARN});
+            consoleAppender.log(0, 'Warn', '', ['Message'], sessionId, '', '', '', {level: logging.level.WARN});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.calledOnce(consoleErrorStub);
 
-            consoleAppender.log(0, 'Error', '', ['Message'], sessionId, '', {level: logging.level.ERROR});
+            consoleAppender.log(0, 'Error', '', ['Message'], sessionId, '', '', '', {level: logging.level.ERROR});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.calledTwice(consoleErrorStub);
 
-            consoleAppender.log(0, 'Fatal', '', ['Message'], sessionId, '', {level: logging.level.FATAL});
+            consoleAppender.log(0, 'Fatal', '', ['Message'], sessionId, '', '', '', {level: logging.level.FATAL});
             sinon.assert.notCalled(consoleLogStub);
             sinon.assert.calledThrice(consoleErrorStub);
         });

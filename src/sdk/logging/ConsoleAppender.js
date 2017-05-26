@@ -34,7 +34,7 @@ define([
         return this._minLevel;
     };
 
-    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, context) {
+    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, environment, version, context) {
         if (context.level < this._minLevel) {
             return;
         }
@@ -49,115 +49,12 @@ define([
     };
 
     var log = function (args) {
-        console.log.apply(console, stringify(args));
+        console.log.apply(console, args);
     } || function () { };
 
     var logError = function (args) {
-        console.error.apply(console, stringify(args));
+        console.error.apply(console, args);
     } || log;
-
-    var stringify = function stringify(args) {
-        if (args.length === 0) {
-            return;
-        }
-
-        var newArgs = [];
-
-        for (var i = 0; i < args.length - 1; i++) {
-            newArgs.push(toString(args[i]));
-        }
-
-        if (args.length > 0) {
-            var last = args[args.length - 1];
-
-            if (last instanceof Error) {
-                newArgs.push(last);
-                newArgs.push(last.stack);
-            } else {
-                newArgs.push(toString(last));
-            }
-        }
-
-        return format(newArgs);
-    };
-
-    var format = function format(args) {
-        var fmt = args[0];
-        var idx = 0;
-
-        while (fmt.indexOf && args.length > 1 && idx >= 0) {
-            idx = fmt.indexOf('%', idx);
-
-            if (idx > 0) {
-                var type = fmt.substring(idx + 1, idx + 2);
-
-                switch (type) {
-                    case '%':
-                        // Escaped '%%' turns into '%'
-                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
-                        idx++;
-                        break;
-                    case 's':
-                    case 'd':
-                        // Replace '%d' or '%s' with the argument
-                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
-                        args.splice(1, 1);
-                        break;
-                    default:
-                        return args;
-                        break;
-                }
-            }
-        }
-
-        return args;
-    };
-
-    var toString = function toString(data) {
-        if (_.isString(data)) {
-            return data;
-        }
-
-        if (_.isBoolean(data)) {
-            return data ? 'true' : 'false';
-        }
-
-        if (_.isNumber(data)) {
-            return data.toString();
-        }
-
-        var toStringStr = '';
-
-        if (data) {
-            if (_.isFunction(data.toString)) {
-                toStringStr = data.toString();
-            } else if (_.isObject(data.toString)) {
-                try {
-                    toStringStr = data.toString();
-                } catch (e) {
-                    toStringStr = '[object invalid toString()]';
-                }
-            }
-        }
-
-        if (toStringStr.indexOf('[object') !== 0) {
-            return toStringStr;
-        }
-
-        var cache = [];
-
-        return toStringStr + JSON.stringify(data, function (key, value) {
-                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
-                    if (_.includes(cache, value)) {
-                        return '<recursive>';
-                    }
-
-                    cache.push(value);
-                }
-
-                return key === '' ? value : toString(value);
-            });
-    };
 
     return ConsoleAppender;
 });

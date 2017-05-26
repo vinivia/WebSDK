@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 const moment = require('moment');
-const version = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+const sdkVersion = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+const releaseVersion = require('./package.json').version;
 const environment = process.env.NODE_ENV;
 
-console.log('Using version', version);
+console.log('Using version', sdkVersion);
 
 module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
@@ -58,8 +59,14 @@ module.exports = function (grunt) {
         },
         sed: {
             version: {
-                pattern: '%VERSION%',
-                replacement: version,
+                pattern: '%SDKVERSION%',
+                replacement: sdkVersion,
+                recursive: true,
+                path: 'dist'
+            },
+            releaseVersion: {
+                pattern: '%RELEASEVERSION%',
+                replacement: releaseVersion,
                 recursive: true,
                 path: 'dist'
             },

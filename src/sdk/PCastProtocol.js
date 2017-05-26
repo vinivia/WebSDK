@@ -16,11 +16,12 @@
 define([
     './LodashLight',
     './assert',
+    './observable/Observable',
     './MQProtocol',
     './ReconnectingWebSocket',
     'ByteBuffer',
     'phenix-rtc'
-], function (_, assert, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
+], function (_, assert, Observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -41,6 +42,7 @@ define([
         this._version = version;
         this._logger = logger;
         this._mqProtocol = new MQProtocol(this._logger);
+        this._observableSessionId = new Observable(null);
 
         this._logger.info('Connecting to [%s]', uri);
 
@@ -75,7 +77,7 @@ define([
     };
 
     PCastProtocol.prototype.disconnect = function () {
-        delete this._sessionId;
+        this._observableSessionId.setValue(null);
 
         return this._webSocket.disconnect();
     };
@@ -97,15 +99,19 @@ define([
             authenticationToken: authToken
         };
 
-        if (this._sessionId) {
-            authenticate.sessionId = this._sessionId;
+        if (this.getSessionId()) {
+            authenticate.sessionId = this.getSessionId();
         }
 
         return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
     };
 
     PCastProtocol.prototype.getSessionId = function () {
-        return this._sessionId;
+        return this._observableSessionId.getValue();
+    };
+
+    PCastProtocol.prototype.getObservableSessionId = function () {
+        return this._observableSessionId;
     };
 
     PCastProtocol.prototype.bye = function (reason, callback) {
@@ -117,7 +123,7 @@ define([
         }
 
         var bye = {
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             reason: reason
         };
 
@@ -143,7 +149,7 @@ define([
         var setupStream = {
             streamToken: streamToken,
             createStream: {
-                sessionId: this._sessionId,
+                sessionId: this.getSessionId(),
                 options: ['data-quality-notifications'],
                 connectUri: options.connectUri,
                 connectOptions: options.connectOptions || []
@@ -287,7 +293,7 @@ define([
         var getRoomInfo = {
             roomId: roomId,
             alias: alias,
-            sessionId: this._sessionId
+            sessionId: this.getSessionId()
         };
 
         return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
@@ -300,7 +306,7 @@ define([
         assert.isFunction(callback, 'callback');
 
         var createRoom = {
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             room: {
                 name: roomName,
                 description: description,
@@ -324,7 +330,7 @@ define([
         var joinRoom = {
             roomId: roomId,
             alias: alias,
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             member: member,
             timestamp: timestamp
         };
@@ -339,7 +345,7 @@ define([
 
         var leaveRoom = {
             roomId: roomId,
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             timestamp: timestamp
         };
 
@@ -354,7 +360,7 @@ define([
         member.updateStreams = member.hasOwnProperty('streams');
 
         var updateMember = {
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             member: member,
             timestamp: timestamp
         };
@@ -368,7 +374,7 @@ define([
         assert.isFunction(callback, 'callback');
 
         var updateRoom = {
-            sessionId: this._sessionId,
+            sessionId: this.getSessionId(),
             room: room,
             timestamp: timestamp
         };
@@ -487,7 +493,7 @@ define([
         var message = this._mqProtocol.decode(response.type, response.payload);
 
         if (response.type === 'pcast.AuthenticateResponse') {
-            this._sessionId = message.sessionId;
+            this._observableSessionId.setValue(message.sessionId);
         } else if (response.type === 'pcast.StreamEnded') {
             triggerEvent.call(this, 'streamEnded', [message]);
         } else if (response.type === 'pcast.StreamDataQuality') {

@@ -56,6 +56,12 @@ define([
                     {
                         "rule": "optional",
                         "type": "string",
+                        "name": "fullQualifiedName",
+                        "id": 11
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
                         "name": "sessionId",
                         "id": 6
                     },

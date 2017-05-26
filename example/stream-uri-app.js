@@ -29,7 +29,9 @@ requirejs.config({
     }
 });
 
-requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, rtc, sdk, shaka) {
+var version = '1.0.0'; // ToDo: use until sample app separated from repo
+
+requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var remoteVideoEl = $('#remoteVideo')[0];
@@ -108,17 +110,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             onLoadedMetaData(remoteVideoSecondaryEl);
         };
 
-        $('#phenixRTCVersion').text(rtc.phenixVersion);
-        $('#browser').text(rtc.browser);
-        $('#browserVersion').text(rtc.browserVersion)
-        if (rtc.webrtcSupported) {
+        $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
+        $('#browser').text(sdk.RTC.browser);
+        $('#browserVersion').text(sdk.RTC.browserVersion)
+        if (sdk.RTC.webrtcSupported) {
             $('#webrtc').addClass('success');
         } else {
             $('#webrtc').addClass('danger');
         }
-        if (rtc.isPhenixEnabled()) {
+        if (sdk.RTC.isPhenixEnabled()) {
             $('#phenix').addClass('success');
-        } else if (rtc.phenixSupported) {
+        } else if (sdk.RTC.phenixSupported) {
             $('#phenix').addClass('warning');
         } else {
             $('#phenix').addClass('danger');
@@ -161,6 +163,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
             fingerprint.get(function (fingerprint) {
                 pcast = new sdk.PCast({uri: uri, deviceId: fingerprint, shaka: shaka});
+
+                pcast.getLogger().setApplicationVersion(version);
+
+                setLoggerUserId();
+                setLoggerEnvironment();
             });
         };
 
@@ -829,9 +836,42 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
             }
         };
 
+        function setLoggerUserId() {
+            if (!pcast) {
+                return;
+            }
+
+            var logger = pcast.getLogger();
+
+            logger.setUserId($('#applicationId').val());
+        }
+
+        function setLoggerEnvironment() {
+            if (!pcast) {
+                return;
+            }
+
+            var env = $('#environment').val().toLowerCase();
+            var logger = pcast.getLogger();
+
+            if(env.indexOf('local') > -1) {
+                logger.setEnvironment('local');
+            } else if (env.indexOf('stg')) {
+                logger.setEnvironment('staging');
+            } else {
+                logger.setEnvironment('production');
+            }
+        }
+
         $('#environment').change(function () {
             createPCast();
             listStreams();
+            setLoggerEnvironment();
+        });
+
+        $('#applicationId').change(function() {
+            listStreams();
+            setLoggerUserId();
         });
 
         $('input[type="radio"]').on('change', function () {
@@ -840,7 +880,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
 
         updateOptions();
 
-        $('#applicationId').change(listStreams);
         $('#secret').change(listStreams);
         $('#createAuthToken').click(createAuthToken);
 
@@ -868,8 +907,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-rtc
         init();
 
         // Plugin might load with delay
-        if (rtc.phenixSupported && !rtc.isPhenixEnabled()) {
-            rtc.onload = init;
+        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
+            sdk.RTC.onload = init;
         }
     });
 });

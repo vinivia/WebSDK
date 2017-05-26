@@ -604,7 +604,7 @@ define([
                         response.members[2].sessionId = 'NewSessionId';
                         response.room.members[2].sessionId = 'NewSessionId';
 
-                        pcast.getProtocol().getSessionId = function() {return 'NewSessionId';};
+                        pcast.getProtocol().getObservableSessionId().setValue('NewSessionId');
                     });
                 });
             });

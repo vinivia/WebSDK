@@ -26,28 +26,12 @@ define([
             authenticationService = new AuthenticationService(pcast);
         });
 
-        it('Has property start which is a function', function () {
-            expect(authenticationService.start).to.be.a('function');
-        });
-
-        it('Has property stop which is a function', function () {
-            expect(authenticationService.stop).to.be.a('function');
-        });
-
         describe('When asserting authorized', function () {
             var newValue = 'newValue';
 
-            beforeEach(function () {
-                authenticationService.start();
-            });
-
-            afterEach(function () {
-                authenticationService.stop();
-            });
-
             it('Error thrown when status and sessionId invalid', function () {
-                pcast.getStatus = function() { return 'online'; };
-                pcast.getProtocol().getSessionId = function() { return '' };
+                pcast.getObservableStatus().setValue('online');
+                pcast.getProtocol().getObservableSessionId().setValue('');
 
                 expect(function () {
                     authenticationService.assertAuthorized();
@@ -55,7 +39,7 @@ define([
             });
 
             it('Error thrown when status invalid', function () {
-                pcast.getStatus = function() { return 'offline'; };
+                pcast.getObservableStatus().setValue('offline');
 
                 expect(function () {
                     authenticationService.assertAuthorized();
@@ -63,7 +47,7 @@ define([
             });
 
             it('Error thrown when sessionId invalid', function () {
-                pcast.getProtocol().getSessionId = function() { return '' };
+                pcast.getProtocol().getObservableSessionId().setValue('');
 
                 expect(function () {
                     authenticationService.assertAuthorized();

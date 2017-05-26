@@ -29,6 +29,38 @@ define([
             });
         });
 
+        describe('When getting iso timestamp as a string', function () {
+            it('Has property isoString that is a function', function () {
+                expect(_.isoString).to.be.a('function');
+            });
+
+            it('Returns integer', function () {
+                expect(_.isoString()).to.be.a('string');
+            });
+        });
+
+        describe('When padding a number with pad', function () {
+            it('Has property pad that is a function', function () {
+                expect(_.pad).to.be.a('function');
+            });
+
+            it('Returns string not padded when length matches order of magnitude', function () {
+                expect(_.pad(10, 2)).to.be.equal('10');
+            });
+
+            it('Returns string not padded when length is greater than order of magnitude', function () {
+                expect(_.pad(100, 2)).to.be.equal('100');
+            });
+
+            it('Returns string padded when length is less than order of magnitude', function () {
+                expect(_.pad(1, 2)).to.be.equal('01');
+            });
+
+            it('Returns string padded when length is less than order of magnitude', function () {
+                expect(_.pad(1, 3)).to.be.equal('001');
+            });
+        });
+
         describe('When iterating through objects properties using forOwn', function () {
             var myObject;
             var count;
@@ -982,6 +1014,46 @@ define([
 
             it('Expect to successfully convert Long datetime to utc datetime', function () {
                 expect(_.utc(Long.fromNumber(1488469432437))).to.be.equal(1488469432437);
+            });
+        });
+
+        describe('When converting to string', function () {
+            it('Has property toString that is a function', function () {
+                expect(_.toString).to.be.a('function');
+            });
+
+            it('Expect object to be converted to string', function () {
+                var myObject = { key: 'value' };
+
+                expect(_.toString(myObject)).to.be.equal('[object Object]{"key":"value"}');
+            });
+
+            it('Expect array to be converted to string', function () {
+                expect(_.toString([1,2,3])).to.be.equal('1,2,3');
+            });
+
+            it('Expect number to be converted to string', function () {
+                expect(_.toString(4)).to.be.equal('4');
+            });
+
+            it('Expect string to be converted to string', function () {
+                expect(_.toString('string')).to.be.equal('string');
+            });
+
+            it('Expect boolean to be converted to string', function () {
+                expect(_.toString(true)).to.be.equal('true');
+            });
+
+            it('Expect undefined to be converted to string', function () {
+                expect(_.toString(undefined)).to.be.equal('');
+            });
+
+            it('Expect null to be converted to string', function () {
+                expect(_.toString(null)).to.be.equal('');
+            });
+
+            it('Expect Error to be converted to string', function () {
+                expect(_.toString(new Error('My Error'))).to.be.equal('Error: My Error');
             });
         });
     });

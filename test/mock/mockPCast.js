@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 define([
+    'sdk/observable/Observable',
     'sdk/logging/Logger',
     'sdk/PCastProtocol',
     'sdk/PhenixPCast'
-], function (Logger, Protocol, PCast) {
+], function (Observable, Logger, Protocol, PCast) {
     return function MockPCast () {
         var pcast = sinon.createStubInstance(PCast);
         var logger = sinon.createStubInstance(Logger);
         var protocol = sinon.createStubInstance(Protocol);
+        var sessionId = new Observable('mockSessionId');
+        var status = new Observable('online');
 
         pcast.getLogger = function() { return logger; };
         pcast.getProtocol = function() { return protocol; };
         pcast.getStatus = function() { return 'online'; };
+        pcast.getObservableStatus = function() { return status; };
         protocol.getSessionId = function() { return 'mockSessionId'; };
+        protocol.getObservableSessionId = function() { return sessionId; };
 
         return pcast;
     }

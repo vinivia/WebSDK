@@ -52,8 +52,6 @@ define([
         assert.stringNotEmpty(role, 'role');
         assert.stringNotEmpty(screenName, 'screenName');
 
-        this._authService.start();
-
         var myState = member.states.passive.name;
         var mySessionId = this._authService.getPCastSessionId();
         var myScreenName = screenName;
@@ -176,8 +174,6 @@ define([
     };
 
     RoomService.prototype.stop = function stop() {
-        this._authService.stop();
-
         disposeOfArray(this._disposables);
     };
 

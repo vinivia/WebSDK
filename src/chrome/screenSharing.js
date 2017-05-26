@@ -53,7 +53,7 @@ chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResp
             sendResponse({status: 'ok'});
             break;
         case 'version':
-            sendResponse({status: 'ok', version: '%VERSION%'});
+            sendResponse({status: 'ok', version: '%SDKVERSION%'});
             break;
         default:
             sendResponse({status: 'failed', reason: 'Unsupported command'});

@@ -15,13 +15,14 @@
  */
 define([
     './LodashLight',
+    './observable/Observable',
     './logging/pcastLoggerFactory',
     './PCastProtocol',
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     'phenix-rtc'
-], function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, Observable, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -45,7 +46,7 @@ define([
             }
         ]
     });
-    var sdkVersion = '%VERSION%';
+    var sdkVersion = '%SDKVERSION%';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -57,10 +58,12 @@ define([
 
     function PhenixPCast(options) {
         options = options || {};
+        this._observableStatus = new Observable('offline');
+        this._observableSessionId = new Observable(null);
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -85,7 +88,11 @@ define([
     };
 
     PhenixPCast.prototype.getStatus = function () {
-        return this._status;
+        return this._observableStatus.getValue();
+    };
+
+    PhenixPCast.prototype.getObservableStatus = function () {
+        return this._observableStatus;
     };
 
     PhenixPCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
@@ -112,7 +119,8 @@ define([
         this._authenticationCallback = authenticationCallback;
         this._onlineCallback = onlineCallback;
         this._offlineCallback = offlineCallback;
-        this._status = 'connecting';
+
+        transitionToStatus.call(this, 'connecting');
 
         this._peerConnections = {};
         this._mediaStreams = {};
@@ -202,6 +210,10 @@ define([
         } finally {
             if (this._protocol) {
                 this._protocol.disconnect();
+
+                if (this._sessionIdSubscription) {
+                    this._sessionIdSubscription.dispose();
+                }
 
                 this._protocol = null;
             }
@@ -355,10 +367,6 @@ define([
 
     PhenixPCast.prototype.getLogger = function () {
         return this._logger;
-    };
-
-    PhenixPCast.prototype.getStatus = function () {
-        return this._status;
     };
 
     PhenixPCast.prototype.toString = function () {
@@ -703,6 +711,13 @@ define([
         this._protocol.on('disconnected', _.bind(disconnected, this));
         this._protocol.on('streamEnded', _.bind(streamEnded, this));
         this._protocol.on('dataQuality', _.bind(dataQuality, this));
+
+        var that = this;
+
+        this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(
+            function(sessionId) {
+                that._observableSessionId.setValue(sessionId);
+            });
     }
 
     function connected() {
@@ -726,9 +741,7 @@ define([
                     } else {
                         transitionToStatus.call(that, 'online');
 
-                        if (that._logger.isPCastLogger) {
-                            that._logger.setSessionId(response.sessionId);
-                        }
+                        that._observableSessionId.setValue(response.sessionId);
 
                         that._authenticationCallback.call(that, that, response.status, response.sessionId);
                     }
@@ -2169,10 +2182,10 @@ define([
     }
 
     function transitionToStatus(newStatus, suppressCallback) {
-        var oldStatus = this._status;
+        var oldStatus = this.getStatus();
 
         if (oldStatus !== newStatus) {
-            this._status = newStatus;
+            this._observableStatus.setValue(newStatus);
 
             if (suppressCallback) {
                 return;

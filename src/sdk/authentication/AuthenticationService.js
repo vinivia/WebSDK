@@ -15,24 +15,13 @@
  */
 define([
     '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableMonitor'
-], function (_, assert, Observable, ObservableMonitor) {
+    '../assert'
+], function (_, assert) {
     'use strict';
 
     function AuthenticationService(pcast) {
-        this._sessionId = new Observable();
-        this._status = new Observable();
-        this._sessionIdMonitor = new ObservableMonitor(this._sessionId);
-        this._statusMonitor = new ObservableMonitor(this._status);
-
-        this.init(pcast);
-    }
-
-    AuthenticationService.prototype.init = function init(pcast) {
         assert.isObject(pcast, 'pcast');
-        assert.isFunction(pcast.getStatus, 'pcast.getStatus');
+        assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
         assert.isFunction(pcast.getLogger, 'pcast.getLogger');
         assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
 
@@ -46,31 +35,12 @@ define([
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
-        assert.isFunction(this._protocol.getSessionId, 'this._protocol.getSessionId');
-        assert.isFunction(this._pcast.getStatus, 'this._pcast.getStatus');
+        assert.isFunction(this._protocol.getObservableSessionId, 'this._protocol.getObservableSessionId');
+        assert.isFunction(this._pcast.getObservableStatus, 'this._pcast.getObservableStatus');
 
-        this._sessionId.setValue(this.getPCastSessionId());
-        this._status.setValue(this.getPCastStatus());
-    };
-
-    AuthenticationService.prototype.start = function start() {
-        if (!this._sessionIdMonitor.isEnabled()) {
-            this._sessionIdMonitor.start(_.bind(this.getPCastSessionId, this));
-        }
-
-        if (!this._statusMonitor.isEnabled()) {
-            this._statusMonitor.start(_.bind(this.getPCastStatus, this));
-        }
-    };
-
-    AuthenticationService.prototype.stop = function stop() {
-        if (this._sessionIdMonitor.isEnabled()) {
-            this._sessionIdMonitor.stop();
-        }
-        if (this._statusMonitor.isEnabled()) {
-            this._statusMonitor.stop();
-        }
-    };
+        this._sessionId = this._protocol.getObservableSessionId();
+        this._status = this._pcast.getObservableStatus();
+    }
 
     AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
         if (!validPCastStatus(this.getPCastStatus())) {
@@ -91,11 +61,11 @@ define([
     };
 
     AuthenticationService.prototype.getPCastSessionId = function getPCastSessionId() {
-        return this._protocol.getSessionId();
+        return this._sessionId.getValue();
     };
 
     AuthenticationService.prototype.getPCastStatus = function getPCastStatus() {
-        return this._pcast.getStatus();
+        return this._status.getValue();
     };
 
     function validPCastSessionId(sessionId) {

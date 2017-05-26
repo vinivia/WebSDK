@@ -90,9 +90,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(1),
 	    __webpack_require__(2),
 	    __webpack_require__(19),
-	    __webpack_require__(27),
-	    __webpack_require__(42),
-	    __webpack_require__(47),
+	    __webpack_require__(28),
+	    __webpack_require__(41),
+	    __webpack_require__(46),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor) {
 	    window.PhenixPCast = PhenixPCast;
 
@@ -175,11 +175,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
+	    var defaultEnvironment = 'production' || '?';
+	    var sdkVersion = '2017-05-31T14:47:03Z' || '?';
+	    var releaseVersion = '2017.2.1';
 
-	    function Logger() {
+	    function Logger(observableSessionId) {
 	        this._appenders = [];
 	        this._userId = null;
 	        this._sessionId = null;
+	        this._environment = defaultEnvironment;
+	        this._applicationVersion = sdkVersion;
+
+	        if (observableSessionId) {
+	            assert.isObject(observableSessionId);
+
+	            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial:'notify'})
+	        }
 	    }
 
 	    Logger.prototype.trace = function trace(/*formatStr, [parameter], ...*/) {
@@ -225,13 +236,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._userId = userId;
 	    };
 
-	    Logger.prototype.getSessionId = function getSessionId() {
-	        return this._sessionId;
+	    Logger.prototype.getEnvironment = function getEnvironment() {
+	        return this._environment;
 	    };
 
-	    Logger.prototype.setSessionId = function setSessionId(sessionId) {
-	        this._sessionId = sessionId;
+	    Logger.prototype.setEnvironment = function setEnvironment(environment) {
+	        this._environment = environment;
 	    };
+
+	    Logger.prototype.getApplicationVersion = function getApplicationVersion() {
+	        return this._applicationVersion;
+	    };
+
+	    Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
+	        this._applicationVersion = version;
+	    };
+
+	    function onSessionIdChange(sessionId) {
+	        this._sessionId = sessionId;
+
+	        if (!sessionId) {
+	            this.info('Websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+	        } else {
+	            this.info('Session started on websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+	        }
+	    }
 
 	    function log(messages, context) {
 	        var now = _.now();
@@ -242,7 +271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        _.forEach(this._appenders, function(appender) {
 	            try {
-	                appender.log(since, level, category, Array.prototype.slice.call(messages), that._sessionId, that._userId, context);
+	                appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
 	            } catch (e) {
 	            }
 	        });
@@ -266,6 +295,57 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
 	    }
+
+	    var stringify = function stringify(args) {
+	        if (args.length === 0) {
+	            return;
+	        }
+
+	        var newArgs = [];
+	        var errorStacks = [];
+
+	        _.forEach(args, function(arg) {
+	            newArgs.push(_.toString(arg));
+
+	            if (arg instanceof Error) {
+	                errorStacks.push(arg.stack);
+	            }
+	        });
+
+	        return format(newArgs.concat(errorStacks));
+	    };
+
+	    var format = function format(args) {
+	        var fmt = args[0];
+	        var idx = 0;
+
+	        while (fmt.indexOf && args.length > 1 && idx >= 0) {
+	            idx = fmt.indexOf('%', idx);
+
+	            if (idx > 0) {
+	                var type = fmt.substring(idx + 1, idx + 2);
+
+	                switch (type) {
+	                    case '%':
+	                        // Escaped '%%' turns into '%'
+	                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
+	                        idx++;
+	                        break;
+	                    case 's':
+	                    case 'd':
+	                        // Replace '%d' or '%s' with the argument
+	                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
+	                        args.splice(1, 1);
+	                        break;
+	                    default:
+	                        return args;
+	                        break;
+	                }
+	            }
+	        }
+
+	        return args;
+	    };
 
 	    return Logger;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -322,6 +402,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return Math.floor(date);
 	    };
 
+	    _.isoString = function isoString() {
+	        var now = new Date();
+
+	        if (now.toISOString) {
+	            return now.toISOString();
+	        }
+
+	        return now.getUTCFullYear() +
+	            '-' + _.pad(now.getUTCMonth() + 1, 2) +
+	            '-' + _.pad(now.getUTCDate(), 2) +
+	            'T' + _.pad(now.getUTCHours(), 2) +
+	            ':' + _.pad(now.getUTCMinutes(), 2) +
+	            ':' + _.pad(now.getUTCSeconds(), 2) +
+	            '.' + (now.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+	            'Z';
+	    };
+
 	    _.map = function map(collection, callback) {
 	        if (!_.isObject(collection)) {
 	            throw new Error('Collection must be an object or array.');
@@ -355,7 +452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return _.map(collection, function(value) {
 	            return value;
-	        })
+	        });
 	    };
 
 	    _.forEach = function forEach(collection, callback) {
@@ -641,9 +738,74 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return null;
 	    };
 
+	    _.toString = function toString(data) {
+	        if (_.isString(data)) {
+	            return data;
+	        }
+
+	        if (_.isBoolean(data)) {
+	            return data ? 'true' : 'false';
+	        }
+
+	        if (_.isNumber(data)) {
+	            return data.toString();
+	        }
+
+	        var toStringStr = '';
+
+	        if (data) {
+	            if (_.isFunction(data.toString)) {
+	                toStringStr = data.toString();
+	            } else if (_.isObject(data.toString)) {
+	                try {
+	                    toStringStr = data.toString();
+	                } catch (e) {
+	                    toStringStr = '[object invalid toString()]';
+	                }
+	            }
+	        }
+
+	        if (toStringStr.indexOf('[object') !== 0) {
+	            return toStringStr;
+	        }
+
+	        var cache = [];
+
+	        return toStringStr + JSON.stringify(data, function (key, value) {
+	                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
+	                    if (_.includes(cache, value)) {
+	                        return '<recursive>';
+	                    }
+
+	                    cache.push(value);
+	                }
+
+	                return key === '' ? value : _.toString(value);
+	            });
+	    };
+
+	    _.pad = function padNumber(value, numberToPad) {
+	        assertIsNumber(value);
+	        assertIsNumber(numberToPad);
+
+	        var valueLength = value.toString().length;
+
+	        for (var i = 0; i < numberToPad - valueLength; i++) {
+	            value = '0' + value.toString();
+	        }
+
+	        return value.toString();
+	    };
+
 	    var assertIsArray = function isArray(collection) {
 	        if (!_.isArray(collection)) {
 	            throw new Error('Array must be an array.');
+	        }
+	    };
+
+	    var assertIsNumber = function isArray(number) {
+	        if (!_.isNumber(number)) {
+	            throw new Error('Number must be a number.');
 	        }
 	    };
 
@@ -884,21 +1046,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var networkDisconnectHysteresisInterval = 0;
 
 	    function AnalytixAppender() {
-	        this._environmentName = 'production' || '?';
-	        this._environmentVersion = '2017-05-30T22:40:44Z' || '?';
 	        this._loggingUrl = '/analytix/logs';
-	        this._source = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+	        this._domain = location.hostname;
 	        this._protocol = new MQProtocol();
 	        this._maxAttempts = 3;
 	        this._maxBufferedRecords = 1000;
 	        this._maxBatchSize = 100;
 	        this._records = [];
 	        this._pending = false;
-	        this._userId = '';
 	        this._baseUri = '';
 	        this._minLevel = logging.level.TRACE;
 	        this._isEnabled = true;
 	        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
+	        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
 	    }
 
 	    AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
@@ -927,16 +1087,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._isEnabled = enabled;
 	    };
 
-	    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, context) {
+	    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
 	        if (context.level < this._minLevel) {
 	            return;
 	        }
 
 	        assert.isArray(messages);
 
-	        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId);
+	        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
 
-	        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId);
+	        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId, environment, version);
 
 	        sendBatchMessagesIfNonePending.call(this);
 	    };
@@ -960,39 +1120,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return networkConnectionMonitor;
 	    }
 
-	    function addMessagesToRecords(since, level, category, messages, sessionId, userId) {
+	    function addMessagesToRecords(since, level, category, messages, sessionId, userId, environment, version) {
 	        var message = messages.join(' ');
 	        var record = {
 	            level: level,
-	            timestamp: _.now().toString(),
+	            timestamp: _.isoString(),
 	            category: category,
 	            message: message,
-	            source: this._source,
+	            source: this._browser,
+	            fullQualifiedName: this._domain,
 	            sessionId: sessionId,
 	            userId: userId,
-	            environment: this._environmentName,
-	            version: this._environmentVersion,
+	            environment: environment,
+	            version: version,
 	            runtime: since
 	        };
 
 	        this._records.push(record);
 	    }
 
-	    function deleteRecordsIfAtCapacity(since, sessionId, userId) {
+	    function deleteRecordsIfAtCapacity(since, sessionId, userId, environment, version) {
 	        if (this._records.length > this._maxBufferedRecords) {
 	            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
 
 	            this._records = this._records.slice(deleteRecords);
 	            this._records.unshift({
 	                level: 'Warn',
-	                timestamp: _.now().toString(),
+	                timestamp: _.isoString(),
 	                category: 'websdk/analytixLogger',
 	                message: 'Deleted ' + deleteRecords + ' records',
-	                source: 'Browser',
+	                source: this._browser,
+	                fullQualifiedName: this._domain,
 	                sessionId: sessionId,
 	                userId: userId,
-	                environment: this._environmentName,
-	                version: this._environmentVersion,
+	                environment: environment,
+	                version: version,
 	                runtime: since
 	            });
 	        }
@@ -1079,7 +1241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-05-30T22:40:44Z';
+	        this._version = '2017-05-31T14:47:03Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -3902,6 +4064,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    {
 	                        "rule": "optional",
 	                        "type": "string",
+	                        "name": "fullQualifiedName",
+	                        "id": 11
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
 	                        "name": "sessionId",
 	                        "id": 6
 	                    },
@@ -4131,7 +4299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._minLevel;
 	    };
 
-	    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, context) {
+	    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, environment, version, context) {
 	        if (context.level < this._minLevel) {
 	            return;
 	        }
@@ -4146,115 +4314,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    var log = function (args) {
-	        console.log.apply(console, stringify(args));
+	        console.log.apply(console, args);
 	    } || function () { };
 
 	    var logError = function (args) {
-	        console.error.apply(console, stringify(args));
+	        console.error.apply(console, args);
 	    } || log;
-
-	    var stringify = function stringify(args) {
-	        if (args.length === 0) {
-	            return;
-	        }
-
-	        var newArgs = [];
-
-	        for (var i = 0; i < args.length - 1; i++) {
-	            newArgs.push(toString(args[i]));
-	        }
-
-	        if (args.length > 0) {
-	            var last = args[args.length - 1];
-
-	            if (last instanceof Error) {
-	                newArgs.push(last);
-	                newArgs.push(last.stack);
-	            } else {
-	                newArgs.push(toString(last));
-	            }
-	        }
-
-	        return format(newArgs);
-	    };
-
-	    var format = function format(args) {
-	        var fmt = args[0];
-	        var idx = 0;
-
-	        while (fmt.indexOf && args.length > 1 && idx >= 0) {
-	            idx = fmt.indexOf('%', idx);
-
-	            if (idx > 0) {
-	                var type = fmt.substring(idx + 1, idx + 2);
-
-	                switch (type) {
-	                    case '%':
-	                        // Escaped '%%' turns into '%'
-	                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
-	                        idx++;
-	                        break;
-	                    case 's':
-	                    case 'd':
-	                        // Replace '%d' or '%s' with the argument
-	                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
-	                        args.splice(1, 1);
-	                        break;
-	                    default:
-	                        return args;
-	                        break;
-	                }
-	            }
-	        }
-
-	        return args;
-	    };
-
-	    var toString = function toString(data) {
-	        if (_.isString(data)) {
-	            return data;
-	        }
-
-	        if (_.isBoolean(data)) {
-	            return data ? 'true' : 'false';
-	        }
-
-	        if (_.isNumber(data)) {
-	            return data.toString();
-	        }
-
-	        var toStringStr = '';
-
-	        if (data) {
-	            if (_.isFunction(data.toString)) {
-	                toStringStr = data.toString();
-	            } else if (_.isObject(data.toString)) {
-	                try {
-	                    toStringStr = data.toString();
-	                } catch (e) {
-	                    toStringStr = '[object invalid toString()]';
-	                }
-	            }
-	        }
-
-	        if (toStringStr.indexOf('[object') !== 0) {
-	            return toStringStr;
-	        }
-
-	        var cache = [];
-
-	        return toStringStr + JSON.stringify(data, function (key, value) {
-	                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
-	                    if (_.includes(cache, value)) {
-	                        return '<recursive>';
-	                    }
-
-	                    cache.push(value);
-	                }
-
-	                return key === '' ? value : toString(value);
-	            });
-	    };
 
 	    return ConsoleAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -4283,11 +4348,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(20),
 	    __webpack_require__(21),
-	    __webpack_require__(23),
-	    __webpack_require__(25),
+	    __webpack_require__(22),
+	    __webpack_require__(24),
 	    __webpack_require__(26),
+	    __webpack_require__(27),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, Observable, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
 	    'use strict';
 
 	    var NetworkStates = _.freeze({
@@ -4311,7 +4377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-05-30T22:40:44Z';
+	    var sdkVersion = '2017-05-31T14:47:03Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -4323,10 +4389,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function PhenixPCast(options) {
 	        options = options || {};
+	        this._observableStatus = new Observable('offline');
+	        this._observableSessionId = new Observable(null);
 	        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
 	        this._deviceId = options.deviceId || '';
 	        this._version = sdkVersion;
-	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId);
 	        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
 	        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
 	        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -4351,7 +4419,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    PhenixPCast.prototype.getStatus = function () {
-	        return this._status;
+	        return this._observableStatus.getValue();
+	    };
+
+	    PhenixPCast.prototype.getObservableStatus = function () {
+	        return this._observableStatus;
 	    };
 
 	    PhenixPCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
@@ -4378,7 +4450,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._authenticationCallback = authenticationCallback;
 	        this._onlineCallback = onlineCallback;
 	        this._offlineCallback = offlineCallback;
-	        this._status = 'connecting';
+
+	        transitionToStatus.call(this, 'connecting');
 
 	        this._peerConnections = {};
 	        this._mediaStreams = {};
@@ -4468,6 +4541,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } finally {
 	            if (this._protocol) {
 	                this._protocol.disconnect();
+
+	                if (this._sessionIdSubscription) {
+	                    this._sessionIdSubscription.dispose();
+	                }
 
 	                this._protocol = null;
 	            }
@@ -4621,10 +4698,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    PhenixPCast.prototype.getLogger = function () {
 	        return this._logger;
-	    };
-
-	    PhenixPCast.prototype.getStatus = function () {
-	        return this._status;
 	    };
 
 	    PhenixPCast.prototype.toString = function () {
@@ -4969,6 +5042,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._protocol.on('disconnected', _.bind(disconnected, this));
 	        this._protocol.on('streamEnded', _.bind(streamEnded, this));
 	        this._protocol.on('dataQuality', _.bind(dataQuality, this));
+
+	        var that = this;
+
+	        this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(
+	            function(sessionId) {
+	                that._observableSessionId.setValue(sessionId);
+	            });
 	    }
 
 	    function connected() {
@@ -4992,9 +5072,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    } else {
 	                        transitionToStatus.call(that, 'online');
 
-	                        if (that._logger.isPCastLogger) {
-	                            that._logger.setSessionId(response.sessionId);
-	                        }
+	                        that._observableSessionId.setValue(response.sessionId);
 
 	                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
 	                    }
@@ -6435,10 +6513,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function transitionToStatus(newStatus, suppressCallback) {
-	        var oldStatus = this._status;
+	        var oldStatus = this.getStatus();
 
 	        if (oldStatus !== newStatus) {
-	            this._status = newStatus;
+	            this._observableStatus.setValue(newStatus);
 
 	            if (suppressCallback) {
 	                return;
@@ -6527,36 +6605,164 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
-	    __webpack_require__(5),
-	    __webpack_require__(3),
-	    __webpack_require__(7),
-	    __webpack_require__(18),
-	    __webpack_require__(6)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
+	    __webpack_require__(5)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
 	    'use strict';
 
-	    function PCastLoggerFactory() { }
+	    function Observable(initialValue, beforeChange) {
+	        this.latestValue = null;
+	        this.subscribeCallbacks = {};
+	        this.subscriptionTimeout = 100;
+	        this.subscriptionCount = 0;
+	        this.resetOnChange = false;
+	        this.lastChangeTime = 0;
+	        this.isPendingChanges = false;
+	        this.beforeChange = beforeChange;
 
-	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri) {
-	        if (baseUri) {
-	            assert.stringNotEmpty(baseUri, 'baseUri');
-	        }
+	        setLatestValue.call(this, initialValue);
+	    }
 
-	        var logger = new Logger();
-	        var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
-
-	        analytixAppender.setThreshold(logging.level.INFO);
-
-	        logger.addAppender(new ConsoleAppender());
-	        logger.addAppender(analytixAppender);
-
-	        logger.isPCastLogger = true;
-
-	        return logger;
+	    Observable.prototype.getValue = function getValue() {
+	        return clone(this.latestValue);
 	    };
 
-	    return new PCastLoggerFactory();
+	    Observable.prototype.setValue = function setValue(value) {
+	        if (value !== this.latestValue) {
+	            setLatestValue.call(this, value);
+	            onSubscribeCallback.call(this, this.subscriptionTimeout);
+	        }
+	    };
+
+	    Observable.prototype.subscribe = function subscribe(callback, options) {
+	        assert.isFunction(callback);
+
+	        if (options) {
+	            assert.isObject(options);
+	        }
+
+	        var that = this;
+	        var key = _.uniqueId();
+	        var listenForChanges;
+
+	        that.subscribeCallbacks[key] = callback;
+	        that.subscriptionCount += 1;
+
+	        if (options) {
+	            if (options.initial === 'notify') {
+	                onSubscribeCallback.call(that, that.subscriptionTimeout);
+	            }
+	            if (options.listenForChanges) {
+	                listenForChanges = setInterval(function() {
+	                    var valueAtInterval = options.listenForChanges.callback();
+
+	                    if (valueAtInterval !== that.latestValue) {
+	                        that.setValue(valueAtInterval);
+	                    }
+	                }, options.listenForChanges.timeout)
+	            }
+	        }
+
+	        function dispose() {
+	            delete that.subscribeCallbacks[key];
+
+	            if (listenForChanges) {
+	                clearInterval(listenForChanges);
+
+	                listenForChanges = null;
+	            }
+
+	            that.subscriptionCount -= 1;
+	        }
+
+	        return { dispose: dispose };
+	    };
+
+	    Observable.prototype.extend = function extend(options) {
+	        assert.isObject(options);
+
+	        switch (options.method) {
+	            case 'notifyWhenChangesStop':
+	                this.subscriptionTimeout = options.timeout;
+	                this.resetOnChange = true;
+	                break;
+	            case 'notifyAtFixedRate':
+	                this.subscriptionTimeout = options.timeout;
+	                break;
+	            default:
+	                break;
+	        }
+	        if (_.isNumber(options.rateLimit)) {
+	            this.subscriptionTimeout = options.rateLimit;
+	        }
+
+	        return this;
+	    };
+
+	    function clone(value) {
+	        if (typeof value === 'undefined' || value === null) {
+	            return value;
+	        }
+
+	        // necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
+	        if (_.isArray(value)) {
+	            return value.slice();
+	        } else {
+	            return value;
+	        }
+	    }
+
+	    function setLatestValue(value) {
+	        var valueToSet = value;
+
+	        if (this.beforeChange) {
+	            valueToSet = this.beforeChange(value);
+	        }
+
+	        this.latestValue = clone(valueToSet);
+	    }
+
+	    function onSubscribeCallback(timeoutLength) {
+	        this.lastChangeTime = _.now();
+
+	        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
+	            this.isPendingChanges = true;
+
+	            continueAfterTimeout.call(this, timeoutLength)
+	        }
+	    }
+
+	    function continueAfterTimeout(timeoutLength) {
+	        var that = this;
+
+	        setTimeout(function() {
+	            var timeElapsedSinceLastChange = _.now() - that.lastChangeTime;
+
+	            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
+	                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
+	            } else {
+	                try {
+	                    executeSubscriptionCallbacks.call(that);
+	                } finally {
+	                    that.isPendingChanges = false;
+	                }
+	            }
+	        }, timeoutLength);
+	    }
+
+	    function executeSubscriptionCallbacks() {
+	        var that = this;
+
+	        _.forOwn(that.subscribeCallbacks, function (callback) {
+	            if (_.isFunction(callback)) {
+	                callback(that.latestValue);
+	            }
+	        });
+	    }
+
+	    return Observable;
+
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }),
 /* 21 */
@@ -6580,11 +6786,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
+	    __webpack_require__(3),
+	    __webpack_require__(7),
+	    __webpack_require__(18),
+	    __webpack_require__(6)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
+	    'use strict';
+
+	    function PCastLoggerFactory() { }
+
+	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId) {
+	        if (baseUri) {
+	            assert.stringNotEmpty(baseUri, 'baseUri');
+	        }
+
+	        var logger = new Logger(observableSessionId);
+	        var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
+
+	        analytixAppender.setThreshold(logging.level.INFO);
+
+	        logger.addAppender(new ConsoleAppender());
+	        logger.addAppender(analytixAppender);
+
+	        logger.isPCastLogger = true;
+
+	        return logger;
+	    };
+
+	    return new PCastLoggerFactory();
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(5),
+	    __webpack_require__(20),
 	    __webpack_require__(11),
-	    __webpack_require__(22),
+	    __webpack_require__(23),
 	    __webpack_require__(10),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
 	    'use strict';
 
 	    function PCastProtocol(uri, deviceId, version, logger) {
@@ -6605,6 +6864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._version = version;
 	        this._logger = logger;
 	        this._mqProtocol = new MQProtocol(this._logger);
+	        this._observableSessionId = new Observable(null);
 
 	        this._logger.info('Connecting to [%s]', uri);
 
@@ -6639,7 +6899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    PCastProtocol.prototype.disconnect = function () {
-	        delete this._sessionId;
+	        this._observableSessionId.setValue(null);
 
 	        return this._webSocket.disconnect();
 	    };
@@ -6661,15 +6921,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            authenticationToken: authToken
 	        };
 
-	        if (this._sessionId) {
-	            authenticate.sessionId = this._sessionId;
+	        if (this.getSessionId()) {
+	            authenticate.sessionId = this.getSessionId();
 	        }
 
 	        return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
 	    };
 
 	    PCastProtocol.prototype.getSessionId = function () {
-	        return this._sessionId;
+	        return this._observableSessionId.getValue();
+	    };
+
+	    PCastProtocol.prototype.getObservableSessionId = function () {
+	        return this._observableSessionId;
 	    };
 
 	    PCastProtocol.prototype.bye = function (reason, callback) {
@@ -6681,7 +6945,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        var bye = {
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            reason: reason
 	        };
 
@@ -6707,7 +6971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var setupStream = {
 	            streamToken: streamToken,
 	            createStream: {
-	                sessionId: this._sessionId,
+	                sessionId: this.getSessionId(),
 	                options: ['data-quality-notifications'],
 	                connectUri: options.connectUri,
 	                connectOptions: options.connectOptions || []
@@ -6851,7 +7115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var getRoomInfo = {
 	            roomId: roomId,
 	            alias: alias,
-	            sessionId: this._sessionId
+	            sessionId: this.getSessionId()
 	        };
 
 	        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
@@ -6864,7 +7128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isFunction(callback, 'callback');
 
 	        var createRoom = {
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            room: {
 	                name: roomName,
 	                description: description,
@@ -6888,7 +7152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var joinRoom = {
 	            roomId: roomId,
 	            alias: alias,
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            member: member,
 	            timestamp: timestamp
 	        };
@@ -6903,7 +7167,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var leaveRoom = {
 	            roomId: roomId,
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            timestamp: timestamp
 	        };
 
@@ -6918,7 +7182,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        member.updateStreams = member.hasOwnProperty('streams');
 
 	        var updateMember = {
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            member: member,
 	            timestamp: timestamp
 	        };
@@ -6932,7 +7196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isFunction(callback, 'callback');
 
 	        var updateRoom = {
-	            sessionId: this._sessionId,
+	            sessionId: this.getSessionId(),
 	            room: room,
 	            timestamp: timestamp
 	        };
@@ -7051,7 +7315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var message = this._mqProtocol.decode(response.type, response.payload);
 
 	        if (response.type === 'pcast.AuthenticateResponse') {
-	            this._sessionId = message.sessionId;
+	            this._observableSessionId.setValue(message.sessionId);
 	        } else if (response.type === 'pcast.StreamEnded') {
 	            triggerEvent.call(this, 'streamEnded', [message]);
 	        } else if (response.type === 'pcast.StreamDataQuality') {
@@ -7102,7 +7366,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7403,7 +7667,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7423,7 +7687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(9),
-	    __webpack_require__(24)
+	    __webpack_require__(25)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (http, ClosestEndPointResolver) {
 	    'use strict';
 
@@ -7503,7 +7767,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7610,7 +7874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7999,7 +8263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8127,7 +8391,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8148,13 +8412,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(30),
 	    __webpack_require__(38),
 	    __webpack_require__(31),
-	    __webpack_require__(28),
+	    __webpack_require__(29),
 	    __webpack_require__(32),
-	    __webpack_require__(40),
+	    __webpack_require__(39),
 	    __webpack_require__(37),
 	    __webpack_require__(36)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
@@ -8183,8 +8447,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RoomService.prototype.start = function start(role, screenName) {
 	        assert.stringNotEmpty(role, 'role');
 	        assert.stringNotEmpty(screenName, 'screenName');
-
-	        this._authService.start();
 
 	        var myState = member.states.passive.name;
 	        var mySessionId = this._authService.getPCastSessionId();
@@ -8308,8 +8570,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    RoomService.prototype.stop = function stop() {
-	        this._authService.stop();
-
 	        disposeOfArray(this._disposables);
 	    };
 
@@ -8768,7 +9028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8789,7 +9049,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(30),
 	    __webpack_require__(31),
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
@@ -8890,186 +9150,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(4),
-	    __webpack_require__(5)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
-	    'use strict';
-
-	    function Observable(initialValue, beforeChange) {
-	        this.latestValue = null;
-	        this.subscribeCallbacks = {};
-	        this.subscriptionTimeout = 100;
-	        this.subscriptionCount = 0;
-	        this.resetOnChange = false;
-	        this.lastChangeTime = 0;
-	        this.isPendingChanges = false;
-	        this.beforeChange = beforeChange;
-
-	        setLatestValue.call(this, initialValue);
-	    }
-
-	    Observable.prototype.getValue = function getValue() {
-	        return clone(this.latestValue);
-	    };
-
-	    Observable.prototype.setValue = function setValue(value) {
-	        if (value !== this.latestValue) {
-	            setLatestValue.call(this, value);
-	            onSubscribeCallback.call(this, this.subscriptionTimeout);
-	        }
-	    };
-
-	    Observable.prototype.subscribe = function subscribe(callback, options) {
-	        assert.isFunction(callback);
-
-	        if (options) {
-	            assert.isObject(options);
-	        }
-
-	        var that = this;
-	        var key = _.uniqueId();
-	        var listenForChanges;
-
-	        that.subscribeCallbacks[key] = callback;
-	        that.subscriptionCount += 1;
-
-	        if (options) {
-	            if (options.initial === 'notify') {
-	                onSubscribeCallback.call(that, that.subscriptionTimeout);
-	            }
-	            if (options.listenForChanges) {
-	                listenForChanges = setInterval(function() {
-	                    var valueAtInterval = options.listenForChanges.callback();
-
-	                    if (valueAtInterval !== that.latestValue) {
-	                        that.setValue(valueAtInterval);
-	                    }
-	                }, options.listenForChanges.timeout)
-	            }
-	        }
-
-	        function dispose() {
-	            delete that.subscribeCallbacks[key];
-
-	            if (listenForChanges) {
-	                clearInterval(listenForChanges);
-
-	                listenForChanges = null;
-	            }
-
-	            that.subscriptionCount -= 1;
-	        }
-
-	        return { dispose: dispose };
-	    };
-
-	    Observable.prototype.extend = function extend(options) {
-	        assert.isObject(options);
-
-	        switch (options.method) {
-	            case 'notifyWhenChangesStop':
-	                this.subscriptionTimeout = options.timeout;
-	                this.resetOnChange = true;
-	                break;
-	            case 'notifyAtFixedRate':
-	                this.subscriptionTimeout = options.timeout;
-	                break;
-	            default:
-	                break;
-	        }
-	        if (_.isNumber(options.rateLimit)) {
-	            this.subscriptionTimeout = options.rateLimit;
-	        }
-
-	        return this;
-	    };
-
-	    function clone(value) {
-	        if (typeof value === 'undefined' || value === null) {
-	            return value;
-	        }
-
-	        // necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
-	        if (_.isArray(value)) {
-	            return value.slice();
-	        } else {
-	            return value;
-	        }
-	    }
-
-	    function setLatestValue(value) {
-	        var valueToSet = value;
-
-	        if (this.beforeChange) {
-	            valueToSet = this.beforeChange(value);
-	        }
-
-	        this.latestValue = clone(valueToSet);
-	    }
-
-	    function onSubscribeCallback(timeoutLength) {
-	        this.lastChangeTime = _.now();
-
-	        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
-	            this.isPendingChanges = true;
-
-	            continueAfterTimeout.call(this, timeoutLength)
-	        }
-	    }
-
-	    function continueAfterTimeout(timeoutLength) {
-	        var that = this;
-
-	        setTimeout(function() {
-	            var timeElapsedSinceLastChange = _.now() - that.lastChangeTime;
-
-	            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
-	                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
-	            } else {
-	                try {
-	                    executeSubscriptionCallbacks.call(that);
-	                } finally {
-	                    that.isPendingChanges = false;
-	                }
-	            }
-	        }, timeoutLength);
-	    }
-
-	    function executeSubscriptionCallbacks() {
-	        var that = this;
-
-	        _.forOwn(that.subscribeCallbacks, function (callback) {
-	            if (_.isFunction(callback)) {
-	                callback(that.latestValue);
-	            }
-	        });
-	    }
-
-	    return Observable;
-
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
 /* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -9091,7 +9171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29)
+	    __webpack_require__(20)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
 	    'use strict';
 
@@ -9205,7 +9285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(30),
 	    __webpack_require__(32),
 	    __webpack_require__(37)
@@ -9431,7 +9511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(30),
 	    __webpack_require__(33),
 	    __webpack_require__(36)
@@ -9638,7 +9718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(30),
 	    __webpack_require__(34),
 	    __webpack_require__(35)
@@ -9897,24 +9977,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
-	    __webpack_require__(5),
-	    __webpack_require__(29),
-	    __webpack_require__(39)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableMonitor) {
+	    __webpack_require__(5)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
 	    'use strict';
 
 	    function AuthenticationService(pcast) {
-	        this._sessionId = new Observable();
-	        this._status = new Observable();
-	        this._sessionIdMonitor = new ObservableMonitor(this._sessionId);
-	        this._statusMonitor = new ObservableMonitor(this._status);
-
-	        this.init(pcast);
-	    }
-
-	    AuthenticationService.prototype.init = function init(pcast) {
 	        assert.isObject(pcast, 'pcast');
-	        assert.isFunction(pcast.getStatus, 'pcast.getStatus');
+	        assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
 	        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
 	        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
 
@@ -9928,31 +9997,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        assert.isObject(this._logger, 'this._logger');
 	        assert.isObject(this._protocol, 'this._protocol');
-	        assert.isFunction(this._protocol.getSessionId, 'this._protocol.getSessionId');
-	        assert.isFunction(this._pcast.getStatus, 'this._pcast.getStatus');
+	        assert.isFunction(this._protocol.getObservableSessionId, 'this._protocol.getObservableSessionId');
+	        assert.isFunction(this._pcast.getObservableStatus, 'this._pcast.getObservableStatus');
 
-	        this._sessionId.setValue(this.getPCastSessionId());
-	        this._status.setValue(this.getPCastStatus());
-	    };
-
-	    AuthenticationService.prototype.start = function start() {
-	        if (!this._sessionIdMonitor.isEnabled()) {
-	            this._sessionIdMonitor.start(_.bind(this.getPCastSessionId, this));
-	        }
-
-	        if (!this._statusMonitor.isEnabled()) {
-	            this._statusMonitor.start(_.bind(this.getPCastStatus, this));
-	        }
-	    };
-
-	    AuthenticationService.prototype.stop = function stop() {
-	        if (this._sessionIdMonitor.isEnabled()) {
-	            this._sessionIdMonitor.stop();
-	        }
-	        if (this._statusMonitor.isEnabled()) {
-	            this._statusMonitor.stop();
-	        }
-	    };
+	        this._sessionId = this._protocol.getObservableSessionId();
+	        this._status = this._pcast.getObservableStatus();
+	    }
 
 	    AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
 	        if (!validPCastStatus(this.getPCastStatus())) {
@@ -9973,11 +10023,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    AuthenticationService.prototype.getPCastSessionId = function getPCastSessionId() {
-	        return this._protocol.getSessionId();
+	        return this._sessionId.getValue();
 	    };
 
 	    AuthenticationService.prototype.getPCastStatus = function getPCastStatus() {
-	        return this._pcast.getStatus();
+	        return this._status.getValue();
 	    };
 
 	    function validPCastSessionId(sessionId) {
@@ -10013,71 +10063,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
-	    __webpack_require__(5)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
-	    'use strict';
-
-	    function ObservableMonitor(observable) {
-	        assert.isObject(observable, 'observable');
-
-	        this._observable = observable;
-	        this._listenerSubscription = null;
-	        this._isEnabled = false;
-	    }
-
-	    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
-	        this._isEnabled = true;
-
-	        this._listenerSubscription = this._observable.subscribe(_.noop, {
-	            listenForChanges: {
-	                callback: checkForChanges,
-	                timeout: timeout || 500
-	            }
-	        });
-	    };
-
-	    ObservableMonitor.prototype.stop = function stop() {
-	        this._isEnabled = false;
-
-	        if (this._listenerSubscription) {
-	            this._listenerSubscription.dispose();
-	        }
-
-	        this._listenerSubscription = null;
-	    };
-
-	    ObservableMonitor.prototype.isEnabled = function isEnabled() {
-	        return this._isEnabled;
-	    };
-
-	    return ObservableMonitor;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
-	 *
-	 * Licensed under the Apache License, Version 2.0 (the "License");
-	 * you may not use this file except in compliance with the License.
-	 * You may obtain a copy of the License at
-	 *
-	 *     http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 * Unless required by applicable law or agreed to in writing, software
-	 * distributed under the License is distributed on an "AS IS" BASIS,
-	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	 * See the License for the specific language governing permissions and
-	 * limitations under the License.
-	 */
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(30),
-	    __webpack_require__(41)
+	    __webpack_require__(40)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
 	    'use strict';
 
@@ -10217,7 +10205,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10238,7 +10226,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(29),
+	    __webpack_require__(20),
 	    __webpack_require__(38)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, AuthenticationService) {
 	    'use strict';
@@ -10268,7 +10256,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._roomMessagesListeners = {};
 
 	        this._enabled.setValue(true);
-	        this._authService.start();
 	        setupSubscriptions.call(this);
 
 	        var disposeOfConversationHandler = this._protocol.on('roomChatEvent', _.bind(onRoomConversationEvent, this));
@@ -10280,8 +10267,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!this._enabled.getValue()) {
 	            return;
 	        }
-
-	        this._authService.stop();
 
 	        disposeOfArray(this._disposables);
 	    };
@@ -10555,7 +10540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10576,11 +10561,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(20),
-	    __webpack_require__(23),
+	    __webpack_require__(21),
+	    __webpack_require__(24),
+	    __webpack_require__(42),
 	    __webpack_require__(43),
-	    __webpack_require__(44),
-	    __webpack_require__(46)
+	    __webpack_require__(45)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
@@ -10673,7 +10658,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10722,7 +10707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10743,7 +10728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(45)
+	    __webpack_require__(44)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
 	    'use strict';
 
@@ -10784,7 +10769,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10925,7 +10910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11043,7 +11028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11064,9 +11049,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(20),
-	    __webpack_require__(23),
-	    __webpack_require__(48)
+	    __webpack_require__(21),
+	    __webpack_require__(24),
+	    __webpack_require__(47)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -11112,7 +11097,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**

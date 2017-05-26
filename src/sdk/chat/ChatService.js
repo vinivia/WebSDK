@@ -46,7 +46,6 @@ define([
         this._roomMessagesListeners = {};
 
         this._enabled.setValue(true);
-        this._authService.start();
         setupSubscriptions.call(this);
 
         var disposeOfConversationHandler = this._protocol.on('roomChatEvent', _.bind(onRoomConversationEvent, this));
@@ -58,8 +57,6 @@ define([
         if (!this._enabled.getValue()) {
             return;
         }
-
-        this._authService.stop();
 
         disposeOfArray(this._disposables);
     };
