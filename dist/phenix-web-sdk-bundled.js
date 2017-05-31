@@ -191,7 +191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-01T15:44:17Z' || '?';
+	    var sdkVersion = '2017-06-01T17:46:20Z' || '?';
 	    var releaseVersion = '2017.2.2';
 
 	    function Logger(observableSessionId) {
@@ -1256,7 +1256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-01T15:44:17Z';
+	        this._version = '2017-06-01T17:46:20Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14303,7 +14303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-01T15:44:17Z';
+	    var sdkVersion = '2017-06-01T17:46:20Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -20010,6 +20010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._chatMessages = new ObservableArray([]);
 	        this._latestMessageQueue = [];
 	        this._disposables = [];
+	        this._chatRoomId = null;
 	    }
 
 	    RoomChatService.prototype.start = function start(batchSize) {
@@ -20061,9 +20062,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function onRoomChange(room) {
 	        disposeOfMessageSubscription.call(this);
 
-	        if (room) {
-	            setupMessageSubscription.call(this);
+	        if (!room || this._chatRoomId === room.getRoomId()) {
+	            return;
 	        }
+
+	        setupMessageSubscription.call(this);
 	    }
 
 	    function setupSubscriptions() {
@@ -20087,6 +20090,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function subscribeAndLoadMessages(batchSize) {
 	        var room = this._roomService.getObservableActiveRoom().getValue();
 	        var roomId = room.getRoomId();
+
+	        this._chatRoomId = roomId;
 
 	        var that = this;
 

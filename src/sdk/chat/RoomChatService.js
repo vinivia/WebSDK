@@ -36,6 +36,7 @@ define([
         this._chatMessages = new ObservableArray([]);
         this._latestMessageQueue = [];
         this._disposables = [];
+        this._chatRoomId = null;
     }
 
     RoomChatService.prototype.start = function start(batchSize) {
@@ -87,9 +88,11 @@ define([
     function onRoomChange(room) {
         disposeOfMessageSubscription.call(this);
 
-        if (room) {
-            setupMessageSubscription.call(this);
+        if (!room || this._chatRoomId === room.getRoomId()) {
+            return;
         }
+
+        setupMessageSubscription.call(this);
     }
 
     function setupSubscriptions() {
@@ -113,6 +116,8 @@ define([
     function subscribeAndLoadMessages(batchSize) {
         var room = this._roomService.getObservableActiveRoom().getValue();
         var roomId = room.getRoomId();
+
+        this._chatRoomId = roomId;
 
         var that = this;
 
