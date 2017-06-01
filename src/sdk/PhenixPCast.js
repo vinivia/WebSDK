@@ -15,6 +15,7 @@
  */
 define([
     './LodashLight',
+    './assert',
     './observable/Observable',
     './logging/pcastLoggerFactory',
     './PCastProtocol',
@@ -22,7 +23,7 @@ define([
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     'phenix-rtc'
-], function (_, Observable, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, assert, Observable, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -1223,6 +1224,12 @@ define([
                 return streamId;
             },
 
+            getStream: function getStream() {
+                that._logger.debug('[%s] Unable to get stream on publisher of remote origin.', streamId);
+
+                return null;
+            },
+
             isActive: function isActive() {
                 return !state.stopped;
             },
@@ -1349,6 +1356,10 @@ define([
                                 return streamId;
                             },
 
+                            getStream: function getStream() {
+                                return mediaStream;
+                            },
+
                             isActive: function isActive() {
                                 return !state.stopped;
                             },
@@ -1405,10 +1416,6 @@ define([
                                 }
 
                                 this.dataQualityChangedCallback = callback;
-                            },
-
-                            setDetectSpeakingCallback: function setDetectSpeakingCallback() {
-
                             },
 
                             limitBandwidth: function limitBandwidth(bandwidthLimit) {
@@ -1844,14 +1851,6 @@ define([
                             return player;
                         },
 
-                        isActive: function isActive() {
-                            return !internalMediaStream.isStopped;
-                        },
-
-                        getStreamId: function getStreamId() {
-                            return streamId;
-                        },
-
                         setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
                             dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
                         }
@@ -1909,6 +1908,20 @@ define([
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
+                },
+
+                getStream: function getStream() {
+                    that._logger.debug('[%s] stream not available for shaka live streams', streamId);
+
+                    return null;
+                },
+
+                isActive: function isActive() {
+                    return !internalMediaStream.isStopped;
+                },
+
+                getStreamId: function getStreamId() {
+                    return streamId;
                 }
             },
 
@@ -2132,6 +2145,12 @@ define([
 
                 getStreamId: function getStreamId() {
                     return streamId;
+                },
+
+                getStream: function getStream() {
+                    that._logger.debug('[%s] stream not available for HLS live streams', streamId);
+
+                    return null;
                 }
             },
 

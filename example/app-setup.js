@@ -1,0 +1,223 @@
+/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var version = '1.0.0'; // ToDo: use until sample app separated from repo
+
+define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+    var enabledSteps = ['step-1'];
+    var onStepsReset;
+    var pcast;
+
+    var init = function init() {
+        $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
+        $('#browser').text(sdk.RTC.browser);
+        $('#browserVersion').text(sdk.RTC.browserVersion);
+        if (sdk.RTC.webrtcSupported) {
+            $('#webrtc').addClass('success');
+        } else {
+            $('#webrtc').addClass('danger');
+        }
+        if (sdk.RTC.isPhenixEnabled()) {
+            $('#phenix').addClass('success');
+        } else if (sdk.RTC.phenixSupported) {
+            $('#phenix').addClass('warning');
+        } else {
+            $('#phenix').addClass('danger');
+        }
+
+        if (getUrlParameter('url')) {
+            $('#environment').append($('<option></option>').attr('value', getUrlParameter('url')).attr('selected', 'selected').text(getUrlParameter('url')));
+        }
+
+        if (getUrlParameter('applicationId')) {
+            $('#applicationId').val(getUrlParameter('applicationId'));
+        }
+
+        if (getUrlParameter('secret')) {
+            $('#secret').val(getUrlParameter('secret'));
+        }
+
+        if (getUrlParameter('streamId')) {
+            $('#stream').append($('<option></option>').attr('value', getUrlParameter('streamId')).attr('selected', 'selected').text(getUrlParameter('streamId')));
+            $('#originStreamId').val(getUrlParameter('streamId'));
+        }
+
+        var updateOptions = function updateOptions() {
+            $('input[name="option"]').each(function () {
+                var option = $(this).val();
+
+                $('.' + option).addClass('option-disabled');
+            });
+
+            var option = $('input[name="option"]:checked').val();
+
+            $('.' + option).removeClass('option-disabled');
+        };
+
+        var createPCast = function createPCast() {
+            if (pcast) {
+                pcast.stop();
+            }
+
+            var uri = getBaseUri();
+
+            pcast = new sdk.PCast({uri: uri});
+            pcast.getLogger().setApplicationVersion(version);
+
+            setLoggerUserId();
+            setLoggerEnvironment();
+        };
+
+        function setLoggerUserId() {
+            if (!pcast) {
+                return;
+            }
+
+            var logger = pcast.getLogger();
+
+            logger.setUserId($('#applicationId').val());
+        }
+
+        function setLoggerEnvironment() {
+            if (!pcast) {
+                return;
+            }
+
+            var env = $('#environment').val().toLowerCase();
+            var logger = pcast.getLogger();
+
+            if(env.indexOf('local') > -1) {
+                logger.setEnvironment('local');
+            } else if (env.indexOf('stg')) {
+                logger.setEnvironment('staging');
+            } else {
+                logger.setEnvironment('production');
+            }
+        }
+
+        $('#environment').change(function () {
+            setLoggerEnvironment();
+
+            if (onStepsReset) {
+                onStepsReset();
+            }
+        });
+
+        $('input[type="radio"]').on('change', function () {
+            updateOptions();
+        });
+
+        updateOptions();
+        enableSteps();
+    };
+
+    var getUri = function getUri() {
+        return $('#environment option:selected').val();
+    };
+
+    var getBaseUri = function parseBaseUri() {
+        var uri = getUri();
+        var parser = document.createElement('a');
+        parser.href = uri;
+
+        var adminBaseUri = 'https://' + parser.hostname;
+
+        if (parser.port) {
+            adminBaseUri += ':' + parser.port;
+        }
+
+        return adminBaseUri;
+    };
+
+    var getUrlParameter = function getUrlParameter(parameterName) {
+        var queryParameters = window.location.search.substring(1).split('&');
+
+        for (var i = 0; i < queryParameters.length; i++) {
+            var parameter = queryParameters[i].split('=');
+
+            if (parameter[0] === parameterName) {
+                return parameter.length > 0 ? decodeURIComponent(parameter[1]) : null;
+            }
+        }
+    };
+
+    var getAuthData = function getAuthData() {
+        return {
+            applicationId: $('#applicationId').val(),
+            secret: $('#secret').val()
+        }
+    };
+
+    var enableSteps = function enableSteps() {
+        $('.step').addClass('step-disabled');
+        $('.step .server').removeClass('step-active');
+        $('.step .client').removeClass('step-active');
+
+        enabledSteps.forEach(function (step) {
+            $('.' + step).removeClass('step-disabled');
+        });
+
+        $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
+        $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
+
+        $('html, body').animate({
+            scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)
+        }, 'slow');
+    };
+
+    var activateStep = function activateStep(step) {
+        enabledSteps.push(step);
+        enableSteps();
+    };
+
+    function createNotification(type, message) {
+        $.notify(message, {
+            type: type,
+            allow_dismiss: false,
+            placement: {
+                from: 'bottom',
+                align: 'right'
+            },
+            delay: 3000,
+            animate: {
+                enter: 'animated fadeInUp',
+                exit: 'animated fadeOutDown'
+            }
+        });
+    }
+
+    function getLogger (){
+        if (!pcast) {
+            createNotification('danger', {
+                icon: 'glyphicon glyphicon-remove-sign',
+                title: '<strong>Get Logger</strong>',
+                message: 'App Has Not Been Initialized'
+            })
+        }
+    }
+
+    return {
+        init: init,
+        getUri: getUri,
+        getBaseUri: getBaseUri,
+        getAuthData: getAuthData,
+        getUrlParameter: getUrlParameter,
+        enableSteps: enableSteps,
+        activateStep: activateStep,
+        createNotification: createNotification,
+        setOnReset: function(callback) { onStepsReset = callback },
+        getLogger: getLogger
+    };
+});

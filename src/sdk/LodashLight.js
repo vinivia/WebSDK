@@ -128,6 +128,24 @@ define([
         }
     };
 
+    _.assign = function assign(objectA, objectB) {
+        var newObject = {};
+
+        _.forOwn(objectA, function(value, key) {
+            newObject[key] = value;
+        });
+
+        _.forOwn(objectB, function(value, key) {
+            if (objectA.hasOwnProperty(key)) {
+                return;
+            }
+
+            newObject[key] = value;
+        });
+
+        return newObject;
+    };
+
     _.includes = function includes(collection, value) {
         if (!_.isObject(collection)) {
             throw new Error('collection type not supported. Collection must be an array or object.');

@@ -772,23 +772,23 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
                 var primaryMediaStream = mediaStream;
 
-                if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
+                if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
                     primaryMediaStream = mediaStream.select(function (track, index) {
                         return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                     });
                 }
 
-                var primaryStream = primaryMediaStream.getStream ? primaryMediaStream.getStream() : null;
+                var primaryStream = primaryMediaStream.getStream();
 
                 displayVideoElementAndControlsWhileStreamIsActive(primaryStream, remoteVideoEl, _.bind(primaryMediaStream.setStreamEndedCallback, primaryMediaStream));
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
 
-                if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
+                if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
                         return track.kind === 'video' && index == 2;
                     });
 
-                    var secondaryStream = secondaryMediaStream.getStream ? secondaryMediaStream.getStream() : null;
+                    var secondaryStream = secondaryMediaStream.getStream();
 
                     displayVideoElementAndControlsWhileStreamIsActive(secondaryStream, remoteVideoSecondaryEl, _.bind(secondaryMediaStream.setStreamEndedCallback, secondaryMediaStream));
                     attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);

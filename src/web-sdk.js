@@ -22,7 +22,8 @@ define('phenix-web-sdk', [
     './sdk/room/RoomService',
     './sdk/audio/AudioSpeakerDetector',
     './sdk/bandwidth/BandwidthMonitor',
-], function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor) {
+    './sdk/PCastExpress'
+], function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, PCastExpress) {
     window.PhenixPCast = PhenixPCast;
 
     return {
@@ -31,6 +32,9 @@ define('phenix-web-sdk', [
         AudioSpeakerDetector: AudioSpeakerDetector,
         BandwidthMonitor: BandwidthMonitor,
         logging: logging,
-        RTC: rtc
+        RTC: rtc,
+        express: {
+            PCastExpress: PCastExpress
+        }
     };
 });
