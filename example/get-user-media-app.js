@@ -35,8 +35,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localVideoEl = $('#localVideo')[0];
+        var localVideoMuteEl = $('#localVideoMute')[0];
         var remoteVideoEl = $('#remoteVideo')[0];
         var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
+        var remoteVideoMuteEl = $('#remoteVideoMute')[0];
+        var remoteVideoSecondaryMuteEl = $('#remoteVideoSecondaryMute')[0];
 
         var userMediaStream = null;
 
@@ -331,6 +334,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
                     $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
                     activateStep('step-5-2');
+
+                    attachMediaStreamToMuteElement(userMediaStream, localVideoMuteEl);
                 }
             };
 
@@ -770,6 +775,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
                 displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
+                attachMediaStreamToMuteElement(primaryMediaStream.getStream(), remoteVideoMuteEl);
 
                 if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
@@ -778,6 +784,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
                     displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
                     attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
+                    attachMediaStreamToMuteElement(secondaryMediaStream.getStream(), remoteVideoSecondaryMuteEl);
                 }
 
                 $.notify({
@@ -947,6 +954,51 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                 element.webkitRequestFullScreen();
             } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
+            }
+        };
+
+        var attachMediaStreamToMuteElement = function attachMediaStreamToMuteElement(stream, element) {
+            element.onclick = function() {
+                var isMuted = toggleAudioMuteMediaStream(stream);
+
+                setAudioMuteClass(isMuted, element);
+            };
+
+            setAudioMuteClass(!isMediaStreamAudioEnabled(stream), element);
+        };
+
+        var isMediaStreamAudioEnabled = function(stream) {
+            var audioTracks = stream.getAudioTracks();
+
+            if (!audioTracks || !audioTracks.length) {
+                return false;
+            }
+
+            return audioTracks[0].enabled;
+        };
+
+        var toggleAudioMuteMediaStream = function toggleAudioMuteMediaStream(stream) {
+            var audioTracks = stream.getAudioTracks();
+            var isEnabled = isMediaStreamAudioEnabled(stream);
+
+            if (!audioTracks || !audioTracks.length) {
+                return !isEnabled;
+            }
+
+            _.forEach(audioTracks, function(track) {
+                track.enabled = !isEnabled;
+            });
+
+            return isEnabled;
+        };
+
+        var setAudioMuteClass = function setAudioMuteClass(isMuted, element) {
+            if (isMuted) {
+                element.classList.remove('glyphicon-volume-up');
+                element.classList.add('glyphicon-volume-off');
+            } else {
+                element.classList.add('glyphicon-volume-up');
+                element.classList.remove('glyphicon-volume-off');
             }
         };
 

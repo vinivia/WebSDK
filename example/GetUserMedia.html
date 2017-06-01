@@ -83,7 +83,11 @@
             visibility: hidden;
         }
 
-        .fullscreen {
+        .video-container, .video-controls{
+            display: inline-block;
+        }
+
+        .video-control {
             cursor: pointer;
             right: 30px;
             top: -4px;
@@ -92,8 +96,17 @@
             border-radius: 6px;
         }
 
-        .fullscreen:hover {
+        .video-control:hover {
             color:white;
+        }
+
+        .video-control:nth-child(1):nth-last-child(1) {
+            right: 30px;
+        }
+
+        .video-control:nth-child(1):nth-last-child(2),
+        .video-control:nth-child(2):nth-last-child(1) {
+            right: 56px;
         }
     </style>
 
@@ -249,8 +262,13 @@
     <div class="row step step-5 option-B">
         <div class="col-md-4 col-md-offset-7 text-center client">
             <p>Get local user media from camera.</p>
-            <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
-            <span class="glyphicon glyphicon-fullscreen fullscreen" aria-hidden="true" data-video-target="localVideo"></span>
+            <div class="video-container">
+                <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
+                <div class="video-controls">
+                    <span class="glyphicon glyphicon-fullscreen video-control fullscreen" aria-hidden="true" data-video-target="localVideo"></span>
+                    <span id="localVideoMute" class="glyphicon glyphicon-volume-off video-control" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                </div>
+            </div>
             <select class="form-control" id="gum-source">
                 <option value="cameraAndMicrophone">Camera & Microphone</option>
                 <option value="screen">Screen</option>
@@ -390,10 +408,20 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2 text-center">
                 <div id="videoList" class="row text-center">
-                    <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
-                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                    <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
-                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                    <div class="video-container">
+                        <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
+                        <div class="video-controls">
+                            <span id="remoteVideoMute" class="glyphicon glyphicon-volume-off video-control hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                            <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                        </div>
+                    </div>
+                    <div class="video-container">
+                        <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
+                        <div class="video-controls">
+                            <span id="remoteVideoSecondaryMute" class="glyphicon glyphicon-volume-off video-control hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                            <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
