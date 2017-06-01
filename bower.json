@@ -22,7 +22,7 @@
     "url": "git://github.com/PhenixP2P/WebSDK.git"
   },
   "dependencies": {
-    "phenix-rtc": "1.0.9",
+    "phenix-rtc": "1.0.10",
     "shaka-player": "2.0.7"
   },
   "devDependencies": {
