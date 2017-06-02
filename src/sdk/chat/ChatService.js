@@ -30,6 +30,7 @@ define([
         this._logger = pcast.getLogger();
         this._protocol =  pcast.getProtocol();
         this._enabled = new Observable(false);
+        this._lastSubscribedSessionId = null;
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
@@ -132,15 +133,14 @@ define([
     }
 
     function onStatusChange(status) {
-        switch (status.toLowerCase()) {
-            case 'offline':
-                return;
-            case 'online':
-                return refreshMessageSubscriptions.call(this);
-        }
+        // Only reason to redo subscriptions is if sessionId changes, which infers status changed
     }
 
-    function onSessionIdChange() {
+    function onSessionIdChange(sessionId) {
+        if (!this._lastSubscribedSessionId || this._lastSubscribedSessionId === sessionId) {
+            return;
+        }
+
         refreshMessageSubscriptions.call(this);
     }
 
@@ -210,6 +210,8 @@ define([
         this._authService.assertAuthorized();
 
         var sessionId = this._authService.getPCastSessionId();
+
+        this._lastSubscribedSessionId = sessionId;
 
         this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
 

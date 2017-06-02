@@ -302,16 +302,17 @@ define([
             });
 
             it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function (done) {
-                chatService._roomMessagesListeners = {
-                    'id1': function () {},
-                    'id2': function () {},
-                    'id3': function () {}
-                };
+                mockProtocol.subscribeToRoomConversation.restore();
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                    callback(null, response);
+                });
+
+                chatService.subscribeAndLoadMessages('roomId', 10, function(){});
 
                 sessionIdObservable.setValue('mockNewSessionId');
 
                 setTimeout(function () {
-                    sinon.assert.calledThrice(mockProtocol.subscribeToRoomConversation);
+                    sinon.assert.calledTwice(mockProtocol.subscribeToRoomConversation);
                     done();
                 }, 500)
             });
@@ -335,7 +336,7 @@ define([
                 chatService.stop();
             });
 
-            it('Status changed to online causes fetchRoomMessages for all existing listeners', function (done) {
+            it('Status changed to online causes fetchRoomMessages for no listeners', function (done) {
                 chatService._roomMessagesListeners = {
                     'id1': function () {},
                     'id2': function () {},
@@ -348,7 +349,7 @@ define([
                     statusObservable.setValue('Online');
 
                     setTimeout(function () {
-                        sinon.assert.calledThrice(mockProtocol.subscribeToRoomConversation);
+                        sinon.assert.notCalled(mockProtocol.subscribeToRoomConversation);
                         done();
                     }, 200)
                 }, 200);

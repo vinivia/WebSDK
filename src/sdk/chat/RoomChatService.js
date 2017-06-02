@@ -86,13 +86,15 @@ define([
     };
 
     function onRoomChange(room) {
-        disposeOfMessageSubscription.call(this);
-
-        if (!room || this._chatRoomId === room.getRoomId()) {
+        if (room && this._chatRoomId === room.getRoomId()) {
             return;
         }
 
-        setupMessageSubscription.call(this);
+        disposeOfMessageSubscription.call(this);
+
+        if (room) {
+            setupMessageSubscription.call(this);
+        }
     }
 
     function setupSubscriptions() {

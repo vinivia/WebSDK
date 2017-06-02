@@ -295,6 +295,10 @@ define([
     }
 
     function handlePCastSessionIdChanged(sessionId) {
+        if (this.getSelf() && this.getSelf().getSessionId() === sessionId) {
+            return;
+        }
+
         resetSelf.call(this, sessionId);
     }
 

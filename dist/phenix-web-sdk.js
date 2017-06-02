@@ -176,7 +176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-02T12:52:50Z' || '?';
+	    var sdkVersion = '2017-06-02T18:59:11Z' || '?';
 	    var releaseVersion = '2017.2.2';
 
 	    function Logger(observableSessionId) {
@@ -1241,7 +1241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-02T12:52:50Z';
+	        this._version = '2017-06-02T18:59:11Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -4377,7 +4377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-02T12:52:50Z';
+	    var sdkVersion = '2017-06-02T18:59:11Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -8727,6 +8727,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function handlePCastSessionIdChanged(sessionId) {
+	        if (this.getSelf() && this.getSelf().getSessionId() === sessionId) {
+	            return;
+	        }
+
 	        resetSelf.call(this, sessionId);
 	    }
 
@@ -10170,13 +10174,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    function onRoomChange(room) {
-	        disposeOfMessageSubscription.call(this);
-
-	        if (!room || this._chatRoomId === room.getRoomId()) {
+	        if (room && this._chatRoomId === room.getRoomId()) {
 	            return;
 	        }
 
-	        setupMessageSubscription.call(this);
+	        disposeOfMessageSubscription.call(this);
+
+	        if (room) {
+	            setupMessageSubscription.call(this);
+	        }
 	    }
 
 	    function setupSubscriptions() {
@@ -10281,6 +10287,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._logger = pcast.getLogger();
 	        this._protocol =  pcast.getProtocol();
 	        this._enabled = new Observable(false);
+	        this._lastSubscribedSessionId = null;
 
 	        assert.isObject(this._logger, 'this._logger');
 	        assert.isObject(this._protocol, 'this._protocol');
@@ -10383,15 +10390,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function onStatusChange(status) {
-	        switch (status.toLowerCase()) {
-	            case 'offline':
-	                return;
-	            case 'online':
-	                return refreshMessageSubscriptions.call(this);
-	        }
+	        // Only reason to redo subscriptions is if sessionId changes, which infers status changed
 	    }
 
-	    function onSessionIdChange() {
+	    function onSessionIdChange(sessionId) {
+	        if (!this._lastSubscribedSessionId || this._lastSubscribedSessionId === sessionId) {
+	            return;
+	        }
+
 	        refreshMessageSubscriptions.call(this);
 	    }
 
@@ -10461,6 +10467,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._authService.assertAuthorized();
 
 	        var sessionId = this._authService.getPCastSessionId();
+
+	        this._lastSubscribedSessionId = sessionId;
 
 	        this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
 
