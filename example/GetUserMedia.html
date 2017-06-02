@@ -108,6 +108,16 @@
         .video-control:nth-child(2):nth-last-child(1) {
             right: 56px;
         }
+
+        .video-control:nth-child(1):nth-last-child(3),
+        .video-control:nth-child(2):nth-last-child(2),
+        .video-control:nth-child(3):nth-last-child(1) {
+            right: 82px;
+        }
+
+        .toggle-off.glyphicon-facetime-video:before {
+            opacity: .4;
+        }
     </style>
 
     <script>
@@ -262,11 +272,22 @@
     <div class="row step step-5 option-B">
         <div class="col-md-4 col-md-offset-7 text-center client">
             <p>Get local user media from camera.</p>
-            <div class="video-container">
-                <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
-                <div class="video-controls">
-                    <span class="glyphicon glyphicon-fullscreen video-control fullscreen" aria-hidden="true" data-video-target="localVideo"></span>
-                    <span id="localVideoMute" class="glyphicon glyphicon-volume-off video-control" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+            <div id="videoList" class="row text-center">
+                <div class="video-container">
+                    <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
+                    <div class="video-controls">
+                        <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="localVideo"></span>
+                        <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="localVideo"></span>
+                        <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="localVideo"></span>
+                    </div>
+                </div>
+                <div class="video-container">
+                    <video id="localVideoSecondary" class="local hidden" width="160" height="120" muted="true"></video>
+                    <div class="video-controls">
+                        <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
+                        <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
+                        <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
+                    </div>
                 </div>
             </div>
             <select class="form-control" id="gum-source">
@@ -411,14 +432,16 @@
                     <div class="video-container">
                         <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
                         <div class="video-controls">
-                            <span id="remoteVideoMute" class="glyphicon glyphicon-volume-off video-control hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                            <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                            <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
                             <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
                         </div>
                     </div>
                     <div class="video-container">
                         <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
                         <div class="video-controls">
-                            <span id="remoteVideoSecondaryMute" class="glyphicon glyphicon-volume-off video-control hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                            <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                            <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                             <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                         </div>
                     </div>

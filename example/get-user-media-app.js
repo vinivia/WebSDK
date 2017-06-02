@@ -35,11 +35,10 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localVideoEl = $('#localVideo')[0];
-        var localVideoMuteEl = $('#localVideoMute')[0];
+        var localVideoSecondaryEl = $('#localVideoSecondary')[0];
         var remoteVideoEl = $('#remoteVideo')[0];
         var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
-        var remoteVideoMuteEl = $('#remoteVideoMute')[0];
-        var remoteVideoSecondaryMuteEl = $('#remoteVideoSecondaryMute')[0];
+        var videoTargetStreams = {};
 
         var userMediaStream = null;
 
@@ -327,7 +326,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     // **********
                     // IMPORTANT: update reference to element as some RTC implementation will replace the element in the DOM
                     // **********
-                    localVideoEl = sdk.RTC.attachMediaStream(localVideoEl, stream);
 
                     userMediaStream = stream;
                     $('#stopUserMedia').removeClass('disabled');
@@ -335,7 +333,34 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
                     activateStep('step-5-2');
 
-                    attachMediaStreamToMuteElement(userMediaStream, localVideoMuteEl);
+                    var primaryStream = new MediaStream();
+                    var secondaryStream = new MediaStream();
+
+                    _.forEach(userMediaStream.getTracks(), function (track) {
+                        var trackCount = _.filter(primaryStream.getTracks(), function(primaryStreamTrack) {
+                            return primaryStreamTrack.kind === track.kind;
+                        }).length;
+
+                        if (trackCount === 1) {
+                            return secondaryStream.addTrack(track);
+                        }
+
+                        return primaryStream.addTrack(track);
+                    });
+
+                    localVideoEl = sdk.RTC.attachMediaStream(localVideoEl, primaryStream);
+
+                    displayVideoElementAndControlsWhileStreamIsActive(primaryStream, localVideoEl, function setOnEnded(callback) {
+                        primaryStream.getTracks()[0].onended = callback;
+                    });
+
+                    if (secondaryStream.getTracks().length > 0) {
+                        localVideoSecondaryEl = sdk.RTC.attachMediaStream(localVideoSecondaryEl, secondaryStream);
+
+                        displayVideoElementAndControlsWhileStreamIsActive(secondaryStream, localVideoSecondaryEl, function setOnEnded(callback) {
+                            secondaryStream.getTracks()[0].onended = callback;
+                        });
+                    }
                 }
             };
 
@@ -743,26 +768,6 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     return;
                 }
 
-                mediaStream.setStreamEndedCallback(function (mediaStream, reason, reasonDescription) {
-                    $.notify({
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>Stream</strong>',
-                        message: 'The stream ended for reason "' + reason + '"'
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
-                });
-
                 mediaStream.monitor({}, monitorStream);
 
                 var primaryMediaStream = mediaStream;
@@ -773,18 +778,16 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     });
                 }
 
-                displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
+                displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream.getStream(), remoteVideoEl, _.bind(primaryMediaStream.setStreamEndedCallback, primaryMediaStream));
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
-                attachMediaStreamToMuteElement(primaryMediaStream.getStream(), remoteVideoMuteEl);
 
                 if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
                         return track.kind === 'video' && index == 2;
                     });
 
-                    displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
+                    displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream.getStream(), remoteVideoSecondaryEl, _.bind(secondaryMediaStream.setStreamEndedCallback, secondaryMediaStream));
                     attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
-                    attachMediaStreamToMuteElement(secondaryMediaStream.getStream(), remoteVideoSecondaryMuteEl);
                 }
 
                 $.notify({
@@ -863,10 +866,12 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
         };
 
-        var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(mediaStream, videoElement) {
+        var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(stream, videoElement, onEnd) {
             var video = $(videoElement);
             var videoControls = $('[data-video-target=' + videoElement.id + ']');
             var shouldVideoBeHidden = video.hasClass('hidden');
+
+            videoTargetStreams[videoElement.id] = stream;
 
             if (shouldVideoBeHidden) {
                 video.removeClass('hidden');
@@ -874,12 +879,17 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
             videoControls.removeClass('hidden');
 
-            mediaStream.setStreamEndedCallback(function() {
+            setAudioMuteClass(!isMediaStreamTrackEnabled(stream, true), $(videoControls.selector + '.mute'));
+            setVideoMuteClass(!isMediaStreamTrackEnabled(stream, false), $(videoControls.selector + '.mute-video'));
+
+            onEnd(function() {
                 if (shouldVideoBeHidden) {
                     video.addClass('hidden');
                 }
 
                 videoControls.addClass('hidden');
+
+                delete videoTargetStreams[videoElement.dataset.target];
             });
         };
 
@@ -957,35 +967,47 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
         };
 
-        var attachMediaStreamToMuteElement = function attachMediaStreamToMuteElement(stream, element) {
-            element.onclick = function() {
-                var isMuted = toggleAudioMuteMediaStream(stream);
+        var handleMuteButtonClick = function handleMuteButtonClick() {
+            if (!this.dataset.videoTarget) {
+                throw new Error('Button Must Have Target');
+            }
 
-                setAudioMuteClass(isMuted, element);
-            };
+            var stream = videoTargetStreams[this.dataset.videoTarget];
+            var isMuted = toggleMuteMediaStreamTrack(stream, true);
 
-            setAudioMuteClass(!isMediaStreamAudioEnabled(stream), element);
+            setAudioMuteClass(isMuted, $(this));
         };
 
-        var isMediaStreamAudioEnabled = function(stream) {
-            var audioTracks = stream.getAudioTracks();
+        var handleMuteVideoButtonClick = function handleMuteVideoButtonClick() {
+            if (!this.dataset.videoTarget) {
+                throw new Error('Button Must Have Target');
+            }
 
-            if (!audioTracks || !audioTracks.length) {
+            var stream = videoTargetStreams[this.dataset.videoTarget];
+            var isMuted = toggleMuteMediaStreamTrack(stream, false);
+
+            setVideoMuteClass(isMuted, $(this));
+        };
+
+        var isMediaStreamTrackEnabled = function(stream, isAudio) {
+            var tracks = isAudio ? stream.getAudioTracks() : stream.getVideoTracks();
+
+            if (!tracks || !tracks.length) {
                 return false;
             }
 
-            return audioTracks[0].enabled;
+            return tracks[0].enabled;
         };
 
-        var toggleAudioMuteMediaStream = function toggleAudioMuteMediaStream(stream) {
-            var audioTracks = stream.getAudioTracks();
-            var isEnabled = isMediaStreamAudioEnabled(stream);
+        var toggleMuteMediaStreamTrack = function toggleAudioMuteMediaStream(stream, isAudio) {
+            var tracks = isAudio ? stream.getAudioTracks() : stream.getVideoTracks();
+            var isEnabled = isMediaStreamTrackEnabled(stream, isAudio);
 
-            if (!audioTracks || !audioTracks.length) {
+            if (!tracks || !tracks.length) {
                 return !isEnabled;
             }
 
-            _.forEach(audioTracks, function(track) {
+            _.forEach(tracks, function(track) {
                 track.enabled = !isEnabled;
             });
 
@@ -994,11 +1016,19 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
         var setAudioMuteClass = function setAudioMuteClass(isMuted, element) {
             if (isMuted) {
-                element.classList.remove('glyphicon-volume-up');
-                element.classList.add('glyphicon-volume-off');
+                element.removeClass('glyphicon-volume-up');
+                element.addClass('glyphicon-volume-off');
             } else {
-                element.classList.add('glyphicon-volume-up');
-                element.classList.remove('glyphicon-volume-off');
+                element.addClass('glyphicon-volume-up');
+                element.removeClass('glyphicon-volume-off');
+            }
+        };
+
+        var setVideoMuteClass = function setVideoMuteClass(isMuted, element) {
+            if (isMuted) {
+                element.addClass('toggle-off');
+            } else {
+                element.removeClass('toggle-off');
             }
         };
 
@@ -1066,6 +1096,8 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
         $('.fullscreen').click(handleFullscreenButtonClick);
+        $('.mute').click(handleMuteButtonClick);
+        $('.mute-video').click(handleMuteVideoButtonClick);
 
         createPCast();
         enableSteps();
