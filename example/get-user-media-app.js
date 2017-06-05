@@ -778,7 +778,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     });
                 }
 
-                displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream.getStream(), remoteVideoEl, _.bind(primaryMediaStream.setStreamEndedCallback, primaryMediaStream));
+                var primaryStream = primaryMediaStream.getStream ? primaryMediaStream.getStream() : null;
+
+                displayVideoElementAndControlsWhileStreamIsActive(primaryStream, remoteVideoEl, _.bind(primaryMediaStream.setStreamEndedCallback, primaryMediaStream));
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
 
                 if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
@@ -786,7 +788,9 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         return track.kind === 'video' && index == 2;
                     });
 
-                    displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream.getStream(), remoteVideoSecondaryEl, _.bind(secondaryMediaStream.setStreamEndedCallback, secondaryMediaStream));
+                    var secondaryStream = secondaryMediaStream.getStream ? secondaryMediaStream.getStream() : null;
+
+                    displayVideoElementAndControlsWhileStreamIsActive(secondaryStream, remoteVideoSecondaryEl, _.bind(secondaryMediaStream.setStreamEndedCallback, secondaryMediaStream));
                     attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
                 }
 
@@ -871,16 +875,21 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             var videoControls = $('[data-video-target=' + videoElement.id + ']');
             var shouldVideoBeHidden = video.hasClass('hidden');
 
-            videoTargetStreams[videoElement.id] = stream;
-
             if (shouldVideoBeHidden) {
                 video.removeClass('hidden');
             }
 
             videoControls.removeClass('hidden');
 
-            setAudioMuteClass(!isMediaStreamTrackEnabled(stream, true), $(videoControls.selector + '.mute'));
-            setVideoMuteClass(!isMediaStreamTrackEnabled(stream, false), $(videoControls.selector + '.mute-video'));
+            if (stream) {
+                videoTargetStreams[videoElement.id] = stream;
+
+                setAudioMuteClass(!isMediaStreamTrackEnabled(stream, true), $(videoControls.selector + '.mute'));
+                setVideoMuteClass(!isMediaStreamTrackEnabled(stream, false), $(videoControls.selector + '.mute-video'));
+            } else {
+                $(videoControls.selector + '.mute').addClass('hidden');
+                $(videoControls.selector + '.mute-video').addClass('hidden');
+            }
 
             onEnd(function() {
                 if (shouldVideoBeHidden) {
@@ -973,9 +982,12 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
 
             var stream = videoTargetStreams[this.dataset.videoTarget];
-            var isMuted = toggleMuteMediaStreamTrack(stream, true);
 
-            setAudioMuteClass(isMuted, $(this));
+            if (stream) {
+                var isMuted = toggleMuteMediaStreamTrack(stream, true);
+
+                setAudioMuteClass(isMuted, $(this));
+            }
         };
 
         var handleMuteVideoButtonClick = function handleMuteVideoButtonClick() {
@@ -984,9 +996,12 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
 
             var stream = videoTargetStreams[this.dataset.videoTarget];
-            var isMuted = toggleMuteMediaStreamTrack(stream, false);
 
-            setVideoMuteClass(isMuted, $(this));
+            if (stream) {
+                var isMuted = toggleMuteMediaStreamTrack(stream, false);
+
+                setVideoMuteClass(isMuted, $(this));
+            }
         };
 
         var isMediaStreamTrackEnabled = function(stream, isAudio) {
