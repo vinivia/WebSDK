@@ -15,9 +15,10 @@
  */
 define([
     '../LodashLight',
+    '../environment',
     '../assert',
     './AnalytixAppender'
-], function (_, assert, AnalytixAppender) {
+], function (_, environment, assert, AnalytixAppender) {
 
     var config = {
         urls: {
@@ -32,7 +33,7 @@ define([
     }
 
     AnalytixAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
-        var env = parseEnvFromPcastBaseUri(pcastBaseUri || '');
+        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
 
         var analytixServerUrl = config.urls[env];
 
@@ -42,18 +43,6 @@ define([
 
         return this._analytixAppenders[env];
     };
-
-    function parseEnvFromPcastBaseUri(uri) {
-        uri = uri.toLowerCase();
-
-        if (uri.indexOf('local') > -1) {
-            return 'local';
-        } else if (uri.indexOf('stg') > -1) {
-            return 'staging';
-        }
-
-        return 'production';
-    }
 
     function createNewAppender(uri) {
         var appender = new AnalytixAppender();

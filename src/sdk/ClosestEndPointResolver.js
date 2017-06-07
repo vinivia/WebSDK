@@ -70,7 +70,7 @@ define([
 
             that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
-            http.getWithRetry.call(that, endPoint, function (err, responseText) {
+            http.getWithRetry(endPoint, function (err, responseText) {
                 var end = _.now();
                 var time = end - start;
                 var timeAboveThreshold = time > endpointClosenessThreshold;

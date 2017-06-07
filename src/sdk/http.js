@@ -22,33 +22,68 @@ define([
         this._version = '%SDKVERSION%';
     }
 
+    Http.prototype.get = function get(url, callback, settings) {
+        var requestMethod = 'GET';
+        settings = settings || {};
+
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, url, callback);
+
+        if (!xhr) {
+            return callback(getUnsupportedError());
+        }
+
+        if (settings.mimeType) {
+            xhr.overrideMimeType(settings.mimeType);
+        }
+
+        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
+
+        xhr.timeout = settings.timeout || 15000;
+
+        xhr.send();
+    };
+
     Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
         if (!_.isNumber(attempt)) {
             attempt = 1;
         }
 
         var that = this;
-        var requestMethod = 'GET';
         var requestUrl = appendQueryParameters(url, that._version, _.now());
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
+
+        function retryCallback(err, response) {
+            if (err) {
+                if ((attempt < maxAttempts) && err.retryable) {
+                    getWithRetry.call(that, url, callback, maxAttempts, attempt + 1);
+                } else {
+                    callback(err);
+                }
+            } else {
+                callback(null, response);
+            }
+        }
+
+        that.get(requestUrl, retryCallback, {});
+    };
+
+    Http.prototype.post = function postWithRetry(url, data, callback, settings) {
+        var requestMethod = 'POST';
+
+        settings = settings || {};
+
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, url, callback);
 
         if (!xhr) {
             return callback(getUnsupportedError());
         }
 
-        function onRetry() {
-            getWithRetry.call(that, url, callback, maxAttempts, attempt + 1);
-        }
+        appendDataTypeHeaders(xhr, settings.dataType);
 
-        function isMaxRetry() {
-            return attempt > maxAttempts;
-        }
+        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
 
-        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback, onRetry, isMaxRetry));
+        xhr.timeout = settings.timeout || 15000;
 
-        xhr.timeout = 15000;
-
-        xhr.send();
+        xhr.send(data);
     };
 
     Http.prototype.postWithRetry = function postWithRetry(url, dataType, data, callback, maxAttempts, attempt) {
@@ -57,29 +92,26 @@ define([
         }
 
         var that = this;
-        var requestMethod = 'POST';
         var requestUrl = appendQueryParameters(url, that._version, _.now());
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
+        var settings = {};
 
-        if (!xhr) {
-            return callback(getUnsupportedError());
+        if (dataType) {
+            settings.dataType = dataType;
         }
 
-        appendDataTypeHeaders(xhr, dataType);
-
-        function onRetry() {
-            postWithRetry.call(that, url, dataType, data, callback, maxAttempts, attempt + 1);
+        function retryCallback(err, response) {
+            if (err) {
+                if ((attempt < maxAttempts) && err.retryable) {
+                    postWithRetry.call(that, url, dataType, data, callback, maxAttempts, attempt + 1);
+                } else {
+                    callback(err);
+                }
+            } else {
+                callback(null, response);
+            }
         }
 
-        function isMaxRetry() {
-            return attempt >= maxAttempts;
-        }
-
-        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback, onRetry, isMaxRetry));
-
-        xhr.timeout = 15000;
-
-        xhr.send(data);
+        that.post(requestUrl, data, retryCallback, settings);
     };
 
     function appendQueryParameters(url, version, timestamp) {
@@ -122,16 +154,17 @@ define([
         }
     }
 
-    function handleReadyStateChange(xhr, callback, onRetry, isMaxRetry) {
+    function handleReadyStateChange(xhr, callback) {
         if (xhr.readyState === 4 /* DONE */) {
             if (xhr.status === 200) {
-                callback(undefined, xhr.responseText);
-            } else if (xhr.status >= 500 && xhr.status < 600 && !isMaxRetry()) {
-                onRetry();
+                callback(null, xhr.responseText);
             } else {
                 var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
-
                 err.code = xhr.status;
+
+                if (xhr.status >= 500 && xhr.status < 600) {
+                    err.retryable = true;
+                }
 
                 callback(err);
             }

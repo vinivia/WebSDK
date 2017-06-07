@@ -751,6 +751,10 @@ requirejs([
 
             capabilities.push($('#subscriber-mode option:selected').val());
 
+            $('#subscriber-drm-capabilities option:selected').each(function () {
+                capabilities.push($(this).val());
+            });
+
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
                 activateStep('step-7');
                 setTimeout(function () {

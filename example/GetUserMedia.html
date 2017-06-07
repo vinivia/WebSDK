@@ -325,6 +325,7 @@
                 <option value="on-demand">On Demand</option>
                 <option value="low-latency">Low Latency (Streaming)</option>
                 <option value="h264">H264 (Real-time)</option>
+                <option value="drm">DRM</option>
             </select>
             <select class="form-control" id="publish-quality">
                 <option value="uld">ULD</option>
@@ -403,6 +404,13 @@
                 <option value="streaming">Live</option>
                 <option value="on-demand">On Demand</option>
             </select>
+            <br/>
+            <p>Choose <strong>DRM modifiers</strong></p>
+            <select class="form-control" id="subscriber-drm-capabilities" size="2" multiple>
+                <option value="drm-open-access" title="By default access is restricted to a single device">DRM - Open Access</option>
+                <option value="drm-hollywood">DRM - Hollywood</option>
+            </select>
+            <br/>
             <input id="sessionIdForViewing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="originStreamId" type="text" placeholder="originStreamId"/>
             <input id="createStreamTokenForViewing" type="button" value="Create Viewing Stream Token"/>

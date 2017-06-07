@@ -18,12 +18,13 @@ define([
     './assert',
     './observable/Observable',
     './logging/pcastLoggerFactory',
+    './http',
     './PCastProtocol',
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     'phenix-rtc'
-], function (_, assert, Observable, pcastLoggerFactory, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -44,6 +45,7 @@ define([
         iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
         hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
     });
+    var widevineServiceCertificate = null;
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
@@ -734,7 +736,7 @@ define([
         var that = this;
 
         this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(
-            function(sessionId) {
+            function (sessionId) {
                 that._observableSessionId.setValue(sessionId);
             });
     }
@@ -1046,7 +1048,7 @@ define([
 
                             var that = this;
 
-                            return phenixRTC.getStats(peerConnection, null, function(stats) {
+                            return phenixRTC.getStats(peerConnection, null, function (stats) {
                                 callback(convertPeerConnectionStats(stats, that._lastStats));
                             });
                         },
@@ -1541,7 +1543,7 @@ define([
 
                                 var that = this;
 
-                                return phenixRTC.getStats(peerConnection, null, function(stats) {
+                                return phenixRTC.getStats(peerConnection, null, function (stats) {
                                     callback(convertPeerConnectionStats(stats, that._lastStats));
                                 });
                             }
@@ -1750,10 +1752,16 @@ define([
     function createLiveViewer(streamId, offerSdp, callback, options) {
         var that = this;
 
-        var dashMatch = offerSdp.match('a=x-playlist:([^\n]*[.]mpd)');
-        var hlsMatch = offerSdp.match('a=x-playlist:([^\n]*[.]m3u8)');
+        var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
+        var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8)/m);
 
         if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
+
+            if (options.isDrmProtectedContent) {
+                options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
+            }
+
             return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
             return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback, options);
@@ -1829,7 +1837,7 @@ define([
                             var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
 
                             lastProgress.count += 1;
-                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
                         }
 
                         lastProgress.buffered = element.buffered.end(0);
@@ -1842,7 +1850,7 @@ define([
                             return;
                         }
 
-                        setTimeout(function() {
+                        setTimeout(function () {
                             if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk) {
                                 internalMediaStream.renderer.stop('ended');
                             }
@@ -1860,8 +1868,9 @@ define([
                     return {
                         start: function start(elementToAttachTo) {
                             player = new shaka.Player(elementToAttachTo);
+                            internalMediaStream.renderer = this;
 
-                            player.configure({
+                            var playerConfig = {
                                 abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
                                 manifest: {retryParameters: {timeout: 10000}},
                                 streaming: {
@@ -1870,35 +1879,52 @@ define([
                                     bufferBehind: 30,
                                     retryParameters: {timeout: 10000}
                                 }
-                            });
+                            };
 
-                            if (options.receiveAudio === false) {
-                                elementToAttachTo.muted = true;
+                            if (options.isDrmProtectedContent) {
+
+                                addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
+                                    if (!err) {
+                                        loadPlayer(updatedPlayerConfig);
+                                    } else {
+                                        that._logger.error('Failed to add DRM configuration to shaka player', err);
+
+                                        throw err;
+                                    }
+                                });
+                            } else {
+                                loadPlayer(playerConfig);
                             }
 
-                            internalMediaStream.renderer = this;
 
-                            player.addEventListener('error', onPlayerError);
+                            function loadPlayer(config) {
+                                player.configure(config);
 
-                            elementToAttachTo.addEventListener('stalled', stalled, false);
-                            elementToAttachTo.addEventListener('progress', onProgress, false);
-                            elementToAttachTo.addEventListener('ended', ended, false);
-
-                            var load = player.load(manifestUri).then(function () { // eslint-disable-line no-unused-vars
-                                that._logger.info('[%s] DASH live stream has been loaded', streamId);
-
-                                if (typeof elementToAttachTo.play === 'function') {
-                                    elementToAttachTo.play();
+                                if (options.receiveAudio === false) {
+                                    elementToAttachTo.muted = true;
                                 }
-                            }).catch(function (e) {
-                                that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
 
-                                internalMediaStream.streamErrorCallback('shaka', e);
-                            });
+                                player.addEventListener('error', onPlayerError);
 
-                            dimensionsChangedMonitor.start(this, elementToAttachTo);
+                                elementToAttachTo.addEventListener('stalled', stalled, false);
+                                elementToAttachTo.addEventListener('progress', onProgress, false);
+                                elementToAttachTo.addEventListener('ended', ended, false);
 
-                            element = elementToAttachTo;
+                                player.load(manifestUri).then(function () {
+                                    that._logger.info('[%s] DASH live stream has been loaded', streamId);
+
+                                    if (_.isFunction(elementToAttachTo.play)) {
+                                        elementToAttachTo.play();
+                                    }
+                                }).catch(function (e) {
+                                    that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
+
+                                    internalMediaStream.streamErrorCallback('shaka', e);
+                                });
+
+                                dimensionsChangedMonitor.start(this, elementToAttachTo);
+                                element = elementToAttachTo;
+                            }
 
                             return elementToAttachTo;
                         },
@@ -2113,6 +2139,74 @@ define([
         callback.call(that, internalMediaStream.mediaStream);
     }
 
+    function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
+        if (!playerConfig.drm) {
+            playerConfig.drm = {};
+        }
+
+        if (!playerConfig.drm.servers) {
+            playerConfig.drm.servers = {};
+        }
+
+        if (!playerConfig.drm.advanced) {
+            playerConfig.drm.advanced = {};
+        }
+
+        if (!playerConfig.manifest) {
+            playerConfig.manifest = {};
+        }
+
+        if (!playerConfig.manifest.dash) {
+            playerConfig.manifest.dash = {};
+        }
+
+        // Add browser specific DRM calls here
+        // Currently we support Widevine only
+        addWidevineConfigToPlayerConfig.call(this, playerConfig, callback, options);
+    }
+
+    function addWidevineConfigToPlayerConfig(playerConfig, callback, options) {
+        playerConfig['manifest']['dash']['customScheme'] = function (element) {
+            if (element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
+                return [{
+                    keySystem: 'com.widevine.alpha',
+                    licenseServerUri: decodeURIComponent(element.getAttribute('widevineLicenseServerUrl'))
+                }];
+            }
+        };
+
+        function addToPlayerconfig(error, serverCertificate) {
+            if (error) {
+                callback(error);
+
+                return;
+            }
+
+            widevineServiceCertificate = serverCertificate; // Cache so that we can reuse
+
+            playerConfig.drm.advanced['com.widevine.alpha'] = {serverCertificate: convertBinaryStringToUint8Array(serverCertificate)};
+
+            callback(null, playerConfig);
+        }
+
+        if (widevineServiceCertificate) {
+            addToPlayerconfig(null, widevineServiceCertificate);
+        } else {
+            http.get(options.widevineServiceCertificateUrl, addToPlayerconfig, {mimeType: 'text/plain; charset=x-user-defined'});
+        }
+    }
+
+    function convertBinaryStringToUint8Array(bStr) {
+        var len = bStr.length;
+        var u8Array = new Uint8Array(len); // eslint-disable-line no-undef
+
+        for (var i = 0; i < len; i++) {
+            u8Array[i] = bStr.charCodeAt(i);
+        }
+
+        return u8Array;
+    }
+
     function createHlsLiveViewer(streamId, uri, callback, options) {
         var that = this;
 
@@ -2163,7 +2257,7 @@ define([
                             var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
 
                             lastProgress.count += 1;
-                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
                         }
 
                         lastProgress.buffered = element.buffered.end(0);
@@ -2175,7 +2269,7 @@ define([
                         if (lastProgress.count === 0) {
                             reload();
                         } else {
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 if (lastProgress.count === 0) {
                                     reload();
                                 }

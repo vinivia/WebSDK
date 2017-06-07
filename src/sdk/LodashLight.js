@@ -88,12 +88,12 @@ define([
         return newArray;
     };
 
-    _.values = function(collection) {
+    _.values = function (collection) {
         if (!_.isObject(collection) || _.isArray(collection)) {
             throw new Error('Collection must be an object.');
         }
 
-        return _.map(collection, function(value) {
+        return _.map(collection, function (value) {
             return value;
         });
     };
@@ -193,10 +193,10 @@ define([
     _.sample = function sample(collection) {
         assertIsArray(collection);
 
-        return collection[Math.floor(Math.random()*collection.length)];
+        return collection[Math.floor(Math.random() * collection.length)];
     };
 
-    _.uniqueId = function() {
+    _.uniqueId = function () {
         return (_.now() * Math.random()).toString();
     };
 
@@ -295,7 +295,7 @@ define([
         } else if (_.isObject(collectionA) && _.isObject(collectionB) && !_.isArray(collectionA) && !_.isArray(collectionB)) {
             _.forOwn(collectionA, getDifferences);
 
-            _.forOwn(collectionB, function(value, key) {
+            _.forOwn(collectionB, function (value, key) {
                 if (!visitedKeys.hasOwnProperty(key)) {
                     differences.push(key);
                 }
@@ -337,7 +337,7 @@ define([
         return obj;
     };
 
-    _.noop = function() {
+    _.noop = function () {
         return undefined;
     };
 
@@ -384,16 +384,16 @@ define([
     _.getEnumName = function getEnumName(enums, nameOrId) {
         var enumObject = null;
 
-        var enumArray = _.map(enums, function(value) {
+        var enumArray = _.map(enums, function (value) {
             return value;
         });
 
         if (_.isNumber(nameOrId)) {
-            enumObject = _.find(enumArray, function(current) {
+            enumObject = _.find(enumArray, function (current) {
                 return current.id === nameOrId;
             });
         } else if (_.isString(nameOrId)) {
-            enumObject = _.find(enumArray, function(current) {
+            enumObject = _.find(enumArray, function (current) {
                 return current.name.toLowerCase() === nameOrId.toLowerCase();
             });
         }
