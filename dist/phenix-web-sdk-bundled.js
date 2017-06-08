@@ -191,7 +191,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-02T18:59:11Z' || '?';
+	    var sdkVersion = '2017-06-08T17:58:15Z' || '?';
 	    var releaseVersion = '2017.2.2';
 
 	    function Logger(observableSessionId) {
@@ -1256,7 +1256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-02T18:59:11Z';
+	        this._version = '2017-06-08T17:58:15Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14303,7 +14303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-02T18:59:11Z';
+	    var sdkVersion = '2017-06-08T17:58:15Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -18609,6 +18609,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        cachedRoom._removeMembers(members);
 	        cachedRoom._addMembers(members);
 
+	        var that = this;
+
+	        var memberIsSelf = function(member) {
+	            return member.sessionId === that.getSelf().getSessionId();
+	        };
+
+	        var joinedSelf = _.find(members, memberIsSelf);
+
+	        if (joinedSelf) {
+	            replaceSelfInstanceInRoom.call(that, room);
+
+	            room._updateMembers([joinedSelf]);
+	        }
+
 	        this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
 	    }
 
@@ -18979,7 +18993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        if (!_.isNumber(selfIndex)) {
-	            throw new Error('Invalid Room State: Self member not in room list of members.');
+	            return this._logger.info('Self not in server room model.');
 	        }
 
 	        self._update(members[selfIndex].toJson());

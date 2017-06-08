@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 define([
+    'lodash',
     'sdk/room/RoomService',
     'sdk/room/Room',
     'sdk/room/ImmutableRoom',
@@ -23,18 +24,18 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     '../../../test/mock/mockPCast'
-], function (RoomService, Room, ImmutableRoom, Member, room, member, stream, track, MockPCast) {
+], function (_, RoomService, Room, ImmutableRoom, Member, room, member, stream, track, MockPCast) {
     var pcast;
     var mockProtocol;
     var roomService;
     var response;
     var baseURI;
+    var self;
 
     var mockTrack = { enabled: 'true', state:track.states.trackEnabled.name };
     var stream1 = {type: stream.types.user.name, uri: baseURI+'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name, getTracks: function () { return [mockTrack]; }};
     var member1 = {state: member.states.passive.name, sessionId: 'member1',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'first'};
     var mockRoom = {roomId:'TestRoom123',alias:'',name:'',description:'',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, getRoomId:function () { return room.roomId; }, members:[member1]};
-    var self = {state: member.states.passive.name, sessionId: 'mockSessionId',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'self'};
 
     var name = 'testRoom';
     var type = room.types.multiPartyChat.name;
@@ -46,6 +47,8 @@ define([
 
     describe('When instantiating a RoomService', function () {
         beforeEach(function () {
+            self = {state: member.states.passive.name, sessionId: 'mockSessionId',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'self'};
+
             pcast = new MockPCast();
 
             mockProtocol = pcast.getProtocol();
@@ -297,6 +300,26 @@ define([
                 });
             });
 
+            it('Self not returned from Enter Room does not throw error.', function () {
+                mockProtocol.enterRoom.restore();
+                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                    response = {
+                        status: 'ok',
+                        room: mockRoom,
+                        members: [member1]
+                    };
+
+                    callback(null, response);
+                });
+
+                roomService.start(role, screenName);
+
+                roomService.enterRoom(roomId, alias, function (error, response) {
+                    expect(error).to.not.exist;
+                    expect(response.status).to.be.equal('ok');
+                });
+            });
+
             describe('When already in room', function () {
                 var onRoomEvent;
                 var on;
@@ -326,11 +349,11 @@ define([
                 });
 
                 it('Self is the same in members list', function () {
-                    var self = roomService.getSelf();
+                    var roomSelf = roomService.getSelf();
                     var room = roomService.getObservableActiveRoom().getValue();
                     var memberListSelf = room.getObservableMembers().getValue()[2];
 
-                    expect(self).to.be.equal(memberListSelf);
+                    expect(roomSelf).to.be.equal(memberListSelf);
                 });
 
                 describe('When onRoomEvent occurs', function () {
@@ -343,6 +366,22 @@ define([
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
 
                         expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(4);
+                    });
+
+                    it('Self joined has self instance in room with updated values', function () {
+                        var member3 = {state: member.states.passive.name, sessionId: self.sessionId, role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'third'};
+                        var event = {eventType: room.events.memberJoined.name, roomId: 'TestRoom123', members: [member1, member2, member3]};
+
+                        onRoomEvent(event);
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+                        var observableSelf = _.find(currentRoom.getObservableMembers().getValue(), function(member) {
+                            return member.getSessionId() === self.sessionId;
+                        });
+
+                        expect(observableSelf).to.exist;
+                        expect(observableSelf).to.be.equal(roomService.getSelf());
+                        expect(roomService.getSelf().getObservableScreenName().getValue()).to.be.equal('third');
                     });
 
                     it('MemberLeft event handled removes member from room', function () {

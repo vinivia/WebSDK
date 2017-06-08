@@ -251,6 +251,20 @@ define([
         cachedRoom._removeMembers(members);
         cachedRoom._addMembers(members);
 
+        var that = this;
+
+        var memberIsSelf = function(member) {
+            return member.sessionId === that.getSelf().getSessionId();
+        };
+
+        var joinedSelf = _.find(members, memberIsSelf);
+
+        if (joinedSelf) {
+            replaceSelfInstanceInRoom.call(that, room);
+
+            room._updateMembers([joinedSelf]);
+        }
+
         this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
     }
 
@@ -621,7 +635,7 @@ define([
         });
 
         if (!_.isNumber(selfIndex)) {
-            throw new Error('Invalid Room State: Self member not in room list of members.');
+            return this._logger.info('Self not in server room model.');
         }
 
         self._update(members[selfIndex].toJson());
