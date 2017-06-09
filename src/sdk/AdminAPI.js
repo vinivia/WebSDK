@@ -24,7 +24,7 @@ define([
         assert.stringNotEmpty(backendUri, 'backendUri');
         assert.isObject(authenticationData, 'authenticationData');
 
-        this._backendUri = backendUri + '/pcast';
+        this._backendUri = backendUri;
         this._authenticationData = authenticationData;
     }
 

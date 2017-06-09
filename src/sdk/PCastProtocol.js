@@ -152,7 +152,8 @@ define([
                 sessionId: this.getSessionId(),
                 options: ['data-quality-notifications'],
                 connectUri: options.connectUri,
-                connectOptions: options.connectOptions || []
+                connectOptions: options.connectOptions || [],
+                tags: options.tags || []
             }
         };
 

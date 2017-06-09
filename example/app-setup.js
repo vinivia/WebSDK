@@ -54,6 +54,10 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
             $('#originStreamId').val(getUrlParameter('streamId'));
         }
 
+        if (getUrlParameter('channelAlias')) {
+            $('#channelAlias').val(getUrlParameter('channelAlias'));
+        }
+
         var updateOptions = function updateOptions() {
             $('input[name="option"]').each(function () {
                 var option = $(this).val();
@@ -171,6 +175,10 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
 
         $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
         $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
+
+        if (!$('.' + enabledSteps[enabledSteps.length - 1]).length) {
+            return;
+        }
 
         $('html, body').animate({
             scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)

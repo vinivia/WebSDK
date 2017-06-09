@@ -20,6 +20,7 @@ define([
     'use strict';
 
     var measurementsPerEndPoint = 4;
+    var endpointClosenessThreshold = 30;
 
     function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger) {
         this._done = false;
@@ -60,6 +61,7 @@ define([
     ClosestEndPointResolver.prototype.resolve = function resolve(endPoint, measurements) {
         var that = this;
         var measurement = 1;
+        var successfulAttempts = 0;
 
         var nextMeasurement = function nextMeasurement(endPoint) {
             var maxAttempts = 1;
@@ -70,6 +72,7 @@ define([
             http.getWithRetry.call(that, endPoint, function (err, responseText) {
                 var end = _.now();
                 var time = end - start;
+                var timeAboveThreshold = time > endpointClosenessThreshold;
 
                 that._logger.info('[%s] End point [%s] latency is [%s] ms', measurement, endPoint, time);
 
@@ -80,14 +83,18 @@ define([
                         // done
                         return;
                     }
+
+                    successfulAttempts++;
                 }
 
-                if (measurement <= measurements && !that.isResolved()) {
+                if (measurement <= measurements && !that.isResolved() && (timeAboveThreshold || err)) {
                     if (err) {
-                        that._logger.info('Retrying after failure to resolve end point [%s]', endPoint, err);
+                        that._logger.info('Retrying after failure to resolve end point [%s] with [%s]', endPoint, err);
                     }
 
                     return nextMeasurement(endPoint);
+                } else if (successfulAttempts === 0) {
+                    return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
                 } else {
                     return that.completeCallback(endPoint);
                 }

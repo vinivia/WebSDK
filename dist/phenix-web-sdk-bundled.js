@@ -93,19 +93,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(34),
 	    __webpack_require__(47),
 	    __webpack_require__(52),
-	    __webpack_require__(54)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PhenixPCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, PCastExpress) {
-	    window.PhenixPCast = PhenixPCast;
+	    __webpack_require__(54),
+	    __webpack_require__(56)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, PCastExpress, RoomExpress) {
+	    window.PhenixPCast = PCast;
 
 	    return {
-	        PCast: PhenixPCast,
+	        PCast: PCast,
 	        RoomService: RoomService,
 	        AudioSpeakerDetector: AudioSpeakerDetector,
 	        BandwidthMonitor: BandwidthMonitor,
 	        logging: logging,
 	        RTC: rtc,
 	        express: {
-	            PCastExpress: PCastExpress
+	            PCastExpress: PCastExpress,
+	            RoomExpress: RoomExpress
 	        }
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -195,7 +197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-08T22:29:03Z' || '?';
+	    var sdkVersion = '2017-06-19T22:55:53Z' || '?';
 	    var releaseVersion = '2017.2.2';
 
 	    function Logger(observableSessionId) {
@@ -1278,7 +1280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-08T22:29:03Z';
+	        this._version = '2017-06-19T22:55:53Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14326,7 +14328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-08T22:29:03Z';
+	    var sdkVersion = '2017-06-19T22:55:53Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14336,7 +14338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var firefoxInstallationCheckInterval = 100;
 	    var firefoxMaxInstallationChecks = 450;
 
-	    function PhenixPCast(options) {
+	    function PCast(options) {
 	        options = options || {};
 	        this._observableStatus = new Observable('offline');
 	        this._observableSessionId = new Observable(null);
@@ -14363,19 +14365,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }(this));
 	    }
 
-	    PhenixPCast.prototype.getBaseUri = function () {
+	    PCast.prototype.getBaseUri = function () {
 	        return this._endPoint.getBaseUri();
 	    };
 
-	    PhenixPCast.prototype.getStatus = function () {
+	    PCast.prototype.getStatus = function () {
 	        return this._observableStatus.getValue();
 	    };
 
-	    PhenixPCast.prototype.getObservableStatus = function () {
+	    PCast.prototype.getObservableStatus = function () {
 	        return this._observableStatus;
 	    };
 
-	    PhenixPCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
+	    PCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
 	        if (typeof authToken !== 'string') {
 	            throw new Error('"authToken" must be a string');
 	        }
@@ -14443,7 +14445,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 
-	    PhenixPCast.prototype.stop = function () {
+	    PCast.prototype.stop = function () {
 	        if (!this._started) {
 	            return;
 	        }
@@ -14500,7 +14502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 
-	    PhenixPCast.prototype.getUserMedia = function (options, callback) {
+	    PCast.prototype.getUserMedia = function (options, callback) {
 	        if (typeof options !== 'object') {
 	            throw new Error('"options" must be an object');
 	        }
@@ -14511,7 +14513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return getUserMedia.call(this, options, callback);
 	    };
 
-	    PhenixPCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
+	    PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
@@ -14542,6 +14544,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            setupStreamOptions.connectUri = streamToPublish;
 	        } else {
 	            setupStreamOptions.connectUri = options.connectUri
+	        }
+
+	        if (tags.length > 0) {
+	            setupStreamOptions.tags = tags;
 	        }
 
 	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
@@ -14584,7 +14590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 
-	    PhenixPCast.prototype.subscribe = function (streamToken, callback, options) {
+	    PCast.prototype.subscribe = function (streamToken, callback, options) {
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
@@ -14641,16 +14647,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 
-	    PhenixPCast.prototype.getProtocol = function () {
+	    PCast.prototype.getProtocol = function () {
 	        return this._protocol;
 	    };
 
-	    PhenixPCast.prototype.getLogger = function () {
+	    PCast.prototype.getLogger = function () {
 	        return this._logger;
 	    };
 
-	    PhenixPCast.prototype.toString = function () {
-	        return 'PhenixPCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+	    PCast.prototype.toString = function () {
+	        return 'PCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
 	    };
 
 	    function checkForScreenSharingCapability(callback) {
@@ -14896,7 +14902,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        var onUserMediaSuccess = function onUserMediaSuccess(status, stream) {
-	            that._gumStreams.push(stream);
+	            if (that._gumStreams) {
+	                that._gumStreams.push(stream);
+	            }
+
 	            callback(that, status, stream);
 	        };
 
@@ -15125,7 +15134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var internalMediaStream = this._mediaStreams[streamId];
 
 	        if (internalMediaStream) {
-	            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
+	            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason, true);
 	        }
 
 	        delete this._mediaStreams[streamId];
@@ -15294,6 +15303,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
 
 	                                return callback(internalMediaStream.mediaStream, 'client-side-failure', reason);
+	                            });
+	                        },
+
+	                        getStats: function getStats(callback) {
+	                            assert.isFunction(callback, 'callback');
+
+	                            if (!this._lastStats) {
+	                                this._lastStats = {};
+	                            }
+
+	                            var that = this;
+
+	                            return phenixRTC.getStats(peerConnection, null, function(stats) {
+	                                callback(convertPeerConnectionStats(stats, that._lastStats));
 	                            });
 	                        },
 
@@ -15505,6 +15528,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            getStream: function getStream() {
 	                that._logger.debug('[%s] Unable to get stream on publisher of remote origin.', streamId);
+
+	                return null;
+	            },
+
+	            getStats: function getStats() {
+	                that._logger.debug('[%s] Unable to get stream stats on publisher of remote origin.', streamId);
 
 	                return null;
 	            },
@@ -15763,6 +15792,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            getOptions: function getOptions() {
 	                                return streamOptions;
+	                            },
+
+	                            getStats: function getStats(callback) {
+	                                assert.isFunction(callback, 'callback');
+
+	                                if (!this._lastStats) {
+	                                    this._lastStats = {};
+	                                }
+
+	                                var that = this;
+
+	                                return phenixRTC.getStats(peerConnection, null, function(stats) {
+	                                    callback(convertPeerConnectionStats(stats, that._lastStats));
+	                                });
 	                            }
 	                        };
 
@@ -16011,11 +16054,59 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderer: null,
 	            isStreamEnded: false,
 	            isStopped: false,
+	            waitingForLastChunk: false,
 
 	            mediaStream: {
 	                createRenderer: function createRenderer() {
 	                    var player = null;
+	                    var element = null;
 	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
+	                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+
+	                    function onProgress() {
+	                        lastProgress.time = _.now();
+
+	                        if (element.buffered.length === 0) {
+	                            return that._logger.debug('[%s] Dash stream progress event fired without any buffered content', streamId);
+	                        }
+
+	                        if (lastProgress.buffered === element.buffered.end(0)) {
+	                            return;
+	                        }
+
+	                        // start and end times are unreliable for overall length of stream.
+	                        if (lastProgress.buffered !== null) {
+	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
+	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+
+	                            lastProgress.count += 1;
+	                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+	                        }
+
+	                        lastProgress.buffered = element.buffered.end(0);
+	                    }
+
+	                    function stalled() {
+	                        that._logger.info('[%s] Loading Dash stream stalled.', streamId);
+
+	                        if (lastProgress.time === 0) {
+	                            return;
+	                        }
+
+	                        setTimeout(function() {
+	                            if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk) {
+	                                internalMediaStream.renderer.stop('ended');
+	                            }
+	                        }, getTimeoutOrMinimum());
+	                    }
+
+	                    function getTimeoutOrMinimum() {
+	                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
+	                    }
+
+	                    function ended() {
+	                        that._logger.info('[%s] Dash stream ended.', streamId);
+	                    }
 
 	                    return {
 	                        start: function start(elementToAttachTo) {
@@ -16045,6 +16136,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            player.addEventListener('error', onPlayerError);
 
+	                            elementToAttachTo.addEventListener('stalled', stalled, false);
+	                            elementToAttachTo.addEventListener('progress', onProgress, false);
+	                            elementToAttachTo.addEventListener('ended', ended, false);
+
 	                            var load = player.load(manifestUri).then(function () {
 	                                that._logger.info('[%s] DASH live stream has been loaded', streamId);
 
@@ -16059,6 +16154,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            dimensionsChangedMonitor.start(this, elementToAttachTo);
 
+	                            element = elementToAttachTo;
+
 	                            return elementToAttachTo;
 	                        },
 
@@ -16069,9 +16166,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                var finalizeStreamEnded = function finalizeStreamEnded() {
 	                                    var reason = '';
 
+	                                    if (element) {
+	                                        element.removeEventListener('stalled', stalled, false);
+	                                        element.removeEventListener('progress', onProgress, false);
+	                                        element.removeEventListener('ended', ended, false);
+	                                    }
+
 	                                    internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
 
 	                                    player = null;
+	                                    element = null;
 	                                };
 
 	                                var destroy = player.destroy()
@@ -16201,6 +16305,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                getStreamId: function getStreamId() {
 	                    return streamId;
+	                },
+
+	                getStats: function getStats() {
+	                    that._logger.debug('[%s] stats not available for shaka live streams', streamId);
+
+	                    return null;
 	                }
 	            },
 
@@ -16212,7 +16322,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            },
 
-	            streamEndedCallback: function (status, reason) {
+	            streamEndedCallback: function (status, reason, waitForLastChunk) {
+	                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
+	                    internalMediaStream.waitingForLastChunk = true;
+
+	                    return that._logger.info('[%s] Shaka stream ended. Waiting for end of content.');
+	                }
+
 	                if (internalMediaStream.isStreamEnded) {
 	                    return;
 	                }
@@ -16255,7 +16371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
-	        var onPlayerError = function onPlayerError(event) {
+	        var onPlayerError = function onPlayerError(event, e) {
 	            var mediaStream = internalMediaStream.mediaStream;
 
 	            if (!mediaStream.streamErrorCallback) {
@@ -16270,11 +16386,88 @@ return /******/ (function(modules) { // webpackBootstrap
 	            renderer: null,
 	            isStreamEnded: false,
 	            isStopped: false,
+	            waitingForLastChunk: false,
 
 	            mediaStream: {
 	                createRenderer: function createRenderer() {
 	                    var element = null;
 	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
+	                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+
+	                    function onProgress() {
+	                        lastProgress.time = _.now();
+
+	                        if (element.buffered.length === 0) {
+	                            return that._logger.debug('[%s] Hls stream progress event fired without any buffered content', streamId);
+	                        }
+
+	                        if (lastProgress.buffered === element.buffered.end(0)) {
+	                            return;
+	                        }
+
+	                        // start and end times are unreliable for overall length of stream.
+	                        if (lastProgress.buffered !== null) {
+	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
+	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+
+	                            lastProgress.count += 1;
+	                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+	                        }
+
+	                        lastProgress.buffered = element.buffered.end(0);
+	                    }
+
+	                    function stalled() {
+	                        that._logger.info('[%s] Loading Hls stream stalled.', streamId);
+
+	                        if (lastProgress.count === 0) {
+	                            reload();
+	                        } else {
+	                            setTimeout(function() {
+	                                if (lastProgress.count === 0) {
+	                                    reload();
+	                                }
+	                            }, getTimeoutOrMinimum());
+
+	                            var streamEndedBeforeSetupTimeout = 5000;
+
+	                            setTimeout(endIfReady, streamEndedBeforeSetupTimeout);
+	                        }
+	                    }
+
+	                    function ended() {
+	                        that._logger.info('[%s] Hls stream ended', streamId);
+
+	                        if (internalMediaStream.renderer) {
+	                            internalMediaStream.renderer.stop('ended');
+	                        }
+	                    }
+
+	                    function waiting() {
+	                        that._logger.info('Time elapsed since last progress [%s]',_.now() - lastProgress.time);
+
+	                        setTimeout(endIfReady, getTimeoutOrMinimum());
+	                    }
+
+	                    function reload() {
+	                        that._logger.info('[%s] Attempting to reload Hls stream.', streamId);
+
+	                        element.pause();
+	                        element.src = '';
+
+	                        element.src = manifestUri;
+	                        element.play();
+	                    }
+
+	                    function getTimeoutOrMinimum() {
+	                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
+	                    }
+
+	                    function endIfReady() {
+	                        if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk && internalMediaStream.renderer) {
+	                            internalMediaStream.renderer.stop('ended');
+	                        }
+	                    }
 
 	                    return {
 	                        start: function start(elementToAttachTo) {
@@ -16287,7 +16480,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                                internalMediaStream.renderer = this;
 
-	                                elementToAttachTo.addEventListener('error', onPlayerError);
+	                                elementToAttachTo.addEventListener('error', onPlayerError, true);
+	                                elementToAttachTo.addEventListener('stalled', stalled, false);
+	                                elementToAttachTo.addEventListener('progress', onProgress, false);
+	                                elementToAttachTo.addEventListener('ended', ended, false);
+	                                elementToAttachTo.addEventListener('waiting', waiting, false);
+
 	                                elementToAttachTo.play();
 
 	                                element = elementToAttachTo;
@@ -16307,12 +16505,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            if (element) {
 	                                var finalizeStreamEnded = function finalizeStreamEnded() {
-	                                    element = null;
+	                                    if (element) {
+	                                        element.removeEventListener('error', onPlayerError, true);
+	                                        element.removeEventListener('stalled', stalled, false);
+	                                        element.removeEventListener('progress', onProgress, false);
+	                                        element.removeEventListener('ended', ended, false);
+	                                        element.removeEventListener('waiting', waiting, false);
+
+	                                        element.src = '';
+
+	                                        element = null;
+	                                    }
 
 	                                    var reason = '';
 
 	                                    internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
-
 	                                };
 
 	                                try {
@@ -16430,6 +16637,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    that._logger.debug('[%s] stream not available for HLS live streams', streamId);
 
 	                    return null;
+	                },
+
+	                getStats: function getStats() {
+	                    that._logger.debug('[%s] stats not available for HLS live streams', streamId);
+
+	                    return null;
 	                }
 	            },
 
@@ -16441,7 +16654,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            },
 
-	            streamEndedCallback: function (status, reason) {
+	            streamEndedCallback: function (status, reason, waitForLastChunk) {
+	                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
+	                    internalMediaStream.waitingForLastChunk = true;
+
+	                    return that._logger.info('[%s] Hls stream ended. Waiting for end of content.');
+	                }
+
 	                if (internalMediaStream.isStreamEnded) {
 	                    return;
 	                }
@@ -16547,7 +16766,96 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    return PhenixPCast;
+	    function convertPeerConnectionStats(stats, lastStats) {
+	        if (!stats) {
+	            return null;
+	        }
+
+	        var newStats = [];
+
+	        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived) {
+	            if (ssrc) {
+	                if (!_.hasIndexOrKey(lastStats, ssrc)) {
+	                    lastStats[ssrc] = {timestamp: 0};
+	                }
+
+	                var timeDelta = parseFloat(timestamp) - lastStats[ssrc].timestamp;
+	                var up = calculateUploadRate(parseFloat(bytesSent), lastStats[ssrc].bytesSent, timeDelta);
+	                var down = calculateDownloadRate(parseFloat(bytesReceived), lastStats[ssrc].bytesReceived, timeDelta);
+
+	                lastStats[ssrc].bytesSent = parseFloat(bytesSent);
+	                lastStats[ssrc].bytesReceived = parseFloat(bytesReceived);
+	                lastStats[ssrc].timestamp = parseFloat(timestamp);
+
+	                newStats.push({
+	                    uploadRate: up,
+	                    downloadRate: down,
+	                    mediaType: mediaType,
+	                    ssrc: ssrc
+	                });
+	            }
+	        };
+
+	        if (_.isFunction(stats.result)) {
+	            _.forEach(stats.result(), function (statsReport) {
+	                if (statsReport.type === 'ssrc') {
+	                    var ssrc = statsReport.stat('ssrc');
+	                    var bytesSent = statsReport.stat('bytesSent');
+	                    var bytesReceived = statsReport.stat('bytesReceived');
+	                    var mediaType = statsReport.stat('mediaType');
+	                    var timestamp = statsReport.timestamp.getTime();
+
+	                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived);
+	                }
+	            });
+	        } else if (_.isFunction(stats.values)) {
+	            _.forEach(Array.from(stats.values()), function (statsReport, key) {
+	                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
+	                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+	                        return;
+	                    }
+
+	                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+	                }
+	            });
+	        } else {
+	            _.forEach(stats, function (statsReport, key) {
+	                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
+	                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+	                        return;
+	                    }
+
+	                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+	                }
+	            });
+	        }
+
+	        return newStats;
+	    }
+
+	    function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
+	        if (bytesSent) {
+	            var bytesSentBefore = prevBytesSent || 0;
+	            var bps = 8 * 1000 * (bytesSent - bytesSentBefore) / timeDelta;
+
+	            return Math.round(bps / 1000);
+	        }
+
+	        return 0;
+	    }
+
+	    function calculateDownloadRate(bytesReceived, prevBytesReceived, timeDelta) {
+	        if (bytesReceived) {
+	            var bytesReceivedBefore = prevBytesReceived || 0;
+	            var bps = 8 * 1000 * (bytesReceived - bytesReceivedBefore) / timeDelta;
+
+	            return Math.round(bps / 1000);
+	        }
+
+	        return 0;
+	    }
+
+	    return PCast;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
@@ -16616,7 +16924,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (options) {
 	            if (options.initial === 'notify') {
-	                onSubscribeCallback.call(that, that.subscriptionTimeout);
+	                onSubscribeCallback.call(that, that.subscriptionTimeout, true);
 	            }
 	            if (options.listenForChanges) {
 	                listenForChanges = setInterval(function() {
@@ -16688,11 +16996,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.latestValue = clone(valueToSet);
 	    }
 
-	    function onSubscribeCallback(timeoutLength) {
+	    function onSubscribeCallback(timeoutLength, noTimeout) {
 	        this.lastChangeTime = _.now();
 
 	        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
 	            this.isPendingChanges = true;
+
+	            if (noTimeout) {
+	                return notifySubscribers.call(this);
+	            }
 
 	            continueAfterTimeout.call(this, timeoutLength)
 	        }
@@ -16707,13 +17019,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
 	                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
 	            } else {
-	                try {
-	                    executeSubscriptionCallbacks.call(that);
-	                } finally {
-	                    that.isPendingChanges = false;
-	                }
+	                notifySubscribers.call(that);
 	            }
 	        }, timeoutLength);
+	    }
+
+	    function notifySubscribers() {
+	        try {
+	            executeSubscriptionCallbacks.call(this);
+	        } finally {
+	            this.isPendingChanges = false;
+	        }
 	    }
 
 	    function executeSubscriptionCallbacks() {
@@ -16941,7 +17257,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                sessionId: this.getSessionId(),
 	                options: ['data-quality-notifications'],
 	                connectUri: options.connectUri,
-	                connectOptions: options.connectOptions || []
+	                connectOptions: options.connectOptions || [],
+	                tags: options.tags || []
 	            }
 	        };
 
@@ -17759,6 +18076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    var measurementsPerEndPoint = 4;
+	    var endpointClosenessThreshold = 30;
 
 	    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger) {
 	        this._done = false;
@@ -17799,6 +18117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    ClosestEndPointResolver.prototype.resolve = function resolve(endPoint, measurements) {
 	        var that = this;
 	        var measurement = 1;
+	        var successfulAttempts = 0;
 
 	        var nextMeasurement = function nextMeasurement(endPoint) {
 	            var maxAttempts = 1;
@@ -17809,6 +18128,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            http.getWithRetry.call(that, endPoint, function (err, responseText) {
 	                var end = _.now();
 	                var time = end - start;
+	                var timeAboveThreshold = time > endpointClosenessThreshold;
 
 	                that._logger.info('[%s] End point [%s] latency is [%s] ms', measurement, endPoint, time);
 
@@ -17819,14 +18139,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        // done
 	                        return;
 	                    }
+
+	                    successfulAttempts++;
 	                }
 
-	                if (measurement <= measurements && !that.isResolved()) {
+	                if (measurement <= measurements && !that.isResolved() && (timeAboveThreshold || err)) {
 	                    if (err) {
-	                        that._logger.info('Retrying after failure to resolve end point [%s]', endPoint, err);
+	                        that._logger.info('Retrying after failure to resolve end point [%s] with [%s]', endPoint, err);
 	                    }
 
 	                    return nextMeasurement(endPoint);
+	                } else if (successfulAttempts === 0) {
+	                    return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
 	                } else {
 	                    return that.completeCallback(endPoint);
 	                }
@@ -21246,8 +21570,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(55),
 	    __webpack_require__(25),
+	    __webpack_require__(34),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PhenixPCast, rtc) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCast, RoomService, rtc) {
 	    'use strict';
 
 	    function PCastExpress(options) {
@@ -21258,31 +21583,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._pcast = null;
 	        this._subscribers = {};
 	        this._publishers = {};
+	        this._roomServices = {};
 	        this._adminAPI = new AdminAPI(options.backendUri, options.authenticationData);
-	        this._pcast = new PhenixPCast(options);
+	        this._pcast = new PCast(options);
 	    }
 
 	    PCastExpress.prototype.stop = function stop() {
-	        if (!this._pcast) {
-	            return;
+	        if (_.values(this._roomServices).length) {
+	            _.forOwn(this._roomServices, function (roomService) {
+	                roomService.stop();
+	            });
+
+	            this._roomServices = {};
 	        }
 
-	        this._pcast.stop();
+	        if (this._pcast) {
+	            this._pcast.stop();
+	        }
 	    };
 
 	    PCastExpress.prototype.getPCast = function getPCast() {
 	        return this._pcast;
 	    };
 
-	    PCastExpress.prototype.publish = function publish(options, callback) {
-	        assert.isObject(options, 'options');
-	        assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
-	        assert.isObject(options.capabilities, 'options.capabilities');
-	        if (options.videoElement) {
-	            assert.isObject(options.videoElement, 'options.videoElement');
-	        }
-
+	    PCastExpress.prototype.getUserMedia = function(options, callback) {
 	        var that = this;
+
+	        assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
 
 	        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
 	            if (error) {
@@ -21302,32 +21629,100 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return callback(null, {status: status});
 	                }
 
-	                that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
-	                    if (error) {
-	                        return callback(error);
-	                    }
-
-	                    if (response.status !== 'ok') {
-	                        return callback(null, response);
-	                    }
-
-	                    that._pcast.publish(response.streamToken, userMedia, function(pcast, status, publisher) {
-	                        if (response.status !== 'ok') {
-	                            return callback(null, {status: status});
-	                        }
-
-	                        that._publishers[publisher.getStreamId()] = publisher;
-
-	                        if (options.videoElement) {
-	                            rtc.attachMediaStream(options.videoElement, userMedia);
-	                        }
-
-	                        var expressPublisher = createExpressPublisher.call(that, publisher);
-
-	                        callback(null, {status: 'ok', publisher: expressPublisher});
-	                    })
-	                }, 1)
+	                callback(null, {status: 'ok', userMedia: userMedia});
 	            });
+	        });
+	    };
+
+	    PCastExpress.prototype.publish = function publish(options, callback) {
+	        assert.isObject(options, 'options');
+
+	        if (options.mediaConstraints) {
+	            assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
+	        } else {
+	            assert.isObject(options.userMediaStream, 'options.userMediaStream');
+	        }
+
+	        if (options.videoElement) {
+	            assert.isObject(options.videoElement, 'options.videoElement');
+	        }
+	        if (options.monitor) {
+	            assert.isObject(options.monitor, 'options.monitor');
+	            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+	            if (options.monitor.options) {
+	                assert.isObject(options.monitor.options, 'options.monitor.options');
+	            }
+	        }
+
+	        var that = this;
+
+	        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (instantiateResponse.status !== 'ok') {
+	                return callback(null, instantiateResponse);
+	            }
+
+	            if (options.userMediaStream) {
+	                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, callback);
+	            }
+
+	            that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
+	                if (e) {
+	                    return callback(e);
+	                }
+
+	                if (status !== 'ok') {
+	                    return callback(null, {status: status});
+	                }
+
+	                getStreamingTokenAndPublish.call(that, userMedia, options, callback);
+	            });
+	        });
+	    };
+
+	    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'hd', 'fhd', 'uhd'];
+
+	    PCastExpress.prototype.publishRemote = function publish(options, callback) {
+	        assert.isObject(options, 'options');
+	        assert.stringNotEmpty(options.streamUri, 'options.streamUri');
+
+	        if (options.mediaConstraints) {
+	            throw new Error('Invalid argument, Media Constraints, for publishing remote.');
+	        }
+	        if (options.videoElement) {
+	            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+	        }
+	        if (options.monitor) {
+	            throw new Error('May not monitor remote stream.');
+	        }
+
+	        var that = this;
+
+	        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (instantiateResponse.status !== 'ok') {
+	                return callback(null, instantiateResponse);
+	            }
+
+	            var remoteOptions = _.assign({}, options);
+
+	            if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
+	                remoteOptions.capabilities.push('publish-uri');
+	            }
+
+	            _.forEach(connectOptionCapabilities, function(capability) {
+	                if (_.includes(remoteOptions.capabilities, capability)) {
+	                    remoteOptions.connectOptions.push('publisher-capability=' + capability);
+	                }
+	            });
+
+	            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
 	        });
 	    };
 
@@ -21337,6 +21732,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(options.capabilities, 'options.capabilities');
 	        if (options.videoElement) {
 	            assert.isObject(options.videoElement, 'options.videoElement');
+	        }
+	        if (options.monitor) {
+	            assert.isObject(options.monitor, 'options.monitor');
+	            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+	            if (options.monitor.options) {
+	                assert.isObject(options.monitor.options, 'options.monitor.options');
+	            }
 	        }
 
 	        var that = this;
@@ -21359,26 +21761,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return callback(null, response);
 	                }
 
-	                that._pcast.subscribe(response.streamToken, function(pcast, status, subscriber) {
-	                    if (response.status !== 'ok') {
-	                        return callback(null, {status: status});
-	                    }
-
-	                    that._subscribers[subscriber.getStreamId()] = subscriber;
-
-	                    var renderer;
-
-	                    if (options.videoElement) {
-	                        renderer = subscriber.createRenderer();
-
-	                        renderer.start(options.videoElement);
-	                    }
-
-	                    var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
-
-	                    callback(null, {status: 'ok', mediaStream: expressSubscriber});
-	                })
+	                subscribeToStream.call(that, response.streamToken, options, callback);
 	            }, 1);
+	        });
+	    };
+
+	    PCastExpress.prototype.createRoomService = function createRoomService(callback) {
+	        var that = this;
+	        var uniqueId = _.uniqueId();
+
+	        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (instantiateResponse.status !== 'ok') {
+	                return callback(null, instantiateResponse);
+	            }
+
+	            that._roomServices[uniqueId] = new RoomService(that._pcast);
+
+	            var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
+
+	            callback(null, {status: 'ok', roomService: expressRoomService});
 	        });
 	    };
 
@@ -21408,25 +21813,120 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    }
 
-	    function stopPCastIfNoActiveStreams() {
-	        var subscriptionCount = _.values(this._subscribers).length;
-	        var publisherCount = _.values(this._publishers).length;
+	    function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
+	        var that = this;
 
-	        if (!publisherCount && !subscriptionCount) {
-	            this.stop();
-	        }
+	        assert.isObject(options.capabilities, 'options.capabilities');
+
+	        that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (response.status !== 'ok') {
+	                return callback(null, response);
+	            }
+
+	            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, callback);
+	        }, 1);
 	    }
 
-	    function createExpressPublisher(publisher) {
+	    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, callback) {
 	        var that = this;
+
+	        if (options.tags) {
+	            assert.isArray(options.tags, 'options.tags');
+	        }
+
+	        if (options.connectOptions) {
+	            assert.isObject(options.connectOptions, 'options.connectOptions');
+	        }
+
+	        var publishCallback = function publishCallback(pcast, status, publisher) {
+	            if (status !== 'ok') {
+	                return callback(null, {status: status});
+	            }
+
+	            that._publishers[publisher.getStreamId()] = publisher;
+
+	            if (options.videoElement) {
+	                rtc.attachMediaStream(options.videoElement, userMediaOrUri);
+	            }
+
+	            if (options.monitor) {
+	                var retryPublisher = function retryPublisher(reason) {
+	                    var placeholder = _.uniqueId();
+	                    that._publishers[placeholder] = true;
+	                    publisher.stop(reason);
+	                    publishUserMedia.call(that, streamToken, userMediaOrUri, options, callback);
+	                    delete that._publishers[placeholder];
+	                };
+	                var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retryPublisher);
+
+	                publisher.monitor(options.monitor.options || {}, monitorCallback);
+	            }
+
+	            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
+
+	            callback(null, {status: 'ok', publisher: expressPublisher});
+	        };
+
+	        that._pcast.publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
+	    }
+
+	    function subscribeToStream(streamToken, options, callback) {
+	        var that = this;
+
+	        that._pcast.subscribe(streamToken, function(pcast, status, subscriber) {
+	            var retrySubscriber = function retrySubscriber(reason) {
+	                var placeholder = _.uniqueId();
+	                that._subscribers[placeholder] = true;
+	                subscriber.stop(reason);
+	                subscribeToStream.call(that, streamToken, options, callback);
+	                delete that._subscribers[placeholder];
+	            };
+
+	            if (status === 'streaming-not-ready') {
+	                return callback(null, {status: status, retry: _.bind(retrySubscriber, that, status)});
+	            }
+
+	            if (status !== 'ok') {
+	                return callback(null, {status: status});
+	            }
+
+	            that._subscribers[subscriber.getStreamId()] = subscriber;
+
+	            var renderer;
+
+	            if (options.videoElement) {
+	                renderer = subscriber.createRenderer();
+
+	                renderer.start(options.videoElement);
+	            }
+
+	            if (options.monitor) {
+	                var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retrySubscriber);
+
+	                subscriber.monitor(options.monitor.options || {}, monitorCallback);
+	            }
+
+	            var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
+
+	            callback(null, {status: 'ok', mediaStream: expressSubscriber});
+	        })
+
+	    }
+
+	    function createExpressPublisher(publisher, videoElement) {
 	        var publisherStop = publisher.stop;
 
-	        publisher.stop =  function() {
-	            publisherStop();
+	        publisher.stop =  function(reason) {
+	            publisherStop(reason);
 
-	            delete that._publishers[publisher.getStreamId()];
-
-	            stopPCastIfNoActiveStreams.call(that);
+	            if (videoElement) {
+	                videoElement.src = '';
+	                videoElement.srcObject = null;
+	            }
 	        };
 
 	        publisher.enableAudio = function() {
@@ -21449,19 +21949,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function createExpressSubscriber(subscriber, renderer) {
-	        var that = this;
 	        var subscriberStop = subscriber.stop;
 
-	        subscriber.stop = function() {
+	        subscriber.stop = function(reason) {
 	            if (renderer) {
 	                renderer.stop();
 	            }
 
-	            subscriberStop();
-
-	            delete that._subscribers[subscriber.getStreamId()];
-
-	            stopPCastIfNoActiveStreams.call(that);
+	            subscriberStop(reason);
 	        };
 
 	        subscriber.enableAudio = function() {
@@ -21481,6 +21976,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        return subscriber;
+	    }
+
+	    function createExpressRoomService(roomService, uniqueId) {
+	        var that = this;
+	        var roomServiceStop = roomService.stop;
+
+	        roomService.stop = function() {
+	            roomServiceStop.call(roomService);
+
+	            delete that._roomServices[uniqueId];
+
+	            // stopPCastIfNoActiveStreams.call(that);
+	        };
+
+	        return roomService;
 	    }
 
 	    function setStreamAudioTracksState(stream, newState) {
@@ -21509,6 +22019,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _.forEach(tracks, function(track) {
 	            track.enabled = enabled;
 	        })
+	    }
+
+	    function onMonitorCallback(callback, retry, stream, reason, description) {
+	        switch (reason) {
+	            case  'client-side-failure':
+	                callback(null, {status: reason, retry: _.bind(retry, null, reason)});
+	                // handle failure event, redo stream
+	                break;
+	            default:
+	                // no failure has occurred, handle monitor event
+	                break;
+	        }
 	    }
 
 	    return PCastExpress;
@@ -21545,7 +22067,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.stringNotEmpty(backendUri, 'backendUri');
 	        assert.isObject(authenticationData, 'authenticationData');
 
-	        this._backendUri = backendUri + '/pcast';
+	        this._backendUri = backendUri;
 	        this._authenticationData = authenticationData;
 	    }
 
@@ -21603,6 +22125,402 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return AdminAPI;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(5),
+	    __webpack_require__(54),
+	    __webpack_require__(43),
+	    __webpack_require__(42),
+	    __webpack_require__(40),
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums, streamEnums) {
+	    'use strict';
+
+	    function RoomExpress(options) {
+	        assert.isObject(options, 'options');
+	        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
+	        assert.isObject(options.authenticationData, 'options.authenticationData');
+
+	        this._pcastExpress = new PCastExpress(options);
+	        this._roomServices = [];
+	    }
+
+	    RoomExpress.prototype.stop = function stop() {
+	        this._pcastExpress.stop();
+	    };
+
+	    RoomExpress.prototype.getPCastExpress = function getPCastExpress() {
+	        return this._pcastExpress;
+	    };
+
+	    RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
+	        assert.isObject(options, 'options');
+	        assert.stringNotEmpty(options.roomAlias, 'options.roomAlias');
+	        assert.isFunction(joinRoomCallback, 'joinRoomCallback');
+	        assert.isFunction(membersChangedCallback, 'membersChangedCallback');
+
+	        if (options.screenName) {
+	            assert.stringNotEmpty(options.screenName, 'options.screenName');
+	        }
+
+	        var that = this;
+	        var role = memberEnums.roles.audience.name;
+	        var screenName = options.screenName || _.uniqueId();
+
+	        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+	            if (error) {
+	                return joinRoomCallback(error);
+	            }
+
+	            if (roomServiceResponse.status !== 'ok') {
+	                return joinRoomCallback(null, roomServiceResponse);
+	            }
+
+	            var roomService = roomServiceResponse.roomService;
+
+	            that._roomServices.push(roomService);
+
+	            roomService.start(role, screenName);
+
+	            roomService.enterRoom(null, options.roomAlias, function(error, roomResponse) {
+	                if (error) {
+	                    roomService.stop();
+
+	                    return joinRoomCallback(error);
+	                }
+
+	                if (roomResponse.status === 'not-found') {
+	                    roomService.stop();
+
+	                    return joinRoomCallback(null, {status: 'room-not-found'});
+	                }
+
+	                if (roomResponse.status !== 'ok') {
+	                    roomService.stop();
+
+	                    return joinRoomCallback(null, roomResponse);
+	                }
+
+	                var room = roomResponse.room;
+	                var roomServiceLeaveRoom = roomService.leaveRoom;
+
+	                roomService.leaveRoom = function leaveRoom(callback) {
+	                    roomServiceLeaveRoom(function(error, response) {
+	                        if (error) {
+	                            roomService.stop();
+
+	                            return callback(error);
+	                        }
+
+	                        if (response.status !== 'ok') {
+	                            return callback(null, response);
+	                        }
+
+	                        roomService.stop();
+	                    });
+	                };
+
+	                joinRoomCallback(null, {status: 'ok', roomService: roomService});
+
+	                that._membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+	            });
+	        });
+	    };
+
+	    RoomExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
+	        assert.isObject(options, 'options');
+	        assert.isFunction(joinChannelCallback, 'joinChannelCallback');
+	        assert.isFunction(subscriberCallback, 'subscriberCallback');
+
+	        if (options.videoElement) {
+	            assert.isObject(options.videoElement, 'options.videoElement');
+	        }
+
+	        var channelOptions = _.assign(options, {roomType: roomEnums.types.channel.name, roomAlias: options.channelAlias});
+	        var lastMediaStream;
+	        var lastStreamId;
+	        var that = this;
+
+	        var joinRoomCallback = function(error, response) {
+	            var channelResponse = !response || _.assign(response, {});
+
+	            if (response && response.roomService) {
+	                channelResponse.roomService.leaveChannel = function(callback) {
+	                    if (lastMediaStream) {
+	                        lastMediaStream.stop();
+	                    }
+
+	                    channelResponse.roomService.leaveRoom(callback);
+	                };
+
+	                channelResponse.channelService = channelResponse.roomService;
+
+	                delete channelResponse.roomService;
+	            }
+
+	            joinChannelCallback(error, channelResponse);
+	        };
+
+	        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members) {
+	            var presenters = _.filter(members, function(member) {
+	                return member.getObservableRole().getValue() === memberEnums.roles.presenter.name;
+	            });
+	            var mostRecentPresenter = _.reduce(presenters, function(presenterA, presenterB) {
+	                if (!presenterA) {
+	                    return presenterB;
+	                }
+
+	                return presenterA.getLastUpdate() > presenterB.getLastUpdate() ? presenterA : presenterB;
+	            });
+
+	            if (!mostRecentPresenter) {
+	                return subscriberCallback(null, {status: 'no-stream-playing'});
+	            }
+
+	            var presenterStream = mostRecentPresenter.getObservableStreams().getValue()[0];
+	            var streamId = parsePcastFromStream(presenterStream.getUri());
+
+	            if (!streamId) {
+	                return subscriberCallback(null, {status: 'no-stream-playing'});
+	            }
+
+	            if (streamId === lastStreamId) {
+	                return;
+	            } else if (lastStreamId) {
+	                lastMediaStream.stop();
+	            }
+
+	            var subscribeOptions = {
+	                capabilities: options.capabilities,
+	                videoElement: options.videoElement,
+	                streamId: streamId,
+	                monitor: {
+	                    callback: _.bind(monitorSubsciber, that, subscriberCallback),
+	                    options: { conditionCountForNotificationThreshold: 8 }
+	                }
+	            };
+
+	            var successReason = lastStreamId ? 'stream-override' : 'stream-started';
+
+	            lastStreamId = streamId;
+
+	            var mediaStreamCallback = function mediaStreamCallback(error, response) {
+	                if (response && response.mediaStream) {
+	                    lastMediaStream = response.mediaStream;
+	                } else {
+	                    lastStreamId = null;
+	                    lastMediaStream = null;
+	                }
+
+	                subscriberCallback(error, response);
+	            };
+
+	            subscribeToMemberStream.call(that, subscribeOptions, mediaStreamCallback, successReason);
+	        });
+	    };
+
+	    RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
+	        assert.isObject(options, 'options');
+	        assert.stringNotEmpty(options.roomAlias, 'options.roomAlias');
+	        assert.isFunction(callback, 'callback');
+	        assert.stringNotEmpty(options.roomType, 'options.roomType');
+
+	        if (options.roomDescription) {
+	            assert.stringNotEmpty(options.roomType, 'options.roomDescription');
+	        }
+
+	        if (options.streamUri) {
+	            assert.stringNotEmpty(options.streamUri, 'options.streamUri');
+	        } else if (options.mediaConstraints) {
+	            assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
+	        } else {
+	            assert.isObject(options.userMediaStream, 'options.userMediaStream');
+	        }
+
+	        if (options.videoElement) {
+	            assert.isObject(options.videoElement, 'options.videoElement');
+	        }
+
+	        if (options.screenName) {
+	            assert.stringNotEmpty(options.screenName, 'options.screenName');
+	        }
+
+	        var that = this;
+	        var role = memberEnums.roles.audience.name;
+	        var screenName = options.screenName || _.uniqueId();
+	        var roomDescription = options.roomDescription || getDefaultRoomDescription(options.roomType);
+
+	        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (roomServiceResponse.status !== 'ok') {
+	                return callback(null, roomServiceResponse);
+	            }
+
+	            var roomService = roomServiceResponse.roomService;
+
+	            roomService.start(role, screenName);
+
+	            roomService.createRoom(options.roomAlias, options.roomType, roomDescription, function(error, roomResponse) {
+	                if (error) {
+	                    roomService.stop();
+
+	                    return callback(error);
+	                }
+
+	                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
+	                    roomService.stop();
+
+	                    return callback(null, roomResponse);
+	                }
+
+	                var room = roomResponse.room;
+
+	                if (options.streamUri) {
+	                    var remoteOptions = _.assign(options, {
+	                        connectOptions: [
+	                            'room-id=' + room.getRoomId(),
+	                            'member-role=Presenter',
+	                            'member-stream-type=Presentation',
+	                            'screen-name='+ screenName
+	                        ]
+	                    });
+
+	                    that._pcastExpress.publishRemote(remoteOptions, callback);
+	                } else if (options.roomType === roomEnums.types.channel.name) {
+	                    var localOptions = _.assign(options, {
+	                        tags: [
+	                            'channelId:' + room.getRoomId()
+	                        ]
+	                    });
+
+	                    if (!_.includes(localOptions.capabilities, 'channel')) {
+	                        localOptions.capabilities.push('channel');
+	                    }
+
+	                    that._pcastExpress.publish(localOptions, callback);
+	                }
+	            });
+	        });
+	    };
+
+	    RoomExpress.prototype.publishToChannel = function publishToChannel(options, callback) {
+	        assert.isObject(options, 'options');
+	        assert.isFunction(callback, 'callback');
+
+	        var channelOptions = _.assign(options, {roomType: roomEnums.types.channel.name, roomAlias: options.channelAlias});
+
+	        this.publishToRoom(channelOptions, callback);
+	    };
+
+	    function subscribeToMemberStream(subscribeOptions, callback, successReason) {
+	        var that = this;
+
+	        var count = 0;
+
+	        that._pcastExpress.subscribe(subscribeOptions, function(error, response) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (response.status !== 'ok' && response.status !== 'streaming-not-ready') {
+	                return callback(null, response);
+	            }
+
+	            count++;
+
+	            if (response.status === 'streaming-not-ready' && count < 3) {
+	                return setTimeout(response.retry, count * count * 1000)
+	            } else if (response.status === 'streaming-not-ready' && count >= 3) {
+	                return callback(null, {status: response.status});
+	            }
+
+	            var mediaStream = response.mediaStream;
+
+	            mediaStream.setStreamEndedCallback(function(mediaStream, status, reason) {
+	                callback(null, {status: status, reason: reason, mediaStream: mediaStream});
+	            });
+
+	            if (count > 1) {
+	                return callback(null, {status: 'ok', mediaStream: mediaStream, reason: 'stream-failure-recovered'});
+	            }
+
+	            callback(null, {status: 'ok', mediaStream: mediaStream, reason: successReason});
+	        });
+	    }
+
+	    function monitorSubsciber(callback, error, response) {
+	        if (error) {
+	            return callback(error);
+	        }
+
+	        if (response.retry) {
+	            response.retry();
+	        }
+	    }
+
+	    function getDefaultRoomDescription(type) {
+	        switch(type) {
+	            case roomEnums.types.channel.name:
+	                return 'Room Channel';
+	            case roomEnums.types.moderatedChat.name:
+	                return 'Moderated Chat';
+	            case roomEnums.types.multiPartyChat.name:
+	                return 'Multi Part Chat';
+	            case roomEnums.types.townHall.name:
+	                return 'Town Hall';
+	            case roomEnums.types.directChat.name:
+	                return 'Direct Chat';
+	            default:
+	                throw new Error('Unsupported Room Type');
+	        }
+	    }
+
+	    var pcastStreamPrefix = 'pcast://phenixp2p.com/';
+
+	    function parsePcastFromStream(uri) {
+	        var hasPrefix = uri.indexOf(pcastStreamPrefix) > -1;
+
+	        if (!hasPrefix) {
+	            return null;
+	        }
+
+	        return uri.replace(pcastStreamPrefix, '');
+	    }
+
+	    function addPublishedStreams(publishedStream) {
+	        var self = this._roomService.getSelf();
+	        var streams = self.getStreams();
+
+	        publishedStream.uri = 'pcast://phenixp2p.com/' + publishedStream.uri;
+	        streams.push(publishedStream);
+	        self.setStreams(streams);
+	    }
+
+	    return RoomExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 

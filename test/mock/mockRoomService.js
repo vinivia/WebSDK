@@ -37,7 +37,7 @@ define([
 
         room.getObservableMembers.restore();
         room.getObservableMembers = sinon.stub(room, 'getObservableMembers', function () {
-            new Observable(members);
+            return new Observable(members);
         });
 
         this.buildUpMockRoom(roomService, room);

@@ -45,7 +45,7 @@ define([
             MockRoomService.buildUpMockRoom(roomService, null);
 
             publisher.limitBandwidth = function (bandwidth) {
-                expect(bandwidth).to.be.equal(500000);
+                expect(bandwidth).to.be.equal(5000000);
             };
 
             publisherBandwidthAdjuster.connect(roomService);
@@ -61,11 +61,11 @@ define([
             publisherBandwidthAdjuster.connect(roomService, {roomBandwidthLimit: 100000});
         });
 
-        it('Room service with a room with 2 member causes default bandwidth limit', function () {
-            MockRoomService.buildUpMockRoomWithMembers(roomService, [{}]);
+        it('Room service with a room with 2 members causes default bandwidth limit', function () {
+            MockRoomService.buildUpMockRoomWithMembers(roomService, [{}, {}]);
 
             publisher.limitBandwidth = function (bandwidth) {
-                expect(bandwidth).to.be.equal(500000);
+                expect(bandwidth).to.be.equal(5000000);
             };
 
             publisherBandwidthAdjuster.connect(roomService);

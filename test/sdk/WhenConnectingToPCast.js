@@ -17,7 +17,7 @@ define([
     'Promise',
     'jquery',
     'lodash',
-    'sdk/PhenixPCast',
+    'sdk/PCast',
     'sdk/logging/pcastLoggerFactory',
     'sdk/logging/Logger'
 ], function (Promise, $, _, PCast, pcastLoggerFactory, Logger) {

@@ -59,7 +59,7 @@ define([
 
         if (options) {
             if (options.initial === 'notify') {
-                onSubscribeCallback.call(that, that.subscriptionTimeout);
+                onSubscribeCallback.call(that, that.subscriptionTimeout, true);
             }
             if (options.listenForChanges) {
                 listenForChanges = setInterval(function() {
@@ -131,11 +131,15 @@ define([
         this.latestValue = clone(valueToSet);
     }
 
-    function onSubscribeCallback(timeoutLength) {
+    function onSubscribeCallback(timeoutLength, noTimeout) {
         this.lastChangeTime = _.now();
 
         if (!this.isPendingChanges && this.subscriptionCount !== 0) {
             this.isPendingChanges = true;
+
+            if (noTimeout) {
+                return notifySubscribers.call(this);
+            }
 
             continueAfterTimeout.call(this, timeoutLength)
         }
@@ -150,13 +154,17 @@ define([
             if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
                 continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
             } else {
-                try {
-                    executeSubscriptionCallbacks.call(that);
-                } finally {
-                    that.isPendingChanges = false;
-                }
+                notifySubscribers.call(that);
             }
         }, timeoutLength);
+    }
+
+    function notifySubscribers() {
+        try {
+            executeSubscriptionCallbacks.call(this);
+        } finally {
+            this.isPendingChanges = false;
+        }
     }
 
     function executeSubscriptionCallbacks() {

@@ -37,7 +37,7 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
 
         var createPCastExpress = function createPCastExpress() {
             pcastExpress = new sdk.express.PCastExpress({
-                backendUri: app.getBaseUri(),
+                backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
                 shaka: shaka
@@ -60,7 +60,10 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
             pcastExpress.publish({
                 mediaConstraints: getConstraints(),
                 capabilities: capabilities,
-                videoElement: localVideoEl
+                videoElement: localVideoEl,
+                monitor: {
+                    callback: onMonitorEvent
+                }
             }, function publishCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
@@ -139,7 +142,10 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
             pcastExpress.subscribe({
                 streamId: streamId,
                 capabilities: capabilities,
-                videoElement: remoteVideoEl
+                videoElement: remoteVideoEl,
+                monitor: {
+                    callback: onMonitorEvent
+                }
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
@@ -199,6 +205,28 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
                 subscriberPlayer.stop();
             }
         };
+
+        function onMonitorEvent(error, response) {
+            if (error) {
+                return app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Monitor Event</strong>',
+                    message: 'Monitor Event triggered for (' + error.message + ')'
+                });
+            }
+
+            if (response.status !== 'ok') {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Monitor Event</strong>',
+                    message: 'Monitor Event triggered (' + response.status + ')'
+                });
+            }
+
+            if (response.retry) {
+                response.retry();
+            }
+        }
 
         function getConstraints() {
             var source = $('#gum-source option:selected').val();

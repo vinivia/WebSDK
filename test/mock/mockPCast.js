@@ -17,7 +17,7 @@ define([
     'sdk/observable/Observable',
     'sdk/logging/Logger',
     'sdk/PCastProtocol',
-    'sdk/PhenixPCast'
+    'sdk/PCast'
 ], function (Observable, Logger, Protocol, PCast) {
     return function MockPCast () {
         var pcast = sinon.createStubInstance(PCast);

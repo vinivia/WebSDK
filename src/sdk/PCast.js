@@ -57,7 +57,7 @@ define([
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
 
-    function PhenixPCast(options) {
+    function PCast(options) {
         options = options || {};
         this._observableStatus = new Observable('offline');
         this._observableSessionId = new Observable(null);
@@ -84,19 +84,19 @@ define([
         }(this));
     }
 
-    PhenixPCast.prototype.getBaseUri = function () {
+    PCast.prototype.getBaseUri = function () {
         return this._endPoint.getBaseUri();
     };
 
-    PhenixPCast.prototype.getStatus = function () {
+    PCast.prototype.getStatus = function () {
         return this._observableStatus.getValue();
     };
 
-    PhenixPCast.prototype.getObservableStatus = function () {
+    PCast.prototype.getObservableStatus = function () {
         return this._observableStatus;
     };
 
-    PhenixPCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
+    PCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
         }
@@ -164,7 +164,7 @@ define([
         });
     };
 
-    PhenixPCast.prototype.stop = function () {
+    PCast.prototype.stop = function () {
         if (!this._started) {
             return;
         }
@@ -221,7 +221,7 @@ define([
         }
     };
 
-    PhenixPCast.prototype.getUserMedia = function (options, callback) {
+    PCast.prototype.getUserMedia = function (options, callback) {
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
@@ -232,7 +232,7 @@ define([
         return getUserMedia.call(this, options, callback);
     };
 
-    PhenixPCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
+    PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -263,6 +263,10 @@ define([
             setupStreamOptions.connectUri = streamToPublish;
         } else {
             setupStreamOptions.connectUri = options.connectUri
+        }
+
+        if (tags.length > 0) {
+            setupStreamOptions.tags = tags;
         }
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
@@ -305,7 +309,7 @@ define([
         });
     };
 
-    PhenixPCast.prototype.subscribe = function (streamToken, callback, options) {
+    PCast.prototype.subscribe = function (streamToken, callback, options) {
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -362,16 +366,16 @@ define([
         });
     };
 
-    PhenixPCast.prototype.getProtocol = function () {
+    PCast.prototype.getProtocol = function () {
         return this._protocol;
     };
 
-    PhenixPCast.prototype.getLogger = function () {
+    PCast.prototype.getLogger = function () {
         return this._logger;
     };
 
-    PhenixPCast.prototype.toString = function () {
-        return 'PhenixPCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+    PCast.prototype.toString = function () {
+        return 'PCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
     };
 
     function checkForScreenSharingCapability(callback) {
@@ -617,7 +621,10 @@ define([
         var that = this;
 
         var onUserMediaSuccess = function onUserMediaSuccess(status, stream) {
-            that._gumStreams.push(stream);
+            if (that._gumStreams) {
+                that._gumStreams.push(stream);
+            }
+
             callback(that, status, stream);
         };
 
@@ -846,7 +853,7 @@ define([
         var internalMediaStream = this._mediaStreams[streamId];
 
         if (internalMediaStream) {
-            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
+            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason, true);
         }
 
         delete this._mediaStreams[streamId];
@@ -1015,6 +1022,20 @@ define([
                                 that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
 
                                 return callback(internalMediaStream.mediaStream, 'client-side-failure', reason);
+                            });
+                        },
+
+                        getStats: function getStats(callback) {
+                            assert.isFunction(callback, 'callback');
+
+                            if (!this._lastStats) {
+                                this._lastStats = {};
+                            }
+
+                            var that = this;
+
+                            return phenixRTC.getStats(peerConnection, null, function(stats) {
+                                callback(convertPeerConnectionStats(stats, that._lastStats));
                             });
                         },
 
@@ -1226,6 +1247,12 @@ define([
 
             getStream: function getStream() {
                 that._logger.debug('[%s] Unable to get stream on publisher of remote origin.', streamId);
+
+                return null;
+            },
+
+            getStats: function getStats() {
+                that._logger.debug('[%s] Unable to get stream stats on publisher of remote origin.', streamId);
 
                 return null;
             },
@@ -1484,6 +1511,20 @@ define([
 
                             getOptions: function getOptions() {
                                 return streamOptions;
+                            },
+
+                            getStats: function getStats(callback) {
+                                assert.isFunction(callback, 'callback');
+
+                                if (!this._lastStats) {
+                                    this._lastStats = {};
+                                }
+
+                                var that = this;
+
+                                return phenixRTC.getStats(peerConnection, null, function(stats) {
+                                    callback(convertPeerConnectionStats(stats, that._lastStats));
+                                });
                             }
                         };
 
@@ -1732,11 +1773,59 @@ define([
             renderer: null,
             isStreamEnded: false,
             isStopped: false,
+            waitingForLastChunk: false,
 
             mediaStream: {
                 createRenderer: function createRenderer() {
                     var player = null;
+                    var element = null;
                     var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
+                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+
+                    function onProgress() {
+                        lastProgress.time = _.now();
+
+                        if (element.buffered.length === 0) {
+                            return that._logger.debug('[%s] Dash stream progress event fired without any buffered content', streamId);
+                        }
+
+                        if (lastProgress.buffered === element.buffered.end(0)) {
+                            return;
+                        }
+
+                        // start and end times are unreliable for overall length of stream.
+                        if (lastProgress.buffered !== null) {
+                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
+                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+
+                            lastProgress.count += 1;
+                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+                        }
+
+                        lastProgress.buffered = element.buffered.end(0);
+                    }
+
+                    function stalled() {
+                        that._logger.info('[%s] Loading Dash stream stalled.', streamId);
+
+                        if (lastProgress.time === 0) {
+                            return;
+                        }
+
+                        setTimeout(function() {
+                            if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk) {
+                                internalMediaStream.renderer.stop('ended');
+                            }
+                        }, getTimeoutOrMinimum());
+                    }
+
+                    function getTimeoutOrMinimum() {
+                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
+                    }
+
+                    function ended() {
+                        that._logger.info('[%s] Dash stream ended.', streamId);
+                    }
 
                     return {
                         start: function start(elementToAttachTo) {
@@ -1766,6 +1855,10 @@ define([
 
                             player.addEventListener('error', onPlayerError);
 
+                            elementToAttachTo.addEventListener('stalled', stalled, false);
+                            elementToAttachTo.addEventListener('progress', onProgress, false);
+                            elementToAttachTo.addEventListener('ended', ended, false);
+
                             var load = player.load(manifestUri).then(function () {
                                 that._logger.info('[%s] DASH live stream has been loaded', streamId);
 
@@ -1780,6 +1873,8 @@ define([
 
                             dimensionsChangedMonitor.start(this, elementToAttachTo);
 
+                            element = elementToAttachTo;
+
                             return elementToAttachTo;
                         },
 
@@ -1790,9 +1885,16 @@ define([
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
                                     var reason = '';
 
+                                    if (element) {
+                                        element.removeEventListener('stalled', stalled, false);
+                                        element.removeEventListener('progress', onProgress, false);
+                                        element.removeEventListener('ended', ended, false);
+                                    }
+
                                     internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
 
                                     player = null;
+                                    element = null;
                                 };
 
                                 var destroy = player.destroy()
@@ -1922,6 +2024,12 @@ define([
 
                 getStreamId: function getStreamId() {
                     return streamId;
+                },
+
+                getStats: function getStats() {
+                    that._logger.debug('[%s] stats not available for shaka live streams', streamId);
+
+                    return null;
                 }
             },
 
@@ -1933,7 +2041,13 @@ define([
                 }
             },
 
-            streamEndedCallback: function (status, reason) {
+            streamEndedCallback: function (status, reason, waitForLastChunk) {
+                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
+                    internalMediaStream.waitingForLastChunk = true;
+
+                    return that._logger.info('[%s] Shaka stream ended. Waiting for end of content.');
+                }
+
                 if (internalMediaStream.isStreamEnded) {
                     return;
                 }
@@ -1976,7 +2090,7 @@ define([
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
-        var onPlayerError = function onPlayerError(event) {
+        var onPlayerError = function onPlayerError(event, e) {
             var mediaStream = internalMediaStream.mediaStream;
 
             if (!mediaStream.streamErrorCallback) {
@@ -1991,11 +2105,88 @@ define([
             renderer: null,
             isStreamEnded: false,
             isStopped: false,
+            waitingForLastChunk: false,
 
             mediaStream: {
                 createRenderer: function createRenderer() {
                     var element = null;
                     var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
+                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+
+                    function onProgress() {
+                        lastProgress.time = _.now();
+
+                        if (element.buffered.length === 0) {
+                            return that._logger.debug('[%s] Hls stream progress event fired without any buffered content', streamId);
+                        }
+
+                        if (lastProgress.buffered === element.buffered.end(0)) {
+                            return;
+                        }
+
+                        // start and end times are unreliable for overall length of stream.
+                        if (lastProgress.buffered !== null) {
+                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
+                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+
+                            lastProgress.count += 1;
+                            lastProgress.averageLength = newTimeElapsed/lastProgress.count;
+                        }
+
+                        lastProgress.buffered = element.buffered.end(0);
+                    }
+
+                    function stalled() {
+                        that._logger.info('[%s] Loading Hls stream stalled.', streamId);
+
+                        if (lastProgress.count === 0) {
+                            reload();
+                        } else {
+                            setTimeout(function() {
+                                if (lastProgress.count === 0) {
+                                    reload();
+                                }
+                            }, getTimeoutOrMinimum());
+
+                            var streamEndedBeforeSetupTimeout = 5000;
+
+                            setTimeout(endIfReady, streamEndedBeforeSetupTimeout);
+                        }
+                    }
+
+                    function ended() {
+                        that._logger.info('[%s] Hls stream ended', streamId);
+
+                        if (internalMediaStream.renderer) {
+                            internalMediaStream.renderer.stop('ended');
+                        }
+                    }
+
+                    function waiting() {
+                        that._logger.info('Time elapsed since last progress [%s]',_.now() - lastProgress.time);
+
+                        setTimeout(endIfReady, getTimeoutOrMinimum());
+                    }
+
+                    function reload() {
+                        that._logger.info('[%s] Attempting to reload Hls stream.', streamId);
+
+                        element.pause();
+                        element.src = '';
+
+                        element.src = manifestUri;
+                        element.play();
+                    }
+
+                    function getTimeoutOrMinimum() {
+                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
+                    }
+
+                    function endIfReady() {
+                        if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk && internalMediaStream.renderer) {
+                            internalMediaStream.renderer.stop('ended');
+                        }
+                    }
 
                     return {
                         start: function start(elementToAttachTo) {
@@ -2008,7 +2199,12 @@ define([
 
                                 internalMediaStream.renderer = this;
 
-                                elementToAttachTo.addEventListener('error', onPlayerError);
+                                elementToAttachTo.addEventListener('error', onPlayerError, true);
+                                elementToAttachTo.addEventListener('stalled', stalled, false);
+                                elementToAttachTo.addEventListener('progress', onProgress, false);
+                                elementToAttachTo.addEventListener('ended', ended, false);
+                                elementToAttachTo.addEventListener('waiting', waiting, false);
+
                                 elementToAttachTo.play();
 
                                 element = elementToAttachTo;
@@ -2028,12 +2224,21 @@ define([
 
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
-                                    element = null;
+                                    if (element) {
+                                        element.removeEventListener('error', onPlayerError, true);
+                                        element.removeEventListener('stalled', stalled, false);
+                                        element.removeEventListener('progress', onProgress, false);
+                                        element.removeEventListener('ended', ended, false);
+                                        element.removeEventListener('waiting', waiting, false);
+
+                                        element.src = '';
+
+                                        element = null;
+                                    }
 
                                     var reason = '';
 
                                     internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
-
                                 };
 
                                 try {
@@ -2151,6 +2356,12 @@ define([
                     that._logger.debug('[%s] stream not available for HLS live streams', streamId);
 
                     return null;
+                },
+
+                getStats: function getStats() {
+                    that._logger.debug('[%s] stats not available for HLS live streams', streamId);
+
+                    return null;
                 }
             },
 
@@ -2162,7 +2373,13 @@ define([
                 }
             },
 
-            streamEndedCallback: function (status, reason) {
+            streamEndedCallback: function (status, reason, waitForLastChunk) {
+                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
+                    internalMediaStream.waitingForLastChunk = true;
+
+                    return that._logger.info('[%s] Hls stream ended. Waiting for end of content.');
+                }
+
                 if (internalMediaStream.isStreamEnded) {
                     return;
                 }
@@ -2268,5 +2485,94 @@ define([
         }
     }
 
-    return PhenixPCast;
+    function convertPeerConnectionStats(stats, lastStats) {
+        if (!stats) {
+            return null;
+        }
+
+        var newStats = [];
+
+        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived) {
+            if (ssrc) {
+                if (!_.hasIndexOrKey(lastStats, ssrc)) {
+                    lastStats[ssrc] = {timestamp: 0};
+                }
+
+                var timeDelta = parseFloat(timestamp) - lastStats[ssrc].timestamp;
+                var up = calculateUploadRate(parseFloat(bytesSent), lastStats[ssrc].bytesSent, timeDelta);
+                var down = calculateDownloadRate(parseFloat(bytesReceived), lastStats[ssrc].bytesReceived, timeDelta);
+
+                lastStats[ssrc].bytesSent = parseFloat(bytesSent);
+                lastStats[ssrc].bytesReceived = parseFloat(bytesReceived);
+                lastStats[ssrc].timestamp = parseFloat(timestamp);
+
+                newStats.push({
+                    uploadRate: up,
+                    downloadRate: down,
+                    mediaType: mediaType,
+                    ssrc: ssrc
+                });
+            }
+        };
+
+        if (_.isFunction(stats.result)) {
+            _.forEach(stats.result(), function (statsReport) {
+                if (statsReport.type === 'ssrc') {
+                    var ssrc = statsReport.stat('ssrc');
+                    var bytesSent = statsReport.stat('bytesSent');
+                    var bytesReceived = statsReport.stat('bytesReceived');
+                    var mediaType = statsReport.stat('mediaType');
+                    var timestamp = statsReport.timestamp.getTime();
+
+                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived);
+                }
+            });
+        } else if (_.isFunction(stats.values)) {
+            _.forEach(Array.from(stats.values()), function (statsReport, key) {
+                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
+                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+                        return;
+                    }
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                }
+            });
+        } else {
+            _.forEach(stats, function (statsReport, key) {
+                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
+                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+                        return;
+                    }
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                }
+            });
+        }
+
+        return newStats;
+    }
+
+    function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
+        if (bytesSent) {
+            var bytesSentBefore = prevBytesSent || 0;
+            var bps = 8 * 1000 * (bytesSent - bytesSentBefore) / timeDelta;
+
+            return Math.round(bps / 1000);
+        }
+
+        return 0;
+    }
+
+    function calculateDownloadRate(bytesReceived, prevBytesReceived, timeDelta) {
+        if (bytesReceived) {
+            var bytesReceivedBefore = prevBytesReceived || 0;
+            var bps = 8 * 1000 * (bytesReceived - bytesReceivedBefore) / timeDelta;
+
+            return Math.round(bps / 1000);
+        }
+
+        return 0;
+    }
+
+    return PCast;
 });
