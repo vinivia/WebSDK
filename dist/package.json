@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2017.2.2",
+  "version": "2017.2.3",
   "license": "Apache-2.0",
   "private": false,
   "main": "phenix-web-sdk-bundled.min.js",
