@@ -366,6 +366,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
             if (!userMediaStream || userMediaStream.ended) {
                 var source = $('#gum-source option:selected').val();
+                var quality = $('#gum-quality option:selected').val();
                 var userMediaOptions = {};
 
                 switch (source) {
@@ -380,7 +381,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         userMediaOptions.audio = false;
                         userMediaOptions.video = {
                             optional: [
-                                {minHeight: 720}
+                                {minHeight: quality}
                             ]
                         };
                         break;
@@ -388,7 +389,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         userMediaOptions.audio = true;
                         userMediaOptions.video = {
                             optional: [
-                                {minHeight: 720}
+                                {minHeight: quality}
                             ]
                         };
                         break;
@@ -397,7 +398,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         userMediaOptions.audio = true;
                         userMediaOptions.video = {
                             optional: [
-                                {minHeight: 720}
+                                {minHeight: quality}
                             ]
                         };
                         break;
