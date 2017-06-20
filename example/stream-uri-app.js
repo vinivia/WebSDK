@@ -569,7 +569,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             var applicationId = $('#applicationId').val();
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForPublishing').val();
-            var originStreamId = '';
+            var originStreamId = $('#originStreamIdForPublishing').val() || '';
             var capabilities = [];
 
             $('#publish-capabilities option:selected').each(function () {
