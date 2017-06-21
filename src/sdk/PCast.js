@@ -56,6 +56,7 @@ define([
     });
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
+    var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
 
     function PCast(options) {
         options = options || {};
@@ -1832,6 +1833,9 @@ define([
                             player = new shaka.Player(elementToAttachTo);
 
                             player.configure({
+                                abr: {
+                                    defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback
+                                },
                                 manifest: {
                                     retryParameters: {
                                         timeout: 10000
