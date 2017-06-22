@@ -197,7 +197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-20T01:14:29Z' || '?';
+	    var sdkVersion = '2017-06-22T14:56:23Z' || '?';
 	    var releaseVersion = '2017.2.3';
 
 	    function Logger(observableSessionId) {
@@ -1280,7 +1280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-20T01:14:29Z';
+	        this._version = '2017-06-22T14:56:23Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14328,7 +14328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-20T01:14:29Z';
+	    var sdkVersion = '2017-06-22T14:56:23Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14337,6 +14337,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    var firefoxInstallationCheckInterval = 100;
 	    var firefoxMaxInstallationChecks = 450;
+	    var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
 
 	    function PCast(options) {
 	        options = options || {};
@@ -16113,6 +16114,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            player = new shaka.Player(elementToAttachTo);
 
 	                            player.configure({
+	                                abr: {
+	                                    defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback
+	                                },
 	                                manifest: {
 	                                    retryParameters: {
 	                                        timeout: 10000
@@ -22226,7 +22230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var roomServiceLeaveRoom = roomService.leaveRoom;
 
 	                roomService.leaveRoom = function leaveRoom(callback) {
-	                    roomServiceLeaveRoom(function(error, response) {
+	                    roomServiceLeaveRoom.call(roomService, function(error, response) {
 	                        if (error) {
 	                            roomService.stop();
 
@@ -22271,7 +22275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        lastMediaStream.stop();
 	                    }
 
-	                    channelResponse.roomService.leaveRoom(callback);
+	                    response.roomService.leaveRoom(callback);
 	                };
 
 	                channelResponse.channelService = channelResponse.roomService;

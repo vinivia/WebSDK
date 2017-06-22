@@ -92,7 +92,7 @@ define([
                 var roomServiceLeaveRoom = roomService.leaveRoom;
 
                 roomService.leaveRoom = function leaveRoom(callback) {
-                    roomServiceLeaveRoom(function(error, response) {
+                    roomServiceLeaveRoom.call(roomService, function(error, response) {
                         if (error) {
                             roomService.stop();
 
@@ -137,7 +137,7 @@ define([
                         lastMediaStream.stop();
                     }
 
-                    channelResponse.roomService.leaveRoom(callback);
+                    response.roomService.leaveRoom(callback);
                 };
 
                 channelResponse.channelService = channelResponse.roomService;
