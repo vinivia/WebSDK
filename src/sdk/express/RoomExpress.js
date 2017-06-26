@@ -232,6 +232,14 @@ define([
             assert.stringNotEmpty(options.screenName, 'options.screenName');
         }
 
+        if (options.capabilities) {
+            assert.isArray(options.capabilities);
+        }
+
+        if (options.tags) {
+            assert.isArray(options.tags);
+        }
+
         var that = this;
         var role = memberEnums.roles.audience.name;
         var screenName = options.screenName || _.uniqueId();
@@ -266,22 +274,32 @@ define([
                 var room = roomResponse.room;
 
                 if (options.streamUri) {
-                    var remoteOptions = _.assign(options, {
-                        connectOptions: [
+                    var remoteOptions = _.assign(options, {connectOptions: []});
+                    var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
+                        return option.startsWith('room-id');
+                    });
+
+                    if (!hasRoomConnectOptions) {
+                        remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
                             'room-id=' + room.getRoomId(),
                             'member-role=Presenter',
                             'member-stream-type=Presentation',
-                            'screen-name='+ screenName
-                        ]
-                    });
+                            'screen-name=' + screenName
+                        ]);
+                    }
 
                     that._pcastExpress.publishRemote(remoteOptions, callback);
                 } else if (options.roomType === roomEnums.types.channel.name) {
-                    var localOptions = _.assign(options, {
-                        tags: [
-                            'channelId:' + room.getRoomId()
-                        ]
+                    var localOptions = _.assign(options, {tags: []});
+                    var hasChannelTag = _.find(localOptions.tags, function(tag) {
+                        return tag.startsWith('channelId');
                     });
+
+                    if (!hasChannelTag) {
+                        localOptions.tags = localOptions.tags.concat([
+                            'channelId:' + room.getRoomId()
+                        ]);
+                    }
 
                     if (!_.includes(localOptions.capabilities, 'channel')) {
                         localOptions.capabilities.push('channel');

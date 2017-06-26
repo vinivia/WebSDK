@@ -85,6 +85,14 @@ define([
     PCastExpress.prototype.publish = function publish(options, callback) {
         assert.isObject(options, 'options');
 
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.connectOptions) {
+            assert.isArray(options.connectOptions, 'options.connectOptions');
+        }
+
         if (options.mediaConstraints) {
             assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
         } else {
@@ -94,9 +102,11 @@ define([
         if (options.videoElement) {
             assert.isObject(options.videoElement, 'options.videoElement');
         }
+
         if (options.monitor) {
             assert.isObject(options.monitor, 'options.monitor');
             assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
             if (options.monitor.options) {
                 assert.isObject(options.monitor.options, 'options.monitor.options');
             }
@@ -131,20 +141,42 @@ define([
         });
     };
 
-    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'hd', 'fhd', 'uhd'];
+    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
 
     PCastExpress.prototype.publishRemote = function publish(options, callback) {
         assert.isObject(options, 'options');
         assert.stringNotEmpty(options.streamUri, 'options.streamUri');
 
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.connectOptions) {
+            assert.isArray(options.connectOptions, 'options.connectOptions');
+        }
+
         if (options.mediaConstraints) {
             throw new Error('Invalid argument, Media Constraints, for publishing remote.');
         }
+
         if (options.videoElement) {
             throw new Error('May not view remote stream publisher. Please subscribe to view.');
         }
+
         if (options.monitor) {
             throw new Error('May not monitor remote stream.');
+        }
+
+        if (options.frameRate) {
+            assert.isObject(options.frameRate, 'options.frameRate');
+
+            if (options.frameRate.exact) {
+                assert.isNumber(options.frameRate.exact, 'options.frameRate.exact');
+            }
+
+            if (options.frameRate.max) {
+                assert.isNumber(options.frameRate.max, 'options.frameRate.max');
+            }
         }
 
         var that = this;
@@ -158,7 +190,7 @@ define([
                 return callback(null, instantiateResponse);
             }
 
-            var remoteOptions = _.assign({}, options);
+            var remoteOptions = _.assign(options, {connectOptions: [], capabilities: []});
 
             if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
                 remoteOptions.capabilities.push('publish-uri');
@@ -169,6 +201,14 @@ define([
                     remoteOptions.connectOptions.push('publisher-capability=' + capability);
                 }
             });
+
+            if (options.frameRate && options.frameRate.exact) {
+                remoteOptions.connectOptions.push('source-uri-video-fps=' + options.frameRate.exact);
+            }
+
+            if (options.frameRate && options.frameRate.max) {
+                remoteOptions.connectOptions.push('source-uri-video-fps-max=' + options.frameRate.max);
+            }
 
             getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
         });
@@ -264,7 +304,7 @@ define([
     function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
         var that = this;
 
-        assert.isObject(options.capabilities, 'options.capabilities');
+        assert.isArray(options.capabilities, 'options.capabilities');
 
         that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
             if (error) {
@@ -287,7 +327,7 @@ define([
         }
 
         if (options.connectOptions) {
-            assert.isObject(options.connectOptions, 'options.connectOptions');
+            assert.isArray(options.connectOptions, 'options.connectOptions');
         }
 
         var publishCallback = function publishCallback(pcast, status, publisher) {

@@ -182,8 +182,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-22T20:30:25Z' || '?';
-	    var releaseVersion = '2017.2.4';
+	    var sdkVersion = '2017-06-26T17:04:21Z' || '?';
+	    var releaseVersion = '2017.2.5';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -1265,7 +1265,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-22T20:30:25Z';
+	        this._version = '2017-06-26T17:04:21Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -4402,7 +4402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-22T20:30:25Z';
+	    var sdkVersion = '2017-06-26T17:04:21Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -11715,6 +11715,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PCastExpress.prototype.publish = function publish(options, callback) {
 	        assert.isObject(options, 'options');
 
+	        if (options.capabilities) {
+	            assert.isArray(options.capabilities, 'options.capabilities');
+	        }
+
+	        if (options.connectOptions) {
+	            assert.isArray(options.connectOptions, 'options.connectOptions');
+	        }
+
 	        if (options.mediaConstraints) {
 	            assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
 	        } else {
@@ -11724,9 +11732,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (options.videoElement) {
 	            assert.isObject(options.videoElement, 'options.videoElement');
 	        }
+
 	        if (options.monitor) {
 	            assert.isObject(options.monitor, 'options.monitor');
 	            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
 	            if (options.monitor.options) {
 	                assert.isObject(options.monitor.options, 'options.monitor.options');
 	            }
@@ -11761,20 +11771,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 
-	    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'hd', 'fhd', 'uhd'];
+	    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
 
 	    PCastExpress.prototype.publishRemote = function publish(options, callback) {
 	        assert.isObject(options, 'options');
 	        assert.stringNotEmpty(options.streamUri, 'options.streamUri');
 
+	        if (options.capabilities) {
+	            assert.isArray(options.capabilities, 'options.capabilities');
+	        }
+
+	        if (options.connectOptions) {
+	            assert.isArray(options.connectOptions, 'options.connectOptions');
+	        }
+
 	        if (options.mediaConstraints) {
 	            throw new Error('Invalid argument, Media Constraints, for publishing remote.');
 	        }
+
 	        if (options.videoElement) {
 	            throw new Error('May not view remote stream publisher. Please subscribe to view.');
 	        }
+
 	        if (options.monitor) {
 	            throw new Error('May not monitor remote stream.');
+	        }
+
+	        if (options.frameRate) {
+	            assert.isObject(options.frameRate, 'options.frameRate');
+
+	            if (options.frameRate.exact) {
+	                assert.isNumber(options.frameRate.exact, 'options.frameRate.exact');
+	            }
+
+	            if (options.frameRate.max) {
+	                assert.isNumber(options.frameRate.max, 'options.frameRate.max');
+	            }
 	        }
 
 	        var that = this;
@@ -11788,7 +11820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return callback(null, instantiateResponse);
 	            }
 
-	            var remoteOptions = _.assign({}, options);
+	            var remoteOptions = _.assign(options, {connectOptions: [], capabilities: []});
 
 	            if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
 	                remoteOptions.capabilities.push('publish-uri');
@@ -11799,6 +11831,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    remoteOptions.connectOptions.push('publisher-capability=' + capability);
 	                }
 	            });
+
+	            if (options.frameRate && options.frameRate.exact) {
+	                remoteOptions.connectOptions.push('source-uri-video-fps=' + options.frameRate.exact);
+	            }
+
+	            if (options.frameRate && options.frameRate.max) {
+	                remoteOptions.connectOptions.push('source-uri-video-fps-max=' + options.frameRate.max);
+	            }
 
 	            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
 	        });
@@ -11894,7 +11934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
 	        var that = this;
 
-	        assert.isObject(options.capabilities, 'options.capabilities');
+	        assert.isArray(options.capabilities, 'options.capabilities');
 
 	        that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
 	            if (error) {
@@ -11917,7 +11957,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (options.connectOptions) {
-	            assert.isObject(options.connectOptions, 'options.connectOptions');
+	            assert.isArray(options.connectOptions, 'options.connectOptions');
 	        }
 
 	        var publishCallback = function publishCallback(pcast, status, publisher) {
@@ -12444,6 +12484,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            assert.stringNotEmpty(options.screenName, 'options.screenName');
 	        }
 
+	        if (options.capabilities) {
+	            assert.isArray(options.capabilities);
+	        }
+
+	        if (options.tags) {
+	            assert.isArray(options.tags);
+	        }
+
 	        var that = this;
 	        var role = memberEnums.roles.audience.name;
 	        var screenName = options.screenName || _.uniqueId();
@@ -12478,22 +12526,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var room = roomResponse.room;
 
 	                if (options.streamUri) {
-	                    var remoteOptions = _.assign(options, {
-	                        connectOptions: [
+	                    var remoteOptions = _.assign(options, {connectOptions: []});
+	                    var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
+	                        return option.startsWith('room-id');
+	                    });
+
+	                    if (!hasRoomConnectOptions) {
+	                        remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
 	                            'room-id=' + room.getRoomId(),
 	                            'member-role=Presenter',
 	                            'member-stream-type=Presentation',
-	                            'screen-name='+ screenName
-	                        ]
-	                    });
+	                            'screen-name=' + screenName
+	                        ]);
+	                    }
 
 	                    that._pcastExpress.publishRemote(remoteOptions, callback);
 	                } else if (options.roomType === roomEnums.types.channel.name) {
-	                    var localOptions = _.assign(options, {
-	                        tags: [
-	                            'channelId:' + room.getRoomId()
-	                        ]
+	                    var localOptions = _.assign(options, {tags: []});
+	                    var hasChannelTag = _.find(localOptions.tags, function(tag) {
+	                        return tag.startsWith('channelId');
 	                    });
+
+	                    if (!hasChannelTag) {
+	                        localOptions.tags = localOptions.tags.concat([
+	                            'channelId:' + room.getRoomId()
+	                        ]);
+	                    }
 
 	                    if (!_.includes(localOptions.capabilities, 'channel')) {
 	                        localOptions.capabilities.push('channel');
