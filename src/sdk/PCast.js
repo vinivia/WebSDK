@@ -46,6 +46,7 @@ define([
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
+    var maxBandwidthForSdPlayback = 1280000; // Safe limit for getting SD only playback
 
     function PCast(options) {
         options = options || {};
@@ -1932,6 +1933,8 @@ define([
                             };
 
                             if (options.isDrmProtectedContent) {
+                                checkBrowserSupportForWidevineDRM.call(that);
+                                unwrapLicenseResponse.call(that, player);
                                 addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
                                     if (!err) {
                                         loadPlayer(updatedPlayerConfig);
@@ -2194,13 +2197,62 @@ define([
         callback.call(that, internalMediaStream.mediaStream);
     }
 
+    function checkBrowserSupportForWidevineDRM() {
+        var error;
+
+        if (!_.isFunction(Uint8Array)) {
+            error = 'Uint8Array support required for DRM';
+            this._logger.error(error);
+
+            throw new Error(error);
+        }
+
+        if (!_.isFunction(window.atob)) {
+            error = 'window.atob support required for DRM';
+            this._logger.error(error);
+
+            throw new Error(error);
+        }
+    }
+
+    function unwrapLicenseResponse(player) {
+        var that = this;
+
+        player.getNetworkingEngine().registerResponseFilter(function (type, response) {
+            // Only manipulate license responses:
+            if (type.toString() === that._shaka.net.NetworkingEngine.RequestType.LICENSE.toString()) {
+                var binaryResponseAsTypedArray = new Uint8Array(response.data);
+                var responseAsString = String.fromCharCode.apply(null, binaryResponseAsTypedArray);
+                var parsedResponse = JSON.parse(responseAsString);
+                var base64License = parsedResponse.license;
+                var decodedLicense = window.atob(base64License);
+
+                response.data = new Uint8Array(decodedLicense.length);
+
+                for (var i = 0; i < decodedLicense.length; ++i) {
+                    response.data[i] = decodedLicense.charCodeAt(i);
+                }
+
+                if (!isHDPlaybackAllowedByWidevine(parsedResponse.allowedTracks)) {
+                    disableHdPlayback(player);
+                }
+            }
+        });
+    }
+
+    function isHDPlaybackAllowedByWidevine(allowedTracks) {
+        var minQualityLevelForHD = '720';
+
+        return _.includes(allowedTracks, minQualityLevelForHD);
+    }
+
+    function disableHdPlayback(player) {
+        player.configure({restrictions: {maxVideoBandwidth: maxBandwidthForSdPlayback}});
+    }
+
     function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
         if (!playerConfig.drm) {
             playerConfig.drm = {};
-        }
-
-        if (!playerConfig.drm.servers) {
-            playerConfig.drm.servers = {};
         }
 
         if (!playerConfig.drm.advanced) {
@@ -2217,10 +2269,10 @@ define([
 
         // Add browser specific DRM calls here
         // Currently we support Widevine only
-        addWidevineConfigToPlayerConfig.call(this, playerConfig, callback, options);
+        addWidevineConfigToPlayerConfig.call(this, playerConfig, options, callback);
     }
 
-    function addWidevineConfigToPlayerConfig(playerConfig, callback, options) {
+    function addWidevineConfigToPlayerConfig(playerConfig, options, callback) {
         playerConfig['manifest']['dash']['customScheme'] = function (element) {
             if (element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
                 return [{

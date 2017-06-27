@@ -9,7 +9,8 @@
     },
     "globals": {
         "sinon": true,
-        "expect": true
+        "expect": true,
+        "Uint8Array": true
     },
     "extends": ["eslint:recommended"],
     "parserOptions": {
