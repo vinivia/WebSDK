@@ -1,18 +1,3 @@
-/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("phenix-rtc"), require("ByteBuffer"), require("protobuf"));
@@ -182,8 +167,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-26T17:04:21Z' || '?';
-	    var releaseVersion = '2017.2.5';
+	    var sdkVersion = '2017-06-30T19:00:17Z' || '?';
+	    var releaseVersion = '2017.2.6';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -1265,7 +1250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-26T17:04:21Z';
+	        this._version = '2017-06-30T19:00:17Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -4402,7 +4387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-26T17:04:21Z';
+	    var sdkVersion = '2017-06-30T19:00:17Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -7346,6 +7331,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                options: [streamType, browser, browserWithVersion],
 	                apiVersion: this._mqProtocol.getApiVersion()
 	            }
+	        }
+
+	        if (options.receiveAudio === false) {
+	            setupStream.createStream.options.push('no-audio');
+	        }
+
+	        if (options.receiveVideo === false) {
+	            setupStream.createStream.options.push('no-video');
 	        }
 
 	        return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);

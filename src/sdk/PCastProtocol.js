@@ -165,6 +165,14 @@ define([
             }
         }
 
+        if (options.receiveAudio === false) {
+            setupStream.createStream.options.push('no-audio');
+        }
+
+        if (options.receiveVideo === false) {
+            setupStream.createStream.options.push('no-video');
+        }
+
         return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
     };
 
