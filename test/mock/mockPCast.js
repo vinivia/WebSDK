@@ -19,8 +19,19 @@ define([
     'sdk/PCastProtocol',
     'sdk/PCast'
 ], function (Observable, Logger, Protocol, PCast) {
-    return function MockPCast () {
+    function MockPCast () {
         var pcast = sinon.createStubInstance(PCast);
+
+        buildUpPcast(pcast);
+
+        return pcast;
+    }
+
+    MockPCast.buildUpMockPCast = function(pcast) {
+        buildUpPcast(pcast);
+    };
+
+    function buildUpPcast(pcast) {
         var logger = sinon.createStubInstance(Logger);
         var protocol = sinon.createStubInstance(Protocol);
         var sessionId = new Observable('mockSessionId');
@@ -33,6 +44,15 @@ define([
         protocol.getSessionId = function() { return 'mockSessionId'; };
         protocol.getObservableSessionId = function() { return sessionId; };
 
-        return pcast;
+        if (pcast.start.restore) {
+            pcast.start.restore();
+        }
+
+        pcast.start = sinon.stub(pcast, 'start', function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
+            authenticationCallback(pcast, 'ok', sessionId.getValue());
+            onlineCallback();
+        })
     }
+
+    return MockPCast;
 });

@@ -1,3 +1,18 @@
+/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -182,8 +197,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-06-30T19:00:17Z' || '?';
-	    var releaseVersion = '2017.2.6';
+	    var sdkVersion = '2017-07-01T02:15:23Z' || '?';
+	    var releaseVersion = '2017.2.7';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -1265,7 +1280,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-06-30T19:00:17Z';
+	        this._version = '2017-07-01T02:15:23Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -14313,7 +14328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        ]
 	    });
-	    var sdkVersion = '2017-06-30T19:00:17Z';
+	    var sdkVersion = '2017-07-01T02:15:23Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -17402,19 +17417,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
 	    };
 
-	    PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
-	        assert.isString(roomName, 'roomName');
-	        assert.isString(type, 'type');
-	        assert.isString(description, 'description');
+	    PCastProtocol.prototype.createRoom = function (room, callback) {
+	        assert.isObject(room, 'room');
+	        assert.stringNotEmpty(room.name, 'room.name');
+	        assert.stringNotEmpty(room.type, 'room.type');
+	        assert.stringNotEmpty(room.description, 'room.description');
 	        assert.isFunction(callback, 'callback');
 
 	        var createRoom = {
 	            sessionId: this.getSessionId(),
-	            room: {
-	                name: roomName,
-	                description: description,
-	                type: type
-	            }
+	            room: room
 	        };
 
 	        return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);
@@ -18804,13 +18816,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        getRoomInfoRequest.call(this, roomId, alias, callback);
 	    };
 
-	    RoomService.prototype.createRoom = function createRoom(name, type, description, callback) {
-	        assert.stringNotEmpty(name, 'name');
-	        assert.stringNotEmpty(type, 'type');
-	        assert.isString(description, 'description');
+	    RoomService.prototype.createRoom = function createRoom(room, callback) {
+	        assert.isObject(room, 'room');
+	        assert.stringNotEmpty(room.name, 'room.name');
+	        assert.stringNotEmpty(room.type, 'room.type');
+	        assert.isString(room.description, 'room.description');
 	        assert.isFunction(callback);
 
-	        createRoomRequest.call(this, name, type, description, callback);
+	        createRoomRequest.call(this, room, callback);
 	    };
 
 	    RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
@@ -19140,32 +19153,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	        );
 	    }
 
-	    function createRoomRequest(roomName, type, description, callback) {
+	    function createRoomRequest(room, callback) {
 	        this._authService.assertAuthorized();
 
 	        var that = this;
 
-	        this._protocol.createRoom(roomName, type, description,
-	            function handleCreateRoomResponse(error, response) {
-	                if (error) {
-	                    that._logger.error('Creating room failed with error [%s]', error);
+	        var validatedRoom = getValidRoomObject(room);
 
-	                    return callback(error, null);
-	                }
+	        this._protocol.createRoom(validatedRoom, function handleCreateRoomResponse(error, response) {
+	            if (error) {
+	                that._logger.error('Creating room failed with error [%s]', error);
 
-	                var result = {status: response.status};
-
-	                if (response.status !== 'ok' && response.status !== 'already-exists') {
-	                    that._logger.warn('Creating room failed with status [%s]', response.status);
-
-	                    return callback(null, result);
-	                }
-
-	                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
-
-	                callback(null, result);
+	                return callback(error, null);
 	            }
-	        );
+
+	            var result = {status: response.status};
+
+	            if (response.status !== 'ok' && response.status !== 'already-exists') {
+	                that._logger.warn('Creating room failed with status [%s]', response.status);
+
+	                return callback(null, result);
+	            }
+
+	            result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+
+	            callback(null, result);
+	        });
+	    }
+
+	    function getValidRoomObject(room) {
+	        var roomService = this;
+
+	        return (new Room(roomService, '', room.alias, room.name, room.description, room.type, [], room.bridgeId, room.pin)).toJson();
 	    }
 
 	    function enterRoomRequest(roomId, alias, callback) {
@@ -19640,20 +19659,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-	        assert.isString(id, 'id');
-	        assert.isString(alias, 'alias');
-	        assert.isString(name, 'name');
-	        assert.isString(description, 'description');
+	        assert.stringNotEmpty(name, 'name');
+	        assert.stringNotEmpty(description, 'description');
 	        assert.isArray(members, 'members');
 
+	        if (id) {
+	            assert.stringNotEmpty(id, 'id');
+	        }
+
+	        if (alias) {
+	            assert.stringNotEmpty(alias, 'alias')
+	        }
+
 	        if (bridgeId) {
-	            assert.isString(bridgeId, 'bridgeId');
+	            assert.stringNotEmpty(bridgeId, 'bridgeId');
 	        }
+
 	        if (pin) {
-	            assert.isString(pin, 'pin');
+	            assert.stringNotEmpty(pin, 'pin');
 	        }
+
 	        if (roomService) {
-	            assert.isObject(roomService);
+	            assert.isObject(roomService, 'roomService');
 	        }
 
 	        this._roomId = new Observable(id);
@@ -22211,18 +22238,84 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._pcastExpress;
 	    };
 
+	    RoomExpress.prototype.createRoom = function createRoom(options, callback) {
+	        assert.isFunction(callback, 'callback');
+	        assert.isObject(options.room, 'options.room');
+	        assert.stringNotEmpty(options.room.name, 'options.room.name');
+	        assert.stringNotEmpty(options.room.type, 'options.room.type');
+
+	        if (options.room.description) {
+	            assert.stringNotEmpty(options.room.description, 'options.room.description');
+	        }
+
+	        var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
+
+	        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+	            if (error) {
+	                return callback(error);
+	            }
+
+	            if (roomServiceResponse.status !== 'ok') {
+	                return callback(null, roomServiceResponse);
+	            }
+
+	            var roomService = roomServiceResponse.roomService;
+	            var roomToCreate = _.assign(options.room, {});
+
+	            if (!roomToCreate.description) {
+	                roomToCreate.description = roomDescription;
+	            }
+
+	            roomService.createRoom(roomToCreate, function (error, roomResponse) {
+	                if (error) {
+	                    roomService.stop();
+
+	                    return callback(error);
+	                }
+
+	                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
+	                    roomService.stop();
+	                }
+
+	                roomResponse.roomService = roomService;
+
+	                return callback(null, roomResponse);
+	            });
+	        });
+	    };
+
+	    RoomExpress.prototype.createChannel = function createChannel(options, callback) {
+	        assert.isObject(options, 'options');
+	        assert.isObject(options.room, 'options.room');
+
+	        var createRoomOptions = _.assign(options, {});
+
+	        createRoomOptions.room.type = roomEnums.types.channel.name;
+
+	        this.createRoom(createRoomOptions, callback)
+	    };
+
+
 	    RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
 	        assert.isObject(options, 'options');
-	        assert.stringNotEmpty(options.roomAlias, 'options.roomAlias');
 	        assert.isFunction(joinRoomCallback, 'joinRoomCallback');
 	        assert.isFunction(membersChangedCallback, 'membersChangedCallback');
+	        assert.stringNotEmpty(options.role, 'options.role');
 
 	        if (options.screenName) {
 	            assert.stringNotEmpty(options.screenName, 'options.screenName');
 	        }
 
+	        if (options.roomId) {
+	            assert.stringNotEmpty(options.roomId, 'options.roomId');
+	        }
+
+	        if (options.alias) {
+	            assert.stringNotEmpty(options.alias, 'options.alias');
+	        }
+
 	        var that = this;
-	        var role = memberEnums.roles.audience.name;
+	        var role = options.role;
 	        var screenName = options.screenName || _.uniqueId();
 
 	        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
@@ -22240,7 +22333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            roomService.start(role, screenName);
 
-	            roomService.enterRoom(null, options.roomAlias, function(error, roomResponse) {
+	            roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
 	                if (error) {
 	                    roomService.stop();
 
@@ -22294,7 +22387,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            assert.isObject(options.videoElement, 'options.videoElement');
 	        }
 
-	        var channelOptions = _.assign(options, {roomType: roomEnums.types.channel.name, roomAlias: options.channelAlias});
+	        var channelOptions = _.assign(options, {
+	            type: roomEnums.types.channel.name,
+	            role: memberEnums.roles.audience.name
+	        });
 	        var lastMediaStream;
 	        var lastStreamId;
 	        var that = this;
@@ -22303,17 +22399,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var channelResponse = !response || _.assign(response, {});
 
 	            if (response && response.roomService) {
-	                channelResponse.roomService.leaveChannel = function(callback) {
+	                var leaveRoom = response.roomService.leaveRoom;
+
+	                channelResponse.roomService.leaveRoom = function(callback) {
 	                    if (lastMediaStream) {
 	                        lastMediaStream.stop();
 	                    }
 
-	                    response.roomService.leaveRoom(callback);
+	                    leaveRoom(callback);
 	                };
-
-	                channelResponse.channelService = channelResponse.roomService;
-
-	                delete channelResponse.roomService;
 	            }
 
 	            joinChannelCallback(error, channelResponse);
@@ -22336,6 +22430,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            var presenterStream = mostRecentPresenter.getObservableStreams().getValue()[0];
+
+	            if (!presenterStream) {
+	                return subscriberCallback(null, {status: 'no-stream-playing'});
+	            }
+
 	            var streamId = parsePcastFromStream(presenterStream.getUri());
 
 	            if (!streamId) {
@@ -22379,13 +22478,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
 	        assert.isObject(options, 'options');
-	        assert.stringNotEmpty(options.roomAlias, 'options.roomAlias');
 	        assert.isFunction(callback, 'callback');
-	        assert.stringNotEmpty(options.roomType, 'options.roomType');
-
-	        if (options.roomDescription) {
-	            assert.stringNotEmpty(options.roomType, 'options.roomDescription');
-	        }
+	        assert.isObject(options.room, 'options.room');
 
 	        if (options.streamUri) {
 	            assert.stringNotEmpty(options.streamUri, 'options.streamUri');
@@ -22414,71 +22508,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var role = memberEnums.roles.audience.name;
 	        var screenName = options.screenName || _.uniqueId();
-	        var roomDescription = options.roomDescription || getDefaultRoomDescription(options.roomType);
 
-	        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+	        this.createRoom(options, function(error, createRoomResponse) {
 	            if (error) {
 	                return callback(error);
 	            }
 
-	            if (roomServiceResponse.status !== 'ok') {
-	                return callback(null, roomServiceResponse);
+	            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
+	                return callback(null, createRoomResponse);
 	            }
 
-	            var roomService = roomServiceResponse.roomService;
+	            var roomService = createRoomResponse.roomService;
+	            var room = createRoomResponse.room;
 
 	            roomService.start(role, screenName);
 
-	            roomService.createRoom(options.roomAlias, options.roomType, roomDescription, function(error, roomResponse) {
-	                if (error) {
-	                    roomService.stop();
+	            if (options.streamUri) {
+	                var remoteOptions = _.assign(options, {connectOptions: []});
+	                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
+	                    return option.startsWith('room-id');
+	                });
 
-	                    return callback(error);
+	                if (!hasRoomConnectOptions) {
+	                    remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
+	                        'room-id=' + room.getRoomId(),
+	                        'member-role=Presenter',
+	                        'member-stream-type=Presentation',
+	                        'screen-name=' + screenName
+	                    ]);
 	                }
 
-	                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
-	                    roomService.stop();
+	                that._pcastExpress.publishRemote(remoteOptions, callback);
+	            } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
+	                var localOptions = _.assign(options, {tags: []});
+	                var hasChannelTag = _.find(localOptions.tags, function(tag) {
+	                    return tag.startsWith('channelId');
+	                });
 
-	                    return callback(null, roomResponse);
+	                if (!hasChannelTag) {
+	                    localOptions.tags = localOptions.tags.concat([
+	                        'channelId:' + room.getRoomId()
+	                    ]);
 	                }
 
-	                var room = roomResponse.room;
-
-	                if (options.streamUri) {
-	                    var remoteOptions = _.assign(options, {connectOptions: []});
-	                    var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
-	                        return option.startsWith('room-id');
-	                    });
-
-	                    if (!hasRoomConnectOptions) {
-	                        remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
-	                            'room-id=' + room.getRoomId(),
-	                            'member-role=Presenter',
-	                            'member-stream-type=Presentation',
-	                            'screen-name=' + screenName
-	                        ]);
-	                    }
-
-	                    that._pcastExpress.publishRemote(remoteOptions, callback);
-	                } else if (options.roomType === roomEnums.types.channel.name) {
-	                    var localOptions = _.assign(options, {tags: []});
-	                    var hasChannelTag = _.find(localOptions.tags, function(tag) {
-	                        return tag.startsWith('channelId');
-	                    });
-
-	                    if (!hasChannelTag) {
-	                        localOptions.tags = localOptions.tags.concat([
-	                            'channelId:' + room.getRoomId()
-	                        ]);
-	                    }
-
-	                    if (!_.includes(localOptions.capabilities, 'channel')) {
-	                        localOptions.capabilities.push('channel');
-	                    }
-
-	                    that._pcastExpress.publish(localOptions, callback);
+	                if (!_.includes(localOptions.capabilities, 'channel')) {
+	                    localOptions.capabilities.push('channel');
 	                }
-	            });
+
+	                that._pcastExpress.publish(localOptions, callback);
+	            }
 	        });
 	    };
 
@@ -22486,7 +22564,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(options, 'options');
 	        assert.isFunction(callback, 'callback');
 
-	        var channelOptions = _.assign(options, {roomType: roomEnums.types.channel.name, roomAlias: options.channelAlias});
+	        var channelOptions = _.assign(options, {});
+
+	        options.room.type = roomEnums.types.channel.name;
 
 	        this.publishToRoom(channelOptions, callback);
 	    };
@@ -22544,7 +22624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            case roomEnums.types.moderatedChat.name:
 	                return 'Moderated Chat';
 	            case roomEnums.types.multiPartyChat.name:
-	                return 'Multi Part Chat';
+	                return 'Multi Party Chat';
 	            case roomEnums.types.townHall.name:
 	                return 'Town Hall';
 	            case roomEnums.types.directChat.name:

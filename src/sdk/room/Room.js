@@ -29,20 +29,28 @@ define([
     }
 
     Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        assert.isString(id, 'id');
-        assert.isString(alias, 'alias');
-        assert.isString(name, 'name');
-        assert.isString(description, 'description');
+        assert.stringNotEmpty(name, 'name');
+        assert.stringNotEmpty(description, 'description');
         assert.isArray(members, 'members');
 
+        if (id) {
+            assert.stringNotEmpty(id, 'id');
+        }
+
+        if (alias) {
+            assert.stringNotEmpty(alias, 'alias')
+        }
+
         if (bridgeId) {
-            assert.isString(bridgeId, 'bridgeId');
+            assert.stringNotEmpty(bridgeId, 'bridgeId');
         }
+
         if (pin) {
-            assert.isString(pin, 'pin');
+            assert.stringNotEmpty(pin, 'pin');
         }
+
         if (roomService) {
-            assert.isObject(roomService);
+            assert.isObject(roomService, 'roomService');
         }
 
         this._roomId = new Observable(id);

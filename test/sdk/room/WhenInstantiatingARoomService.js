@@ -35,7 +35,7 @@ define([
     var mockTrack = { enabled: 'true', state:track.states.trackEnabled.name };
     var stream1 = {type: stream.types.user.name, uri: baseURI+'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name, getTracks: function () { return [mockTrack]; }};
     var member1 = {state: member.states.passive.name, sessionId: 'member1',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'first'};
-    var mockRoom = {roomId:'TestRoom123',alias:'',name:'',description:'',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, getRoomId:function () { return room.roomId; }, members:[member1]};
+    var mockRoom = {roomId:'TestRoom123',alias:'',name:'Test123',description:'Test 123',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, getRoomId:function () { return room.roomId; }, members:[member1]};
 
     var name = 'testRoom';
     var type = room.types.multiPartyChat.name;
@@ -75,7 +75,7 @@ define([
             });
 
             mockProtocol.createRoom.restore();
-            mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom', function (roomName, type, description, callback) {
+            mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom', function (room, callback) {
                 callback(null, response);
             });
 
@@ -150,14 +150,14 @@ define([
             it('Expect created room to be an immutable room', function () {
                 roomService.start(role, screenName);
 
-                roomService.createRoom(name, type, description, function (error, response) {
+                roomService.createRoom(mockRoom, function (error, response) {
                     expect(response.room).to.be.an.instanceof(ImmutableRoom);
                     expect(response.status).to.be.equal('ok');
                 }, screenName);
             });
 
             it('Expect room to be undefined when protocol returns error status', function () {
-                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                mockProtocol.createRoom = function (room, callback) {
                     response.status = 'error';
                     response.reason = 'Error creating room';
 
@@ -166,18 +166,18 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.createRoom(name, type, description, function (error, response) {
+                roomService.createRoom(mockRoom, function (error, response) {
                     expect(response.status).to.not.be.equal('ok');
                     expect(response.room).to.be.not.ok;
                 }, screenName);
             });
 
             it('Expect createRoom to return an error when error returned from protocol', function () {
-                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                mockProtocol.createRoom = function (room, callback) {
                     callback(new Error('Error'), null);
                 };
 
-                roomService.createRoom(name, type, description, function (error, response) {
+                roomService.createRoom(mockRoom, function (error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
@@ -258,7 +258,7 @@ define([
             });
 
             it('Expect createRoom to return status other than "ok"', function () {
-                mockProtocol.createRoom = function (roomName, type, description, callback) {
+                mockProtocol.createRoom = function (room, callback) {
                     response.status = 'already-exists';
 
                     callback(null, response);
@@ -267,9 +267,29 @@ define([
                 roomService.start(role, screenName);
 
 
-                roomService.createRoom(name, type, description, function (error, response) {
+                roomService.createRoom(mockRoom, function (error, response) {
                     expect(response.status).to.not.be.equal('ok');
-                }, screenName);
+                });
+            });
+
+            it('Expect createRoom to have all valid values (no members, and no roomId) passed to protocol', function () {
+                var roomToCreate = _.assign(mockRoom, {invalidProp: 'myInvalidValue'});
+
+                mockProtocol.createRoom = function (room) {
+                    expect(room.roomId).to.be.empty;
+                    expect(room.alias).to.be.equal(roomToCreate.alias);
+                    expect(room.roomType).to.be.equal(roomToCreate.roomType);
+                    expect(room.name).to.be.equal(roomToCreate.name);
+                    expect(room.description).to.be.equal(roomToCreate.description);
+                    expect(room.bridgeId).to.be.equal(roomToCreate.bridgeId);
+                    expect(room.pin).to.be.equal(roomToCreate.pin);
+                    expect(room.members).to.not.exist;
+                    expect(room.invalidProp).to.not.exist;
+                };
+
+                roomService.start(role, screenName);
+
+                roomService.createRoom(roomToCreate, function (error, response) {});
             });
 
             it('Return new Room model with response.room values', function () {

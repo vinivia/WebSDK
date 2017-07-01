@@ -308,19 +308,16 @@ define([
         return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
     };
 
-    PCastProtocol.prototype.createRoom = function (roomName, type, description, callback) {
-        assert.isString(roomName, 'roomName');
-        assert.isString(type, 'type');
-        assert.isString(description, 'description');
+    PCastProtocol.prototype.createRoom = function (room, callback) {
+        assert.isObject(room, 'room');
+        assert.stringNotEmpty(room.name, 'room.name');
+        assert.stringNotEmpty(room.type, 'room.type');
+        assert.stringNotEmpty(room.description, 'room.description');
         assert.isFunction(callback, 'callback');
 
         var createRoom = {
             sessionId: this.getSessionId(),
-            room: {
-                name: roomName,
-                description: description,
-                type: type
-            }
+            room: room
         };
 
         return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);

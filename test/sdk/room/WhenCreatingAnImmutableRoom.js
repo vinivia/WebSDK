@@ -41,7 +41,7 @@ define([
             stubRoomService = new MockRoomService();
 
             member1 = { state: member.states.passive.name, sessionId: 'member1', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'first' };
-            testRoom = new ImmutableRoom(stubRoomService, 'asd', 'User', 'MyRoom', '', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
+            testRoom = new ImmutableRoom(stubRoomService, 'asd', 'User', 'MyRoom', 'Immutable Room', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
         it('Has property toJson that is a function', function () {
