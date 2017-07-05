@@ -59,14 +59,18 @@ define([
 
             it('Remove returns all items matching input function and removes them from the array', function () {
                 observableArray.push(newValue1);
+
                 var arrayAfterPush = [value[0], newValue1];
-                var allArrayValues = observableArray.remove(function () { return true; });
+                var allArrayValues = observableArray.remove(function () {
+                    return true;
+                });
                 expect(allArrayValues).to.be.deep.equal(arrayAfterPush);
                 expect(observableArray.getValue()).to.be.deep.equal(emptyArray);
             });
 
             it('RemoveAll returns all items in the array and removes them', function () {
                 observableArray.push(newValue1);
+
                 var arrayAfterPush = [value[0], newValue1];
                 var allArrayValues = observableArray.removeAll();
                 expect(allArrayValues).to.be.deep.equal(arrayAfterPush);
@@ -98,7 +102,9 @@ define([
                     expect(changedValue).to.be.deep.equal(emptyArray);
                     done();
                 });
-                observableArray.remove(function () { return true; });
+                observableArray.remove(function () {
+                    return true;
+                });
             });
 
             it('Does not trigger subscription callback when nothing removed', function (done) {
@@ -106,7 +112,9 @@ define([
                 observableArray.subscribe(function () {
                     count++;
                 });
-                observableArray.remove(function () { return false; });
+                observableArray.remove(function () {
+                    return false;
+                });
                 setTimeout(function () {
                     expect(count).to.be.equal(0);
                     done();

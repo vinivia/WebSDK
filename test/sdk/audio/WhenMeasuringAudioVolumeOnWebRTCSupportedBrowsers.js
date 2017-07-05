@@ -58,9 +58,13 @@ define([
 
             it('Successfully connects mediaStream object with audio tracks', function () {
                 var stream = new MediaStream();
-                stream.getAudioTracks = function () {return [{}]};
+                stream.getAudioTracks = function () {
+                    return [{}];
+                };
 
-                sinon.stub(audioContext, "createMediaStreamSource", function () {return {connect:function () {}}});
+                sinon.stub(audioContext, "createMediaStreamSource", function () {
+                    return {connect: function () {}};
+                });
 
                 audioVolumeMeter.connect(stream);
 
@@ -70,9 +74,13 @@ define([
 
             it('Does not connect mediaStream object with no audio tracks', function () {
                 var stream = new MediaStream();
-                stream.getAudioTracks = function () {return []};
+                stream.getAudioTracks = function () {
+                    return [];
+                };
 
-                sinon.stub(audioContext, "createMediaStreamSource", function () {return {connect:function () {}}});
+                sinon.stub(audioContext, "createMediaStreamSource", function () {
+                    return {connect: function () {}};
+                });
 
                 audioVolumeMeter.connect(stream);
 

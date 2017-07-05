@@ -84,6 +84,7 @@ define([
 
             if ((speakingThreshold || (speaking && speakingContinuationThreshold)) && nextSpeakingDeadline < value.date) {
                 nextSilenceDeadline = _.utc(value.date) + silenceHysteresisInterval;
+
                 if (!speaking) {
                     speaking = true;
 
@@ -95,6 +96,7 @@ define([
                 }
             } else if ((notSpeakingThreshold || (!speaking && notSpeakingContinuationThreshold)) && nextSilenceDeadline < value.date) {
                 nextSpeakingDeadline = _.utc(value.date) + speakingHysteresisInterval;
+
                 if (speaking) {
                     speaking = false;
 

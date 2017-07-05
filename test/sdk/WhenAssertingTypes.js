@@ -25,13 +25,13 @@ define([
 
             it('Error thrown on string', function () {
                 expect(function () {
-                    assert.isObject('', 'myObject')
+                    assert.isObject('', 'myObject');
                 }).to.throw(Error);
             });
 
             it('No Error thrown on object', function () {
                 expect(function () {
-                    assert.isObject({}, 'myObject')
+                    assert.isObject({}, 'myObject');
                 }).to.not.throw();
             });
         });
@@ -43,13 +43,13 @@ define([
 
             it('Error thrown on string', function () {
                 expect(function () {
-                    assert.isArray('', 'myArray')
+                    assert.isArray('', 'myArray');
                 }).to.throw(Error);
             });
 
             it('No Error thrown on array', function () {
                 expect(function () {
-                    assert.isObject([], 'myArray')
+                    assert.isObject([], 'myArray');
                 }).to.not.throw();
             });
         });
@@ -61,13 +61,13 @@ define([
 
             it('Error thrown on object', function () {
                 expect(function () {
-                    assert.isString({}, 'myString')
+                    assert.isString({}, 'myString');
                 }).to.throw(Error);
             });
 
             it('No Error thrown on string', function () {
                 expect(function () {
-                    assert.isString('', 'myString')
+                    assert.isString('', 'myString');
                 }).to.not.throw();
             });
         });
@@ -79,13 +79,13 @@ define([
 
             it('Error thrown on string', function () {
                 expect(function () {
-                    assert.isNumber('', 'myNumber')
+                    assert.isNumber('', 'myNumber');
                 }).to.throw(Error);
             });
 
             it('No Error thrown on number', function () {
                 expect(function () {
-                    assert.isNumber(123, 'myNumber')
+                    assert.isNumber(123, 'myNumber');
                 }).to.not.throw();
             });
         });
@@ -97,15 +97,15 @@ define([
 
             it('Error thrown on object', function () {
                 expect(function () {
-                    assert.isFunction({}, 'myFunction')
+                    assert.isFunction({}, 'myFunction');
                 }).to.throw(Error);
             });
 
             it('No Error thrown on function', function () {
                 expect(function () {
-                    assert.isFunction(function () {}, 'myFunction')
+                    assert.isFunction(function () {}, 'myFunction');
                 }).to.not.throw();
             });
         });
-    })
+    });
 });

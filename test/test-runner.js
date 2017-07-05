@@ -16,7 +16,7 @@
 'use strict';
 
 var tests = [];
-var TEST_REGEXP = /\/When[^\/].*\.js$/i;
+var TEST_REGEXP = /\/When[^].*\.js$/i;
 
 var pathToModule = function (path) {
     return '../' + path.replace(/^\/base\//, '').replace(/\.js$/, '');
@@ -33,8 +33,7 @@ require.config({
     // Karma serves files under /base, which is the basePath from your config file
     baseUrl: '/base/src/',
 
-    shim: {
-    },
+    shim: {},
 
     paths: {
         bluebird: '../3p/bluebird/js/browser/bluebird',
@@ -49,7 +48,7 @@ require.config({
         protobuf: '../3p/protobuf/dist/ProtoBuf',
         'sinon': '../3p/sinon/lib/sinon',
         'sinon-chai': '../3p/sinon-chai/lib/sinon-chai',
-        ByteBuffer: '../3p/bytebuffer/dist/ByteBufferAB',
+        ByteBuffer: '../3p/bytebuffer/dist/ByteBufferAB'
     },
 
     map: {
@@ -59,10 +58,10 @@ require.config({
         }
     },
 
-    // dynamically load all test files
+    // Dynamically load all test files
     deps: tests,
 
-    // start test run, once Require.js is done
+    // Start test run, once Require.js is done
     callback: function () {
         require([
             'lodash',

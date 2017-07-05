@@ -38,7 +38,7 @@ define([
         }
 
         if (alias) {
-            assert.stringNotEmpty(alias, 'alias')
+            assert.stringNotEmpty(alias, 'alias');
         }
 
         if (bridgeId) {
@@ -58,7 +58,10 @@ define([
         this._name = new Observable(name);
         this._description = new Observable(description);
         this._type = new Observable(type, assertIsValidRoomType);
-        this._members = new ObservableArray([]).extend({ method: "notifyWhenChangesStop", timeout: 400 });
+        this._members = new ObservableArray([]).extend({
+            method: "notifyWhenChangesStop",
+            timeout: 400
+        });
         this._options = new ObservableArray();
         this._bridgeId = new Observable(bridgeId);
         this._pin = new Observable(pin);
@@ -112,7 +115,7 @@ define([
             type: this._type.getValue(),
             pin: this._pin.getValue(),
             bridgeId: this._bridgeId.getValue()
-        }
+        };
     };
 
     Room.prototype.commitChanges = function commitChanges(callback) {

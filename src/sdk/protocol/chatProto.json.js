@@ -169,9 +169,7 @@ define([
                         "type": "bool",
                         "name": "updateStreams",
                         "id": 7,
-                        "options": {
-                            "default": false
-                        }
+                        "options": {"default": false}
                     },
                     {
                         "rule": "repeated",

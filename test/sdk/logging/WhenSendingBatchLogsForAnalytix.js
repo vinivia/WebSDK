@@ -29,6 +29,7 @@ define([
             this.xhr = sinon.useFakeXMLHttpRequest();
 
             requests = [];
+
             this.xhr.onCreate = function (req) {
                 requests.push(req);
             };
@@ -112,7 +113,10 @@ define([
             analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             var protocol = new MQProtocol();
-            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {status:'ok', storedRecords: 2}).toBinary();
+            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {
+                status: 'ok',
+                storedRecords: 2
+            }).toBinary();
 
             expect(function () {
                 requests[0].respond(200, null, responseText);
@@ -135,7 +139,10 @@ define([
             analytixAppender.log(0, 'Trace', '', ['Message2'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             var protocol = new MQProtocol();
-            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {status:'ok', storedRecords: 2}).toBinary();
+            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {
+                status: 'ok',
+                storedRecords: 2
+            }).toBinary();
 
             requests[0].respond(200, null, responseText);
 
@@ -153,7 +160,10 @@ define([
             }
 
             var protocol = new MQProtocol();
-            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {status:'ok', storedRecords: 2}).toBinary();
+            var responseText = protocol.encode('analytix.StoreLogRecordsResponse', {
+                status: 'ok',
+                storedRecords: 2
+            }).toBinary();
 
             requests[0].respond(200, null, responseText);
 

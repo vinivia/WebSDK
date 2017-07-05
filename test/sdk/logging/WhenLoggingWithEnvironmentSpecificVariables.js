@@ -15,7 +15,7 @@
  */
 define([
     'sdk/logging/ConsoleAppender',
-    'sdk/logging/Logger',
+    'sdk/logging/Logger'
 ], function (ConsoleAppender, Logger) {
     describe('When Logging With Environment Specific Variables', function () {
         var logger;
@@ -53,11 +53,11 @@ define([
             beforeEach(function() {
                 logger = new Logger();
 
-                logger.addAppender(consoleAppender)
+                logger.addAppender(consoleAppender);
             });
 
             it('Expect Trace to trigger appender log call with version variable', function () {
-                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId, environment, version, context) {
+                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId, environment, version) {
                     expect(version).to.be.equal('version');
                 });
 
@@ -71,7 +71,7 @@ define([
             });
 
             it('Expect Trace to trigger appender log call with environment variable', function () {
-                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId, environment, version, context) {
+                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId, environment) {
                     expect(environment).to.be.equal('environment');
                 });
 
@@ -85,7 +85,7 @@ define([
             });
 
             it('Expect Trace to trigger appender log call with userId variable', function () {
-                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId, environment, version, context) {
+                var consoleAppenderStub = sinon.stub(consoleAppender, 'log', function(since, level, category, messages, sessionId, userId) {
                     expect(userId).to.be.equal('userId');
                 });
 

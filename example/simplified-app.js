@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global requirejs */
 requirejs.config({
     paths: {
         'phenix-web-sdk': 'web-sdk',
@@ -31,7 +32,14 @@ requirejs.config({
     }
 });
 
-requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player', 'app-setup'], function ($, _, sdk, shaka, Player, app) {
+requirejs([
+    'jquery',
+    'lodash',
+    'phenix-web-sdk',
+    'shaka-player',
+    'video-player',
+    'app-setup'
+], function ($, _, sdk, shaka, Player, app) {
     var init = function init() {
         var pcastExpress;
 
@@ -61,9 +69,7 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
                 mediaConstraints: getConstraints(),
                 capabilities: capabilities,
                 videoElement: localVideoEl,
-                monitor: {
-                    callback: onMonitorEvent
-                }
+                monitor: {callback: onMonitorEvent}
             }, function publishCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
@@ -143,9 +149,7 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
                 streamId: streamId,
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
-                monitor: {
-                    callback: onMonitorEvent
-                }
+                monitor: {callback: onMonitorEvent}
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
@@ -233,41 +237,45 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
             var userMediaOptions = {};
 
             switch (source) {
-                case 'screen':
-                    userMediaOptions.screen = true;
-                    break;
-                case 'microphone':
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = false;
-                    break;
-                case 'camera':
-                    userMediaOptions.audio = false;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: 720}
-                        ]
-                    };
-                    break;
-                case 'cameraAndMicrophone':
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: 720}
-                        ]
-                    };
-                    break;
-                case 'cameraMicrophoneAndScreen':
-                    userMediaOptions.screen = true;
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: 720}
-                        ]
-                    };
-                    break;
-                default:
-                    throw new Error('Unsupported User Media Options');
-                    break;
+            case 'screen':
+                userMediaOptions.screen = true;
+
+                break;
+            case 'microphone':
+                userMediaOptions.audio = true;
+                userMediaOptions.video = false;
+
+                break;
+            case 'camera':
+                userMediaOptions.audio = false;
+                userMediaOptions.video = {
+                    optional: [
+                        {minHeight: 720}
+                    ]
+                };
+
+                break;
+            case 'cameraAndMicrophone':
+                userMediaOptions.audio = true;
+                userMediaOptions.video = {
+                    optional: [
+                        {minHeight: 720}
+                    ]
+                };
+
+                break;
+            case 'cameraMicrophoneAndScreen':
+                userMediaOptions.screen = true;
+                userMediaOptions.audio = true;
+                userMediaOptions.video = {
+                    optional: [
+                        {minHeight: 720}
+                    ]
+                };
+
+                break;
+            default:
+                throw new Error('Unsupported User Media Options');
             }
 
             return userMediaOptions;
@@ -294,7 +302,7 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
             sdk.RTC.onload = function() {
                 app.init();
                 init();
-            }
+            };
         }
     });
 });

@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-], function (_, assert) {
+], function () {
     'use strict';
 
     function AudioContext() {
@@ -25,7 +23,7 @@ define([
 
     AudioContext.prototype.init = function init() {
         if (!window.AudioContext) {
-            throw new Error('Browser does not support AudioContext')
+            throw new Error('Browser does not support AudioContext');
         }
 
         this._audioContext = new window.AudioContext();

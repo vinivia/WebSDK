@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global process */
 const http = require('http');
 const https = require('https');
 const express = require('express');

@@ -43,7 +43,7 @@ define([
         this._screenName = new Observable(screenName);
         this._streams = new ObservableArray([]);
 
-        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit:500});
+        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
         this._role = new Observable(role, assertIsValidMemberRole);
         this._lastUpdate = new Observable(lastUpdate, _.utc);
         this._roomService = roomService;
@@ -82,7 +82,7 @@ define([
     Member.prototype.getStreams = function getStreams() {
         return _.map(this._streams.getValue(), function mapToJson(stream) {
             return stream.toJson();
-        })
+        });
     };
 
     Member.prototype.commitChanges = function commitChanges(callback) {
@@ -157,7 +157,7 @@ define([
     }
 
     function updateStreams(streams) {
-        // iterate through new streams object, update those that have changed, push new ones, remove old ones
+        // Iterate through new streams object, update those that have changed, push new ones, remove old ones
         var oldObservableStreams = this._streams.getValue();
         var newObservableStreams = [];
 

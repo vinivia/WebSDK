@@ -28,15 +28,19 @@ define([
         if (typeof uri !== 'string') {
             throw new Error('Must pass a valid "uri"');
         }
+
         if (typeof deviceId !== 'string') {
             throw new Error('Must pass a valid "deviceId"');
         }
+
         if (typeof version !== 'string') {
             throw new Error('Must pass a valid "version"');
         }
+
         if (typeof logger !== 'object') {
             throw new Error('Must pass a valid "logger"');
         }
+
         this._uri = uri;
         this._deviceId = deviceId;
         this._version = version;
@@ -65,6 +69,7 @@ define([
         if (typeof eventName !== 'string') {
             throw new Error('"eventName" must be a string');
         }
+
         if (typeof handler !== 'function') {
             throw new Error('"handler" must be a function');
         }
@@ -86,6 +91,7 @@ define([
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -118,6 +124,7 @@ define([
         if (typeof reason !== 'string') {
             throw new Error('"reason" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -134,12 +141,15 @@ define([
         if (typeof streamType !== 'string') {
             throw new Error('"streamType" must be a string');
         }
+
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
+
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -162,7 +172,7 @@ define([
                 streamId: '',
                 options: [streamType, browser, browserWithVersion],
                 apiVersion: this._mqProtocol.getApiVersion()
-            }
+            };
         }
 
         if (options.receiveAudio === false) {
@@ -180,9 +190,11 @@ define([
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
+
         if (typeof sdp !== 'string') {
             throw new Error('"sdp" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -203,12 +215,15 @@ define([
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
+
         if (!(candidates instanceof Array)) {
             throw new Error('"candidates" must be an array');
         }
+
         if (!(options instanceof Array)) {
             throw new Error('"options" must be an array');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -220,9 +235,11 @@ define([
             if (typeof candidate.candidate !== 'string') {
                 throw new Error('"candidates[' + i + '].candidate" must be a string');
             }
+
             if (typeof candidate.sdpMLineIndex !== 'number') {
                 throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
             }
+
             if (typeof candidate.sdpMid !== 'string') {
                 throw new Error('"candidates[' + i + '].sdpMid" must be a string');
             }
@@ -248,15 +265,19 @@ define([
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
+
         if (typeof signalingState !== 'string') {
             throw new Error('"signalingState" must be a string');
         }
+
         if (typeof iceGatheringState !== 'string') {
             throw new Error('"iceGatheringState" must be a string');
         }
+
         if (typeof iceConnectionState !== 'string') {
             throw new Error('"iceConnectionState" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -276,9 +297,11 @@ define([
         if (typeof streamId !== 'string') {
             throw new Error('"streamId" must be a string');
         }
+
         if (typeof reason !== 'string') {
             throw new Error('"reason" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -297,6 +320,7 @@ define([
         } else {
             assert.isString(alias, 'alias');
         }
+
         assert.isFunction(callback, 'callback');
 
         var getRoomInfo = {
@@ -329,6 +353,7 @@ define([
         } else {
             assert.isString(alias, 'alias');
         }
+
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -525,15 +550,15 @@ define([
         }
     }
 
-    function onReconnecting(evt) {
+    function onReconnecting(evt) { // eslint-disable-line no-unused-vars
         triggerEvent.call(this, 'reconnecting');
     }
 
-    function onConnected(evt) {
+    function onConnected(evt) { // eslint-disable-line no-unused-vars
         triggerEvent.call(this, 'connected');
     }
 
-    function onReconnected(evt) {
+    function onReconnected(evt) { // eslint-disable-line no-unused-vars
         triggerEvent.call(this, 'reconnected');
     }
 

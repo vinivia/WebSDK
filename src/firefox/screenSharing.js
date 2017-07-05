@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global exports */
 const preferencesService = require('sdk/preferences/service');
 const pageMod = require('sdk/page-mod');
 const allowedDomainsPreferenceKey = 'media.getusermedia.screensharing.allowed_domains';
@@ -47,27 +48,33 @@ function removeWhiteListedDomainsFromPreferences() {
 
 exports.main = function (options) {
     switch (options.loadReason) {
-        case 'install':
-        case 'upgrade':
-        case 'downgrade':
-        case 'enable':
-            addWhiteListedDomainsToPreferences();
-            break;
-        case 'startup':
-            break;
+    case 'install':
+    case 'upgrade':
+    case 'downgrade':
+    case 'enable':
+        addWhiteListedDomainsToPreferences();
+
+        break;
+    case 'startup':
+        break;
+    default:
+        break;
     }
 };
 
 exports.onUnload = function (reason) {
     switch (reason) {
-        case 'uninstall':
-        case 'upgrade':
-        case 'downgrade':
-        case 'disable':
-            removeWhiteListedDomainsFromPreferences();
-            break;
-        case 'shutdown':
-            break;
+    case 'uninstall':
+    case 'upgrade':
+    case 'downgrade':
+    case 'disable':
+        removeWhiteListedDomainsFromPreferences();
+
+        break;
+    case 'shutdown':
+        break;
+    default:
+        break;
     }
 };
 

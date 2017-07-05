@@ -30,7 +30,7 @@ define([
         var that = this;
         var requestMethod = 'GET';
         var requestUrl = appendQueryParameters(url, that._version, _.now());
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback);
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
 
         if (!xhr) {
             return callback(getUnsupportedError());
@@ -59,7 +59,7 @@ define([
         var that = this;
         var requestMethod = 'POST';
         var requestUrl = appendQueryParameters(url, that._version, _.now());
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback);
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
 
         if (!xhr) {
             return callback(getUnsupportedError());
@@ -86,13 +86,13 @@ define([
         return url + '?version=' + encodeURIComponent(version) + '&_=' + timestamp;
     }
 
-    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback) {
+    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
         var xhr = new XMLHttpRequest();
 
         if ('withCredentials' in xhr) {
             // Most browsers.
             xhr.open(requestMethod, requestUrl, true);
-        } else if (typeof XDomainRequest != 'undefined') {
+        } else if (typeof XDomainRequest !== 'undefined') {
             // IE8 & IE9
             xhr = new XDomainRequest();
             xhr.open(requestMethod, requestUrl);
@@ -117,7 +117,7 @@ define([
             xhr.setRequestHeader('Content-type', 'application/protobuf');
             xhr.setRequestHeader('Accept', 'application/protobuf');
         } else {
-            xhr.setRequestHeader('Content-type', 'application/json'); // default to json
+            xhr.setRequestHeader('Content-type', 'application/json'); // Default to json
             xhr.setRequestHeader('Accept', 'application/json');
         }
     }

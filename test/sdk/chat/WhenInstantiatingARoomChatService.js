@@ -99,7 +99,11 @@ define([
         describe('When Room Changes', function () {
             var roomObservable;
             var newMessagesCallback;
-            var room = {getRoomId:function () { return ''; }};
+            var room = {
+                getRoomId: function () {
+                    return '';
+                }
+            };
 
             beforeEach(function () {
                 roomObservable = new Observable(room);
@@ -136,7 +140,7 @@ define([
                 setTimeout(function () {
                     sinon.assert.calledOnce(roomChatService._roomChatSubscriptionDispose);
                     done();
-                }, 101)
+                }, 101);
             });
 
             it('New room causes new subscription', function (done) {
@@ -147,7 +151,7 @@ define([
 
                     sinon.assert.calledOnce(stubChatService.subscribeAndLoadMessages);
                     done();
-                }, 101)
+                }, 101);
             });
 
             describe('When internal queue is at max size (100)', function () {
@@ -159,7 +163,10 @@ define([
                     messages[1] = 1;
                     messages[99] = 99;
 
-                    newMessagesCallback(null, {status:'ok', chatMessages: messages});
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: messages
+                    });
                 });
 
                 it('new message yields array of size 100', function () {
@@ -167,7 +174,10 @@ define([
                         expect(messages.length).to.be.equal(100);
                     });
 
-                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [100]
+                    });
                 });
 
                 it('new message removes first element in array', function () {
@@ -175,7 +185,10 @@ define([
                         expect(messages[0]).to.be.equal(1);
                     });
 
-                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [100]
+                    });
                 });
 
                 it('new message is added at the end of array', function () {
@@ -183,7 +196,10 @@ define([
                         expect(messages[99]).to.be.equal(100);
                     });
 
-                    newMessagesCallback(null, {status:'ok', chatMessages:[100]});
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [100]
+                    });
                 });
 
                 it('multiple new messages returns fixed sized array of size 100 with new values at end', function () {
@@ -195,7 +211,10 @@ define([
                         expect(messages[1]).to.be.undefined;
                     });
 
-                    newMessagesCallback(null, {status:'ok', chatMessages:[100,101]});
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [100, 101]
+                    });
                 });
             });
         });

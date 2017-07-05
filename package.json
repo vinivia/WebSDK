@@ -25,7 +25,9 @@
     "ci-coverage": "node scripts/ci-coverage.js",
     "start": "node example/httpserver.js",
     "jpm-run": "jpm run --addon-dir src/firefox",
-    "jpm-xpi": "jpm xpi --addon-dir src/firefox"
+    "jpm-xpi": "jpm xpi --addon-dir src/firefox",
+    "eslint": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' —-cache",
+    "eslint-fix": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' --fix"
   },
   "dependencies": {
     "phenix-rtc": "1.0.10"
@@ -35,6 +37,9 @@
   },
   "devDependencies": {
     "bower": "1.8.0",
+    "eslint": "4.1.1",
+    "eslint-plugin-mocha": "4.11.0",
+    "eslint-plugin-requirejs": "3.1.1",
     "express": "4.14.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",

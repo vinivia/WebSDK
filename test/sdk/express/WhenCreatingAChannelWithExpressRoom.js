@@ -16,19 +16,34 @@
 define([
     'sdk/express/RoomExpress',
     '../../../test/mock/mockPCast',
-    'sdk/room/room.json',
+    'sdk/room/room.json'
 ], function (RoomExpress, MockPCast, room) {
     describe('When Creating a Channel with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {name: 'mockUser', password: 'somePassword'};
-        var mockRoom = {roomId:'TestRoom123',alias:'',name:'Test123',description:'',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, members:[]};
+        var mockAuthData = {
+            name: 'mockUser',
+            password: 'somePassword'
+        };
+        var mockRoom = {
+            roomId: 'TestRoom123',
+            alias: '',
+            name: 'Test123',
+            description: '',
+            bridgeId: '',
+            pin: '',
+            type: room.types.multiPartyChat.name,
+            members: []
+        };
 
         var requests = [];
 
         before(function() {
             this.xhr = sinon.useFakeXMLHttpRequest();
 
-            var authResponse = {status: 'ok', authenticationToken: 'newToken'};
+            var authResponse = {
+                status: 'ok',
+                authenticationToken: 'newToken'
+            };
 
             this.xhr.onCreate = function (req) {
                 requests.push(req);
@@ -47,7 +62,10 @@ define([
         var response;
 
         beforeEach(function() {
-            roomExpress = new RoomExpress({backendUri: mockBackendUri, authenticationData: mockAuthData});
+            roomExpress = new RoomExpress({
+                backendUri: mockBackendUri,
+                authenticationData: mockAuthData
+            });
 
             MockPCast.buildUpMockPCast(roomExpress.getPCastExpress().getPCast());
 
@@ -85,7 +103,10 @@ define([
         it('Expect room to be returned from createChannel', function () {
             protocol.createRoom.restore();
             protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room, callback) {
-                callback(null, {status: 'ok', room: room});
+                callback(null, {
+                    status: 'ok',
+                    room: room
+                });
             });
 
             roomExpress.createChannel({room: mockRoom}, function(error, response) {

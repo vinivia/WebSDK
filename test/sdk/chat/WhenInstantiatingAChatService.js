@@ -30,13 +30,16 @@ define([
             pcast = new MockPCast();
 
             mockProtocol = pcast.getProtocol();
-            mockProtocol.getSessionId = function () { return 'mockSessionId'; };
+
+            mockProtocol.getSessionId = function () {
+                return 'mockSessionId';
+            };
 
             chatService = new ChatService(pcast);
 
             response = {
                 status: 'ok',
-                chatMessages: [],
+                chatMessages: []
             };
 
             mockProtocol.subscribeToRoomConversation.restore();
@@ -84,7 +87,7 @@ define([
             });
 
             it('loadMessages returns list of existing messages for roomId', function () {
-                response.chatMessages = [{id:'1'}];
+                response.chatMessages = [{id: '1'}];
 
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
@@ -97,7 +100,10 @@ define([
             });
 
             it('loadMessages successfully converts Long Timestamp', function () {
-                response.chatMessages = [{id:'1',timestamp:Long.fromNumber(1488469432437)}];
+                response.chatMessages = [{
+                    id: '1',
+                    timestamp: Long.fromNumber(1488469432437)
+                }];
 
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
@@ -123,7 +129,7 @@ define([
                 });
             });
 
-            it('Expect loadMessages to return an error when error returned from protocol', function () {
+            it('Expect subscribeAndLoadMessages to return an error when error returned from protocol', function () {
                 mockProtocol.subscribeToRoomConversation.restore();
                 mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
                     callback(new Error('Error'), null);
@@ -141,7 +147,7 @@ define([
                 sinon.assert.calledOnce(mockProtocol.sendMessageToRoom);
             });
 
-            it('Expect loadMessages to return an error when error returned from protocol', function () {
+            it('Expect sendMessageToRoom to return an error when error returned from protocol', function () {
                 mockProtocol.sendMessageToRoom.restore();
                 mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom', function (roomId, chatService, callback) {
                     callback(new Error('Error'), null);
@@ -183,7 +189,11 @@ define([
                     }
                 });
 
-                var event = {roomId:'roomId', eventType: 'Message', chatMessages: [{id:'1'}]};
+                var event = {
+                    roomId: 'roomId',
+                    eventType: 'Message',
+                    chatMessages: [{id: '1'}]
+                };
                 onChatEvent(event);
             });
 
@@ -194,7 +204,14 @@ define([
                     }
                 });
 
-                var event = {roomId:'roomId', eventType: 'Message', chatMessages: [{id:'1', timestamp: Long.fromNumber(1488469432437)}]};
+                var event = {
+                    roomId: 'roomId',
+                    eventType: 'Message',
+                    chatMessages: [{
+                        id: '1',
+                        timestamp: Long.fromNumber(1488469432437)
+                    }]
+                };
                 onChatEvent(event);
             });
 
@@ -205,9 +222,16 @@ define([
                     }
                 });
 
-                var event = {roomId:'roomId', eventType: 'Message', chatMessages: [{id:'1', from: { lastUpdate: Long.fromNumber(1488469432437) }}]};
+                var event = {
+                    roomId: 'roomId',
+                    eventType: 'Message',
+                    chatMessages: [{
+                        id: '1',
+                        from: {lastUpdate: Long.fromNumber(1488469432437)}
+                    }]
+                };
                 onChatEvent(event);
-            })
+            });
         });
 
         describe('When getting messages', function () {
@@ -234,7 +258,10 @@ define([
                     }
                 });
 
-                var response = {status: 'ok', chatMessages: [{id:'1'}]};
+                var response = {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                };
                 messagesCallback(null, response);
             });
 
@@ -245,7 +272,10 @@ define([
                     }
                 });
 
-                var response = {status: 'ok', chatMessages: [{id:'1'}]};
+                var response = {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                };
                 messagesCallback(null, response);
             });
 
@@ -256,7 +286,10 @@ define([
                     }
                 });
 
-                var response = {status: 'ok', chatMessages: [{id:'1'}]};
+                var response = {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                };
                 messagesCallback(null, response);
             });
 
@@ -267,7 +300,13 @@ define([
                     }
                 });
 
-                var response = {status: 'ok', chatMessages: [{id:'1', from: { lastUpdate: Long.fromNumber(1488469432437) }}]};
+                var response = {
+                    status: 'ok',
+                    chatMessages: [{
+                        id: '1',
+                        from: {lastUpdate: Long.fromNumber(1488469432437)}
+                    }]
+                };
                 messagesCallback(null, response);
             });
 
@@ -278,7 +317,13 @@ define([
                     }
                 });
 
-                var response = {status: 'ok', chatMessages: [{id:'1', timestamp: Long.fromNumber(1488469432437)}]};
+                var response = {
+                    status: 'ok',
+                    chatMessages: [{
+                        id: '1',
+                        timestamp: Long.fromNumber(1488469432437)
+                    }]
+                };
                 messagesCallback(null, response);
             });
         });
@@ -314,7 +359,7 @@ define([
                 setTimeout(function () {
                     sinon.assert.calledTwice(mockProtocol.subscribeToRoomConversation);
                     done();
-                }, 500)
+                }, 500);
             });
         });
 
@@ -351,7 +396,7 @@ define([
                     setTimeout(function () {
                         sinon.assert.notCalled(mockProtocol.subscribeToRoomConversation);
                         done();
-                    }, 200)
+                    }, 200);
                 }, 200);
             });
         });

@@ -32,14 +32,41 @@ define([
     var baseURI;
     var self;
 
-    var mockTrack = { enabled: 'true', state:track.states.trackEnabled.name };
-    var stream1 = {type: stream.types.user.name, uri: baseURI+'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name, getTracks: function () { return [mockTrack]; }};
-    var member1 = {state: member.states.passive.name, sessionId: 'member1',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'first'};
-    var mockRoom = {roomId:'TestRoom123',alias:'',name:'Test123',description:'Test 123',bridgeId:'',pin:'',type: room.types.multiPartyChat.name, getRoomId:function () { return room.roomId; }, members:[member1]};
+    var mockTrack = {
+        enabled: 'true',
+        state: track.states.trackEnabled.name
+    };
+    var stream1 = {
+        type: stream.types.user.name,
+        uri: baseURI+'Stream1',
+        audioState: track.states.trackEnabled.name,
+        videoState: track.states.trackEnabled.name,
+        getTracks: function () {
+            return [mockTrack];
+        }
+    };
+    var member1 = {
+        state: member.states.passive.name,
+        sessionId: 'member1',
+        role: member.roles.participant.name,
+        streams: [stream1],
+        lastUpdate: 123,
+        screenName: 'first'
+    };
+    var mockRoom = {
+        roomId: 'TestRoom123',
+        alias: '',
+        name: 'Test123',
+        description: 'Test 123',
+        bridgeId: '',
+        pin: '',
+        type: room.types.multiPartyChat.name,
+        getRoomId: function () {
+            return room.roomId;
+        },
+        members: [member1]
+    };
 
-    var name = 'testRoom';
-    var type = room.types.multiPartyChat.name;
-    var description = 'MyRoom';
     var screenName = 'MyRoom';
     var roomId = '';
     var alias = '';
@@ -47,12 +74,22 @@ define([
 
     describe('When instantiating a RoomService', function () {
         beforeEach(function () {
-            self = {state: member.states.passive.name, sessionId: 'mockSessionId',role: member.roles.participant.name,streams:[stream1],lastUpdate:123, screenName:'self'};
+            self = {
+                state: member.states.passive.name,
+                sessionId: 'mockSessionId',
+                role: member.roles.participant.name,
+                streams: [stream1],
+                lastUpdate: 123,
+                screenName: 'self'
+            };
 
             pcast = new MockPCast();
 
             mockProtocol = pcast.getProtocol();
-            mockProtocol.getSessionId = function(){ return 'mockSessionId'; };
+
+            mockProtocol.getSessionId = function(){
+                return 'mockSessionId';
+            };
 
             baseURI = pcast._baseUri;
 
@@ -61,7 +98,7 @@ define([
             response = {
                 status: 'ok',
                 room: mockRoom,
-                members: [member1,self]
+                members: [member1, self]
             };
 
             mockProtocol.enterRoom.restore();
@@ -266,7 +303,6 @@ define([
 
                 roomService.start(role, screenName);
 
-
                 roomService.createRoom(mockRoom, function (error, response) {
                     expect(response.status).to.not.be.equal('ok');
                 });
@@ -289,7 +325,7 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.createRoom(roomToCreate, function (error, response) {});
+                roomService.createRoom(roomToCreate, function () {});
             });
 
             it('Return new Room model with response.room values', function () {
@@ -303,7 +339,7 @@ define([
 
             it('Self in enterRoomRequest should have all values', function () {
                 mockProtocol.enterRoom.restore();
-                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest) {
                     expect(selfForRequest.sessionId).to.be.a('string');
                     expect(selfForRequest.screenName).to.be.a('string');
                     expect(selfForRequest.role).to.be.a('string');
@@ -342,9 +378,15 @@ define([
 
             describe('When already in room', function () {
                 var onRoomEvent;
-                var on;
 
-                var member2 = {state: member.states.passive.name, sessionId: 'member2', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'second'};
+                var member2 = {
+                    state: member.states.passive.name,
+                    sessionId: 'member2',
+                    role: member.roles.participant.name,
+                    streams: [stream1],
+                    lastUpdate: 123,
+                    screenName: 'second'
+                };
 
                 beforeEach(function (done) {
                     response.members = [member1, member2, self];
@@ -378,8 +420,19 @@ define([
 
                 describe('When onRoomEvent occurs', function () {
                     it('MemberJoined event adds member to room', function () {
-                        var member3 = {state: member.states.passive.name, sessionId: 'member3', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'third'};
-                        var event = {eventType: room.events.memberJoined.name, roomId: 'TestRoom123', members: [member1, member2, member3]};
+                        var member3 = {
+                            state: member.states.passive.name,
+                            sessionId: 'member3',
+                            role: member.roles.participant.name,
+                            streams: [stream1],
+                            lastUpdate: 123,
+                            screenName: 'third'
+                        };
+                        var event = {
+                            eventType: room.events.memberJoined.name,
+                            roomId: 'TestRoom123',
+                            members: [member1, member2, member3]
+                        };
 
                         onRoomEvent(event);
 
@@ -389,8 +442,19 @@ define([
                     });
 
                     it('Self joined has self instance in room with updated values', function () {
-                        var member3 = {state: member.states.passive.name, sessionId: self.sessionId, role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'third'};
-                        var event = {eventType: room.events.memberJoined.name, roomId: 'TestRoom123', members: [member1, member2, member3]};
+                        var member3 = {
+                            state: member.states.passive.name,
+                            sessionId: self.sessionId,
+                            role: member.roles.participant.name,
+                            streams: [stream1],
+                            lastUpdate: 123,
+                            screenName: 'third'
+                        };
+                        var event = {
+                            eventType: room.events.memberJoined.name,
+                            roomId: 'TestRoom123',
+                            members: [member1, member2, member3]
+                        };
 
                         onRoomEvent(event);
 
@@ -405,7 +469,11 @@ define([
                     });
 
                     it('MemberLeft event handled removes member from room', function () {
-                        var event = {eventType: room.events.memberLeft.name, roomId: 'TestRoom123', members: [member2]};
+                        var event = {
+                            eventType: room.events.memberLeft.name,
+                            roomId: 'TestRoom123',
+                            members: [member2]
+                        };
 
                         onRoomEvent(event);
 
@@ -415,7 +483,11 @@ define([
                     });
 
                     it('MemberLeft event for self removes member from room', function () {
-                        var event = {eventType: room.events.memberLeft.name, roomId: 'TestRoom123', members: [self]};
+                        var event = {
+                            eventType: room.events.memberLeft.name,
+                            roomId: 'TestRoom123',
+                            members: [self]
+                        };
 
                         onRoomEvent(event);
 
@@ -425,8 +497,19 @@ define([
                     });
 
                     it('MemberUpdated event updates room member screenName', function () {
-                        var updatedMember2 = {state: member.states.passive.name, sessionId: 'member2', screenName: 'James', role: member.roles.participant.name, streams: [stream1], lastUpdate: 125};
-                        var event = {eventType: room.events.memberUpdated.name, roomId: 'TestRoom123', members: [updatedMember2]};
+                        var updatedMember2 = {
+                            state: member.states.passive.name,
+                            sessionId: 'member2',
+                            screenName: 'James',
+                            role: member.roles.participant.name,
+                            streams: [stream1],
+                            lastUpdate: 125
+                        };
+                        var event = {
+                            eventType: room.events.memberUpdated.name,
+                            roomId: 'TestRoom123',
+                            members: [updatedMember2]
+                        };
 
                         onRoomEvent(event);
 
@@ -442,8 +525,19 @@ define([
                     });
 
                     it('MemberUpdated event updates self screenName', function () {
-                        var newSelf = {state: member.states.passive.name, sessionId: mockProtocol.getSessionId(), screenName: 'NewScreenName', role: member.roles.participant.name, streams: [stream1], lastUpdate: 125};
-                        var event = {eventType: room.events.memberUpdated.name, roomId: 'TestRoom123', members: [newSelf]};
+                        var newSelf = {
+                            state: member.states.passive.name,
+                            sessionId: mockProtocol.getSessionId(),
+                            screenName: 'NewScreenName',
+                            role: member.roles.participant.name,
+                            streams: [stream1],
+                            lastUpdate: 125
+                        };
+                        var event = {
+                            eventType: room.events.memberUpdated.name,
+                            roomId: 'TestRoom123',
+                            members: [newSelf]
+                        };
 
                         onRoomEvent(event);
 
@@ -453,8 +547,21 @@ define([
                     });
 
                     it('Updated (room) event updates room name', function () {
-                        var updatedRoom = {roomId: 'TestRoom123', alias: '', name: 'TestRoom', description: '', bridgeId: '', pin: '', type: ''};
-                        var event = {eventType: room.events.roomUpdated.name, roomId: 'TestRoom123', room: updatedRoom, members: [member1, member2]};
+                        var updatedRoom = {
+                            roomId: 'TestRoom123',
+                            alias: '',
+                            name: 'TestRoom',
+                            description: '',
+                            bridgeId: '',
+                            pin: '',
+                            type: ''
+                        };
+                        var event = {
+                            eventType: room.events.roomUpdated.name,
+                            roomId: 'TestRoom123',
+                            room: updatedRoom,
+                            members: [member1, member2]
+                        };
 
                         onRoomEvent(event);
 
@@ -465,7 +572,13 @@ define([
 
                     it('DISABLED: Ended (room) event handled successfully', function () {
                         this.skip();
-                        var event = {eventType: room.events.roomEnded.name, roomId: 'TestRoom123', room: mockRoom, members: [member1, member2]};
+
+                        var event = {
+                            eventType: room.events.roomEnded.name,
+                            roomId: 'TestRoom123',
+                            room: mockRoom,
+                            members: [member1, member2]
+                        };
 
                         onRoomEvent(event);
 
@@ -476,8 +589,18 @@ define([
                 });
 
                 describe('When Member Updated (memberUpdate) triggered', function () {
-                    var publishedStream1 = {type:'User', uri: 'Stream1', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name};
-                    var publishedStream2 = {type:'User', uri: 'Stream2', audioState: track.states.trackEnabled.name, videoState: track.states.trackEnabled.name};
+                    var publishedStream1 = {
+                        type: 'User',
+                        uri: 'Stream1',
+                        audioState: track.states.trackEnabled.name,
+                        videoState: track.states.trackEnabled.name
+                    };
+                    var publishedStream2 = {
+                        type: 'User',
+                        uri: 'Stream2',
+                        audioState: track.states.trackEnabled.name,
+                        videoState: track.states.trackEnabled.name
+                    };
                     var self;
 
                     beforeEach(function () {
@@ -532,7 +655,7 @@ define([
 
                     it('Screen Name Updated does not include state property when state has not changed', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member) {
                             expect(member.state).to.be.undefined;
                             done();
                         });
@@ -583,7 +706,7 @@ define([
                         roomService.revertMemberChanges(member);
 
                         expect(member.getObservableScreenName().getValue()).to.be.equal(cachedMember.getObservableScreenName().getValue());
-                    })
+                    });
                 });
 
                 describe('When Updating Room', function () {
@@ -625,7 +748,7 @@ define([
                         roomService.revertRoomChanges();
 
                         expect(descriptionObs.getValue()).to.be.equal(mockRoom.description);
-                    })
+                    });
                 });
 
                 describe('When Streams updated', function () {

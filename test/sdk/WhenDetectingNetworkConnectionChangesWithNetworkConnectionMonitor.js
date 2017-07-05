@@ -54,7 +54,6 @@ define([
             expect(monitor._offlineHysteresisTimeout).to.be.equal(1);
         });
 
-
         it('offline event triggers offline callback after timeout', function (done) {
             var event = new Event('offline');
 

@@ -29,7 +29,7 @@ define([
         beforeEach(function() {
             consoleAppender = new ConsoleAppender();
 
-            consoleLogStub = sinon.stub(console, 'log'); //disable requests to external source
+            consoleLogStub = sinon.stub(console, 'log'); // Disable requests to external source
             consoleErrorStub = sinon.stub(console, 'error');
         });
 

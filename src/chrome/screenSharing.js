@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global chrome */
 'use strict';
 
 const defaultSources = ['screen', 'window', 'tab'];
@@ -29,7 +30,10 @@ function getDesktopMedia(sources, sender, callback) {
             return callback({status: 'permission-denied'});
         }
 
-        return callback({status: 'ok', streamId: streamId});
+        return callback({
+            status: 'ok',
+            streamId: streamId
+        });
     });
 }
 
@@ -42,21 +46,30 @@ function cancelDesktopMedia() {
 
 chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResponse) {
     switch (message.type) {
-        case 'get-desktop-media':
-            getDesktopMedia(message.sources || defaultSources, sender, function (response) {
-                sendResponse(response);
-            });
-            return true;
-            break;
-        case 'cancel-desktop-media':
-            cancelDesktopMedia();
-            sendResponse({status: 'ok'});
-            break;
-        case 'version':
-            sendResponse({status: 'ok', version: '%SDKVERSION%'});
-            break;
-        default:
-            sendResponse({status: 'failed', reason: 'Unsupported command'});
-            break;
+    case 'get-desktop-media':
+        getDesktopMedia(message.sources || defaultSources, sender, function (response) {
+            sendResponse(response);
+        });
+
+        return true;
+    case 'cancel-desktop-media':
+        cancelDesktopMedia();
+        sendResponse({status: 'ok'});
+
+        break;
+    case 'version':
+        sendResponse({
+            status: 'ok',
+            version: '%SDKVERSION%'
+        });
+
+        break;
+    default:
+        sendResponse({
+            status: 'failed',
+            reason: 'Unsupported command'
+        });
+
+        break;
     }
 });

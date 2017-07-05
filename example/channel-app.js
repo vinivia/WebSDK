@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global requirejs */
 requirejs.config({
     paths: {
         'phenix-web-sdk': 'web-sdk',
@@ -31,7 +32,14 @@ requirejs.config({
     }
 });
 
-requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player', 'app-setup'], function ($, _, sdk, shaka, Player, app) {
+requirejs([
+    'jquery',
+    'lodash',
+    'phenix-web-sdk',
+    'shaka-player',
+    'video-player',
+    'app-setup'
+], function ($, _, sdk, shaka, Player, app) {
     var init = function init() {
         var roomExpress;
 
@@ -175,7 +183,7 @@ requirejs(['jquery', 'lodash', 'phenix-web-sdk', 'shaka-player', 'video-player',
             sdk.RTC.onload = function() {
                 app.init();
                 init();
-            }
+            };
         }
     });
 });

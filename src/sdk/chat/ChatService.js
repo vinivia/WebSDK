@@ -28,7 +28,7 @@ define([
 
         this._pcast = pcast;
         this._logger = pcast.getLogger();
-        this._protocol =  pcast.getProtocol();
+        this._protocol = pcast.getProtocol();
         this._enabled = new Observable(false);
         this._lastSubscribedSessionId = null;
 
@@ -117,22 +117,27 @@ define([
         assert.isArray(event.chatMessages, 'event.chatMessages');
 
         switch (event.eventType) {
-            case 'Message':
-                this._logger.debug('[%s] Room messages [%s]', event.roomId, event.chatMessages);
-                var listener = this._roomMessagesListeners[event.roomId];
+        case 'Message':
+            this._logger.debug('[%s] Room messages [%s]', event.roomId, event.chatMessages);
 
-                convertTimeFromLongInChatMessages(event.chatMessages);
+            var listener = this._roomMessagesListeners[event.roomId];
 
-                if (listener) {
-                    listener(null, {status: 'ok', chatMessages: event.chatMessages});
-                }
-                break;
-            default:
-                this._logger.warn('Unsupported room conversation event [%s]', event.eventType)
+            convertTimeFromLongInChatMessages(event.chatMessages);
+
+            if (listener) {
+                listener(null, {
+                    status: 'ok',
+                    chatMessages: event.chatMessages
+                });
+            }
+
+            break;
+        default:
+            this._logger.warn('Unsupported room conversation event [%s]', event.eventType);
         }
     }
 
-    function onStatusChange(status) {
+    function onStatusChange(status) { // eslint-disable-line no-unused-vars
         // Only reason to redo subscriptions is if sessionId changes, which infers status changed
     }
 
@@ -310,6 +315,7 @@ define([
         if (chatMessage.timestamp) {
             chatMessage.timestamp = _.utc(chatMessage.timestamp);
         }
+
         if (chatMessage.from) {
             chatMessage.from.lastUpdate = _.utc(chatMessage.from.lastUpdate);
         }

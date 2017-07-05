@@ -112,7 +112,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -162,9 +161,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    return {
-	        createLogger: function() { return new Logger(); }, // base logger with nothing appended
+	        createLogger: function() {
+	            return new Logger();
+	        }, // Base logger with nothing appended
 	        ConsoleAppender: ConsoleAppender,
-	        level: logging.level // object with log levels
+	        level: logging.level // Object with log levels
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -197,7 +198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-07-01T02:15:23Z' || '?';
+	    var sdkVersion = '2017-07-05T22:12:29Z' || '?';
 	    var releaseVersion = '2017.2.7';
 
 	    function Logger(observableSessionId) {
@@ -210,31 +211,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (observableSessionId) {
 	            assert.isObject(observableSessionId);
 
-	            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial:'notify'})
+	            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
 	        }
 	    }
 
-	    Logger.prototype.trace = function trace(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.TRACE});
 	    };
 
-	    Logger.prototype.debug = function debug(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.debug = function debug(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.DEBUG});
 	    };
 
-	    Logger.prototype.info = function info(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.info = function info(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.INFO});
 	    };
 
-	    Logger.prototype.warn = function warn(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.warn = function warn(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.WARN});
 	    };
 
-	    Logger.prototype.error = function error(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.error = function error(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.ERROR});
 	    };
 
-	    Logger.prototype.fatal = function fatal(/*formatStr, [parameter], ...*/) {
+	    Logger.prototype.fatal = function fatal(/* formatStr, [parameter], ...*/) {
 	        return log.call(this, arguments, {level: logging.level.FATAL});
 	    };
 
@@ -293,28 +294,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _.forEach(this._appenders, function(appender) {
 	            try {
 	                appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
-	            } catch (e) {
-	            }
+	            } catch (e) { } // eslint-disable-line no-empty
 	        });
 	    }
 
 	    function convertLevel(jsLoggerLevel) {
 	        switch (jsLoggerLevel) {
-	            case logging.level.TRACE:
-	                return 'Trace';
-	            case logging.level.DEBUG:
-	                return 'Debug';
-	            case logging.level.INFO:
-	                return 'Info';
-	            case logging.level.WARN:
-	                return 'Warn';
-	            case logging.level.ERROR:
-	                return 'Error';
-	            case logging.level.FATAL:
-	                return 'Fatal';
+	        case logging.level.TRACE:
+	            return 'Trace';
+	        case logging.level.DEBUG:
+	            return 'Debug';
+	        case logging.level.INFO:
+	            return 'Info';
+	        case logging.level.WARN:
+	            return 'Warn';
+	        case logging.level.ERROR:
+	            return 'Error';
+	        case logging.level.FATAL:
+	            return 'Fatal';
+	        default:
+	            throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
 	        }
-
-	        throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
 	    }
 
 	    var stringify = function stringify(args) {
@@ -347,20 +347,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var type = fmt.substring(idx + 1, idx + 2);
 
 	                switch (type) {
-	                    case '%':
-	                        // Escaped '%%' turns into '%'
-	                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
-	                        idx++;
-	                        break;
-	                    case 's':
-	                    case 'd':
-	                        // Replace '%d' or '%s' with the argument
-	                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
-	                        args.splice(1, 1);
-	                        break;
-	                    default:
-	                        return args;
-	                        break;
+	                case '%':
+	                    // Escaped '%%' turns into '%'
+	                    fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
+	                    idx++;
+
+	                    break;
+	                case 's':
+	                case 'd':
+	                    // Replace '%d' or '%s' with the argument
+	                    args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
+	                    args.splice(1, 1);
+
+	                    break;
+	                default:
+	                    return args;
 	                }
 	            }
 	        }
@@ -370,7 +371,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return Logger;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 4 */
@@ -480,6 +480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!_.isFunction(callback)) {
 	            throw new Error('Callback must be a function');
 	        }
+
 	        assertIsArray(collection);
 
 	        for (var i = 0; i < collection.length; i++) {
@@ -491,6 +492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!_.isFunction(callback)) {
 	            throw new Error('Callback must be a function');
 	        }
+
 	        if (!_.isObject(objectWithProperties)) {
 	            throw new Error('objectWithProperties must be an object.');
 	        }
@@ -584,6 +586,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _.forEach(collection, function findInCollection(value, index) {
 	            if (callback(value) && index >= (initialIndex || 0)) {
 	                hasItem = value;
+
 	                return hasItem;
 	            }
 	        });
@@ -599,6 +602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _.forEach(collection, function findInCollection(value, index) {
 	            if (callback(value, index) && index >= (initialIndex || 0)) {
 	                hasItem = index;
+
 	                return hasItem;
 	            }
 	        });
@@ -685,8 +689,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (_.isArray(collection)) {
 	            return collection.length > parseInt(indexOrKey);
 	        } else if (_.isObject(collection)) {
-	            return collection.hasOwnProperty(indexOrKey)
+	            return collection.hasOwnProperty(indexOrKey);
 	        }
+
 	        return false;
 	    };
 
@@ -694,6 +699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (_.isNullOrUndefined(first) || _.isNullOrUndefined(second)) {
 	            return _.isNullOrUndefined(first) && _.isNullOrUndefined(second);
 	        }
+
 	        if (_.isArray(first) || _.isArray(second)) {
 	            return _.isArray(first) && _.isArray(second);
 	        }
@@ -811,16 +817,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var cache = [];
 
 	        return toStringStr + JSON.stringify(data, function (key, value) {
-	                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
-	                    if (_.includes(cache, value)) {
-	                        return '<recursive>';
-	                    }
-
-	                    cache.push(value);
+	            if (_.isObject(value) && !_.isNullOrUndefined(value)) {
+	                if (_.includes(cache, value)) {
+	                    return '<recursive>';
 	                }
 
-	                return key === '' ? value : _.toString(value);
-	            });
+	                cache.push(value);
+	            }
+
+	            return key === '' ? value : _.toString(value);
+	        });
 	    };
 
 	    _.pad = function padNumber(value, numberToPad) {
@@ -958,8 +964,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(4)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 	    'use strict';
 
 	    var logging = {
@@ -998,7 +1003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(8),
+	    __webpack_require__(8)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AnalytixAppender) {
 
 	    var config = {
@@ -1032,9 +1037,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return 'local';
 	        } else if (uri.indexOf('stg') > -1) {
 	            return 'staging';
-	        } else {
-	            return 'production';
 	        }
+
+	        return 'production';
 	    }
 
 	    function createNewAppender(uri) {
@@ -1204,9 +1209,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 
-	        var storeLogRecords = {
-	            records: _.take(this._records, this._maxBatchSize)
-	        };
+	        var storeLogRecords = {records: _.take(this._records, this._maxBatchSize)};
 
 	        this._records = this._records.slice(this._maxBatchSize);
 	        this._pending = true;
@@ -1243,7 +1246,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    onTimeout();
 	                }
 
-	                return {storedRecords: 0, status: 'error'};
+	                return {
+	                    storedRecords: 0,
+	                    status: 'error'
+	                };
 	            }
 
 	            return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));
@@ -1280,7 +1286,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-07-01T02:15:23Z';
+	        this._version = '2017-07-05T22:12:29Z';
 	    }
 
 	    Http.prototype.getWithRetry = function getWithRetry(url, callback, maxAttempts, attempt) {
@@ -1291,7 +1297,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var requestMethod = 'GET';
 	        var requestUrl = appendQueryParameters(url, that._version, _.now());
-	        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback);
+	        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
 
 	        if (!xhr) {
 	            return callback(getUnsupportedError());
@@ -1320,7 +1326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var requestMethod = 'POST';
 	        var requestUrl = appendQueryParameters(url, that._version, _.now());
-	        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback);
+	        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl);
 
 	        if (!xhr) {
 	            return callback(getUnsupportedError());
@@ -1347,13 +1353,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return url + '?version=' + encodeURIComponent(version) + '&_=' + timestamp;
 	    }
 
-	    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl, callback) {
+	    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
 	        var xhr = new XMLHttpRequest();
 
 	        if ('withCredentials' in xhr) {
 	            // Most browsers.
 	            xhr.open(requestMethod, requestUrl, true);
-	        } else if (typeof XDomainRequest != 'undefined') {
+	        } else if (typeof XDomainRequest !== 'undefined') {
 	            // IE8 & IE9
 	            xhr = new XDomainRequest();
 	            xhr.open(requestMethod, requestUrl);
@@ -1378,7 +1384,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            xhr.setRequestHeader('Content-type', 'application/protobuf');
 	            xhr.setRequestHeader('Accept', 'application/protobuf');
 	        } else {
-	            xhr.setRequestHeader('Content-type', 'application/json'); // default to json
+	            xhr.setRequestHeader('Content-type', 'application/json'); // Default to json
 	            xhr.setRequestHeader('Accept', 'application/json');
 	        }
 	    }
@@ -1401,7 +1407,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return new Http();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 10 */
@@ -5966,12 +5971,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(19),
 	    __webpack_require__(20),
 	    __webpack_require__(21),
-	    __webpack_require__(22),
-	    ], __WEBPACK_AMD_DEFINE_RESULT__ = function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
+	    __webpack_require__(22)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
 	    'use strict';
 
 	    function MQProtocol(logger) {
 	        this._logger = logger;
+
 	        var builder = ProtoBuf.loadJson(mqProto);
 
 	        builder = ProtoBuf.loadJson(pcastProto, builder);
@@ -5990,6 +5996,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof type !== 'string') {
 	            throw new Error("'type' must be a string");
 	        }
+
 	        if (typeof data !== 'object') {
 	            throw new Error("'data' must be an object");
 	        }
@@ -6045,6 +6052,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    for (var i = 0; i < type.children.length; i++) {
 	                        if (type.children[i].id === value) {
 	                            metaValue = type.children[i];
+
 	                            break;
 	                        }
 	                    }
@@ -6061,7 +6069,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return MQProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 15 */
@@ -11617,9 +11624,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 9,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    },
 	                    {
 	                        "rule": "required",
@@ -11760,9 +11765,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "Type",
 	                        "name": "type",
 	                        "id": 1,
-	                        "options": {
-	                            "default": "Offer"
-	                        }
+	                        "options": {"default": "Offer"}
 	                    },
 	                    {
 	                        "rule": "required",
@@ -11919,9 +11922,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 3,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -11962,9 +11963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 3,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12011,9 +12010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 3,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12060,9 +12057,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 3,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12138,9 +12133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 4,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12193,9 +12186,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 5,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12743,9 +12734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "apiVersion",
 	                        "id": 1,
-	                        "options": {
-	                            "default": 0
-	                        }
+	                        "options": {"default": 0}
 	                    },
 	                    {
 	                        "rule": "required",
@@ -12781,9 +12770,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "protocol",
 	                        "id": 1,
-	                        "options": {
-	                            "default": "http"
-	                        }
+	                        "options": {"default": "http"}
 	                    },
 	                    {
 	                        "rule": "required",
@@ -12796,27 +12783,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "uint32",
 	                        "name": "port",
 	                        "id": 3,
-	                        "options": {
-	                            "default": 80
-	                        }
+	                        "options": {"default": 80}
 	                    },
 	                    {
 	                        "rule": "optional",
 	                        "type": "string",
 	                        "name": "method",
 	                        "id": 4,
-	                        "options": {
-	                            "default": "POST"
-	                        }
+	                        "options": {"default": "POST"}
 	                    },
 	                    {
 	                        "rule": "optional",
 	                        "type": "string",
 	                        "name": "path",
 	                        "id": 5,
-	                        "options": {
-	                            "default": "/"
-	                        }
+	                        "options": {"default": "/"}
 	                    }
 	                ]
 	            },
@@ -13242,9 +13223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "bool",
 	                        "name": "updateStreams",
 	                        "id": 7,
-	                        "options": {
-	                            "default": false
-	                        }
+	                        "options": {"default": false}
 	                    },
 	                    {
 	                        "rule": "repeated",
@@ -14165,7 +14144,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._onOffline = null;
 	    };
 
-	    function handleOfflineWithHysteresis(offlineCallback, event) {
+	    function handleOfflineWithHysteresis(offlineCallback, event) { // eslint-disable-line no-unused-vars
 	        var that = this;
 
 	        if (that._logger) {
@@ -14189,7 +14168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, that._offlineHysteresisTimeout);
 	    }
 
-	    function handleOnline(onlineCallback, event) {
+	    function handleOnline(onlineCallback, event) { // eslint-disable-line no-unused-vars
 	        if (this._logger) {
 	            this._logger.info('Network Reconnected.');
 	        }
@@ -14207,7 +14186,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return NetworkConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 24 */
@@ -14257,7 +14235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        messages[0] = since + ' [' + category + '] ' + level + ' ' + messages[0];
 
 	        if (context.level > logging.level.INFO) {
-	            logError(messages)
+	            logError(messages);
 	        } else {
 	            log(messages);
 	        }
@@ -14273,7 +14251,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return ConsoleAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 25 */
@@ -14315,20 +14292,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    var peerConnectionConfig = _.freeze({
 	        'iceServers': [
-	            {
-	                urls: 'stun:stun.l.google.com:19302'
-	            }, {
-	                urls: 'stun:stun1.l.google.com:19302'
-	            }, {
-	                urls: 'stun:stun2.l.google.com:19302'
-	            }, {
-	                urls: 'stun:stun3.l.google.com:19302'
-	            }, {
-	                urls: 'stun:stun4.l.google.com:19302'
-	            }
+	            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
 	        ]
 	    });
-	    var sdkVersion = '2017-07-01T02:15:23Z';
+	    var sdkVersion = '2017-07-05T22:12:29Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14362,7 +14329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        phenixRTC.addEventListener(window, 'unload', function (pcast) {
 	            return function () {
 	                pcast.stop();
-	            }
+	            };
 	        }(this));
 	    }
 
@@ -14382,12 +14349,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof authToken !== 'string') {
 	            throw new Error('"authToken" must be a string');
 	        }
+
 	        if (typeof authenticationCallback !== 'function') {
 	            throw new Error('"authenticationCallback" must be a function');
 	        }
+
 	        if (typeof onlineCallback !== 'function') {
 	            throw new Error('"onlineCallback" must be a function');
 	        }
+
 	        if (typeof offlineCallback !== 'function') {
 	            throw new Error('"offlineCallback" must be a function');
 	        }
@@ -14422,15 +14392,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    transitionToStatus.call(that, 'offline');
 
 	                    switch (err.code) {
-	                        case 0:
-	                            that._authenticationCallback.call(that, that, 'network-unavailable', '');
-	                            break;
-	                        case 503:
-	                            that._authenticationCallback.call(that, that, 'capacity', '');
-	                            break;
-	                        default:
-	                            that._authenticationCallback.call(that, that, 'failed', '');
-	                            break;
+	                    case 0:
+	                        that._authenticationCallback.call(that, that, 'network-unavailable', '');
+
+	                        break;
+	                    case 503:
+	                        that._authenticationCallback.call(that, that, 'capacity', '');
+
+	                        break;
+	                    default:
+	                        that._authenticationCallback.call(that, that, 'failed', '');
+
+	                        break;
 	                    }
 
 	                    that._stopped = true;
@@ -14465,11 +14438,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 
-	            for (var streamId in this._publishers) {
-	                if (this._publishers.hasOwnProperty(streamId)) {
-	                    var publisher = this._publishers[streamId];
+	            for (var publisherStreamId in this._publishers) {
+	                if (this._publishers.hasOwnProperty(publisherStreamId)) {
+	                    var publisher = this._publishers[publisherStreamId];
 
-	                    endStream.call(this, streamId, reason);
+	                    endStream.call(this, publisherStreamId, reason);
 
 	                    if (!_.includes(publisher.getOptions(), 'detached')) {
 	                        publisher.stop(reason);
@@ -14477,9 +14450,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 
-	            for (var streamId in this._peerConnections) {
-	                if (this._peerConnections.hasOwnProperty(streamId)) {
-	                    endStream.call(this, streamId, reason);
+	            for (var peerConnectionStreamId in this._peerConnections) {
+	                if (this._peerConnections.hasOwnProperty(peerConnectionStreamId)) {
+	                    endStream.call(this, peerConnectionStreamId, reason);
 	                }
 	            }
 
@@ -14507,6 +14480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof options !== 'object') {
 	            throw new Error('"options" must be an object');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -14518,17 +14492,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
+
 	        if (typeof streamToPublish !== 'object' && typeof streamToPublish !== 'string') {
 	            throw new Error('"streamToPublish" must be an object or URI');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
+
 	        tags = tags || [];
+
 	        if (!Array.isArray(tags)) {
 	            throw new Error('"tags" must be an array');
 	        }
+
 	        options = options || {};
+
 	        if (typeof options !== 'object') {
 	            throw new Error('"options" must be an object');
 	        }
@@ -14544,7 +14524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            setupStreamOptions.negotiate = false;
 	            setupStreamOptions.connectUri = streamToPublish;
 	        } else {
-	            setupStreamOptions.connectUri = options.connectUri
+	            setupStreamOptions.connectUri = options.connectUri;
 	        }
 
 	        if (tags.length > 0) {
@@ -14560,10 +14540,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._logger.warn('Failed to create uploader, status [%s]', response.status);
 
 	                switch (response.status) {
-	                    case 'capacity':
-	                        return callback.call(that, that, response.status);
-	                    default:
-	                        return callback.call(that, that, 'failed');
+	                case 'capacity':
+	                    return callback.call(that, that, response.status);
+	                default:
+	                    return callback.call(that, that, 'failed');
 	                }
 	            } else {
 	                var streamId = response.createStreamResponse.streamId;
@@ -14595,10 +14575,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
+
 	        options = options || {};
+
 	        if (typeof options !== 'object') {
 	            throw new Error('"options" must be an object');
 	        }
@@ -14620,13 +14603,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
 	                switch (response.status) {
-	                    case 'capacity':
-	                    case 'stream-ended':
-	                    case 'origin-stream-ended':
-	                    case 'streaming-not-available':
-	                        return callback.call(that, that, response.status);
-	                    default:
-	                        return callback.call(that, that, 'failed');
+	                case 'capacity':
+	                case 'stream-ended':
+	                case 'origin-stream-ended':
+	                case 'streaming-not-available':
+	                    return callback.call(that, that, response.status);
+	                default:
+	                    return callback.call(that, that, 'failed');
 	                }
 	            } else {
 	                var streamId = response.createStreamResponse.streamId;
@@ -14665,7 +14648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
 	            try {
-	                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) {
+	                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) { // eslint-disable-line no-undef
 	                    if (response && response.status === 'ok') {
 	                        that._logger.info('Screen sharing enabled using version [%s]', response.version);
 	                        callback(true);
@@ -14719,7 +14702,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
 
 	        try {
-	            chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
+	            chrome.webstore.install(chromeWebStoreUrl, function successCallback() { // eslint-disable-line no-undef
 	                return callback('ok');
 	            }, function failureCallback(reason) {
 	                if (reason) {
@@ -14761,12 +14744,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (intervalId) {
 	                    clearInterval(intervalId);
 	                }
+
 	                callback('ok');
 	            };
+
 	            var failure = function failure() {
 	                if (intervalId) {
 	                    clearInterval(intervalId);
 	                }
+
 	                callback('failed', new Error('failed'));
 	            };
 
@@ -14774,12 +14760,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (typeof window.PCastScreenSharing === 'object') {
 	                    return success();
 	                }
+
 	                if (attemptsLeft-- < 0) {
 	                    return failure();
 	                }
 	            }, firefoxInstallationCheckInterval);
 
-	            InstallTrigger.install(params, function xpiInstallCallback(url, status) {
+	            InstallTrigger.install(params, function xpiInstallCallback(url, status) { // eslint-disable-line no-undef
 	                // Callback only works for verified sites
 	                if (status === 0) {
 	                    success();
@@ -14800,54 +14787,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        switch (phenixRTC.browser) {
-	            case 'Chrome':
-	                try {
-	                    chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) {
-	                        if (response.status !== 'ok') {
-	                            return callback(response.status, undefined, new Error(response.status));
-	                        }
-
-	                        var constraints = {
-	                            video: {}
-	                        };
-
-	                        if (typeof options === 'object' && typeof options.screen === 'object') {
-	                            constraints.video = options.screen;
-	                        }
-
-	                        if (typeof constraints.video.mandatory !== 'object') {
-	                            constraints.video.mandatory = {};
-	                        }
-
-	                        constraints.video.mandatory.chromeMediaSource = 'desktop';
-	                        constraints.video.mandatory.chromeMediaSourceId = response.streamId;
-
-	                        callback('ok', constraints, undefined);
-	                    });
-	                } catch (e) {
-	                    if (e.message) {
-	                        that._logger.warn(e.message);
+	        case 'Chrome':
+	            try {
+	                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) { // eslint-disable-line no-undef
+	                    if (response.status !== 'ok') {
+	                        return callback(response.status, undefined, new Error(response.status));
 	                    }
 
-	                    callback('failed', undefined, e);
+	                    var constraints = {video: {}};
+
+	                    if (typeof options === 'object' && typeof options.screen === 'object') {
+	                        constraints.video = options.screen;
+	                    }
+
+	                    if (typeof constraints.video.mandatory !== 'object') {
+	                        constraints.video.mandatory = {};
+	                    }
+
+	                    constraints.video.mandatory.chromeMediaSource = 'desktop';
+	                    constraints.video.mandatory.chromeMediaSourceId = response.streamId;
+
+	                    callback('ok', constraints, undefined);
+	                });
+	            } catch (e) {
+	                if (e.message) {
+	                    that._logger.warn(e.message);
 	                }
-	                break;
-	            case 'Firefox':
-	                var constraints = {
-	                    video: {}
-	                };
 
-	                if (typeof options === 'object' && typeof options.screen === 'object') {
-	                    constraints.video = options.screen;
-	                }
+	                callback('failed', undefined, e);
+	            }
 
-	                constraints.video.mediaSource = 'window';
+	            break;
+	        case 'Firefox':
+	            var constraints = {video: {}};
 
-	                callback('ok', constraints, undefined);
-	                break;
-	            default:
-	                callback('not-supported', undefined, new Error('not-supported'));
-	                break;
+	            if (typeof options === 'object' && typeof options.screen === 'object') {
+	                constraints.video = options.screen;
+	            }
+
+	            constraints.video.mediaSource = 'window';
+
+	            callback('ok', constraints, undefined);
+
+	            break;
+	        default:
+	            callback('not-supported', undefined, new Error('not-supported'));
+
+	            break;
 	        }
 	    }
 
@@ -14860,6 +14846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (status === 'cancelled') {
 	                        return callback(status, 'cancelled');
 	                    }
+
 	                    if (status !== 'ok') {
 	                        return callback(status, undefined, new Error('screen-sharing-installation-failed'));
 	                    }
@@ -14876,15 +14863,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 
 	                switch (phenixRTC.browser) {
-	                    case 'Chrome':
-	                        tryInstallChromeScreenSharingExtension.call(that, installCallback);
-	                        break;
-	                    case 'Firefox':
-	                        tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
-	                        break;
-	                    default:
-	                        callback('not-supported', undefined, new Error('not-supported'));
-	                        break;
+	                case 'Chrome':
+	                    tryInstallChromeScreenSharingExtension.call(that, installCallback);
+
+	                    break;
+	                case 'Firefox':
+	                    tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
+
+	                    break;
+	                default:
+	                    callback('not-supported', undefined, new Error('not-supported'));
+
+	                    break;
 	                }
 	            } else {
 	                getScreenSharingConstraints.call(that, options, callback);
@@ -14921,9 +14911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
 	        }
 
-	        return getUserMediaStream.call(that, {
-	            screen: options.screen
-	        }, function success(status, screenStream) {
+	        return getUserMediaStream.call(that, {screen: options.screen}, function success(status, screenStream) {
 	            return getUserMediaStream.call(that, {
 	                audio: options.audio,
 	                video: options.video
@@ -14968,7 +14956,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        });
 	    }
-
 
 	    var getUserMediaErrorStatus = function getUserMediaErrorStatus(e) {
 	        var status;
@@ -15083,24 +15070,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function getStreamEndedReason(value) {
 	        switch (value) {
-	            case '':
-	            case 'none':
-	            case 'ended':
-	                return 'ended';
-	            case 'server-error':
-	            case 'not-ready':
-	            case 'error':
-	                return 'failed';
-	            case 'censored':
-	                return 'censored';
-	            case 'maintenance':
-	                return 'maintenance';
-	            case 'capacity':
-	                return 'capacity';
-	            case 'app-background':
-	                return 'app-background';
-	            default:
-	                return 'custom';
+	        case '':
+	        case 'none':
+	        case 'ended':
+	            return 'ended';
+	        case 'server-error':
+	        case 'not-ready':
+	        case 'error':
+	            return 'failed';
+	        case 'censored':
+	            return 'censored';
+	        case 'maintenance':
+	            return 'maintenance';
+	        case 'capacity':
+	            return 'capacity';
+	        case 'app-background':
+	            return 'app-background';
+	        default:
+	            return 'custom';
 	        }
 	    }
 
@@ -15231,7 +15218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                            height: 0,
 	                                            currentTime: 0.0,
 	                                            networkState: NetworkStates.NETWORK_NO_SOURCE
-	                                        }
+	                                        };
 	                                    }
 
 	                                    return {
@@ -15239,7 +15226,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                        height: element.videoHeight || element.height,
 	                                        currentTime: element.currentTime,
 	                                        networkState: element.networkState
-	                                    }
+	                                    };
 	                                },
 
 	                                setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
@@ -15268,6 +15255,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            if (typeof callback !== 'function') {
 	                                throw new Error('"callback" must be a function');
 	                            }
+
 	                            this.streamErrorCallback = callback;
 	                        },
 
@@ -15367,7 +15355,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    },
 
 	                    streamErrorCallback: function (status, reason) {
-	                        // recursively calls all children error callbacks
+	                        // Recursively calls all children error callbacks
 	                        for (var i = 0; i < internalMediaStream.children.length; i++) {
 	                            internalMediaStream.children[i].streamErrorCallback(status, reason);
 	                        }
@@ -15380,7 +15368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    },
 
 	                    streamEndedCallback: function (status, reason) {
-	                        // recursively calls all children ended callbacks
+	                        // Recursively calls all children ended callbacks
 	                        for (var i = 0; i < internalMediaStream.children.length; i++) {
 	                            internalMediaStream.children[i].streamEndedCallback(status, reason);
 	                        }
@@ -15450,9 +15438,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                    if (error) {
 	                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
 	                        return;
 	                    } else if (response.status !== 'ok') {
 	                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
 	                        return;
 	                    }
 
@@ -15493,19 +15483,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function setupStateListener(streamId, peerConnection) {
 	        var that = this;
-	        var onNegotiationNeeded = function onNegotiationNeeded(event) {
+	        var onNegotiationNeeded = function onNegotiationNeeded(event) { // eslint-disable-line no-unused-vars
 	            that._logger.info('[%s] Negotiation needed');
 	        };
-	        var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) {
+
+	        var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) { // eslint-disable-line no-unused-vars
 	            that._logger.info('[%s] ICE connection state changed [%s]', streamId, peerConnection.iceConnectionState);
 	        };
-	        var onIceGatheringStateChanged = function onIceGatheringStateChanged(event) {
+
+	        var onIceGatheringStateChanged = function onIceGatheringStateChanged(event) { // eslint-disable-line no-unused-vars
 	            that._logger.info('[%s] ICE gathering state changed [%s]', streamId, peerConnection.iceGatheringState);
 	        };
-	        var onSignalingStateChanged = function onSignalingStateChanged(event) {
+
+	        var onSignalingStateChanged = function onSignalingStateChanged(event) { // eslint-disable-line no-unused-vars
 	            that._logger.info('[%s] Signaling state changed [%s]', streamId, peerConnection.signalingState);
 	        };
-	        var onConnectionStateChanged = function onConnectionStateChanged(event) {
+
+	        var onConnectionStateChanged = function onConnectionStateChanged(event) { // eslint-disable-line no-unused-vars
 	            that._logger.info('[%s] Connection state changed [%s]', streamId, peerConnection.connectionState);
 	        };
 
@@ -15518,9 +15512,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function createPublisher(streamId, callback, streamOptions) {
 	        var that = this;
-	        var state = {
-	            stopped: false
-	        };
+	        var state = {stopped: false};
 
 	        var publisher = {
 	            getStreamId: function getStreamId() {
@@ -15555,9 +15547,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                    if (error) {
 	                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
 	                        return;
 	                    } else if (response.status !== 'ok') {
 	                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
 	                        return;
 	                    }
 
@@ -15603,11 +15597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var hasDataChannel = offerSdp.match(/m=application /i);
 	        var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
 	            'optional': [
-	                {
-	                    DtlsSrtpKeyAgreement: !hasCrypto
-	                }, {
-	                    RtpDataChannels: hasDataChannel
-	                }
+	                {DtlsSrtpKeyAgreement: !hasCrypto}, {RtpDataChannels: hasDataChannel}
 	            ]
 	        });
 	        var remoteMediaStream = null;
@@ -15641,9 +15631,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
 	                    if (error) {
 	                        that._logger.error('Failed to set answer description [%s]', error);
+
 	                        return onFailure();
 	                    } else if (response.status !== 'ok') {
 	                        that._logger.warn('Failed to set answer description, status [%s]', response.status);
+
 	                        return onFailure();
 	                    }
 
@@ -15675,17 +15667,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                            hasEnded: function hasEnded() {
 	                                switch (peerConnection.iceConnectionState) {
-	                                    case 'new':
-	                                    case 'checking':
-	                                    case 'connected':
-	                                    case 'completed':
-	                                        return false;
-	                                    case 'disconnected':
-	                                    case 'failed':
-	                                    case 'closed':
-	                                        return true;
-	                                    default:
-	                                        return true;
+	                                case 'new':
+	                                case 'checking':
+	                                case 'connected':
+	                                case 'completed':
+	                                    return false;
+	                                case 'disconnected':
+	                                case 'failed':
+	                                case 'closed':
+	                                    return true;
+	                                default:
+	                                    return true;
 	                                }
 	                            },
 
@@ -15699,9 +15691,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                                    if (error) {
 	                                        that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
 	                                        return;
 	                                    } else if (response.status !== 'ok') {
 	                                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
 	                                        return;
 	                                    }
 
@@ -15740,7 +15734,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                var updatedSdp = remoteDescription.sdp.replace(bandwidthAttribute, '');
 
 	                                // Add new limit in kbps
-	                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) {
+	                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) { // eslint-disable-line no-unused-vars
 	                                    return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
 	                                });
 
@@ -15755,13 +15749,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    dispose: function () {
 	                                        peerConnection.setRemoteDescription(remoteDescription);
 	                                    }
-	                                }
+	                                };
 	                            },
 
 	                            monitor: function monitor(options, callback) {
 	                                if (typeof options !== 'object') {
 	                                    throw new Error('"options" must be an object');
 	                                }
+
 	                                if (typeof callback !== 'function') {
 	                                    throw new Error('"callback" must be a function');
 	                                }
@@ -15829,9 +15824,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            that._protocol.addIceCandidates(streamId, candidates, options, function (error, response) {
 	                                if (error) {
 	                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+
 	                                    return;
 	                                } else if (response.status !== 'ok') {
 	                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
+
 	                                    return;
 	                                }
 
@@ -15880,7 +15877,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	        setupStateListener.call(that, streamId, peerConnection);
 
-	        var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
+	        var offerSessionDescription = new phenixRTC.RTCSessionDescription({
+	            type: 'offer',
+	            sdp: offerSdp
+	        });
 
 	        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
 	    }
@@ -15895,11 +15895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var hasDataChannel = offerSdp.match(/m=application /i);
 	        var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
 	            'optional': [
-	                {
-	                    DtlsSrtpKeyAgreement: !hasCrypto
-	                }, {
-	                    RtpDataChannels: hasDataChannel
-	                }
+	                {DtlsSrtpKeyAgreement: !hasCrypto}, {RtpDataChannels: hasDataChannel}
 	            ]
 	        });
 	        var onIceCandidateCallback = null;
@@ -15956,9 +15952,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
 	                                if (error) {
 	                                    that._logger.error('Failed to add ICE candidate [%s]', error);
+
 	                                    return;
 	                                } else if (response.status !== 'ok') {
 	                                    that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
+
 	                                    return;
 	                                }
 
@@ -15999,7 +15997,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	        setupStateListener.call(that, streamId, peerConnection);
 
-	        var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
+	        var offerSessionDescription = new phenixRTC.RTCSessionDescription({
+	            type: 'offer',
+	            sdp: offerSdp
+	        });
 
 	        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
 	    }
@@ -16014,11 +16015,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback, options);
 	        } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
 	            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback, options);
-	        } else {
-	            that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
-
-	            return callback.call(that, undefined, 'failed');
 	        }
+
+	        that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
+
+	        return callback.call(that, undefined, 'failed');
 	    }
 
 	    function createShakaLiveViewer(streamId, uri, callback, options) {
@@ -16062,7 +16063,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var player = null;
 	                    var element = null;
 	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-	                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+	                    var lastProgress = {
+	                        time: 0,
+	                        buffered: null,
+	                        averageLength: 0,
+	                        count: 0
+	                    };
 
 	                    function onProgress() {
 	                        lastProgress.time = _.now();
@@ -16075,7 +16081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            return;
 	                        }
 
-	                        // start and end times are unreliable for overall length of stream.
+	                        // Start and end times are unreliable for overall length of stream.
 	                        if (lastProgress.buffered !== null) {
 	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
 	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
@@ -16114,21 +16120,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            player = new shaka.Player(elementToAttachTo);
 
 	                            player.configure({
-	                                abr: {
-	                                    defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback
-	                                },
-	                                manifest: {
-	                                    retryParameters: {
-	                                        timeout: 10000
-	                                    }
-	                                },
+	                                abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
+	                                manifest: {retryParameters: {timeout: 10000}},
 	                                streaming: {
 	                                    rebufferingGoal: 2,
 	                                    bufferingGoal: 10,
 	                                    bufferBehind: 30,
-	                                    retryParameters: {
-	                                        timeout: 10000
-	                                    }
+	                                    retryParameters: {timeout: 10000}
 	                                }
 	                            });
 
@@ -16144,7 +16142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            elementToAttachTo.addEventListener('progress', onProgress, false);
 	                            elementToAttachTo.addEventListener('ended', ended, false);
 
-	                            var load = player.load(manifestUri).then(function () {
+	                            var load = player.load(manifestUri).then(function () { // eslint-disable-line no-unused-vars
 	                                that._logger.info('[%s] DASH live stream has been loaded', streamId);
 
 	                                if (typeof elementToAttachTo.play === 'function') {
@@ -16182,7 +16180,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    element = null;
 	                                };
 
-	                                var destroy = player.destroy()
+	                                var destroy = player.destroy() // eslint-disable-line no-unused-vars
 	                                    .then(function () {
 	                                        that._logger.info('[%s] DASH live stream has been destroyed', streamId);
 	                                    }).then(function () {
@@ -16244,7 +16242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    };
 	                },
 
-	                select: function select(trackSelectCallback) {
+	                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
 	                    that._logger.warn('[%s] selection of tracks not supported for shaka live streams', streamId);
 
 	                    return this;
@@ -16276,9 +16274,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                        if (error) {
 	                            that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+
 	                            return;
 	                        } else if (response.status !== 'ok') {
 	                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
 	                            return;
 	                        }
 
@@ -16292,6 +16292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (typeof options !== 'object') {
 	                        throw new Error('"options" must be an object');
 	                    }
+
 	                    if (typeof callback !== 'function') {
 	                        throw new Error('"callback" must be a function');
 	                    }
@@ -16375,7 +16376,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
-	        var onPlayerError = function onPlayerError(event, e) {
+	        var onPlayerError = function onPlayerError(event, e) { // eslint-disable-line no-unused-vars
 	            var mediaStream = internalMediaStream.mediaStream;
 
 	            if (!mediaStream.streamErrorCallback) {
@@ -16396,7 +16397,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                createRenderer: function createRenderer() {
 	                    var element = null;
 	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-	                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+	                    var lastProgress = {
+	                        time: 0,
+	                        buffered: null,
+	                        averageLength: 0,
+	                        count: 0
+	                    };
 
 	                    function onProgress() {
 	                        lastProgress.time = _.now();
@@ -16409,7 +16415,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            return;
 	                        }
 
-	                        // start and end times are unreliable for overall length of stream.
+	                        // Start and end times are unreliable for overall length of stream.
 	                        if (lastProgress.buffered !== null) {
 	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
 	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
@@ -16448,7 +16454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 
 	                    function waiting() {
-	                        that._logger.info('Time elapsed since last progress [%s]',_.now() - lastProgress.time);
+	                        that._logger.info('Time elapsed since last progress [%s]', _.now() - lastProgress.time);
 
 	                        setTimeout(endIfReady, getTimeoutOrMinimum());
 	                    }
@@ -16559,7 +16565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                height: element.videoHeight || element.height,
 	                                currentTime: element.currentTime,
 	                                networkState: element.networkState
-	                            }
+	                            };
 	                        },
 
 	                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
@@ -16576,7 +16582,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    };
 	                },
 
-	                select: function select(trackSelectCallback) {
+	                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
 	                    that._logger.warn('[%s] selection of tracks not supported for HLS live streams', streamId);
 
 	                    return this;
@@ -16608,9 +16614,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
 	                        if (error) {
 	                            that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
 	                            return;
 	                        } else if (response.status !== 'ok') {
 	                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
 	                            return;
 	                        }
 
@@ -16624,6 +16632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (typeof options !== 'object') {
 	                        throw new Error('"options" must be an object');
 	                    }
+
 	                    if (typeof callback !== 'function') {
 	                        throw new Error('"callback" must be a function');
 	                    }
@@ -16713,16 +16722,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            switch (newStatus) {
-	                case 'connecting':
-	                case 'reconnecting':
-	                case 'reconnected':
-	                    break;
-	                case 'offline':
-	                    this._offlineCallback.call(this);
-	                    break;
-	                case 'online':
-	                    this._onlineCallback.call(this);
-	                    break;
+	            case 'connecting':
+	            case 'reconnecting':
+	            case 'reconnected':
+	                break;
+	            case 'offline':
+	                this._offlineCallback.call(this);
+
+	                break;
+	            case 'online':
+	                this._onlineCallback.call(this);
+
+	                break;
+	            default:
+	                break;
 	            }
 	        }
 	    }
@@ -16731,9 +16744,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof stream !== 'object') {
 	            return;
 	        }
+
 	        if (typeof tracks !== 'object') {
 	            return;
 	        }
+
 	        if (tracks.constructor !== Array) {
 	            return;
 	        }
@@ -16759,6 +16774,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof track !== 'object') {
 	            throw new Error('Invalid track.');
 	        }
+
 	        return track.readyState === 'ended';
 	    }
 
@@ -16813,7 +16829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        } else if (_.isFunction(stats.values)) {
-	            _.forEach(Array.from(stats.values()), function (statsReport, key) {
+	            _.forEach(Array.from(stats.values()), function (statsReport) {
 	                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
 	                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
 	                        return;
@@ -16823,7 +16839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        } else {
-	            _.forEach(stats, function (statsReport, key) {
+	            _.forEach(stats, function (statsReport) {
 	                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
 	                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
 	                        return;
@@ -16861,7 +16877,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return PCast;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 26 */
@@ -16930,6 +16945,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (options.initial === 'notify') {
 	                onSubscribeCallback.call(that, that.subscriptionTimeout, true);
 	            }
+
 	            if (options.listenForChanges) {
 	                listenForChanges = setInterval(function() {
 	                    var valueAtInterval = options.listenForChanges.callback();
@@ -16937,7 +16953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (valueAtInterval !== that.latestValue) {
 	                        that.setValue(valueAtInterval);
 	                    }
-	                }, options.listenForChanges.timeout)
+	                }, options.listenForChanges.timeout);
 	            }
 	        }
 
@@ -16953,23 +16969,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	            that.subscriptionCount -= 1;
 	        }
 
-	        return { dispose: dispose };
+	        return {dispose: dispose};
 	    };
 
 	    Observable.prototype.extend = function extend(options) {
 	        assert.isObject(options);
 
 	        switch (options.method) {
-	            case 'notifyWhenChangesStop':
-	                this.subscriptionTimeout = options.timeout;
-	                this.resetOnChange = true;
-	                break;
-	            case 'notifyAtFixedRate':
-	                this.subscriptionTimeout = options.timeout;
-	                break;
-	            default:
-	                break;
+	        case 'notifyWhenChangesStop':
+	            this.subscriptionTimeout = options.timeout;
+	            this.resetOnChange = true;
+
+	            break;
+	        case 'notifyAtFixedRate':
+	            this.subscriptionTimeout = options.timeout;
+
+	            break;
+	        default:
+	            break;
 	        }
+
 	        if (_.isNumber(options.rateLimit)) {
 	            this.subscriptionTimeout = options.rateLimit;
 	        }
@@ -16982,12 +17001,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return value;
 	        }
 
-	        // necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
+	        // Necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
 	        if (_.isArray(value)) {
 	            return value.slice();
-	        } else {
-	            return value;
 	        }
+
+	        return value;
 	    }
 
 	    function setLatestValue(value) {
@@ -17010,7 +17029,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return notifySubscribers.call(this);
 	            }
 
-	            continueAfterTimeout.call(this, timeoutLength)
+	            continueAfterTimeout.call(this, timeoutLength);
 	        }
 	    }
 
@@ -17049,7 +17068,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Observable;
 
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 27 */
@@ -17137,15 +17155,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof uri !== 'string') {
 	            throw new Error('Must pass a valid "uri"');
 	        }
+
 	        if (typeof deviceId !== 'string') {
 	            throw new Error('Must pass a valid "deviceId"');
 	        }
+
 	        if (typeof version !== 'string') {
 	            throw new Error('Must pass a valid "version"');
 	        }
+
 	        if (typeof logger !== 'object') {
 	            throw new Error('Must pass a valid "logger"');
 	        }
+
 	        this._uri = uri;
 	        this._deviceId = deviceId;
 	        this._version = version;
@@ -17174,6 +17196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof eventName !== 'string') {
 	            throw new Error('"eventName" must be a string');
 	        }
+
 	        if (typeof handler !== 'function') {
 	            throw new Error('"handler" must be a function');
 	        }
@@ -17195,6 +17218,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof authToken !== 'string') {
 	            throw new Error('"authToken" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17227,6 +17251,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof reason !== 'string') {
 	            throw new Error('"reason" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17243,12 +17268,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamType !== 'string') {
 	            throw new Error('"streamType" must be a string');
 	        }
+
 	        if (typeof streamToken !== 'string') {
 	            throw new Error('"streamToken" must be a string');
 	        }
+
 	        if (typeof options !== 'object') {
 	            throw new Error('"options" must be an object');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17271,7 +17299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                streamId: '',
 	                options: [streamType, browser, browserWithVersion],
 	                apiVersion: this._mqProtocol.getApiVersion()
-	            }
+	            };
 	        }
 
 	        if (options.receiveAudio === false) {
@@ -17289,9 +17317,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamId !== 'string') {
 	            throw new Error('"streamId" must be a string');
 	        }
+
 	        if (typeof sdp !== 'string') {
 	            throw new Error('"sdp" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17312,12 +17342,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamId !== 'string') {
 	            throw new Error('"streamId" must be a string');
 	        }
+
 	        if (!(candidates instanceof Array)) {
 	            throw new Error('"candidates" must be an array');
 	        }
+
 	        if (!(options instanceof Array)) {
 	            throw new Error('"options" must be an array');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17329,9 +17362,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (typeof candidate.candidate !== 'string') {
 	                throw new Error('"candidates[' + i + '].candidate" must be a string');
 	            }
+
 	            if (typeof candidate.sdpMLineIndex !== 'number') {
 	                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
 	            }
+
 	            if (typeof candidate.sdpMid !== 'string') {
 	                throw new Error('"candidates[' + i + '].sdpMid" must be a string');
 	            }
@@ -17357,15 +17392,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamId !== 'string') {
 	            throw new Error('"streamId" must be a string');
 	        }
+
 	        if (typeof signalingState !== 'string') {
 	            throw new Error('"signalingState" must be a string');
 	        }
+
 	        if (typeof iceGatheringState !== 'string') {
 	            throw new Error('"iceGatheringState" must be a string');
 	        }
+
 	        if (typeof iceConnectionState !== 'string') {
 	            throw new Error('"iceConnectionState" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17385,9 +17424,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof streamId !== 'string') {
 	            throw new Error('"streamId" must be a string');
 	        }
+
 	        if (typeof reason !== 'string') {
 	            throw new Error('"reason" must be a string');
 	        }
+
 	        if (typeof callback !== 'function') {
 	            throw new Error('"callback" must be a function');
 	        }
@@ -17406,6 +17447,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            assert.isString(alias, 'alias');
 	        }
+
 	        assert.isFunction(callback, 'callback');
 
 	        var getRoomInfo = {
@@ -17438,6 +17480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            assert.isString(alias, 'alias');
 	        }
+
 	        assert.isObject(member, 'member');
 	        assert.isNumber(timestamp, 'timestamp');
 	        assert.isFunction(callback, 'callback');
@@ -17634,15 +17677,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    function onReconnecting(evt) {
+	    function onReconnecting(evt) { // eslint-disable-line no-unused-vars
 	        triggerEvent.call(this, 'reconnecting');
 	    }
 
-	    function onConnected(evt) {
+	    function onConnected(evt) { // eslint-disable-line no-unused-vars
 	        triggerEvent.call(this, 'connected');
 	    }
 
-	    function onReconnected(evt) {
+	    function onReconnected(evt) { // eslint-disable-line no-unused-vars
 	        triggerEvent.call(this, 'reconnected');
 	    }
 
@@ -17656,7 +17699,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return PCastProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 29 */
@@ -17813,10 +17855,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        } catch(e) {
 	            this._logger.warn('Unable to create WebSocket connection [%s]', e);
-	            // swallow error - we will alert client of failure after timeouts.
+	            // Swallow error - we will alert client of failure after timeouts.
 	        }
 
-	        backoffTimeout = reconnectWithBackoff.call(this, attempt)
+	        backoffTimeout = reconnectWithBackoff.call(this, attempt);
 	    };
 
 	    ReconnectingWebSocket.prototype.disconnect = function () {
@@ -17832,7 +17874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function closeWebSocketOrTriggerDisconnectEvent(evt) {
 	        if (this._webSocket.readyState === readyStates.closed.code) {
-	            return onClose.call(this, evt)
+	            return onClose.call(this, evt);
 	        }
 
 	        return this._webSocket.close(evt.code, evt.reason);
@@ -17867,18 +17909,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function onClose(evt) {
 	        switch (evt.code) {
-	            case closeReasons.reconnecting.code:
+	        case closeReasons.reconnecting.code:
+	            return;
+	        case closeReasons.byebye.code:
+	        case closeReasons.backoffLimitReached.code:
+	        case closeReasons.networkDisconnect.code:
+	            return onDisconnect.call(this, evt);
+	        default:
+	            if (this._hasAttemptedReconnect) {
 	                return;
-	            case closeReasons.byebye.code:
-	            case closeReasons.backoffLimitReached.code:
-	            case closeReasons.networkDisconnect.code:
-	                return onDisconnect.call(this, evt);
-	            default:
-	                if (this._hasAttemptedReconnect) {
-	                    return;
-	                }
+	            }
 
-	                return onReconnecting.call(this, evt);
+	            return onReconnecting.call(this, evt);
 	        }
 	    }
 
@@ -17937,7 +17979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        setTimeout(function() {
 	            if (that._stopped) {
-	                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.')
+	                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.');
 	            }
 
 	            if (that._webSocket.readyState !== readyStates.open.code) {
@@ -17957,7 +17999,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return ReconnectingWebSocket;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 30 */
@@ -17990,9 +18031,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof version !== 'string') {
 	            throw new Error('Must pass a valid "version"');
 	        }
+
 	        if (typeof baseUri !== 'string') {
 	            throw new Error('Must pass a valid "baseUri"');
 	        }
+
 	        if (typeof logger !== 'object') {
 	            throw new Error('Must pass a valid "logger"');
 	        }
@@ -18058,7 +18101,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastEndPoint;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 31 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -18110,9 +18152,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.isResolved();
 	    };
 
-	    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) {
+	    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) { // eslint-disable-line no-unused-vars
 	        if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
 	            this._done = true;
+
 	            return this._onClosestEndpointFound(undefined, this._minResponseText);
 	        }
 	    };
@@ -18145,7 +18188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                if (!err) {
 	                    if (that.measurementCallback(endPoint, time, responseText)) {
-	                        // done
+	                        // Done
 	                        return;
 	                    }
 
@@ -18160,9 +18203,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return nextMeasurement(endPoint);
 	                } else if (successfulAttempts === 0) {
 	                    return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
-	                } else {
-	                    return that.completeCallback(endPoint);
 	                }
+
+	                return that.completeCallback(endPoint);
 	            }, maxAttempts);
 	        };
 
@@ -18171,7 +18214,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return ClosestEndPointResolver;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 32 */
@@ -18209,12 +18251,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (typeof name !== 'string') {
 	            throw new Error('Must pass a valid "name"');
 	        }
+
 	        if (typeof peerConnection !== 'object') {
 	            throw new Error('Must pass a valid "peerConnection"');
 	        }
+
 	        if (typeof logger !== 'object') {
 	            throw new Error('Must pass a valid "logger"');
 	        }
+
 	        this._name = name;
 	        this._peerConnection = peerConnection;
 	        this._logger = logger;
@@ -18228,23 +18273,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return 'PeerConnectionMonitor[]';
 	    };
 
-
 	    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
 	        if (typeof name !== 'string') {
 	            throw new Error('Must pass a valid "name"');
 	        }
+
 	        if (typeof peerConnection !== 'object') {
 	            throw new Error('Must pass a valid "peerConnection"');
 	        }
+
 	        if (typeof options !== 'object') {
 	            throw new Error('Must pass a valid "options"');
 	        }
+
 	        if (typeof activeCallback !== 'function') {
 	            throw new Error('Must pass a valid "activeCallback"');
 	        }
+
 	        if (typeof monitorCallback !== 'function') {
 	            throw new Error('Must pass a valid "monitorCallback"');
 	        }
+
 	        if (options.direction !== 'inbound' && options.direction !== 'outbound') {
 	            throw new Error('Invalid monitoring direction');
 	        }
@@ -18276,117 +18325,137 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var readable = false;
 	                var writable = false;
 
-	                function eachStats(stats, reportId) {
+	                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
+	                    var trackId = stats.ssrc;
+	                    var currentBytes = null;
+
 	                    switch (phenixRTC.browser) {
-	                        case 'Firefox':
-	                            writable = readable |= stats.selected && stats.state === 'succeeded';
+	                    case 'Firefox':
+	                        writable = readable |= stats.selected && stats.state === 'succeeded';
 
-	                            var trackId = stats.ssrc;
+	                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp')) {
+	                            currentBytes = new StatsBytes(stats.bytesSent);
 
-	                            if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp')) {
-	                                var currentBytes = new StatsBytes(stats.bytesSent);
+	                            switch (stats.mediaType) {
+	                            case 'video':
+	                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+	                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+	                                hasFrameRate = true;
+	                                frameRate = stats.framerateMean || 0;
+	                                hasVideoBitRate = true;
+	                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                lastVideoBytes[trackId] = currentBytes;
 
-	                                switch (stats.mediaType) {
-	                                    case 'video':
-	                                        that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-	                                            name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
-	                                        hasFrameRate = true;
-	                                        frameRate = stats.framerateMean || 0;
-	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
-	                                        lastVideoBytes[trackId] = currentBytes;
-	                                        break;
-	                                    case 'audio':
-	                                        that._logger.debug('[%s] Outbound [%s] [%s]',
-	                                            name, stats.mediaType, stats.ssrc);
-	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
-	                                        lastAudioBytes[trackId] = currentBytes;
-	                                        break;
-	                                }
+	                                break;
+	                            case 'audio':
+	                                that._logger.debug('[%s] Outbound [%s] [%s]',
+	                                    name, stats.mediaType, stats.ssrc);
+	                                hasAudioBitRate = true;
+	                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                lastAudioBytes[trackId] = currentBytes;
+
+	                                break;
+	                            default:
+	                                break;
 	                            }
-	                            if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp')) {
-	                                var currentBytes = new StatsBytes(stats.bytesReceived);
+	                        }
 
-	                                switch (stats.mediaType) {
-	                                    case 'video':
-	                                        that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
-	                                            name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+	                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp')) {
+	                            currentBytes = new StatsBytes(stats.bytesReceived);
 
-	                                        // Inbound frame rate is not calculated correctly
-	                                        // hasFrameRate = true;
-	                                        // frameRate = stats.framerateMean || 0;
-	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
-	                                        lastVideoBytes[trackId] = currentBytes;
-	                                        break;
-	                                    case 'audio':
-	                                        that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
-	                                            name, stats.mediaType, stats.ssrc, stats.jitter);
-	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
-	                                        lastAudioBytes[trackId] = currentBytes;
-	                                        break;
-	                                }
+	                            switch (stats.mediaType) {
+	                            case 'video':
+	                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
+	                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+
+	                                // Inbound frame rate is not calculated correctly
+	                                // hasFrameRate = true;
+	                                // frameRate = stats.framerateMean || 0;
+	                                hasVideoBitRate = true;
+	                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                lastVideoBytes[trackId] = currentBytes;
+
+	                                break;
+	                            case 'audio':
+	                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
+	                                    name, stats.mediaType, stats.ssrc, stats.jitter);
+	                                hasAudioBitRate = true;
+	                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                lastAudioBytes[trackId] = currentBytes;
+
+	                                break;
+	                            default:
+	                                break;
 	                            }
-	                            break;
-	                        default:
-	                            if (stats.googWritable === 'true') {
-	                                writable = true;
-	                            }
-	                            if (stats.googReadable === 'true') {
-	                                readable = true;
-	                            }
-	                            if (stats.type !== 'ssrc') {
-	                                return;
-	                            }
+	                        }
 
-	                            var trackId = stats.ssrc;
+	                        break;
+	                    default:
+	                        if (stats.googWritable === 'true') {
+	                            writable = true;
+	                        }
 
-	                            if (options.direction === 'outbound') {
-	                                var currentBytes = new StatsBytes(stats.bytesSent);
+	                        if (stats.googReadable === 'true') {
+	                            readable = true;
+	                        }
 
-	                                switch (stats.mediaType) {
-	                                    case 'video':
-	                                        that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-	                                            name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
-	                                        hasFrameRate = true;
-	                                        frameRate = stats.googFrameRateSent || 0;
-	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
-	                                        lastVideoBytes[trackId] = currentBytes;
-	                                        break;
-	                                    case 'audio':
-	                                        that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-	                                            name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
-	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
-	                                        lastAudioBytes[trackId] = currentBytes;
-	                                        break;
-	                                }
-	                            } else if (options.direction === 'inbound') {
-	                                var currentBytes = new StatsBytes(stats.bytesReceived);
+	                        if (stats.type !== 'ssrc') {
+	                            return;
+	                        }
 
-	                                switch (stats.mediaType) {
-	                                    case 'video':
-	                                        that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-	                                            name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
-	                                        hasFrameRate = true;
-	                                        frameRate = stats.googFrameRateReceived || 0;
-	                                        hasVideoBitRate = true;
-	                                        videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
-	                                        lastVideoBytes[trackId] = currentBytes;
-	                                        break;
-	                                    case 'audio':
-	                                        that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-	                                            name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
-	                                        hasAudioBitRate = true;
-	                                        audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
-	                                        lastAudioBytes[trackId] = currentBytes;
-	                                        break;
-	                                }
+	                        if (options.direction === 'outbound') {
+	                            currentBytes = new StatsBytes(stats.bytesSent);
+
+	                            switch (stats.mediaType) {
+	                            case 'video':
+	                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+	                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+	                                hasFrameRate = true;
+	                                frameRate = stats.googFrameRateSent || 0;
+	                                hasVideoBitRate = true;
+	                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                lastVideoBytes[trackId] = currentBytes;
+
+	                                break;
+	                            case 'audio':
+	                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+	                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+	                                hasAudioBitRate = true;
+	                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                lastAudioBytes[trackId] = currentBytes;
+
+	                                break;
+	                            default:
+	                                break;
 	                            }
-	                            break;
+	                        } else if (options.direction === 'inbound') {
+	                            currentBytes = new StatsBytes(stats.bytesReceived);
+
+	                            switch (stats.mediaType) {
+	                            case 'video':
+	                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+	                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+	                                hasFrameRate = true;
+	                                frameRate = stats.googFrameRateReceived || 0;
+	                                hasVideoBitRate = true;
+	                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId]);
+	                                lastVideoBytes[trackId] = currentBytes;
+
+	                                break;
+	                            case 'audio':
+	                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+	                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+	                                hasAudioBitRate = true;
+	                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId]);
+	                                lastAudioBytes[trackId] = currentBytes;
+
+	                                break;
+	                            default:
+	                                break;
+	                            }
+	                        }
+
+	                        break;
 	                    }
 	                }
 
@@ -18419,6 +18488,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                if (!activeCallback()) {
 	                    that._logger.info('[%s] Finished monitoring of peer connection', name);
+
 	                    return;
 	                }
 
@@ -18431,6 +18501,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
 	                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
+
 	                        return;
 	                    }
 
@@ -18496,23 +18567,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function getStats(peerConnection, selector, successCallback, monitorCallback) {
 	        switch (phenixRTC.browser) {
-	            case  'Firefox':
-	                return peerConnection.getStats(selector)
-	                    .then(function (response) {
-	                        var report = normalizeStatsReport(response);
-
-	                        successCallback(report);
-	                    }).catch(function (e) {
-	                        monitorCallback('error', e);
-	                    });
-	            default:
-	                return peerConnection.getStats(function (response) {
+	        case 'Firefox':
+	            return peerConnection.getStats(selector)
+	                .then(function (response) {
 	                    var report = normalizeStatsReport(response);
 
 	                    successCallback(report);
-	                }, selector, function (e) {
+	                }).catch(function (e) {
 	                    monitorCallback('error', e);
 	                });
+	        default:
+	            return peerConnection.getStats(function (response) {
+	                var report = normalizeStatsReport(response);
+
+	                successCallback(report);
+	            }, selector, function (e) {
+	                monitorCallback('error', e);
+	            });
 	        }
 	    }
 
@@ -18554,7 +18625,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function hasActiveAudioInSdp(peerConnection) {
 	        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
 	            if (section.startsWith('audio')) {
-	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1
+	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1;
 	            }
 
 	            return false;
@@ -18566,7 +18637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function hasActiveVideoInSdp(peerConnection) {
 	        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
 	            if (section.startsWith('video')) {
-	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1
+	                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1;
 	            }
 
 	            return false;
@@ -18628,6 +18699,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!logger) {
 	            throw new Error("'logger' must be specified.");
 	        }
+
 	        this._logger = logger;
 	        this._dimensionsChangedIntervalId = null;
 	        this._videoDisplayDimensionsChangedCallback = null;
@@ -18673,6 +18745,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function stopMonitor() {
 	        this._toBeStarted = false;
+
 	        if (this._dimensionsChangedIntervalId) {
 	            clearInterval(this._dimensionsChangedIntervalId);
 	            this._dimensionsChangedIntervalId = null;
@@ -18683,6 +18756,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (callback === null) {
 	            this._videoDisplayDimensionsChangedCallback = null;
 	            stopMonitor.call(this);
+
 	            return;
 	        }
 
@@ -18691,14 +18765,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        this._videoDisplayDimensionsChangedCallback = callback;
+
 	        if (options && options.pollFrequency) {
 	            this._dimensionsChangedData.pollFrequency = options.pollFrequency >= minimumPollFrequency ? options.pollFrequency : minimumPollFrequency;
 	        }
+
 	        startInterval.call(this);
 	    }
 
 	    function startInterval() {
-	        //return if either:
+	        // Return if either:
 	        // - start hasn't been called yet
 	        // - the interval is already running
 	        // - there is no callback yet
@@ -18724,7 +18800,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return DimensionsChangedMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 34 */
@@ -18767,7 +18842,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._pcast = pcast;
 	        this._logger = pcast.getLogger();
-	        this._protocol =  pcast.getProtocol();
+	        this._protocol = pcast.getProtocol();
 
 	        this._self = new Observable(null);
 	        this._activeRoom = new Observable(null);
@@ -18811,6 +18886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            assert.stringNotEmpty('alias', alias);
 	        }
+
 	        assert.isFunction(callback);
 
 	        getRoomInfoRequest.call(this, roomId, alias, callback);
@@ -18832,6 +18908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        } else {
 	            assert.stringNotEmpty('alias', alias);
 	        }
+
 	        assert.isFunction(callback);
 
 	        enterRoomRequest.call(this, roomId, alias, callback);
@@ -18936,7 +19013,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    }
 
-	    // handle events
+	    // Handle events
 	    function onRoomEvent(event) {
 	        assert.isObject(event, 'event');
 	        assert.isString(event.roomId, 'event.roomId');
@@ -18950,23 +19027,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        switch (event.eventType) {
-	            case room.events.memberJoined.name:
-	                that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
-	                return onMembersJoinsRoom.call(that, event.roomId, event.members);
-	            case room.events.memberLeft.name:
-	                that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
-	                return onMembersLeavesRoom.call(that, event.roomId, event.members);
-	            case room.events.memberUpdated.name:
-	                that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
-	                return onMembersUpdated.call(that, event.roomId, event.members);
-	            case room.events.roomUpdated.name:
-	                that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
-	                return onRoomUpdated.call(that, event.roomId, event.room);
-	            case room.events.roomEnded.name:
-	                that._logger.info('[%s] Room ended', event.roomId);
-	                break;
-	            default:
-	                that._logger.warn('Unsupported room event [%s]', event.eventType);
+	        case room.events.memberJoined.name:
+	            that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
+
+	            return onMembersJoinsRoom.call(that, event.roomId, event.members);
+	        case room.events.memberLeft.name:
+	            that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
+
+	            return onMembersLeavesRoom.call(that, event.roomId, event.members);
+	        case room.events.memberUpdated.name:
+	            that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
+
+	            return onMembersUpdated.call(that, event.roomId, event.members);
+	        case room.events.roomUpdated.name:
+	            that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
+
+	            return onRoomUpdated.call(that, event.roomId, event.room);
+	        case room.events.roomEnded.name:
+	            that._logger.info('[%s] Room ended', event.roomId);
+
+	            break;
+	        default:
+	            that._logger.warn('Unsupported room event [%s]', event.eventType);
 	        }
 	    }
 
@@ -19052,6 +19134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function findMemberInObservableRoom(sessionId, observableRoom) {
 	        var room = observableRoom.getValue();
 	        var members = room.getObservableMembers().getValue();
+
 	        return findMemberInMembers(sessionId, members);
 	    }
 
@@ -19102,7 +19185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var memberForRequest = findDifferencesInSelf(member, memberToCompare);
 
 	        memberForRequest.sessionId = member.getSessionId();
-	        // last valid update from server. Handles collisions.
+	        // Last valid update from server. Handles collisions.
 	        memberForRequest.lastUpdate = memberToCompare ? memberToCompare.getLastUpdate() : _.now();
 
 	        return memberForRequest;
@@ -19219,7 +19302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                result.room = initializeRoomAndBuildCache.call(that, response);
 
-	                callback(null, result)
+	                callback(null, result);
 	            }
 	        );
 	    }
@@ -19387,7 +19470,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 35 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -19412,7 +19494,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(26),
 	    __webpack_require__(36),
-	    __webpack_require__(37),
+	    __webpack_require__(37)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
 	    'use strict';
 
@@ -19421,7 +19503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    ImmutableRoom.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-	        // don't pass roomService.
+	        // Don't pass roomService.
 	        this._room = new Room(null, id, alias, name, description, type, members, bridgeId, pin);
 
 	        makeArrayOrObjectObservablesImmutable(this._room);
@@ -19480,13 +19562,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function makeArrayOrObjectObservablesImmutable(collection) {
 	        if (_.isArray(collection)) {
-	            _.forEach(collection, function (value, index) {
+	            _.forEach(collection, function (value) {
 	                wrapObservableAndAnyObservableProperties(value);
 	            });
 	        } else if (_.isObject(collection)) {
-	            _.forOwn(collection, function (value, key) {
+	            _.forOwn(collection, function (value) {
 	                wrapObservableAndAnyObservableProperties(value);
-	            })
+	            });
 	        }
 	    }
 
@@ -19508,7 +19590,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return ImmutableRoom;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 36 */
@@ -19604,6 +19685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var array = this.observableArray.getValue();
 
 	        this.observableArray.setValue([]);
+
 	        return array;
 	    };
 
@@ -19613,16 +19695,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this;
 	    };
 
-	    function updateArray(array, valuesToRemove, i) {
-	        valuesToRemove.push(array[i]);
-	        array.splice(i, 1);
-	        i--;
-	        return i;
-	    }
-
 	    return ObservableArray;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 37 */
@@ -19668,7 +19742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (alias) {
-	            assert.stringNotEmpty(alias, 'alias')
+	            assert.stringNotEmpty(alias, 'alias');
 	        }
 
 	        if (bridgeId) {
@@ -19688,7 +19762,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._name = new Observable(name);
 	        this._description = new Observable(description);
 	        this._type = new Observable(type, assertIsValidRoomType);
-	        this._members = new ObservableArray([]).extend({ method: "notifyWhenChangesStop", timeout: 400 });
+	        this._members = new ObservableArray([]).extend({
+	            method: "notifyWhenChangesStop",
+	            timeout: 400
+	        });
 	        this._options = new ObservableArray();
 	        this._bridgeId = new Observable(bridgeId);
 	        this._pin = new Observable(pin);
@@ -19742,7 +19819,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            type: this._type.getValue(),
 	            pin: this._pin.getValue(),
 	            bridgeId: this._bridgeId.getValue()
-	        }
+	        };
 	    };
 
 	    Room.prototype.commitChanges = function commitChanges(callback) {
@@ -19857,7 +19934,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Room;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 38 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -19907,7 +19983,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._screenName = new Observable(screenName);
 	        this._streams = new ObservableArray([]);
 
-	        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit:500});
+	        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
 	        this._role = new Observable(role, assertIsValidMemberRole);
 	        this._lastUpdate = new Observable(lastUpdate, _.utc);
 	        this._roomService = roomService;
@@ -19946,7 +20022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Member.prototype.getStreams = function getStreams() {
 	        return _.map(this._streams.getValue(), function mapToJson(stream) {
 	            return stream.toJson();
-	        })
+	        });
 	    };
 
 	    Member.prototype.commitChanges = function commitChanges(callback) {
@@ -20021,7 +20097,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function updateStreams(streams) {
-	        // iterate through new streams object, update those that have changed, push new ones, remove old ones
+	        // Iterate through new streams object, update those that have changed, push new ones, remove old ones
 	        var oldObservableStreams = this._streams.getValue();
 	        var newObservableStreams = [];
 
@@ -20063,7 +20139,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return Member;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 39 */
@@ -20197,9 +20272,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var streamEnums = {
 	        types: {
-	            user: { id: 0, name: 'User' },
-	            presentation: { id: 1, name: 'Presentation' },
-	            audio: { id: 2, name: 'Audio' },
+	            user: {
+	                id: 0,
+	                name: 'User'
+	            },
+	            presentation: {
+	                id: 1,
+	                name: 'Presentation'
+	            },
+	            audio: {
+	                id: 2,
+	                name: 'Audio'
+	            }
 	        }
 	    };
 
@@ -20231,9 +20315,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var trackEnums = {
 	        states: {
-	            trackEnabled: { id: 0, name: 'TrackEnabled' },
-	            trackDisabled: { id: 1, name: 'TrackDisabled' },
-	            trackEnded: { id: 2, name: 'TrackEnded' },
+	            trackEnabled: {
+	                id: 0,
+	                name: 'TrackEnabled'
+	            },
+	            trackDisabled: {
+	                id: 1,
+	                name: 'TrackDisabled'
+	            },
+	            trackEnded: {
+	                id: 2,
+	                name: 'TrackEnded'
+	            }
 	        }
 	    };
 
@@ -20265,17 +20358,44 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var memberEnums = {
 	        roles: {
-	            participant: {id: 0, name: 'Participant'},
-	            moderator: {id: 1, name: 'Moderator'},
-	            presenter: {id: 2, name: 'Presenter'},
-	            audience: {id: 3, name: 'Audience'}
+	            participant: {
+	                id: 0,
+	                name: 'Participant'
+	            },
+	            moderator: {
+	                id: 1,
+	                name: 'Moderator'
+	            },
+	            presenter: {
+	                id: 2,
+	                name: 'Presenter'
+	            },
+	            audience: {
+	                id: 3,
+	                name: 'Audience'
+	            }
 	        },
 	        states: {
-	            active: {id: 0, name: 'Active'},
-	            passive: {id: 1, name: 'Passive'},
-	            handRaised: {id: 2, name: 'HandRaised'},
-	            inactive: {id: 3, name: 'Inactive'},
-	            offline: {id: 4, name: 'Offline'}
+	            active: {
+	                id: 0,
+	                name: 'Active'
+	            },
+	            passive: {
+	                id: 1,
+	                name: 'Passive'
+	            },
+	            handRaised: {
+	                id: 2,
+	                name: 'HandRaised'
+	            },
+	            inactive: {
+	                id: 3,
+	                name: 'Inactive'
+	            },
+	            offline: {
+	                id: 4,
+	                name: 'Offline'
+	            }
 	        }
 	    };
 
@@ -20307,20 +20427,50 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var roomEnums = {
 	        types: {
-	            directChat: { id: 0, name: 'DirectChat' },
-	            multiPartyChat: { id: 1, name: 'MultiPartyChat' },
-	            moderatedChat: { id: 2, name: 'ModeratedChat' },
-	            townHall: { id: 3, name: 'TownHall' },
-	            channel: { id: 4, name: 'Channel' }
+	            directChat: {
+	                id: 0,
+	                name: 'DirectChat'
+	            },
+	            multiPartyChat: {
+	                id: 1,
+	                name: 'MultiPartyChat'
+	            },
+	            moderatedChat: {
+	                id: 2,
+	                name: 'ModeratedChat'
+	            },
+	            townHall: {
+	                id: 3,
+	                name: 'TownHall'
+	            },
+	            channel: {
+	                id: 4,
+	                name: 'Channel'
+	            }
 	        },
 	        events: {
-	            memberJoined: { id: 0, name: 'MemberJoined' },
-	            memberLeft: { id: 1, name: 'MemberLeft' },
-	            memberUpdated: { id: 2, name: 'MemberUpdated' },
-	            roomUpdated: { id: 3, name: 'RoomUpdated' },
-	            roomEnded: { id: 4, name: 'RoomEnded' },
+	            memberJoined: {
+	                id: 0,
+	                name: 'MemberJoined'
+	            },
+	            memberLeft: {
+	                id: 1,
+	                name: 'MemberLeft'
+	            },
+	            memberUpdated: {
+	                id: 2,
+	                name: 'MemberUpdated'
+	            },
+	            roomUpdated: {
+	                id: 3,
+	                name: 'RoomUpdated'
+	            },
+	            roomEnded: {
+	                id: 4,
+	                name: 'RoomEnded'
+	            }
 	        }
-	    }
+	    };
 
 	    return roomEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -20409,7 +20559,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return AuthenticationService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 45 */
@@ -20546,6 +20695,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (error) {
 	                throw error;
 	            }
+
 	            if (response.status !== 'ok') {
 	                throw new Error('Unable to subscribe to room chat. Status ' + status);
 	            }
@@ -20578,7 +20728,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return RoomChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 46 */
@@ -20614,7 +20763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._pcast = pcast;
 	        this._logger = pcast.getLogger();
-	        this._protocol =  pcast.getProtocol();
+	        this._protocol = pcast.getProtocol();
 	        this._enabled = new Observable(false);
 	        this._lastSubscribedSessionId = null;
 
@@ -20703,22 +20852,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isArray(event.chatMessages, 'event.chatMessages');
 
 	        switch (event.eventType) {
-	            case 'Message':
-	                this._logger.debug('[%s] Room messages [%s]', event.roomId, event.chatMessages);
-	                var listener = this._roomMessagesListeners[event.roomId];
+	        case 'Message':
+	            this._logger.debug('[%s] Room messages [%s]', event.roomId, event.chatMessages);
 
-	                convertTimeFromLongInChatMessages(event.chatMessages);
+	            var listener = this._roomMessagesListeners[event.roomId];
 
-	                if (listener) {
-	                    listener(null, {status: 'ok', chatMessages: event.chatMessages});
-	                }
-	                break;
-	            default:
-	                this._logger.warn('Unsupported room conversation event [%s]', event.eventType)
+	            convertTimeFromLongInChatMessages(event.chatMessages);
+
+	            if (listener) {
+	                listener(null, {
+	                    status: 'ok',
+	                    chatMessages: event.chatMessages
+	                });
+	            }
+
+	            break;
+	        default:
+	            this._logger.warn('Unsupported room conversation event [%s]', event.eventType);
 	        }
 	    }
 
-	    function onStatusChange(status) {
+	    function onStatusChange(status) { // eslint-disable-line no-unused-vars
 	        // Only reason to redo subscriptions is if sessionId changes, which infers status changed
 	    }
 
@@ -20896,6 +21050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (chatMessage.timestamp) {
 	            chatMessage.timestamp = _.utc(chatMessage.timestamp);
 	        }
+
 	        if (chatMessage.from) {
 	            chatMessage.from.lastUpdate = _.utc(chatMessage.from.lastUpdate);
 	        }
@@ -20915,7 +21070,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return ChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 47 */
@@ -21034,7 +21188,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioSpeakerDetector;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 48 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -21055,9 +21208,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * limitations under the License.
 	 */
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-	    __webpack_require__(4),
-	    __webpack_require__(5),
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 	    'use strict';
 
 	    function AudioContext() {
@@ -21066,7 +21217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    AudioContext.prototype.init = function init() {
 	        if (!window.AudioContext) {
-	            throw new Error('Browser does not support AudioContext')
+	            throw new Error('Browser does not support AudioContext');
 	        }
 
 	        this._audioContext = new window.AudioContext();
@@ -21082,7 +21233,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return AudioContext;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 49 */
@@ -21128,7 +21278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.stringNotEmpty(stream.id, 'streamId');
 
 	        if (!this._audioVolumeMeters[stream.id]) {
-	            this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger)
+	            this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger);
 	        }
 
 	        return this._audioVolumeMeters[stream.id];
@@ -21144,7 +21294,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return AudioVolumeMeterFactory;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 50 */
@@ -21286,7 +21435,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioVolumeMeter;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 51 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -21377,6 +21525,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            if ((speakingThreshold || (speaking && speakingContinuationThreshold)) && nextSpeakingDeadline < value.date) {
 	                nextSilenceDeadline = _.utc(value.date) + silenceHysteresisInterval;
+
 	                if (!speaking) {
 	                    speaking = true;
 
@@ -21388,6 +21537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            } else if ((notSpeakingThreshold || (!speaking && notSpeakingContinuationThreshold)) && nextSilenceDeadline < value.date) {
 	                nextSpeakingDeadline = _.utc(value.date) + speakingHysteresisInterval;
+
 	                if (speaking) {
 	                    speaking = false;
 
@@ -21403,7 +21553,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return AudioSpeakerDetectionAlgorithm;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 52 */
@@ -21467,12 +21616,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        publisherAdjuster.connect(roomService, options);
 
-	        this._publisherAdjusters.push(publisherAdjuster)
+	        this._publisherAdjusters.push(publisherAdjuster);
 	    }
 
 	    return BandwidthMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 53 */
@@ -21522,15 +21670,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var roomObservable = roomService.getObservableActiveRoom();
 	        var roomBandwidthLimit = options.roomBandwidthLimit || defaultRoomBandwidthLimit;
 
-	        this._roomSubscription = roomObservable.subscribe(_.bind(onRoomChange, this, roomBandwidthLimit), {initial:'notify'});
+	        this._roomSubscription = roomObservable.subscribe(_.bind(onRoomChange, this, roomBandwidthLimit), {initial: 'notify'});
 	    };
 
 	    PublisherBandwidthAdjuster.prototype.close = function close() {
 	        if (this._roomSubscription) {
-	            this._roomSubscription.dispose()
+	            this._roomSubscription.dispose();
 	        }
+
 	        if (this._membersSubscription) {
-	            this._membersSubscription.dispose()
+	            this._membersSubscription.dispose();
 	        }
 
 	        this._roomSubscription = null;
@@ -21545,13 +21694,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._membersSubscription) {
 	            this._membersSubscription.dispose();
 	        }
+
 	        if (!room) {
 	            return this._publisher.limitBandwidth(roomBandwidthLimit);
 	        }
 
 	        var membersObservable = room.getObservableMembers();
 
-	        this._membersSubscription = membersObservable.subscribe(_.bind(onRoomMembersChanged, this, roomBandwidthLimit), {initial:'notify'});
+	        this._membersSubscription = membersObservable.subscribe(_.bind(onRoomMembersChanged, this, roomBandwidthLimit), {initial: 'notify'});
 	    }
 
 	    function onRoomMembersChanged(roomBandwidthLimit, members) {
@@ -21568,7 +21718,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return PublisherBandwidthAdjuster;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 54 */
@@ -21653,7 +21802,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return callback(null, {status: status});
 	                }
 
-	                callback(null, {status: 'ok', userMedia: userMedia});
+	                callback(null, {
+	                    status: 'ok',
+	                    userMedia: userMedia
+	                });
 	            });
 	        });
 	    };
@@ -21766,7 +21918,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return callback(null, instantiateResponse);
 	            }
 
-	            var remoteOptions = _.assign(options, {connectOptions: [], capabilities: []});
+	            var remoteOptions = _.assign(options, {
+	                connectOptions: [],
+	                capabilities: []
+	            });
 
 	            if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
 	                remoteOptions.capabilities.push('publish-uri');
@@ -21794,12 +21949,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(options, 'options');
 	        assert.stringNotEmpty(options.streamId, 'options.streamId');
 	        assert.isObject(options.capabilities, 'options.capabilities');
+
 	        if (options.videoElement) {
 	            assert.isObject(options.videoElement, 'options.videoElement');
 	        }
+
 	        if (options.monitor) {
 	            assert.isObject(options.monitor, 'options.monitor');
 	            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
 	            if (options.monitor.options) {
 	                assert.isObject(options.monitor.options, 'options.monitor.options');
 	            }
@@ -21847,7 +22005,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
 
-	            callback(null, {status: 'ok', roomService: expressRoomService});
+	            callback(null, {
+	                status: 'ok',
+	                roomService: expressRoomService
+	            });
 	        });
 	    };
 
@@ -21868,10 +22029,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            that._pcast.start(response.authenticationToken,
-	                function authenticationToken(sessionId) {},
+	                function authenticationToken() {},
 	                function onlineCallback() {
 	                    callback(null, {status: 'ok'});
-	                }, function offlineCallback(reason) {
+	                }, function offlineCallback() {
 	                    callback(null, {status: 'offline'});
 	                });
 	        });
@@ -21922,9 +22083,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var placeholder = _.uniqueId();
 	                    that._publishers[placeholder] = true;
 	                    publisher.stop(reason);
-	                    publishUserMedia.call(that, streamToken, userMediaOrUri, options, callback);
+	                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, callback);
 	                    delete that._publishers[placeholder];
 	                };
+
 	                var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retryPublisher);
 
 	                publisher.monitor(options.monitor.options || {}, monitorCallback);
@@ -21932,7 +22094,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
 
-	            callback(null, {status: 'ok', publisher: expressPublisher});
+	            callback(null, {
+	                status: 'ok',
+	                publisher: expressPublisher
+	            });
 	        };
 
 	        that._pcast.publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
@@ -21951,7 +22116,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 
 	            if (status === 'streaming-not-ready') {
-	                return callback(null, {status: status, retry: _.bind(retrySubscriber, that, status)});
+	                return callback(null, {
+	                    status: status,
+	                    retry: _.bind(retrySubscriber, that, status)
+	                });
 	            }
 
 	            if (status !== 'ok') {
@@ -21976,15 +22144,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
 
-	            callback(null, {status: 'ok', mediaStream: expressSubscriber});
-	        })
+	            callback(null, {
+	                status: 'ok',
+	                mediaStream: expressSubscriber
+	            });
+	        });
 
 	    }
 
 	    function createExpressPublisher(publisher, videoElement) {
 	        var publisherStop = publisher.stop;
 
-	        publisher.stop =  function(reason) {
+	        publisher.stop = function(reason) {
 	            publisherStop(reason);
 
 	            if (videoElement) {
@@ -22051,7 +22222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            delete that._roomServices[uniqueId];
 
-	            // stopPCastIfNoActiveStreams.call(that);
+	            // StopPCastIfNoActiveStreams.call(that);
 	        };
 
 	        return roomService;
@@ -22082,24 +22253,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        _.forEach(tracks, function(track) {
 	            track.enabled = enabled;
-	        })
+	        });
 	    }
 
-	    function onMonitorCallback(callback, retry, stream, reason, description) {
+	    function onMonitorCallback(callback, retry, stream, reason, description) { // eslint-disable-line no-unused-vars
 	        switch (reason) {
-	            case  'client-side-failure':
-	                callback(null, {status: reason, retry: _.bind(retry, null, reason)});
-	                // handle failure event, redo stream
-	                break;
-	            default:
-	                // no failure has occurred, handle monitor event
-	                break;
+	        case 'client-side-failure':
+	            callback(null, {
+	                status: reason,
+	                retry: _.bind(retry, null, reason)
+	            });
+
+	            // Handle failure event, redo stream
+	            break;
+	        default:
+	                // No failure has occurred, handle monitor event
+	            break;
 	        }
 	    }
 
 	    return PCastExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 55 */
@@ -22191,7 +22365,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AdminAPI;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 56 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -22216,9 +22389,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(54),
 	    __webpack_require__(43),
-	    __webpack_require__(42),
-	    __webpack_require__(40),
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums, streamEnums) {
+	    __webpack_require__(42)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums) {
 	    'use strict';
 
 	    function RoomExpress(options) {
@@ -22292,9 +22464,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        createRoomOptions.room.type = roomEnums.types.channel.name;
 
-	        this.createRoom(createRoomOptions, callback)
+	        this.createRoom(createRoomOptions, callback);
 	    };
-
 
 	    RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
 	        assert.isObject(options, 'options');
@@ -22371,7 +22542,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    });
 	                };
 
-	                joinRoomCallback(null, {status: 'ok', roomService: roomService});
+	                joinRoomCallback(null, {
+	                    status: 'ok',
+	                    roomService: roomService
+	                });
 
 	                that._membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
 	            });
@@ -22453,7 +22627,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                streamId: streamId,
 	                monitor: {
 	                    callback: _.bind(monitorSubsciber, that, subscriberCallback),
-	                    options: { conditionCountForNotificationThreshold: 8 }
+	                    options: {conditionCountForNotificationThreshold: 8}
 	                }
 	            };
 
@@ -22588,7 +22762,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            count++;
 
 	            if (response.status === 'streaming-not-ready' && count < 3) {
-	                return setTimeout(response.retry, count * count * 1000)
+	                return setTimeout(response.retry, count * count * 1000);
 	            } else if (response.status === 'streaming-not-ready' && count >= 3) {
 	                return callback(null, {status: response.status});
 	            }
@@ -22596,14 +22770,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var mediaStream = response.mediaStream;
 
 	            mediaStream.setStreamEndedCallback(function(mediaStream, status, reason) {
-	                callback(null, {status: status, reason: reason, mediaStream: mediaStream});
+	                callback(null, {
+	                    status: status,
+	                    reason: reason,
+	                    mediaStream: mediaStream
+	                });
 	            });
 
 	            if (count > 1) {
-	                return callback(null, {status: 'ok', mediaStream: mediaStream, reason: 'stream-failure-recovered'});
+	                return callback(null, {
+	                    status: 'ok',
+	                    mediaStream: mediaStream,
+	                    reason: 'stream-failure-recovered'
+	                });
 	            }
 
-	            callback(null, {status: 'ok', mediaStream: mediaStream, reason: successReason});
+	            callback(null, {
+	                status: 'ok',
+	                mediaStream: mediaStream,
+	                reason: successReason
+	            });
 	        });
 	    }
 
@@ -22619,18 +22805,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function getDefaultRoomDescription(type) {
 	        switch(type) {
-	            case roomEnums.types.channel.name:
-	                return 'Room Channel';
-	            case roomEnums.types.moderatedChat.name:
-	                return 'Moderated Chat';
-	            case roomEnums.types.multiPartyChat.name:
-	                return 'Multi Party Chat';
-	            case roomEnums.types.townHall.name:
-	                return 'Town Hall';
-	            case roomEnums.types.directChat.name:
-	                return 'Direct Chat';
-	            default:
-	                throw new Error('Unsupported Room Type');
+	        case roomEnums.types.channel.name:
+	            return 'Room Channel';
+	        case roomEnums.types.moderatedChat.name:
+	            return 'Moderated Chat';
+	        case roomEnums.types.multiPartyChat.name:
+	            return 'Multi Party Chat';
+	        case roomEnums.types.townHall.name:
+	            return 'Town Hall';
+	        case roomEnums.types.directChat.name:
+	            return 'Direct Chat';
+	        default:
+	            throw new Error('Unsupported Room Type');
 	        }
 	    }
 
@@ -22646,7 +22832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return uri.replace(pcastStreamPrefix, '');
 	    }
 
-	    function addPublishedStreams(publishedStream) {
+	    function addPublishedStreams(publishedStream) { // eslint-disable-line no-unused-vars
 	        var self = this._roomService.getSelf();
 	        var streams = self.getStreams();
 
@@ -22657,7 +22843,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return RoomExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ })
 /******/ ])

@@ -27,8 +27,6 @@ define([
         });
 
         describe('When asserting authorized', function () {
-            var newValue = 'newValue';
-
             it('Error thrown when status and sessionId invalid', function () {
                 pcast.getObservableStatus().setValue('online');
                 pcast.getProtocol().getObservableSessionId().setValue('');

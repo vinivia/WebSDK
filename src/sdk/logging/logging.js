@@ -22,8 +22,10 @@ define([
     'use strict';
 
     return {
-        createLogger: function() { return new Logger(); }, // base logger with nothing appended
+        createLogger: function() {
+            return new Logger();
+        }, // Base logger with nothing appended
         ConsoleAppender: ConsoleAppender,
-        level: logging.level // object with log levels
+        level: logging.level // Object with log levels
     };
 });

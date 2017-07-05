@@ -40,7 +40,14 @@ define([
         beforeEach(function () {
             stubRoomService = new MockRoomService();
 
-            member1 = { state: member.states.passive.name, sessionId: 'member1', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'first' };
+            member1 = {
+                state: member.states.passive.name,
+                sessionId: 'member1',
+                role: member.roles.participant.name,
+                streams: [stream1],
+                lastUpdate: 123,
+                screenName: 'first'
+            };
             testRoom = new Room(stubRoomService, 'asd', 'User', 'MyRoom', 'My Mutli Party Chat', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
@@ -193,6 +200,6 @@ define([
 
                 expect(testRoom.getObservableMembers().getValue()[0].getObservableLastUpdate().getValue()).to.be.equal(125);
             });
-        })
+        });
     });
 });

@@ -56,7 +56,7 @@ define([
 
         publisherAdjuster.connect(roomService, options);
 
-        this._publisherAdjusters.push(publisherAdjuster)
+        this._publisherAdjusters.push(publisherAdjuster);
     }
 
     return BandwidthMonitor;

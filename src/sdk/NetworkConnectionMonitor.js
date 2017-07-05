@@ -45,7 +45,7 @@ define([
         this._onOffline = null;
     };
 
-    function handleOfflineWithHysteresis(offlineCallback, event) {
+    function handleOfflineWithHysteresis(offlineCallback, event) { // eslint-disable-line no-unused-vars
         var that = this;
 
         if (that._logger) {
@@ -69,7 +69,7 @@ define([
         }, that._offlineHysteresisTimeout);
     }
 
-    function handleOnline(onlineCallback, event) {
+    function handleOnline(onlineCallback, event) { // eslint-disable-line no-unused-vars
         if (this._logger) {
             this._logger.info('Network Reconnected.');
         }

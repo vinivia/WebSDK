@@ -40,7 +40,14 @@ define([
         beforeEach(function () {
             stubRoomService = new MockRoomService();
 
-            member1 = { state: member.states.passive.name, sessionId: 'member1', role: member.roles.participant.name, streams: [stream1], lastUpdate: 123, screenName: 'first' };
+            member1 = {
+                state: member.states.passive.name,
+                sessionId: 'member1',
+                role: member.roles.participant.name,
+                streams: [stream1],
+                lastUpdate: 123,
+                screenName: 'first'
+            };
             testRoom = new ImmutableRoom(stubRoomService, 'asd', 'User', 'MyRoom', 'Immutable Room', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
@@ -48,7 +55,7 @@ define([
             expect(testRoom.toJson).to.be.a('function');
         });
 
-        it('Expect setValue on getObservableType to throw error', function () {
+        it('Expect roomId on to be passed roomId value', function () {
             expect(testRoom.getRoomId()).to.be.equal('asd');
         });
 

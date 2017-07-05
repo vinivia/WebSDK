@@ -129,6 +129,7 @@ define([
             if (error) {
                 throw error;
             }
+
             if (response.status !== 'ok') {
                 throw new Error('Unable to subscribe to room chat. Status ' + status);
             }

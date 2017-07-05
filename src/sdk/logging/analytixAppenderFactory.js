@@ -16,7 +16,7 @@
 define([
     '../LodashLight',
     '../assert',
-    './AnalytixAppender',
+    './AnalytixAppender'
 ], function (_, assert, AnalytixAppender) {
 
     var config = {
@@ -50,9 +50,9 @@ define([
             return 'local';
         } else if (uri.indexOf('stg') > -1) {
             return 'staging';
-        } else {
-            return 'production';
         }
+
+        return 'production';
     }
 
     function createNewAppender(uri) {

@@ -16,7 +16,7 @@
 define([
     'lodash',
     'sdk/logging/Logger',
-    'sdk/ReconnectingWebSocket',
+    'sdk/ReconnectingWebSocket'
 ], function (_, Logger, ReconnectingWebSocket) {
     'use strict';
 
@@ -35,13 +35,19 @@ define([
             mockWebSocket.readyState = closedReadyState;
 
             if (mockWebSocket.onclose) {
-                mockWebSocket.onclose({code: code || 1001, reason: ''});
+                mockWebSocket.onclose({
+                    code: code || 1001,
+                    reason: ''
+                });
             }
         }
 
         function openWebSocket() {
             mockWebSocket.readyState = openReadyState;
-            mockWebSocket.onopen({code:0,reason:''});
+            mockWebSocket.onopen({
+                code: 0,
+                reason: ''
+            });
         }
 
         function goOnline() {
@@ -56,24 +62,26 @@ define([
 
         before(function () {
             mockWebSocket = {
-                close: function () { closeWebSocket(1000); },
+                close: function () {
+                    closeWebSocket(1000);
+                },
                 send: sinon.stub()
             };
 
-            WebSocket = function() {
+            WebSocket = function() { // eslint-disable-line no-global-assign
                 webSocketReconnectCount++;
 
                 return mockWebSocket;
             };
         });
         after(function() {
-            WebSocket = webSocketClone;
+            WebSocket = webSocketClone; // eslint-disable-line no-global-assign
         });
 
         beforeEach(function() {
             reconnectingWebSocket = new ReconnectingWebSocket(uri, new Logger(), maxAttempts, initialBackoffTime);
 
-            mockWebSocket.readyState = openReadyState; // open
+            mockWebSocket.readyState = openReadyState; // Open
 
             webSocketReconnectCount = 0;
         });
@@ -121,7 +129,7 @@ define([
             };
         });
 
-        it('Expect WebSocket close event of 1001 to trigger reconnect a single time after a successful reconnect', function (done) {
+        it('Expect WebSocket close event of 1000 to not trigger reconnect', function (done) {
             reconnectingWebSocket.disconnect();
 
             setTimeout(function() {

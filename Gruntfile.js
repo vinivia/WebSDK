@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global process module __dirname */
 const moment = require('moment');
 const sdkVersion = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
 const releaseVersion = require('./package.json').version;
@@ -100,9 +101,7 @@ module.exports = function (grunt) {
                     path: __dirname + '/dist',
                     filename: 'phenix-web-sdk.js'
                 },
-                resolve: {
-                    modulesDirectories: ['3p', 'node_modules']
-                }
+                resolve: {modulesDirectories: ['3p', 'node_modules']}
             },
             'phenix-web-sdk-bundled': {
                 context: __dirname + '/src',

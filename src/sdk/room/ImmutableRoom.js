@@ -18,7 +18,7 @@ define([
     '../assert',
     '../observable/Observable',
     '../observable/ObservableArray',
-    './Room',
+    './Room'
 ], function (_, assert, Observable, ObservableArray, Room) {
     'use strict';
 
@@ -27,7 +27,7 @@ define([
     }
 
     ImmutableRoom.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        // don't pass roomService.
+        // Don't pass roomService.
         this._room = new Room(null, id, alias, name, description, type, members, bridgeId, pin);
 
         makeArrayOrObjectObservablesImmutable(this._room);
@@ -86,13 +86,13 @@ define([
 
     function makeArrayOrObjectObservablesImmutable(collection) {
         if (_.isArray(collection)) {
-            _.forEach(collection, function (value, index) {
+            _.forEach(collection, function (value) {
                 wrapObservableAndAnyObservableProperties(value);
             });
         } else if (_.isObject(collection)) {
-            _.forOwn(collection, function (value, key) {
+            _.forOwn(collection, function (value) {
                 wrapObservableAndAnyObservableProperties(value);
-            })
+            });
         }
     }
 

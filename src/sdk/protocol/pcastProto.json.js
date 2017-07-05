@@ -28,9 +28,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 9,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     },
                     {
                         "rule": "required",
@@ -171,9 +169,7 @@ define([
                         "type": "Type",
                         "name": "type",
                         "id": 1,
-                        "options": {
-                            "default": "Offer"
-                        }
+                        "options": {"default": "Offer"}
                     },
                     {
                         "rule": "required",
@@ -330,9 +326,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 3,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -373,9 +367,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 3,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -422,9 +414,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 3,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -471,9 +461,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 3,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -549,9 +537,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 4,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -604,9 +590,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 5,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -1154,9 +1138,7 @@ define([
                         "type": "uint32",
                         "name": "apiVersion",
                         "id": 1,
-                        "options": {
-                            "default": 0
-                        }
+                        "options": {"default": 0}
                     },
                     {
                         "rule": "required",
@@ -1192,9 +1174,7 @@ define([
                         "type": "string",
                         "name": "protocol",
                         "id": 1,
-                        "options": {
-                            "default": "http"
-                        }
+                        "options": {"default": "http"}
                     },
                     {
                         "rule": "required",
@@ -1207,27 +1187,21 @@ define([
                         "type": "uint32",
                         "name": "port",
                         "id": 3,
-                        "options": {
-                            "default": 80
-                        }
+                        "options": {"default": 80}
                     },
                     {
                         "rule": "optional",
                         "type": "string",
                         "name": "method",
                         "id": 4,
-                        "options": {
-                            "default": "POST"
-                        }
+                        "options": {"default": "POST"}
                     },
                     {
                         "rule": "optional",
                         "type": "string",
                         "name": "path",
                         "id": 5,
-                        "options": {
-                            "default": "/"
-                        }
+                        "options": {"default": "/"}
                     }
                 ]
             },

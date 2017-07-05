@@ -16,7 +16,7 @@
 define([
     'sdk/logging/analytixAppenderFactory',
     'sdk/logging/ConsoleAppender',
-    'sdk/logging/Logger',
+    'sdk/logging/Logger'
 ], function (analytixAppenderFactory, ConsoleAppender, Logger) {
     describe('When Logging With Multiple Appenders', function () {
         var logger;
@@ -56,12 +56,12 @@ define([
             var consoleAppenderStub;
 
             beforeEach(function() {
-                analytixAppenderStub = sinon.stub(analytixAppender, 'log'); //disable requests to external source
+                analytixAppenderStub = sinon.stub(analytixAppender, 'log'); // Disable requests to external source
                 consoleAppenderStub = sinon.stub(consoleAppender, 'log');
                 logger = new Logger();
 
                 logger.addAppender(analytixAppender);
-                logger.addAppender(consoleAppender)
+                logger.addAppender(consoleAppender);
             });
 
             afterEach(function() {

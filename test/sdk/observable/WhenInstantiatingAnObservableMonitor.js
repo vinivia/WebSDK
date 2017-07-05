@@ -42,7 +42,7 @@ define([
             beforeEach(function () {
                 observableMonitor.start(function () {
                     return valueToObserve.value;
-                }, 50)
+                }, 50);
             });
 
             afterEach(function () {

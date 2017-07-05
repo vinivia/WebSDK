@@ -18,9 +18,8 @@ define([
     '../assert',
     './PCastExpress',
     '../room/room.json',
-    '../room/member.json',
-    '../room/stream.json',
-], function (_, assert, PCastExpress, roomEnums, memberEnums, streamEnums) {
+    '../room/member.json'
+], function (_, assert, PCastExpress, roomEnums, memberEnums) {
     'use strict';
 
     function RoomExpress(options) {
@@ -94,9 +93,8 @@ define([
 
         createRoomOptions.room.type = roomEnums.types.channel.name;
 
-        this.createRoom(createRoomOptions, callback)
+        this.createRoom(createRoomOptions, callback);
     };
-
 
     RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
         assert.isObject(options, 'options');
@@ -173,7 +171,10 @@ define([
                     });
                 };
 
-                joinRoomCallback(null, {status: 'ok', roomService: roomService});
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
 
                 that._membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
             });
@@ -255,7 +256,7 @@ define([
                 streamId: streamId,
                 monitor: {
                     callback: _.bind(monitorSubsciber, that, subscriberCallback),
-                    options: { conditionCountForNotificationThreshold: 8 }
+                    options: {conditionCountForNotificationThreshold: 8}
                 }
             };
 
@@ -390,7 +391,7 @@ define([
             count++;
 
             if (response.status === 'streaming-not-ready' && count < 3) {
-                return setTimeout(response.retry, count * count * 1000)
+                return setTimeout(response.retry, count * count * 1000);
             } else if (response.status === 'streaming-not-ready' && count >= 3) {
                 return callback(null, {status: response.status});
             }
@@ -398,14 +399,26 @@ define([
             var mediaStream = response.mediaStream;
 
             mediaStream.setStreamEndedCallback(function(mediaStream, status, reason) {
-                callback(null, {status: status, reason: reason, mediaStream: mediaStream});
+                callback(null, {
+                    status: status,
+                    reason: reason,
+                    mediaStream: mediaStream
+                });
             });
 
             if (count > 1) {
-                return callback(null, {status: 'ok', mediaStream: mediaStream, reason: 'stream-failure-recovered'});
+                return callback(null, {
+                    status: 'ok',
+                    mediaStream: mediaStream,
+                    reason: 'stream-failure-recovered'
+                });
             }
 
-            callback(null, {status: 'ok', mediaStream: mediaStream, reason: successReason});
+            callback(null, {
+                status: 'ok',
+                mediaStream: mediaStream,
+                reason: successReason
+            });
         });
     }
 
@@ -421,18 +434,18 @@ define([
 
     function getDefaultRoomDescription(type) {
         switch(type) {
-            case roomEnums.types.channel.name:
-                return 'Room Channel';
-            case roomEnums.types.moderatedChat.name:
-                return 'Moderated Chat';
-            case roomEnums.types.multiPartyChat.name:
-                return 'Multi Party Chat';
-            case roomEnums.types.townHall.name:
-                return 'Town Hall';
-            case roomEnums.types.directChat.name:
-                return 'Direct Chat';
-            default:
-                throw new Error('Unsupported Room Type');
+        case roomEnums.types.channel.name:
+            return 'Room Channel';
+        case roomEnums.types.moderatedChat.name:
+            return 'Moderated Chat';
+        case roomEnums.types.multiPartyChat.name:
+            return 'Multi Party Chat';
+        case roomEnums.types.townHall.name:
+            return 'Town Hall';
+        case roomEnums.types.directChat.name:
+            return 'Direct Chat';
+        default:
+            throw new Error('Unsupported Room Type');
         }
     }
 
@@ -448,7 +461,7 @@ define([
         return uri.replace(pcastStreamPrefix, '');
     }
 
-    function addPublishedStreams(publishedStream) {
+    function addPublishedStreams(publishedStream) { // eslint-disable-line no-unused-vars
         var self = this._roomService.getSelf();
         var streams = self.getStreams();
 

@@ -37,21 +37,38 @@ define([
         var sessionId = new Observable('mockSessionId');
         var status = new Observable('online');
 
-        pcast.getLogger = function() { return logger; };
-        pcast.getProtocol = function() { return protocol; };
-        pcast.getStatus = function() { return 'online'; };
-        pcast.getObservableStatus = function() { return status; };
-        protocol.getSessionId = function() { return 'mockSessionId'; };
-        protocol.getObservableSessionId = function() { return sessionId; };
+        pcast.getLogger = function() {
+            return logger;
+        };
+
+        pcast.getProtocol = function() {
+            return protocol;
+        };
+
+        pcast.getStatus = function() {
+            return 'online';
+        };
+
+        pcast.getObservableStatus = function() {
+            return status;
+        };
+
+        protocol.getSessionId = function() {
+            return 'mockSessionId';
+        };
+
+        protocol.getObservableSessionId = function() {
+            return sessionId;
+        };
 
         if (pcast.start.restore) {
             pcast.start.restore();
         }
 
-        pcast.start = sinon.stub(pcast, 'start', function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
+        pcast.start = sinon.stub(pcast, 'start', function(authToken, authenticationCallback, onlineCallback) {
             authenticationCallback(pcast, 'ok', sessionId.getValue());
             onlineCallback();
-        })
+        });
     }
 
     return MockPCast;

@@ -19,7 +19,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json',
-    '../../../test/mock/mockRoomService',
+    '../../../test/mock/mockRoomService'
 ], function (Long, Member, member, stream, track, MockRoomService) {
     describe('When instantiating a Member', function () {
         var testMember;
@@ -198,6 +198,6 @@ define([
 
                 expect(myMember.getLastUpdate()).to.be.equal(1488469432437);
             });
-        })
+        });
     });
 });

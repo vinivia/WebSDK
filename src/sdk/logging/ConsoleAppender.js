@@ -42,7 +42,7 @@ define([
         messages[0] = since + ' [' + category + '] ' + level + ' ' + messages[0];
 
         if (context.level > logging.level.INFO) {
-            logError(messages)
+            logError(messages);
         } else {
             log(messages);
         }

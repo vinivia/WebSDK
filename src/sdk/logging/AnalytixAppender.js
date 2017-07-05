@@ -146,9 +146,7 @@ define([
             return;
         }
 
-        var storeLogRecords = {
-            records: _.take(this._records, this._maxBatchSize)
-        };
+        var storeLogRecords = {records: _.take(this._records, this._maxBatchSize)};
 
         this._records = this._records.slice(this._maxBatchSize);
         this._pending = true;
@@ -185,7 +183,10 @@ define([
                     onTimeout();
                 }
 
-                return {storedRecords: 0, status: 'error'};
+                return {
+                    storedRecords: 0,
+                    status: 'error'
+                };
             }
 
             return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));

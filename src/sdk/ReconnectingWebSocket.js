@@ -149,10 +149,10 @@ define([
             });
         } catch(e) {
             this._logger.warn('Unable to create WebSocket connection [%s]', e);
-            // swallow error - we will alert client of failure after timeouts.
+            // Swallow error - we will alert client of failure after timeouts.
         }
 
-        backoffTimeout = reconnectWithBackoff.call(this, attempt)
+        backoffTimeout = reconnectWithBackoff.call(this, attempt);
     };
 
     ReconnectingWebSocket.prototype.disconnect = function () {
@@ -168,7 +168,7 @@ define([
 
     function closeWebSocketOrTriggerDisconnectEvent(evt) {
         if (this._webSocket.readyState === readyStates.closed.code) {
-            return onClose.call(this, evt)
+            return onClose.call(this, evt);
         }
 
         return this._webSocket.close(evt.code, evt.reason);
@@ -203,18 +203,18 @@ define([
 
     function onClose(evt) {
         switch (evt.code) {
-            case closeReasons.reconnecting.code:
+        case closeReasons.reconnecting.code:
+            return;
+        case closeReasons.byebye.code:
+        case closeReasons.backoffLimitReached.code:
+        case closeReasons.networkDisconnect.code:
+            return onDisconnect.call(this, evt);
+        default:
+            if (this._hasAttemptedReconnect) {
                 return;
-            case closeReasons.byebye.code:
-            case closeReasons.backoffLimitReached.code:
-            case closeReasons.networkDisconnect.code:
-                return onDisconnect.call(this, evt);
-            default:
-                if (this._hasAttemptedReconnect) {
-                    return;
-                }
+            }
 
-                return onReconnecting.call(this, evt);
+            return onReconnecting.call(this, evt);
         }
     }
 
@@ -273,7 +273,7 @@ define([
 
         setTimeout(function() {
             if (that._stopped) {
-                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.')
+                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.');
             }
 
             if (that._webSocket.readyState !== readyStates.open.code) {

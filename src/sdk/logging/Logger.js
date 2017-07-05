@@ -36,31 +36,31 @@ define([
         if (observableSessionId) {
             assert.isObject(observableSessionId);
 
-            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial:'notify'})
+            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
         }
     }
 
-    Logger.prototype.trace = function trace(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.TRACE});
     };
 
-    Logger.prototype.debug = function debug(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.debug = function debug(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.DEBUG});
     };
 
-    Logger.prototype.info = function info(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.info = function info(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.INFO});
     };
 
-    Logger.prototype.warn = function warn(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.warn = function warn(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.WARN});
     };
 
-    Logger.prototype.error = function error(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.error = function error(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.ERROR});
     };
 
-    Logger.prototype.fatal = function fatal(/*formatStr, [parameter], ...*/) {
+    Logger.prototype.fatal = function fatal(/* formatStr, [parameter], ...*/) {
         return log.call(this, arguments, {level: logging.level.FATAL});
     };
 
@@ -119,28 +119,27 @@ define([
         _.forEach(this._appenders, function(appender) {
             try {
                 appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
-            } catch (e) {
-            }
+            } catch (e) { } // eslint-disable-line no-empty
         });
     }
 
     function convertLevel(jsLoggerLevel) {
         switch (jsLoggerLevel) {
-            case logging.level.TRACE:
-                return 'Trace';
-            case logging.level.DEBUG:
-                return 'Debug';
-            case logging.level.INFO:
-                return 'Info';
-            case logging.level.WARN:
-                return 'Warn';
-            case logging.level.ERROR:
-                return 'Error';
-            case logging.level.FATAL:
-                return 'Fatal';
+        case logging.level.TRACE:
+            return 'Trace';
+        case logging.level.DEBUG:
+            return 'Debug';
+        case logging.level.INFO:
+            return 'Info';
+        case logging.level.WARN:
+            return 'Warn';
+        case logging.level.ERROR:
+            return 'Error';
+        case logging.level.FATAL:
+            return 'Fatal';
+        default:
+            throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
         }
-
-        throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
     }
 
     var stringify = function stringify(args) {
@@ -173,20 +172,21 @@ define([
                 var type = fmt.substring(idx + 1, idx + 2);
 
                 switch (type) {
-                    case '%':
-                        // Escaped '%%' turns into '%'
-                        fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
-                        idx++;
-                        break;
-                    case 's':
-                    case 'd':
-                        // Replace '%d' or '%s' with the argument
-                        args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
-                        args.splice(1, 1);
-                        break;
-                    default:
-                        return args;
-                        break;
+                case '%':
+                    // Escaped '%%' turns into '%'
+                    fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
+                    idx++;
+
+                    break;
+                case 's':
+                case 'd':
+                    // Replace '%d' or '%s' with the argument
+                    args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
+                    args.splice(1, 1);
+
+                    break;
+                default:
+                    return args;
                 }
             }
         }

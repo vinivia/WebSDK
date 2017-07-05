@@ -45,9 +45,10 @@ define([
         return this.isResolved();
     };
 
-    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) {
+    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) { // eslint-disable-line no-unused-vars
         if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
             this._done = true;
+
             return this._onClosestEndpointFound(undefined, this._minResponseText);
         }
     };
@@ -80,7 +81,7 @@ define([
 
                 if (!err) {
                     if (that.measurementCallback(endPoint, time, responseText)) {
-                        // done
+                        // Done
                         return;
                     }
 
@@ -95,9 +96,9 @@ define([
                     return nextMeasurement(endPoint);
                 } else if (successfulAttempts === 0) {
                     return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
-                } else {
-                    return that.completeCallback(endPoint);
                 }
+
+                return that.completeCallback(endPoint);
             }, maxAttempts);
         };
 

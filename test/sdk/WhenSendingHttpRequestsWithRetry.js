@@ -25,6 +25,7 @@ define([
             this.xhr = sinon.useFakeXMLHttpRequest();
 
             requests = [];
+
             this.xhr.onCreate = function (req) {
                 requests.push(req);
             };
@@ -45,18 +46,17 @@ define([
                     expect(responseText).to.be.equal(httpResponseText);
                 }, 2);
 
-
                 requests[0].respond(200, null, httpResponseText);
             });
 
             it('Expect request method to be get', function () {
-                http.getWithRetry('', function(error, responseText) { }, 2);
+                http.getWithRetry('', function() { }, 2);
 
                 expect(requests[0].method).to.be.equal('GET');
             });
 
             it('Expect a response of 500 to attempt a retry', function () {
-                http.getWithRetry('', function(error, responseText) {}, 2);
+                http.getWithRetry('', function() {}, 2);
 
                 requests[0].respond(500, [], 'Error');
 
@@ -64,7 +64,7 @@ define([
             });
 
             it('Expect a response of 500 to attempt a retry until response with 200', function () {
-                http.getWithRetry('', function(error, responseText) {}, 2);
+                http.getWithRetry('', function() {}, 2);
 
                 requests[0].respond(500, [], 'Error');
                 requests[1].respond(200, [], 'text: "My Response Text"');
@@ -97,7 +97,6 @@ define([
                     expect(responseText).to.be.equal(httpResponseText);
                 }, 2);
 
-
                 requests[0].respond(200, null, httpResponseText);
             });
 
@@ -106,7 +105,6 @@ define([
                     expect(error).to.not.be.ok;
                     expect(responseText).to.be.equal(httpResponseText);
                 }, 2);
-
 
                 requests[0].respond(200, null, httpResponseText);
             });
@@ -119,13 +117,13 @@ define([
             });
 
             it('Expect request method to be post', function () {
-                http.postWithRetry('', 'json', {}, function(error, responseText) { }, 2);
+                http.postWithRetry('', 'json', {}, function() { }, 2);
 
                 expect(requests[0].method).to.be.equal('POST');
             });
 
             it('Expect a response of 500 to attempt a retry', function () {
-                http.postWithRetry('', 'json', {}, function(error, responseText) {}, 2);
+                http.postWithRetry('', 'json', {}, function() {}, 2);
 
                 requests[0].respond(500, [], 'Error');
 
@@ -149,5 +147,5 @@ define([
                 expect(requests[3]).to.not.be.ok;
             });
         });
-    })
+    });
 });

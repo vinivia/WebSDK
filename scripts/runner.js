@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global process exports */
 var path = require('path');
 var fs = require('fs');
 var spawn = require('child_process').spawn;
@@ -44,6 +45,7 @@ function run(command, next) {
             console.error(command[0] + ' failed with code ' + code);
             process.exit(code);
         }
+
         next();
     });
 }
@@ -56,9 +58,9 @@ exports.runCommands = function runCommands(commands, done) {
     }
 
     if (command.length > 0) {
-        if (command[0] == 'npm') {
+        if (command[0] === 'npm') {
             command[0] = npm;
-        } else if (command[0] == 'node') {
+        } else if (command[0] === 'node') {
             command[0] = node;
         }
     }
@@ -72,7 +74,7 @@ exports.runCommands = function runCommands(commands, done) {
             }
         }
     });
-}
+};
 
 exports.node = node;
 exports.npm = npm;

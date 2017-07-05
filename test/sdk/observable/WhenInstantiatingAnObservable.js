@@ -87,7 +87,7 @@ define([
                 observable.subscribe(function (changedValue) {
                     expect(changedValue).to.be.equal(value);
                     done();
-                }, { initial: 'notify' });
+                }, {initial: 'notify'});
             });
 
             it('Triggers subscription callback when value changed externally when Listening for Changes', function (done) {
@@ -97,10 +97,14 @@ define([
                     expect(changedValue).to.be.equal('newValue');
                     subscription.dispose();
                     done();
-                }, { listenForChanges: {
-                    callback: function () { return myValue; },
-                    timeout: 300
-                } });
+                }, {
+                    listenForChanges: {
+                        callback: function () {
+                            return myValue;
+                        },
+                        timeout: 300
+                    }
+                });
 
                 myValue = 'newValue';
             });
@@ -125,8 +129,15 @@ define([
 
                 observable.subscribe(function (updatedValue) {
                     count++;
-                    if (count === 1) expect(updatedValue).to.be.equal(newValue1);
-                    if (count === 2) expect(updatedValue).to.be.equal(newValue2);
+
+                    if (count === 1) {
+                        expect(updatedValue).to.be.equal(newValue1);
+                    }
+
+                    if (count === 2) {
+                        expect(updatedValue).to.be.equal(newValue2);
+                    }
+
                     setTimeout(function () {
                         expect(count).to.be.equal(2);
                         done();
@@ -160,10 +171,10 @@ define([
                 it('Triggers one callback per subscription for a single change', function (done) {
                     var count = 0;
 
-                    var subscriptionOne = observable.subscribe(function () {
+                    observable.subscribe(function () {
                         count++;
                     });
-                    var subscriptionTwo = observable.subscribe(function () {
+                    observable.subscribe(function () {
                         count++;
                     });
 
@@ -203,7 +214,10 @@ define([
                 });
 
                 it('Trigger callback after timeout wait triggered by first change for notifyAtFixedRate', function (done) {
-                    observable.extend({ method: 'notifyAtFixedRate', timeout: subscriptionTimeout });
+                    observable.extend({
+                        method: 'notifyAtFixedRate',
+                        timeout: subscriptionTimeout
+                    });
 
                     observable.subscribe(function () {
                         var timeElapsedSinceFirstChange = triggerTime - _.now();
@@ -215,12 +229,15 @@ define([
                     observable.setValue(newValue1);
 
                     setTimeout(function () {
-                        observable.setValue(newValue2)
+                        observable.setValue(newValue2);
                     }, subscriptionTimeout / 2);
                 });
 
                 it('Method notifyWhenChangesStop - Two changes within timeout window increase timeout window by time elapsed', function (done) {
-                    observable.extend({ method: 'notifyWhenChangesStop', timeout: subscriptionTimeout });
+                    observable.extend({
+                        method: 'notifyWhenChangesStop',
+                        timeout: subscriptionTimeout
+                    });
 
                     observable.subscribe(function () {
                         var timeElapsedSinceFirstChange = _.now() - triggerTime;
@@ -232,7 +249,7 @@ define([
                     observable.setValue(newValue1);
 
                     setTimeout(function () {
-                        observable.setValue(newValue2)
+                        observable.setValue(newValue2);
                     }, subscriptionTimeout / 2);
                 });
             });

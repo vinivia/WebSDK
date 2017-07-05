@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global requirejs */
 requirejs.config({
     paths: {
         'phenix-web-sdk': 'web-sdk',
@@ -25,13 +26,20 @@ requirejs.config({
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'Long': 'long/dist/long.min',
         'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
-        'shaka-player': 'shaka-player/dist/shaka-player.compiled',
+        'shaka-player': 'shaka-player/dist/shaka-player.compiled'
     }
 });
 
 var version = '1.0.0'; // ToDo: use until sample app separated from repo
 
-requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+requirejs([
+    'jquery',
+    'lodash',
+    'bootstrap-notify',
+    'fingerprintjs2',
+    'phenix-web-sdk',
+    'shaka-player'
+], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var remoteVideoEl = $('#remoteVideo')[0];
@@ -63,9 +71,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
             $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
 
-            $('html, body').animate({
-                scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)
-            }, 'slow');
+            $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
         };
 
         var activateStep = function activateStep(step) {
@@ -87,7 +93,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                 message: 'The video dimensions are ' + video.videoWidth + ' x ' + video.videoHeight
             }, {
                 type: 'info',
-                allow_dismiss: false,
+                allow_dismiss: false, // eslint-disable-line camelcase
                 placement: {
                     from: 'bottom',
                     align: 'right'
@@ -112,12 +118,14 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
         $('#browser').text(sdk.RTC.browser);
-        $('#browserVersion').text(sdk.RTC.browserVersion)
+        $('#browserVersion').text(sdk.RTC.browserVersion);
+
         if (sdk.RTC.webrtcSupported) {
             $('#webrtc').addClass('success');
         } else {
             $('#webrtc').addClass('danger');
         }
+
         if (sdk.RTC.isPhenixEnabled()) {
             $('#phenix').addClass('success');
         } else if (sdk.RTC.phenixSupported) {
@@ -162,7 +170,11 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
 
             fingerprint.get(function (fingerprint) {
-                pcast = new sdk.PCast({uri: uri, deviceId: fingerprint, shaka: shaka});
+                pcast = new sdk.PCast({
+                    uri: uri,
+                    deviceId: fingerprint,
+                    shaka: shaka
+                });
 
                 pcast.getLogger().setApplicationVersion(version);
 
@@ -198,7 +210,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Failed to create authentication token (' + (errorThrown || jqXHR.status) + ')'
                 }, {
                     type: 'danger',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -216,14 +228,14 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             pcast.start($('#authToken').val(), function authenticateCallback(pcast, status, sessionId) {
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
-            }, function onlineCallback(pcast) {
+            }, function onlineCallback() {
                 $.notify({
                     icon: 'glyphicon glyphicon-log-in',
                     title: '<strong>Online</strong>',
                     message: 'Connected to PCast&trade;'
                 }, {
                     type: 'success',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -238,14 +250,14 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                 setTimeout(function () {
                     activateStep('step-5');
                 }, 1500);
-            }, function offlineCallback(pcast) {
+            }, function offlineCallback() {
                 $.notify({
                     icon: 'glyphicon glyphicon-log-out',
                     title: '<strong>Offline</strong>',
                     message: 'Disconnected from PCast&trade;'
                 }, {
                     type: 'warning',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -298,7 +310,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Please provide a source URI before publishing'
                 }, {
                     type: 'danger',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -322,7 +334,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Please create a stream token before publishing'
                 }, {
                     type: 'danger',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -347,7 +359,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         message: 'Failed to publish stream (' + status + ')'
                     }, {
                         type: 'danger',
-                        allow_dismiss: false,
+                        allow_dismiss: false, // eslint-disable-line camelcase
                         placement: {
                             from: 'bottom',
                             align: 'right'
@@ -358,6 +370,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                             exit: 'animated fadeOutDown'
                         }
                     });
+
                     return;
                 }
 
@@ -371,7 +384,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         message: 'Data quality update: sending ' + status + ' with limitation ' + reason
                     }, {
                         type: 'info',
-                        allow_dismiss: false,
+                        allow_dismiss: false, // eslint-disable-line camelcase
                         placement: {
                             from: 'bottom',
                             align: 'right'
@@ -384,14 +397,14 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     });
                 });
 
-                publisher.setPublisherEndedCallback(function (publisher, reason, reasonDescription) {
+                publisher.setPublisherEndedCallback(function (publisher, reason) {
                     $.notify({
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
                         message: 'The published stream ended for reason "' + reason + '"'
                     }, {
                         type: 'info',
-                        allow_dismiss: false,
+                        allow_dismiss: false, // eslint-disable-line camelcase
                         placement: {
                             from: 'bottom',
                             align: 'right'
@@ -410,7 +423,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Started publishing stream "' + publisher.getStreamId() + '"'
                 }, {
                     type: 'success',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -430,9 +443,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                 }, 1500);
             };
 
-            var options = {
-                connectOptions: sourceOptions
-            };
+            var options = {connectOptions: sourceOptions};
 
             pcast.publish(streamToken, sourceUri, publishCallback, tags, options);
         };
@@ -495,7 +506,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Failed to list streams (' + (errorThrown || jqXHR.status) + ')'
                 }, {
                     type: 'danger',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -532,7 +543,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Created token for stream "' + originStreamId + '"'
                 }, {
                     type: 'success',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -551,7 +562,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Failed to create stream token (' + (errorThrown || jqXHR.status) + ')'
                 }, {
                     type: 'danger',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -616,7 +627,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                         message: 'Failed to subscribe to stream (' + status + ')'
                     }, {
                         type: 'danger',
-                        allow_dismiss: false,
+                        allow_dismiss: false, // eslint-disable-line camelcase
                         placement: {
                             from: 'bottom',
                             align: 'right'
@@ -627,17 +638,18 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                             exit: 'animated fadeOutDown'
                         }
                     });
+
                     return;
                 }
 
-                mediaStream.setStreamEndedCallback(function (mediaStream, reason, reasonDescription) {
+                mediaStream.setStreamEndedCallback(function (mediaStream, reason) {
                     $.notify({
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Stream</strong>',
                         message: 'The stream ended for reason "' + reason + '"'
                     }, {
                         type: 'info',
-                        allow_dismiss: false,
+                        allow_dismiss: false, // eslint-disable-line camelcase
                         placement: {
                             from: 'bottom',
                             align: 'right'
@@ -661,7 +673,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
 
                 if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function(track, index) {
-                        return track.kind === 'video' && index == 2;
+                        return track.kind === 'video' && index === 2;
                     });
 
                     displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
@@ -674,7 +686,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Starting stream'
                 }, {
                     type: 'success',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -699,48 +711,50 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
             }
         };
 
-        var monitorStream = function monitorStream(stream, reason, description) {
+        var monitorStream = function monitorStream(stream, reason) {
             switch (reason) {
-                case  'client-side-failure':
-                    $.notify({
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Monitor</strong>',
-                        message: 'Stream Failure'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 3000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
-                    // handle failure event, redo stream
-                    break;
-                default:
-                    $.notify({
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>Monitor</strong>',
-                        message: 'Stream Healthy'
-                    }, {
-                        type: 'success',
-                        allow_dismiss: false,
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 3000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
-                    });
-                    // no failure has occurred, handle monitor event
-                    break;
+            case 'client-side-failure':
+                $.notify({
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Monitor</strong>',
+                    message: 'Stream Failure'
+                }, {
+                    type: 'danger',
+                    allow_dismiss: false, // eslint-disable-line camelcase
+                    placement: {
+                        from: 'bottom',
+                        align: 'right'
+                    },
+                    delay: 3000,
+                    animate: {
+                        enter: 'animated fadeInUp',
+                        exit: 'animated fadeOutDown'
+                    }
+                });
+
+                // Handle failure event, redo stream
+                break;
+            default:
+                $.notify({
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Monitor</strong>',
+                    message: 'Stream Healthy'
+                }, {
+                    type: 'success',
+                    allow_dismiss: false, // eslint-disable-line camelcase
+                    placement: {
+                        from: 'bottom',
+                        align: 'right'
+                    },
+                    delay: 3000,
+                    animate: {
+                        enter: 'animated fadeInUp',
+                        exit: 'animated fadeOutDown'
+                    }
+                });
+
+                    // No failure has occurred, handle monitor event
+                break;
             }
         };
 
@@ -774,7 +788,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
                 }, {
                     type: 'info',
-                    allow_dismiss: false,
+                    allow_dismiss: false, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'
@@ -796,7 +810,7 @@ requirejs(['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web
                     message: 'Video dimensions changed: new width = ' + dimensions.width + ', new height = ' + dimensions.height
                 }, {
                     type: 'info',
-                    allow_dismiss: true,
+                    allow_dismiss: true, // eslint-disable-line camelcase
                     placement: {
                         from: 'bottom',
                         align: 'right'

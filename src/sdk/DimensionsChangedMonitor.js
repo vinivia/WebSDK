@@ -24,6 +24,7 @@ define([
         if (!logger) {
             throw new Error("'logger' must be specified.");
         }
+
         this._logger = logger;
         this._dimensionsChangedIntervalId = null;
         this._videoDisplayDimensionsChangedCallback = null;
@@ -69,6 +70,7 @@ define([
 
     function stopMonitor() {
         this._toBeStarted = false;
+
         if (this._dimensionsChangedIntervalId) {
             clearInterval(this._dimensionsChangedIntervalId);
             this._dimensionsChangedIntervalId = null;
@@ -79,6 +81,7 @@ define([
         if (callback === null) {
             this._videoDisplayDimensionsChangedCallback = null;
             stopMonitor.call(this);
+
             return;
         }
 
@@ -87,14 +90,16 @@ define([
         }
 
         this._videoDisplayDimensionsChangedCallback = callback;
+
         if (options && options.pollFrequency) {
             this._dimensionsChangedData.pollFrequency = options.pollFrequency >= minimumPollFrequency ? options.pollFrequency : minimumPollFrequency;
         }
+
         startInterval.call(this);
     }
 
     function startInterval() {
-        //return if either:
+        // Return if either:
         // - start hasn't been called yet
         // - the interval is already running
         // - there is no callback yet

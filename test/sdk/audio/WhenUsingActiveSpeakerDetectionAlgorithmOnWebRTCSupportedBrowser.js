@@ -27,7 +27,7 @@ define([
         before(function() {
             pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
                 return sinon.createStubInstance(Logger);
-            }); //disable requests to external source
+            }); // Disable requests to external source
         });
 
         beforeEach(function () {
@@ -62,7 +62,10 @@ define([
 
                 audioVolumeMeter.init(audioContext, 123);
 
-                audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, {silenceHysteresisInterval:1, speakingHysteresisInterval: 1})
+                audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, {
+                    silenceHysteresisInterval: 1,
+                    speakingHysteresisInterval: 1
+                });
             });
 
             afterEach(function () {

@@ -18,12 +18,13 @@ define([
     './protocol/mqProto.json',
     './protocol/pcastProto.json',
     './protocol/chatProto.json',
-    './protocol/analytixProto.json',
-    ], function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
+    './protocol/analytixProto.json'
+], function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
     'use strict';
 
     function MQProtocol(logger) {
         this._logger = logger;
+
         var builder = ProtoBuf.loadJson(mqProto);
 
         builder = ProtoBuf.loadJson(pcastProto, builder);
@@ -42,6 +43,7 @@ define([
         if (typeof type !== 'string') {
             throw new Error("'type' must be a string");
         }
+
         if (typeof data !== 'object') {
             throw new Error("'data' must be an object");
         }
@@ -97,6 +99,7 @@ define([
                     for (var i = 0; i < type.children.length; i++) {
                         if (type.children[i].id === value) {
                             metaValue = type.children[i];
+
                             break;
                         }
                     }

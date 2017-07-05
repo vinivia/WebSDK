@@ -38,7 +38,7 @@ define([
         assert.stringNotEmpty(stream.id, 'streamId');
 
         if (!this._audioVolumeMeters[stream.id]) {
-            this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger)
+            this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger);
         }
 
         return this._audioVolumeMeters[stream.id];

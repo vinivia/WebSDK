@@ -15,7 +15,7 @@
  */
 define([
     'sdk/LodashLight',
-    'Long',
+    'Long'
 ], function (_, Long) {
     describe('When utilizing LodashLight', function () {
 
@@ -52,11 +52,11 @@ define([
                 expect(_.pad(100, 2)).to.be.equal('100');
             });
 
-            it('Returns string padded when length is less than order of magnitude', function () {
+            it('Returns string padded when length is 1 less than order of magnitude', function () {
                 expect(_.pad(1, 2)).to.be.equal('01');
             });
 
-            it('Returns string padded when length is less than order of magnitude', function () {
+            it('Returns string padded when length is 2 less than order of magnitude', function () {
                 expect(_.pad(1, 3)).to.be.equal('001');
             });
         });
@@ -139,7 +139,7 @@ define([
             it('Expect items to be the same after forEach is executed and no modification occurs', function () {
                 myArray.push('newItem');
 
-                _.forEach(myArray, function (item, index) {});
+                _.forEach(myArray, function () {});
 
                 expect(myArray[0]).to.be.equal('newItem');
             });
@@ -171,7 +171,9 @@ define([
             it('Expect original array items to be the same after map is executed and no modification occurs', function () {
                 myArray.push('newItem');
 
-                _.map(myArray, function (item, index) { return false; });
+                _.map(myArray, function () {
+                    return false;
+                });
 
                 expect(myArray[0]).to.be.equal('newItem');
             });
@@ -186,7 +188,7 @@ define([
                 var myArray;
 
                 beforeEach(function () {
-                    myArray = ['value1','value2','value3'];
+                    myArray = ['value1', 'value2', 'value3'];
                 });
 
                 it('Returns true when item in collection', function () {
@@ -244,7 +246,7 @@ define([
                 var myArray;
 
                 beforeEach(function () {
-                    myArray = [1,2,3];
+                    myArray = [1, 2, 3];
                 });
 
                 it('Returns single value when initial value passed in', function () {
@@ -287,6 +289,7 @@ define([
                     var result = _.reduce(myObject,
                         function (result, value, key) {
                             (result[value] || (result[value] = [])).push(key);
+
                             return result;
                         }, {});
 
@@ -500,7 +503,7 @@ define([
             });
 
             it('Expect frozen object to be immutable - value cannot change', function () {
-                var myObject = { key: 'value' };
+                var myObject = {key: 'value'};
                 _.freeze(myObject);
 
                 myObject.key = 'newValue';
@@ -509,7 +512,7 @@ define([
             });
 
             it('Expect frozen object to be immutable - new property cannot be added', function () {
-                var myObject = { key: 'value' };
+                var myObject = {key: 'value'};
                 _.freeze(myObject);
 
                 myObject.newKey = 'newValue';
@@ -518,7 +521,7 @@ define([
             });
 
             it('Expect frozen object to be immutable - property cannot be deleted', function () {
-                var myObject = { key: 'value' };
+                var myObject = {key: 'value'};
                 _.freeze(myObject);
 
                 delete myObject.key;
@@ -590,8 +593,14 @@ define([
                 var myObject2;
 
                 beforeEach(function () {
-                    myObject1 = { name: 'hello', id: '123'};
-                    myObject2 = { name: 'hello', id: '123'};
+                    myObject1 = {
+                        name: 'hello',
+                        id: '123'
+                    };
+                    myObject2 = {
+                        name: 'hello',
+                        id: '123'
+                    };
                 });
 
                 it('Expect to return an array with no items when two empty objects passed in', function () {
@@ -613,73 +622,76 @@ define([
                 });
 
                 it('Expect to return array with one item of key of id when ids are different', function () {
-                    var differences = _.findDifferences(myObject1, { name: 'hello', id: '125'});
+                    var differences = _.findDifferences(myObject1, {
+                        name: 'hello',
+                        id: '125'
+                    });
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('id');
                 });
 
                 it('Expect to return one item when properties are objects that have the same properties and values', function () {
-                    var differences = _.findDifferences({ name: {id:'1'}}, { name: {id:'1'}});
+                    var differences = _.findDifferences({name: {id: '1'}}, {name: {id: '1'}});
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('name');
                 });
 
                 it('Expect to return no items when properties are objects that have the same properties and values when deep is true', function () {
-                    var differences = _.findDifferences({ name: {id:'1'}}, { name: {id:'1'}}, true);
+                    var differences = _.findDifferences({name: {id: '1'}}, {name: {id: '1'}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return no items when properties are objects that have the same properties and values when deep is true', function () {
-                    var differences = _.findDifferences({ name: {id:{value:'1'}}}, { name: {id:{value:'1'}}}, true);
+                it('Expect to return no items when properties are objects with nested objects that have the same properties and values when deep is true', function () {
+                    var differences = _.findDifferences({name: {id: {value: '1'}}}, {name: {id: {value: '1'}}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
                 it('Expect to return one item when property is array that have the same values and values when deep is false', function () {
-                    var differences = _.findDifferences({ name: {ids:[1,2,3]}}, { name: {ids:[1,2,3]}}, false);
+                    var differences = _.findDifferences({name: {ids: [1, 2, 3]}}, {name: {ids: [1, 2, 3]}}, false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('name');
                 });
 
                 it('Expect to return no items when property is array that have the same values and values when deep is true', function () {
-                    var differences = _.findDifferences({ name: {ids:[1,2,3]}}, { name: {ids:[1,2,3]}}, true);
+                    var differences = _.findDifferences({name: {ids: [1, 2, 3]}}, {name: {ids: [1, 2, 3]}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
                 it('Expect to return no items when property is array of identical objects when deep is true', function () {
-                    var differences = _.findDifferences({ names: [{ids:'123'}]}, { names: [{ids:'123'}]}, true);
+                    var differences = _.findDifferences({names: [{ids: '123'}]}, {names: [{ids: '123'}]}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
                 it('Expect to return one item when property is array of objects with different values when deep is true', function () {
-                    var differences = _.findDifferences({ names: [{ids:'123'}]}, { names: [{ids:'125'}]}, true);
+                    var differences = _.findDifferences({names: [{ids: '123'}]}, {names: [{ids: '125'}]}, true);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
                 it('Expect to return one item when one property is array of objects and the other object has property of empty array when deep is true', function () {
-                    var differences = _.findDifferences({ names: [{ids:'123'}]}, { names: []}, true);
+                    var differences = _.findDifferences({names: [{ids: '123'}]}, {names: []}, true);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
-                it('Expect to return one item when one one object does not have the other objects property when deep is false', function () {
-                    var differences = _.findDifferences({ names: [{ids:'123'}]}, {}, false);
+                it('Expect to return one item when second object does not have the other objects property when deep is false', function () {
+                    var differences = _.findDifferences({names: [{ids: '123'}]}, {}, false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
-                it('Expect to return one item when one one object does not have the other objects property when deep is false', function () {
-                    var differences = _.findDifferences({}, { names: [{ids:'123'}]}, false);
+                it('Expect to return one item when first object does not have the other objects property when deep is false', function () {
+                    var differences = _.findDifferences({}, {names: [{ids: '123'}]}, false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
@@ -738,26 +750,26 @@ define([
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when empty array of array passed in with deep property false', function () {
+                it('Expect to return one item when array of similar objects passed in with deep property false', function () {
                     var differences = _.findDifferences([{name: 'hello'}], [{name: 'hello'}], false);
 
                     expect(differences.length).to.be.equal(1);
                 });
 
-                it('Expect to return no items when empty array of array passed in with deep property true', function () {
+                it('Expect to return no items when array of similar objects passed in with deep property true', function () {
                     var differences = _.findDifferences([{name: 'hello'}], [{name: 'hello'}], true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when empty array passed in against array with one item', function () {
+                it('Expect to return one item when empty array passed in as first item against array with one item', function () {
                     var differences = _.findDifferences([], [123], false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal(0);
                 });
 
-                it('Expect to return one item when empty array passed in against array with one item', function () {
+                it('Expect to return one item when empty array passed in as second item against array with one item', function () {
                     var differences = _.findDifferences([123], [], false);
 
                     expect(differences.length).to.be.equal(1);
@@ -766,14 +778,13 @@ define([
             });
         });
         describe('When binding context to a function', function () {
-            var contextA = { myVal: 'contextA' };
-            var contextB = { myVal: 'contextB' };
+            var contextA = {myVal: 'contextA'};
             var exposeContextAndArguments;
 
             beforeEach(function() {
                 exposeContextAndArguments = function () {
                     return [this, arguments];
-                }
+                };
             });
 
             it('Has property bind that is a function', function () {
@@ -1023,13 +1034,13 @@ define([
             });
 
             it('Expect object to be converted to string', function () {
-                var myObject = { key: 'value' };
+                var myObject = {key: 'value'};
 
                 expect(_.toString(myObject)).to.be.equal('[object Object]{"key":"value"}');
             });
 
             it('Expect array to be converted to string', function () {
-                expect(_.toString([1,2,3])).to.be.equal('1,2,3');
+                expect(_.toString([1, 2, 3])).to.be.equal('1,2,3');
             });
 
             it('Expect number to be converted to string', function () {

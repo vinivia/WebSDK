@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-define('video-player' ,['jquery', 'lodash'], function ($, _) {
+define('video-player', [
+    'jquery',
+    'lodash'
+], function ($, _) {
 
     var Player = function(elementId) {
         this.videoId = elementId;
@@ -59,7 +62,7 @@ define('video-player' ,['jquery', 'lodash'], function ($, _) {
         } else if (this.stream.getTracks) {
             this.onEnd = function setOnEnded(callback) {
                 that.stream.getTracks()[0].onended = callback;
-            }
+            };
         }
 
         return newVideo;
@@ -106,10 +109,6 @@ define('video-player' ,['jquery', 'lodash'], function ($, _) {
         return element;
     }
 
-    function replaceWith(elementToReplace, element) {
-        elementToReplace.parentNode.replaceChild(element, elementToReplace)
-    }
-
     var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
         video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
         video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
@@ -124,7 +123,7 @@ define('video-player' ,['jquery', 'lodash'], function ($, _) {
             message: 'The video dimensions are ' + video.videoWidth + ' x ' + video.videoHeight
         }, {
             type: 'info',
-            allow_dismiss: false,
+            allow_dismiss: false, // eslint-disable-line camelcase
             placement: {
                 from: 'bottom',
                 align: 'right'

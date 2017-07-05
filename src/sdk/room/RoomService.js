@@ -35,7 +35,7 @@ define([
 
         this._pcast = pcast;
         this._logger = pcast.getLogger();
-        this._protocol =  pcast.getProtocol();
+        this._protocol = pcast.getProtocol();
 
         this._self = new Observable(null);
         this._activeRoom = new Observable(null);
@@ -79,6 +79,7 @@ define([
         } else {
             assert.stringNotEmpty('alias', alias);
         }
+
         assert.isFunction(callback);
 
         getRoomInfoRequest.call(this, roomId, alias, callback);
@@ -100,6 +101,7 @@ define([
         } else {
             assert.stringNotEmpty('alias', alias);
         }
+
         assert.isFunction(callback);
 
         enterRoomRequest.call(this, roomId, alias, callback);
@@ -204,7 +206,7 @@ define([
         });
     }
 
-    // handle events
+    // Handle events
     function onRoomEvent(event) {
         assert.isObject(event, 'event');
         assert.isString(event.roomId, 'event.roomId');
@@ -218,23 +220,28 @@ define([
         var that = this;
 
         switch (event.eventType) {
-            case room.events.memberJoined.name:
-                that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
-                return onMembersJoinsRoom.call(that, event.roomId, event.members);
-            case room.events.memberLeft.name:
-                that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
-                return onMembersLeavesRoom.call(that, event.roomId, event.members);
-            case room.events.memberUpdated.name:
-                that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
-                return onMembersUpdated.call(that, event.roomId, event.members);
-            case room.events.roomUpdated.name:
-                that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
-                return onRoomUpdated.call(that, event.roomId, event.room);
-            case room.events.roomEnded.name:
-                that._logger.info('[%s] Room ended', event.roomId);
-                break;
-            default:
-                that._logger.warn('Unsupported room event [%s]', event.eventType);
+        case room.events.memberJoined.name:
+            that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
+
+            return onMembersJoinsRoom.call(that, event.roomId, event.members);
+        case room.events.memberLeft.name:
+            that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
+
+            return onMembersLeavesRoom.call(that, event.roomId, event.members);
+        case room.events.memberUpdated.name:
+            that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
+
+            return onMembersUpdated.call(that, event.roomId, event.members);
+        case room.events.roomUpdated.name:
+            that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
+
+            return onRoomUpdated.call(that, event.roomId, event.room);
+        case room.events.roomEnded.name:
+            that._logger.info('[%s] Room ended', event.roomId);
+
+            break;
+        default:
+            that._logger.warn('Unsupported room event [%s]', event.eventType);
         }
     }
 
@@ -320,6 +327,7 @@ define([
     function findMemberInObservableRoom(sessionId, observableRoom) {
         var room = observableRoom.getValue();
         var members = room.getObservableMembers().getValue();
+
         return findMemberInMembers(sessionId, members);
     }
 
@@ -370,7 +378,7 @@ define([
         var memberForRequest = findDifferencesInSelf(member, memberToCompare);
 
         memberForRequest.sessionId = member.getSessionId();
-        // last valid update from server. Handles collisions.
+        // Last valid update from server. Handles collisions.
         memberForRequest.lastUpdate = memberToCompare ? memberToCompare.getLastUpdate() : _.now();
 
         return memberForRequest;
@@ -487,7 +495,7 @@ define([
 
                 result.room = initializeRoomAndBuildCache.call(that, response);
 
-                callback(null, result)
+                callback(null, result);
             }
         );
     }

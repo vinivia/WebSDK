@@ -15,7 +15,14 @@
  */
 var version = '1.0.0'; // ToDo: use until sample app separated from repo
 
-define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', 'phenix-web-sdk', 'shaka-player'], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+define('app-setup', [
+    'jquery',
+    'lodash',
+    'bootstrap-notify',
+    'fingerprintjs2',
+    'phenix-web-sdk',
+    'shaka-player'
+], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var enabledSteps = ['step-1'];
     var onStepsReset;
     var pcast;
@@ -24,11 +31,13 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
         $('#browser').text(sdk.RTC.browser);
         $('#browserVersion').text(sdk.RTC.browserVersion);
+
         if (sdk.RTC.webrtcSupported) {
             $('#webrtc').addClass('success');
         } else {
             $('#webrtc').addClass('danger');
         }
+
         if (sdk.RTC.isPhenixEnabled()) {
             $('#phenix').addClass('success');
         } else if (sdk.RTC.phenixSupported) {
@@ -70,19 +79,22 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
             $('.' + option).removeClass('option-disabled');
         };
 
-        var createPCast = function createPCast() {
+        function createPCast() { // eslint-disable-line no-unused-vars
             if (pcast) {
                 pcast.stop();
             }
 
             var uri = getBaseUri();
 
-            pcast = new sdk.PCast({uri: uri});
+            pcast = new sdk.PCast({
+                uri: uri,
+                shaka: shaka
+            });
             pcast.getLogger().setApplicationVersion(version);
 
             setLoggerUserId();
             setLoggerEnvironment();
-        };
+        }
 
         function setLoggerUserId() {
             if (!pcast) {
@@ -161,7 +173,7 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
         return {
             applicationId: $('#applicationId').val(),
             secret: $('#secret').val()
-        }
+        };
     };
 
     var enableSteps = function enableSteps() {
@@ -180,9 +192,7 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
             return;
         }
 
-        $('html, body').animate({
-            scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)
-        }, 'slow');
+        $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
     };
 
     var activateStep = function activateStep(step) {
@@ -193,7 +203,7 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
     function createNotification(type, message) {
         $.notify(message, {
             type: type,
-            allow_dismiss: false,
+            allow_dismiss: false, // eslint-disable-line camelcase
             placement: {
                 from: 'bottom',
                 align: 'right'
@@ -212,7 +222,7 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
                 icon: 'glyphicon glyphicon-remove-sign',
                 title: '<strong>Get Logger</strong>',
                 message: 'App Has Not Been Initialized'
-            })
+            });
         }
     }
 
@@ -225,7 +235,9 @@ define('app-setup', ['jquery', 'lodash', 'bootstrap-notify', 'fingerprintjs2', '
         enableSteps: enableSteps,
         activateStep: activateStep,
         createNotification: createNotification,
-        setOnReset: function(callback) { onStepsReset = callback },
+        setOnReset: function(callback) {
+            onStepsReset = callback;
+        },
         getLogger: getLogger
     };
 });

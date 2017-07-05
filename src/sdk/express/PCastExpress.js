@@ -77,7 +77,10 @@ define([
                     return callback(null, {status: status});
                 }
 
-                callback(null, {status: 'ok', userMedia: userMedia});
+                callback(null, {
+                    status: 'ok',
+                    userMedia: userMedia
+                });
             });
         });
     };
@@ -190,7 +193,10 @@ define([
                 return callback(null, instantiateResponse);
             }
 
-            var remoteOptions = _.assign(options, {connectOptions: [], capabilities: []});
+            var remoteOptions = _.assign(options, {
+                connectOptions: [],
+                capabilities: []
+            });
 
             if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
                 remoteOptions.capabilities.push('publish-uri');
@@ -218,12 +224,15 @@ define([
         assert.isObject(options, 'options');
         assert.stringNotEmpty(options.streamId, 'options.streamId');
         assert.isObject(options.capabilities, 'options.capabilities');
+
         if (options.videoElement) {
             assert.isObject(options.videoElement, 'options.videoElement');
         }
+
         if (options.monitor) {
             assert.isObject(options.monitor, 'options.monitor');
             assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
             if (options.monitor.options) {
                 assert.isObject(options.monitor.options, 'options.monitor.options');
             }
@@ -271,7 +280,10 @@ define([
 
             var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
 
-            callback(null, {status: 'ok', roomService: expressRoomService});
+            callback(null, {
+                status: 'ok',
+                roomService: expressRoomService
+            });
         });
     };
 
@@ -292,10 +304,10 @@ define([
             }
 
             that._pcast.start(response.authenticationToken,
-                function authenticationToken(sessionId) {},
+                function authenticationToken() {},
                 function onlineCallback() {
                     callback(null, {status: 'ok'});
-                }, function offlineCallback(reason) {
+                }, function offlineCallback() {
                     callback(null, {status: 'offline'});
                 });
         });
@@ -346,9 +358,10 @@ define([
                     var placeholder = _.uniqueId();
                     that._publishers[placeholder] = true;
                     publisher.stop(reason);
-                    publishUserMedia.call(that, streamToken, userMediaOrUri, options, callback);
+                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, callback);
                     delete that._publishers[placeholder];
                 };
+
                 var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retryPublisher);
 
                 publisher.monitor(options.monitor.options || {}, monitorCallback);
@@ -356,7 +369,10 @@ define([
 
             var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
 
-            callback(null, {status: 'ok', publisher: expressPublisher});
+            callback(null, {
+                status: 'ok',
+                publisher: expressPublisher
+            });
         };
 
         that._pcast.publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
@@ -375,7 +391,10 @@ define([
             };
 
             if (status === 'streaming-not-ready') {
-                return callback(null, {status: status, retry: _.bind(retrySubscriber, that, status)});
+                return callback(null, {
+                    status: status,
+                    retry: _.bind(retrySubscriber, that, status)
+                });
             }
 
             if (status !== 'ok') {
@@ -400,15 +419,18 @@ define([
 
             var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
 
-            callback(null, {status: 'ok', mediaStream: expressSubscriber});
-        })
+            callback(null, {
+                status: 'ok',
+                mediaStream: expressSubscriber
+            });
+        });
 
     }
 
     function createExpressPublisher(publisher, videoElement) {
         var publisherStop = publisher.stop;
 
-        publisher.stop =  function(reason) {
+        publisher.stop = function(reason) {
             publisherStop(reason);
 
             if (videoElement) {
@@ -475,7 +497,7 @@ define([
 
             delete that._roomServices[uniqueId];
 
-            // stopPCastIfNoActiveStreams.call(that);
+            // StopPCastIfNoActiveStreams.call(that);
         };
 
         return roomService;
@@ -506,18 +528,22 @@ define([
 
         _.forEach(tracks, function(track) {
             track.enabled = enabled;
-        })
+        });
     }
 
-    function onMonitorCallback(callback, retry, stream, reason, description) {
+    function onMonitorCallback(callback, retry, stream, reason, description) { // eslint-disable-line no-unused-vars
         switch (reason) {
-            case  'client-side-failure':
-                callback(null, {status: reason, retry: _.bind(retry, null, reason)});
-                // handle failure event, redo stream
-                break;
-            default:
-                // no failure has occurred, handle monitor event
-                break;
+        case 'client-side-failure':
+            callback(null, {
+                status: reason,
+                retry: _.bind(retry, null, reason)
+            });
+
+            // Handle failure event, redo stream
+            break;
+        default:
+                // No failure has occurred, handle monitor event
+            break;
         }
     }
 

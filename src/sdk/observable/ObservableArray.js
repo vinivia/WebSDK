@@ -88,6 +88,7 @@ define([
         var array = this.observableArray.getValue();
 
         this.observableArray.setValue([]);
+
         return array;
     };
 
@@ -96,13 +97,6 @@ define([
 
         return this;
     };
-
-    function updateArray(array, valuesToRemove, i) {
-        valuesToRemove.push(array[i]);
-        array.splice(i, 1);
-        i--;
-        return i;
-    }
 
     return ObservableArray;
 });

@@ -25,9 +25,11 @@ define([
         if (typeof version !== 'string') {
             throw new Error('Must pass a valid "version"');
         }
+
         if (typeof baseUri !== 'string') {
             throw new Error('Must pass a valid "baseUri"');
         }
+
         if (typeof logger !== 'object') {
             throw new Error('Must pass a valid "logger"');
         }

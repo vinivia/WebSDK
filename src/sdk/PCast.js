@@ -34,17 +34,7 @@ define([
     });
     var peerConnectionConfig = _.freeze({
         'iceServers': [
-            {
-                urls: 'stun:stun.l.google.com:19302'
-            }, {
-                urls: 'stun:stun1.l.google.com:19302'
-            }, {
-                urls: 'stun:stun2.l.google.com:19302'
-            }, {
-                urls: 'stun:stun3.l.google.com:19302'
-            }, {
-                urls: 'stun:stun4.l.google.com:19302'
-            }
+            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
         ]
     });
     var sdkVersion = '%SDKVERSION%';
@@ -81,7 +71,7 @@ define([
         phenixRTC.addEventListener(window, 'unload', function (pcast) {
             return function () {
                 pcast.stop();
-            }
+            };
         }(this));
     }
 
@@ -101,12 +91,15 @@ define([
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
         }
+
         if (typeof authenticationCallback !== 'function') {
             throw new Error('"authenticationCallback" must be a function');
         }
+
         if (typeof onlineCallback !== 'function') {
             throw new Error('"onlineCallback" must be a function');
         }
+
         if (typeof offlineCallback !== 'function') {
             throw new Error('"offlineCallback" must be a function');
         }
@@ -141,15 +134,18 @@ define([
                     transitionToStatus.call(that, 'offline');
 
                     switch (err.code) {
-                        case 0:
-                            that._authenticationCallback.call(that, that, 'network-unavailable', '');
-                            break;
-                        case 503:
-                            that._authenticationCallback.call(that, that, 'capacity', '');
-                            break;
-                        default:
-                            that._authenticationCallback.call(that, that, 'failed', '');
-                            break;
+                    case 0:
+                        that._authenticationCallback.call(that, that, 'network-unavailable', '');
+
+                        break;
+                    case 503:
+                        that._authenticationCallback.call(that, that, 'capacity', '');
+
+                        break;
+                    default:
+                        that._authenticationCallback.call(that, that, 'failed', '');
+
+                        break;
                     }
 
                     that._stopped = true;
@@ -184,11 +180,11 @@ define([
                 }
             }
 
-            for (var streamId in this._publishers) {
-                if (this._publishers.hasOwnProperty(streamId)) {
-                    var publisher = this._publishers[streamId];
+            for (var publisherStreamId in this._publishers) {
+                if (this._publishers.hasOwnProperty(publisherStreamId)) {
+                    var publisher = this._publishers[publisherStreamId];
 
-                    endStream.call(this, streamId, reason);
+                    endStream.call(this, publisherStreamId, reason);
 
                     if (!_.includes(publisher.getOptions(), 'detached')) {
                         publisher.stop(reason);
@@ -196,9 +192,9 @@ define([
                 }
             }
 
-            for (var streamId in this._peerConnections) {
-                if (this._peerConnections.hasOwnProperty(streamId)) {
-                    endStream.call(this, streamId, reason);
+            for (var peerConnectionStreamId in this._peerConnections) {
+                if (this._peerConnections.hasOwnProperty(peerConnectionStreamId)) {
+                    endStream.call(this, peerConnectionStreamId, reason);
                 }
             }
 
@@ -226,6 +222,7 @@ define([
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
@@ -237,17 +234,23 @@ define([
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
+
         if (typeof streamToPublish !== 'object' && typeof streamToPublish !== 'string') {
             throw new Error('"streamToPublish" must be an object or URI');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
+
         tags = tags || [];
+
         if (!Array.isArray(tags)) {
             throw new Error('"tags" must be an array');
         }
+
         options = options || {};
+
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
@@ -263,7 +266,7 @@ define([
             setupStreamOptions.negotiate = false;
             setupStreamOptions.connectUri = streamToPublish;
         } else {
-            setupStreamOptions.connectUri = options.connectUri
+            setupStreamOptions.connectUri = options.connectUri;
         }
 
         if (tags.length > 0) {
@@ -279,10 +282,10 @@ define([
                 that._logger.warn('Failed to create uploader, status [%s]', response.status);
 
                 switch (response.status) {
-                    case 'capacity':
-                        return callback.call(that, that, response.status);
-                    default:
-                        return callback.call(that, that, 'failed');
+                case 'capacity':
+                    return callback.call(that, that, response.status);
+                default:
+                    return callback.call(that, that, 'failed');
                 }
             } else {
                 var streamId = response.createStreamResponse.streamId;
@@ -314,10 +317,13 @@ define([
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
+
         if (typeof callback !== 'function') {
             throw new Error('"callback" must be a function');
         }
+
         options = options || {};
+
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
@@ -339,13 +345,13 @@ define([
                 that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
                 switch (response.status) {
-                    case 'capacity':
-                    case 'stream-ended':
-                    case 'origin-stream-ended':
-                    case 'streaming-not-available':
-                        return callback.call(that, that, response.status);
-                    default:
-                        return callback.call(that, that, 'failed');
+                case 'capacity':
+                case 'stream-ended':
+                case 'origin-stream-ended':
+                case 'streaming-not-available':
+                    return callback.call(that, that, response.status);
+                default:
+                    return callback.call(that, that, 'failed');
                 }
             } else {
                 var streamId = response.createStreamResponse.streamId;
@@ -384,7 +390,7 @@ define([
 
         if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
             try {
-                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) {
+                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) { // eslint-disable-line no-undef
                     if (response && response.status === 'ok') {
                         that._logger.info('Screen sharing enabled using version [%s]', response.version);
                         callback(true);
@@ -438,7 +444,7 @@ define([
         var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
 
         try {
-            chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
+            chrome.webstore.install(chromeWebStoreUrl, function successCallback() { // eslint-disable-line no-undef
                 return callback('ok');
             }, function failureCallback(reason) {
                 if (reason) {
@@ -480,12 +486,15 @@ define([
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
+
                 callback('ok');
             };
+
             var failure = function failure() {
                 if (intervalId) {
                     clearInterval(intervalId);
                 }
+
                 callback('failed', new Error('failed'));
             };
 
@@ -493,12 +502,13 @@ define([
                 if (typeof window.PCastScreenSharing === 'object') {
                     return success();
                 }
+
                 if (attemptsLeft-- < 0) {
                     return failure();
                 }
             }, firefoxInstallationCheckInterval);
 
-            InstallTrigger.install(params, function xpiInstallCallback(url, status) {
+            InstallTrigger.install(params, function xpiInstallCallback(url, status) { // eslint-disable-line no-undef
                 // Callback only works for verified sites
                 if (status === 0) {
                     success();
@@ -519,54 +529,53 @@ define([
         var that = this;
 
         switch (phenixRTC.browser) {
-            case 'Chrome':
-                try {
-                    chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) {
-                        if (response.status !== 'ok') {
-                            return callback(response.status, undefined, new Error(response.status));
-                        }
-
-                        var constraints = {
-                            video: {}
-                        };
-
-                        if (typeof options === 'object' && typeof options.screen === 'object') {
-                            constraints.video = options.screen;
-                        }
-
-                        if (typeof constraints.video.mandatory !== 'object') {
-                            constraints.video.mandatory = {};
-                        }
-
-                        constraints.video.mandatory.chromeMediaSource = 'desktop';
-                        constraints.video.mandatory.chromeMediaSourceId = response.streamId;
-
-                        callback('ok', constraints, undefined);
-                    });
-                } catch (e) {
-                    if (e.message) {
-                        that._logger.warn(e.message);
+        case 'Chrome':
+            try {
+                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) { // eslint-disable-line no-undef
+                    if (response.status !== 'ok') {
+                        return callback(response.status, undefined, new Error(response.status));
                     }
 
-                    callback('failed', undefined, e);
+                    var constraints = {video: {}};
+
+                    if (typeof options === 'object' && typeof options.screen === 'object') {
+                        constraints.video = options.screen;
+                    }
+
+                    if (typeof constraints.video.mandatory !== 'object') {
+                        constraints.video.mandatory = {};
+                    }
+
+                    constraints.video.mandatory.chromeMediaSource = 'desktop';
+                    constraints.video.mandatory.chromeMediaSourceId = response.streamId;
+
+                    callback('ok', constraints, undefined);
+                });
+            } catch (e) {
+                if (e.message) {
+                    that._logger.warn(e.message);
                 }
-                break;
-            case 'Firefox':
-                var constraints = {
-                    video: {}
-                };
 
-                if (typeof options === 'object' && typeof options.screen === 'object') {
-                    constraints.video = options.screen;
-                }
+                callback('failed', undefined, e);
+            }
 
-                constraints.video.mediaSource = 'window';
+            break;
+        case 'Firefox':
+            var constraints = {video: {}};
 
-                callback('ok', constraints, undefined);
-                break;
-            default:
-                callback('not-supported', undefined, new Error('not-supported'));
-                break;
+            if (typeof options === 'object' && typeof options.screen === 'object') {
+                constraints.video = options.screen;
+            }
+
+            constraints.video.mediaSource = 'window';
+
+            callback('ok', constraints, undefined);
+
+            break;
+        default:
+            callback('not-supported', undefined, new Error('not-supported'));
+
+            break;
         }
     }
 
@@ -579,6 +588,7 @@ define([
                     if (status === 'cancelled') {
                         return callback(status, 'cancelled');
                     }
+
                     if (status !== 'ok') {
                         return callback(status, undefined, new Error('screen-sharing-installation-failed'));
                     }
@@ -595,15 +605,18 @@ define([
                 };
 
                 switch (phenixRTC.browser) {
-                    case 'Chrome':
-                        tryInstallChromeScreenSharingExtension.call(that, installCallback);
-                        break;
-                    case 'Firefox':
-                        tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
-                        break;
-                    default:
-                        callback('not-supported', undefined, new Error('not-supported'));
-                        break;
+                case 'Chrome':
+                    tryInstallChromeScreenSharingExtension.call(that, installCallback);
+
+                    break;
+                case 'Firefox':
+                    tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
+
+                    break;
+                default:
+                    callback('not-supported', undefined, new Error('not-supported'));
+
+                    break;
                 }
             } else {
                 getScreenSharingConstraints.call(that, options, callback);
@@ -640,9 +653,7 @@ define([
             return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
         }
 
-        return getUserMediaStream.call(that, {
-            screen: options.screen
-        }, function success(status, screenStream) {
+        return getUserMediaStream.call(that, {screen: options.screen}, function success(status, screenStream) {
             return getUserMediaStream.call(that, {
                 audio: options.audio,
                 video: options.video
@@ -687,7 +698,6 @@ define([
             }
         });
     }
-
 
     var getUserMediaErrorStatus = function getUserMediaErrorStatus(e) {
         var status;
@@ -802,24 +812,24 @@ define([
 
     function getStreamEndedReason(value) {
         switch (value) {
-            case '':
-            case 'none':
-            case 'ended':
-                return 'ended';
-            case 'server-error':
-            case 'not-ready':
-            case 'error':
-                return 'failed';
-            case 'censored':
-                return 'censored';
-            case 'maintenance':
-                return 'maintenance';
-            case 'capacity':
-                return 'capacity';
-            case 'app-background':
-                return 'app-background';
-            default:
-                return 'custom';
+        case '':
+        case 'none':
+        case 'ended':
+            return 'ended';
+        case 'server-error':
+        case 'not-ready':
+        case 'error':
+            return 'failed';
+        case 'censored':
+            return 'censored';
+        case 'maintenance':
+            return 'maintenance';
+        case 'capacity':
+            return 'capacity';
+        case 'app-background':
+            return 'app-background';
+        default:
+            return 'custom';
         }
     }
 
@@ -950,7 +960,7 @@ define([
                                             height: 0,
                                             currentTime: 0.0,
                                             networkState: NetworkStates.NETWORK_NO_SOURCE
-                                        }
+                                        };
                                     }
 
                                     return {
@@ -958,7 +968,7 @@ define([
                                         height: element.videoHeight || element.height,
                                         currentTime: element.currentTime,
                                         networkState: element.networkState
-                                    }
+                                    };
                                 },
 
                                 setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
@@ -987,6 +997,7 @@ define([
                             if (typeof callback !== 'function') {
                                 throw new Error('"callback" must be a function');
                             }
+
                             this.streamErrorCallback = callback;
                         },
 
@@ -1086,7 +1097,7 @@ define([
                     },
 
                     streamErrorCallback: function (status, reason) {
-                        // recursively calls all children error callbacks
+                        // Recursively calls all children error callbacks
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
                             internalMediaStream.children[i].streamErrorCallback(status, reason);
                         }
@@ -1099,7 +1110,7 @@ define([
                     },
 
                     streamEndedCallback: function (status, reason) {
-                        // recursively calls all children ended callbacks
+                        // Recursively calls all children ended callbacks
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
                             internalMediaStream.children[i].streamEndedCallback(status, reason);
                         }
@@ -1169,9 +1180,11 @@ define([
                 that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                     if (error) {
                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
                         return;
                     } else if (response.status !== 'ok') {
                         that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
                         return;
                     }
 
@@ -1212,19 +1225,23 @@ define([
 
     function setupStateListener(streamId, peerConnection) {
         var that = this;
-        var onNegotiationNeeded = function onNegotiationNeeded(event) {
+        var onNegotiationNeeded = function onNegotiationNeeded(event) { // eslint-disable-line no-unused-vars
             that._logger.info('[%s] Negotiation needed');
         };
-        var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) {
+
+        var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) { // eslint-disable-line no-unused-vars
             that._logger.info('[%s] ICE connection state changed [%s]', streamId, peerConnection.iceConnectionState);
         };
-        var onIceGatheringStateChanged = function onIceGatheringStateChanged(event) {
+
+        var onIceGatheringStateChanged = function onIceGatheringStateChanged(event) { // eslint-disable-line no-unused-vars
             that._logger.info('[%s] ICE gathering state changed [%s]', streamId, peerConnection.iceGatheringState);
         };
-        var onSignalingStateChanged = function onSignalingStateChanged(event) {
+
+        var onSignalingStateChanged = function onSignalingStateChanged(event) { // eslint-disable-line no-unused-vars
             that._logger.info('[%s] Signaling state changed [%s]', streamId, peerConnection.signalingState);
         };
-        var onConnectionStateChanged = function onConnectionStateChanged(event) {
+
+        var onConnectionStateChanged = function onConnectionStateChanged(event) { // eslint-disable-line no-unused-vars
             that._logger.info('[%s] Connection state changed [%s]', streamId, peerConnection.connectionState);
         };
 
@@ -1237,9 +1254,7 @@ define([
 
     function createPublisher(streamId, callback, streamOptions) {
         var that = this;
-        var state = {
-            stopped: false
-        };
+        var state = {stopped: false};
 
         var publisher = {
             getStreamId: function getStreamId() {
@@ -1274,9 +1289,11 @@ define([
                 that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                     if (error) {
                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
                         return;
                     } else if (response.status !== 'ok') {
                         that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
                         return;
                     }
 
@@ -1322,11 +1339,7 @@ define([
         var hasDataChannel = offerSdp.match(/m=application /i);
         var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
             'optional': [
-                {
-                    DtlsSrtpKeyAgreement: !hasCrypto
-                }, {
-                    RtpDataChannels: hasDataChannel
-                }
+                {DtlsSrtpKeyAgreement: !hasCrypto}, {RtpDataChannels: hasDataChannel}
             ]
         });
         var remoteMediaStream = null;
@@ -1360,9 +1373,11 @@ define([
                 that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
                     if (error) {
                         that._logger.error('Failed to set answer description [%s]', error);
+
                         return onFailure();
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to set answer description, status [%s]', response.status);
+
                         return onFailure();
                     }
 
@@ -1394,17 +1409,17 @@ define([
 
                             hasEnded: function hasEnded() {
                                 switch (peerConnection.iceConnectionState) {
-                                    case 'new':
-                                    case 'checking':
-                                    case 'connected':
-                                    case 'completed':
-                                        return false;
-                                    case 'disconnected':
-                                    case 'failed':
-                                    case 'closed':
-                                        return true;
-                                    default:
-                                        return true;
+                                case 'new':
+                                case 'checking':
+                                case 'connected':
+                                case 'completed':
+                                    return false;
+                                case 'disconnected':
+                                case 'failed':
+                                case 'closed':
+                                    return true;
+                                default:
+                                    return true;
                                 }
                             },
 
@@ -1418,9 +1433,11 @@ define([
                                 that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                                     if (error) {
                                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
                                         return;
                                     } else if (response.status !== 'ok') {
                                         that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
                                         return;
                                     }
 
@@ -1459,7 +1476,7 @@ define([
                                 var updatedSdp = remoteDescription.sdp.replace(bandwidthAttribute, '');
 
                                 // Add new limit in kbps
-                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) {
+                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) { // eslint-disable-line no-unused-vars
                                     return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
                                 });
 
@@ -1474,13 +1491,14 @@ define([
                                     dispose: function () {
                                         peerConnection.setRemoteDescription(remoteDescription);
                                     }
-                                }
+                                };
                             },
 
                             monitor: function monitor(options, callback) {
                                 if (typeof options !== 'object') {
                                     throw new Error('"options" must be an object');
                                 }
+
                                 if (typeof callback !== 'function') {
                                     throw new Error('"callback" must be a function');
                                 }
@@ -1548,9 +1566,11 @@ define([
                             that._protocol.addIceCandidates(streamId, candidates, options, function (error, response) {
                                 if (error) {
                                     that._logger.error('Failed to add ICE candidate [%s]', error);
+
                                     return;
                                 } else if (response.status !== 'ok') {
                                     that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
+
                                     return;
                                 }
 
@@ -1599,7 +1619,10 @@ define([
         });
         setupStateListener.call(that, streamId, peerConnection);
 
-        var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
+        var offerSessionDescription = new phenixRTC.RTCSessionDescription({
+            type: 'offer',
+            sdp: offerSdp
+        });
 
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
@@ -1614,11 +1637,7 @@ define([
         var hasDataChannel = offerSdp.match(/m=application /i);
         var peerConnection = new phenixRTC.RTCPeerConnection(peerConnectionConfig, {
             'optional': [
-                {
-                    DtlsSrtpKeyAgreement: !hasCrypto
-                }, {
-                    RtpDataChannels: hasDataChannel
-                }
+                {DtlsSrtpKeyAgreement: !hasCrypto}, {RtpDataChannels: hasDataChannel}
             ]
         });
         var onIceCandidateCallback = null;
@@ -1675,9 +1694,11 @@ define([
                             that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
                                 if (error) {
                                     that._logger.error('Failed to add ICE candidate [%s]', error);
+
                                     return;
                                 } else if (response.status !== 'ok') {
                                     that._logger.warn('Failed to add ICE candidate, status [%s]', response.status);
+
                                     return;
                                 }
 
@@ -1718,7 +1739,10 @@ define([
         });
         setupStateListener.call(that, streamId, peerConnection);
 
-        var offerSessionDescription = new phenixRTC.RTCSessionDescription({type: 'offer', sdp: offerSdp});
+        var offerSessionDescription = new phenixRTC.RTCSessionDescription({
+            type: 'offer',
+            sdp: offerSdp
+        });
 
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
@@ -1733,11 +1757,11 @@ define([
             return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
             return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback, options);
-        } else {
-            that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
-
-            return callback.call(that, undefined, 'failed');
         }
+
+        that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
+
+        return callback.call(that, undefined, 'failed');
     }
 
     function createShakaLiveViewer(streamId, uri, callback, options) {
@@ -1781,7 +1805,12 @@ define([
                     var player = null;
                     var element = null;
                     var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+                    var lastProgress = {
+                        time: 0,
+                        buffered: null,
+                        averageLength: 0,
+                        count: 0
+                    };
 
                     function onProgress() {
                         lastProgress.time = _.now();
@@ -1794,7 +1823,7 @@ define([
                             return;
                         }
 
-                        // start and end times are unreliable for overall length of stream.
+                        // Start and end times are unreliable for overall length of stream.
                         if (lastProgress.buffered !== null) {
                             var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
                             var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
@@ -1833,21 +1862,13 @@ define([
                             player = new shaka.Player(elementToAttachTo);
 
                             player.configure({
-                                abr: {
-                                    defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback
-                                },
-                                manifest: {
-                                    retryParameters: {
-                                        timeout: 10000
-                                    }
-                                },
+                                abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
+                                manifest: {retryParameters: {timeout: 10000}},
                                 streaming: {
                                     rebufferingGoal: 2,
                                     bufferingGoal: 10,
                                     bufferBehind: 30,
-                                    retryParameters: {
-                                        timeout: 10000
-                                    }
+                                    retryParameters: {timeout: 10000}
                                 }
                             });
 
@@ -1863,7 +1884,7 @@ define([
                             elementToAttachTo.addEventListener('progress', onProgress, false);
                             elementToAttachTo.addEventListener('ended', ended, false);
 
-                            var load = player.load(manifestUri).then(function () {
+                            var load = player.load(manifestUri).then(function () { // eslint-disable-line no-unused-vars
                                 that._logger.info('[%s] DASH live stream has been loaded', streamId);
 
                                 if (typeof elementToAttachTo.play === 'function') {
@@ -1901,7 +1922,7 @@ define([
                                     element = null;
                                 };
 
-                                var destroy = player.destroy()
+                                var destroy = player.destroy() // eslint-disable-line no-unused-vars
                                     .then(function () {
                                         that._logger.info('[%s] DASH live stream has been destroyed', streamId);
                                     }).then(function () {
@@ -1963,7 +1984,7 @@ define([
                     };
                 },
 
-                select: function select(trackSelectCallback) {
+                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
                     that._logger.warn('[%s] selection of tracks not supported for shaka live streams', streamId);
 
                     return this;
@@ -1995,9 +2016,11 @@ define([
                     that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                         if (error) {
                             that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+
                             return;
                         } else if (response.status !== 'ok') {
                             that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
                             return;
                         }
 
@@ -2011,6 +2034,7 @@ define([
                     if (typeof options !== 'object') {
                         throw new Error('"options" must be an object');
                     }
+
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
@@ -2094,7 +2118,7 @@ define([
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
-        var onPlayerError = function onPlayerError(event, e) {
+        var onPlayerError = function onPlayerError(event, e) { // eslint-disable-line no-unused-vars
             var mediaStream = internalMediaStream.mediaStream;
 
             if (!mediaStream.streamErrorCallback) {
@@ -2115,7 +2139,12 @@ define([
                 createRenderer: function createRenderer() {
                     var element = null;
                     var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-                    var lastProgress = { time: 0, buffered: null, averageLength: 0, count: 0 };
+                    var lastProgress = {
+                        time: 0,
+                        buffered: null,
+                        averageLength: 0,
+                        count: 0
+                    };
 
                     function onProgress() {
                         lastProgress.time = _.now();
@@ -2128,7 +2157,7 @@ define([
                             return;
                         }
 
-                        // start and end times are unreliable for overall length of stream.
+                        // Start and end times are unreliable for overall length of stream.
                         if (lastProgress.buffered !== null) {
                             var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
                             var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
@@ -2167,7 +2196,7 @@ define([
                     }
 
                     function waiting() {
-                        that._logger.info('Time elapsed since last progress [%s]',_.now() - lastProgress.time);
+                        that._logger.info('Time elapsed since last progress [%s]', _.now() - lastProgress.time);
 
                         setTimeout(endIfReady, getTimeoutOrMinimum());
                     }
@@ -2278,7 +2307,7 @@ define([
                                 height: element.videoHeight || element.height,
                                 currentTime: element.currentTime,
                                 networkState: element.networkState
-                            }
+                            };
                         },
 
                         setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
@@ -2295,7 +2324,7 @@ define([
                     };
                 },
 
-                select: function select(trackSelectCallback) {
+                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
                     that._logger.warn('[%s] selection of tracks not supported for HLS live streams', streamId);
 
                     return this;
@@ -2327,9 +2356,11 @@ define([
                     that._protocol.destroyStream(streamId, reason || '', function (error, response) {
                         if (error) {
                             that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
+
                             return;
                         } else if (response.status !== 'ok') {
                             that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
                             return;
                         }
 
@@ -2343,6 +2374,7 @@ define([
                     if (typeof options !== 'object') {
                         throw new Error('"options" must be an object');
                     }
+
                     if (typeof callback !== 'function') {
                         throw new Error('"callback" must be a function');
                     }
@@ -2432,16 +2464,20 @@ define([
             }
 
             switch (newStatus) {
-                case 'connecting':
-                case 'reconnecting':
-                case 'reconnected':
-                    break;
-                case 'offline':
-                    this._offlineCallback.call(this);
-                    break;
-                case 'online':
-                    this._onlineCallback.call(this);
-                    break;
+            case 'connecting':
+            case 'reconnecting':
+            case 'reconnected':
+                break;
+            case 'offline':
+                this._offlineCallback.call(this);
+
+                break;
+            case 'online':
+                this._onlineCallback.call(this);
+
+                break;
+            default:
+                break;
             }
         }
     }
@@ -2450,9 +2486,11 @@ define([
         if (typeof stream !== 'object') {
             return;
         }
+
         if (typeof tracks !== 'object') {
             return;
         }
+
         if (tracks.constructor !== Array) {
             return;
         }
@@ -2478,6 +2516,7 @@ define([
         if (typeof track !== 'object') {
             throw new Error('Invalid track.');
         }
+
         return track.readyState === 'ended';
     }
 
@@ -2532,7 +2571,7 @@ define([
                 }
             });
         } else if (_.isFunction(stats.values)) {
-            _.forEach(Array.from(stats.values()), function (statsReport, key) {
+            _.forEach(Array.from(stats.values()), function (statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
                     if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
                         return;
@@ -2542,7 +2581,7 @@ define([
                 }
             });
         } else {
-            _.forEach(stats, function (statsReport, key) {
+            _.forEach(stats, function (statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
                     if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
                         return;

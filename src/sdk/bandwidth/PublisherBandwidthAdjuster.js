@@ -42,15 +42,16 @@ define([
         var roomObservable = roomService.getObservableActiveRoom();
         var roomBandwidthLimit = options.roomBandwidthLimit || defaultRoomBandwidthLimit;
 
-        this._roomSubscription = roomObservable.subscribe(_.bind(onRoomChange, this, roomBandwidthLimit), {initial:'notify'});
+        this._roomSubscription = roomObservable.subscribe(_.bind(onRoomChange, this, roomBandwidthLimit), {initial: 'notify'});
     };
 
     PublisherBandwidthAdjuster.prototype.close = function close() {
         if (this._roomSubscription) {
-            this._roomSubscription.dispose()
+            this._roomSubscription.dispose();
         }
+
         if (this._membersSubscription) {
-            this._membersSubscription.dispose()
+            this._membersSubscription.dispose();
         }
 
         this._roomSubscription = null;
@@ -65,13 +66,14 @@ define([
         if (this._membersSubscription) {
             this._membersSubscription.dispose();
         }
+
         if (!room) {
             return this._publisher.limitBandwidth(roomBandwidthLimit);
         }
 
         var membersObservable = room.getObservableMembers();
 
-        this._membersSubscription = membersObservable.subscribe(_.bind(onRoomMembersChanged, this, roomBandwidthLimit), {initial:'notify'});
+        this._membersSubscription = membersObservable.subscribe(_.bind(onRoomMembersChanged, this, roomBandwidthLimit), {initial: 'notify'});
     }
 
     function onRoomMembersChanged(roomBandwidthLimit, members) {

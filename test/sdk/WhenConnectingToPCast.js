@@ -33,7 +33,7 @@ define([
         before(function () {
             pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
                 return sinon.createStubInstance(Logger);
-            }); //disable requests to external source
+            }); // Disable requests to external source
 
             pcast = new PCast();
 
@@ -83,9 +83,9 @@ define([
                         } else {
                             resolve();
                         }
-                    }, function onlineCallback (pcast) {
+                    }, function onlineCallback () {
                         onlineCallbackInvocationCount++;
-                    }, function offlineCallback (pcast) {
+                    }, function offlineCallback () {
                         offlineCallbackInvocationCount++;
                     });
                 }).should.be.fulfilled;
@@ -103,6 +103,7 @@ define([
                 before(function () {
                     return new Promise(function (resolve, reject) {
                         pcast.stop();
+
                         var intervalId = setInterval(function () {
                             if (offlineCallbackInvocationCount > 0) {
                                 resolve();

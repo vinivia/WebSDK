@@ -61,6 +61,7 @@ define([
             if (options.initial === 'notify') {
                 onSubscribeCallback.call(that, that.subscriptionTimeout, true);
             }
+
             if (options.listenForChanges) {
                 listenForChanges = setInterval(function() {
                     var valueAtInterval = options.listenForChanges.callback();
@@ -68,7 +69,7 @@ define([
                     if (valueAtInterval !== that.latestValue) {
                         that.setValue(valueAtInterval);
                     }
-                }, options.listenForChanges.timeout)
+                }, options.listenForChanges.timeout);
             }
         }
 
@@ -84,23 +85,26 @@ define([
             that.subscriptionCount -= 1;
         }
 
-        return { dispose: dispose };
+        return {dispose: dispose};
     };
 
     Observable.prototype.extend = function extend(options) {
         assert.isObject(options);
 
         switch (options.method) {
-            case 'notifyWhenChangesStop':
-                this.subscriptionTimeout = options.timeout;
-                this.resetOnChange = true;
-                break;
-            case 'notifyAtFixedRate':
-                this.subscriptionTimeout = options.timeout;
-                break;
-            default:
-                break;
+        case 'notifyWhenChangesStop':
+            this.subscriptionTimeout = options.timeout;
+            this.resetOnChange = true;
+
+            break;
+        case 'notifyAtFixedRate':
+            this.subscriptionTimeout = options.timeout;
+
+            break;
+        default:
+            break;
         }
+
         if (_.isNumber(options.rateLimit)) {
             this.subscriptionTimeout = options.rateLimit;
         }
@@ -113,12 +117,12 @@ define([
             return value;
         }
 
-        // necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
+        // Necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
         if (_.isArray(value)) {
             return value.slice();
-        } else {
-            return value;
         }
+
+        return value;
     }
 
     function setLatestValue(value) {
@@ -141,7 +145,7 @@ define([
                 return notifySubscribers.call(this);
             }
 
-            continueAfterTimeout.call(this, timeoutLength)
+            continueAfterTimeout.call(this, timeoutLength);
         }
     }
 

@@ -102,6 +102,7 @@ define([
         if (!_.isFunction(callback)) {
             throw new Error('Callback must be a function');
         }
+
         assertIsArray(collection);
 
         for (var i = 0; i < collection.length; i++) {
@@ -113,6 +114,7 @@ define([
         if (!_.isFunction(callback)) {
             throw new Error('Callback must be a function');
         }
+
         if (!_.isObject(objectWithProperties)) {
             throw new Error('objectWithProperties must be an object.');
         }
@@ -206,6 +208,7 @@ define([
         _.forEach(collection, function findInCollection(value, index) {
             if (callback(value) && index >= (initialIndex || 0)) {
                 hasItem = value;
+
                 return hasItem;
             }
         });
@@ -221,6 +224,7 @@ define([
         _.forEach(collection, function findInCollection(value, index) {
             if (callback(value, index) && index >= (initialIndex || 0)) {
                 hasItem = index;
+
                 return hasItem;
             }
         });
@@ -307,8 +311,9 @@ define([
         if (_.isArray(collection)) {
             return collection.length > parseInt(indexOrKey);
         } else if (_.isObject(collection)) {
-            return collection.hasOwnProperty(indexOrKey)
+            return collection.hasOwnProperty(indexOrKey);
         }
+
         return false;
     };
 
@@ -316,6 +321,7 @@ define([
         if (_.isNullOrUndefined(first) || _.isNullOrUndefined(second)) {
             return _.isNullOrUndefined(first) && _.isNullOrUndefined(second);
         }
+
         if (_.isArray(first) || _.isArray(second)) {
             return _.isArray(first) && _.isArray(second);
         }
@@ -433,16 +439,16 @@ define([
         var cache = [];
 
         return toStringStr + JSON.stringify(data, function (key, value) {
-                if (_.isObject(value) && !_.isNullOrUndefined(value)) {
-                    if (_.includes(cache, value)) {
-                        return '<recursive>';
-                    }
-
-                    cache.push(value);
+            if (_.isObject(value) && !_.isNullOrUndefined(value)) {
+                if (_.includes(cache, value)) {
+                    return '<recursive>';
                 }
 
-                return key === '' ? value : _.toString(value);
-            });
+                cache.push(value);
+            }
+
+            return key === '' ? value : _.toString(value);
+        });
     };
 
     _.pad = function padNumber(value, numberToPad) {

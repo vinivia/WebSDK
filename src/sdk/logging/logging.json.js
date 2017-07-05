@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight'
-], function (_) {
+], function () {
     'use strict';
 
     var logging = {
