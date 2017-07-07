@@ -4,7 +4,7 @@ Simple configuration based APIs for setting up your streaming application.
 
 ## Express Options
 
-Pass these options when creating an instance of the [PCast Express](express/PCastExpress.md) or [Room Express](express/RoomExpress.md). 
+Pass these options when creating an instance of the [PCast Express](./PCastExpress.md) or [Room Express](./RoomExpress.md).
 
 ```js
 var expressOptions = {
