@@ -233,6 +233,10 @@ define([
     };
 
     PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
+        if (!this._started) {
+            throw new Error('PCast not started. Unable to publish. Please start pcast first.');
+        }
+
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -259,10 +263,7 @@ define([
 
         var that = this;
         var streamType = 'upload';
-        var setupStreamOptions = {
-            negotiate: true,
-            connectOptions: options.connectOptions
-        };
+        var setupStreamOptions = _.assign(options, {negotiate: true});
 
         if (typeof streamToPublish === 'string') {
             setupStreamOptions.negotiate = false;
@@ -316,6 +317,10 @@ define([
     };
 
     PCast.prototype.subscribe = function (streamToken, callback, options) {
+        if (!this._started) {
+            throw new Error('PCast not started. Unable to subscribe. Please start pcast first.');
+        }
+
         if (typeof streamToken !== 'string') {
             throw new Error('"streamToken" must be a string');
         }
@@ -332,11 +337,7 @@ define([
 
         var that = this;
         var streamType = 'download';
-        var setupStreamOptions = {
-            negotiate: options.negotiate !== false,
-            connectUri: options.connectUri,
-            connectOptions: options.connectOptions
-        };
+        var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
