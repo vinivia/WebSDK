@@ -18,17 +18,20 @@ define([
     'sdk/PCast',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
-    '../../../test/mock/ChromeRuntimeStubber'
-], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+    '../../../test/mock/ChromeRuntimeStubber',
+    '../../../test/mock/PeerConnectionStubber'
+], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
     describe('When Subscribing to a Stream', function () {
         var httpStubber = new HttpStubber();
         var websocketStubber = new WebSocketStubber();
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var peerConnectionStubber = new PeerConnectionStubber();
         var pcast;
 
         before(function() {
             httpStubber.stubAuthRequest();
             chromeRuntimeStubber.stub();
+            peerConnectionStubber.stub();
         });
 
         beforeEach(function () {
@@ -38,6 +41,7 @@ define([
         after(function() {
             httpStubber.restore();
             chromeRuntimeStubber.restore();
+            peerConnectionStubber.restore();
         });
 
         it('Has method subscribe', function () {
@@ -80,6 +84,15 @@ define([
                 });
 
                 pcast.subscribe('mockStreamToken', function() {}, {connectOptions: ['mock-option']});
+            });
+
+            it('Expect mediaStream to be returned in subscribe callback', function (done) {
+                websocketStubber.stubSetupStream();
+
+                pcast.subscribe('mockStreamToken', function(internalPcast, status, mediaStream) {
+                    done();
+                    expect(mediaStream).to.be.a('object');
+                });
             });
         });
     });

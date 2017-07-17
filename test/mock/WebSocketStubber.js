@@ -39,13 +39,29 @@ define([
     WebSocketStubber.prototype.stubAuthRequest = function(callback) {
         setupStubIfNoneExist.call(this);
 
-        this._handlers['pcast.Authenticate'] = {
-            message: {
+        this.stubResponse('pcast.Authenticate', {
+            status: 'ok',
+            sessionId: 'MockSessionId'
+        }, callback);
+    };
+
+    WebSocketStubber.prototype.stubSetupStream = function(callback) {
+        this.stubResponse('pcast.SetupStream', {
+            status: 'ok',
+            createStreamResponse: {
                 status: 'ok',
-                sessionId: 'MockSessionId'
-            },
-            callback: callback
-        };
+                streamId: 'mockStreamId',
+                createOfferDescriptionResponse: {
+                    status: 'ok',
+                    sessionDescription: {sdp: 'mockSdp'}
+                }
+            }
+        }, callback);
+
+        this.stubResponse('pcast.SetRemoteDescription', {
+            status: 'ok',
+            sessionDescription: {sdp: 'mockSdp'}
+        }, callback);
     };
 
     WebSocketStubber.prototype.stubResponse = function(type, message, callback) {

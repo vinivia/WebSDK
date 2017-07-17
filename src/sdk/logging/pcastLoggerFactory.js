@@ -25,7 +25,7 @@ define([
 
     function PCastLoggerFactory() { }
 
-    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId) {
+    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId, disableConsole) {
         if (baseUri) {
             assert.stringNotEmpty(baseUri, 'baseUri');
         }
@@ -35,7 +35,10 @@ define([
 
         analytixAppender.setThreshold(logging.level.INFO);
 
-        logger.addAppender(new ConsoleAppender());
+        if (!disableConsole) {
+            logger.addAppender(new ConsoleAppender());
+        }
+
         logger.addAppender(analytixAppender);
 
         logger.isPCastLogger = true;

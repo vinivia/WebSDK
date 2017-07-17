@@ -23,6 +23,8 @@ define([
 ], function (_, assert, AdminAPI, PCast, RoomService, rtc) {
     'use strict';
 
+    var unauthorizedStatus = 'unauthorized';
+
     function PCastExpress(options) {
         assert.isObject(options, 'options');
         assert.stringNotEmpty(options.backendUri, 'options.backendUri');
@@ -356,9 +358,18 @@ define([
             if (options.monitor) {
                 var retryPublisher = function retryPublisher(reason) {
                     var placeholder = _.uniqueId();
+
                     that._publishers[placeholder] = true;
                     publisher.stop(reason);
-                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, callback);
+
+                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+                        if (response && response.status === unauthorizedStatus) {
+                            return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+                        }
+
+                        callback(error, response);
+                    });
+
                     delete that._publishers[placeholder];
                 };
 
@@ -384,9 +395,19 @@ define([
         that._pcast.subscribe(streamToken, function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
                 var placeholder = _.uniqueId();
+
                 that._subscribers[placeholder] = true;
+
                 subscriber.stop(reason);
-                subscribeToStream.call(that, streamToken, options, callback);
+
+                subscribeToStream.call(that, streamToken, options, function(error, response) {
+                    if (response && response.status === unauthorizedStatus) {
+                        return that.subscribe(options, callback);
+                    }
+
+                    callback(error, response);
+                });
+
                 delete that._subscribers[placeholder];
             };
 

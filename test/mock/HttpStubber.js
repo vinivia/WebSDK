@@ -13,48 +13,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define([], function () {
+define(['sdk/LodashLight'], function (_) {
     function HttpStubber() {
         this._requests = [];
+        this._handlers = {};
+        this._defaultHandler = {
+            response: {status: 'ok'},
+            type: 'application/json'
+        };
     }
 
     HttpStubber.prototype.stub = function(callback) {
-        var that = this;
+        stubIfNoneExist.call(this);
 
-        this.xhr = sinon.useFakeXMLHttpRequest();
-
-        this.xhr.onCreate = function (req) {
-            that._requests.push(req);
-
-            if (callback) {
-                callback(req);
-            }
-        };
+        this._defaultHandler.callback = callback;
     };
 
     HttpStubber.prototype.stubAuthRequest = function(callback) {
-        var that = this;
-        var authResponse = {
+        stubIfNoneExist.call(this);
+
+        this.stubResponse('auth', 'application/json', {
             status: 'ok',
             authenticationToken: 'newToken'
-        };
+        }, callback);
+    };
 
-        this.xhr = sinon.useFakeXMLHttpRequest();
+    HttpStubber.prototype.stubStreamRequest = function(callback) {
+        stubIfNoneExist.call(this);
 
-        this.xhr.onCreate = function (req) {
-            that._requests.push(req);
+        this.stubResponse('stream', 'application/json', {
+            status: 'ok',
+            streamToken: 'newToken'
+        }, callback);
+    };
 
-            req.respond(200, null, authResponse);
+    HttpStubber.prototype.stubResponse = function(url, contentType, response, callback) {
+        stubIfNoneExist.call(this);
 
-            if (callback) {
-                callback(req);
-            }
+        this._handlers[url] = {
+            response: response,
+            type: contentType,
+            callback: callback
         };
     };
 
     HttpStubber.prototype.restore = function() {
         this.xhr.restore();
 
+        this.xhr = null;
+        this._handlers = {};
         this._requests = [];
     };
 
@@ -62,6 +69,37 @@ define([], function () {
         return this._requests;
     };
 
+    function stubIfNoneExist() {
+        if (this.xhr) {
+            return;
+        }
+
+        this.xhr = sinon.useFakeXMLHttpRequest();
+        this._requests = [];
+
+        var that = this;
+
+        this.xhr.onCreate = function (req) {
+            that._requests.push(req);
+
+            req.onSend = function(sentRequest) {
+                var handlerKey = _.find(_.keys(that._handlers), function(key) {
+                    return sentRequest.url.toLowerCase().indexOf(key) > -1;
+                });
+                var handler = handlerKey ? that._handlers[handlerKey] : that._defaultHandler;
+
+                if (sentRequest.url.toLowerCase().indexOf('analytix') === -1 ) {
+                    req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
+
+                    if (handler.callback) {
+                        handler.callback(req);
+                    }
+                }
+
+                return false;
+            };
+        };
+    }
 
     return HttpStubber;
 });

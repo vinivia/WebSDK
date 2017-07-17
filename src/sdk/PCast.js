@@ -57,7 +57,7 @@ define([
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId);
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId, options.disableConsoleLogging);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -286,6 +286,7 @@ define([
 
                 switch (response.status) {
                 case 'capacity':
+                case 'unauthorized':
                     return callback.call(that, that, response.status);
                 default:
                     return callback.call(that, that, 'failed');
@@ -352,6 +353,7 @@ define([
                 case 'stream-ended':
                 case 'origin-stream-ended':
                 case 'streaming-not-available':
+                case 'unauthorized':
                     return callback.call(that, that, response.status);
                 default:
                     return callback.call(that, that, 'failed');

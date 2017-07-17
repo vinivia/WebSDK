@@ -70,17 +70,17 @@ define([
         var newArray = [];
 
         if (collection.constructor === Array) {
-            _.forEach(collection, function mapCollection(item) {
+            _.forEach(collection, function mapCollection(item, index) {
                 if (_.isString(callback) && _.isObject(item)) {
                     newArray.push(item[callback]);
                 } else if (_.isFunction(callback)) {
-                    newArray.push(callback(item));
+                    newArray.push(callback(item, index));
                 }
             });
         } else {
-            _.forOwn(collection, function mapCollection(value) {
+            _.forOwn(collection, function mapCollection(value, key) {
                 if (_.isFunction(callback)) {
-                    newArray.push(callback(value));
+                    newArray.push(callback(value, key));
                 }
             });
         }
@@ -95,6 +95,16 @@ define([
 
         return _.map(collection, function (value) {
             return value;
+        });
+    };
+
+    _.keys = function (collection) {
+        if (!_.isObject(collection) || _.isArray(collection)) {
+            throw new Error('Collection must be an object.');
+        }
+
+        return _.map(collection, function (value, key) {
+            return key;
         });
     };
 

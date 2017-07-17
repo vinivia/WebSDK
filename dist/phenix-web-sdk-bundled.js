@@ -198,8 +198,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-07-11T15:49:42Z' || '?';
-	    var releaseVersion = '2017.2.8';
+	    var sdkVersion = '2017-07-17T23:21:06Z' || '?';
+	    var releaseVersion = '2017.2.9';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -448,17 +448,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var newArray = [];
 
 	        if (collection.constructor === Array) {
-	            _.forEach(collection, function mapCollection(item) {
+	            _.forEach(collection, function mapCollection(item, index) {
 	                if (_.isString(callback) && _.isObject(item)) {
 	                    newArray.push(item[callback]);
 	                } else if (_.isFunction(callback)) {
-	                    newArray.push(callback(item));
+	                    newArray.push(callback(item, index));
 	                }
 	            });
 	        } else {
-	            _.forOwn(collection, function mapCollection(value) {
+	            _.forOwn(collection, function mapCollection(value, key) {
 	                if (_.isFunction(callback)) {
-	                    newArray.push(callback(value));
+	                    newArray.push(callback(value, key));
 	                }
 	            });
 	        }
@@ -473,6 +473,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        return _.map(collection, function (value) {
 	            return value;
+	        });
+	    };
+
+	    _.keys = function (collection) {
+	        if (!_.isObject(collection) || _.isArray(collection)) {
+	            throw new Error('Collection must be an object.');
+	        }
+
+	        return _.map(collection, function (value, key) {
+	            return key;
 	        });
 	    };
 
@@ -1315,7 +1325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-07-11T15:49:42Z';
+	        this._version = '2017-07-17T23:21:06Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -14358,7 +14368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
 	        ]
 	    });
-	    var sdkVersion = '2017-07-11T15:49:42Z';
+	    var sdkVersion = '2017-07-17T23:21:06Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14377,7 +14387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
 	        this._deviceId = options.deviceId || '';
 	        this._version = sdkVersion;
-	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId);
+	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId, options.disableConsoleLogging);
 	        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
 	        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
 	        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -14606,6 +14616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                switch (response.status) {
 	                case 'capacity':
+	                case 'unauthorized':
 	                    return callback.call(that, that, response.status);
 	                default:
 	                    return callback.call(that, that, 'failed');
@@ -14672,6 +14683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                case 'stream-ended':
 	                case 'origin-stream-ended':
 	                case 'streaming-not-available':
+	                case 'unauthorized':
 	                    return callback.call(that, that, response.status);
 	                default:
 	                    return callback.call(that, that, 'failed');
@@ -18136,7 +18148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function PCastLoggerFactory() { }
 
-	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId) {
+	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId, disableConsole) {
 	        if (baseUri) {
 	            assert.stringNotEmpty(baseUri, 'baseUri');
 	        }
@@ -18146,7 +18158,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        analytixAppender.setThreshold(logging.level.INFO);
 
-	        logger.addAppender(new ConsoleAppender());
+	        if (!disableConsole) {
+	            logger.addAppender(new ConsoleAppender());
+	        }
+
 	        logger.addAppender(analytixAppender);
 
 	        logger.isPCastLogger = true;
@@ -21905,6 +21920,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCast, RoomService, rtc) {
 	    'use strict';
 
+	    var unauthorizedStatus = 'unauthorized';
+
 	    function PCastExpress(options) {
 	        assert.isObject(options, 'options');
 	        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
@@ -22238,9 +22255,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (options.monitor) {
 	                var retryPublisher = function retryPublisher(reason) {
 	                    var placeholder = _.uniqueId();
+
 	                    that._publishers[placeholder] = true;
 	                    publisher.stop(reason);
-	                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, callback);
+
+	                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+	                        if (response && response.status === unauthorizedStatus) {
+	                            return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+	                        }
+
+	                        callback(error, response);
+	                    });
+
 	                    delete that._publishers[placeholder];
 	                };
 
@@ -22266,9 +22292,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        that._pcast.subscribe(streamToken, function(pcast, status, subscriber) {
 	            var retrySubscriber = function retrySubscriber(reason) {
 	                var placeholder = _.uniqueId();
+
 	                that._subscribers[placeholder] = true;
+
 	                subscriber.stop(reason);
-	                subscribeToStream.call(that, streamToken, options, callback);
+
+	                subscribeToStream.call(that, streamToken, options, function(error, response) {
+	                    if (response && response.status === unauthorizedStatus) {
+	                        return that.subscribe(options, callback);
+	                    }
+
+	                    callback(error, response);
+	                });
+
 	                delete that._subscribers[placeholder];
 	            };
 
