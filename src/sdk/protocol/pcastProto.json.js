@@ -254,6 +254,119 @@ define([
                 ]
             },
             {
+                "name": "IceServer",
+                "fields": [
+                    {
+                        "rule": "repeated",
+                        "type": "string",
+                        "name": "urls",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "username",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "credential",
+                        "id": 3
+                    }
+                ]
+            },
+            {
+                "name": "RtcConfiguration",
+                "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "BundlePolicy",
+                        "name": "bundlePolicy",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint32",
+                        "name": "iceCandidatePoolSize",
+                        "id": 3
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "IceServer",
+                        "name": "iceServers",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "IceTransportPolicy",
+                        "name": "iceTransportPolicy",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "peerIdentity",
+                        "id": 6
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "RtcpMuxPolicy",
+                        "name": "rtcpMuxPolicy",
+                        "id": 7
+                    }
+                ],
+                "enums": [
+                    {
+                        "name": "BundlePolicy",
+                        "values": [
+                            {
+                                "name": "BundlePolicyBalanced",
+                                "id": 1
+                            },
+                            {
+                                "name": "BundlePolicyMaxCompat",
+                                "id": 2
+                            },
+                            {
+                                "name": "BundlePolicyMaxBundle",
+                                "id": 3
+                            }
+                        ]
+                    },
+                    {
+                        "name": "IceTransportPolicy",
+                        "values": [
+                            {
+                                "name": "IceTransportPolicyAll",
+                                "id": 1
+                            },
+                            {
+                                "name": "IceTransportPolicyPublic",
+                                "id": 2
+                            },
+                            {
+                                "name": "IceTransportPolicyRelay",
+                                "id": 3
+                            }
+                        ]
+                    },
+                    {
+                        "name": "RtcpMuxPolicy",
+                        "values": [
+                            {
+                                "name": "RtcpMuxPolicyNegotiate",
+                                "id": 1
+                            },
+                            {
+                                "name": "RtcpMuxPolicyRequire",
+                                "id": 2
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
                 "name": "CreateStreamResponse",
                 "fields": [
                     {
@@ -279,6 +392,12 @@ define([
                         "type": "string",
                         "name": "streamUris",
                         "id": 8
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "RtcConfiguration",
+                        "name": "rtcConfiguration",
+                        "id": 9
                     },
                     {
                         "rule": "optional",
@@ -791,6 +910,18 @@ define([
                         "type": "string",
                         "name": "tags",
                         "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "continuationId",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "routeKey",
+                        "id": 6
                     }
                 ]
             },
@@ -837,6 +968,18 @@ define([
                         "type": "string",
                         "name": "status",
                         "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "continuationId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "routeKey",
+                        "id": 3
                     }
                 ]
             },
@@ -912,6 +1055,50 @@ define([
                         "type": "float",
                         "name": "duration",
                         "id": 3
+                    }
+                ]
+            },
+            {
+                "name": "StreamPlaylist",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "PlaylistType",
+                        "name": "playlistType",
+                        "id": 3
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "uri",
+                        "id": 4
+                    }
+                ],
+                "enums": [
+                    {
+                        "name": "PlaylistType",
+                        "values": [
+                            {
+                                "name": "Live",
+                                "id": 0
+                            },
+                            {
+                                "name": "OnDemand",
+                                "id": 1
+                            }
+                        ]
                     }
                 ]
             },
@@ -1347,10 +1534,18 @@ define([
                         "id": 2
                     },
                     {
-                        "rule": "required",
+                        "rule": "optional",
                         "type": "string",
                         "name": "streamId",
-                        "id": 3
+                        "id": 3,
+                        "oneof": "streamOrToken"
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamToken",
+                        "id": 5,
+                        "oneof": "streamOrToken"
                     },
                     {
                         "rule": "optional",
@@ -1358,7 +1553,13 @@ define([
                         "name": "reason",
                         "id": 4
                     }
-                ]
+                ],
+                "oneofs": {
+                    "streamOrToken": [
+                        3,
+                        5
+                    ]
+                }
             },
             {
                 "name": "TerminateStreamResponse",
