@@ -104,6 +104,9 @@ var publishRemoteOptions = {
     tags: [],
     // Optional: stream tags
 
+    monitor: monitorOptions, // See Below (1)
+    // Optional: Monitor a publisher for failure.
+
     frameRate: {
         // Optional frame rate constraints
 

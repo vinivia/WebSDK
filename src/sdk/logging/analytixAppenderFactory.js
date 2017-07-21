@@ -19,7 +19,6 @@ define([
     '../assert',
     './AnalytixAppender'
 ], function (_, environment, assert, AnalytixAppender) {
-
     var config = {
         urls: {
             local: '',

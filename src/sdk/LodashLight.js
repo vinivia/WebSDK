@@ -17,7 +17,9 @@ define([
 ], function () {
     'use strict';
 
-    var _ = function() {};
+    var _ = function() {
+
+    };
 
     _.bind = function bind(callback, that) {
         var argsAfterContext = Array.prototype.slice.call(arguments, 2);

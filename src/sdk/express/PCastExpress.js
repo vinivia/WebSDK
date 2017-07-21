@@ -24,6 +24,8 @@ define([
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
+    var capacityBackoffTimeout = 1000;
+    var defaultPrerollSkipDuration = 500;
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
@@ -168,8 +170,17 @@ define([
             throw new Error('May not view remote stream publisher. Please subscribe to view.');
         }
 
+        if (options.prerollSkipDuration) {
+            assert.isNumber(options.prerollSkipDuration, 'options.prerollSkipDuration');
+        }
+
         if (options.monitor) {
-            throw new Error('May not monitor remote stream.');
+            assert.isObject(options.monitor, 'options.monitor');
+            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
+            if (options.monitor.options) {
+                assert.isObject(options.monitor.options, 'options.monitor.options');
+            }
         }
 
         if (options.frameRate) {
@@ -217,6 +228,8 @@ define([
             if (options.frameRate && options.frameRate.max) {
                 remoteOptions.connectOptions.push('source-uri-video-fps-max=' + options.frameRate.max);
             }
+
+            remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
             getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
         });
@@ -345,6 +358,23 @@ define([
         }
 
         var publishCallback = function publishCallback(pcast, status, publisher) {
+            var retryPublisher = function retryPublisher(reason) {
+                var placeholder = _.uniqueId();
+
+                that._publishers[placeholder] = true;
+                publisher.stop(reason);
+
+                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+                    if (response && response.status === unauthorizedStatus) {
+                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+                    }
+
+                    callback(error, response);
+                });
+
+                delete that._publishers[placeholder];
+            };
+
             if (status !== 'ok') {
                 return callback(null, {status: status});
             }
@@ -355,28 +385,19 @@ define([
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
             }
 
+            var isPublisher = true;
+            var noopCallback = function() {};
+            var publisherEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retryPublisher, isPublisher);
+
             if (options.monitor) {
-                var retryPublisher = function retryPublisher(reason) {
-                    var placeholder = _.uniqueId();
-
-                    that._publishers[placeholder] = true;
-                    publisher.stop(reason);
-
-                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
-                        if (response && response.status === unauthorizedStatus) {
-                            return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
-                        }
-
-                        callback(error, response);
-                    });
-
-                    delete that._publishers[placeholder];
-                };
-
                 var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retryPublisher);
 
                 publisher.monitor(options.monitor.options || {}, monitorCallback);
+
+                publisherEndedCallback = _.bind(onPublisherOrStreamEnd, that, options.monitor.callback, retryPublisher, isPublisher);
             }
+
+            publisher.setPublisherEndedCallback(publisherEndedCallback);
 
             var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
 
@@ -432,11 +453,19 @@ define([
                 renderer.start(options.videoElement);
             }
 
+            var isPublisher = false;
+            var noopCallback = function() {};
+            var subscriberEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retrySubscriber, isPublisher);
+
             if (options.monitor) {
                 var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retrySubscriber);
 
                 subscriber.monitor(options.monitor.options || {}, monitorCallback);
+
+                subscriberEndedCallback = _.bind(onPublisherOrStreamEnd, that, options.monitor.callback, retrySubscriber, isPublisher);
             }
+
+            subscriber.setStreamEndedCallback(subscriberEndedCallback);
 
             var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
 
@@ -445,7 +474,6 @@ define([
                 mediaStream: expressSubscriber
             });
         });
-
     }
 
     function createExpressPublisher(publisher, videoElement) {
@@ -476,6 +504,9 @@ define([
             return setStreamVideoTracksState(publisher.getStream(), false);
         };
 
+        // Publisher Ended Callback handled with normal callback route for express
+        publisher.setPublisherEndedCallback = function() {};
+
         return publisher;
     }
 
@@ -505,6 +536,9 @@ define([
         subscriber.disableVideo = function() {
             return setStreamVideoTracksState(subscriber.getStream(), false);
         };
+
+        // Stream Ended Callback handled with normal callback route for express
+        subscriber.setStreamEndedCallback = function() {};
 
         return subscriber;
     }
@@ -563,8 +597,53 @@ define([
             // Handle failure event, redo stream
             break;
         default:
-                // No failure has occurred, handle monitor event
+            // No failure has occurred, handle monitor event
             break;
+        }
+    }
+
+    function onPublisherOrStreamEnd(monitorCallback, retry, isPublisher, publisherOrStream, reason, description) {
+        var response = {
+            status: 'stream-ended',
+            reason: reason,
+            description: description
+        };
+
+        switch (reason) {
+        case 'ended':
+            // Normal operation
+            var endedResponse = {
+                status: reason,
+                reason: reason,
+                description: description
+            };
+
+            if (isPublisher) {
+                endedResponse.publisher = publisherOrStream;
+            } else {
+                endedResponse.mediaStream = publisherOrStream;
+            }
+
+            return monitorCallback(null, endedResponse);
+        case 'custom':
+            // Client ended publisher, do nothing
+            return monitorCallback(null, response);
+        case 'capacity':
+            // Don't inform the client, attempt to re-publish automatically after backoff
+            return setTimeout(function() {
+                return retry(reason);
+            }, capacityBackoffTimeout);
+        case 'failed':
+        case 'maintenance':
+            // Don't inform the client, attempt to re-publish automatically
+            return retry(reason);
+        case 'censored':
+        case 'app-background':
+        default:
+            // Give client option to re-publish
+            response.retry = retry;
+
+            return monitorCallback(null, response);
         }
     }
 

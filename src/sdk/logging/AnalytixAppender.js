@@ -23,7 +23,6 @@ define([
     'phenix-rtc',
     './logging.json'
 ], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
-
     var networkDisconnectHysteresisInterval = 0;
 
     function AnalytixAppender() {

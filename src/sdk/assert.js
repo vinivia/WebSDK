@@ -18,7 +18,9 @@ define([
 ], function (_) {
     'use strict';
 
-    var Assert = function() {};
+    var Assert = function() {
+
+    };
 
     Assert.prototype.isObject = function isObject(obj, name) {
         var error = '"' + name + '" must be an object';

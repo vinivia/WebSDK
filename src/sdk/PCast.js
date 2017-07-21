@@ -824,6 +824,7 @@ define([
         case 'server-error':
         case 'not-ready':
         case 'error':
+        case 'died':
             return 'failed';
         case 'censored':
             return 'censored';
@@ -1326,6 +1327,16 @@ define([
 
             getOptions: function getOptions() {
                 return streamOptions;
+            },
+
+            monitor: function monitor(options, callback) {
+                if (typeof options !== 'object') {
+                    throw new Error('"options" must be an object');
+                }
+
+                if (typeof callback !== 'function') {
+                    throw new Error('"callback" must be a function');
+                }
             }
         };
 
@@ -1885,7 +1896,6 @@ define([
                             };
 
                             if (options.isDrmProtectedContent) {
-
                                 addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
                                     if (!err) {
                                         loadPlayer(updatedPlayerConfig);
@@ -1898,7 +1908,6 @@ define([
                             } else {
                                 loadPlayer(playerConfig);
                             }
-
 
                             function loadPlayer(config) {
                                 player.configure(config);

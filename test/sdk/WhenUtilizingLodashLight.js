@@ -18,7 +18,6 @@ define([
     'Long'
 ], function (_, Long) {
     describe('When utilizing LodashLight', function () {
-
         describe('When getting current time using now', function () {
             it('Has property now that is a function', function () {
                 expect(_.now).to.be.a('function');

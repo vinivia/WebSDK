@@ -182,5 +182,4 @@ define([
     }
 
     return Observable;
-
 });

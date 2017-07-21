@@ -62,7 +62,6 @@ define([
         this._webSocket.onreconnected = _.bind(onReconnected, this);
         this._webSocket.ondisconnected = _.bind(onDisconnected, this);
         this._webSocket.onerror = _.bind(onError, this);
-
     }
 
     PCastProtocol.prototype.on = function (eventName, handler) {

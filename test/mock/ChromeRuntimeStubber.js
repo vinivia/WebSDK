@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 define([], function () {
-    function ChromeRuntimeStubber() { }
+    function ChromeRuntimeStubber() {
+
+    }
 
     ChromeRuntimeStubber.prototype.stub = function(callback) {
         if (window.chrome && window.chrome.runtime) {

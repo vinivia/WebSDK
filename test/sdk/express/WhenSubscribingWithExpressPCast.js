@@ -34,6 +34,8 @@ define([
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcastExpress;
 
+        var clientFailureReason = 'client-side-failure';
+
         before(function() {
             chromeRuntimeStubber.stub();
             peerConnectionStubber.stub();
@@ -84,7 +86,7 @@ define([
             var startClone = PeerConnectionMonitor.prototype.start;
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
-                monitorCallback();
+                monitorCallback(clientFailureReason);
             };
 
             pcastExpress.subscribe({
@@ -93,6 +95,10 @@ define([
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {
+                        if (response.status !== clientFailureReason) {
+                            return;
+                        }
+
                         expect(response.retry).to.be.a('function');
 
                         PeerConnectionMonitor.prototype.start = startClone;
@@ -111,7 +117,7 @@ define([
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
                 setTimeout(function() {
                     if (subscribeCount < 2) {
-                        monitorCallback();
+                        monitorCallback(clientFailureReason);
                     }
                 }, 10);
             };
@@ -122,6 +128,10 @@ define([
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {
+                        if (response.status !== clientFailureReason) {
+                            return;
+                        }
+
                         response.retry();
 
                         PeerConnectionMonitor.prototype.start = startClone;
@@ -148,7 +158,7 @@ define([
                     if (subscribeCount < 2) {
                         websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
 
-                        monitorCallback();
+                        monitorCallback(clientFailureReason);
                     }
                 }, 10);
             };
@@ -159,6 +169,10 @@ define([
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {
+                        if (response.status !== clientFailureReason) {
+                            return;
+                        }
+
                         response.retry();
 
                         PeerConnectionMonitor.prototype.start = startClone;

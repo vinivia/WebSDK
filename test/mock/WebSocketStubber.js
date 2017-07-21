@@ -73,6 +73,19 @@ define([
         };
     };
 
+    WebSocketStubber.prototype.stubMessage = function(type, message) {
+        setupStubIfNoneExist.call(this);
+
+        if (this._mockWebSocket.onmessage) {
+            this._mockWebSocket.onmessage({
+                data: encodeMessage.call(this, {
+                    type: type,
+                    requestId: '10000'
+                }, message, false)
+            });
+        }
+    };
+
     WebSocketStubber.prototype.restore = function() {
         if (this._mockWebSocket) {
             this._mockWebSocket.send = sinon.stub();
@@ -102,7 +115,7 @@ define([
                 var message = decodeMessage.call(that, encodedMessage);
                 var handler = that._handlers[response.type] || that._defaultResponse;
 
-                that._mockWebSocket.onmessage({data: encodeMessage.call(that, response, handler.message)});
+                that._mockWebSocket.onmessage({data: encodeMessage.call(that, response, handler.message, true)});
 
                 if (_.isFunction(handler.callback)) {
                     handler.callback(response, message);
@@ -125,8 +138,8 @@ define([
         return this._mqProtocol.decode(response.type, response.payload);
     }
 
-    function encodeMessage(request, message) {
-        var type = request.type + 'Response';
+    function encodeMessage(request, message, includeResponse) {
+        var type = request.type + (includeResponse ? 'Response' : '');
 
         return this._mqProtocol.encode('mq.Response', {
             requestId: request.requestId,

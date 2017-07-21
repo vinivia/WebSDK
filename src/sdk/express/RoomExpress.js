@@ -255,7 +255,7 @@ define([
                 videoElement: options.videoElement,
                 streamId: streamId,
                 monitor: {
-                    callback: _.bind(monitorSubsciber, that, subscriberCallback),
+                    callback: _.bind(monitorSubsciberOrPublisher, that, subscriberCallback),
                     options: {conditionCountForNotificationThreshold: 8}
                 }
             };
@@ -326,8 +326,15 @@ define([
 
             roomService.start(role, screenName);
 
+            var publishOptions = _.assign(options, {
+                monitor: {
+                    callback: _.bind(monitorSubsciberOrPublisher, that, callback),
+                    options: {conditionCountForNotificationThreshold: 8}
+                }
+            });
+
             if (options.streamUri) {
-                var remoteOptions = _.assign(options, {connectOptions: []});
+                var remoteOptions = _.assign(publishOptions, {connectOptions: []});
                 var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
                     return option.startsWith('room-id');
                 });
@@ -343,7 +350,7 @@ define([
 
                 that._pcastExpress.publishRemote(remoteOptions, callback);
             } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-                var localOptions = _.assign(options, {tags: []});
+                var localOptions = _.assign(publishOptions, {tags: []});
                 var hasChannelTag = _.find(localOptions.tags, function(tag) {
                     return tag.startsWith('channelId');
                 });
@@ -398,14 +405,6 @@ define([
 
             var mediaStream = response.mediaStream;
 
-            mediaStream.setStreamEndedCallback(function(mediaStream, status, reason) {
-                callback(null, {
-                    status: status,
-                    reason: reason,
-                    mediaStream: mediaStream
-                });
-            });
-
             if (count > 1) {
                 return callback(null, {
                     status: 'ok',
@@ -422,7 +421,7 @@ define([
         });
     }
 
-    function monitorSubsciber(callback, error, response) {
+    function monitorSubsciberOrPublisher(callback, error, response) {
         if (error) {
             return callback(error);
         }

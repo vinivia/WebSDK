@@ -64,7 +64,7 @@ requirejs([
             capabilities.push($('#subscriber-mode option:selected').val());
 
             roomExpress.joinChannel({
-                channelAlias: channelAlias,
+                alias: channelAlias,
                 capabilities: capabilities,
                 videoElement: channelVideoEl
             }, function joinChannelCallback(error, response) {

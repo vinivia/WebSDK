@@ -198,8 +198,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-07-17T23:21:06Z' || '?';
-	    var releaseVersion = '2017.2.9';
+	    var sdkVersion = '2017-07-24T17:10:01Z' || '?';
+	    var releaseVersion = '2017.2.10';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -395,7 +395,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
 	    'use strict';
 
-	    var _ = function() {};
+	    var _ = function() {
+
+	    };
 
 	    _.bind = function bind(callback, that) {
 	        var argsAfterContext = Array.prototype.slice.call(arguments, 2);
@@ -891,7 +893,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
 	    'use strict';
 
-	    var Assert = function() {};
+	    var Assert = function() {
+
+	    };
 
 	    Assert.prototype.isObject = function isObject(obj, name) {
 	        var error = '"' + name + '" must be an object';
@@ -1016,7 +1020,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(9)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, environment, assert, AnalytixAppender) {
-
 	    var config = {
 	        urls: {
 	            local: '',
@@ -1090,7 +1093,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return 'production';
-
 	    };
 
 	    return environment;
@@ -1125,7 +1127,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(1),
 	    __webpack_require__(6)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
-
 	    var networkDisconnectHysteresisInterval = 0;
 
 	    function AnalytixAppender() {
@@ -1325,7 +1326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-07-17T23:21:06Z';
+	        this._version = '2017-07-24T17:10:01Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -14368,7 +14369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
 	        ]
 	    });
-	    var sdkVersion = '2017-07-17T23:21:06Z';
+	    var sdkVersion = '2017-07-24T17:10:01Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -15154,6 +15155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        case 'server-error':
 	        case 'not-ready':
 	        case 'error':
+	        case 'died':
 	            return 'failed';
 	        case 'censored':
 	            return 'censored';
@@ -15656,6 +15658,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            getOptions: function getOptions() {
 	                return streamOptions;
+	            },
+
+	            monitor: function monitor(options, callback) {
+	                if (typeof options !== 'object') {
+	                    throw new Error('"options" must be an object');
+	                }
+
+	                if (typeof callback !== 'function') {
+	                    throw new Error('"callback" must be a function');
+	                }
 	            }
 	        };
 
@@ -16215,7 +16227,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            };
 
 	                            if (options.isDrmProtectedContent) {
-
 	                                addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
 	                                    if (!err) {
 	                                        loadPlayer(updatedPlayerConfig);
@@ -16228,7 +16239,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            } else {
 	                                loadPlayer(playerConfig);
 	                            }
-
 
 	                            function loadPlayer(config) {
 	                                player.configure(config);
@@ -17115,7 +17125,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._webSocket.onreconnected = _.bind(onReconnected, this);
 	        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
 	        this._webSocket.onerror = _.bind(onError, this);
-
 	    }
 
 	    PCastProtocol.prototype.on = function (eventName, handler) {
@@ -17814,7 +17823,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return Observable;
-
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
@@ -18146,7 +18154,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
 	    'use strict';
 
-	    function PCastLoggerFactory() { }
+	    function PCastLoggerFactory() {
+
+	    }
 
 	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId, disableConsole) {
 	        if (baseUri) {
@@ -21921,6 +21931,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    var unauthorizedStatus = 'unauthorized';
+	    var capacityBackoffTimeout = 1000;
+	    var defaultPrerollSkipDuration = 500;
 
 	    function PCastExpress(options) {
 	        assert.isObject(options, 'options');
@@ -22065,8 +22077,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            throw new Error('May not view remote stream publisher. Please subscribe to view.');
 	        }
 
+	        if (options.prerollSkipDuration) {
+	            assert.isNumber(options.prerollSkipDuration, 'options.prerollSkipDuration');
+	        }
+
 	        if (options.monitor) {
-	            throw new Error('May not monitor remote stream.');
+	            assert.isObject(options.monitor, 'options.monitor');
+	            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
+	            if (options.monitor.options) {
+	                assert.isObject(options.monitor.options, 'options.monitor.options');
+	            }
 	        }
 
 	        if (options.frameRate) {
@@ -22114,6 +22135,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (options.frameRate && options.frameRate.max) {
 	                remoteOptions.connectOptions.push('source-uri-video-fps-max=' + options.frameRate.max);
 	            }
+
+	            remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
 	            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
 	        });
@@ -22242,6 +22265,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        var publishCallback = function publishCallback(pcast, status, publisher) {
+	            var retryPublisher = function retryPublisher(reason) {
+	                var placeholder = _.uniqueId();
+
+	                that._publishers[placeholder] = true;
+	                publisher.stop(reason);
+
+	                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+	                    if (response && response.status === unauthorizedStatus) {
+	                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+	                    }
+
+	                    callback(error, response);
+	                });
+
+	                delete that._publishers[placeholder];
+	            };
+
 	            if (status !== 'ok') {
 	                return callback(null, {status: status});
 	            }
@@ -22252,28 +22292,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                rtc.attachMediaStream(options.videoElement, userMediaOrUri);
 	            }
 
+	            var isPublisher = true;
+	            var noopCallback = function() {};
+	            var publisherEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retryPublisher, isPublisher);
+
 	            if (options.monitor) {
-	                var retryPublisher = function retryPublisher(reason) {
-	                    var placeholder = _.uniqueId();
-
-	                    that._publishers[placeholder] = true;
-	                    publisher.stop(reason);
-
-	                    publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
-	                        if (response && response.status === unauthorizedStatus) {
-	                            return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
-	                        }
-
-	                        callback(error, response);
-	                    });
-
-	                    delete that._publishers[placeholder];
-	                };
-
 	                var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retryPublisher);
 
 	                publisher.monitor(options.monitor.options || {}, monitorCallback);
+
+	                publisherEndedCallback = _.bind(onPublisherOrStreamEnd, that, options.monitor.callback, retryPublisher, isPublisher);
 	            }
+
+	            publisher.setPublisherEndedCallback(publisherEndedCallback);
 
 	            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
 
@@ -22329,11 +22360,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                renderer.start(options.videoElement);
 	            }
 
+	            var isPublisher = false;
+	            var noopCallback = function() {};
+	            var subscriberEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retrySubscriber, isPublisher);
+
 	            if (options.monitor) {
 	                var monitorCallback = _.bind(onMonitorCallback, that, options.monitor.callback, retrySubscriber);
 
 	                subscriber.monitor(options.monitor.options || {}, monitorCallback);
+
+	                subscriberEndedCallback = _.bind(onPublisherOrStreamEnd, that, options.monitor.callback, retrySubscriber, isPublisher);
 	            }
+
+	            subscriber.setStreamEndedCallback(subscriberEndedCallback);
 
 	            var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
 
@@ -22342,7 +22381,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                mediaStream: expressSubscriber
 	            });
 	        });
-
 	    }
 
 	    function createExpressPublisher(publisher, videoElement) {
@@ -22373,6 +22411,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return setStreamVideoTracksState(publisher.getStream(), false);
 	        };
 
+	        // Publisher Ended Callback handled with normal callback route for express
+	        publisher.setPublisherEndedCallback = function() {};
+
 	        return publisher;
 	    }
 
@@ -22402,6 +22443,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        subscriber.disableVideo = function() {
 	            return setStreamVideoTracksState(subscriber.getStream(), false);
 	        };
+
+	        // Stream Ended Callback handled with normal callback route for express
+	        subscriber.setStreamEndedCallback = function() {};
 
 	        return subscriber;
 	    }
@@ -22460,8 +22504,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Handle failure event, redo stream
 	            break;
 	        default:
-	                // No failure has occurred, handle monitor event
+	            // No failure has occurred, handle monitor event
 	            break;
+	        }
+	    }
+
+	    function onPublisherOrStreamEnd(monitorCallback, retry, isPublisher, publisherOrStream, reason, description) {
+	        var response = {
+	            status: 'stream-ended',
+	            reason: reason,
+	            description: description
+	        };
+
+	        switch (reason) {
+	        case 'ended':
+	            // Normal operation
+	            var endedResponse = {
+	                status: reason,
+	                reason: reason,
+	                description: description
+	            };
+
+	            if (isPublisher) {
+	                endedResponse.publisher = publisherOrStream;
+	            } else {
+	                endedResponse.mediaStream = publisherOrStream;
+	            }
+
+	            return monitorCallback(null, endedResponse);
+	        case 'custom':
+	            // Client ended publisher, do nothing
+	            return monitorCallback(null, response);
+	        case 'capacity':
+	            // Don't inform the client, attempt to re-publish automatically after backoff
+	            return setTimeout(function() {
+	                return retry(reason);
+	            }, capacityBackoffTimeout);
+	        case 'failed':
+	        case 'maintenance':
+	            // Don't inform the client, attempt to re-publish automatically
+	            return retry(reason);
+	        case 'censored':
+	        case 'app-background':
+	        default:
+	            // Give client option to re-publish
+	            response.retry = retry;
+
+	            return monitorCallback(null, response);
 	        }
 	    }
 
@@ -22819,7 +22908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                videoElement: options.videoElement,
 	                streamId: streamId,
 	                monitor: {
-	                    callback: _.bind(monitorSubsciber, that, subscriberCallback),
+	                    callback: _.bind(monitorSubsciberOrPublisher, that, subscriberCallback),
 	                    options: {conditionCountForNotificationThreshold: 8}
 	                }
 	            };
@@ -22890,8 +22979,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            roomService.start(role, screenName);
 
+	            var publishOptions = _.assign(options, {
+	                monitor: {
+	                    callback: _.bind(monitorSubsciberOrPublisher, that, callback),
+	                    options: {conditionCountForNotificationThreshold: 8}
+	                }
+	            });
+
 	            if (options.streamUri) {
-	                var remoteOptions = _.assign(options, {connectOptions: []});
+	                var remoteOptions = _.assign(publishOptions, {connectOptions: []});
 	                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
 	                    return option.startsWith('room-id');
 	                });
@@ -22907,7 +23003,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                that._pcastExpress.publishRemote(remoteOptions, callback);
 	            } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-	                var localOptions = _.assign(options, {tags: []});
+	                var localOptions = _.assign(publishOptions, {tags: []});
 	                var hasChannelTag = _.find(localOptions.tags, function(tag) {
 	                    return tag.startsWith('channelId');
 	                });
@@ -22962,14 +23058,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var mediaStream = response.mediaStream;
 
-	            mediaStream.setStreamEndedCallback(function(mediaStream, status, reason) {
-	                callback(null, {
-	                    status: status,
-	                    reason: reason,
-	                    mediaStream: mediaStream
-	                });
-	            });
-
 	            if (count > 1) {
 	                return callback(null, {
 	                    status: 'ok',
@@ -22986,7 +23074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    }
 
-	    function monitorSubsciber(callback, error, response) {
+	    function monitorSubsciberOrPublisher(callback, error, response) {
 	        if (error) {
 	            return callback(error);
 	        }

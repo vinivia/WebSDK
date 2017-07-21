@@ -17,7 +17,6 @@ define([
     'sdk/assert'
 ], function (assert) {
     describe('When Asserting Types with Assert', function () {
-
         describe('When asserting argument is an object', function () {
             it('Has property isObject that is a function', function () {
                 expect(assert.isObject).to.be.a('function');

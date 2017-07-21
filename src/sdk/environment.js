@@ -28,7 +28,6 @@ define([], function () {
         }
 
         return 'production';
-
     };
 
     return environment;

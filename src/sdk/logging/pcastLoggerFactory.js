@@ -23,7 +23,9 @@ define([
 ], function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
     'use strict';
 
-    function PCastLoggerFactory() { }
+    function PCastLoggerFactory() {
+
+    }
 
     PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId, disableConsole) {
         if (baseUri) {

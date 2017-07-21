@@ -45,7 +45,6 @@ define([
                     expect(responseText).to.be.equal(httpResponseText);
                 });
 
-
                 requests[0].respond(200, null, httpResponseText);
             });
 

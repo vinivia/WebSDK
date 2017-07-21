@@ -68,7 +68,10 @@ requirejs([
 
             roomExpress.publishToChannel({
                 mediaConstraints: getConstraints(),
-                channelAlias: channelAlias,
+                room: {
+                    alias: channelAlias,
+                    name: channelAlias
+                },
                 capabilities: capabilities,
                 videoElement: channelVideoEl
             }, function publishToChannelCallback(error, response) {

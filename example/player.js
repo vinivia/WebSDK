@@ -18,7 +18,6 @@ define('video-player', [
     'jquery',
     'lodash'
 ], function ($, _) {
-
     var Player = function(elementId) {
         this.videoId = elementId;
         this.video = document.getElementById(elementId);
