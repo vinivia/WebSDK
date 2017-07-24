@@ -427,8 +427,10 @@ define([
         }
 
         if (response.retry) {
-            response.retry();
+            return response.retry();
         }
+
+        callback(error, response);
     }
 
     function getDefaultRoomDescription(type) {

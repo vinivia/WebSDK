@@ -183,8 +183,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-07-24T17:10:01Z' || '?';
-	    var releaseVersion = '2017.2.10';
+	    var sdkVersion = '2017-07-24T22:26:05Z' || '?';
+	    var releaseVersion = '2017.2.11';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -1311,7 +1311,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-07-24T17:10:01Z';
+	        this._version = '2017-07-24T22:26:05Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -1997,6 +1997,119 @@ return /******/ (function(modules) { // webpackBootstrap
 	                ]
 	            },
 	            {
+	                "name": "IceServer",
+	                "fields": [
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "urls",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "username",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "credential",
+	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "RtcConfiguration",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "BundlePolicy",
+	                        "name": "bundlePolicy",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint32",
+	                        "name": "iceCandidatePoolSize",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "IceServer",
+	                        "name": "iceServers",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "IceTransportPolicy",
+	                        "name": "iceTransportPolicy",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "peerIdentity",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "RtcpMuxPolicy",
+	                        "name": "rtcpMuxPolicy",
+	                        "id": 7
+	                    }
+	                ],
+	                "enums": [
+	                    {
+	                        "name": "BundlePolicy",
+	                        "values": [
+	                            {
+	                                "name": "BundlePolicyBalanced",
+	                                "id": 1
+	                            },
+	                            {
+	                                "name": "BundlePolicyMaxCompat",
+	                                "id": 2
+	                            },
+	                            {
+	                                "name": "BundlePolicyMaxBundle",
+	                                "id": 3
+	                            }
+	                        ]
+	                    },
+	                    {
+	                        "name": "IceTransportPolicy",
+	                        "values": [
+	                            {
+	                                "name": "IceTransportPolicyAll",
+	                                "id": 1
+	                            },
+	                            {
+	                                "name": "IceTransportPolicyPublic",
+	                                "id": 2
+	                            },
+	                            {
+	                                "name": "IceTransportPolicyRelay",
+	                                "id": 3
+	                            }
+	                        ]
+	                    },
+	                    {
+	                        "name": "RtcpMuxPolicy",
+	                        "values": [
+	                            {
+	                                "name": "RtcpMuxPolicyNegotiate",
+	                                "id": 1
+	                            },
+	                            {
+	                                "name": "RtcpMuxPolicyRequire",
+	                                "id": 2
+	                            }
+	                        ]
+	                    }
+	                ]
+	            },
+	            {
 	                "name": "CreateStreamResponse",
 	                "fields": [
 	                    {
@@ -2022,6 +2135,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "streamUris",
 	                        "id": 8
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "RtcConfiguration",
+	                        "name": "rtcConfiguration",
+	                        "id": 9
 	                    },
 	                    {
 	                        "rule": "optional",
@@ -2534,6 +2653,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "tags",
 	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "continuationId",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "routeKey",
+	                        "id": 6
 	                    }
 	                ]
 	            },
@@ -2580,6 +2711,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "status",
 	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "continuationId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "routeKey",
+	                        "id": 3
 	                    }
 	                ]
 	            },
@@ -2655,6 +2798,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "float",
 	                        "name": "duration",
 	                        "id": 3
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "StreamPlaylist",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "PlaylistType",
+	                        "name": "playlistType",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "uri",
+	                        "id": 4
+	                    }
+	                ],
+	                "enums": [
+	                    {
+	                        "name": "PlaylistType",
+	                        "values": [
+	                            {
+	                                "name": "Live",
+	                                "id": 0
+	                            },
+	                            {
+	                                "name": "OnDemand",
+	                                "id": 1
+	                            }
+	                        ]
 	                    }
 	                ]
 	            },
@@ -3090,10 +3277,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "id": 2
 	                    },
 	                    {
-	                        "rule": "required",
+	                        "rule": "optional",
 	                        "type": "string",
 	                        "name": "streamId",
-	                        "id": 3
+	                        "id": 3,
+	                        "oneof": "streamOrToken"
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "streamToken",
+	                        "id": 5,
+	                        "oneof": "streamOrToken"
 	                    },
 	                    {
 	                        "rule": "optional",
@@ -3101,7 +3296,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "name": "reason",
 	                        "id": 4
 	                    }
-	                ]
+	                ],
+	                "oneofs": {
+	                    "streamOrToken": [
+	                        3,
+	                        5
+	                    ]
+	                }
 	            },
 	            {
 	                "name": "TerminateStreamResponse",
@@ -4443,7 +4644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
 	        ]
 	    });
-	    var sdkVersion = '2017-07-24T17:10:01Z';
+	    var sdkVersion = '2017-07-24T22:26:05Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -13154,8 +13355,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        if (response.retry) {
-	            response.retry();
+	            return response.retry();
 	        }
+
+	        callback(error, response);
 	    }
 
 	    function getDefaultRoomDescription(type) {
