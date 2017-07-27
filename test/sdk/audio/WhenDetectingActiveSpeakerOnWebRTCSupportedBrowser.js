@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/Logger',
+    'phenix-web-logging',
     'sdk/audio/AudioSpeakerDetector',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
-], function (Logger, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
+], function (logging, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
     describe('When Detecting Active Speaker on WebRTC Supported Browser', function () {
         var audioSpeakerDetector;
         var streams = [];
@@ -32,7 +32,7 @@ define([
         beforeEach(function () {
             streams = [new MediaStream()];
 
-            audioSpeakerDetector = new AudioSpeakerDetector(streams, {logger: sinon.createStubInstance(Logger)});
+            audioSpeakerDetector = new AudioSpeakerDetector(streams, {logger: sinon.createStubInstance(logging.Logger)});
         });
 
         afterEach(function() {

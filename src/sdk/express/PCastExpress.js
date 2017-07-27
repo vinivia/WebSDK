@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
     '../AdminAPI',
     '../PCast',
     '../room/RoomService',

@@ -15,11 +15,11 @@
  */
 define([
     'Long',
-    'sdk/observable/Observable',
+    'phenix-web-observable',
     'sdk/authentication/AuthenticationService',
     'sdk/chat/ChatService',
     '../../../test/mock/mockPCast'
-], function (Long, Observable, AuthenticationService, ChatService, MockPCast) {
+], function (Long, observable, AuthenticationService, ChatService, MockPCast) {
     var pcast;
     var mockProtocol;
     var chatService;
@@ -332,7 +332,7 @@ define([
             var sessionIdObservable;
 
             beforeEach(function () {
-                sessionIdObservable = new Observable('mockPCastSessionId');
+                sessionIdObservable = new observable.Observable('mockPCastSessionId');
 
                 AuthenticationService.prototype.getObservableSessionId = sinon.stub(AuthenticationService.prototype, 'getObservableSessionId', function () {
                     return sessionIdObservable;
@@ -367,7 +367,7 @@ define([
             var statusObservable;
 
             beforeEach(function () {
-                statusObservable = new Observable('online');
+                statusObservable = new observable.Observable('online');
 
                 AuthenticationService.prototype.getObservableStatus = sinon.stub(AuthenticationService.prototype, 'getObservableStatus', function () {
                     return statusObservable;

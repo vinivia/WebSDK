@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global process */
 define([
-    'Promise',
-    'jquery',
+    'phenix-web-http',
     'lodash',
     'sdk/PCast',
     'sdk/logging/pcastLoggerFactory',
-    'sdk/logging/Logger'
-], function (Promise, $, _, PCast, pcastLoggerFactory, Logger) {
+    'phenix-web-logging'
+], function (http, _, PCast, pcastLoggerFactory, logging) {
     'use strict';
 
     describe('When connecting to PCast', function () {
@@ -30,9 +30,13 @@ define([
 
         this.timeout(30000);
 
-        before(function () {
+        before('Get Auth Token', function (done) {
+            if (pcastLoggerFactory.createPCastLogger.restore) {
+                pcastLoggerFactory.createPCastLogger.restore();
+            }
+
             pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
-                return sinon.createStubInstance(Logger);
+                return sinon.createStubInstance(logging.Logger);
             }); // Disable requests to external source
 
             pcast = new PCast();
@@ -40,8 +44,8 @@ define([
             var parser = document.createElement('a');
             parser.href = pcast.getBaseUri();
 
-            var applicationId = window.__env__['PHENIX_APPLICATION_ID'];
-            var secret = window.__env__['PHENIX_SECRET'];
+            var applicationId = process.env.PHENIX_APPLICATION_ID;
+            var secret = process.env.PHENIX_SECRET;
             var data = {
                 applicationId: applicationId,
                 secret: secret
@@ -50,20 +54,16 @@ define([
             expect(applicationId).to.be.a('string');
             expect(secret).to.be.a('string');
 
-            return new Promise(function (resolve, reject) {
-                $.ajax({
-                    url: 'https://' + parser.hostname + '/pcast/auth',
-                    accepts: 'application/json',
-                    contentType: 'application/json',
-                    method: 'POST',
-                    data: JSON.stringify(data)
-                }).success(function (data) {
-                    authToken = data.authenticationToken;
-                    resolve();
-                }).error(function (jqXHR, textStatus, errorThrown) {
-                    reject(errorThrown instanceof Error ? errorThrown : new Error(textStatus || 'undefined-error'));
-                });
-            }).should.be.fulfilled;
+            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), null, function (error, data) {
+                if (error) {
+                    done(error);
+                }
+
+                authToken = JSON.parse(data).authenticationToken;
+
+                expect(authToken).to.be.a('string');
+                done();
+            }, 0);
         });
         it('acquires an authentication token', function () {
             expect(authToken).to.be.a('string');
@@ -72,23 +72,29 @@ define([
             var theSessionId;
             var onlineCallbackInvocationCount = 0;
             var offlineCallbackInvocationCount = 0;
+            var startCount = 0;
 
-            before(function () {
-                return new Promise(function (resolve, reject) {
-                    pcast.start(authToken, function authenticateCallback (pcast, status, sessionId) {
-                        theSessionId = sessionId;
+            before(function (done) {
+                if (startCount > 0) {
+                    return;
+                }
 
-                        if (status !== 'ok') {
-                            reject(new Error('auth-failed'));
-                        } else {
-                            resolve();
-                        }
-                    }, function onlineCallback () {
-                        onlineCallbackInvocationCount++;
-                    }, function offlineCallback () {
-                        offlineCallbackInvocationCount++;
-                    });
-                }).should.be.fulfilled;
+                startCount++;
+
+                pcast.start(authToken, function authenticateCallback (pcast, status, sessionId) {
+                    theSessionId = sessionId;
+
+                    if (status !== 'ok') {
+                        done(new Error('auth-failed'));
+                    } else {
+                        expect(sessionId).to.be.a('string');
+                        done();
+                    }
+                }, function onlineCallback () {
+                    onlineCallbackInvocationCount++;
+                }, function offlineCallback () {
+                    offlineCallbackInvocationCount++;
+                });
             });
             it('receives a session ID', function () {
                 expect(theSessionId).to.be.a('string');
@@ -100,19 +106,19 @@ define([
                 expect(offlineCallbackInvocationCount).to.be.equal(0);
             });
             describe('When stopping PCast', function () {
-                before(function () {
-                    return new Promise(function (resolve, reject) {
-                        pcast.stop();
+                before(function (done) {
+                    pcast.stop();
 
-                        var intervalId = setInterval(function () {
-                            if (offlineCallbackInvocationCount > 0) {
-                                resolve();
-                                clearInterval(intervalId);
-                            } else {
-                                reject(new Error('Offline Callback not called'));
-                            }
-                        }, 100);
-                    }).should.be.fulfilled;
+                    var intervalId = setInterval(function () {
+                        if (offlineCallbackInvocationCount > 0) {
+                            clearInterval(intervalId);
+
+                            expect(offlineCallbackInvocationCount > 0).to.be.true;
+                            done();
+                        } else {
+                            done(new Error('Offline Callback not called'));
+                        }
+                    }, 200);
                 });
                 it('became "online" once', function () {
                     expect(onlineCallbackInvocationCount).to.be.equal(1);

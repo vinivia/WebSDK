@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 define([
-    './LodashLight',
-    './http'
+    'phenix-web-lodash-light',
+    'phenix-web-http'
 ], function (_, http) {
     'use strict';
 
@@ -73,7 +73,13 @@ define([
 
             that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
 
-            http.getWithRetry(endPoint, function (err, responseText) {
+            http.getWithRetry(endPoint, {
+                timeout: 15000,
+                queryParameters: {
+                    version: '%VERSION%',
+                    _: _.now()
+                }
+            }, function (err, responseText) {
                 var end = _.now();
                 var time = end - start;
                 var timeAboveThreshold = time > endpointClosenessThreshold;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
     '../environment',
-    '../assert',
     './AnalytixAppender'
-], function (_, environment, assert, AnalytixAppender) {
+], function (_, assert, environment, AnalytixAppender) {
     var config = {
         urls: {
             local: '',

@@ -15,16 +15,15 @@
  */
 define([
     'sdk/logging/analytixAppenderFactory',
-    'sdk/logging/ConsoleAppender',
-    'sdk/logging/Logger'
-], function (analytixAppenderFactory, ConsoleAppender, Logger) {
+    'phenix-web-logging'
+], function (analytixAppenderFactory, logging) {
     describe('When Logging With Multiple Appenders', function () {
         var logger;
-        var consoleAppender = new ConsoleAppender();
+        var consoleAppender = new logging.ConsoleAppender();
         var analytixAppender = analytixAppenderFactory.getAppender();
 
         beforeEach(function() {
-            logger = new Logger();
+            logger = new logging.Logger();
         });
 
         it('Has property trace that is a function', function () {
@@ -58,7 +57,7 @@ define([
             beforeEach(function() {
                 analytixAppenderStub = sinon.stub(analytixAppender, 'log'); // Disable requests to external source
                 consoleAppenderStub = sinon.stub(consoleAppender, 'log');
-                logger = new Logger();
+                logger = new logging.Logger();
 
                 logger.addAppender(analytixAppender);
                 logger.addAppender(consoleAppender);

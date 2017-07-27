@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 define([
-    './http',
+    'phenix-web-lodash-light',
+    'phenix-web-http',
     './ClosestEndPointResolver'
-], function (http, ClosestEndPointResolver) {
+], function (_, http, ClosestEndPointResolver) {
     'use strict';
 
     var maxAttempts = 4;
@@ -80,7 +81,13 @@ define([
     }
 
     function getEndpoints(baseUri, callback) {
-        http.getWithRetry(baseUri + '/pcast/endPoints', function (err, responseText) {
+        http.getWithRetry(baseUri + '/pcast/endPoints', {
+            timeout: 15000,
+            queryParameters: {
+                version: '%VERSION%',
+                _: _.now()
+            }
+        }, function (err, responseText) {
             if (err) {
                 return callback(new Error('Failed to resolve an end point', err));
             }

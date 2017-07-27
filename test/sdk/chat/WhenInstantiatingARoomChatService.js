@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    'sdk/observable/Observable',
+    'phenix-web-observable',
     'sdk/chat/RoomChatService',
     'sdk/chat/ChatService',
     '../../../test/mock/mockRoomService'
-], function (Observable, RoomChatService, ChatService, MockRoomService) {
+], function (observable, RoomChatService, ChatService, MockRoomService) {
     var stubRoomService;
     var stubChatService;
     var roomChatService;
@@ -106,7 +106,7 @@ define([
             };
 
             beforeEach(function () {
-                roomObservable = new Observable(room);
+                roomObservable = new observable.Observable(room);
 
                 stubRoomService.getObservableActiveRoom.restore();
                 stubRoomService.getObservableActiveRoom = sinon.stub(stubRoomService, 'getObservableActiveRoom', function () {

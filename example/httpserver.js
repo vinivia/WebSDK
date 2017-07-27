@@ -25,6 +25,7 @@ app.use(express.static(path.join(process.cwd(), 'example')));
 app.use(express.static(path.join(process.cwd(), 'dist')));
 app.use(express.static(path.join(process.cwd(), 'src')));
 app.use(express.static(path.join(process.cwd(), '3p')));
+app.use(express.static(path.join(process.cwd(), 'node_modules')));
 
 app.get('/', function (req, res) {
     res.redirect('/GetUserMedia.html');

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../http',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-http',
     'ByteBuffer',
     '../MQProtocol',
-    '../NetworkConnectionMonitor',
+    'phenix-web-network-connection-monitor',
     'phenix-rtc'
 ], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc) {
     var networkDisconnectHysteresisInterval = 0;
@@ -172,7 +172,7 @@ define([
             return that._protocol.decode('analytix.SubmitMetricRecordsResponse', ByteBuffer.fromBinary(result));
         }
 
-        http.postWithRetry(url, 'protobuf', data, handlePost, this._maxAttempts);
+        http.postWithRetry(url, data, {contentType: 'application/protobuf'}, handlePost, this._maxAttempts);
     }
 
     return MetricsTransmitter;

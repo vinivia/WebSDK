@@ -17,7 +17,7 @@ define([
     'sdk/logging/AnalytixAppender',
     'ByteBuffer',
     'sdk/MQProtocol',
-    'sdk/logging/logging.json'
+    'phenix-web-logging'
 ], function (AnalytixAppender, ByteBuffer, MQProtocol, logging) {
     describe('When Sending Batch Logs For Analytix', function () {
         var requests;

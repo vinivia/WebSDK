@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define(['sdk/LodashLight'], function (_) {
+define(['phenix-web-lodash-light'], function (_) {
     function HttpStubber() {
         this._requests = [];
         this._handlers = {};

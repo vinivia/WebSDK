@@ -17,7 +17,7 @@
 
 define('phenix-web-sdk', [
     'phenix-rtc',
-    './sdk/logging/logging',
+    'phenix-web-logging',
     './sdk/PCast',
     './sdk/room/RoomService',
     './sdk/audio/AudioSpeakerDetector',

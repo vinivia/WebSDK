@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './Room'
-], function (_, assert, Observable, ObservableArray, Room) {
+], function (_, assert, observable, Room) {
     'use strict';
 
     function ImmutableRoom(roomService, id, alias, name, description, type, members, bridgeId, pin) {
@@ -102,7 +101,7 @@ define([
     }
 
     function wrapObservable(value) {
-        if (value instanceof Observable || value instanceof ObservableArray) {
+        if (value instanceof observable.Observable || value instanceof observable.ObservableArray) {
             value.setValue = throwImmutableError;
             value.subscribe = throwImmutableError;
 

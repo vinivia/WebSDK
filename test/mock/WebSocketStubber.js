@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
     'ByteBuffer',
     'sdk/MQProtocol'
 ], function (_, ByteBuffer, MQProtocol) {

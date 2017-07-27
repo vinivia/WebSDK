@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     '../authentication/AuthenticationService'
-], function (_, assert, Observable, AuthenticationService) {
+], function (_, assert, observable, AuthenticationService) {
     'use strict';
 
     function ChatService(pcast) {
@@ -29,7 +29,7 @@ define([
         this._pcast = pcast;
         this._logger = pcast.getLogger();
         this._protocol = pcast.getProtocol();
-        this._enabled = new Observable(false);
+        this._enabled = new observable.Observable(false);
         this._lastSubscribedSessionId = null;
 
         assert.isObject(this._logger, 'this._logger');

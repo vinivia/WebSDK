@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
     'phenix-rtc'
 ], function (_, phenixRTC) {
     var peerConnectionClone = phenixRTC.RTCPeerConnection;

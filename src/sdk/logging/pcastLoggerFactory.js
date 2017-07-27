@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    './Logger',
-    './analytixAppenderFactory',
-    './ConsoleAppender',
-    './logging.json'
-], function (_, assert, Logger, analytixAppenderFactory, ConsoleAppender, logging) {
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-logging',
+    './analytixAppenderFactory'
+], function (_, assert, logging, analytixAppenderFactory) {
     'use strict';
 
     function PCastLoggerFactory() {
@@ -32,13 +30,13 @@ define([
             assert.stringNotEmpty(baseUri, 'baseUri');
         }
 
-        var logger = new Logger();
+        var logger = new logging.Logger();
         var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
 
         analytixAppender.setThreshold(logging.level.INFO);
 
         if (!disableConsole) {
-            logger.addAppender(new ConsoleAppender());
+            logger.addAppender(new logging.ConsoleAppender());
         }
 
         logger.addAppender(analytixAppender);

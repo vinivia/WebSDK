@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    './LodashLight',
-    './assert',
-    './observable/Observable',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './logging/pcastLoggerFactory',
-    './http',
+    'phenix-web-http',
     './PCastProtocol',
     './PCastEndPoint',
     './PeerConnectionMonitor',
@@ -26,7 +26,7 @@ define([
     './analytix/metricsTransmitterFactory',
     './analytix/StreamAnalytix',
     'phenix-rtc'
-], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -50,7 +50,7 @@ define([
 
     function PCast(options) {
         options = options || {};
-        this._observableStatus = new Observable('offline');
+        this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
@@ -2305,7 +2305,7 @@ define([
         if (widevineServiceCertificate) {
             addToPlayerconfig(null, widevineServiceCertificate);
         } else {
-            http.get(options.widevineServiceCertificateUrl, addToPlayerconfig, {mimeType: 'text/plain; charset=x-user-defined'});
+            http.get(options.widevineServiceCertificateUrl, {mimeType: 'text/plain; charset=x-user-defined'}, addToPlayerconfig);
         }
     }
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../http',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-http',
     'ByteBuffer',
     '../MQProtocol',
-    '../NetworkConnectionMonitor',
+    'phenix-web-network-connection-monitor',
     'phenix-rtc',
-    './logging.json'
+    'phenix-web-logging'
 ], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
     var networkDisconnectHysteresisInterval = 0;
 
@@ -191,7 +191,7 @@ define([
             return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));
         }
 
-        http.postWithRetry(url, 'protobuf', data, handlePost, this._maxAttempts);
+        http.postWithRetry(url, data, {contentType: 'application/protobuf'}, handlePost, this._maxAttempts);
     }
 
     return AnalytixAppender;

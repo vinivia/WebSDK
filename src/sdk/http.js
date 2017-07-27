@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    './LodashLight'
+    'phenix-web-lodash-light'
 ], function (_) {
     'use strict';
 

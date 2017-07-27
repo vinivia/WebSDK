@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
     'sdk/express/PCastExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
@@ -150,7 +150,7 @@ define([
                 streamId: 'MockStreamId',
                 monitor: {
                     callback: function(error, response) {
-                        expect(response.retry).to.not.be.truthy;
+                        expect(response.retry).to.not.be.true;
                         done();
                     }
                 }

@@ -17,9 +17,9 @@
 requirejs.config({
     paths: {
         'phenix-web-sdk': 'web-sdk',
-        'phenix-rtc': 'phenix-rtc/dist/phenix-rtc',
+        'phenix-rtc': 'phenix-rtc/phenix-rtc.min',
         'jquery': 'jquery/dist/jquery.min',
-        'lodash': 'lodash/dist/lodash.min',
+        'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
         'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'remarkable-bootstrap-notify/dist/bootstrap-notify.min',
@@ -28,7 +28,14 @@ requirejs.config({
         'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
         'shaka-player': 'shaka-player/dist/shaka-player.compiled',
         'video-player': 'player',
-        'app-setup': 'app-setup'
+        'app-setup': 'app-setup',
+        'phenix-web-lodash-light': 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min',
+        'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
+        'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
+        'phenix-web-logging': 'phenix-web-logging/dist/phenix-web-logging.min',
+        'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable.min',
+        'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
+        'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min'
     }
 });
 

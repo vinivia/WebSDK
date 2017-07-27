@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',

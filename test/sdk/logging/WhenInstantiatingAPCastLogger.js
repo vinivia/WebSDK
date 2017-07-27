@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
+    'phenix-web-logging',
     'sdk/logging/pcastLoggerFactory',
-    'sdk/logging/logging.json',
-    'sdk/logging/AnalytixAppender',
-    'sdk/logging/ConsoleAppender'
-], function (_, pcastLoggerFactory, logging, AnalytixAppender, ConsoleAppender) {
+    'sdk/logging/AnalytixAppender'
+], function (_, logging, pcastLoggerFactory, AnalytixAppender) {
     describe('When Instantiating A PCast Logger', function () {
         var logger;
 
@@ -51,7 +50,7 @@ define([
 
         function getConsoleAppender(logger) {
             return _.find(logger.getAppenders(), function(appender) {
-                return appender instanceof ConsoleAppender;
+                return appender instanceof logging.ConsoleAppender;
             });
         }
     });

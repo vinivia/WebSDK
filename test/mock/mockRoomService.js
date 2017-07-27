@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 define([
-    'sdk/observable/Observable',
+    'phenix-web-observable',
     'sdk/room/RoomService',
     'sdk/room/Room',
     'sdk/room/Member',
     '../../test/mock/mockPCast'
-], function (Observable, RoomService, Room, Member, MockPCast) {
+], function (observable, RoomService, Room, Member, MockPCast) {
     function MockRoomService () {
         var room = sinon.createStubInstance(Room);
 
@@ -37,7 +37,7 @@ define([
 
         room.getObservableMembers.restore();
         room.getObservableMembers = sinon.stub(room, 'getObservableMembers', function () {
-            return new Observable(members);
+            return new observable.Observable(members);
         });
 
         this.buildUpMockRoom(roomService, room);
@@ -49,7 +49,7 @@ define([
         }
 
         roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom', function () {
-            return new Observable(room);
+            return new observable.Observable(room);
         });
     };
 

@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/Logger',
+    'phenix-web-logging',
     'sdk/audio/AudioSpeakerDetectionAlgorithm',
     'sdk/audio/AudioVolumeMeter',
-    'sdk/logging/pcastLoggerFactory',
-    'phenix-rtc'
-], function (Logger, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, pcastLoggerFactory, rtc) {
+    'phenix-rtc',
+    '../../../test/mock/HttpStubber'
+], function (logging, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
     describe('When Using Active Speaker Detection Algorithm on WebRTC Supported Browser', function () {
         var audioSpeakerDetectionAlgorithm;
-        var pcastLoggerStub;
-
-        before(function() {
-            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
-                return sinon.createStubInstance(Logger);
-            }); // Disable requests to external source
-        });
+        var httpStubber;
 
         beforeEach(function () {
-            audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(sinon.createStubInstance(Logger));
+            httpStubber = new HttpStubber();
+            httpStubber.stub();
+            audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(sinon.createStubInstance(logging.Logger));
         });
 
-        after(function () {
-            pcastLoggerStub.restore();
+        afterEach(function() {
+            httpStubber.restore();
         });
 
         it('Has property onValue that is a function', function () {
@@ -58,7 +54,7 @@ define([
 
             beforeEach(function () {
                 audioContext = new window.AudioContext();
-                audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(Logger));
+                audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(logging.Logger));
 
                 audioVolumeMeter.init(audioContext, 123);
 

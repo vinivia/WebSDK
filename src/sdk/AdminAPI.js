@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 define([
-    './LodashLight',
-    './assert',
-    './http'
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-http'
 ], function (_, assert, http) {
     'use strict';
 
@@ -31,7 +31,7 @@ define([
     AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
         var data = appendAuthDataTo.call(this, {});
 
-        http.postWithRetry(this._backendUri + '/auth', 'JSON', JSON.stringify(data), _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/auth', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
@@ -43,7 +43,7 @@ define([
             capabilities: capabilities
         });
 
-        http.postWithRetry(this._backendUri + '/stream', 'JSON', JSON.stringify(data), _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, callback) {
@@ -56,11 +56,11 @@ define([
             originStreamId: streamId
         });
 
-        http.postWithRetry(this._backendUri + '/stream', 'JSON', JSON.stringify(data), _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
     };
 
     AdminAPI.prototype.getStreams = function getStreams(callback) {
-        http.getWithRetry(this._backendUri + '/streams', _.bind(handleResponse, this, callback), 1);
+        http.getWithRetry(this._backendUri + '/streams', null, _.bind(handleResponse, this, callback), 1);
     };
 
     function appendAuthDataTo(data) {

@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global process module __dirname */
+/* global process module */
 const moment = require('moment');
 const sdkVersion = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
 const releaseVersion = require('./package.json').version;
 const environment = process.env.NODE_ENV;
+const webpackConfigs = require('./webpack.config');
 
 console.log('Using version', sdkVersion);
 
@@ -85,44 +86,7 @@ module.exports = function (grunt) {
                 dest: 'dist/pcast-screen-sharing.zip'
             }
         },
-        webpack: {
-            'phenix-web-sdk': {
-                context: __dirname + '/src',
-                entry: './web-sdk',
-                externals: [
-                    {
-                        'phenix-rtc': true,
-                        'protobuf': true,
-                        'ByteBuffer': true
-                    }
-                ],
-                output: {
-                    libraryTarget: 'umd',
-                    path: __dirname + '/dist',
-                    filename: 'phenix-web-sdk.js'
-                },
-                resolve: {modulesDirectories: ['3p', 'node_modules']}
-            },
-            'phenix-web-sdk-bundled': {
-                context: __dirname + '/src',
-                entry: './web-sdk',
-                output: {
-                    library: 'phenix-web-sdk',
-                    libraryTarget: 'umd',
-                    umdNamedDefine: true,
-                    path: __dirname + '/dist',
-                    filename: 'phenix-web-sdk-bundled.js'
-                },
-                resolve: {
-                    alias: {
-                        'fs': 'dummyFs.js',
-                        'ByteBuffer': 'bytebuffer',
-                        'Long': 'long'
-                    },
-                    modulesDirectories: ['3p', 'node_modules']
-                }
-            }
-        },
+        webpack: webpackConfigs,
         uglify: {
             minify: {
                 files: {

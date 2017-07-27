@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './stream.json',
     './track.json'
-], function (_, assert, Observable, ObservableArray, stream, track) {
+], function (_, assert, observable, stream, track) {
     'use strict';
 
     var streamTypes = stream.types;
@@ -33,10 +32,10 @@ define([
     Stream.prototype.init = function (uri, type, audioState, videoState) {
         assert.isString(uri, 'uri');
 
-        this._uri = new Observable(uri);
-        this._type = new Observable(type, assertIsValidStreamType);
-        this._audioState = new Observable(audioState || trackStates.trackEnabled.name, assertIsValidTrackState);
-        this._videoState = new Observable(videoState || trackStates.trackEnabled.name, assertIsValidTrackState);
+        this._uri = new observable.Observable(uri);
+        this._type = new observable.Observable(type, assertIsValidStreamType);
+        this._audioState = new observable.Observable(audioState || trackStates.trackEnabled.name, assertIsValidTrackState);
+        this._videoState = new observable.Observable(videoState || trackStates.trackEnabled.name, assertIsValidTrackState);
     };
 
     Stream.prototype.getUri = function getUri() {

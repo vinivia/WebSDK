@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'sdk/LodashLight',
+    'phenix-web-lodash-light',
     'sdk/PCast',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
@@ -50,7 +50,7 @@ define([
 
         it('Expect subscribe with receiveAudio of false to have options no-audio', function (done) {
             websocketStubber.stubResponse('pcast.SetupStream', {status: 'dont-continue-code-execution'}, function(response, message) {
-                expect(_.includes(message.createStream.options, 'no-audio')).to.be.truthy;
+                expect(_.includes(message.createStream.options, 'no-audio')).to.be.true;
 
                 done();
             });

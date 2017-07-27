@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    'sdk/observable/Observable',
-    'sdk/logging/Logger',
+    'phenix-web-observable',
+    'phenix-web-logging',
     'sdk/PCastProtocol',
     'sdk/PCast'
-], function (Observable, Logger, Protocol, PCast) {
+], function (observable, logging, Protocol, PCast) {
     function MockPCast () {
         var pcast = sinon.createStubInstance(PCast);
 
@@ -32,10 +32,10 @@ define([
     };
 
     function buildUpPcast(pcast) {
-        var logger = sinon.createStubInstance(Logger);
+        var logger = sinon.createStubInstance(logging.Logger);
         var protocol = sinon.createStubInstance(Protocol);
-        var sessionId = new Observable('mockSessionId');
-        var status = new Observable('online');
+        var sessionId = new observable.Observable('mockSessionId');
+        var status = new observable.Observable('online');
 
         pcast.getLogger = function() {
             return logger;

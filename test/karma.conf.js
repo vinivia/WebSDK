@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/* global process module */
-
+/* global process module __dirname */
+var path = require('path');
+var webpack = require('webpack');
 var browsers = [];
 var isWin = /^win/.test(process.platform);
 var isOSX = /^darwin/.test(process.platform);
@@ -40,33 +40,16 @@ if (isLinux) {
 
 module.exports = function (config) {
     config.set({
-
         // Base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '..',
+        basePath: '../src',
 
         // Frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha', 'requirejs'],
+        frameworks: ['mocha'],
 
         // List of files / patterns to load in the browser
         files: [
-            {
-                pattern: '3p/**/*.js',
-                included: false
-            },
-            {
-                pattern: 'src/**/*.js',
-                included: false
-            },
-            {
-                pattern: 'test/**/When*.js',
-                included: false
-            },
-            {
-                pattern: 'test/mock/*.js',
-                included: false
-            },
-            'test/test-runner.js'
+            '../test/test-runner.js'
         ],
 
         // List of files to exclude
@@ -76,7 +59,25 @@ module.exports = function (config) {
 
         // Preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {'test/**/When*.js': ['env']},
+        preprocessors: {'../test/test-runner.js': ['webpack']},
+
+        webpack: {
+            devtool: 'inline-source-map',
+            resolve: {
+                alias: {
+                    ByteBuffer: 'bytebuffer',
+                    Long: 'long',
+                    'sdk': path.resolve(__dirname, '../src/sdk')
+                },
+                modules: ['3p', 'node_modules']
+            }, // Resolve test dependencies to src
+            plugins: [
+                new webpack.DefinePlugin({'process.env.PHENIX_APPLICATION_ID': JSON.stringify(process.env.PHENIX_APPLICATION_ID)}),
+                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)})
+            ]
+        },
+
+        webpackMiddleware: {stats: 'errors-only'},
 
         // Test results reporter to use
         // possible values: 'dots', 'progress'
@@ -102,12 +103,6 @@ module.exports = function (config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false,
-
-        // Variables to process with the environment preprocessor
-        envPreprocessor: [
-            'PHENIX_APPLICATION_ID',
-            'PHENIX_SECRET'
-        ]
+        singleRun: false
     });
 };

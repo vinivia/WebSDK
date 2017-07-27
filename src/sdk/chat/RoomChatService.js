@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './ChatService'
-], function (_, assert, ObservableArray, ChatService) {
+], function (_, assert, observable, ChatService) {
     'use strict';
 
     var defaultBatchSize = 0;
@@ -33,7 +33,7 @@ define([
         this._pcast = roomService._pcast;
         this._logger = roomService._logger;
         this._chatService = new ChatService(this._pcast);
-        this._chatMessages = new ObservableArray([]);
+        this._chatMessages = new observable.ObservableArray([]);
         this._latestMessageQueue = [];
         this._disposables = [];
         this._chatRoomId = null;

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './Member',
     './room.json'
-], function (_, assert, Observable, ObservableArray, Member, room) {
+], function (_, assert, observable, Member, room) {
     'use strict';
     var roomTypes = room.types;
 
@@ -53,18 +52,18 @@ define([
             assert.isObject(roomService, 'roomService');
         }
 
-        this._roomId = new Observable(id);
-        this._alias = new Observable(alias);
-        this._name = new Observable(name);
-        this._description = new Observable(description);
-        this._type = new Observable(type, assertIsValidRoomType);
-        this._members = new ObservableArray([]).extend({
+        this._roomId = new observable.Observable(id);
+        this._alias = new observable.Observable(alias);
+        this._name = new observable.Observable(name);
+        this._description = new observable.Observable(description);
+        this._type = new observable.Observable(type, assertIsValidRoomType);
+        this._members = new observable.ObservableArray([]).extend({
             method: "notifyWhenChangesStop",
             timeout: 400
         });
-        this._options = new ObservableArray();
-        this._bridgeId = new Observable(bridgeId);
-        this._pin = new Observable(pin);
+        this._options = new observable.ObservableArray();
+        this._bridgeId = new observable.Observable(bridgeId);
+        this._pin = new observable.Observable(pin);
         this._roomService = roomService;
 
         setMembers.call(this, members);

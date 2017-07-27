@@ -16,12 +16,11 @@
 
 define([
     'sdk/PCast',
-    'sdk/logging/Logger',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber'
-], function (PCast, Logger, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
     describe('When Using a Custom Logger with PCast', function () {
         var httpStubber = new HttpStubber();
         var websocketStubber = new WebSocketStubber();

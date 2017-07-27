@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './Stream',
     './member.json'
-], function (_, assert, Observable, ObservableArray, Stream, member) {
+], function (_, assert, observable, Stream, member) {
     'use strict';
     var memberRoles = member.roles;
     var memberStates = member.states;
@@ -39,13 +38,13 @@ define([
             assert.isObject(roomService);
         }
 
-        this._sessionId = new Observable(sessionId);
-        this._screenName = new Observable(screenName);
-        this._streams = new ObservableArray([]);
+        this._sessionId = new observable.Observable(sessionId);
+        this._screenName = new observable.Observable(screenName);
+        this._streams = new observable.ObservableArray([]);
 
-        this._state = new Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
-        this._role = new Observable(role, assertIsValidMemberRole);
-        this._lastUpdate = new Observable(lastUpdate, _.utc);
+        this._state = new observable.Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
+        this._role = new observable.Observable(role, assertIsValidMemberRole);
+        this._lastUpdate = new observable.Observable(lastUpdate, _.utc);
         this._roomService = roomService;
 
         this.setStreams(streams);

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/Logger',
+    'phenix-web-logging',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
-], function (Logger, AudioVolumeMeter, rtc) {
+], function (logging, AudioVolumeMeter, rtc) {
     describe('When Measuring the Audio Volume Using WebRTC supported Browsers', function () {
         var audioVolumeMeter;
 
         beforeEach(function () {
-            audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(Logger));
+            audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(logging.Logger));
         });
 
         it('Has property onValue that is a function', function () {

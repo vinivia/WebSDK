@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 define([
-    './LodashLight',
-    './assert',
-    './observable/Observable',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     './MQProtocol',
-    './ReconnectingWebSocket',
+    'phenix-web-reconnecting-websocket',
     'ByteBuffer',
     'phenix-rtc'
-], function (_, assert, Observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
+], function (_, assert, observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -46,7 +46,7 @@ define([
         this._version = version;
         this._logger = logger;
         this._mqProtocol = new MQProtocol(this._logger);
-        this._observableSessionId = new Observable(null).extend({rateLimit: 0});
+        this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
 
         this._logger.info('Connecting to [%s]', uri);
 

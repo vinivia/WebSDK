@@ -13,79 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
+// Webpack syntax - recursively loads all dependencies
+var tests = require.context('./sdk/', true, /When[^].*\.js$/i);
+var components = require.context('../src/sdk/', true, /.*\.js$/i);
 
-var tests = [];
-var TEST_REGEXP = /\/When[^].*\.js$/i;
+define([
+    'lodash',
+    'chai',
+    'sinon',
+    'sinon-chai'
+], function (_, chai, sinon, sinonChai) {
+    'use strict';
 
-var pathToModule = function (path) {
-    return '../' + path.replace(/^\/base\//, '').replace(/\.js$/, '');
-};
+    tests.keys().forEach(tests);
+    components.keys().forEach(components);
 
-Object.keys(window.__karma__.files).forEach(function (file) {
-    if (TEST_REGEXP.test(file)) {
-        // Normalize paths to RequireJS module names.
-        tests.push(pathToModule(file));
-    }
-});
+    chai.use(sinonChai);
+    chai.should();
 
-require.config({
-    // Karma serves files under /base, which is the basePath from your config file
-    baseUrl: '/base/src/',
+    window.expect = chai.expect;
+    window.sinon = sinon;
 
-    shim: {},
-
-    paths: {
-        bluebird: '../3p/bluebird/js/browser/bluebird',
-        bowser: '../3p/bowser/src/bowser',
-        bytebuffer: '../3p/bytebuffer/dist/ByteBufferAB',
-        'chai': '../3p/chai/chai',
-        'chai-as-promised': '../3p/chai-as-promised/lib/chai-as-promised',
-        jquery: '../3p/jquery/dist/jquery.min',
-        lodash: '../3p/lodash/dist/lodash.min',
-        Long: '../3p/long/dist/long',
-        'phenix-rtc': '../3p/phenix-rtc/dist/phenix-rtc',
-        protobuf: '../3p/protobuf/dist/ProtoBuf',
-        'sinon': '../3p/sinon/lib/sinon',
-        'sinon-chai': '../3p/sinon-chai/lib/sinon-chai',
-        ByteBuffer: '../3p/bytebuffer/dist/ByteBufferAB'
-    },
-
-    map: {
-        '*': {
-            'phenix-web-sdk': 'main',
-            Promise: 'bluebird'
-        }
-    },
-
-    // Dynamically load all test files
-    deps: tests,
-
-    // Start test run, once Require.js is done
-    callback: function () {
-        require([
-            'lodash',
-            'chai',
-            'chai-as-promised',
-            'sinon',
-            'sinon-chai'
-        ], function (_, chai, chaiAsPromised, sinon, sinonChai) {
-            'use strict';
-
-            chai.use(chaiAsPromised);
-            chai.use(sinonChai);
-            chai.should();
-
-            // Use lodash.bind to support environments that don't support function.bind
-            chaiAsPromised.transferPromiseness = function (assertion, promise) {
-                assertion.then = _.bind(promise.then, promise);
-            };
-
-            window.expect = chai.expect;
-            window.sinon = sinon;
-            window.requirejs = require;
-
-            window.__karma__.start();
-        });
-    }
+    window.__karma__.start();
 });

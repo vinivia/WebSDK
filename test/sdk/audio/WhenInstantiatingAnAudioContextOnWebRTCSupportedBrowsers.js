@@ -20,7 +20,15 @@ define([
     describe('When Instantiating An Audio Context on WebRTC supported browsers', function () {
         before(function () {
             if (!rtc.webrtcSupported) {
-                this.skip();
+                console.log('SKIPPING Webrtc Unsupported environment');
+
+                return this.skip();
+            }
+
+            if (!window.AudioContext) {
+                console.log('SKIPPING Environment without global AudioContext');
+
+                return this.skip();
             }
         });
 

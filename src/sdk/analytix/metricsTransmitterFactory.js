@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
     '../environment',
-    '../assert',
     './MetricsTransmitter'
-], function (_, environment, assert, MetricsTransmitter) {
+], function (_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
             local: '',

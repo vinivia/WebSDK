@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 define([
-    '../LodashLight',
-    '../assert',
-    '../observable/Observable',
-    '../observable/ObservableArray',
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-observable',
     '../authentication/AuthenticationService',
     './Room',
     './ImmutableRoom',
@@ -25,7 +24,7 @@ define([
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
+], function (_, assert, observable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
@@ -39,9 +38,9 @@ define([
         this._logger = pcast.getLogger();
         this._protocol = pcast.getProtocol();
 
-        this._self = new Observable(null);
-        this._activeRoom = new Observable(null);
-        this._cachedRoom = new Observable(null);
+        this._self = new observable.Observable(null);
+        this._activeRoom = new observable.Observable(null);
+        this._cachedRoom = new observable.Observable(null);
         this._roomChatService = null;
 
         assert.isObject(this._logger, 'this._logger');
@@ -63,7 +62,7 @@ define([
 
         var self = new Member(roomService, myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
 
-        this._self = new Observable(self);
+        this._self = new observable.Observable(self);
         this._disposables = [];
 
         var disposeOfRoomEventHandler = this._protocol.on('roomEvent', _.bind(onRoomEvent, this));
