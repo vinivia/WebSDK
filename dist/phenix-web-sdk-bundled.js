@@ -198,8 +198,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-07-24T22:26:05Z' || '?';
-	    var releaseVersion = '2017.2.11';
+	    var sdkVersion = '2017-08-01T21:20:37Z' || '?';
+	    var releaseVersion = '2017.2.12';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -1326,7 +1326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-07-24T22:26:05Z';
+	        this._version = '2017-08-01T21:20:37Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -14565,12 +14565,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var peerConnectionConfig = _.freeze({
-	        'iceServers': [
-	            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
-	        ]
-	    });
-	    var sdkVersion = '2017-07-24T22:26:05Z';
+	    var sdkVersion = '2017-08-01T21:20:37Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14828,8 +14823,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                if (setupStreamOptions.negotiate === true) {
 	                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
+	                    var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-	                    return createPublisherPeerConnection.call(that, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
+	                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
 	                        if (error) {
 	                            callback.call(that, that, 'failed', null);
 	                        } else {
@@ -14893,7 +14889,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else {
 	                var streamId = response.createStreamResponse.streamId;
 	                var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
-	                var create = createViewerPeerConnection;
+	                var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
+	                var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
 
 	                if (offerSdp.match(/a=x-playlist:/)) {
 	                    create = createLiveViewer;
@@ -15877,7 +15874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback(publisher);
 	    }
 
-	    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options, streamOptions) {
+	    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, callback, options, streamOptions) {
 	        var that = this;
 	        var state = {
 	            failed: false,
@@ -16175,7 +16172,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
 	    }
 
-	    function createViewerPeerConnection(streamId, offerSdp, callback, options) {
+	    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, callback, options) {
 	        var that = this;
 	        var state = {
 	            failed: false,
@@ -17253,6 +17250,60 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return 0;
+	    }
+
+	    function parseProtobufMessage(message) {
+	        if (!message) {
+	            return message;
+	        }
+
+	        var parsedMessage = _.isArray(message) ? [] : {};
+	        var processIndexOrKey = _.bind(removeNullValuesAndParseEnums, null, parsedMessage);
+
+	        if (_.isArray(message)) {
+	            _.forEach(message, processIndexOrKey);
+	        } else {
+	            _.forOwn(message, processIndexOrKey);
+	        }
+
+	        return parsedMessage;
+	    }
+
+	    function removeNullValuesAndParseEnums(parsedMessage, value, key) {
+	        if (value === null) {
+	            return;
+	        }
+
+	        if (_.isObject(value) || _.isArray(value)) {
+	            return parsedMessage[key] = parseProtobufMessage(value);
+	        }
+
+	        if (!_.isString(value) || !_.isString(key)) {
+	            return parsedMessage[key] = value;
+	        }
+
+	        var prefixedByKey = value.toLowerCase().indexOf(key.toLowerCase()) === 0;
+	        var valueParsedWithoutKey = prefixedByKey ? value.substring(key.length, value.length).toLowerCase() : value;
+
+	        parsedMessage[key] = valueParsedWithoutKey;
+	    }
+
+	    function applyVendorSpecificLogic(config) {
+	        if (phenixRTC.browser.toLowerCase() === 'firefox') {
+	            removeTurnsServers(config);
+	        }
+
+	        return config;
+	    }
+
+	    function removeTurnsServers(config) {
+	        _.forEach(config.iceServers, function(server) {
+	            server.urls = _.filter(server.urls, function(url) {
+	                return url.indexOf('turns') !== 0;
+	            });
+	        });
+
+	        return config;
 	    }
 
 	    return PCast;

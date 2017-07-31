@@ -33,11 +33,6 @@ define([
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var peerConnectionConfig = _.freeze({
-        'iceServers': [
-            {urls: 'stun:stun.l.google.com:19302'}, {urls: 'stun:stun1.l.google.com:19302'}, {urls: 'stun:stun2.l.google.com:19302'}, {urls: 'stun:stun3.l.google.com:19302'}, {urls: 'stun:stun4.l.google.com:19302'}
-        ]
-    });
     var sdkVersion = '%SDKVERSION%';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
@@ -296,8 +291,9 @@ define([
 
                 if (setupStreamOptions.negotiate === true) {
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
+                    var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-                    return createPublisherPeerConnection.call(that, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
+                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
                         if (error) {
                             callback.call(that, that, 'failed', null);
                         } else {
@@ -361,7 +357,8 @@ define([
             } else {
                 var streamId = response.createStreamResponse.streamId;
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
-                var create = createViewerPeerConnection;
+                var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
+                var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
 
                 if (offerSdp.match(/a=x-playlist:/)) {
                     create = createLiveViewer;
@@ -1345,7 +1342,7 @@ define([
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(mediaStream, streamId, offerSdp, callback, options, streamOptions) {
+    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, callback, options, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1643,7 +1640,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createViewerPeerConnection(streamId, offerSdp, callback, options) {
+    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, callback, options) {
         var that = this;
         var state = {
             failed: false,
@@ -2721,6 +2718,60 @@ define([
         }
 
         return 0;
+    }
+
+    function parseProtobufMessage(message) {
+        if (!message) {
+            return message;
+        }
+
+        var parsedMessage = _.isArray(message) ? [] : {};
+        var processIndexOrKey = _.bind(removeNullValuesAndParseEnums, null, parsedMessage);
+
+        if (_.isArray(message)) {
+            _.forEach(message, processIndexOrKey);
+        } else {
+            _.forOwn(message, processIndexOrKey);
+        }
+
+        return parsedMessage;
+    }
+
+    function removeNullValuesAndParseEnums(parsedMessage, value, key) {
+        if (value === null) {
+            return;
+        }
+
+        if (_.isObject(value) || _.isArray(value)) {
+            return parsedMessage[key] = parseProtobufMessage(value);
+        }
+
+        if (!_.isString(value) || !_.isString(key)) {
+            return parsedMessage[key] = value;
+        }
+
+        var prefixedByKey = value.toLowerCase().indexOf(key.toLowerCase()) === 0;
+        var valueParsedWithoutKey = prefixedByKey ? value.substring(key.length, value.length).toLowerCase() : value;
+
+        parsedMessage[key] = valueParsedWithoutKey;
+    }
+
+    function applyVendorSpecificLogic(config) {
+        if (phenixRTC.browser.toLowerCase() === 'firefox') {
+            removeTurnsServers(config);
+        }
+
+        return config;
+    }
+
+    function removeTurnsServers(config) {
+        _.forEach(config.iceServers, function(server) {
+            server.urls = _.filter(server.urls, function(url) {
+                return url.indexOf('turns') !== 0;
+            });
+        });
+
+        return config;
     }
 
     return PCast;
