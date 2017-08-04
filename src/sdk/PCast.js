@@ -23,8 +23,9 @@ define([
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
+    './StreamAnalytix',
     'phenix-rtc'
-], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, phenixRTC) {
+], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, StreamAnalytix, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -271,6 +272,8 @@ define([
             setupStreamOptions.tags = tags;
         }
 
+        var streamAnalytix = new StreamAnalytix(this._logger);
+
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
@@ -289,11 +292,13 @@ define([
             } else {
                 var streamId = response.createStreamResponse.streamId;
 
+                streamAnalytix.setStreamId(streamId);
+
                 if (setupStreamOptions.negotiate === true) {
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, function (phenixPublisher, error) {
+                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamAnalytix, function (phenixPublisher, error) {
                         if (error) {
                             callback.call(that, that, 'failed', null);
                         } else {
@@ -335,6 +340,7 @@ define([
         var that = this;
         var streamType = 'download';
         var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
+        var streamAnalytix = new StreamAnalytix(this._logger);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -364,7 +370,9 @@ define([
                     create = createLiveViewer;
                 }
 
-                return create.call(that, streamId, offerSdp, function (phenixMediaStream, error) {
+                streamAnalytix.setStreamId(streamId);
+
+                return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
                     if (error) {
                         callback.call(that, that, 'failed', null);
                     } else {
@@ -889,7 +897,7 @@ define([
         delete this._peerConnections[streamId];
     }
 
-    function setupStreamAddedListener(streamId, state, peerConnection, callback, options) {
+    function setupStreamAddedListener(streamId, state, peerConnection, streamAnalytix, callback, options) {
         var that = this;
         var onAddStream = function onAddStream(event) {
             if (state.failed) {
@@ -923,6 +931,10 @@ define([
                                 start: function start(elementToAttachTo) {
                                     element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
+                                    streamAnalytix.recordTimeToFirstFrame(element);
+                                    streamAnalytix.recordRebuffering(element);
+                                    streamAnalytix.recordVideoResolutionChanges(element);
+
                                     if (options.receiveAudio === false) {
                                         element.muted = true;
                                     }
@@ -936,6 +948,8 @@ define([
 
                                 stop: function stop() {
                                     dimensionsChangedMonitor.stop();
+
+                                    streamAnalytix.stop();
 
                                     if (element) {
                                         if (typeof element.pause === 'function') {
@@ -1342,7 +1356,7 @@ define([
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, callback, options, streamOptions) {
+    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, options, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1616,7 +1630,7 @@ define([
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, function (mediaStream) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
             remoteMediaStream = mediaStream;
@@ -1640,7 +1654,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, callback, options) {
+    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, options) {
         var that = this;
         var state = {
             failed: false,
@@ -1744,7 +1758,7 @@ define([
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, callback, options);
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, options);
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
@@ -1760,7 +1774,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, callback, options) {
+    function createLiveViewer(streamId, offerSdp, streamAnalytix, callback, options) {
         var that = this;
 
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
@@ -1773,9 +1787,9 @@ define([
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], callback, options);
+            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamAnalytix, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], callback, options);
+            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamAnalytix, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -1783,7 +1797,7 @@ define([
         return callback.call(that, undefined, 'failed');
     }
 
-    function createShakaLiveViewer(streamId, uri, callback, options) {
+    function createShakaLiveViewer(streamId, uri, streamAnalytix, callback, options) {
         var that = this;
 
         if (!that._shaka) {
@@ -1881,6 +1895,10 @@ define([
                             player = new shaka.Player(elementToAttachTo);
                             internalMediaStream.renderer = this;
 
+                            streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
+                            streamAnalytix.recordRebuffering(elementToAttachTo);
+                            streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+
                             var playerConfig = {
                                 abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
                                 manifest: {retryParameters: {timeout: 10000}},
@@ -1940,6 +1958,8 @@ define([
 
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
+
+                            streamAnalytix.stop();
 
                             if (player) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -2216,7 +2236,7 @@ define([
         return u8Array;
     }
 
-    function createHlsLiveViewer(streamId, uri, callback, options) {
+    function createHlsLiveViewer(streamId, uri, streamAnalytix, callback, options) {
         var that = this;
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -2333,6 +2353,10 @@ define([
                                     elementToAttachTo.muted = true;
                                 }
 
+                                streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
+                                streamAnalytix.recordRebuffering(elementToAttachTo);
+                                streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+
                                 internalMediaStream.renderer = this;
 
                                 elementToAttachTo.addEventListener('error', onPlayerError, true);
@@ -2357,6 +2381,8 @@ define([
 
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
+
+                            streamAnalytix.stop();
 
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -2765,6 +2791,10 @@ define([
     }
 
     function removeTurnsServers(config) {
+        if (!config) {
+            return config;
+        }
+
         _.forEach(config.iceServers, function(server) {
             server.urls = _.filter(server.urls, function(url) {
                 return url.indexOf('turns') !== 0;
