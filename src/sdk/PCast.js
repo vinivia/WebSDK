@@ -125,7 +125,7 @@ define([
         checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
             that._screenSharingEnabled = screenSharingEnabled;
 
-            that._endPoint.resolveUri(function (err, uri) {
+            that._endPoint.resolveUri(function (err, endPoint) {
                 if (err) {
                     that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
@@ -152,9 +152,11 @@ define([
                     return;
                 }
 
-                that._logger.info('Discovered end point [%s]', uri);
+                that._logger.info('Discovered end point [%s] with RTT [%s]', endPoint.uri, endPoint.roundTripTime);
 
-                instantiateProtocol.call(that, uri);
+                that._networkOneWayLatency = endPoint.roundTripTime / 2;
+
+                instantiateProtocol.call(that, endPoint.uri);
             });
         });
     };
@@ -293,6 +295,8 @@ define([
                 var streamId = response.createStreamResponse.streamId;
 
                 streamAnalytix.setStreamId(streamId);
+                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
+                streamAnalytix.recordMetric('Stream provisioned');
 
                 if (setupStreamOptions.negotiate === true) {
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -308,6 +312,8 @@ define([
                 }
 
                 return createPublisher.call(that, streamId, function (phenixPublisher, error) {
+                    streamAnalytix.recordMetric('Stream setup');
+
                     if (error) {
                         callback.call(that, that, 'failed', null);
                     } else {
@@ -371,8 +377,14 @@ define([
                 }
 
                 streamAnalytix.setStreamId(streamId);
+                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
+                streamAnalytix.recordMetric('Stream provisioned');
+
+                options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
                 return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
+                    streamAnalytix.recordMetric('Stream setup');
+
                     if (error) {
                         callback.call(that, that, 'failed', null);
                     } else {
@@ -976,14 +988,19 @@ define([
                                             width: 0,
                                             height: 0,
                                             currentTime: 0.0,
+                                            lag: 0.0,
                                             networkState: NetworkStates.NETWORK_NO_SOURCE
                                         };
                                     }
 
+                                    var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+                                    var lag = that._networkOneWayLatency / 1000; // Check RTC stats instead
+
                                     return {
                                         width: element.videoWidth || element.width,
                                         height: element.videoHeight || element.height,
-                                        currentTime: element.currentTime,
+                                        currentTime: trueCurrentTime,
+                                        lag: lag,
                                         networkState: element.networkState
                                     };
                                 },
@@ -1356,7 +1373,7 @@ define([
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, options, streamOptions) {
+    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, createOptions, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1620,11 +1637,11 @@ define([
             var mediaConstraints = {mandatory: {}};
 
             if (phenixRTC.browser === 'Chrome') {
-                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo === true;
-                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio === true;
+                mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo === true;
+                mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio === true;
             } else {
-                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo === true;
-                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio === true;
+                mediaConstraints.mandatory.offerToReceiveVideo = createOptions.receiveVideo === true;
+                mediaConstraints.mandatory.offerToReceiveAudio = createOptions.receiveAudio === true;
             }
 
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
@@ -1638,7 +1655,7 @@ define([
             if (publisher && publisher.remoteMediaStreamCallback) {
                 publisher.remoteMediaStreamCallback(publisher, mediaStream);
             }
-        }, options);
+        }, createOptions);
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
@@ -1654,7 +1671,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, options) {
+    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, createOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1710,15 +1727,15 @@ define([
                     if (_.includes(response.options, 'ice-candidates')) {
                         onIceCandidateCallback = function (candidate) {
                             var candidates = [];
-                            var options = [];
+                            var iceCandidatesOptions = [];
 
                             if (candidate) {
                                 candidates.push(candidate);
                             } else {
-                                options.push('completed');
+                                iceCandidatesOptions.push('completed');
                             }
 
-                            that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
+                            that._protocol.addIceCandidates(streamId, candidate, iceCandidatesOptions, function (error, response) {
                                 if (error) {
                                     that._logger.error('Failed to add ICE candidate [%s]', error);
 
@@ -1748,17 +1765,17 @@ define([
             var mediaConstraints = {mandatory: {}};
 
             if (phenixRTC.browser === 'Chrome') {
-                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo !== false;
-                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio !== false;
+                mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo !== false;
+                mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio !== false;
             } else {
-                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo !== false;
-                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio !== false;
+                mediaConstraints.mandatory.offerToReceiveVideo = createOptions.receiveVideo !== false;
+                mediaConstraints.mandatory.offerToReceiveAudio = createOptions.receiveAudio !== false;
             }
 
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, options);
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, createOptions);
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
@@ -1852,20 +1869,22 @@ define([
                             return that._logger.debug('[%s] Dash stream progress event fired without any buffered content', streamId);
                         }
 
-                        if (lastProgress.buffered === element.buffered.end(0)) {
+                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
+
+                        if (lastProgress.buffered === bufferedEnd) {
                             return;
                         }
 
                         // Start and end times are unreliable for overall length of stream.
                         if (lastProgress.buffered !== null) {
                             var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
 
                             lastProgress.count += 1;
                             lastProgress.averageLength = newTimeElapsed / lastProgress.count;
                         }
 
-                        lastProgress.buffered = element.buffered.end(0);
+                        lastProgress.buffered = bufferedEnd;
                     }
 
                     function stalled() {
@@ -2000,13 +2019,18 @@ define([
                                     width: 0,
                                     height: 0,
                                     currentTime: 0.0,
+                                    lag: 0.0,
                                     networkState: NetworkStates.NETWORK_NO_SOURCE
                                 };
                             }
 
                             var stat = player.getStats();
+                            var currentTime = element.currentTime;
+                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+                            var lag = Math.max(0.0, trueCurrentTime - currentTime);
 
-                            stat.currentTime = stat.playTime + stat.bufferingTime;
+                            stat.currentTime = currentTime;
+                            stat.lag = lag;
 
                             if (stat.estimatedBandwidth > 0) {
                                 stat.networkState = NetworkStates.NETWORK_LOADING;
@@ -2261,6 +2285,7 @@ define([
             mediaStream: {
                 createRenderer: function createRenderer() {
                     var element = null;
+                    var bufferSizeHistory = [];
                     var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
                     var lastProgress = {
                         time: 0,
@@ -2276,20 +2301,22 @@ define([
                             return that._logger.debug('[%s] Hls stream progress event fired without any buffered content', streamId);
                         }
 
-                        if (lastProgress.buffered === element.buffered.end(0)) {
+                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
+
+                        if (lastProgress.buffered === bufferedEnd) {
                             return;
                         }
 
                         // Start and end times are unreliable for overall length of stream.
                         if (lastProgress.buffered !== null) {
                             var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
 
                             lastProgress.count += 1;
                             lastProgress.averageLength = newTimeElapsed / lastProgress.count;
                         }
 
-                        lastProgress.buffered = element.buffered.end(0);
+                        lastProgress.buffered = bufferedEnd;
                     }
 
                     function stalled() {
@@ -2427,14 +2454,38 @@ define([
                                     width: 0,
                                     height: 0,
                                     currentTime: 0.0,
+                                    lag: 0.0,
                                     networkState: NetworkStates.NETWORK_NO_SOURCE
                                 };
                             }
 
+                            var currentTime = element ? element.currentTime || 0.0 : 0.0;
+                            var buffered = (element && element.buffered && element.buffered.length > 0) ? element.buffered.end(element.buffered.length - 1) : 0;
+                            var currentBufferSize = Math.max(0, buffered - currentTime);
+
+                            bufferSizeHistory.push(currentBufferSize);
+
+                            if (bufferSizeHistory.length > 15) {
+                                bufferSizeHistory.shift();
+                            }
+
+                            var estimatedBufferSize = 0.0;
+
+                            for (var i = 0, len = bufferSizeHistory.length; i < len; i++) {
+                                estimatedBufferSize = Math.max(estimatedBufferSize, bufferSizeHistory[i]);
+                            }
+
+                            var chunkDuration = 2.0; // TODO (sbi) Parse chunk duration from manifest
+                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+                            var lag = 2.0 * chunkDuration + estimatedBufferSize;
+                            var estimatedCurrentTime = trueCurrentTime - lag;
+
                             return {
                                 width: element.videoWidth || element.width,
                                 height: element.videoHeight || element.height,
-                                currentTime: element.currentTime,
+                                currentTime: estimatedCurrentTime,
+                                originTime: trueCurrentTime,
+                                lag: lag,
                                 networkState: element.networkState
                             };
                         },

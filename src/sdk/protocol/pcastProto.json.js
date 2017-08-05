@@ -422,6 +422,13 @@ define([
                         "type": "string",
                         "name": "options",
                         "id": 7
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "offset",
+                        "id": 10,
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -761,40 +768,6 @@ define([
                         "type": "string",
                         "name": "status",
                         "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "ArchiveStream",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "streamId",
-                        "id": 1
-                    },
-                    {
-                        "rule": "repeated",
-                        "type": "string",
-                        "name": "options",
-                        "id": 2
-                    }
-                ]
-            },
-            {
-                "name": "ArchiveStreamResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "uri",
-                        "id": 2
                     }
                 ]
             },
@@ -1207,6 +1180,12 @@ define([
                         "type": "string",
                         "name": "manifest",
                         "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bool",
+                        "name": "isProtectedContent",
+                        "id": 2
                     }
                 ]
             },
@@ -1224,6 +1203,13 @@ define([
                         "type": "PlaylistStreamManifest",
                         "name": "manifests",
                         "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "offset",
+                        "id": 3,
+                        "options": {"default": 0}
                     }
                 ]
             },
@@ -1514,6 +1500,64 @@ define([
                         "rule": "optional",
                         "type": "string",
                         "name": "streamToken",
+                        "id": 2
+                    }
+                ]
+            },
+            {
+                "name": "IssueDrmToken",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "applicationId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "secret",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamToken",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 4
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "originStreamId",
+                        "id": 5
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
+                        "name": "capabilities",
+                        "id": 6
+                    }
+                ]
+            },
+            {
+                "name": "IssueDrmTokenResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "drmToken",
                         "id": 2
                     }
                 ]

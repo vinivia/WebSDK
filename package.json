@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2017.2.13",
+  "version": "2017.2.14",
   "license": "Apache-2.0",
   "private": false,
   "main": "phenix-web-sdk-bundled.min.js",
@@ -26,8 +26,8 @@
     "start": "node example/httpserver.js",
     "jpm-run": "jpm run --addon-dir src/firefox",
     "jpm-xpi": "jpm xpi --addon-dir src/firefox",
-    "eslint": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' —-cache",
-    "eslint-fix": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' --fix"
+    "lint": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' —-cache",
+    "lint-fix": "eslint ./ --ignore-pattern '/dist/*' --ignore-pattern '/3p/*' --ignore-pattern '/coverage/*' --fix"
   },
   "dependencies": {
     "phenix-rtc": "1.0.10"

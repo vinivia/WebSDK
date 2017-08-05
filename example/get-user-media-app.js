@@ -50,6 +50,13 @@ requirejs([
 
         var userMediaStream = null;
 
+        var userAgent = window.navigator.userAgent;
+
+        if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+            remoteVideoEl.muted = true;
+            remoteVideoSecondaryEl.muted = true;
+        }
+
         var getUrlParameter = function getUrlParameter(parameterName) {
             var queryParameters = window.location.search.substring(1).split('&');
 
@@ -84,7 +91,7 @@ requirejs([
             enableSteps();
         };
 
-        var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
+        var setVideoWidthAndHeight = function setVideoWithAndHeight(video) {
             video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
             video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
         };
@@ -113,13 +120,49 @@ requirejs([
             setVideoWidthAndHeight(video);
         };
 
-        remoteVideoEl.onloadedmetadata = function () {
-            onLoadedMetaData(remoteVideoEl);
-        };
+        function processTimeUpdate(video) {
+            var now = _.now();
+            var currentTime = video.currentTime;
+            var buffered = video.buffered;
+            var bufferedEnd = 0;
+            var lag = -1;
+            var stats = {};
 
-        remoteVideoSecondaryEl.onloadedmetadata = function () {
-            onLoadedMetaData(remoteVideoSecondaryEl);
-        };
+            if (buffered && buffered.length > 0) {
+                bufferedEnd = buffered.end(buffered.length - 1);
+                video.bufferSize = Math.max(bufferedEnd - currentTime, video.bufferSize || 0);
+            } else {
+                video.bufferSize = Math.max(0, video.bufferSize || 0);
+            }
+
+            if (video.__renderer) {
+                stats = video.__renderer.getStats();
+
+                lag = stats.lag;
+            }
+
+            if (!video.lastBufferReport || (now - video.lastBufferReport) > 30000) {
+                console.log('Current time: ' + currentTime + ' Lag: ' + lag + ' Buffered: ' + bufferedEnd + ' |Buffer|: ' + video.bufferSize + ' ' + JSON.stringify(stats));
+                video.lastBufferReport = now;
+                video.bufferSize = 0;
+            }
+
+            return {
+                now: now,
+                currentTime: currentTime,
+                lag: lag,
+                buffered: bufferedEnd,
+                bufferSize: video.bufferSize
+            };
+        }
+
+        sdk.RTC.addEventListener(remoteVideoEl, 'loadedmetadata', function () {
+            onLoadedMetaData(remoteVideoEl);
+        });
+
+        sdk.RTC.addEventListener(remoteVideoSecondaryEl, 'loadedmetadata', function () {
+            onLoadedMetaData(remoteVideoEl);
+        });
 
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
         $('#browser').text(sdk.RTC.browser);
@@ -349,7 +392,7 @@ requirejs([
                     var secondaryStream = new MediaStream();
 
                     _.forEach(userMediaStream.getTracks(), function (track) {
-                        var trackCount = _.filter(primaryStream.getTracks(), function(primaryStreamTrack) {
+                        var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
                             return primaryStreamTrack.kind === track.kind;
                         }).length;
 
@@ -807,7 +850,7 @@ requirejs([
                 attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
 
                 if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
-                    var secondaryMediaStream = mediaStream.select(function(track, index) {
+                    var secondaryMediaStream = mediaStream.select(function (track, index) {
                         return track.kind === 'video' && index === 2;
                     });
 
@@ -909,19 +952,44 @@ requirejs([
             if (stream) {
                 videoTargetStreams[videoElement.id] = stream;
 
-                setAudioMuteClass(!isMediaStreamTrackEnabled(stream, true), $(videoControls.selector + '.mute'));
-                setVideoMuteClass(!isMediaStreamTrackEnabled(stream, false), $(videoControls.selector + '.mute-video'));
+                var isLocal = video.hasClass('local');
+                var isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
+                var isVideoMuted = !isMediaStreamTrackEnabled(stream.getVideoTracks());
+
+                setAudioMuteClass(isAudioMuted, $(videoControls.selector + '.mute'));
+                setVideoMuteClass(isVideoMuted, $(videoControls.selector + '.mute-video'));
             } else {
-                $(videoControls.selector + '.mute').addClass('hidden');
                 $(videoControls.selector + '.mute-video').addClass('hidden');
             }
 
-            onEnd(function() {
+            var lastUpdate = 0;
+            var videoElementOnTimeUpdate = function () {
+                var stat = processTimeUpdate(videoElement);
+
+                $(videoControls.selector + '.currentTime').html(stat.currentTime.toFixed(1));
+                $(videoControls.selector + '.lag').html(stat.lag.toFixed(1));
+                $(videoControls.selector + '.buffered').html(stat.buffered.toFixed(1));
+                $(videoControls.selector + '.bufferSize').html(stat.bufferSize.toFixed(1));
+
+                if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+                    // Force the player to buffer less than 10 seconds
+                    if (stat.bufferSize > 10 && (lastUpdate + 30000) > stat.now) {
+                        lastUpdate = stat.now;
+                        videoElement.currentTime = videoElement.currentTime + (stat.bufferSize - 4);
+                    }
+                }
+            };
+
+            sdk.RTC.addEventListener(videoElement, 'timeupdate', videoElementOnTimeUpdate);
+
+            onEnd(function () {
                 if (shouldVideoBeHidden) {
                     video.addClass('hidden');
                 }
 
                 videoControls.addClass('hidden');
+
+                sdk.RTC.removeEventListener(videoElement, 'timeupdate', videoElementOnTimeUpdate);
 
                 delete videoTargetStreams[videoElement.dataset.target];
             });
@@ -951,6 +1019,7 @@ requirejs([
             });
 
             element = renderer.start(element);
+            element.__renderer = renderer;
 
             renderer.setVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
                 $.notify({
@@ -973,6 +1042,30 @@ requirejs([
 
                 setVideoWidthAndHeight(element);
             });
+        };
+
+        var handlePlayButtonClick = function handlePlayButtonClick() {
+            if (!this.dataset.videoTarget) {
+                throw new Error('Button Must Have Target');
+            }
+
+            console.log('Play ' + this.dataset.videoTarget);
+
+            var video = $('#' + this.dataset.videoTarget)[0];
+
+            video.play();
+        };
+
+        var handlePauseButtonClick = function handlePauseButtonClick() {
+            if (!this.dataset.videoTarget) {
+                throw new Error('Button Must Have Target');
+            }
+
+            console.log('Pause ' + this.dataset.videoTarget);
+
+            var video = $('#' + this.dataset.videoTarget)[0];
+
+            video.pause();
         };
 
         var handleFullscreenButtonClick = function handleFullscreenButtonClick() {
@@ -1007,12 +1100,24 @@ requirejs([
             }
 
             var stream = videoTargetStreams[this.dataset.videoTarget];
+            var video = $('#' + this.dataset.videoTarget);
+            var isLocal = video.hasClass('local');
+            var isAudioMuted;
+            var shallBeMuted;
 
             if (stream) {
-                var isMuted = toggleMuteMediaStreamTrack(stream, true);
-
-                setAudioMuteClass(isMuted, $(this));
+                isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
+                shallBeMuted = setMediaStreamTrackEnabled(stream.getAudioTracks(), !isAudioMuted);
+            } else {
+                isAudioMuted = !isLocal && video[0] && video[0].muted;
+                shallBeMuted = !isAudioMuted;
             }
+
+            if (!isLocal && video[0]) {
+                video[0].muted = shallBeMuted;
+            }
+
+            setAudioMuteClass(shallBeMuted, $(this));
         };
 
         var handleMuteVideoButtonClick = function handleMuteVideoButtonClick() {
@@ -1023,15 +1128,14 @@ requirejs([
             var stream = videoTargetStreams[this.dataset.videoTarget];
 
             if (stream) {
-                var isMuted = toggleMuteMediaStreamTrack(stream, false);
+                var isVideoMuted = !isMediaStreamTrackEnabled(stream.getVideoTracks());
+                var isMuted = setMediaStreamTrackEnabled(stream.getVideoTracks(), !isVideoMuted);
 
                 setVideoMuteClass(isMuted, $(this));
             }
         };
 
-        var isMediaStreamTrackEnabled = function(stream, isAudio) {
-            var tracks = isAudio ? stream.getAudioTracks() : stream.getVideoTracks();
-
+        var isMediaStreamTrackEnabled = function (tracks) {
             if (!tracks || !tracks.length) {
                 return false;
             }
@@ -1039,19 +1143,16 @@ requirejs([
             return tracks[0].enabled;
         };
 
-        var toggleMuteMediaStreamTrack = function toggleAudioMuteMediaStream(stream, isAudio) {
-            var tracks = isAudio ? stream.getAudioTracks() : stream.getVideoTracks();
-            var isEnabled = isMediaStreamTrackEnabled(stream, isAudio);
-
+        var setMediaStreamTrackEnabled = function setMediaStreamTrackEnabled(tracks, enabled) {
             if (!tracks || !tracks.length) {
-                return !isEnabled;
+                return false;
             }
 
-            _.forEach(tracks, function(track) {
-                track.enabled = !isEnabled;
+            _.forEach(tracks, function (track) {
+                track.enabled = !enabled;
             });
 
-            return isEnabled;
+            return enabled;
         };
 
         var setAudioMuteClass = function setAudioMuteClass(isMuted, element) {
@@ -1090,7 +1191,7 @@ requirejs([
             var env = $('#environment').val().toLowerCase();
             var logger = pcast.getLogger();
 
-            if(env.indexOf('local') > -1) {
+            if (env.indexOf('local') > -1) {
                 logger.setEnvironment('local');
             } else if (env.indexOf('stg')) {
                 logger.setEnvironment('staging');
@@ -1105,7 +1206,7 @@ requirejs([
             setLoggerEnvironment();
         });
 
-        $('#applicationId').change(function() {
+        $('#applicationId').change(function () {
             listStreams();
             setLoggerUserId();
         });
@@ -1135,6 +1236,8 @@ requirejs([
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
+        $('.play').click(handlePlayButtonClick);
+        $('.pause').click(handlePauseButtonClick);
         $('.fullscreen').click(handleFullscreenButtonClick);
         $('.mute').click(handleMuteButtonClick);
         $('.mute-video').click(handleMuteVideoButtonClick);

@@ -1,17 +1,5 @@
 /**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -67,7 +55,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -112,9 +100,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -133,9 +121,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!function(a,b){if(true)module.exports=b();else if("function"==typeof define&&define.amd)define([],b);else{var c=b();for(var d in c)("object"==typeof exports?exports:a)[d]=c[d]}}(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={exports:{},id:d,loaded:!1};return a[d].call(e.exports,e,e.exports,b),e.loaded=!0,e.exports}var c={};return b.m=a,b.c=c,b.p="",b(0)}([function(a,b,c){var d,e;d=[c(1),c(7)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2),c(3),c(4)],e=function(a,b,c){"use strict";var d=new a(navigator.userAgent).detect(),e={RTCPeerConnection:b.RTCPeerConnection,RTCSessionDescription:b.RTCSessionDescription,RTCIceCandidate:b.RTCIceCandidate,getSources:b.getSources,getUserMedia:b.getUserMedia,getStats:b.getStats,attachMediaStream:b.attachMediaStream,reattachMediaStream:b.reattachMediaStream,browser:d.browser,browserVersion:d.version,webrtcSupported:b.webrtcSupported,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0};if(c.isSupported()){e.phenixSupported=!0;var f=new c,g=function(){e.RTCPeerConnection=f.getRTCPeerConnectionConstructor(),e.RTCSessionDescription=f.getRTCSessionDescriptionConstructor(),e.RTCIceCandidate=f.getRTCIceCandidateConstructor(),e.getSources=f.getSourcesDelegate(),e.getUserMedia=f.getUserMediaDelegate(),e.getStats=f.getStatsDelegate(),Function.prototype.bind?(e.attachMediaStream=f.attachMediaStream.bind(f),e.reattachMediaStream=f.reattachMediaStream.bind(f),e.isPhenixEnabled=f.isEnabled.bind(f)):(e.attachMediaStream=function(){f.attachMediaStream.apply(f,arguments)},e.reattachMediaStream=function(){f.reattachMediaStream.apply(f,arguments)},e.isPhenixEnabled=function(){return f.isEnabled()}),e.webrtcSupported=!0,e.phenixSupported=!0,e.phenixVersion=f.getVersion(),e.onLoaded&&e.onLoaded.call()};f.isEnabled()?g():f.onReady(function(a){a&&(g(),e.onload&&"function"==typeof e.onload&&e.onload())}),f.onLoaded(function(){g()})}else e.phenixSupported=!1;return e.addEventListener=function(a,b,c,d){a.phenixSetEventListener?a.phenixSetEventListener(b,c):a.addEventListener?a.addEventListener(b,c,d===!0):a.attachEvent("on"+b,c)},e.removeEventListener=function(a,b,c,d){a.removeEventListener?a.removeEventListener(b,c,d===!0):a.detachEvent("on"+b,c)},e}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";function a(a){this._userAgent=a}return a.prototype.detect=function(){var a="Unknown",b="?",c=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),d=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return c&&c.length>=2?a=c[1]:this._userAgent.match(/^\(?Mozilla/)&&(a="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(a="IE",(d=this._userAgent.match(/MSIE ([0-9]+)/))?(b=parseInt(d[1],10),(d=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(b=parseInt(d[1],10))):(d=this._userAgent.match(/rv:([0-9]+)/))&&(b=parseInt(d[1],10)))),"Chrome"===a&&this._userAgent.match(/OPR\//)?(a="Opera",d=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===a&&this._userAgent.match(/Edge\//)?(a="Edge",d=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==a&&"IE"!==a||!this._userAgent.match(/Opera/)||(a="Opera",d=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==a&&d&&d.length>=3&&(b=parseInt(d[2],10)),{browser:a,version:b}},a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";var b=function(){console.log.apply(console,arguments)}||function(){},c=null,d=null,e=null,f=null,g=null,h=null,i=null,j=null,k=null,l=!1,m=function(a){navigator.mediaDevices.enumerateDevices().then(function(b){var c=[];b.forEach(function(a){"audioinput"===a.kind?c.push({kind:"audio",id:a.deviceId,label:a.label}):"videoinput"===a.kind&&c.push({kind:"video",id:a.deviceId,label:a.label})}),a(c)})};navigator.mozGetUserMedia?(b("Firefox detected",navigator.userAgent),c=mozRTCPeerConnection,d=mozRTCSessionDescription,e=mozRTCIceCandidate,g=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?function(a,b,c){navigator.mediaDevices.getUserMedia(a).then(b)["catch"](c)}:navigator.mozGetUserMedia.bind(navigator),h=function(a,b,c){var d=a.getStats(b).then(c);if("rejected"===d.state)throw new Error(d.message)},k=function(b,c,d){var e=null,f=b.split(":");if(0===f[0].indexOf("stun"))e={url:b};else if(0===f[0].indexOf("turn")){var g=new a(navigator.userAgent).detect();if(g.version<27){var h=b.split("?");0===h[1].indexOf("transport=udp")&&(e={url:h[0],credential:d,username:c})}else e={url:b,credential:d,username:c}}return e},i=function(a,c){b("Attaching media stream");var d=a.muted;return a.mozSrcObject=c,a.play(),d===!0&&(a.muted=!0),a},j=function(a,c){b("Reattaching media stream");var d=a.muted;return a.mozSrcObject=c.mozSrcObject,a.play(),d===!0&&(a.muted=!0),a},MediaStream.prototype.getVideoTracks||(MediaStream.prototype.getVideoTracks=function(){return[]}),MediaStream.prototype.getAudioTracks||(MediaStream.prototype.getAudioTracks=function(){return[]}),f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources?MediaStreamTrack.getSources.bind(MediaStreamTrack):function(a){setTimeout(function(){a([{kind:"audio",id:"default",label:"",facing:""},{kind:"video",id:"default",label:"",facing:""}])},0)},l=!0):navigator.webkitGetUserMedia?(b("Webkit detected",navigator.userAgent),k=function(a,b,c){var d=null,e=a.split(":");return 0===e[0].indexOf("stun")?d={url:a}:0===e[0].indexOf("turn")&&(d={url:a,credential:c,username:b}),d},c=window.webkitRTCPeerConnection,d=window.RTCSessionDescription,e=window.RTCIceCandidate,g=function(a,c,d){var e=function(a){setTimeout(function(){for(var e=a.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){b(a.timeStamp,"Track",g.id,g.label,"ended")},b("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState){try{var h=new Error("User media not available");h.code="unavailable",d(h)}finally{for(var i=0;i<e.length;i++)e[i].stop()}return}}c(a)},100)};navigator.webkitGetUserMedia(a,e,d)},h=function(a,b,c,d){a.getStats(c,b,d)},i=function(a,c){return"undefined"!=typeof a.srcObject?a.srcObject=c:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=c:"undefined"!=typeof a.src?a.src=URL.createObjectURL(c):b("Error attaching stream to element."),a.play(),a},j=function(a,b){return a.src=b.src,a},f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources.bind(MediaStreamTrack),l=!0):b("Browser does not appear to be WebRTC-capable",navigator.userAgent);var n={RTCPeerConnection:c,RTCSessionDescription:d,RTCIceCandidate:e,getSources:f,getUserMedia:g,getStats:h,attachMediaStream:i,reattachMediaStream:j,webrtcSupported:l};return n.exportGlobal=function(){window.RTCPeerConnection=n.RTCPeerConnection,window.RTCSessionDescription=n.RTCSessionDescription,window.RTCIceCandidate=n.RTCIceCandidate},n}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5),c(6)],e=function(a,b){"use strict";function c(){var b=this;this._root=e(),this._version="?";var c=function(a){b._loaded=!0,b._enabled=a===!0,b._version=b._phenixRTC.phenixVersion||"?.?.?.?",h(a?"Phenix RTC "+b._version:"No Phenix RTC"),b._onReady&&b._onReady(b._enabled)};try{this._phenixRTC=f(this._root),this._phenixRTC.onunload=function(){b._loaded=!1};var d=new a;d.waitForReady(this._phenixRTC,c)}catch(g){i("Error while loading Phenix RTC"+g),loaded(!1)}}function d(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function e(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function f(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function g(a,c){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=c,a;var d=new b(a,c);return d.getElement().phenixPresenter=d,d.getElement()}var h=function(){console.log.apply(console,arguments)}||function(){},i=function(){console.error.apply(console,arguments)}||h;return c.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},c.prototype.onLoaded=function(a){this._onLoaded=a},c.prototype.isLoaded=function(){return this._loaded===!0},c.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/))try{new ActiveXObject("PhenixP2P.RTC");return!0}catch(c){return!1}return!1},c.prototype.isEnabled=function(){return d.call(this),this._phenixRTC&&void 0!=this._phenixRTC.phenixVersion},c.prototype.getVersion=function(){return d.call(this),this._version},c.prototype.getRTCPeerConnectionConstructor=function(){return d.call(this),this._phenixRTC.RTCPeerConnection},c.prototype.getRTCSessionDescriptionConstructor=function(){return d.call(this),this._phenixRTC.RTCSessionDescription},c.prototype.getRTCIceCandidateConstructor=function(){return d.call(this),this._phenixRTC.RTCIceCandidate},c.prototype.getSourcesDelegate=function(){var a=this;return function(b){return d.call(a),a._phenixRTC.getSources(b)}},c.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,e){return d.call(a),a._phenixRTC.getUserMedia(b,c,e)}},c.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},c.prototype.attachMediaStream=function(a,b){return d.call(this),g.call(this,a,b)},c.prototype.reattachMediaStream=function(a,b){return d.call(this),this.attachMediaStream(a,b.src)},c}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5)],e=function(a){"use strict";function b(b,d){var e=this;this._ghost=b,this._stream=d,this._events={};var f=function(a){e._loaded=!0,e._enabled=a===!0,a?h.call(e):m("Failed to create Phenix video element"),e._onReady&&e._onReady(e._enabled)};try{this._video=c(),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){e._loaded=!1},j.call(this),document.body&&document.body.contains||l("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost);var g=new a;g.waitForReady(this._video,f)}catch(i){m("Error while loading Phenix RTC"+i),f(!1)}}function c(){var a=document.createElement("object");return a.type="application/x-phenix-video",a}function d(a,b,c){var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&f.call(this,a)),d.push(b)}function e(a,b,c){var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function f(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function g(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function h(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)f.call(this,a[b]);this.hookUpEvents(),i.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function i(){var a=this,b=["style"];if(window.MutationObserver){var c=new MutationObserver(function(c){c.forEach(function(c){"attributes"===c.type&&c.target===a._ghost&&b.indexOf(c.attributeName)===-1&&(a._video[c.attributeName]=a._ghost[c.attributeName])})}),d={attributes:!0};c.observe(a._ghost,d)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),a._ghost.addEventListener?a._ghost.addEventListener("DOMAttrModified",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]},!1):a._ghost.attachEvent("onpropertychange",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]})}function j(){var a=this;if(window.MutationObserver){var b=new MutationObserver(function(b){b.forEach(function(b){if("childList"===b.type)for(var c=0;c<b.addedNodes.length;c++){var d=b.addedNodes[c];b.target!==a._video&&(d===a._ghost?(b.target.replaceChild(a._video,a._ghost),h.call(a)):k(b.target,a._ghost)&&(a._ghost.parentNode.replaceChild(a._video,a._ghost),h.call(a)))}})}),c={childList:!0,attributes:!1,characterData:!1,subtree:!0};b.observe(document.body,c)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),d(a._ghost,"DOMNodeInserted",function(b){a._ghost.parentNode.replaceChild(a._video,a._ghost)},!1)}function k(a,b){for(var c=b.parentNode;null!=c;){if(c==a)return!0;c=c.parentNode}return!1}var l=function(){console.log.apply(console,arguments)}||function(){},m=function(){console.error.apply(console,arguments)}||l;return b.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){g(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,g(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,g(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,g(b,"ended")}),this.addEventListener("loadedmetadata",function(){l("Video loaded metadata",a._video.videoWidth,a._video.videoHeight),b.width=a._video.width,b.height=a._video.height,g(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,g(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,g(b,"resize")})},b.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},b.prototype.getElement=function(){return this._video},b.prototype.addEventListener=function(a,b,c){d.call(this,a,b,c)},b.prototype.removeEventListener=function(a,b,c){e.call(this,a,b,c)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(a){window.RTCPeerConnection=a.RTCPeerConnection,window.RTCSessionDescription=a.RTCSessionDescription,window.RTCIceCandidate=a.RTCIceCandidate};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
 
-/***/ }),
+/***/ },
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -169,9 +157,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -198,8 +186,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-04T22:41:58Z' || '?';
-	    var releaseVersion = '2017.2.13';
+	    var sdkVersion = '2017-08-06T20:27:07Z' || '?';
+	    var releaseVersion = '2017.2.14';
 
 	    function Logger(observableSessionId) {
 	        this._appenders = [];
@@ -372,9 +360,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Logger;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -869,9 +857,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -958,9 +946,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Assert();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 6 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -995,9 +983,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return logging;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1059,9 +1047,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new AnalytixAppenderFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 8 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1098,9 +1086,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return environment;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 9 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1301,9 +1289,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AnalytixAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1326,7 +1314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-08-04T22:41:58Z';
+	        this._version = '2017-08-06T20:27:07Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -1481,9 +1469,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Http();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
 	 Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
@@ -4781,9 +4769,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
-/***/ }),
+/***/ },
 /* 12 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = function(module) {
 		if(!module.webpackPolyfill) {
@@ -4797,9 +4785,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 
-/***/ }),
+/***/ },
 /* 13 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
 	 Copyright 2013 Daniel Wirtz <dcode@dcode.io>
@@ -6013,16 +6001,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
-/***/ }),
+/***/ },
 /* 14 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
-/***/ }),
+/***/ },
 /* 15 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -6086,7 +6074,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var builder = getBuilder.call(this, type);
 
-	        return stringifyEnums(builder.decode(value));
+	        return convertTypes(builder.decode(value));
 	    };
 
 	    function getBuilder(type) {
@@ -6110,7 +6098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return builder;
 	    }
 
-	    function stringifyEnums(message) {
+	    function convertTypes(message) {
 	        if (message && message.$type && message.$type.children) {
 	            for (var key in message.$type.children) {
 	                var child = message.$type.children[key];
@@ -6118,8 +6106,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var type = child && child.element ? child.element.resolvedType : null;
 
 	                if (type && type.className === 'Message' && type.children) {
-	                    message[child.name] = stringifyEnums(value);
+	                    message[child.name] = convertTypes(value);
 	                } else if (type && type.className === 'Enum' && type.children) {
+	                    // Stringify Enums
 	                    var metaValue = null;
 
 	                    for (var i = 0; i < type.children.length; i++) {
@@ -6133,6 +6122,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (metaValue && metaValue.name) {
 	                        message[child.name] = metaValue.name;
 	                    }
+	                } else if (value && typeof value.toNumber === 'function') {
+	                    // Convert long to numbers
+	                    message[child.name] = value.toNumber();
 	                }
 	            }
 	        }
@@ -6143,9 +6135,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return MQProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 16 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, module) {/*
 	 Copyright 2013 Daniel Wirtz <dcode@dcode.io>
@@ -11325,9 +11317,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(12)(module)))
 
-/***/ }),
+/***/ },
 /* 17 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -11499,10 +11491,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
-	process.prependListener = noop;
-	process.prependOnceListener = noop;
-
-	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -11515,21 +11503,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	process.umask = function() { return 0; };
 
 
-/***/ }),
+/***/ },
 /* 18 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	/* (ignored) */
 
-/***/ }),
+/***/ },
 /* 19 */
-/***/ (function(module, exports) {
+/***/ function(module, exports) {
 
 	/* (ignored) */
 
-/***/ }),
+/***/ },
 /* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -11663,9 +11651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return mqProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -12091,6 +12079,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "options",
 	                        "id": 7
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "offset",
+	                        "id": 10,
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -12430,40 +12425,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "status",
 	                        "id": 1
-	                    }
-	                ]
-	            },
-	            {
-	                "name": "ArchiveStream",
-	                "fields": [
-	                    {
-	                        "rule": "required",
-	                        "type": "string",
-	                        "name": "streamId",
-	                        "id": 1
-	                    },
-	                    {
-	                        "rule": "repeated",
-	                        "type": "string",
-	                        "name": "options",
-	                        "id": 2
-	                    }
-	                ]
-	            },
-	            {
-	                "name": "ArchiveStreamResponse",
-	                "fields": [
-	                    {
-	                        "rule": "required",
-	                        "type": "string",
-	                        "name": "status",
-	                        "id": 1
-	                    },
-	                    {
-	                        "rule": "optional",
-	                        "type": "string",
-	                        "name": "uri",
-	                        "id": 2
 	                    }
 	                ]
 	            },
@@ -12876,6 +12837,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "string",
 	                        "name": "manifest",
 	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "bool",
+	                        "name": "isProtectedContent",
+	                        "id": 2
 	                    }
 	                ]
 	            },
@@ -12893,6 +12860,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "type": "PlaylistStreamManifest",
 	                        "name": "manifests",
 	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "offset",
+	                        "id": 3,
+	                        "options": {"default": 0}
 	                    }
 	                ]
 	            },
@@ -13188,6 +13162,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	                ]
 	            },
 	            {
+	                "name": "IssueDrmToken",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "applicationId",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "secret",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "streamToken",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "originStreamId",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "repeated",
+	                        "type": "string",
+	                        "name": "capabilities",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "IssueDrmTokenResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "drmToken",
+	                        "id": 2
+	                    }
+	                ]
+	            },
+	            {
 	                "name": "TerminateStream",
 	                "fields": [
 	                    {
@@ -13322,9 +13354,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return pcastProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14205,9 +14237,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return chatProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 23 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14367,9 +14399,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return analytixProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 24 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14461,9 +14493,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return NetworkConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14526,9 +14558,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ConsoleAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 26 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14566,7 +14598,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var sdkVersion = '2017-08-04T22:41:58Z';
+	    var sdkVersion = '2017-08-06T20:27:07Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14657,7 +14689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
 	            that._screenSharingEnabled = screenSharingEnabled;
 
-	            that._endPoint.resolveUri(function (err, uri) {
+	            that._endPoint.resolveUri(function (err, endPoint) {
 	                if (err) {
 	                    that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
@@ -14684,9 +14716,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return;
 	                }
 
-	                that._logger.info('Discovered end point [%s]', uri);
+	                that._logger.info('Discovered end point [%s] with RTT [%s]', endPoint.uri, endPoint.roundTripTime);
 
-	                instantiateProtocol.call(that, uri);
+	                that._networkOneWayLatency = endPoint.roundTripTime / 2;
+
+	                instantiateProtocol.call(that, endPoint.uri);
 	            });
 	        });
 	    };
@@ -14825,6 +14859,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var streamId = response.createStreamResponse.streamId;
 
 	                streamAnalytix.setStreamId(streamId);
+	                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
+	                streamAnalytix.recordMetric('Stream provisioned');
 
 	                if (setupStreamOptions.negotiate === true) {
 	                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -14840,6 +14876,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                return createPublisher.call(that, streamId, function (phenixPublisher, error) {
+	                    streamAnalytix.recordMetric('Stream setup');
+
 	                    if (error) {
 	                        callback.call(that, that, 'failed', null);
 	                    } else {
@@ -14903,8 +14941,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                streamAnalytix.setStreamId(streamId);
+	                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
+	                streamAnalytix.recordMetric('Stream provisioned');
+
+	                options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
 	                return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
+	                    streamAnalytix.recordMetric('Stream setup');
+
 	                    if (error) {
 	                        callback.call(that, that, 'failed', null);
 	                    } else {
@@ -15508,14 +15552,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                            width: 0,
 	                                            height: 0,
 	                                            currentTime: 0.0,
+	                                            lag: 0.0,
 	                                            networkState: NetworkStates.NETWORK_NO_SOURCE
 	                                        };
 	                                    }
 
+	                                    var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+	                                    var lag = that._networkOneWayLatency / 1000; // Check RTC stats instead
+
 	                                    return {
 	                                        width: element.videoWidth || element.width,
 	                                        height: element.videoHeight || element.height,
-	                                        currentTime: element.currentTime,
+	                                        currentTime: trueCurrentTime,
+	                                        lag: lag,
 	                                        networkState: element.networkState
 	                                    };
 	                                },
@@ -15888,7 +15937,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback(publisher);
 	    }
 
-	    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, options, streamOptions) {
+	    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, createOptions, streamOptions) {
 	        var that = this;
 	        var state = {
 	            failed: false,
@@ -16152,11 +16201,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var mediaConstraints = {mandatory: {}};
 
 	            if (phenixRTC.browser === 'Chrome') {
-	                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo === true;
-	                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio === true;
+	                mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo === true;
+	                mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio === true;
 	            } else {
-	                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo === true;
-	                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio === true;
+	                mediaConstraints.mandatory.offerToReceiveVideo = createOptions.receiveVideo === true;
+	                mediaConstraints.mandatory.offerToReceiveAudio = createOptions.receiveAudio === true;
 	            }
 
 	            peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
@@ -16170,7 +16219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (publisher && publisher.remoteMediaStreamCallback) {
 	                publisher.remoteMediaStreamCallback(publisher, mediaStream);
 	            }
-	        }, options);
+	        }, createOptions);
 	        setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
 	            if (onIceCandidateCallback) {
 	                onIceCandidateCallback(candidate);
@@ -16186,7 +16235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
 	    }
 
-	    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, options) {
+	    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, createOptions) {
 	        var that = this;
 	        var state = {
 	            failed: false,
@@ -16242,15 +16291,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (_.includes(response.options, 'ice-candidates')) {
 	                        onIceCandidateCallback = function (candidate) {
 	                            var candidates = [];
-	                            var options = [];
+	                            var iceCandidatesOptions = [];
 
 	                            if (candidate) {
 	                                candidates.push(candidate);
 	                            } else {
-	                                options.push('completed');
+	                                iceCandidatesOptions.push('completed');
 	                            }
 
-	                            that._protocol.addIceCandidates(streamId, candidate, options, function (error, response) {
+	                            that._protocol.addIceCandidates(streamId, candidate, iceCandidatesOptions, function (error, response) {
 	                                if (error) {
 	                                    that._logger.error('Failed to add ICE candidate [%s]', error);
 
@@ -16280,17 +16329,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var mediaConstraints = {mandatory: {}};
 
 	            if (phenixRTC.browser === 'Chrome') {
-	                mediaConstraints.mandatory.OfferToReceiveVideo = options.receiveVideo !== false;
-	                mediaConstraints.mandatory.OfferToReceiveAudio = options.receiveAudio !== false;
+	                mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo !== false;
+	                mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio !== false;
 	            } else {
-	                mediaConstraints.mandatory.offerToReceiveVideo = options.receiveVideo !== false;
-	                mediaConstraints.mandatory.offerToReceiveAudio = options.receiveAudio !== false;
+	                mediaConstraints.mandatory.offerToReceiveVideo = createOptions.receiveVideo !== false;
+	                mediaConstraints.mandatory.offerToReceiveAudio = createOptions.receiveAudio !== false;
 	            }
 
 	            peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
 	        }
 
-	        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, options);
+	        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, createOptions);
 	        setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
 	            if (onIceCandidateCallback) {
 	                onIceCandidateCallback(candidate);
@@ -16384,20 +16433,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            return that._logger.debug('[%s] Dash stream progress event fired without any buffered content', streamId);
 	                        }
 
-	                        if (lastProgress.buffered === element.buffered.end(0)) {
+	                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
+
+	                        if (lastProgress.buffered === bufferedEnd) {
 	                            return;
 	                        }
 
 	                        // Start and end times are unreliable for overall length of stream.
 	                        if (lastProgress.buffered !== null) {
 	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+	                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
 
 	                            lastProgress.count += 1;
 	                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
 	                        }
 
-	                        lastProgress.buffered = element.buffered.end(0);
+	                        lastProgress.buffered = bufferedEnd;
 	                    }
 
 	                    function stalled() {
@@ -16532,13 +16583,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    width: 0,
 	                                    height: 0,
 	                                    currentTime: 0.0,
+	                                    lag: 0.0,
 	                                    networkState: NetworkStates.NETWORK_NO_SOURCE
 	                                };
 	                            }
 
 	                            var stat = player.getStats();
+	                            var currentTime = element.currentTime;
+	                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+	                            var lag = Math.max(0.0, trueCurrentTime - currentTime);
 
-	                            stat.currentTime = stat.playTime + stat.bufferingTime;
+	                            stat.currentTime = currentTime;
+	                            stat.lag = lag;
 
 	                            if (stat.estimatedBandwidth > 0) {
 	                                stat.networkState = NetworkStates.NETWORK_LOADING;
@@ -16793,6 +16849,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            mediaStream: {
 	                createRenderer: function createRenderer() {
 	                    var element = null;
+	                    var bufferSizeHistory = [];
 	                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
 	                    var lastProgress = {
 	                        time: 0,
@@ -16808,20 +16865,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            return that._logger.debug('[%s] Hls stream progress event fired without any buffered content', streamId);
 	                        }
 
-	                        if (lastProgress.buffered === element.buffered.end(0)) {
+	                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
+
+	                        if (lastProgress.buffered === bufferedEnd) {
 	                            return;
 	                        }
 
 	                        // Start and end times are unreliable for overall length of stream.
 	                        if (lastProgress.buffered !== null) {
 	                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-	                            var newTimeElapsed = oldTimeElapsed + (element.buffered.end(0) - lastProgress.buffered);
+	                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
 
 	                            lastProgress.count += 1;
 	                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
 	                        }
 
-	                        lastProgress.buffered = element.buffered.end(0);
+	                        lastProgress.buffered = bufferedEnd;
 	                    }
 
 	                    function stalled() {
@@ -16959,14 +17018,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    width: 0,
 	                                    height: 0,
 	                                    currentTime: 0.0,
+	                                    lag: 0.0,
 	                                    networkState: NetworkStates.NETWORK_NO_SOURCE
 	                                };
 	                            }
 
+	                            var currentTime = element ? element.currentTime || 0.0 : 0.0;
+	                            var buffered = (element && element.buffered && element.buffered.length > 0) ? element.buffered.end(element.buffered.length - 1) : 0;
+	                            var currentBufferSize = Math.max(0, buffered - currentTime);
+
+	                            bufferSizeHistory.push(currentBufferSize);
+
+	                            if (bufferSizeHistory.length > 15) {
+	                                bufferSizeHistory.shift();
+	                            }
+
+	                            var estimatedBufferSize = 0.0;
+
+	                            for (var i = 0, len = bufferSizeHistory.length; i < len; i++) {
+	                                estimatedBufferSize = Math.max(estimatedBufferSize, bufferSizeHistory[i]);
+	                            }
+
+	                            var chunkDuration = 2.0; // TODO (sbi) Parse chunk duration from manifest
+	                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
+	                            var lag = 2.0 * chunkDuration + estimatedBufferSize;
+	                            var estimatedCurrentTime = trueCurrentTime - lag;
+
 	                            return {
 	                                width: element.videoWidth || element.width,
 	                                height: element.videoHeight || element.height,
-	                                currentTime: element.currentTime,
+	                                currentTime: estimatedCurrentTime,
+	                                originTime: trueCurrentTime,
+	                                lag: lag,
 	                                networkState: element.networkState
 	                            };
 	                        },
@@ -17339,9 +17422,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCast;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 27 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17390,7 +17473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._baseUri;
 	    };
 
-	    PCastEndPoint.prototype.resolveUri = function (callback /* (error, uri) */) {
+	    PCastEndPoint.prototype.resolveUri = function (callback /* (error, {uri, roundTripTime}) */) {
 	        return resolveUri.call(this, this._baseUri, callback);
 	    };
 
@@ -17398,10 +17481,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return 'PCastEndPoint[' + this._baseUri + ']';
 	    };
 
-	    function resolveUri(baseUri, callback /* (error, uri) */) {
+	    function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
 	        if (baseUri.lastIndexOf('wss:', 0) === 0) {
 	            // WSS - Specific web socket end point
-	            callback(undefined, baseUri + '/ws');
+	            callback(undefined, {
+	                uri: baseUri + '/ws',
+	                roundTripTime: 0
+	            });
 	        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
 	            // HTTP - Resolve closest end point
 	            var that = this;
@@ -17440,9 +17526,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastEndPoint;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 28 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17495,7 +17581,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
 	            this._done = true;
 
-	            return this._onClosestEndpointFound(undefined, this._minResponseText);
+	            return this._onClosestEndpointFound(undefined, {
+	                uri: this._minResponseText,
+	                roundTripTime: this._minTime
+	            });
 	        }
 	    };
 
@@ -17554,9 +17643,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ClosestEndPointResolver;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 29 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17744,9 +17833,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Observable;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 30 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17801,9 +17890,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new PCastLoggerFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 31 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -18379,9 +18468,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 32 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -18679,9 +18768,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ReconnectingWebSocket;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 33 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19133,9 +19222,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PeerConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 34 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19265,9 +19354,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return DimensionsChangedMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 35 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19307,6 +19396,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._streamId = streamId;
 	    };
 
+	    StreamAnalytix.prototype.setStartOffset = function(startOffset) {
+	        this._startOffset = startOffset;
+	    };
+
+	    StreamAnalytix.prototype.getStartOffset = function () {
+	        return this._startOffset;
+	    };
+
+	    StreamAnalytix.prototype.getTimeOfFirstFrame = function () {
+	        return this._timeOfFirstFrame;
+	    };
+
+	    StreamAnalytix.prototype.getTimeToFirstFrame = function () {
+	        return this._timeToFirstFrame;
+	    };
+
 	    StreamAnalytix.prototype.stop = function() {
 	        _.forEach(this._disposables, function(dispose) {
 	            dispose();
@@ -19315,18 +19420,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        recordMetric.call(this, 'Stream has stopped');
 	    };
 
+	    StreamAnalytix.prototype.recordMetric = function(metric) {
+	        recordMetric.call(this, metric);
+	    };
+
 	    StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
 	        var that = this;
-	        var recordedTimeToFirstFrame = null;
 
 	        var listenForFirstFrame = function() {
-	            if (recordedTimeToFirstFrame) {
+	            if (that._timeToFirstFrame) {
 	                return;
 	            }
 
-	            recordedTimeToFirstFrame = _.now() - that._start;
+	            that._timeOfFirstFrame = _.now();
+	            that._timeToFirstFrame = that._timeOfFirstFrame - that._start;
 
-	            recordMetric.call(that, 'First Frame');
+	            recordMetric.call(that, 'First frame');
 
 	            phenixRTC.removeEventListener(video, 'loadeddata', listenForFirstFrame);
 	        };
@@ -19353,7 +19462,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                height: video.videoHeight
 	            };
 
-	            recordMetric.call(that, 'Resolution has changed to: width [%s] height [%s]', video.videoWidth, video.videoHeight);
+	            recordMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
 	        };
 
 	        // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
@@ -19430,9 +19539,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return StreamAnalytix;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 36 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20099,9 +20208,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 37 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20220,9 +20329,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ImmutableRoom;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 38 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20327,9 +20436,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ObservableArray;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 39 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20563,9 +20672,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Room;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 40 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20769,9 +20878,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Member;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 41 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20876,9 +20985,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Stream;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 42 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20919,9 +21028,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return streamEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 43 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20962,9 +21071,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return trackEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 44 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21031,9 +21140,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return memberEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 45 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21104,9 +21213,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return roomEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 46 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21189,9 +21298,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AuthenticationService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 47 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21358,9 +21467,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 48 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21700,9 +21809,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 49 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21817,9 +21926,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioSpeakerDetector;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 50 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21863,9 +21972,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioContext;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 51 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21924,9 +22033,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioVolumeMeterFactory;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 52 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22064,9 +22173,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioVolumeMeter;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 53 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22183,9 +22292,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioSpeakerDetectionAlgorithm;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 54 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22251,9 +22360,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return BandwidthMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 55 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22348,9 +22457,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PublisherBandwidthAdjuster;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 56 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -23004,9 +23113,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 57 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -23094,9 +23203,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AdminAPI;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }),
+/***/ },
 /* 58 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -23574,7 +23683,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ })
+/***/ }
 /******/ ])
 });
 ;

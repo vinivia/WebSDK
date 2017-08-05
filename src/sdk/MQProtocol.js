@@ -60,7 +60,7 @@ define([
 
         var builder = getBuilder.call(this, type);
 
-        return stringifyEnums(builder.decode(value));
+        return convertTypes(builder.decode(value));
     };
 
     function getBuilder(type) {
@@ -84,7 +84,7 @@ define([
         return builder;
     }
 
-    function stringifyEnums(message) {
+    function convertTypes(message) {
         if (message && message.$type && message.$type.children) {
             for (var key in message.$type.children) {
                 var child = message.$type.children[key];
@@ -92,8 +92,9 @@ define([
                 var type = child && child.element ? child.element.resolvedType : null;
 
                 if (type && type.className === 'Message' && type.children) {
-                    message[child.name] = stringifyEnums(value);
+                    message[child.name] = convertTypes(value);
                 } else if (type && type.className === 'Enum' && type.children) {
+                    // Stringify Enums
                     var metaValue = null;
 
                     for (var i = 0; i < type.children.length; i++) {
@@ -107,6 +108,9 @@ define([
                     if (metaValue && metaValue.name) {
                         message[child.name] = metaValue.name;
                     }
+                } else if (value && typeof value.toNumber === 'function') {
+                    // Convert long to numbers
+                    message[child.name] = value.toNumber();
                 }
             }
         }

@@ -45,7 +45,7 @@ define([
         return this._baseUri;
     };
 
-    PCastEndPoint.prototype.resolveUri = function (callback /* (error, uri) */) {
+    PCastEndPoint.prototype.resolveUri = function (callback /* (error, {uri, roundTripTime}) */) {
         return resolveUri.call(this, this._baseUri, callback);
     };
 
@@ -53,10 +53,13 @@ define([
         return 'PCastEndPoint[' + this._baseUri + ']';
     };
 
-    function resolveUri(baseUri, callback /* (error, uri) */) {
+    function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
         if (baseUri.lastIndexOf('wss:', 0) === 0) {
             // WSS - Specific web socket end point
-            callback(undefined, baseUri + '/ws');
+            callback(undefined, {
+                uri: baseUri + '/ws',
+                roundTripTime: 0
+            });
         } else if (baseUri.lastIndexOf('https:', 0) === 0) {
             // HTTP - Resolve closest end point
             var that = this;

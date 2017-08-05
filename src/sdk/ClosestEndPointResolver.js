@@ -49,7 +49,10 @@ define([
         if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
             this._done = true;
 
-            return this._onClosestEndpointFound(undefined, this._minResponseText);
+            return this._onClosestEndpointFound(undefined, {
+                uri: this._minResponseText,
+                roundTripTime: this._minTime
+            });
         }
     };
 

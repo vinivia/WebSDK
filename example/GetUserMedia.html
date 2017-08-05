@@ -83,36 +83,26 @@
             visibility: hidden;
         }
 
-        .video-container, .video-controls{
-            display: inline-block;
+        .video-container, .video-controls {
+            display: block;
+            clear: both;
         }
 
         .video-control {
+            top: 1px;
             cursor: pointer;
-            right: 30px;
-            top: -4px;
-            padding: 4px;
+            padding: 10px;
             background: grey;
             border-radius: 6px;
+            position: relative;
+            display: inline-block;
+            line-height: 1;
+            font-size: 200%;
+            vertical-align: text-top;
         }
 
         .video-control:hover {
             color:white;
-        }
-
-        .video-control:nth-child(1):nth-last-child(1) {
-            right: 30px;
-        }
-
-        .video-control:nth-child(1):nth-last-child(2),
-        .video-control:nth-child(2):nth-last-child(1) {
-            right: 56px;
-        }
-
-        .video-control:nth-child(1):nth-last-child(3),
-        .video-control:nth-child(2):nth-last-child(2),
-        .video-control:nth-child(3):nth-last-child(1) {
-            right: 82px;
         }
 
         .toggle-off.glyphicon-facetime-video:before {
@@ -456,17 +446,29 @@
                     <div class="video-container">
                         <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
                         <div class="video-controls">
+                            <span class="glyphicon glyphicon-play video-control play hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                            <span class="glyphicon glyphicon-pause video-control pause hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
                             <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
                             <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
                             <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
+                            <span class="video-control currentTime hidden" aria-hidden="true" data-video-target="remoteVideo">0.0</span>
+                            <span class="video-control lag hidden" aria-hidden="true" data-video-target="remoteVideo">0.0</span>
+                            <span class="video-control buffered hidden" aria-hidden="true" data-video-target="remoteVideo">0.0</span>
+                            <span class="video-control bufferSize hidden" aria-hidden="true" data-video-target="remoteVideo">0.0</span>
                         </div>
                     </div>
                     <div class="video-container">
                         <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
                         <div class="video-controls">
+                            <span class="glyphicon glyphicon-play video-control play hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                            <span class="glyphicon glyphicon-pause video-control pause hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                             <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                             <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
                             <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                            <span class="video-control currentTime hidden" aria-hidden="true" data-video-target="remoteVideoSecondary">0.0</span>
+                            <span class="video-control lag hidden" aria-hidden="true" data-video-target="remoteVideoSecondary">0.0</span>
+                            <span class="video-control buffered hidden" aria-hidden="true" data-video-target="remoteVideoSecondary">0.0</span>
+                            <span class="video-control bufferSize hidden" aria-hidden="true" data-video-target="remoteVideoSecondary">0.0</span>
                         </div>
                     </div>
                 </div>

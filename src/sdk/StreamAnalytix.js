@@ -36,6 +36,22 @@ define([
         this._streamId = streamId;
     };
 
+    StreamAnalytix.prototype.setStartOffset = function(startOffset) {
+        this._startOffset = startOffset;
+    };
+
+    StreamAnalytix.prototype.getStartOffset = function () {
+        return this._startOffset;
+    };
+
+    StreamAnalytix.prototype.getTimeOfFirstFrame = function () {
+        return this._timeOfFirstFrame;
+    };
+
+    StreamAnalytix.prototype.getTimeToFirstFrame = function () {
+        return this._timeToFirstFrame;
+    };
+
     StreamAnalytix.prototype.stop = function() {
         _.forEach(this._disposables, function(dispose) {
             dispose();
@@ -44,18 +60,22 @@ define([
         recordMetric.call(this, 'Stream has stopped');
     };
 
+    StreamAnalytix.prototype.recordMetric = function(metric) {
+        recordMetric.call(this, metric);
+    };
+
     StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
-        var recordedTimeToFirstFrame = null;
 
         var listenForFirstFrame = function() {
-            if (recordedTimeToFirstFrame) {
+            if (that._timeToFirstFrame) {
                 return;
             }
 
-            recordedTimeToFirstFrame = _.now() - that._start;
+            that._timeOfFirstFrame = _.now();
+            that._timeToFirstFrame = that._timeOfFirstFrame - that._start;
 
-            recordMetric.call(that, 'First Frame');
+            recordMetric.call(that, 'First frame');
 
             phenixRTC.removeEventListener(video, 'loadeddata', listenForFirstFrame);
         };
@@ -82,7 +102,7 @@ define([
                 height: video.videoHeight
             };
 
-            recordMetric.call(that, 'Resolution has changed to: width [%s] height [%s]', video.videoWidth, video.videoHeight);
+            recordMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
         };
 
         // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.

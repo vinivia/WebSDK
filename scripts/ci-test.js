@@ -19,5 +19,6 @@ runner.runCommands([
     'node --version',
     'npm --version',
     'npm install',
-    'npm run test'
+    'npm run test',
+    'npm run lint'
 ]);
