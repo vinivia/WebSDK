@@ -165,6 +165,7 @@ define([
             var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
                 return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
             });
+
             if (streamToUpdate) {
                 streamToUpdate._update(stream);
             } else {

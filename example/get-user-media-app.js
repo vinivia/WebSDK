@@ -47,14 +47,16 @@ requirejs([
         var remoteVideoEl = $('#remoteVideo')[0];
         var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
         var videoTargetStreams = {};
-
         var userMediaStream = null;
-
         var userAgent = window.navigator.userAgent;
 
         if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
             remoteVideoEl.muted = true;
             remoteVideoSecondaryEl.muted = true;
+        }
+
+        if (!shaka.Player.isBrowserSupported()) {
+            shaka.polyfill.installAll();
         }
 
         var getUrlParameter = function getUrlParameter(parameterName) {
@@ -966,10 +968,10 @@ requirejs([
             var videoElementOnTimeUpdate = function () {
                 var stat = processTimeUpdate(videoElement);
 
-                $(videoControls.selector + '.currentTime').html(stat.currentTime.toFixed(1));
-                $(videoControls.selector + '.lag').html(stat.lag.toFixed(1));
-                $(videoControls.selector + '.buffered').html(stat.buffered.toFixed(1));
-                $(videoControls.selector + '.bufferSize').html(stat.bufferSize.toFixed(1));
+                $(videoControls.selector + '.currentTime').html(stat.currentTime.toFixed(1) + ' s');
+                $(videoControls.selector + '.lag').html(stat.lag.toFixed(1) + ' s');
+                $(videoControls.selector + '.buffered').html(stat.buffered.toFixed(1) + ' s');
+                $(videoControls.selector + '.bufferSize').html(stat.bufferSize.toFixed(1) + ' s');
 
                 if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
                     // Force the player to buffer less than 10 seconds

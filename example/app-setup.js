@@ -46,6 +46,10 @@ define('app-setup', [
             $('#phenix').addClass('danger');
         }
 
+        if (!shaka.Player.isBrowserSupported()) {
+            shaka.polyfill.installAll();
+        }
+
         if (getUrlParameter('url')) {
             $('#environment').append($('<option></option>').attr('value', getUrlParameter('url')).attr('selected', 'selected').text(getUrlParameter('url')));
         }

@@ -45,6 +45,10 @@ requirejs([
         var remoteVideoEl = $('#remoteVideo')[0];
         var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
 
+        if (!shaka.Player.isBrowserSupported()) {
+            shaka.polyfill.installAll();
+        }
+
         var getUrlParameter = function getUrlParameter(parameterName) {
             var queryParameters = window.location.search.substring(1).split('&');
 
