@@ -21,23 +21,17 @@ define([
     'use strict';
 
     var defaultCategory= 'websdk';
-    var start = window['__phenixPageLoadTime'] || _.now();
+    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = '%ENVIRONMENT%' || '?';
     var sdkVersion = '%SDKVERSION%' || '?';
     var releaseVersion = '%RELEASEVERSION%';
 
-    function Logger(observableSessionId) {
+    function Logger() {
         this._appenders = [];
         this._userId = null;
         this._sessionId = null;
         this._environment = defaultEnvironment;
         this._applicationVersion = sdkVersion;
-
-        if (observableSessionId) {
-            assert.isObject(observableSessionId);
-
-            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
-        }
     }
 
     Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
@@ -97,6 +91,24 @@ define([
 
     Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
         this._applicationVersion = version;
+    };
+
+    Logger.prototype.getObservableSessionId = function getObservableSessionId() {
+        return this._observableSessionId;
+    };
+
+    Logger.prototype.setObservableSessionId = function setObservableSessionId(observableSessionId) {
+        this._observableSessionId = observableSessionId;
+
+        if (this._sessionIdSubscription) {
+            this._sessionIdSubscription.dispose();
+        }
+
+        if (observableSessionId) {
+            assert.isObject(observableSessionId, 'observableSessionId');
+
+            this._sessionIdSubscription = this._observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
+        }
     };
 
     function onSessionIdChange(sessionId) {

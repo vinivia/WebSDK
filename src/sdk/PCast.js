@@ -23,9 +23,10 @@ define([
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
-    './StreamAnalytix',
+    './analytix/metricsTransmitterFactory',
+    './analytix/StreamAnalytix',
     'phenix-rtc'
-], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, StreamAnalytix, phenixRTC) {
+], function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -49,11 +50,11 @@ define([
     function PCast(options) {
         options = options || {};
         this._observableStatus = new Observable('offline');
-        this._observableSessionId = new Observable(null);
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId, options.disableConsoleLogging);
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
+        this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -209,11 +210,11 @@ define([
             if (this._protocol) {
                 this._protocol.disconnect();
 
-                if (this._sessionIdSubscription) {
-                    this._sessionIdSubscription.dispose();
-                }
-
                 this._protocol = null;
+            }
+
+            if (this._logger.setObservableSessionId) {
+                this._logger.setObservableSessionId(null);
             }
         }
     };
@@ -274,7 +275,9 @@ define([
             setupStreamOptions.tags = tags;
         }
 
-        var streamAnalytix = new StreamAnalytix(this._logger);
+        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+
+        streamAnalytix.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -296,13 +299,15 @@ define([
 
                 streamAnalytix.setStreamId(streamId);
                 streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Stream provisioned');
+                streamAnalytix.recordMetric('Provisioned');
 
                 if (setupStreamOptions.negotiate === true) {
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
                     return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamAnalytix, function (phenixPublisher, error) {
+                        streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+
                         if (error) {
                             callback.call(that, that, 'failed', null);
                         } else {
@@ -312,7 +317,7 @@ define([
                 }
 
                 return createPublisher.call(that, streamId, function (phenixPublisher, error) {
-                    streamAnalytix.recordMetric('Stream setup');
+                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -346,7 +351,9 @@ define([
         var that = this;
         var streamType = 'download';
         var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
-        var streamAnalytix = new StreamAnalytix(this._logger);
+        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+
+        streamAnalytix.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -378,12 +385,12 @@ define([
 
                 streamAnalytix.setStreamId(streamId);
                 streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Stream provisioned');
+                streamAnalytix.recordMetric('Provisioned');
 
                 options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
                 return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
-                    streamAnalytix.recordMetric('Stream setup');
+                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -404,7 +411,7 @@ define([
     };
 
     PCast.prototype.toString = function () {
-        return 'PCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+        return 'PCast[' + this.getProtocol().getSessionId() + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
     };
 
     function checkForScreenSharingCapability(callback) {
@@ -753,12 +760,9 @@ define([
         this._protocol.on('streamEnded', _.bind(streamEnded, this));
         this._protocol.on('dataQuality', _.bind(dataQuality, this));
 
-        var that = this;
-
-        this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(
-            function (sessionId) {
-                that._observableSessionId.setValue(sessionId);
-            });
+        if (this._logger.setObservableSessionId) {
+            this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
+        }
     }
 
     function connected() {
@@ -781,8 +785,6 @@ define([
                         that.stop('unauthorized');
                     } else {
                         transitionToStatus.call(that, 'online');
-
-                        that._observableSessionId.setValue(response.sessionId);
 
                         that._authenticationCallback.call(that, that, response.status, response.sessionId);
                     }

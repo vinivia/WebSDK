@@ -973,7 +973,7 @@ requirejs([
 
                 if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
                     // Force the player to buffer less than 10 seconds
-                    if (stat.bufferSize > 10 && (lastUpdate + 30000) > stat.now) {
+                    if (stat.bufferSize > 10 && (lastUpdate + 30000) < stat.now) {
                         lastUpdate = stat.now;
                         videoElement.currentTime = videoElement.currentTime + (stat.bufferSize - 4);
                     }

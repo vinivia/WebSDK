@@ -14,42 +14,86 @@
  * limitations under the License.
  */
 define([
-    './LodashLight',
-    './assert',
+    './../LodashLight',
+    './../assert',
     'phenix-rtc'
 ], function (_, assert, phenixRTC) {
     'use strict';
 
-    function StreamAnalytix(logger) {
+    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+    var defaultEnvironment = '%ENVIRONMENT%' || '?';
+    var sdkVersion = '%SDKVERSION%' || '?';
+
+    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
+        assert.stringNotEmpty(sessionId, 'sessionId');
+
+        this._environment = defaultEnvironment;
+        this._version = sdkVersion;
+        this._sessionId = sessionId;
+        this._properties = {};
         this._logger = logger;
+        this._metricsTransmitter = metricsTransmitter;
         this._start = _.now();
         this._disposables = [];
 
-        recordMetric.call(this, 'Stream initializing');
+        logMetric.call(this, 'Stream initializing');
     }
 
+    StreamAnalytix.prototype.setProperty = function(name, value) {
+        assert.stringNotEmpty(name, 'name');
+        assert.stringNotEmpty(value, 'value');
+
+        this._properties[name] = value;
+    };
+
+    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue) {
+        assert.stringNotEmpty(metric, 'metric');
+
+        recordMetricRecord.call(this, {
+            metric: metric,
+            elapsed: this.elapsed(),
+            value: value,
+            previousValue: previousValue
+        }, since());
+    };
+
     StreamAnalytix.prototype.setStreamId = function(streamId) {
+        assert.stringNotEmpty(streamId, 'streamId');
+
         if (this._streamId) {
-            throw new Error('Unable to override streamId. Please instantiate a new StreamAnalytix.');
+            throw new Error('Stream ID can only be set once.');
         }
 
         this._streamId = streamId;
+
+        var now = _.now();
+
+        recordMetricRecord.call(this, {
+            metric: 'Initialized',
+            elapsed: this.elapsed() - now + this._start // Adjust for delay to get the stream ID
+        }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
     };
 
     StreamAnalytix.prototype.setStartOffset = function(startOffset) {
+        assert.isNumber(startOffset, 'startOffset');
+
+        if (this._startOffset) {
+            throw new Error('Start offset can only be set once.');
+        }
+
         this._startOffset = startOffset;
+
+        this.recordMetric('Offset', {uint64: startOffset});
     };
 
     StreamAnalytix.prototype.getStartOffset = function () {
         return this._startOffset;
     };
 
-    StreamAnalytix.prototype.getTimeOfFirstFrame = function () {
-        return this._timeOfFirstFrame;
-    };
+    StreamAnalytix.prototype.elapsed = function () {
+        var now = _.now();
 
-    StreamAnalytix.prototype.getTimeToFirstFrame = function () {
-        return this._timeToFirstFrame;
+        return now - this._start;
     };
 
     StreamAnalytix.prototype.stop = function() {
@@ -57,25 +101,25 @@ define([
             dispose();
         });
 
-        recordMetric.call(this, 'Stream has stopped');
-    };
+        this.recordMetric('Stopped');
 
-    StreamAnalytix.prototype.recordMetric = function(metric) {
-        recordMetric.call(this, metric);
+        logMetric.call(this, 'Stream stopped');
     };
 
     StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
+        var timeOfFirstFrame;
 
         var listenForFirstFrame = function() {
-            if (that._timeToFirstFrame) {
+            if (timeOfFirstFrame) {
                 return;
             }
 
-            that._timeOfFirstFrame = _.now();
-            that._timeToFirstFrame = that._timeOfFirstFrame - that._start;
+            that.recordMetric('TimeToFirstFrame');
 
-            recordMetric.call(that, 'First frame');
+            timeOfFirstFrame = _.now();
+
+            logMetric.call(that, 'First frame');
 
             phenixRTC.removeEventListener(video, 'loadeddata', listenForFirstFrame);
         };
@@ -83,7 +127,7 @@ define([
         phenixRTC.addEventListener(video, 'loadeddata', listenForFirstFrame);
     };
 
-    // ToDo(dy) Add logging for bit rate changes using PC.getStats
+    // TODO(dy) Add logging for bit rate changes using PC.getStats
 
     StreamAnalytix.prototype.recordVideoResolutionChanges = function(video) {
         var that = this;
@@ -97,13 +141,17 @@ define([
                 return;
             }
 
+            that.recordMetric('ResolutionChanged', {string: video.videoWidth + 'x' + video.videoHeight}, {string: lastResolution.width + 'x' + lastResolution.height});
+
             lastResolution = {
                 width: video.videoWidth,
                 height: video.videoHeight
             };
 
-            recordMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
+            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
         };
+
+        // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
 
         // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
         phenixRTC.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
@@ -123,23 +171,28 @@ define([
                 return;
             }
 
+            that.recordMetric('Stalled');
+
             videoStalled = _.now();
 
-            recordMetric.call(that, '[buffering] Stream has stalled');
+            logMetric.call(that, '[buffering] Stream has stalled');
         };
 
         var listenForContinuation = function(event) {
-            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(0) === lastProgress)) {
+            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(video.buffered.length) === lastProgress)) {
                 return;
             }
 
             if (event.type === 'progress') {
-                lastProgress = video.buffered.end(0);
+                lastProgress = video.buffered.end(video.buffered.length);
             }
 
             var timeSinceStop = _.now() - videoStalled;
 
-            recordMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
+            that.recordMetric('Buffering', {uint64: timeSinceStop});
+            that.recordMetric('Playing');
+
+            logMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
 
             videoStalled = null;
         };
@@ -161,7 +214,7 @@ define([
         });
     };
 
-    function recordMetric() {
+    function logMetric() {
         var args = Array.prototype.slice.call(arguments);
 
         if (args.length === 0) {
@@ -173,7 +226,21 @@ define([
         var loggingArguments = args.slice(1);
         var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
 
-        this._logger.info.apply(this._logger, analytixArguments);
+        this._logger.debug.apply(this._logger, analytixArguments);
+    }
+
+    function since() {
+        var now = _.now();
+
+        return (now - start) / 1000;
+    }
+
+    function recordMetricRecord(record, since) {
+        assert.stringNotEmpty(record.metric, 'record.metric');
+
+        record = _.assign(this._properties, record);
+
+        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, record);
     }
 
     return StreamAnalytix;

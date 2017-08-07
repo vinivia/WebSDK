@@ -20,63 +20,48 @@ define([
     'ByteBuffer',
     '../MQProtocol',
     '../NetworkConnectionMonitor',
-    'phenix-rtc',
-    './logging.json'
-], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
+    'phenix-rtc'
+], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc) {
     var networkDisconnectHysteresisInterval = 0;
 
-    function AnalytixAppender() {
-        this._loggingUrl = '/analytix/logs';
+    function MetricsTransmitter() {
+        this._loggingUrl = '/analytix/metrics';
         this._domain = location.hostname;
         this._protocol = new MQProtocol();
         this._maxAttempts = 3;
         this._maxBufferedRecords = 1000;
-        this._maxBatchSize = 100;
+        this._maxBatchSize = 512;
         this._records = [];
         this._pending = false;
         this._baseUri = '';
-        this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
     }
 
-    AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level);
-
-        this._minLevel = level;
-    };
-
-    AnalytixAppender.prototype.getThreshold = function getThreshold() {
-        return this._minLevel;
-    };
-
-    AnalytixAppender.prototype.setUri = function setUri(uri) {
+    MetricsTransmitter.prototype.setUri = function setUri(uri) {
         assert.stringNotEmpty(uri, 'uri');
 
         this._baseUri = uri;
     };
 
-    AnalytixAppender.prototype.isEnabled = function isEnabled() {
+    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
         return this._isEnabled;
     };
 
-    AnalytixAppender.prototype.setEnabled = function setEnabled(enabled) {
+    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
         assert.isBoolean(enabled);
 
         this._isEnabled = enabled;
     };
 
-    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel) {
-            return;
-        }
+    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+        assert.stringNotEmpty(metric, 'metric');
+        assert.isObject(value, 'value');
 
-        assert.isArray(messages, 'messages');
+        addMetricToRecords.call(this, metric, since, sessionId, streamId, environment, version, value);
 
-        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
-
-        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId, environment, version);
+        deleteRecordsIfAtCapacity.call(this, since, sessionId, streamId, environment, version);
 
         sendBatchMessagesIfNonePending.call(this);
     };
@@ -100,39 +85,35 @@ define([
         return networkConnectionMonitor;
     }
 
-    function addMessagesToRecords(since, level, category, messages, sessionId, userId, environment, version) {
-        var message = messages.join(' ');
-        var record = {
-            level: level,
+    function addMetricToRecords(metric, since, sessionId, streamId, environment, version, value) {
+        var record = _.assign(value, {
+            metric: metric,
             timestamp: _.isoString(),
-            category: category,
-            message: message,
+            sessionId: sessionId,
+            streamId: streamId,
             source: this._browser,
             fullQualifiedName: this._domain,
-            sessionId: sessionId,
-            userId: userId,
             environment: environment,
             version: version,
             runtime: since
-        };
+        });
 
         this._records.push(record);
     }
 
-    function deleteRecordsIfAtCapacity(since, sessionId, userId, environment, version) {
+    function deleteRecordsIfAtCapacity(since, sessionId, streamId, environment, version) {
         if (this._records.length > this._maxBufferedRecords) {
             var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
 
             this._records = this._records.slice(deleteRecords);
             this._records.unshift({
-                level: 'Warn',
                 timestamp: _.isoString(),
-                category: 'websdk/analytixLogger',
-                message: 'Deleted ' + deleteRecords + ' records',
-                source: this._browser,
-                fullQualifiedName: this._domain,
                 sessionId: sessionId,
-                userId: userId,
+                streamId: streamId,
+                source: this._browser,
+                metric: 'MetricDropped',
+                value: {uint64: deleteRecords},
+                fullQualifiedName: this._domain,
                 environment: environment,
                 version: version,
                 runtime: since
@@ -145,7 +126,7 @@ define([
             return;
         }
 
-        var storeLogRecords = {records: _.take(this._records, this._maxBatchSize)};
+        var submitMetricRecords = {records: _.take(this._records, this._maxBatchSize)};
 
         this._records = this._records.slice(this._maxBatchSize);
         this._pending = true;
@@ -153,13 +134,13 @@ define([
         var that = this;
 
         try {
-            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords, function onTimeout() {
+            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, submitMetricRecords, function onTimeout() {
                 setTimeout(function waitForDisconnectTimeout() {
                     if (!that._isOffline) {
                         return;
                     }
 
-                    that._records = that._records.concat(storeLogRecords.records);
+                    that._records = that._records.concat(submitMetricRecords.records);
                 }, networkDisconnectHysteresisInterval);
             });
         } catch (e) {
@@ -172,7 +153,7 @@ define([
     function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
         var that = this;
 
-        var data = this._protocol.encode('analytix.StoreLogRecords', dataToEncode).toBinary();
+        var data = this._protocol.encode('analytix.SubmitMetricRecords', dataToEncode).toBinary();
 
         function handlePost(error, result) {
             that._pending = false;
@@ -188,11 +169,11 @@ define([
                 };
             }
 
-            return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));
+            return that._protocol.decode('analytix.SubmitMetricRecordsResponse', ByteBuffer.fromBinary(result));
         }
 
         http.postWithRetry(url, 'protobuf', data, handlePost, this._maxAttempts);
     }
 
-    return AnalytixAppender;
+    return MetricsTransmitter;
 });

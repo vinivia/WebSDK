@@ -46,7 +46,7 @@ define([
         this._version = version;
         this._logger = logger;
         this._mqProtocol = new MQProtocol(this._logger);
-        this._observableSessionId = new Observable(null);
+        this._observableSessionId = new Observable(null).extend({rateLimit: 0});
 
         this._logger.info('Connecting to [%s]', uri);
 

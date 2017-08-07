@@ -1,5 +1,17 @@
 /**
- * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -55,7 +67,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -78,11 +90,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(1),
 	    __webpack_require__(2),
 	    __webpack_require__(26),
-	    __webpack_require__(36),
-	    __webpack_require__(49),
-	    __webpack_require__(54),
+	    __webpack_require__(38),
+	    __webpack_require__(51),
 	    __webpack_require__(56),
-	    __webpack_require__(58)
+	    __webpack_require__(58),
+	    __webpack_require__(60)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, PCastExpress, RoomExpress) {
 	    window.PhenixPCast = PCast;
 
@@ -100,9 +112,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -121,9 +133,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	!function(a,b){if(true)module.exports=b();else if("function"==typeof define&&define.amd)define([],b);else{var c=b();for(var d in c)("object"==typeof exports?exports:a)[d]=c[d]}}(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={exports:{},id:d,loaded:!1};return a[d].call(e.exports,e,e.exports,b),e.loaded=!0,e.exports}var c={};return b.m=a,b.c=c,b.p="",b(0)}([function(a,b,c){var d,e;d=[c(1),c(7)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2),c(3),c(4)],e=function(a,b,c){"use strict";var d=new a(navigator.userAgent).detect(),e={RTCPeerConnection:b.RTCPeerConnection,RTCSessionDescription:b.RTCSessionDescription,RTCIceCandidate:b.RTCIceCandidate,getSources:b.getSources,getUserMedia:b.getUserMedia,getStats:b.getStats,attachMediaStream:b.attachMediaStream,reattachMediaStream:b.reattachMediaStream,browser:d.browser,browserVersion:d.version,webrtcSupported:b.webrtcSupported,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0};if(c.isSupported()){e.phenixSupported=!0;var f=new c,g=function(){e.RTCPeerConnection=f.getRTCPeerConnectionConstructor(),e.RTCSessionDescription=f.getRTCSessionDescriptionConstructor(),e.RTCIceCandidate=f.getRTCIceCandidateConstructor(),e.getSources=f.getSourcesDelegate(),e.getUserMedia=f.getUserMediaDelegate(),e.getStats=f.getStatsDelegate(),Function.prototype.bind?(e.attachMediaStream=f.attachMediaStream.bind(f),e.reattachMediaStream=f.reattachMediaStream.bind(f),e.isPhenixEnabled=f.isEnabled.bind(f)):(e.attachMediaStream=function(){f.attachMediaStream.apply(f,arguments)},e.reattachMediaStream=function(){f.reattachMediaStream.apply(f,arguments)},e.isPhenixEnabled=function(){return f.isEnabled()}),e.webrtcSupported=!0,e.phenixSupported=!0,e.phenixVersion=f.getVersion(),e.onLoaded&&e.onLoaded.call()};f.isEnabled()?g():f.onReady(function(a){a&&(g(),e.onload&&"function"==typeof e.onload&&e.onload())}),f.onLoaded(function(){g()})}else e.phenixSupported=!1;return e.addEventListener=function(a,b,c,d){a.phenixSetEventListener?a.phenixSetEventListener(b,c):a.addEventListener?a.addEventListener(b,c,d===!0):a.attachEvent("on"+b,c)},e.removeEventListener=function(a,b,c,d){a.removeEventListener?a.removeEventListener(b,c,d===!0):a.detachEvent("on"+b,c)},e}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";function a(a){this._userAgent=a}return a.prototype.detect=function(){var a="Unknown",b="?",c=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),d=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return c&&c.length>=2?a=c[1]:this._userAgent.match(/^\(?Mozilla/)&&(a="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(a="IE",(d=this._userAgent.match(/MSIE ([0-9]+)/))?(b=parseInt(d[1],10),(d=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(b=parseInt(d[1],10))):(d=this._userAgent.match(/rv:([0-9]+)/))&&(b=parseInt(d[1],10)))),"Chrome"===a&&this._userAgent.match(/OPR\//)?(a="Opera",d=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===a&&this._userAgent.match(/Edge\//)?(a="Edge",d=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==a&&"IE"!==a||!this._userAgent.match(/Opera/)||(a="Opera",d=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==a&&d&&d.length>=3&&(b=parseInt(d[2],10)),{browser:a,version:b}},a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";var b=function(){console.log.apply(console,arguments)}||function(){},c=null,d=null,e=null,f=null,g=null,h=null,i=null,j=null,k=null,l=!1,m=function(a){navigator.mediaDevices.enumerateDevices().then(function(b){var c=[];b.forEach(function(a){"audioinput"===a.kind?c.push({kind:"audio",id:a.deviceId,label:a.label}):"videoinput"===a.kind&&c.push({kind:"video",id:a.deviceId,label:a.label})}),a(c)})};navigator.mozGetUserMedia?(b("Firefox detected",navigator.userAgent),c=mozRTCPeerConnection,d=mozRTCSessionDescription,e=mozRTCIceCandidate,g=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?function(a,b,c){navigator.mediaDevices.getUserMedia(a).then(b)["catch"](c)}:navigator.mozGetUserMedia.bind(navigator),h=function(a,b,c){var d=a.getStats(b).then(c);if("rejected"===d.state)throw new Error(d.message)},k=function(b,c,d){var e=null,f=b.split(":");if(0===f[0].indexOf("stun"))e={url:b};else if(0===f[0].indexOf("turn")){var g=new a(navigator.userAgent).detect();if(g.version<27){var h=b.split("?");0===h[1].indexOf("transport=udp")&&(e={url:h[0],credential:d,username:c})}else e={url:b,credential:d,username:c}}return e},i=function(a,c){b("Attaching media stream");var d=a.muted;return a.mozSrcObject=c,a.play(),d===!0&&(a.muted=!0),a},j=function(a,c){b("Reattaching media stream");var d=a.muted;return a.mozSrcObject=c.mozSrcObject,a.play(),d===!0&&(a.muted=!0),a},MediaStream.prototype.getVideoTracks||(MediaStream.prototype.getVideoTracks=function(){return[]}),MediaStream.prototype.getAudioTracks||(MediaStream.prototype.getAudioTracks=function(){return[]}),f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources?MediaStreamTrack.getSources.bind(MediaStreamTrack):function(a){setTimeout(function(){a([{kind:"audio",id:"default",label:"",facing:""},{kind:"video",id:"default",label:"",facing:""}])},0)},l=!0):navigator.webkitGetUserMedia?(b("Webkit detected",navigator.userAgent),k=function(a,b,c){var d=null,e=a.split(":");return 0===e[0].indexOf("stun")?d={url:a}:0===e[0].indexOf("turn")&&(d={url:a,credential:c,username:b}),d},c=window.webkitRTCPeerConnection,d=window.RTCSessionDescription,e=window.RTCIceCandidate,g=function(a,c,d){var e=function(a){setTimeout(function(){for(var e=a.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){b(a.timeStamp,"Track",g.id,g.label,"ended")},b("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState){try{var h=new Error("User media not available");h.code="unavailable",d(h)}finally{for(var i=0;i<e.length;i++)e[i].stop()}return}}c(a)},100)};navigator.webkitGetUserMedia(a,e,d)},h=function(a,b,c,d){a.getStats(c,b,d)},i=function(a,c){return"undefined"!=typeof a.srcObject?a.srcObject=c:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=c:"undefined"!=typeof a.src?a.src=URL.createObjectURL(c):b("Error attaching stream to element."),a.play(),a},j=function(a,b){return a.src=b.src,a},f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources.bind(MediaStreamTrack),l=!0):b("Browser does not appear to be WebRTC-capable",navigator.userAgent);var n={RTCPeerConnection:c,RTCSessionDescription:d,RTCIceCandidate:e,getSources:f,getUserMedia:g,getStats:h,attachMediaStream:i,reattachMediaStream:j,webrtcSupported:l};return n.exportGlobal=function(){window.RTCPeerConnection=n.RTCPeerConnection,window.RTCSessionDescription=n.RTCSessionDescription,window.RTCIceCandidate=n.RTCIceCandidate},n}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5),c(6)],e=function(a,b){"use strict";function c(){var b=this;this._root=e(),this._version="?";var c=function(a){b._loaded=!0,b._enabled=a===!0,b._version=b._phenixRTC.phenixVersion||"?.?.?.?",h(a?"Phenix RTC "+b._version:"No Phenix RTC"),b._onReady&&b._onReady(b._enabled)};try{this._phenixRTC=f(this._root),this._phenixRTC.onunload=function(){b._loaded=!1};var d=new a;d.waitForReady(this._phenixRTC,c)}catch(g){i("Error while loading Phenix RTC"+g),loaded(!1)}}function d(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function e(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function f(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function g(a,c){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=c,a;var d=new b(a,c);return d.getElement().phenixPresenter=d,d.getElement()}var h=function(){console.log.apply(console,arguments)}||function(){},i=function(){console.error.apply(console,arguments)}||h;return c.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},c.prototype.onLoaded=function(a){this._onLoaded=a},c.prototype.isLoaded=function(){return this._loaded===!0},c.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/))try{new ActiveXObject("PhenixP2P.RTC");return!0}catch(c){return!1}return!1},c.prototype.isEnabled=function(){return d.call(this),this._phenixRTC&&void 0!=this._phenixRTC.phenixVersion},c.prototype.getVersion=function(){return d.call(this),this._version},c.prototype.getRTCPeerConnectionConstructor=function(){return d.call(this),this._phenixRTC.RTCPeerConnection},c.prototype.getRTCSessionDescriptionConstructor=function(){return d.call(this),this._phenixRTC.RTCSessionDescription},c.prototype.getRTCIceCandidateConstructor=function(){return d.call(this),this._phenixRTC.RTCIceCandidate},c.prototype.getSourcesDelegate=function(){var a=this;return function(b){return d.call(a),a._phenixRTC.getSources(b)}},c.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,e){return d.call(a),a._phenixRTC.getUserMedia(b,c,e)}},c.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},c.prototype.attachMediaStream=function(a,b){return d.call(this),g.call(this,a,b)},c.prototype.reattachMediaStream=function(a,b){return d.call(this),this.attachMediaStream(a,b.src)},c}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5)],e=function(a){"use strict";function b(b,d){var e=this;this._ghost=b,this._stream=d,this._events={};var f=function(a){e._loaded=!0,e._enabled=a===!0,a?h.call(e):m("Failed to create Phenix video element"),e._onReady&&e._onReady(e._enabled)};try{this._video=c(),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){e._loaded=!1},j.call(this),document.body&&document.body.contains||l("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost);var g=new a;g.waitForReady(this._video,f)}catch(i){m("Error while loading Phenix RTC"+i),f(!1)}}function c(){var a=document.createElement("object");return a.type="application/x-phenix-video",a}function d(a,b,c){var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&f.call(this,a)),d.push(b)}function e(a,b,c){var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function f(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function g(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function h(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)f.call(this,a[b]);this.hookUpEvents(),i.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function i(){var a=this,b=["style"];if(window.MutationObserver){var c=new MutationObserver(function(c){c.forEach(function(c){"attributes"===c.type&&c.target===a._ghost&&b.indexOf(c.attributeName)===-1&&(a._video[c.attributeName]=a._ghost[c.attributeName])})}),d={attributes:!0};c.observe(a._ghost,d)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),a._ghost.addEventListener?a._ghost.addEventListener("DOMAttrModified",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]},!1):a._ghost.attachEvent("onpropertychange",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]})}function j(){var a=this;if(window.MutationObserver){var b=new MutationObserver(function(b){b.forEach(function(b){if("childList"===b.type)for(var c=0;c<b.addedNodes.length;c++){var d=b.addedNodes[c];b.target!==a._video&&(d===a._ghost?(b.target.replaceChild(a._video,a._ghost),h.call(a)):k(b.target,a._ghost)&&(a._ghost.parentNode.replaceChild(a._video,a._ghost),h.call(a)))}})}),c={childList:!0,attributes:!1,characterData:!1,subtree:!0};b.observe(document.body,c)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),d(a._ghost,"DOMNodeInserted",function(b){a._ghost.parentNode.replaceChild(a._video,a._ghost)},!1)}function k(a,b){for(var c=b.parentNode;null!=c;){if(c==a)return!0;c=c.parentNode}return!1}var l=function(){console.log.apply(console,arguments)}||function(){},m=function(){console.error.apply(console,arguments)}||l;return b.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){g(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,g(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,g(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,g(b,"ended")}),this.addEventListener("loadedmetadata",function(){l("Video loaded metadata",a._video.videoWidth,a._video.videoHeight),b.width=a._video.width,b.height=a._video.height,g(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,g(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,g(b,"resize")})},b.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},b.prototype.getElement=function(){return this._video},b.prototype.addEventListener=function(a,b,c){d.call(this,a,b,c)},b.prototype.removeEventListener=function(a,b,c){e.call(this,a,b,c)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(a){window.RTCPeerConnection=a.RTCPeerConnection,window.RTCSessionDescription=a.RTCSessionDescription,window.RTCIceCandidate=a.RTCIceCandidate};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -157,9 +169,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -184,23 +196,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    var defaultCategory= 'websdk';
-	    var start = window['__phenixPageLoadTime'] || _.now();
+	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-06T20:27:07Z' || '?';
-	    var releaseVersion = '2017.2.14';
+	    var sdkVersion = '2017-08-07T16:16:54Z' || '?';
+	    var releaseVersion = '2017.2.15';
 
-	    function Logger(observableSessionId) {
+	    function Logger() {
 	        this._appenders = [];
 	        this._userId = null;
 	        this._sessionId = null;
 	        this._environment = defaultEnvironment;
 	        this._applicationVersion = sdkVersion;
-
-	        if (observableSessionId) {
-	            assert.isObject(observableSessionId);
-
-	            observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
-	        }
 	    }
 
 	    Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
@@ -260,6 +266,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
 	        this._applicationVersion = version;
+	    };
+
+	    Logger.prototype.getObservableSessionId = function getObservableSessionId() {
+	        return this._observableSessionId;
+	    };
+
+	    Logger.prototype.setObservableSessionId = function setObservableSessionId(observableSessionId) {
+	        this._observableSessionId = observableSessionId;
+
+	        if (this._sessionIdSubscription) {
+	            this._sessionIdSubscription.dispose();
+	        }
+
+	        if (observableSessionId) {
+	            assert.isObject(observableSessionId, 'observableSessionId');
+
+	            this._sessionIdSubscription = this._observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
+	        }
 	    };
 
 	    function onSessionIdChange(sessionId) {
@@ -360,9 +384,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Logger;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -857,9 +881,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return _;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -946,9 +970,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Assert();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -983,9 +1007,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return logging;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1047,9 +1071,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new AnalytixAppenderFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1086,9 +1110,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return environment;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1164,7 +1188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 
-	        assert.isArray(messages);
+	        assert.isArray(messages, 'messages');
 
 	        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
 
@@ -1275,8 +1299,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                return {
-	                    storedRecords: 0,
-	                    status: 'error'
+	                    status: 'error',
+	                    storedRecords: 0
 	                };
 	            }
 
@@ -1289,9 +1313,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AnalytixAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -1314,7 +1338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-08-06T20:27:07Z';
+	        this._version = '2017-08-07T16:16:54Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -1469,9 +1493,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new Http();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
 	 Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
@@ -4769,9 +4793,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function(module) {
 		if(!module.webpackPolyfill) {
@@ -4785,9 +4809,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module) {/*
 	 Copyright 2013 Daniel Wirtz <dcode@dcode.io>
@@ -6001,16 +6025,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -6135,9 +6159,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return MQProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, module) {/*
 	 Copyright 2013 Daniel Wirtz <dcode@dcode.io>
@@ -11317,9 +11341,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(12)(module)))
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	// shim for using process in browser
 	var process = module.exports = {};
@@ -11491,6 +11515,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	process.removeListener = noop;
 	process.removeAllListeners = noop;
 	process.emit = noop;
+	process.prependListener = noop;
+	process.prependOnceListener = noop;
+
+	process.listeners = function (name) { return [] }
 
 	process.binding = function (name) {
 	    throw new Error('process.binding is not supported');
@@ -11503,21 +11531,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	process.umask = function() { return 0; };
 
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* (ignored) */
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* (ignored) */
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -11651,9 +11679,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return mqProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -13354,9 +13382,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return pcastProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14237,9 +14265,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return chatProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 23 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14361,6 +14389,176 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "id": 2
 	                    }
 	                ]
+	            },
+	            {
+	                "name": "MetricValue",
+	                "fields": [
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "string",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "float",
+	                        "name": "float",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "uint64",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "int64",
+	                        "name": "int64",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "bool",
+	                        "name": "boolean",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "timestamp",
+	                        "id": 6
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "MetricData",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "timestamp",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "sessionId",
+	                        "id": 2
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "streamId",
+	                        "id": 3
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "source",
+	                        "id": 4
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "resource",
+	                        "id": 5
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "kind",
+	                        "id": 6
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "Metric",
+	                        "name": "metric",
+	                        "id": 7
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "MetricValue",
+	                        "name": "value",
+	                        "id": 8
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "MetricValue",
+	                        "name": "previousValue",
+	                        "id": 9
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "uint64",
+	                        "name": "elapsed",
+	                        "id": 10
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "fullQualifiedName",
+	                        "id": 11
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "environment",
+	                        "id": 12
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "version",
+	                        "id": 13
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "tool",
+	                        "id": 14
+	                    },
+	                    {
+	                        "rule": "optional",
+	                        "type": "string",
+	                        "name": "toolVersion",
+	                        "id": 15
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "float",
+	                        "name": "runtime",
+	                        "id": 16
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SubmitMetricRecords",
+	                "fields": [
+	                    {
+	                        "rule": "repeated",
+	                        "type": "MetricData",
+	                        "name": "records",
+	                        "id": 1
+	                    }
+	                ]
+	            },
+	            {
+	                "name": "SubmitMetricRecordsResponse",
+	                "fields": [
+	                    {
+	                        "rule": "required",
+	                        "type": "string",
+	                        "name": "status",
+	                        "id": 1
+	                    },
+	                    {
+	                        "rule": "required",
+	                        "type": "uint64",
+	                        "name": "storedRecords",
+	                        "id": 2
+	                    }
+	                ]
 	            }
 	        ],
 	        "enums": [
@@ -14392,6 +14590,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "id": 5
 	                    }
 	                ]
+	            },
+	            {
+	                "name": "Metric",
+	                "values": [
+	                    {
+	                        "name": "EndPointRoundTripTime",
+	                        "id": 0
+	                    },
+	                    {
+	                        "name": "Initialized",
+	                        "id": 1
+	                    },
+	                    {
+	                        "name": "Provisioned",
+	                        "id": 2
+	                    },
+	                    {
+	                        "name": "SetupCompleted",
+	                        "id": 3
+	                    },
+	                    {
+	                        "name": "Offset",
+	                        "id": 4
+	                    },
+	                    {
+	                        "name": "TimeToFirstFrame",
+	                        "id": 5
+	                    },
+	                    {
+	                        "name": "Playing",
+	                        "id": 6
+	                    },
+	                    {
+	                        "name": "Stalled",
+	                        "id": 7
+	                    },
+	                    {
+	                        "name": "Buffering",
+	                        "id": 8
+	                    },
+	                    {
+	                        "name": "Stopped",
+	                        "id": 9
+	                    },
+	                    {
+	                        "name": "BitRateAdaptation",
+	                        "id": 10
+	                    },
+	                    {
+	                        "name": "ResolutionChanged",
+	                        "id": 11
+	                    },
+	                    {
+	                        "name": "FrameRateChanged",
+	                        "id": 12
+	                    },
+	                    {
+	                        "name": "FramesDropped",
+	                        "id": 13
+	                    },
+	                    {
+	                        "name": "PacketsLost",
+	                        "id": 14
+	                    },
+	                    {
+	                        "name": "PictureLost",
+	                        "id": 15
+	                    },
+	                    {
+	                        "name": "PlayoutDelayChanged",
+	                        "id": 16
+	                    },
+	                    {
+	                        "name": "CodecChanged",
+	                        "id": 17
+	                    },
+	                    {
+	                        "name": "MetricDropped",
+	                        "id": 18
+	                    }
+	                ]
 	            }
 	        ]
 	    };
@@ -14399,9 +14678,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return analytixProto;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14493,9 +14772,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return NetworkConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 25 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14558,9 +14837,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ConsoleAppender;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 26 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -14588,8 +14867,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(33),
 	    __webpack_require__(34),
 	    __webpack_require__(35),
+	    __webpack_require__(37),
 	    __webpack_require__(1)
-	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, StreamAnalytix, phenixRTC) {
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
 	    'use strict';
 
 	    var NetworkStates = _.freeze({
@@ -14598,7 +14878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var sdkVersion = '2017-08-06T20:27:07Z';
+	    var sdkVersion = '2017-08-07T16:16:54Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14613,11 +14893,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function PCast(options) {
 	        options = options || {};
 	        this._observableStatus = new Observable('offline');
-	        this._observableSessionId = new Observable(null);
 	        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
 	        this._deviceId = options.deviceId || '';
 	        this._version = sdkVersion;
-	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, this._observableSessionId, options.disableConsoleLogging);
+	        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
+	        this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
 	        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
 	        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
 	        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
@@ -14773,11 +15053,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (this._protocol) {
 	                this._protocol.disconnect();
 
-	                if (this._sessionIdSubscription) {
-	                    this._sessionIdSubscription.dispose();
-	                }
-
 	                this._protocol = null;
+	            }
+
+	            if (this._logger.setObservableSessionId) {
+	                this._logger.setObservableSessionId(null);
 	            }
 	        }
 	    };
@@ -14838,7 +15118,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            setupStreamOptions.tags = tags;
 	        }
 
-	        var streamAnalytix = new StreamAnalytix(this._logger);
+	        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+
+	        streamAnalytix.setProperty('resource', streamType);
 
 	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
 	            if (error) {
@@ -14860,13 +15142,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                streamAnalytix.setStreamId(streamId);
 	                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-	                streamAnalytix.recordMetric('Stream provisioned');
+	                streamAnalytix.recordMetric('Provisioned');
 
 	                if (setupStreamOptions.negotiate === true) {
 	                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
 	                    var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
 	                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamAnalytix, function (phenixPublisher, error) {
+	                        streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+
 	                        if (error) {
 	                            callback.call(that, that, 'failed', null);
 	                        } else {
@@ -14876,7 +15160,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                return createPublisher.call(that, streamId, function (phenixPublisher, error) {
-	                    streamAnalytix.recordMetric('Stream setup');
+	                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
 	                    if (error) {
 	                        callback.call(that, that, 'failed', null);
@@ -14910,7 +15194,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 	        var streamType = 'download';
 	        var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
-	        var streamAnalytix = new StreamAnalytix(this._logger);
+	        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+
+	        streamAnalytix.setProperty('resource', streamType);
 
 	        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
 	            if (error) {
@@ -14942,12 +15228,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                streamAnalytix.setStreamId(streamId);
 	                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-	                streamAnalytix.recordMetric('Stream provisioned');
+	                streamAnalytix.recordMetric('Provisioned');
 
 	                options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
 	                return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
-	                    streamAnalytix.recordMetric('Stream setup');
+	                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
 	                    if (error) {
 	                        callback.call(that, that, 'failed', null);
@@ -14968,7 +15254,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    PCast.prototype.toString = function () {
-	        return 'PCast[' + this._sessionId + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+	        return 'PCast[' + this.getProtocol().getSessionId() + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
 	    };
 
 	    function checkForScreenSharingCapability(callback) {
@@ -15317,12 +15603,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._protocol.on('streamEnded', _.bind(streamEnded, this));
 	        this._protocol.on('dataQuality', _.bind(dataQuality, this));
 
-	        var that = this;
-
-	        this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(
-	            function (sessionId) {
-	                that._observableSessionId.setValue(sessionId);
-	            });
+	        if (this._logger.setObservableSessionId) {
+	            this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
+	        }
 	    }
 
 	    function connected() {
@@ -15345,8 +15628,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        that.stop('unauthorized');
 	                    } else {
 	                        transitionToStatus.call(that, 'online');
-
-	                        that._observableSessionId.setValue(response.sessionId);
 
 	                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
 	                    }
@@ -17422,9 +17703,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCast;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17526,9 +17807,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastEndPoint;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 28 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17643,9 +17924,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ClosestEndPointResolver;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 29 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17833,9 +18114,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Observable;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17866,12 +18147,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    }
 
-	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, observableSessionId, disableConsole) {
+	    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole) {
 	        if (baseUri) {
 	            assert.stringNotEmpty(baseUri, 'baseUri');
 	        }
 
-	        var logger = new Logger(observableSessionId);
+	        var logger = new Logger();
 	        var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
 
 	        analytixAppender.setThreshold(logging.level.INFO);
@@ -17890,9 +18171,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return new PCastLoggerFactory();
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 31 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -17942,7 +18223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._version = version;
 	        this._logger = logger;
 	        this._mqProtocol = new MQProtocol(this._logger);
-	        this._observableSessionId = new Observable(null);
+	        this._observableSessionId = new Observable(null).extend({rateLimit: 0});
 
 	        this._logger.info('Connecting to [%s]', uri);
 
@@ -18468,9 +18749,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastProtocol;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 32 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -18768,9 +19049,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ReconnectingWebSocket;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19222,9 +19503,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PeerConnectionMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 34 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19354,9 +19635,257 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return DimensionsChangedMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
+/***/ }),
 /* 35 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(8),
+	    __webpack_require__(5),
+	    __webpack_require__(36)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, environment, assert, MetricsTransmitter) {
+	    var config = {
+	        urls: {
+	            local: '',
+	            staging: 'https://analytix-stg.phenixp2p.com',
+	            production: 'https://analytix.phenixp2p.com'
+	        }
+	    };
+
+	    function MetricsTransmitterFactory() {
+	        this._metricsTransmitters = {};
+	    }
+
+	    MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
+	        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
+
+	        var analytixServerUrl = config.urls[env];
+
+	        if (!this._metricsTransmitters[env]) {
+	            this._metricsTransmitters[env] = createNewTransmitter.call(this, analytixServerUrl);
+	        }
+
+	        return this._metricsTransmitters[env];
+	    };
+
+	    function createNewTransmitter(uri) {
+	        var transmitter = new MetricsTransmitter();
+
+	        if (uri) {
+	            transmitter.setUri(uri);
+	        } else {
+	            transmitter.setEnabled(false);
+	        }
+
+	        return transmitter;
+	    }
+
+	    return new MetricsTransmitterFactory();
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+	    __webpack_require__(4),
+	    __webpack_require__(5),
+	    __webpack_require__(10),
+	    __webpack_require__(11),
+	    __webpack_require__(15),
+	    __webpack_require__(24),
+	    __webpack_require__(1)
+	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc) {
+	    var networkDisconnectHysteresisInterval = 0;
+
+	    function MetricsTransmitter() {
+	        this._loggingUrl = '/analytix/metrics';
+	        this._domain = location.hostname;
+	        this._protocol = new MQProtocol();
+	        this._maxAttempts = 3;
+	        this._maxBufferedRecords = 1000;
+	        this._maxBatchSize = 512;
+	        this._records = [];
+	        this._pending = false;
+	        this._baseUri = '';
+	        this._isEnabled = true;
+	        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
+	        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+	    }
+
+	    MetricsTransmitter.prototype.setUri = function setUri(uri) {
+	        assert.stringNotEmpty(uri, 'uri');
+
+	        this._baseUri = uri;
+	    };
+
+	    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
+	        return this._isEnabled;
+	    };
+
+	    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
+	        assert.isBoolean(enabled);
+
+	        this._isEnabled = enabled;
+	    };
+
+	    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+	        assert.stringNotEmpty(metric, 'metric');
+	        assert.isObject(value, 'value');
+
+	        addMetricToRecords.call(this, metric, since, sessionId, streamId, environment, version, value);
+
+	        deleteRecordsIfAtCapacity.call(this, since, sessionId, streamId, environment, version);
+
+	        sendBatchMessagesIfNonePending.call(this);
+	    };
+
+	    function createAndStartNetworkConnectionMonitor() {
+	        var that = this;
+	        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
+
+	        function onReconnect() {
+	            that._isOffline = false;
+
+	            sendBatchMessagesIfNonePending.call(that);
+	        }
+
+	        function onDisconnect() {
+	            that._isOffline = true;
+	        }
+
+	        networkConnectionMonitor.start(onReconnect, onDisconnect);
+
+	        return networkConnectionMonitor;
+	    }
+
+	    function addMetricToRecords(metric, since, sessionId, streamId, environment, version, value) {
+	        var record = _.assign(value, {
+	            metric: metric,
+	            timestamp: _.isoString(),
+	            sessionId: sessionId,
+	            streamId: streamId,
+	            source: this._browser,
+	            fullQualifiedName: this._domain,
+	            environment: environment,
+	            version: version,
+	            runtime: since
+	        });
+
+	        this._records.push(record);
+	    }
+
+	    function deleteRecordsIfAtCapacity(since, sessionId, streamId, environment, version) {
+	        if (this._records.length > this._maxBufferedRecords) {
+	            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
+
+	            this._records = this._records.slice(deleteRecords);
+	            this._records.unshift({
+	                timestamp: _.isoString(),
+	                sessionId: sessionId,
+	                streamId: streamId,
+	                source: this._browser,
+	                metric: 'MetricDropped',
+	                value: {uint64: deleteRecords},
+	                fullQualifiedName: this._domain,
+	                environment: environment,
+	                version: version,
+	                runtime: since
+	            });
+	        }
+	    }
+
+	    function sendBatchMessagesIfNonePending() {
+	        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
+	            return;
+	        }
+
+	        var submitMetricRecords = {records: _.take(this._records, this._maxBatchSize)};
+
+	        this._records = this._records.slice(this._maxBatchSize);
+	        this._pending = true;
+
+	        var that = this;
+
+	        try {
+	            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, submitMetricRecords, function onTimeout() {
+	                setTimeout(function waitForDisconnectTimeout() {
+	                    if (!that._isOffline) {
+	                        return;
+	                    }
+
+	                    that._records = that._records.concat(submitMetricRecords.records);
+	                }, networkDisconnectHysteresisInterval);
+	            });
+	        } catch (e) {
+	            this._pending = false;
+
+	            throw e;
+	        }
+	    }
+
+	    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
+	        var that = this;
+
+	        var data = this._protocol.encode('analytix.SubmitMetricRecords', dataToEncode).toBinary();
+
+	        function handlePost(error, result) {
+	            that._pending = false;
+
+	            if (error) {
+	                if (error.message === 'timeout') {
+	                    onTimeout();
+	                }
+
+	                return {
+	                    status: 'error',
+	                    storedRecords: 0
+	                };
+	            }
+
+	            return that._protocol.decode('analytix.SubmitMetricRecordsResponse', ByteBuffer.fromBinary(result));
+	        }
+
+	        http.postWithRetry(url, 'protobuf', data, handlePost, this._maxAttempts);
+	    }
+
+	    return MetricsTransmitter;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19380,36 +19909,80 @@ return /******/ (function(modules) { // webpackBootstrap
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, phenixRTC) {
 	    'use strict';
 
-	    function StreamAnalytix(logger) {
+	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+	    var defaultEnvironment = 'production' || '?';
+	    var sdkVersion = '2017-08-07T16:16:54Z' || '?';
+
+	    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
+	        assert.stringNotEmpty(sessionId, 'sessionId');
+
+	        this._environment = defaultEnvironment;
+	        this._version = sdkVersion;
+	        this._sessionId = sessionId;
+	        this._properties = {};
 	        this._logger = logger;
+	        this._metricsTransmitter = metricsTransmitter;
 	        this._start = _.now();
 	        this._disposables = [];
 
-	        recordMetric.call(this, 'Stream initializing');
+	        logMetric.call(this, 'Stream initializing');
 	    }
 
+	    StreamAnalytix.prototype.setProperty = function(name, value) {
+	        assert.stringNotEmpty(name, 'name');
+	        assert.stringNotEmpty(value, 'value');
+
+	        this._properties[name] = value;
+	    };
+
+	    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue) {
+	        assert.stringNotEmpty(metric, 'metric');
+
+	        recordMetricRecord.call(this, {
+	            metric: metric,
+	            elapsed: this.elapsed(),
+	            value: value,
+	            previousValue: previousValue
+	        }, since());
+	    };
+
 	    StreamAnalytix.prototype.setStreamId = function(streamId) {
+	        assert.stringNotEmpty(streamId, 'streamId');
+
 	        if (this._streamId) {
-	            throw new Error('Unable to override streamId. Please instantiate a new StreamAnalytix.');
+	            throw new Error('Stream ID can only be set once.');
 	        }
 
 	        this._streamId = streamId;
+
+	        var now = _.now();
+
+	        recordMetricRecord.call(this, {
+	            metric: 'Initialized',
+	            elapsed: this.elapsed() - now + this._start // Adjust for delay to get the stream ID
+	        }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
 	    };
 
 	    StreamAnalytix.prototype.setStartOffset = function(startOffset) {
+	        assert.isNumber(startOffset, 'startOffset');
+
+	        if (this._startOffset) {
+	            throw new Error('Start offset can only be set once.');
+	        }
+
 	        this._startOffset = startOffset;
+
+	        this.recordMetric('Offset', {uint64: startOffset});
 	    };
 
 	    StreamAnalytix.prototype.getStartOffset = function () {
 	        return this._startOffset;
 	    };
 
-	    StreamAnalytix.prototype.getTimeOfFirstFrame = function () {
-	        return this._timeOfFirstFrame;
-	    };
+	    StreamAnalytix.prototype.elapsed = function () {
+	        var now = _.now();
 
-	    StreamAnalytix.prototype.getTimeToFirstFrame = function () {
-	        return this._timeToFirstFrame;
+	        return now - this._start;
 	    };
 
 	    StreamAnalytix.prototype.stop = function() {
@@ -19417,25 +19990,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dispose();
 	        });
 
-	        recordMetric.call(this, 'Stream has stopped');
-	    };
+	        this.recordMetric('Stopped');
 
-	    StreamAnalytix.prototype.recordMetric = function(metric) {
-	        recordMetric.call(this, metric);
+	        logMetric.call(this, 'Stream stopped');
 	    };
 
 	    StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
 	        var that = this;
+	        var timeOfFirstFrame;
 
 	        var listenForFirstFrame = function() {
-	            if (that._timeToFirstFrame) {
+	            if (timeOfFirstFrame) {
 	                return;
 	            }
 
-	            that._timeOfFirstFrame = _.now();
-	            that._timeToFirstFrame = that._timeOfFirstFrame - that._start;
+	            that.recordMetric('TimeToFirstFrame');
 
-	            recordMetric.call(that, 'First frame');
+	            timeOfFirstFrame = _.now();
+
+	            logMetric.call(that, 'First frame');
 
 	            phenixRTC.removeEventListener(video, 'loadeddata', listenForFirstFrame);
 	        };
@@ -19443,7 +20016,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        phenixRTC.addEventListener(video, 'loadeddata', listenForFirstFrame);
 	    };
 
-	    // ToDo(dy) Add logging for bit rate changes using PC.getStats
+	    // TODO(dy) Add logging for bit rate changes using PC.getStats
 
 	    StreamAnalytix.prototype.recordVideoResolutionChanges = function(video) {
 	        var that = this;
@@ -19457,13 +20030,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 
+	            that.recordMetric('ResolutionChanged', {string: video.videoWidth + 'x' + video.videoHeight}, {string: lastResolution.width + 'x' + lastResolution.height});
+
 	            lastResolution = {
 	                width: video.videoWidth,
 	                height: video.videoHeight
 	            };
 
-	            recordMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
+	            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
 	        };
+
+	        // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
 
 	        // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
 	        phenixRTC.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
@@ -19483,23 +20060,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 
+	            that.recordMetric('Stalled');
+
 	            videoStalled = _.now();
 
-	            recordMetric.call(that, '[buffering] Stream has stalled');
+	            logMetric.call(that, '[buffering] Stream has stalled');
 	        };
 
 	        var listenForContinuation = function(event) {
-	            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(0) === lastProgress)) {
+	            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(video.buffered.length) === lastProgress)) {
 	                return;
 	            }
 
 	            if (event.type === 'progress') {
-	                lastProgress = video.buffered.end(0);
+	                lastProgress = video.buffered.end(video.buffered.length);
 	            }
 
 	            var timeSinceStop = _.now() - videoStalled;
 
-	            recordMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
+	            that.recordMetric('Buffering', {uint64: timeSinceStop});
+	            that.recordMetric('Playing');
+
+	            logMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
 
 	            videoStalled = null;
 	        };
@@ -19521,7 +20103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 
-	    function recordMetric() {
+	    function logMetric() {
 	        var args = Array.prototype.slice.call(arguments);
 
 	        if (args.length === 0) {
@@ -19533,15 +20115,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var loggingArguments = args.slice(1);
 	        var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
 
-	        this._logger.info.apply(this._logger, analytixArguments);
+	        this._logger.debug.apply(this._logger, analytixArguments);
+	    }
+
+	    function since() {
+	        var now = _.now();
+
+	        return (now - start) / 1000;
+	    }
+
+	    function recordMetricRecord(record, since) {
+	        assert.stringNotEmpty(record.metric, 'record.metric');
+
+	        record = _.assign(this._properties, record);
+
+	        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, record);
 	    }
 
 	    return StreamAnalytix;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -19562,14 +20158,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(38),
-	    __webpack_require__(46),
-	    __webpack_require__(39),
-	    __webpack_require__(37),
 	    __webpack_require__(40),
+	    __webpack_require__(48),
+	    __webpack_require__(41),
+	    __webpack_require__(39),
+	    __webpack_require__(42),
+	    __webpack_require__(49),
 	    __webpack_require__(47),
-	    __webpack_require__(45),
-	    __webpack_require__(44)
+	    __webpack_require__(46)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
 	    'use strict';
 
@@ -20208,9 +20804,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20231,8 +20827,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(38),
-	    __webpack_require__(39)
+	    __webpack_require__(40),
+	    __webpack_require__(41)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Room) {
 	    'use strict';
 
@@ -20329,9 +20925,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ImmutableRoom;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20436,9 +21032,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ObservableArray;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20459,9 +21055,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(38),
 	    __webpack_require__(40),
-	    __webpack_require__(45)
+	    __webpack_require__(42),
+	    __webpack_require__(47)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Member, room) {
 	    'use strict';
 	    var roomTypes = room.types;
@@ -20672,9 +21268,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Room;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20695,9 +21291,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(38),
-	    __webpack_require__(41),
-	    __webpack_require__(44)
+	    __webpack_require__(40),
+	    __webpack_require__(43),
+	    __webpack_require__(46)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, Stream, member) {
 	    'use strict';
 	    var memberRoles = member.roles;
@@ -20878,9 +21474,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Member;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -20901,9 +21497,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(38),
-	    __webpack_require__(42),
-	    __webpack_require__(43)
+	    __webpack_require__(40),
+	    __webpack_require__(44),
+	    __webpack_require__(45)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, stream, track) {
 	    'use strict';
 
@@ -20985,9 +21581,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return Stream;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21028,9 +21624,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return streamEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21071,9 +21667,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return trackEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 46 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21140,9 +21736,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return memberEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21213,9 +21809,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return roomEnums;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21298,9 +21894,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AuthenticationService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 47 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21320,8 +21916,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(38),
-	    __webpack_require__(48)
+	    __webpack_require__(40),
+	    __webpack_require__(50)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, ObservableArray, ChatService) {
 	    'use strict';
 
@@ -21467,9 +22063,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21490,7 +22086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(4),
 	    __webpack_require__(5),
 	    __webpack_require__(29),
-	    __webpack_require__(46)
+	    __webpack_require__(48)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, AuthenticationService) {
 	    'use strict';
 
@@ -21809,9 +22405,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ChatService;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21833,9 +22429,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(30),
 	    __webpack_require__(27),
-	    __webpack_require__(50),
-	    __webpack_require__(51),
-	    __webpack_require__(53)
+	    __webpack_require__(52),
+	    __webpack_require__(53),
+	    __webpack_require__(55)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
 	    'use strict';
 
@@ -21926,9 +22522,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioSpeakerDetector;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21972,9 +22568,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioContext;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -21994,7 +22590,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(52)
+	    __webpack_require__(54)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
 	    'use strict';
 
@@ -22033,9 +22629,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioVolumeMeterFactory;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22173,9 +22769,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioVolumeMeter;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22292,9 +22888,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AudioSpeakerDetectionAlgorithm;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22316,7 +22912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(5),
 	    __webpack_require__(30),
 	    __webpack_require__(27),
-	    __webpack_require__(55)
+	    __webpack_require__(57)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
 	    'use strict';
 
@@ -22360,9 +22956,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return BandwidthMonitor;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22457,9 +23053,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PublisherBandwidthAdjuster;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -22479,9 +23075,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(57),
+	    __webpack_require__(59),
 	    __webpack_require__(26),
-	    __webpack_require__(36),
+	    __webpack_require__(38),
 	    __webpack_require__(1)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCast, RoomService, rtc) {
 	    'use strict';
@@ -23113,9 +23709,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return PCastExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -23203,9 +23799,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return AdminAPI;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 	 * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
@@ -23225,9 +23821,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 	    __webpack_require__(4),
 	    __webpack_require__(5),
-	    __webpack_require__(56),
-	    __webpack_require__(45),
-	    __webpack_require__(44)
+	    __webpack_require__(58),
+	    __webpack_require__(47),
+	    __webpack_require__(46)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums) {
 	    'use strict';
 
@@ -23683,7 +24279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return RoomExpress;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
