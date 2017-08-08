@@ -25,7 +25,6 @@ define('app-setup', [
 ], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var enabledSteps = ['step-1'];
     var onStepsReset;
-    var pcast;
 
     var init = function init() {
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
@@ -83,53 +82,7 @@ define('app-setup', [
             $('.' + option).removeClass('option-disabled');
         };
 
-        function createPCast() { // eslint-disable-line no-unused-vars
-            if (pcast) {
-                pcast.stop();
-            }
-
-            var uri = getBaseUri();
-
-            pcast = new sdk.PCast({
-                uri: uri,
-                shaka: shaka
-            });
-            pcast.getLogger().setApplicationVersion(version);
-
-            setLoggerUserId();
-            setLoggerEnvironment();
-        }
-
-        function setLoggerUserId() {
-            if (!pcast) {
-                return;
-            }
-
-            var logger = pcast.getLogger();
-
-            logger.setUserId($('#applicationId').val());
-        }
-
-        function setLoggerEnvironment() {
-            if (!pcast) {
-                return;
-            }
-
-            var env = $('#environment').val().toLowerCase();
-            var logger = pcast.getLogger();
-
-            if(env.indexOf('local') > -1) {
-                logger.setEnvironment('local');
-            } else if (env.indexOf('stg')) {
-                logger.setEnvironment('staging');
-            } else {
-                logger.setEnvironment('production');
-            }
-        }
-
         $('#environment').change(function () {
-            setLoggerEnvironment();
-
             if (onStepsReset) {
                 onStepsReset();
             }
@@ -180,6 +133,37 @@ define('app-setup', [
         };
     };
 
+    var setLoggerUserId = function setLoggerUserId(pcast) {
+        if (!pcast) {
+            return;
+        }
+
+        var logger = pcast.getLogger();
+
+        logger.setUserId($('#applicationId').val());
+    };
+
+    var setLoggerEnvironment = function setLoggerEnvironment(pcast) {
+        if (!pcast) {
+            return;
+        }
+
+        var env = $('#environment').val().toLowerCase();
+        var logger = pcast.getLogger();
+
+        if(env.indexOf('local') > -1) {
+            logger.setEnvironment('local');
+        } else if (env.indexOf('stg')) {
+            logger.setEnvironment('staging');
+        } else {
+            logger.setEnvironment('production');
+        }
+    };
+
+    var setLoggerVersion = function setLoggerVersion(pcast) {
+        pcast.getLogger().setApplicationVersion(version);
+    };
+
     var enableSteps = function enableSteps() {
         $('.step').addClass('step-disabled');
         $('.step .server').removeClass('step-active');
@@ -220,15 +204,20 @@ define('app-setup', [
         });
     }
 
-    function getLogger (){
-        if (!pcast) {
-            createNotification('danger', {
-                icon: 'glyphicon glyphicon-remove-sign',
-                title: '<strong>Get Logger</strong>',
-                message: 'App Has Not Been Initialized'
-            });
+    var getModeFromAbbreviation = function getModeFromAbbreviation(mode) {
+        switch (mode) {
+        case 'r':
+            return 'real-time';
+        case 's':
+            return 'streaming';
+        case 'b':
+            return 'broadcast';
+        case 'l':
+            return 'low-latency';
+        default:
+            return mode;
         }
-    }
+    };
 
     return {
         init: init,
@@ -242,6 +231,9 @@ define('app-setup', [
         setOnReset: function(callback) {
             onStepsReset = callback;
         },
-        getLogger: getLogger
+        setLoggerUserId: setLoggerUserId,
+        setLoggerEnvironment: setLoggerEnvironment,
+        setLoggerVersion: setLoggerVersion,
+        getModeFromAbbreviation: getModeFromAbbreviation
     };
 });

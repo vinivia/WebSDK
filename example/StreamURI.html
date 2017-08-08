@@ -87,17 +87,30 @@
             visibility: hidden;
         }
 
-        .fullscreen {
-            cursor: pointer;
-            right: 30px;
-            top: -4px;
-            padding: 4px;
-            background: grey;
-            border-radius: 6px;
+        .video-container, .video-controls {
+            display: block;
+            clear: both;
         }
 
-        .fullscreen:hover {
+        .video-control {
+            top: 1px;
+            cursor: pointer;
+            padding: 10px;
+            background: grey;
+            border-radius: 6px;
+            position: relative;
+            display: inline-block;
+            line-height: 1;
+            font-size: 200%;
+            vertical-align: text-top;
+        }
+
+        .video-control:hover {
             color:white;
+        }
+
+        .toggle-off.glyphicon-facetime-video:before {
+            opacity: .4;
         }
     </style>
 
@@ -359,10 +372,8 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2 text-center">
                 <div id="videoList" class="row text-center">
-                    <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
-                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                    <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
-                    <span class="glyphicon glyphicon-fullscreen fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
+                    <video id="remoteVideo" class="remote" width="640" height="480" playsinline autoplay></video>
+                    <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" playsinline autoplay></video>
                 </div>
             </div>
         </div>

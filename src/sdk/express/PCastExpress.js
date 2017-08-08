@@ -206,10 +206,10 @@ define([
                 return callback(null, instantiateResponse);
             }
 
-            var remoteOptions = _.assign(options, {
+            var remoteOptions = _.assign({
                 connectOptions: [],
                 capabilities: []
-            });
+            }, options);
 
             if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
                 remoteOptions.capabilities.push('publish-uri');
@@ -468,11 +468,16 @@ define([
             subscriber.setStreamEndedCallback(subscriberEndedCallback);
 
             var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
-
-            callback(null, {
+            var subscribeResponse = {
                 status: 'ok',
                 mediaStream: expressSubscriber
-            });
+            };
+
+            if (renderer) {
+                subscribeResponse.renderer = renderer;
+            }
+
+            callback(null, subscribeResponse);
         });
     }
 

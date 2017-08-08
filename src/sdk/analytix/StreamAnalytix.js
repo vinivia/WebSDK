@@ -179,12 +179,15 @@ define([
         };
 
         var listenForContinuation = function(event) {
-            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(video.buffered.length) === lastProgress)) {
+            var bufferLength = video.buffered.length;
+            var hasNotProgressedSinceLastProgressEvent = bufferLength > 0 && event.type === 'progress' && video.buffered.end(bufferLength - 1) === lastProgress;
+
+            if (!videoStalled || !bufferLength || hasNotProgressedSinceLastProgressEvent) {
                 return;
             }
 
             if (event.type === 'progress') {
-                lastProgress = video.buffered.end(video.buffered.length);
+                lastProgress = video.buffered.end(bufferLength - 1);
             }
 
             var timeSinceStop = _.now() - videoStalled;
@@ -198,7 +201,7 @@ define([
         };
 
         phenixRTC.addEventListener(video, 'stalled', listenForStall);
-        phenixRTC.addEventListener(video, 'paused', listenForStall);
+        phenixRTC.addEventListener(video, 'pause', listenForStall);
         phenixRTC.addEventListener(video, 'suspend', listenForStall);
         phenixRTC.addEventListener(video, 'play', listenForContinuation);
         phenixRTC.addEventListener(video, 'playing', listenForContinuation);
@@ -206,7 +209,7 @@ define([
 
         this._disposables.push(function() {
             phenixRTC.removeEventListener(video, 'stalled', listenForStall);
-            phenixRTC.removeEventListener(video, 'paused', listenForStall);
+            phenixRTC.removeEventListener(video, 'pause', listenForStall);
             phenixRTC.removeEventListener(video, 'suspend', listenForStall);
             phenixRTC.removeEventListener(video, 'play', listenForContinuation);
             phenixRTC.removeEventListener(video, 'playing', listenForContinuation);
@@ -238,9 +241,9 @@ define([
     function recordMetricRecord(record, since) {
         assert.stringNotEmpty(record.metric, 'record.metric');
 
-        record = _.assign(this._properties, record);
+        var annotatedRecord = _.assign({}, this._properties, record);
 
-        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, record);
+        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, annotatedRecord);
     }
 
     return StreamAnalytix;

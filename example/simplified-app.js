@@ -98,14 +98,6 @@ requirejs([
                 publisher = response.publisher;
                 publisherPlayer = new Player('localVideo');
 
-                publisherPlayer.onToggleAudio = function(enabled) {
-                    return enabled ? publisher.disableAudio() : publisher.enableAudio();
-                };
-
-                publisherPlayer.onToggleVideo = function(enabled) {
-                    return enabled ? publisher.disableVideo() : publisher.enableVideo();
-                };
-
                 publisherPlayer.start(publisher);
 
                 app.createNotification('success', {
@@ -184,15 +176,7 @@ requirejs([
                 subscriberMediaStream = response.mediaStream;
                 subscriberPlayer = new Player('remoteVideo');
 
-                subscriberPlayer.onToggleAudio = function(enabled) {
-                    return enabled ? subscriberMediaStream.disableAudio() : subscriberMediaStream.enableAudio();
-                };
-
-                subscriberPlayer.onToggleVideo = function(enabled) {
-                    return enabled ? subscriberMediaStream.disableVideo() : subscriberMediaStream.enableVideo();
-                };
-
-                subscriberPlayer.start(subscriberMediaStream);
+                subscriberPlayer.start(subscriberMediaStream, response.renderer);
 
                 $('#stopSubscriber').removeClass('disabled');
             });

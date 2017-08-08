@@ -309,7 +309,7 @@ define([
             });
 
             it('Expect createRoom to have all valid values (no members, and no roomId) passed to protocol', function () {
-                var roomToCreate = _.assign(mockRoom, {invalidProp: 'myInvalidValue'});
+                var roomToCreate = _.assign({}, mockRoom, {invalidProp: 'myInvalidValue'});
 
                 mockProtocol.createRoom = function (room) {
                     expect(room.roomId).to.be.empty;

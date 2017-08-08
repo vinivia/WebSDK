@@ -16,46 +16,97 @@
 
 define('video-player', [
     'jquery',
-    'lodash'
-], function ($, _) {
-    var Player = function(elementId) {
+    'lodash',
+    'phenix-web-sdk'
+], function ($, _, sdk) {
+    var userAgent = window.navigator.userAgent;
+    var isIOS= /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+
+    var Player = function(elementId, options) {
         this.videoId = elementId;
         this.video = document.getElementById(elementId);
         this.videoControls = null;
         this.onEnd = null;
+        this.options = options;
+
+        if (!this.video) {
+            throw new Error('Unable to find video.');
+        }
+
+        this.shouldVideoBeHidden = this.video.className.indexOf('hidden') > -1;
+        this.onLoadedMetaData = onLoadedMetaData.bind(this, this.video);
     };
 
-    Player.prototype.onToggleAudio = null;
-
-    Player.prototype.onToggleVideo = null;
-
-    Player.prototype.start = function start(stream) {
-        this.stream = stream;
+    Player.prototype.start = function start(stream, renderer) {
+        this.stream = stream.getStream ? stream.getStream() : stream;
         this.videoControls = createVideoControls.call(this);
 
         this.video.parentNode.insertBefore(this.videoControls, this.video.nextElementSibling);
 
+        // Disable audio for autoplay
+        if ((isIOS || isMobile) && !this.stream) {
+            this.video.muted = true;
+            this.video.autoplay = true;
+            this.video.attributes.playsinline = "";
+            this.video.attributes['webkit-playsinline'] = "";
+            this.video.play();
+        }
+
         setupVideoEvents.call(this);
-        displayVideoElementAndControlsWhileStreamIsActive.call(this, this.stream.getStream(), this.video, this.onEnd);
+        displayVideoElementAndControlsWhileStreamIsActive.call(this, this.stream, this.video, this.onEnd);
+
+        if (!renderer && stream.createRenderer) {
+            renderer = stream.createRenderer();
+
+            renderer.start(this.video);
+        } else if (sdk.RTC.attachMediaStream) {
+            sdk.RTC.attachMediaStream(this.video, this.stream);
+        }
+
+        if (renderer) {
+            this.renderer = renderer;
+            this.video.__renderer = this.renderer;
+        }
     };
 
     Player.prototype.stop = function stop() {
-        this.videoControls.remove();
+        if (this.videoControls) {
+            this.videoControls.remove();
+        }
 
         this.videoControls = null;
+
+        if (!this.onEnd) {
+            onStreamEnd.call(this);
+        }
+
+        sdk.RTC.addEventListener(this.video, 'loadedmetadata', this.onLoadedMetaData);
+
         this.onEnd = null;
+
+        if (this.renderer) {
+            this.renderer.stop();
+
+            this.video.__renderer = null;
+            this.renderer = null;
+        }
     };
 
     function setupVideoEvents() {
         var newVideo = this.video;
         var that = this;
 
+        sdk.RTC.addEventListener(newVideo, 'loadedmetadata', this.onLoadedMetaData);
+
+        if (!this.stream) {
+            return newVideo;
+        }
+
         if (this.stream.setStreamEndedCallback) {
             this.onEnd = _.bind(this.stream.setStreamEndedCallback, this.stream);
 
-            newVideo.onloadedmetadata = function () {
-                onLoadedMetaData(newVideo);
-            };
+            newVideo.onloadedmetadata = this.onLoadedMetaData;
         } else if (this.stream.setPublisherEndedCallback) {
             this.onEnd = _.bind(this.stream.setPublisherEndedCallback, this.stream);
         } else if (this.stream.getTracks) {
@@ -71,9 +122,35 @@ define('video-player', [
         var element = document.createElement('div');
 
         element.className = 'video-controls';
+        element.appendChild(createPlayVideoControl.call(this));
+        element.appendChild(createPauseVideoControl.call(this));
         element.appendChild(createMuteAudioControl.call(this));
         element.appendChild(createMuteVideoControl.call(this));
         element.appendChild(createFullscreenControl.call(this));
+
+        _.forEach(createTimingControls.call(this), function(timingControl) {
+            element.appendChild(timingControl);
+        });
+
+        return element;
+    }
+
+    function createPlayVideoControl() {
+        var element = document.createElement('span');
+
+        element.className = 'glyphicon glyphicon-play play video-control';
+        element.dataset.targetVideo = this.videoId;
+        element.onclick = handlePlayButtonClick.bind(this);
+
+        return element;
+    }
+
+    function createPauseVideoControl() {
+        var element = document.createElement('span');
+
+        element.className = 'glyphicon glyphicon-pause video-control pause';
+        element.dataset.targetVideo = this.videoId;
+        element.onclick = handlePauseButtonClick.bind(this);
 
         return element;
     }
@@ -108,9 +185,42 @@ define('video-player', [
         return element;
     }
 
-    var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
-        video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
-        video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
+    function createTimingControls() {
+        var timingElements = [{
+            className: 'currentTime',
+            title: 'Current Time'
+        }, {
+            className: 'lag',
+            title: 'Estimated Lag'
+        }, {
+            className: 'buffered',
+            title: 'Buffered Time'
+        }, {
+            className: 'bufferSize',
+            title: 'Buffered Size'
+        }];
+
+        return _.map(timingElements, function(timingElement) {
+            var element = document.createElement('span');
+
+            element.className = 'video-control ' + timingElement.className;
+            element.dataset.targetVideo = this.videoId;
+            element.title = timingElement.title;
+            element.innerHTML = '0.0';
+
+            return element;
+        });
+    }
+
+    var setVideoWidthAndHeight = function setVideoWithAndHeight(video, options){
+        var videoOptions = options || {};
+        var minWidth = videoOptions.minWidth || 160;
+        var minHeight = videoOptions.minHeight || 120;
+        var maxWidth = videoOptions.maxWidth || 640;
+        var maxHeight = videoOptions.maxHeight || 480;
+
+        video.width = video.videoWidth <= minWidth ? minWidth : video.videoWidth > maxWidth ? maxWidth : video.videoWidth;
+        video.height = video.videoHeight <= minHeight ? minHeight : video.videoHeight > maxHeight ? maxHeight : video.videoHeight;
     };
 
     var onLoadedMetaData = function onLoadedMetaData(video) {
@@ -134,36 +244,139 @@ define('video-player', [
             }
         });
 
-        setVideoWidthAndHeight(video);
+        setVideoWidthAndHeight(video, this.options);
     };
 
     var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(stream, videoElement, onEnd) {
         var video = $(videoElement);
         var videoControlsContainer = $(this.videoControls);
         var videoControls = $(videoControlsContainer).children();
-        var shouldVideoBeHidden = video.hasClass('hidden');
 
-        if (shouldVideoBeHidden) {
+        if (this.shouldVideoBeHidden) {
             video.removeClass('hidden');
         }
 
         videoControls.removeClass('hidden');
 
         if (stream) {
-            setAudioMuteClass(!isMediaStreamTrackEnabled(stream, true), $(videoControlsContainer).find('.mute'));
-            setVideoMuteClass(!isMediaStreamTrackEnabled(stream, false), $(videoControlsContainer).find('.mute-video'));
+            var isLocal = video.hasClass('local');
+            var isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
+            var isVideoMuted = !isMediaStreamTrackEnabled(stream.getVideoTracks());
+
+            setAudioMuteClass(isAudioMuted, $(videoControlsContainer).find('.mute'));
+            setVideoMuteClass(isVideoMuted, $(videoControlsContainer).find('.mute-video'));
         } else {
-            $(videoControlsContainer).find('.mute').addClass('hidden');
             $(videoControlsContainer).find('.mute-video').addClass('hidden');
         }
 
-        onEnd(function() {
-            if (shouldVideoBeHidden) {
-                video.addClass('hidden');
-            }
+        this.lastUpdate = 0;
+        this.boundOnTimeUpdate = videoElementOnTimeUpdate.bind(this);
 
-            videoControls.addClass('hidden');
-        });
+        sdk.RTC.addEventListener(videoElement, 'timeupdate', this.boundOnTimeUpdate);
+
+        if (onEnd) {
+            onEnd(onStreamEnd.bind(this));
+        }
+    };
+
+    var onStreamEnd = function onStreamEnd() {
+        var videoControlsContainer = $(this.videoControls);
+        var videoControls = $(videoControlsContainer).children();
+
+        if (this.shouldVideoBeHidden) {
+            this.video.className += ' hidden';
+        }
+
+        videoControls.addClass('hidden');
+
+        if (this.boundOnTimeUpdate) {
+            sdk.RTC.removeEventListener(this.video, 'timeupdate', this.boundOnTimeUpdate);
+        }
+
+        this.boundOnTimeUpdate = null;
+        this.lastUpdate = 0;
+    };
+
+    var videoElementOnTimeUpdate = function videoElementOnTimeUpdate() {
+        var videoControlsContainer = $(this.videoControls);
+        var stat = processTimeUpdate(this.video);
+
+        $(videoControlsContainer).find('.currentTime').html(stat.currentTime.toFixed(1) + ' s');
+        $(videoControlsContainer).find('.lag').html(stat.lag.toFixed(1) + ' s');
+        $(videoControlsContainer).find('.buffered').html(stat.buffered.toFixed(1) + ' s');
+        $(videoControlsContainer).find('.bufferSize').html(stat.bufferSize.toFixed(1) + ' s');
+
+        if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
+            // Force the player to buffer less than 10 seconds
+            if (stat.bufferSize > 10 && (this.lastUpdate + 30000) < stat.now) {
+                this.lastUpdate = stat.now;
+                this.video.currentTime = this.video.currentTime + (stat.bufferSize - 4);
+            }
+        }
+    };
+
+    var processTimeUpdate = function processTimeUpdate(video) {
+        var now = _.now();
+        var currentTime = video.currentTime;
+        var buffered = video.buffered;
+        var bufferedEnd = 0;
+        var lag = -1;
+        var stats = {};
+
+        if (buffered && buffered.length > 0) {
+            bufferedEnd = buffered.end(buffered.length - 1);
+            video.bufferSize = Math.max(bufferedEnd - currentTime, video.bufferSize || 0);
+        } else {
+            video.bufferSize = Math.max(0, video.bufferSize || 0);
+        }
+
+        if (video.__renderer) {
+            stats = video.__renderer.getStats();
+
+            lag = stats.lag;
+        }
+
+        if (!video.lastBufferReport || (now - video.lastBufferReport) > 30000) {
+            console.log('Current time: ' + currentTime + ' Lag: ' + lag + ' Buffered: ' + bufferedEnd + ' |Buffer|: ' + video.bufferSize + ' ' + JSON.stringify(stats));
+            video.lastBufferReport = now;
+            video.bufferSize = 0;
+        }
+
+        return {
+            now: now,
+            currentTime: currentTime,
+            lag: lag,
+            buffered: bufferedEnd,
+            bufferSize: video.bufferSize
+        };
+    };
+
+    var handlePlayButtonClick = function handlePlayButtonClick(clickEvent) {
+        var element = clickEvent.target;
+
+        if (!element.dataset.targetVideo) {
+            throw new Error('Button Must Have Target');
+        }
+
+        console.log('Play ' + element.dataset.targetVideo);
+
+        var video = $('#' + element.dataset.targetVideo)[0];
+
+        video.play();
+    };
+
+    var handlePauseButtonClick = function handlePauseButtonClick(clickEvent) {
+        var element = clickEvent.target;
+
+        if (!element.dataset.targetVideo) {
+            throw new Error('Button Must Have Target');
+        }
+
+        console.log('Pause ' + element.dataset.targetVideo);
+
+        var video = $('#' + element.dataset.targetVideo)[0];
+
+        video.pause();
     };
 
     var handleFullscreenButtonClick = function handleFullscreenButtonClick(clickEvent) {
@@ -178,16 +391,28 @@ define('video-player', [
 
     var handleMuteButtonClick = function handleMuteButtonClick(clickEvent) {
         var element = clickEvent.target;
+        var video = $('#' + element.dataset.targetVideo);
+        var isLocal = video.hasClass('local');
+        var isAudioMuted;
+        var shallBeMuted;
 
         if (!element.dataset.targetVideo) {
             throw new Error('Button Must Have Target');
         }
 
-        if (this.stream && this.onToggleAudio) {
-            var isMuted = !this.onToggleAudio(isMediaStreamTrackEnabled(this.stream.getStream(), true));
-
-            setAudioMuteClass(isMuted, $(element));
+        if (this.stream) {
+            isAudioMuted = !isMediaStreamTrackEnabled(this.stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
+            shallBeMuted = setMediaStreamTrackEnabled(this.stream.getAudioTracks(), !isAudioMuted);
+        } else {
+            isAudioMuted = !isLocal && video[0] && video[0].muted;
+            shallBeMuted = !isAudioMuted;
         }
+
+        if (!isLocal && video[0]) {
+            video[0].muted = shallBeMuted;
+        }
+
+        setAudioMuteClass(shallBeMuted, $(element));
     };
 
     var handleMuteVideoButtonClick = function handleMuteVideoButtonClick(clickEvent) {
@@ -197,8 +422,9 @@ define('video-player', [
             throw new Error('Button Must Have Target');
         }
 
-        if (this.stream && this.onToggleVideo) {
-            var isMuted = !this.onToggleVideo(isMediaStreamTrackEnabled(this.stream.getStream(), false));
+        if (this.stream) {
+            var isVideoMuted = !isMediaStreamTrackEnabled(this.stream.getVideoTracks());
+            var isMuted = setMediaStreamTrackEnabled(this.stream.getVideoTracks(), !isVideoMuted);
 
             setVideoMuteClass(isMuted, $(element));
         }
@@ -220,14 +446,24 @@ define('video-player', [
         }
     };
 
-    var isMediaStreamTrackEnabled = function(stream, isAudio) {
-        var tracks = isAudio ? stream.getAudioTracks() : stream.getVideoTracks();
-
+    var isMediaStreamTrackEnabled = function(tracks) {
         if (!tracks || !tracks.length) {
             return false;
         }
 
         return tracks[0].enabled;
+    };
+
+    var setMediaStreamTrackEnabled = function setMediaStreamTrackEnabled(tracks, enabled) {
+        if (!tracks || !tracks.length) {
+            return false;
+        }
+
+        _.forEach(tracks, function (track) {
+            track.enabled = !enabled;
+        });
+
+        return enabled;
     };
 
     var setAudioMuteClass = function setAudioMuteClass(isMuted, element) {

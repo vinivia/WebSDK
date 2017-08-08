@@ -26,11 +26,11 @@ requirejs.config({
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'Long': 'long/dist/long.min',
         'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
-        'shaka-player': 'shaka-player/dist/shaka-player.compiled'
+        'shaka-player': 'shaka-player/dist/shaka-player.compiled',
+        'video-player': 'player',
+        'app-setup': 'app-setup'
     }
 });
-
-var version = '1.0.0'; // ToDo: use until sample app separated from repo
 
 requirejs([
     'jquery',
@@ -38,167 +38,21 @@ requirejs([
     'bootstrap-notify',
     'fingerprintjs2',
     'phenix-web-sdk',
-    'shaka-player'
-], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+    'shaka-player',
+    'video-player',
+    'app-setup'
+], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
-        var localVideoEl = $('#localVideo')[0];
-        var localVideoSecondaryEl = $('#localVideoSecondary')[0];
-        var remoteVideoEl = $('#remoteVideo')[0];
-        var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
-        var videoTargetStreams = {};
+        var localPrimaryPlayer = null;
+        var localSecondaryPlayer = null;
+        var primaryPlayer = null;
+        var secondaryPlayer = null;
         var userMediaStream = null;
-        var userAgent = window.navigator.userAgent;
 
-        if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-            remoteVideoEl.muted = true;
-            remoteVideoSecondaryEl.muted = true;
-        }
-
-        if (!shaka.Player.isBrowserSupported()) {
-            shaka.polyfill.installAll();
-        }
-
-        var getUrlParameter = function getUrlParameter(parameterName) {
-            var queryParameters = window.location.search.substring(1).split('&');
-
-            for (var i = 0; i < queryParameters.length; i++) {
-                var parameter = queryParameters[i].split('=');
-
-                if (parameter[0] === parameterName) {
-                    return parameter.length > 0 ? decodeURIComponent(parameter[1]) : null;
-                }
-            }
-        };
-
-        var enabledSteps = ['step-1'];
-
-        var enableSteps = function enableSteps() {
-            $('.step').addClass('step-disabled');
-            $('.step .server').removeClass('step-active');
-            $('.step .client').removeClass('step-active');
-
-            enabledSteps.forEach(function (step) {
-                $('.' + step).removeClass('step-disabled');
-            });
-
-            $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
-            $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
-
-            $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
-        };
-
-        var activateStep = function activateStep(step) {
-            enabledSteps.push(step);
-            enableSteps();
-        };
-
-        var setVideoWidthAndHeight = function setVideoWithAndHeight(video) {
-            video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
-            video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
-        };
-
-        var onLoadedMetaData = function onLoadedMetaData(video) {
-            console.log('Meta data, width=' + video.videoWidth + ', height=' + video.videoHeight);
-
-            $.notify({
-                icon: 'glyphicon glyphicon-film',
-                title: '<strong>Video</strong>',
-                message: 'The video dimensions are ' + video.videoWidth + ' x ' + video.videoHeight
-            }, {
-                type: 'info',
-                allow_dismiss: false, // eslint-disable-line camelcase
-                placement: {
-                    from: 'bottom',
-                    align: 'right'
-                },
-                delay: 5000,
-                animate: {
-                    enter: 'animated fadeInUp',
-                    exit: 'animated fadeOutDown'
-                }
-            });
-
-            setVideoWidthAndHeight(video);
-        };
-
-        function processTimeUpdate(video) {
-            var now = _.now();
-            var currentTime = video.currentTime;
-            var buffered = video.buffered;
-            var bufferedEnd = 0;
-            var lag = -1;
-            var stats = {};
-
-            if (buffered && buffered.length > 0) {
-                bufferedEnd = buffered.end(buffered.length - 1);
-                video.bufferSize = Math.max(bufferedEnd - currentTime, video.bufferSize || 0);
-            } else {
-                video.bufferSize = Math.max(0, video.bufferSize || 0);
-            }
-
-            if (video.__renderer) {
-                stats = video.__renderer.getStats();
-
-                lag = stats.lag;
-            }
-
-            if (!video.lastBufferReport || (now - video.lastBufferReport) > 30000) {
-                console.log('Current time: ' + currentTime + ' Lag: ' + lag + ' Buffered: ' + bufferedEnd + ' |Buffer|: ' + video.bufferSize + ' ' + JSON.stringify(stats));
-                video.lastBufferReport = now;
-                video.bufferSize = 0;
-            }
-
-            return {
-                now: now,
-                currentTime: currentTime,
-                lag: lag,
-                buffered: bufferedEnd,
-                bufferSize: video.bufferSize
-            };
-        }
-
-        sdk.RTC.addEventListener(remoteVideoEl, 'loadedmetadata', function () {
-            onLoadedMetaData(remoteVideoEl);
-        });
-
-        sdk.RTC.addEventListener(remoteVideoSecondaryEl, 'loadedmetadata', function () {
-            onLoadedMetaData(remoteVideoEl);
-        });
-
-        $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
-        $('#browser').text(sdk.RTC.browser);
-        $('#browserVersion').text(sdk.RTC.browserVersion);
-
-        if (sdk.RTC.webrtcSupported) {
-            $('#webrtc').addClass('success');
-        } else {
-            $('#webrtc').addClass('danger');
-        }
-
-        if (sdk.RTC.isPhenixEnabled()) {
-            $('#phenix').addClass('success');
-        } else if (sdk.RTC.phenixSupported) {
-            $('#phenix').addClass('warning');
-        } else {
-            $('#phenix').addClass('danger');
-        }
-
-        if (getUrlParameter('url')) {
-            $('#environment').append($('<option></option>').attr('value', getUrlParameter('url')).attr('selected', 'selected').text(getUrlParameter('url')));
-        }
-
-        if (getUrlParameter('applicationId')) {
-            $('#applicationId').val(getUrlParameter('applicationId'));
-        }
-
-        if (getUrlParameter('secret')) {
-            $('#secret').val(getUrlParameter('secret'));
-        }
-
-        if (getUrlParameter('streamId')) {
-            $('#stream').append($('<option></option>').attr('value', getUrlParameter('streamId')).attr('selected', 'selected').text(getUrlParameter('streamId')));
-            $('#originStreamId').val(getUrlParameter('streamId'));
+        if (app.getUrlParameter('streamId')) {
+            $('#stream').append($('<option></option>').attr('value', app.getUrlParameter('streamId')).attr('selected', 'selected').text(app.getUrlParameter('streamId')));
+            $('#originStreamId').val(app.getUrlParameter('streamId'));
         }
 
         var adminBaseUri;
@@ -209,15 +63,9 @@ requirejs([
                 pcast.stop();
             }
 
-            var uri = $('#environment option:selected').val();
-            var parser = document.createElement('a');
-            parser.href = uri;
+            var uri = app.getUri();
 
-            adminBaseUri = 'https://' + parser.hostname;
-
-            if (parser.port) {
-                adminBaseUri += ':' + parser.port;
-            }
+            adminBaseUri = app.getBaseUri();
 
             fingerprint.get(function (fingerprint) {
                 pcast = new sdk.PCast({
@@ -226,20 +74,14 @@ requirejs([
                     shaka: shaka
                 });
 
-                pcast.getLogger().setApplicationVersion(version);
-
-                setLoggerUserId();
-                setLoggerEnvironment();
+                app.setLoggerUserId(pcast);
+                app.setLoggerEnvironment(pcast);
+                app.setLoggerVersion(pcast);
             });
         };
 
         var createAuthToken = function createAuthToken() {
-            var applicationId = $('#applicationId').val();
-            var secret = $('#secret').val();
-            var data = {
-                applicationId: applicationId,
-                secret: secret
-            };
+            var data = app.getAuthData();
 
             $.ajax({
                 url: adminBaseUri + '/pcast/auth',
@@ -249,27 +91,15 @@ requirejs([
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $('.authToken').val(result.authenticationToken);
-                activateStep('step-2');
+                app.activateStep('step-2');
                 setTimeout(function () {
-                    activateStep('step-3');
+                    app.activateStep('step-3');
                 }, 1500);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Auth</strong>',
                     message: 'Failed to create authentication token (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -279,44 +109,20 @@ requirejs([
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
             }, function onlineCallback() {
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-log-in',
                     title: '<strong>Online</strong>',
                     message: 'Connected to PCast&trade;'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
-                activateStep('step-4');
+                app.activateStep('step-4');
                 setTimeout(function () {
-                    activateStep('step-5');
+                    app.activateStep('step-5');
                 }, 1500);
             }, function offlineCallback() {
-                $.notify({
+                app.createNotification('warning', {
                     icon: 'glyphicon glyphicon-log-out',
                     title: '<strong>Offline</strong>',
                     message: 'Disconnected from PCast&trade;'
-                }, {
-                    type: 'warning',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -327,57 +133,21 @@ requirejs([
             $('#stop').addClass('disabled');
         };
 
-        var updateOptions = function updateOptions() {
-            $('input[name="option"]').each(function () {
-                var option = $(this).val();
-
-                $('.' + option).addClass('option-disabled');
-            });
-
-            var option = $('input[name="option"]:checked').val();
-
-            $('.' + option).removeClass('option-disabled');
-        };
-
         var getUserMedia = function getUserMedia() {
             var userMediaCallback = function userMediaCallback(pcast, status, stream, e) {
                 if (status !== 'ok') {
-                    $.notify({
+                    app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-facetime-video',
                         title: '<strong>User Media</strong>',
                         message: 'Failed to get user media (' + e + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
                     $('#userMediaInfo').text('Failed: ' + e.message);
                 } else {
                     console.log('Got user media stream');
-                    $.notify({
+                    app.createNotification('info', {
                         icon: 'glyphicon glyphicon-facetime-video',
                         title: '<strong>User Media</strong>',
                         message: 'Acquired user media stream'
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 3000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
 
                     // **********
@@ -388,7 +158,7 @@ requirejs([
                     $('#stopUserMedia').removeClass('disabled');
 
                     $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
-                    activateStep('step-5-2');
+                    app.activateStep('step-5-2');
 
                     var primaryStream = new MediaStream();
                     var secondaryStream = new MediaStream();
@@ -405,18 +175,20 @@ requirejs([
                         return primaryStream.addTrack(track);
                     });
 
-                    localVideoEl = sdk.RTC.attachMediaStream(localVideoEl, primaryStream);
-
-                    displayVideoElementAndControlsWhileStreamIsActive(primaryStream, localVideoEl, function setOnEnded(callback) {
-                        primaryStream.getTracks()[0].onended = callback;
+                    localPrimaryPlayer = new Player('localVideo', {
+                        maxWidth: 160,
+                        maxHeight: 120
                     });
 
-                    if (secondaryStream.getTracks().length > 0) {
-                        localVideoSecondaryEl = sdk.RTC.attachMediaStream(localVideoSecondaryEl, secondaryStream);
+                    localPrimaryPlayer.start(primaryStream);
 
-                        displayVideoElementAndControlsWhileStreamIsActive(secondaryStream, localVideoSecondaryEl, function setOnEnded(callback) {
-                            secondaryStream.getTracks()[0].onended = callback;
+                    if (secondaryStream.getTracks().length > 0) {
+                        localSecondaryPlayer = new Player('localVideoSecondary', {
+                            maxWidth: 160,
+                            maxHeight: 120
                         });
+
+                        localSecondaryPlayer.start(secondaryStream);
                     }
                 }
             };
@@ -490,22 +262,10 @@ requirejs([
 
         var publish = function publish() {
             if (!userMediaStream) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-facetime-video',
                     title: '<strong>User Media</strong>',
                     message: 'Please acquire the user media before publishing'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 8000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 return;
@@ -514,22 +274,10 @@ requirejs([
             var streamToken = $('#streamTokenForPublishing').val();
 
             if (!streamToken) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-facetime-video',
                     title: '<strong>Stream Token</strong>',
                     message: 'Please create a stream token before publishing'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 8000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 return;
@@ -539,22 +287,10 @@ requirejs([
 
             var publishCallback = function publishCallback(pcast, status, phenixPublisher) {
                 if (status !== 'ok') {
-                    $.notify({
+                    app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Publish</strong>',
                         message: 'Failed to publish stream (' + status + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
 
                     return;
@@ -564,42 +300,18 @@ requirejs([
                 $('#stopPublisher').removeClass('disabled');
 
                 publisher.setDataQualityChangedCallback(function (publisher, status, reason) {
-                    $.notify({
+                    app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
                         message: 'Data quality update: sending ' + status + ' with limitation ' + reason
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
                 });
 
                 publisher.setPublisherEndedCallback(function (publisher, reason) {
-                    $.notify({
+                    app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
                         message: 'The published stream ended for reason "' + reason + '"'
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
                 });
 
@@ -609,29 +321,17 @@ requirejs([
                     limit.dispose();
                 }, 10000);
 
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',
                     message: 'Started publishing stream "' + publisher.getStreamId() + '"'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
-                activateStep('step-5-5');
+                app.activateStep('step-5-5');
                 setTimeout(function () {
-                    activateStep('step-6');
+                    app.activateStep('step-6');
                 }, 1500);
             };
 
@@ -652,7 +352,7 @@ requirejs([
 
             if (streamId) {
                 $('#originStreamId').val(streamId);
-                activateStep('step-6');
+                app.activateStep('step-6');
             }
         };
 
@@ -690,22 +390,10 @@ requirejs([
                     $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Streams</strong>',
                     message: 'Failed to list streams (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -727,41 +415,17 @@ requirejs([
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $(targetElementSelector).val(result.streamToken);
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
                     message: 'Created token for stream "' + originStreamId + '"'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
                 callback(result.streamToken);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Stream</strong>',
                     message: 'Failed to create stream token (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -780,9 +444,9 @@ requirejs([
             capabilities.push($('#publish-quality option:selected').val());
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-5-3');
+                app.activateStep('step-5-3');
                 setTimeout(function () {
-                    activateStep('step-5-4');
+                    app.activateStep('step-5-4');
                 }, 1500);
             });
         };
@@ -801,9 +465,9 @@ requirejs([
             });
 
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-7');
+                app.activateStep('step-7');
                 setTimeout(function () {
-                    activateStep('step-8');
+                    app.activateStep('step-8');
                 }, 1500);
             });
         };
@@ -815,22 +479,10 @@ requirejs([
 
             pcast.subscribe(streamToken, function subscribeCallback(pcast, status, mediaStream) {
                 if (status !== 'ok') {
-                    $.notify({
+                    app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Subscribe</strong>',
                         message: 'Failed to subscribe to stream (' + status + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
 
                     return;
@@ -846,38 +498,24 @@ requirejs([
                     });
                 }
 
-                var primaryStream = primaryMediaStream.getStream();
+                primaryPlayer = new Player('remoteVideo');
 
-                displayVideoElementAndControlsWhileStreamIsActive(primaryStream, remoteVideoEl, _.bind(primaryMediaStream.setStreamEndedCallback, primaryMediaStream));
-                attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
+                primaryPlayer.start(primaryMediaStream);
 
                 if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
                     var secondaryMediaStream = mediaStream.select(function (track, index) {
                         return track.kind === 'video' && index === 2;
                     });
 
-                    var secondaryStream = secondaryMediaStream.getStream();
+                    secondaryPlayer = new Player('remoteVideoSecondary');
 
-                    displayVideoElementAndControlsWhileStreamIsActive(secondaryStream, remoteVideoSecondaryEl, _.bind(secondaryMediaStream.setStreamEndedCallback, secondaryMediaStream));
-                    attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
+                    secondaryPlayer.start(secondaryMediaStream);
                 }
 
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
                     message: 'Starting stream'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 subscriberMediaStream = mediaStream;
@@ -896,43 +534,19 @@ requirejs([
         var monitorStream = function monitorStream(stream, reason) {
             switch (reason) {
             case 'client-side-failure':
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Monitor</strong>',
                     message: 'Stream Failure'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 // Handle failure event, redo stream
                 break;
             default:
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Monitor</strong>',
                     message: 'Stream Healthy'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                     // No failure has occurred, handle monitor event
@@ -940,284 +554,16 @@ requirejs([
             }
         };
 
-        var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(stream, videoElement, onEnd) {
-            var video = $(videoElement);
-            var videoControls = $('[data-video-target=' + videoElement.id + ']');
-            var shouldVideoBeHidden = video.hasClass('hidden');
-
-            if (shouldVideoBeHidden) {
-                video.removeClass('hidden');
-            }
-
-            videoControls.removeClass('hidden');
-
-            if (stream) {
-                videoTargetStreams[videoElement.id] = stream;
-
-                var isLocal = video.hasClass('local');
-                var isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
-                var isVideoMuted = !isMediaStreamTrackEnabled(stream.getVideoTracks());
-
-                setAudioMuteClass(isAudioMuted, $(videoControls.selector + '.mute'));
-                setVideoMuteClass(isVideoMuted, $(videoControls.selector + '.mute-video'));
-            } else {
-                $(videoControls.selector + '.mute-video').addClass('hidden');
-            }
-
-            var lastUpdate = 0;
-            var videoElementOnTimeUpdate = function () {
-                var stat = processTimeUpdate(videoElement);
-
-                $(videoControls.selector + '.currentTime').html(stat.currentTime.toFixed(1) + ' s');
-                $(videoControls.selector + '.lag').html(stat.lag.toFixed(1) + ' s');
-                $(videoControls.selector + '.buffered').html(stat.buffered.toFixed(1) + ' s');
-                $(videoControls.selector + '.bufferSize').html(stat.bufferSize.toFixed(1) + ' s');
-
-                if (userAgent.match(/iPad/i) || userAgent.match(/iPhone/i)) {
-                    // Force the player to buffer less than 10 seconds
-                    if (stat.bufferSize > 10 && (lastUpdate + 30000) < stat.now) {
-                        lastUpdate = stat.now;
-                        videoElement.currentTime = videoElement.currentTime + (stat.bufferSize - 4);
-                    }
-                }
-            };
-
-            sdk.RTC.addEventListener(videoElement, 'timeupdate', videoElementOnTimeUpdate);
-
-            onEnd(function () {
-                if (shouldVideoBeHidden) {
-                    video.addClass('hidden');
-                }
-
-                videoControls.addClass('hidden');
-
-                sdk.RTC.removeEventListener(videoElement, 'timeupdate', videoElementOnTimeUpdate);
-
-                delete videoTargetStreams[videoElement.dataset.target];
-            });
-        };
-
-        var attachMediaStreamToVideoElement = function attachMediaStreamToVideoElement(mediaStream, element) {
-            var renderer = mediaStream.createRenderer();
-
-            renderer.setDataQualityChangedCallback(function (renderer, status, reason) {
-                $.notify({
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Publish</strong>',
-                    message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
-                }, {
-                    type: 'info',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
-            });
-
-            element = renderer.start(element);
-            element.__renderer = renderer;
-
-            renderer.setVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
-                $.notify({
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Video Dimensions Changed</strong>',
-                    message: 'Video dimensions changed: new width = ' + dimensions.width + ', new height = ' + dimensions.height
-                }, {
-                    type: 'info',
-                    allow_dismiss: true, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
-
-                setVideoWidthAndHeight(element);
-            });
-        };
-
-        var handlePlayButtonClick = function handlePlayButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            console.log('Play ' + this.dataset.videoTarget);
-
-            var video = $('#' + this.dataset.videoTarget)[0];
-
-            video.play();
-        };
-
-        var handlePauseButtonClick = function handlePauseButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            console.log('Pause ' + this.dataset.videoTarget);
-
-            var video = $('#' + this.dataset.videoTarget)[0];
-
-            video.pause();
-        };
-
-        var handleFullscreenButtonClick = function handleFullscreenButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            var video = $('#' + this.dataset.videoTarget)[0];
-
-            requestFullscreen(video);
-        };
-
-        var requestFullscreen = function requestFullScreen(element) {
-            if (!element) {
-                throw new Error('Element required to request full screen');
-            }
-
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullScreen) {
-                element.webkitRequestFullScreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        };
-
-        var handleMuteButtonClick = function handleMuteButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            var stream = videoTargetStreams[this.dataset.videoTarget];
-            var video = $('#' + this.dataset.videoTarget);
-            var isLocal = video.hasClass('local');
-            var isAudioMuted;
-            var shallBeMuted;
-
-            if (stream) {
-                isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
-                shallBeMuted = setMediaStreamTrackEnabled(stream.getAudioTracks(), !isAudioMuted);
-            } else {
-                isAudioMuted = !isLocal && video[0] && video[0].muted;
-                shallBeMuted = !isAudioMuted;
-            }
-
-            if (!isLocal && video[0]) {
-                video[0].muted = shallBeMuted;
-            }
-
-            setAudioMuteClass(shallBeMuted, $(this));
-        };
-
-        var handleMuteVideoButtonClick = function handleMuteVideoButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            var stream = videoTargetStreams[this.dataset.videoTarget];
-
-            if (stream) {
-                var isVideoMuted = !isMediaStreamTrackEnabled(stream.getVideoTracks());
-                var isMuted = setMediaStreamTrackEnabled(stream.getVideoTracks(), !isVideoMuted);
-
-                setVideoMuteClass(isMuted, $(this));
-            }
-        };
-
-        var isMediaStreamTrackEnabled = function (tracks) {
-            if (!tracks || !tracks.length) {
-                return false;
-            }
-
-            return tracks[0].enabled;
-        };
-
-        var setMediaStreamTrackEnabled = function setMediaStreamTrackEnabled(tracks, enabled) {
-            if (!tracks || !tracks.length) {
-                return false;
-            }
-
-            _.forEach(tracks, function (track) {
-                track.enabled = !enabled;
-            });
-
-            return enabled;
-        };
-
-        var setAudioMuteClass = function setAudioMuteClass(isMuted, element) {
-            if (isMuted) {
-                element.removeClass('glyphicon-volume-up');
-                element.addClass('glyphicon-volume-off');
-            } else {
-                element.addClass('glyphicon-volume-up');
-                element.removeClass('glyphicon-volume-off');
-            }
-        };
-
-        var setVideoMuteClass = function setVideoMuteClass(isMuted, element) {
-            if (isMuted) {
-                element.addClass('toggle-off');
-            } else {
-                element.removeClass('toggle-off');
-            }
-        };
-
-        function setLoggerUserId() {
-            if (!pcast) {
-                return;
-            }
-
-            var logger = pcast.getLogger();
-
-            logger.setUserId($('#applicationId').val());
-        }
-
-        function setLoggerEnvironment() {
-            if (!pcast) {
-                return;
-            }
-
-            var env = $('#environment').val().toLowerCase();
-            var logger = pcast.getLogger();
-
-            if (env.indexOf('local') > -1) {
-                logger.setEnvironment('local');
-            } else if (env.indexOf('stg')) {
-                logger.setEnvironment('staging');
-            } else {
-                logger.setEnvironment('production');
-            }
-        }
-
-        $('#environment').change(function () {
+        app.setOnReset(function () {
             createPCast();
+            app.setLoggerEnvironment(pcast);
             listStreams();
-            setLoggerEnvironment();
         });
 
         $('#applicationId').change(function () {
             listStreams();
-            setLoggerUserId();
+            app.setLoggerUserId(pcast);
         });
-
-        $('input[type="radio"]').on('change', function () {
-            updateOptions();
-        });
-
-        updateOptions();
 
         $('#secret').change(listStreams);
         $('#createAuthToken').click(createAuthToken);
@@ -1238,22 +584,19 @@ requirejs([
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
-        $('.play').click(handlePlayButtonClick);
-        $('.pause').click(handlePauseButtonClick);
-        $('.fullscreen').click(handleFullscreenButtonClick);
-        $('.mute').click(handleMuteButtonClick);
-        $('.mute-video').click(handleMuteVideoButtonClick);
-
         createPCast();
-        enableSteps();
     };
 
     $(function () {
+        app.init();
         init();
 
         // Plugin might load with delay
         if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = init;
+            sdk.RTC.onload = function() {
+                app.init();
+                init();
+            };
         }
     });
 });

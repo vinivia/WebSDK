@@ -142,22 +142,40 @@ define([
         }
     };
 
-    _.assign = function assign(objectA, objectB) {
-        var newObject = {};
+    _.argumentsToArray = function(args) {
+        if (!_.isObject(args) || !args.length) {
+            throw new Error('Collection must be arguments');
+        }
 
-        _.forOwn(objectA, function(value, key) {
-            newObject[key] = value;
-        });
+        var collection = [];
 
-        _.forOwn(objectB, function(value, key) {
-            if (objectA.hasOwnProperty(key)) {
-                return;
+        for (var i = 0; i < args.length; i++) {
+            collection.push(args[i]);
+        }
+
+        return collection;
+    };
+
+    _.assign = function assign(target) {
+        if (!_.isObject(target)) {
+            throw new Error('target must be object');
+        }
+
+        var sources = _.argumentsToArray(arguments);
+
+        sources.shift();
+
+        _.forEach(sources, function(source, index) {
+            if (!_.isObject(source)) {
+                throw new Error('source ' + index + ' must be object');
             }
 
-            newObject[key] = value;
+            _.forOwn(source, function(value, key) {
+                target[key] = value;
+            });
         });
 
-        return newObject;
+        return target;
     };
 
     _.includes = function includes(collection, value) {

@@ -86,7 +86,7 @@ define([
     }
 
     function addMetricToRecords(metric, since, sessionId, streamId, environment, version, value) {
-        var record = _.assign(value, {
+        var record = _.assign({}, value, {
             metric: metric,
             timestamp: _.isoString(),
             sessionId: sessionId,

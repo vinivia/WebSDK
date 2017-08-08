@@ -73,7 +73,7 @@ define([
                 expect(_.forOwn).to.be.a('function');
             });
 
-            it('Only user defined properties are iterated over', function () {
+            it('Only iterates over user defined properties', function () {
                 myObject.mykeyOne = 'myvalue';
                 myObject.mykeyTwo = 'myvalue';
 
@@ -84,7 +84,7 @@ define([
                 expect(count).to.be.equal(2);
             });
 
-            it('Callback arguments are the current key-value pair', function () {
+            it('Has key-value pair as arguments in the callback', function () {
                 myObject.mykey = 'myvalue';
 
                 _.forOwn(myObject, function (value, key) {
@@ -93,7 +93,7 @@ define([
                 });
             });
 
-            it('Expect items to be the same after forOwn is executed and no modification occurs', function () {
+            it('Does not modify object property values if no explicit modification occurs', function () {
                 myObject.mykey = 'myvalue';
 
                 _.forOwn(myObject, function () {});
@@ -113,7 +113,7 @@ define([
                 expect(_.forEach).to.be.a('function');
             });
 
-            it('Expect callback arguments to be item-index pairs', function () {
+            it('Has item-index pairs as callback arguments', function () {
                 myArray.push('newItem');
 
                 _.forEach(myArray, function (item, index) {
@@ -122,7 +122,7 @@ define([
                 });
             });
 
-            it('Expect callback to be executed 2 times for an array of size 2', function () {
+            it('Executes callback 2 times for an array of size 2', function () {
                 var count = 0;
 
                 myArray.push('newItem');
@@ -135,7 +135,7 @@ define([
                 expect(count).to.be.equal(2);
             });
 
-            it('Expect items to be the same after forEach is executed and no modification occurs', function () {
+            it('Does not modify array if no explicit modification occurs', function () {
                 myArray.push('newItem');
 
                 _.forEach(myArray, function () {});
@@ -155,7 +155,7 @@ define([
                 expect(_.map).to.be.a('function');
             });
 
-            it('Expect callback arguments to be item-index pairs', function () {
+            it('Has item-index pairs as callback arguments', function () {
                 myArray.push('newItem');
                 myArray.push(true);
 
@@ -167,7 +167,7 @@ define([
                 expect(newArray[1]).to.be.equal(true);
             });
 
-            it('Expect original array items to be the same after map is executed and no modification occurs', function () {
+            it('Does not modify original array', function () {
                 myArray.push('newItem');
 
                 _.map(myArray, function () {
@@ -198,7 +198,7 @@ define([
                     expect(_.includes(myArray, 'value4')).to.be.equal(false);
                 });
 
-                it('Array is not modified by includes', function () {
+                it('Does not modify array', function () {
                     _.includes(myArray, 'value4');
 
                     expect(myArray[0]).to.be.equal('value1');
@@ -226,7 +226,7 @@ define([
                     expect(_.includes(myObject, 'value4')).to.be.equal(false);
                 });
 
-                it('Object is not modified by includes', function () {
+                it('Does not modify object', function () {
                     _.includes(myObject, 'value4');
 
                     expect(myObject.key1).to.be.equal('value1');
@@ -264,7 +264,7 @@ define([
                     ).to.be.equal(3);
                 });
 
-                it('Array is not modified by reduce', function () {
+                it('Does not modify array', function () {
                     _.reduce(myArray, function () {});
 
                     expect(myArray[0]).to.be.equal(1);
@@ -297,7 +297,7 @@ define([
                     expect(result.value3[0]).to.be.equal('key3');
                 });
 
-                it('Object is not modified by reduce', function () {
+                it('Does not modify object', function () {
                     _.includes(myObject, 'value4');
 
                     expect(myObject.key1).to.be.equal('value1');
@@ -318,7 +318,7 @@ define([
                 expect(_.find).to.be.a('function');
             });
 
-            it('Expect to return item that matches callback', function () {
+            it('Returns item that matches callback', function () {
                 var item = _.find(myArray, function (val) {
                     return val === 2;
                 });
@@ -326,7 +326,7 @@ define([
                 expect(item).to.be.equal(2);
             });
 
-            it('Expect to return undefined when no matches to callback', function () {
+            it('Returns undefined when no matches to callback', function () {
                 var item = _.find(myArray, function (val) {
                     return val === 4;
                 });
@@ -334,7 +334,7 @@ define([
                 expect(item).to.be.undefined;
             });
 
-            it('Expect to return item that matches callback after initial index', function () {
+            it('Returns item that matches callback after initial index', function () {
                 var item = _.find(myArray, function (val) {
                     return val === 2;
                 }, 1);
@@ -342,12 +342,65 @@ define([
                 expect(item).to.be.equal(2);
             });
 
-            it('Expect to return undefined when no matches to callback after inital index', function () {
+            it('Returns undefined when no matches to callback after inital index', function () {
                 var item = _.find(myArray, function (val) {
                     return val === 1;
                 }, 1);
 
                 expect(item).to.be.undefined;
+            });
+        });
+
+        describe('When combining objects with assign', function () {
+            var target;
+
+            beforeEach(function () {
+                target = {key1: 'value1'};
+            });
+
+            it('Has property find that is a function', function () {
+                expect(_.assign).to.be.a('function');
+            });
+
+            it('Returns item that matches target', function () {
+                var item = _.assign(target, {});
+
+                expect(item).to.be.equal(target);
+            });
+
+            it('Returns item with source key and value when single source passed in', function () {
+                var source1 = {key2: 'value2'};
+                var item = _.assign(target, source1);
+
+                expect(item.key2).to.be.equal(source1.key2);
+            });
+
+            it('Returns item with all source keys and values when multiple sources passed in', function () {
+                var source1 = {key2: 'value2'};
+                var source2 = {key3: 'value3'};
+                var item = _.assign(target, source1, source2);
+
+                expect(item.key2).to.be.equal(source1.key2);
+                expect(item.key3).to.be.equal(source2.key3);
+            });
+
+            it('Does not modify sources', function () {
+                var source1 = {key2: 'value2'};
+                var source2 = {key3: 'value3'};
+                _.assign(target, source1, source2);
+
+                expect(source1.key1).to.not.be.defined;
+                expect(source1.key3).to.not.be.defined;
+                expect(source2.key1).to.not.be.defined;
+                expect(source2.key2).to.not.be.defined;
+            });
+
+            it('Resolves overlapping keys to last source value', function () {
+                var source1 = {key1: 'value2'};
+                var source2 = {key1: 'value3'};
+                var item = _.assign(target, source1, source2);
+
+                expect(item.key1).to.be.equal(source2.key1);
             });
         });
 
@@ -362,7 +415,7 @@ define([
                 expect(_.findIndex).to.be.a('function');
             });
 
-            it('Expect to return item that matches callback', function () {
+            it('Returns item that matches callback', function () {
                 var index = _.findIndex(myArray, function (val) {
                     return val === 2;
                 });
@@ -370,7 +423,7 @@ define([
                 expect(index).to.be.equal(1);
             });
 
-            it('Expect to return undefined when no matches to callback', function () {
+            it('Returns undefined when no matches to callback', function () {
                 var index = _.findIndex(myArray, function (val) {
                     return val === 4;
                 });
@@ -378,7 +431,7 @@ define([
                 expect(index).to.be.undefined;
             });
 
-            it('Expect to return item that matches callback after initial index', function () {
+            it('Returns item that matches callback after initial index', function () {
                 var index = _.findIndex(myArray, function (val) {
                     return val === 2;
                 }, 1);
@@ -386,7 +439,7 @@ define([
                 expect(index).to.be.equal(1);
             });
 
-            it('Expect to return undefined when no matches to callback after inital index', function () {
+            it('Returns undefined when no matches to callback after inital index', function () {
                 var index = _.findIndex(myArray, function (val) {
                     return val === 1;
                 }, 1);
@@ -402,7 +455,7 @@ define([
                 myArray = [1, 2, 3];
             });
 
-            it('Expect error to be thrown for object', function () {
+            it('Throws an error when an object is passed in', function () {
                 expect(function () {
                     _.filter({}, function () {});
                 }).to.throw(Error);
@@ -412,7 +465,7 @@ define([
                 expect(_.filter).to.be.a('function');
             });
 
-            it('Expect to return an array with one item for condition matching one item in collection', function () {
+            it('Returns an array with one item for condition matching one item in collection', function () {
                 var collection = _.filter(myArray, function (val) {
                     return val === 2;
                 });
@@ -421,7 +474,7 @@ define([
                 expect(collection[0]).to.be.equal(2);
             });
 
-            it('Expect to return empty list when no matches to callback', function () {
+            it('Returns empty list when no matches to callback', function () {
                 var collection = _.filter(myArray, function (val) {
                     return val === 5;
                 });
@@ -429,7 +482,7 @@ define([
                 expect(collection.length).to.be.equal(0);
             });
 
-            it('Expect to return list of same size when all match in callback', function () {
+            it('Returns list of same size when all match in callback', function () {
                 var collection = _.filter(myArray, function (val) {
                     return typeof val === 'number';
                 });
@@ -449,7 +502,7 @@ define([
                 expect(_.remove).to.be.a('function');
             });
 
-            it('Expect to return an array with one item for condition matching one item in collection', function () {
+            it('Returns an array with one item for condition matching one item in collection', function () {
                 var collection = _.remove(myArray, function (val) {
                     return val === 2;
                 });
@@ -459,7 +512,7 @@ define([
                 expect(collection[1]).to.be.equal(3);
             });
 
-            it('Expect to return full list when no matches to callback', function () {
+            it('Returns full list when no matches to callback', function () {
                 var collection = _.remove(myArray, function (val) {
                     return val === 5;
                 });
@@ -467,7 +520,7 @@ define([
                 expect(collection.length).to.be.equal(3);
             });
 
-            it('Expect to return empty list when all match in callback', function () {
+            it('Returns empty list when all match in callback', function () {
                 var collection = _.remove(myArray, function (val) {
                     return typeof val === 'number';
                 });
@@ -481,14 +534,14 @@ define([
                 expect(_.sample).to.be.a('function');
             });
 
-            it('Expect to return int item that matches callback', function () {
+            it('Returns int item that matches callback', function () {
                 var myArray = [1, 2, 3];
                 var randomItem = _.sample(myArray);
 
                 expect(_.includes(myArray, randomItem)).to.be.equal(true);
             });
 
-            it('Expect to return string item that matches callback', function () {
+            it('Returns string item that matches callback', function () {
                 var myArray = ['value1', 'value2'];
                 var randomItem = _.sample(myArray);
 
@@ -501,7 +554,7 @@ define([
                 expect(_.freeze).to.be.a('function');
             });
 
-            it('Expect frozen object to be immutable - value cannot change', function () {
+            it('Does not allow changes to properties of frozen object', function () {
                 var myObject = {key: 'value'};
                 _.freeze(myObject);
 
@@ -510,7 +563,7 @@ define([
                 expect(myObject.key).to.be.equal('value');
             });
 
-            it('Expect frozen object to be immutable - new property cannot be added', function () {
+            it('Does not allow new properties to be added to frozen object', function () {
                 var myObject = {key: 'value'};
                 _.freeze(myObject);
 
@@ -519,7 +572,7 @@ define([
                 expect(myObject.newKey).to.be.undefined;
             });
 
-            it('Expect frozen object to be immutable - property cannot be deleted', function () {
+            it('Does not allow new properties to be deleted from frozen object', function () {
                 var myObject = {key: 'value'};
                 _.freeze(myObject);
 
@@ -528,7 +581,7 @@ define([
                 expect(myObject.key).to.be.equal('value');
             });
 
-            it('Expect frozen array to be immutable - values cannot change', function () {
+            it('Does not allow changes to properties of frozen array', function () {
                 var myArray = [5];
                 _.freeze(myArray);
 
@@ -537,7 +590,7 @@ define([
                 expect(myArray[0]).to.be.equal(5);
             });
 
-            it('Expect frozen array to be immutable - push throws an error', function () {
+            it('Throws an error when adding a value to a frozen array', function () {
                 var myArray = [5];
                 _.freeze(myArray);
 
@@ -546,7 +599,7 @@ define([
                 }).to.throw(Error);
             });
 
-            it('Expect frozen array to be immutable - pop throws an error', function () {
+            it('Throws an error when removing a value from a frozen array', function () {
                 var myArray = [5];
                 _.freeze(myArray);
 
@@ -561,11 +614,11 @@ define([
                 expect(_.noop).to.be.a('function');
             });
 
-            it('Expect to return undefined when no arguments passed in', function () {
+            it('Returns undefined when no arguments passed in', function () {
                 expect(_.noop()).to.be.undefined;
             });
 
-            it('Expect to return undefined when arguments passed in', function () {
+            it('Returns undefined when arguments passed in', function () {
                 expect(_.noop({}, 'value4')).to.be.undefined;
             });
         });
@@ -575,13 +628,13 @@ define([
                 expect(_.findDifferences).to.be.a('function');
             });
 
-            it('Expect object and array comparison throws an error', function () {
+            it('Throws an error when object and array passed as arguments', function () {
                 expect(function () {
                     _.findDifferences({}, []);
                 }).to.throw(Error);
             });
 
-            it('Expect string and string comparison throws an error', function () {
+            it('Throws an error when string and string passed as arguments', function () {
                 expect(function () {
                     _.findDifferences('', '');
                 }).to.throw(Error);
@@ -602,25 +655,25 @@ define([
                     };
                 });
 
-                it('Expect to return an array with no items when two empty objects passed in', function () {
+                it('Returns an array with no items when two empty objects passed in', function () {
                     var differences = _.findDifferences({}, {});
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return an array with no items when no differences', function () {
+                it('Returns an array with no items when no differences', function () {
                     var differences = _.findDifferences(myObject1, myObject2);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return an array with no items when same item passed in for both', function () {
+                it('Returns an array with no items when same item passed in for both', function () {
                     var differences = _.findDifferences(myObject1, myObject1);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return array with one item of key of id when ids are different', function () {
+                it('Returns array with one item of key of id when ids are different', function () {
                     var differences = _.findDifferences(myObject1, {
                         name: 'hello',
                         id: '125'
@@ -630,66 +683,66 @@ define([
                     expect(differences[0]).to.be.equal('id');
                 });
 
-                it('Expect to return one item when properties are objects that have the same properties and values', function () {
+                it('Returns one item when properties are objects that have the same properties and values', function () {
                     var differences = _.findDifferences({name: {id: '1'}}, {name: {id: '1'}});
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('name');
                 });
 
-                it('Expect to return no items when properties are objects that have the same properties and values when deep is true', function () {
+                it('Returns no items when properties are objects that have the same properties and values when deep is true', function () {
                     var differences = _.findDifferences({name: {id: '1'}}, {name: {id: '1'}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return no items when properties are objects with nested objects that have the same properties and values when deep is true', function () {
+                it('Returns no items when properties are objects with nested objects that have the same properties and values when deep is true', function () {
                     var differences = _.findDifferences({name: {id: {value: '1'}}}, {name: {id: {value: '1'}}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when property is array that have the same values and values when deep is false', function () {
+                it('Returns one item when property is array that have the same values and values when deep is false', function () {
                     var differences = _.findDifferences({name: {ids: [1, 2, 3]}}, {name: {ids: [1, 2, 3]}}, false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('name');
                 });
 
-                it('Expect to return no items when property is array that have the same values and values when deep is true', function () {
+                it('Returns no items when property is array that have the same values and values when deep is true', function () {
                     var differences = _.findDifferences({name: {ids: [1, 2, 3]}}, {name: {ids: [1, 2, 3]}}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return no items when property is array of identical objects when deep is true', function () {
+                it('Returns no items when property is array of identical objects when deep is true', function () {
                     var differences = _.findDifferences({names: [{ids: '123'}]}, {names: [{ids: '123'}]}, true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when property is array of objects with different values when deep is true', function () {
+                it('Returns one item when property is array of objects with different values when deep is true', function () {
                     var differences = _.findDifferences({names: [{ids: '123'}]}, {names: [{ids: '125'}]}, true);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
-                it('Expect to return one item when one property is array of objects and the other object has property of empty array when deep is true', function () {
+                it('Returns one item when one property is array of objects and the other object has property of empty array when deep is true', function () {
                     var differences = _.findDifferences({names: [{ids: '123'}]}, {names: []}, true);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
-                it('Expect to return one item when second object does not have the other objects property when deep is false', function () {
+                it('Returns one item when second object does not have the other objects property when deep is false', function () {
                     var differences = _.findDifferences({names: [{ids: '123'}]}, {}, false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal('names');
                 });
 
-                it('Expect to return one item when first object does not have the other objects property when deep is false', function () {
+                it('Returns one item when first object does not have the other objects property when deep is false', function () {
                     var differences = _.findDifferences({}, {names: [{ids: '123'}]}, false);
 
                     expect(differences.length).to.be.equal(1);
@@ -705,70 +758,70 @@ define([
                     myArray2 = [ 'hello', '123' ];
                 });
 
-                it('Expect to return an array with no items when two empty arrays passed in', function () {
+                it('Returns an array with no items when two empty arrays passed in', function () {
                     var differences = _.findDifferences([], []);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return an array with no items when no differences', function () {
+                it('Returns an array with no items when no differences', function () {
                     var differences = _.findDifferences(myArray1, myArray2);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return an array with no items when same item passed in for both', function () {
+                it('Returns an array with no items when same item passed in for both', function () {
                     var differences = _.findDifferences(myArray1, myArray1);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return array with one item of key of id when ids are different', function () {
+                it('Returns array with one item of key of id when ids are different', function () {
                     var differences = _.findDifferences(myArray1, [ 'hello', '125' ]);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal(1);
                 });
 
-                it('Expect to return one item when empty array of array passed in', function () {
+                it('Returns one item when empty array of array passed in', function () {
                     var differences = _.findDifferences([[]], [[]]);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal(0);
                 });
 
-                it('Expect to return no items when empty array of array passed in with deep property true', function () {
+                it('Returns no items when empty array of array passed in with deep property true', function () {
                     var differences = _.findDifferences([[]], [[]], true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return no items when empty array of array of array passed in with deep property true', function () {
+                it('Returns no items when empty array of array of array passed in with deep property true', function () {
                     var differences = _.findDifferences([[[]]], [[[]]], true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when array of similar objects passed in with deep property false', function () {
+                it('Returns one item when array of similar objects passed in with deep property false', function () {
                     var differences = _.findDifferences([{name: 'hello'}], [{name: 'hello'}], false);
 
                     expect(differences.length).to.be.equal(1);
                 });
 
-                it('Expect to return no items when array of similar objects passed in with deep property true', function () {
+                it('Returns no items when array of similar objects passed in with deep property true', function () {
                     var differences = _.findDifferences([{name: 'hello'}], [{name: 'hello'}], true);
 
                     expect(differences.length).to.be.equal(0);
                 });
 
-                it('Expect to return one item when empty array passed in as first item against array with one item', function () {
+                it('Returns one item when empty array passed in as first item against array with one item', function () {
                     var differences = _.findDifferences([], [123], false);
 
                     expect(differences.length).to.be.equal(1);
                     expect(differences[0]).to.be.equal(0);
                 });
 
-                it('Expect to return one item when empty array passed in as second item against array with one item', function () {
+                it('Returns one item when empty array passed in as second item against array with one item', function () {
                     var differences = _.findDifferences([123], [], false);
 
                     expect(differences.length).to.be.equal(1);
@@ -829,27 +882,27 @@ define([
                 expect(_.isObject).to.be.a('function');
             });
 
-            it('Expect to return false when null is passed in', function () {
+            it('Returns false when null is passed in', function () {
                 expect(_.isObject(null)).to.not.be.true;
             });
 
-            it('Expect to return false when a string is passed in', function () {
+            it('Returns false when a string is passed in', function () {
                 expect(_.isObject('')).to.not.be.true;
             });
 
-            it('Expect to return false when undefined is passed in', function () {
+            it('Returns false when undefined is passed in', function () {
                 expect(_.isObject(undefined)).to.not.be.true;
             });
 
-            it('Expect to return false when a number is passed in', function () {
+            it('Returns false when a number is passed in', function () {
                 expect(_.isObject(123)).to.not.be.true;
             });
 
-            it('Expect to return false when a function is passed in', function () {
+            it('Returns false when a function is passed in', function () {
                 expect(_.isObject(function () {})).to.not.be.true;
             });
 
-            it('Expect to return true when an object is passed in', function () {
+            it('Returns true when an object is passed in', function () {
                 expect(_.isObject({})).to.be.true;
             });
         });
@@ -859,31 +912,31 @@ define([
                 expect(_.isArray).to.be.a('function');
             });
 
-            it('Expect to return false when null is passed in', function () {
+            it('Returns false when null is passed in', function () {
                 expect(_.isArray(null)).to.not.be.true;
             });
 
-            it('Expect to return false when a string is passed in', function () {
+            it('Returns false when a string is passed in', function () {
                 expect(_.isArray('')).to.not.be.true;
             });
 
-            it('Expect to return false when undefined is passed in', function () {
+            it('Returns false when undefined is passed in', function () {
                 expect(_.isArray(undefined)).to.not.be.true;
             });
 
-            it('Expect to return false when a number is passed in', function () {
+            it('Returns false when a number is passed in', function () {
                 expect(_.isArray(1234)).to.not.be.true;
             });
 
-            it('Expect to return false when an object is passed in', function () {
+            it('Returns false when an object is passed in', function () {
                 expect(_.isArray({})).to.not.be.true;
             });
 
-            it('Expect to return false when a function is passed in', function () {
+            it('Returns false when a function is passed in', function () {
                 expect(_.isArray(function () {})).to.not.be.true;
             });
 
-            it('Expect to return true when an array is passed in', function () {
+            it('Returns true when an array is passed in', function () {
                 expect(_.isArray([])).to.be.true;
             });
         });
@@ -893,31 +946,31 @@ define([
                 expect(_.isString).to.be.a('function');
             });
 
-            it('Expect to return false when null is passed in', function () {
+            it('Returns false when null is passed in', function () {
                 expect(_.isString(null)).to.not.be.true;
             });
 
-            it('Expect to return false when undefined is passed in', function () {
+            it('Returns false when undefined is passed in', function () {
                 expect(_.isString(undefined)).to.not.be.true;
             });
 
-            it('Expect to return false when a number is passed in', function () {
+            it('Returns false when a number is passed in', function () {
                 expect(_.isString(1234)).to.not.be.true;
             });
 
-            it('Expect to return false when an object is passed in', function () {
+            it('Returns false when an object is passed in', function () {
                 expect(_.isString({})).to.not.be.true;
             });
 
-            it('Expect to return false when an array is passed in', function () {
+            it('Returns false when an array is passed in', function () {
                 expect(_.isString([])).to.not.be.true;
             });
 
-            it('Expect to return false when a function is passed in', function () {
+            it('Returns false when a function is passed in', function () {
                 expect(_.isString(function () {})).to.not.be.true;
             });
 
-            it('Expect to return true when a string is passed in', function () {
+            it('Returns true when a string is passed in', function () {
                 expect(_.isString('')).to.be.true;
             });
         });
@@ -927,38 +980,38 @@ define([
                 expect(_.isNumber).to.be.a('function');
             });
 
-            it('Expect to return false when null is passed in', function () {
+            it('Returns false when null is passed in', function () {
                 expect(_.isNumber(null)).to.not.be.true;
             });
 
-            it('Expect to return false when undefined is passed in', function () {
+            it('Returns false when undefined is passed in', function () {
                 expect(_.isNumber(undefined)).to.not.be.true;
             });
 
-            it('Expect to return false when a string is passed in', function () {
+            it('Returns false when a string is passed in', function () {
                 expect(_.isNumber('')).to.not.be.true;
             });
 
-            it('Expect to return false when an object is passed in', function () {
+            it('Returns false when an object is passed in', function () {
                 expect(_.isNumber({})).to.not.be.true;
             });
 
-            it('Expect to return false when an array is passed in', function () {
+            it('Returns false when an array is passed in', function () {
                 expect(_.isNumber([])).to.not.be.true;
             });
 
-            it('Expect to return false when NaN is passed in', function () {
+            it('Returns false when NaN is passed in', function () {
                 expect(_.isNumber(NaN)).to.not.be.true;
             });
 
-            it('Expect to return false when a Function is passed in', function () {
+            it('Returns false when a Function is passed in', function () {
                 expect(_.isNumber(function () {})).to.not.be.true;
             });
 
-            it('Expect to return true when a number is passed in', function () {
+            it('Returns true when a number is passed in', function () {
                 expect(_.isNumber(1234)).to.be.true;
             });
-            it('Expect to return true when a floating point number is passed in', function () {
+            it('Returns true when a floating point number is passed in', function () {
                 expect(_.isNumber(1234.1234)).to.be.true;
             });
         });
@@ -968,35 +1021,35 @@ define([
                 expect(_.isFunction).to.be.a('function');
             });
 
-            it('Expect to return false when null is passed in', function () {
+            it('Returns false when null is passed in', function () {
                 expect(_.isFunction(null)).to.not.be.true;
             });
 
-            it('Expect to return false when undefined is passed in', function () {
+            it('Returns false when undefined is passed in', function () {
                 expect(_.isFunction(undefined)).to.not.be.true;
             });
 
-            it('Expect to return false when a string is passed in', function () {
+            it('Returns false when a string is passed in', function () {
                 expect(_.isFunction('')).to.not.be.true;
             });
 
-            it('Expect to return false when an object is passed in', function () {
+            it('Returns false when an object is passed in', function () {
                 expect(_.isFunction({})).to.not.be.true;
             });
 
-            it('Expect to return false when an array is passed in', function () {
+            it('Returns false when an array is passed in', function () {
                 expect(_.isFunction([])).to.not.be.true;
             });
 
-            it('Expect to return false when NaN is passed in', function () {
+            it('Returns false when NaN is passed in', function () {
                 expect(_.isFunction(NaN)).to.not.be.true;
             });
 
-            it('Expect to return false when a number is passed in', function () {
+            it('Returns false when a number is passed in', function () {
                 expect(_.isFunction(1234)).to.not.be.true;
             });
 
-            it('Expect to return true when a function is passed in', function () {
+            it('Returns true when a function is passed in', function () {
                 expect(_.isFunction(function () {})).to.be.true;
             });
         });
@@ -1006,23 +1059,23 @@ define([
                 expect(_.utc).to.be.a('function');
             });
 
-            it('Expect to return NaN when null is passed in', function () {
+            it('Returns NaN when null is passed in', function () {
                 expect(_.utc(null)).to.be.nan;
             });
 
-            it('Expect to return NaN when NaN is passed in', function () {
+            it('Returns NaN when NaN is passed in', function () {
                 expect(_.utc(NaN)).to.be.nan;
             });
 
-            it('Expect to return a Number when a number is passed in', function () {
+            it('Returns a Number when a number is passed in', function () {
                 expect(_.utc(1234)).to.be.equal(1234);
             });
 
-            it('Expect to return a number when utc datetime is passed in', function () {
+            it('Returns a number when utc datetime is passed in', function () {
                 expect(_.utc(_.now())).to.be.number;
             });
 
-            it('Expect to successfully convert Long datetime to utc datetime', function () {
+            it('Successfully converts Long datetime to utc datetime', function () {
                 expect(_.utc(Long.fromNumber(1488469432437))).to.be.equal(1488469432437);
             });
         });
@@ -1032,37 +1085,37 @@ define([
                 expect(_.toString).to.be.a('function');
             });
 
-            it('Expect object to be converted to string', function () {
+            it('Converts object to string', function () {
                 var myObject = {key: 'value'};
 
                 expect(_.toString(myObject)).to.be.equal('[object Object]{"key":"value"}');
             });
 
-            it('Expect array to be converted to string', function () {
+            it('Converts array to string', function () {
                 expect(_.toString([1, 2, 3])).to.be.equal('1,2,3');
             });
 
-            it('Expect number to be converted to string', function () {
+            it('Converts number to string', function () {
                 expect(_.toString(4)).to.be.equal('4');
             });
 
-            it('Expect string to be converted to string', function () {
+            it('Converts string to string', function () {
                 expect(_.toString('string')).to.be.equal('string');
             });
 
-            it('Expect boolean to be converted to string', function () {
+            it('Converts boolean to string', function () {
                 expect(_.toString(true)).to.be.equal('true');
             });
 
-            it('Expect undefined to be converted to string', function () {
+            it('Converts undefined to string', function () {
                 expect(_.toString(undefined)).to.be.equal('');
             });
 
-            it('Expect null to be converted to string', function () {
+            it('Converts null to string', function () {
                 expect(_.toString(null)).to.be.equal('');
             });
 
-            it('Expect Error to be converted to string', function () {
+            it('Converts Error to string', function () {
                 expect(_.toString(new Error('My Error'))).to.be.equal('Error: My Error');
             });
         });

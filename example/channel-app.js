@@ -43,6 +43,12 @@ requirejs([
     var init = function init() {
         var roomExpress;
 
+        if (app.getUrlParameter('m') || app.getUrlParameter('mode')) {
+            var subscriberMode = app.getModeFromAbbreviation(app.getUrlParameter('m') || app.getUrlParameter('mode'));
+
+            $('#subscriber-mode').val(subscriberMode);
+        }
+
         var createRoomExpress = function createPCastExpress() {
             roomExpress = new sdk.express.RoomExpress({
                 backendUri: app.getBaseUri() + '/pcast',
@@ -61,6 +67,10 @@ requirejs([
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
 
+            if (!channelAlias) {
+                return;
+            }
+
             capabilities.push($('#subscriber-mode option:selected').val());
 
             roomExpress.joinChannel({
@@ -71,7 +81,7 @@ requirejs([
                 if (error) {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Publish</strong>',
+                        title: '<strong>Subscribe</strong>',
                         message: 'Unable to join Channel (' + error.message + ')'
                     });
                 }
@@ -87,7 +97,7 @@ requirejs([
                 if (response.status !== 'ok') {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Publish</strong>',
+                        title: '<strong>Subscribe</strong>',
                         message: 'Failed to join channel (' + response.status + ')'
                     });
                 }
@@ -126,18 +136,17 @@ requirejs([
                     });
                 }
 
+                if (channelPlayer) {
+                    channelPlayer.stop();
+                }
+
                 channelSubscriber = response.mediaStream;
-                channelPlayer = new Player('channelVideo');
+                channelPlayer = new Player('channelVideo', {
+                    minWidth: 320,
+                    minHeight: 240
+                });
 
-                channelPlayer.onToggleAudio = function(enabled) {
-                    return enabled ? channelSubscriber.disableAudio() : channelSubscriber.enableAudio();
-                };
-
-                channelPlayer.onToggleVideo = function(enabled) {
-                    return enabled ? channelSubscriber.disableVideo() : channelSubscriber.enableVideo();
-                };
-
-                channelPlayer.start(channelSubscriber);
+                channelPlayer.start(channelSubscriber, response.renderer);
 
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
@@ -172,6 +181,7 @@ requirejs([
         $('#leaveChannel').click(leaveChannel);
 
         createRoomExpress();
+        joinChannel();
     };
 
     $(function () {

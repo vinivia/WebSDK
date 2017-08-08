@@ -265,23 +265,9 @@
     <div class="row step step-5 option-B">
         <div class="col-md-4 col-md-offset-7 text-center client">
             <p>Get local user media from camera.</p>
-            <div id="videoList" class="row text-center">
-                <div class="video-container">
-                    <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
-                    <div class="video-controls">
-                        <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="localVideo"></span>
-                        <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="localVideo"></span>
-                        <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="localVideo"></span>
-                    </div>
-                </div>
-                <div class="video-container">
-                    <video id="localVideoSecondary" class="local hidden" width="160" height="120" muted="true"></video>
-                    <div class="video-controls">
-                        <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
-                        <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
-                        <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="localVideoSecondary"></span>
-                    </div>
-                </div>
+            <div id="localVideoList" class="row text-center">
+                <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
+                <video id="localVideoSecondary" class="local hidden" width="160" height="120" muted="true"></video>
             </div>
             <select class="form-control" id="gum-source">
                 <option value="cameraAndMicrophone">Camera & Microphone</option>
@@ -442,35 +428,9 @@
         <h1>Video Stream</h1>
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2 text-center">
-                <div id="videoList" class="row text-center">
-                    <div class="video-container">
-                        <video id="remoteVideo" class="remote" width="640" height="480" autoplay></video>
-                        <div class="video-controls">
-                            <span class="glyphicon glyphicon-play video-control play hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                            <span class="glyphicon glyphicon-pause video-control pause hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                            <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                            <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                            <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideo"></span>
-                            <span class="video-control currentTime hidden" aria-hidden="true" data-video-target="remoteVideo" title="Current Time">0.0</span>
-                            <span class="video-control lag hidden" aria-hidden="true" data-video-target="remoteVideo" title="Estimated Lag">0.0</span>
-                            <span class="video-control buffered hidden" aria-hidden="true" data-video-target="remoteVideo" title="Buffered Time">0.0</span>
-                            <span class="video-control bufferSize hidden" aria-hidden="true" data-video-target="remoteVideo" title="Buffer Size">0.0</span>
-                        </div>
-                    </div>
-                    <div class="video-container">
-                        <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" autoplay></video>
-                        <div class="video-controls">
-                            <span class="glyphicon glyphicon-play video-control play hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
-                            <span class="glyphicon glyphicon-pause video-control pause hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
-                            <span class="glyphicon glyphicon-facetime-video toggle-off video-control mute-video hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
-                            <span class="glyphicon glyphicon-volume-off video-control mute hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
-                            <span class="glyphicon glyphicon-fullscreen video-control fullscreen hidden" aria-hidden="true" data-video-target="remoteVideoSecondary"></span>
-                            <span class="video-control currentTime hidden" aria-hidden="true" data-video-target="remoteVideoSecondary" title="Current Time">0.0 s</span>
-                            <span class="video-control lag hidden" aria-hidden="true" data-video-target="remoteVideoSecondary" title="Estimated Lag">0.0 s</span>
-                            <span class="video-control buffered hidden" aria-hidden="true" data-video-target="remoteVideoSecondary" title="Buffered Time">0.0 s</span>
-                            <span class="video-control bufferSize hidden" aria-hidden="true" data-video-target="remoteVideoSecondary" title="Buffer Size">0.0 s</span>
-                        </div>
-                    </div>
+                <div id="subscriberVideoList" class="row text-center">
+                    <video id="remoteVideo" class="remote" width="640" height="480" playsinline autoplay></video>
+                    <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" playsinline autoplay></video>
                 </div>
             </div>
         </div>

@@ -61,7 +61,7 @@ define([
             }
 
             var roomService = roomServiceResponse.roomService;
-            var roomToCreate = _.assign(options.room, {});
+            var roomToCreate = _.assign({}, options.room);
 
             if (!roomToCreate.description) {
                 roomToCreate.description = roomDescription;
@@ -89,7 +89,7 @@ define([
         assert.isObject(options, 'options');
         assert.isObject(options.room, 'options.room');
 
-        var createRoomOptions = _.assign(options, {});
+        var createRoomOptions = _.assign({}, options);
 
         createRoomOptions.room.type = roomEnums.types.channel.name;
 
@@ -190,16 +190,16 @@ define([
             assert.isObject(options.videoElement, 'options.videoElement');
         }
 
-        var channelOptions = _.assign(options, {
+        var channelOptions = _.assign({
             type: roomEnums.types.channel.name,
             role: memberEnums.roles.audience.name
-        });
+        }, options);
         var lastMediaStream;
         var lastStreamId;
         var that = this;
 
         var joinRoomCallback = function(error, response) {
-            var channelResponse = !response || _.assign(response, {});
+            var channelResponse = !response || _.assign({}, response);
 
             if (response && response.roomService) {
                 var leaveRoom = response.roomService.leaveRoom;
@@ -326,15 +326,15 @@ define([
 
             roomService.start(role, screenName);
 
-            var publishOptions = _.assign(options, {
+            var publishOptions = _.assign({
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
                     options: {conditionCountForNotificationThreshold: 8}
                 }
-            });
+            }, options);
 
             if (options.streamUri) {
-                var remoteOptions = _.assign(publishOptions, {connectOptions: []});
+                var remoteOptions = _.assign({connectOptions: []}, publishOptions);
                 var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
                     return option.startsWith('room-id');
                 });
@@ -350,7 +350,7 @@ define([
 
                 that._pcastExpress.publishRemote(remoteOptions, callback);
             } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-                var localOptions = _.assign(publishOptions, {tags: []});
+                var localOptions = _.assign({tags: []}, publishOptions);
                 var hasChannelTag = _.find(localOptions.tags, function(tag) {
                     return tag.startsWith('channelId');
                 });
@@ -374,7 +374,7 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
-        var channelOptions = _.assign(options, {});
+        var channelOptions = _.assign({}, options);
 
         options.room.type = roomEnums.types.channel.name;
 
@@ -403,21 +403,18 @@ define([
                 return callback(null, {status: response.status});
             }
 
-            var mediaStream = response.mediaStream;
-
-            if (count > 1) {
-                return callback(null, {
-                    status: 'ok',
-                    mediaStream: mediaStream,
-                    reason: 'stream-failure-recovered'
-                });
-            }
-
-            callback(null, {
+            var subscribeResponse = _.assign({}, response, {
                 status: 'ok',
-                mediaStream: mediaStream,
                 reason: successReason
             });
+
+            if (count > 1) {
+                subscribeResponse.reason = 'stream-failure-recovered';
+
+                return callback(null, subscribeResponse);
+            }
+
+            callback(null, subscribeResponse);
         });
     }
 

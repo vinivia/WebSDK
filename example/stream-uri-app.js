@@ -26,11 +26,11 @@ requirejs.config({
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'Long': 'long/dist/long.min',
         'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
-        'shaka-player': 'shaka-player/dist/shaka-player.compiled'
+        'shaka-player': 'shaka-player/dist/shaka-player.compiled',
+        'video-player': 'player',
+        'app-setup': 'app-setup'
     }
 });
-
-var version = '1.0.0'; // ToDo: use until sample app separated from repo
 
 requirejs([
     'jquery',
@@ -38,121 +38,18 @@ requirejs([
     'bootstrap-notify',
     'fingerprintjs2',
     'phenix-web-sdk',
-    'shaka-player'
-], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+    'shaka-player',
+    'video-player',
+    'app-setup'
+], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
-        var remoteVideoEl = $('#remoteVideo')[0];
-        var remoteVideoSecondaryEl = $('#remoteVideoSecondary')[0];
+        var primaryPlayer = null;
+        var secondaryPlayer = null;
 
-        if (!shaka.Player.isBrowserSupported()) {
-            shaka.polyfill.installAll();
-        }
-
-        var getUrlParameter = function getUrlParameter(parameterName) {
-            var queryParameters = window.location.search.substring(1).split('&');
-
-            for (var i = 0; i < queryParameters.length; i++) {
-                var parameter = queryParameters[i].split('=');
-
-                if (parameter[0] === parameterName) {
-                    return parameter.length > 0 ? decodeURIComponent(parameter[1]) : null;
-                }
-            }
-        };
-
-        var enabledSteps = ['step-1'];
-
-        var enableSteps = function enableSteps() {
-            $('.step').addClass('step-disabled');
-            $('.step .server').removeClass('step-active');
-            $('.step .client').removeClass('step-active');
-
-            enabledSteps.forEach(function (step) {
-                $('.' + step).removeClass('step-disabled');
-            });
-
-            $('.' + enabledSteps[enabledSteps.length - 1] + ' .server').addClass('step-active');
-            $('.' + enabledSteps[enabledSteps.length - 1] + ' .client').addClass('step-active');
-
-            $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
-        };
-
-        var activateStep = function activateStep(step) {
-            enabledSteps.push(step);
-            enableSteps();
-        };
-
-        var setVideoWidthAndHeight = function setVideoWithAndHeight(video){
-            video.width = video.videoWidth <= 160 ? 160 : video.videoWidth > 640 ? 640 : video.videoWidth;
-            video.height = video.videoHeight <= 120 ? 120 : video.videoHeight > 480 ? 480 : video.videoHeight;
-        };
-
-        var onLoadedMetaData = function onLoadedMetaData(video) {
-            console.log('Meta data, width=' + video.videoWidth + ', height=' + video.videoHeight);
-
-            $.notify({
-                icon: 'glyphicon glyphicon-film',
-                title: '<strong>Video</strong>',
-                message: 'The video dimensions are ' + video.videoWidth + ' x ' + video.videoHeight
-            }, {
-                type: 'info',
-                allow_dismiss: false, // eslint-disable-line camelcase
-                placement: {
-                    from: 'bottom',
-                    align: 'right'
-                },
-                delay: 5000,
-                animate: {
-                    enter: 'animated fadeInUp',
-                    exit: 'animated fadeOutDown'
-                }
-            });
-
-            setVideoWidthAndHeight(video);
-        };
-
-        remoteVideoEl.onloadedmetadata = function () {
-            onLoadedMetaData(remoteVideoEl);
-        };
-
-        remoteVideoSecondaryEl.onloadedmetadata = function () {
-            onLoadedMetaData(remoteVideoSecondaryEl);
-        };
-
-        $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
-        $('#browser').text(sdk.RTC.browser);
-        $('#browserVersion').text(sdk.RTC.browserVersion);
-
-        if (sdk.RTC.webrtcSupported) {
-            $('#webrtc').addClass('success');
-        } else {
-            $('#webrtc').addClass('danger');
-        }
-
-        if (sdk.RTC.isPhenixEnabled()) {
-            $('#phenix').addClass('success');
-        } else if (sdk.RTC.phenixSupported) {
-            $('#phenix').addClass('warning');
-        } else {
-            $('#phenix').addClass('danger');
-        }
-
-        if (getUrlParameter('url')) {
-            $('#environment').append($('<option></option>').attr('value', getUrlParameter('url')).attr('selected', 'selected').text(getUrlParameter('url')));
-        }
-
-        if (getUrlParameter('applicationId')) {
-            $('#applicationId').val(getUrlParameter('applicationId'));
-        }
-
-        if (getUrlParameter('secret')) {
-            $('#secret').val(getUrlParameter('secret'));
-        }
-
-        if (getUrlParameter('streamId')) {
-            $('#stream').append($('<option></option>').attr('value', getUrlParameter('streamId')).attr('selected', 'selected').text(getUrlParameter('streamId')));
-            $('#originStreamId').val(getUrlParameter('streamId'));
+        if (app.getUrlParameter('streamId')) {
+            $('#stream').append($('<option></option>').attr('value', app.getUrlParameter('streamId')).attr('selected', 'selected').text(app.getUrlParameter('streamId')));
+            $('#originStreamId').val(app.getUrlParameter('streamId'));
         }
 
         var adminBaseUri;
@@ -163,15 +60,9 @@ requirejs([
                 pcast.stop();
             }
 
-            var uri = $('#environment option:selected').val();
-            var parser = document.createElement('a');
-            parser.href = uri;
+            var uri = app.getUri();
 
-            adminBaseUri = 'https://' + parser.hostname;
-
-            if (parser.port) {
-                adminBaseUri += ':' + parser.port;
-            }
+            adminBaseUri = app.getBaseUri();
 
             fingerprint.get(function (fingerprint) {
                 pcast = new sdk.PCast({
@@ -180,20 +71,14 @@ requirejs([
                     shaka: shaka
                 });
 
-                pcast.getLogger().setApplicationVersion(version);
-
-                setLoggerUserId();
-                setLoggerEnvironment();
+                app.setLoggerUserId(pcast);
+                app.setLoggerEnvironment(pcast);
+                app.setLoggerVersion(pcast);
             });
         };
 
         var createAuthToken = function createAuthToken() {
-            var applicationId = $('#applicationId').val();
-            var secret = $('#secret').val();
-            var data = {
-                applicationId: applicationId,
-                secret: secret
-            };
+            var data = app.getAuthData();
 
             $.ajax({
                 url: adminBaseUri + '/pcast/auth',
@@ -203,27 +88,15 @@ requirejs([
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $('.authToken').val(result.authenticationToken);
-                activateStep('step-2');
+                app.activateStep('step-2');
                 setTimeout(function () {
-                    activateStep('step-3');
+                    app.activateStep('step-3');
                 }, 1500);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Auth</strong>',
                     message: 'Failed to create authentication token (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -233,44 +106,20 @@ requirejs([
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
             }, function onlineCallback() {
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-log-in',
                     title: '<strong>Online</strong>',
                     message: 'Connected to PCast&trade;'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
-                activateStep('step-4');
+                app.activateStep('step-4');
                 setTimeout(function () {
-                    activateStep('step-5');
+                    app.activateStep('step-5');
                 }, 1500);
             }, function offlineCallback() {
-                $.notify({
+                app.createNotification('warning', {
                     icon: 'glyphicon glyphicon-log-out',
                     title: '<strong>Offline</strong>',
                     message: 'Disconnected from PCast&trade;'
-                }, {
-                    type: 'warning',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -279,18 +128,6 @@ requirejs([
             pcast.stop();
             $('.sessionId').val('');
             $('#stop').addClass('disabled');
-        };
-
-        var updateOptions = function updateOptions() {
-            $('input[name="option"]').each(function () {
-                var option = $(this).val();
-
-                $('.' + option).addClass('option-disabled');
-            });
-
-            var option = $('input[name="option"]:checked').val();
-
-            $('.' + option).removeClass('option-disabled');
         };
 
         var publisher;
@@ -308,22 +145,10 @@ requirejs([
             var sourceOptions = parseArray($('#sourceOptionsForPublishing').val());
 
             if (!sourceUri) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-cd',
                     title: '<strong>Source URI</strong>',
                     message: 'Please provide a source URI before publishing'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 8000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 return;
@@ -332,22 +157,10 @@ requirejs([
             var streamToken = $('#streamTokenForPublishing').val();
 
             if (!streamToken) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-facetime-video',
                     title: '<strong>Stream Token</strong>',
                     message: 'Please create a stream token before publishing'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 8000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 return;
@@ -357,22 +170,10 @@ requirejs([
 
             var publishCallback = function publishCallback(pcast, status, phenixPublisher) {
                 if (status !== 'ok') {
-                    $.notify({
+                    app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Publish</strong>',
                         message: 'Failed to publish stream (' + status + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
 
                     return;
@@ -382,68 +183,32 @@ requirejs([
                 $('#stopPublisher').removeClass('disabled');
 
                 publisher.setDataQualityChangedCallback(function (publisher, status, reason) {
-                    $.notify({
+                    app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
                         message: 'Data quality update: sending ' + status + ' with limitation ' + reason
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
                 });
 
                 publisher.setPublisherEndedCallback(function (publisher, reason) {
-                    $.notify({
+                    app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
                         message: 'The published stream ended for reason "' + reason + '"'
-                    }, {
-                        type: 'info',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
                 });
 
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',
                     message: 'Started publishing stream "' + publisher.getStreamId() + '"'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
-                activateStep('step-8');
+                app.activateStep('step-5-5');
                 setTimeout(function () {
-                    activateStep('step-9');
+                    app.activateStep('step-6');
                 }, 1500);
             };
 
@@ -466,7 +231,7 @@ requirejs([
 
             if (streamId) {
                 $('#originStreamId').val(streamId);
-                activateStep('step-6');
+                app.activateStep('step-6');
             }
         };
 
@@ -504,22 +269,10 @@ requirejs([
                     $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
                 }
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Streams</strong>',
                     message: 'Failed to list streams (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -541,41 +294,17 @@ requirejs([
                 data: JSON.stringify(data)
             }).done(function (result) {
                 $(targetElementSelector).val(result.streamToken);
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
                     message: 'Created token for stream "' + originStreamId + '"'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
                 callback(result.streamToken);
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Stream</strong>',
                     message: 'Failed to create stream token (' + (errorThrown || jqXHR.status) + ')'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
             });
         };
@@ -594,9 +323,9 @@ requirejs([
             capabilities.push($('#publish-quality option:selected').val());
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-6');
+                app.activateStep('step-6');
                 setTimeout(function () {
-                    activateStep('step-7');
+                    app.activateStep('step-7');
                 }, 1500);
             });
         };
@@ -611,9 +340,9 @@ requirejs([
             capabilities.push($('#subscriber-mode option:selected').val());
 
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
-                activateStep('step-10');
+                app.activateStep('step-10');
                 setTimeout(function () {
-                    activateStep('step-11');
+                    app.activateStep('step-11');
                 }, 1500);
             });
         };
@@ -625,22 +354,10 @@ requirejs([
 
             pcast.subscribe(streamToken, function subscribeCallback(pcast, status, mediaStream) {
                 if (status !== 'ok') {
-                    $.notify({
+                    app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Subscribe</strong>',
                         message: 'Failed to subscribe to stream (' + status + ')'
-                    }, {
-                        type: 'danger',
-                        allow_dismiss: false, // eslint-disable-line camelcase
-                        placement: {
-                            from: 'bottom',
-                            align: 'right'
-                        },
-                        delay: 5000,
-                        animate: {
-                            enter: 'animated fadeInUp',
-                            exit: 'animated fadeOutDown'
-                        }
                     });
 
                     return;
@@ -672,34 +389,24 @@ requirejs([
                     return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                 });
 
-                displayVideoElementAndControlsWhileStreamIsActive(primaryMediaStream, remoteVideoEl);
-                attachMediaStreamToVideoElement(primaryMediaStream, remoteVideoEl);
+                primaryPlayer = new Player('remoteVideo');
 
-                if (typeof mediaStream.getStream === 'function' && mediaStream.getStream().getTracks().length > 2) {
-                    var secondaryMediaStream = mediaStream.select(function(track, index) {
+                primaryPlayer.start(primaryMediaStream);
+
+                if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
+                    var secondaryMediaStream = mediaStream.select(function (track, index) {
                         return track.kind === 'video' && index === 2;
                     });
 
-                    displayVideoElementAndControlsWhileStreamIsActive(secondaryMediaStream, remoteVideoSecondaryEl);
-                    attachMediaStreamToVideoElement(secondaryMediaStream, remoteVideoSecondaryEl);
+                    secondaryPlayer = new Player('remoteVideoSecondary');
+
+                    secondaryPlayer.start(secondaryMediaStream);
                 }
 
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
                     message: 'Starting stream'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 subscriberMediaStream = mediaStream;
@@ -718,43 +425,19 @@ requirejs([
         var monitorStream = function monitorStream(stream, reason) {
             switch (reason) {
             case 'client-side-failure':
-                $.notify({
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Monitor</strong>',
                     message: 'Stream Failure'
-                }, {
-                    type: 'danger',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                 // Handle failure event, redo stream
                 break;
             default:
-                $.notify({
+                app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Monitor</strong>',
                     message: 'Stream Healthy'
-                }, {
-                    type: 'success',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
                 });
 
                     // No failure has occurred, handle monitor event
@@ -762,143 +445,16 @@ requirejs([
             }
         };
 
-        var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(mediaStream, videoElement) {
-            var video = $(videoElement);
-            var videoControls = $('[data-video-target=' + videoElement.id + ']');
-            var shouldVideoBeHidden = video.hasClass('hidden');
-
-            if (shouldVideoBeHidden) {
-                video.removeClass('hidden');
-            }
-
-            videoControls.removeClass('hidden');
-
-            mediaStream.setStreamEndedCallback(function() {
-                if (shouldVideoBeHidden) {
-                    video.addClass('hidden');
-                }
-
-                videoControls.addClass('hidden');
-            });
-        };
-
-        var attachMediaStreamToVideoElement = function attachMediaStreamToVideoElement(mediaStream, element) {
-            var renderer = mediaStream.createRenderer();
-
-            renderer.setDataQualityChangedCallback(function (renderer, status, reason) {
-                $.notify({
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Publish</strong>',
-                    message: 'Data quality update: receiving ' + status + ' with limitation ' + reason
-                }, {
-                    type: 'info',
-                    allow_dismiss: false, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 5000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
-            });
-
-            element = renderer.start(element);
-
-            renderer.setVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
-                $.notify({
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Video Dimensions Changed</strong>',
-                    message: 'Video dimensions changed: new width = ' + dimensions.width + ', new height = ' + dimensions.height
-                }, {
-                    type: 'info',
-                    allow_dismiss: true, // eslint-disable-line camelcase
-                    placement: {
-                        from: 'bottom',
-                        align: 'right'
-                    },
-                    delay: 3000,
-                    animate: {
-                        enter: 'animated fadeInUp',
-                        exit: 'animated fadeOutDown'
-                    }
-                });
-
-                setVideoWidthAndHeight(element);
-            });
-        };
-
-        var handleFullscreenButtonClick = function handleFullscreenButtonClick() {
-            if (!this.dataset.videoTarget) {
-                throw new Error('Button Must Have Target');
-            }
-
-            var video = $('#' + this.dataset.videoTarget)[0];
-
-            requestFullscreen(video);
-        };
-
-        var requestFullscreen = function requestFullScreen(element) {
-            if (!element) {
-                throw new Error('Element required to request full screen');
-            }
-
-            if (element.requestFullscreen) {
-                element.requestFullscreen();
-            } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
-            } else if (element.webkitRequestFullScreen) {
-                element.webkitRequestFullScreen();
-            } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
-            }
-        };
-
-        function setLoggerUserId() {
-            if (!pcast) {
-                return;
-            }
-
-            var logger = pcast.getLogger();
-
-            logger.setUserId($('#applicationId').val());
-        }
-
-        function setLoggerEnvironment() {
-            if (!pcast) {
-                return;
-            }
-
-            var env = $('#environment').val().toLowerCase();
-            var logger = pcast.getLogger();
-
-            if(env.indexOf('local') > -1) {
-                logger.setEnvironment('local');
-            } else if (env.indexOf('stg')) {
-                logger.setEnvironment('staging');
-            } else {
-                logger.setEnvironment('production');
-            }
-        }
-
-        $('#environment').change(function () {
+        app.setOnReset(function () {
             createPCast();
+            app.setLoggerEnvironment(pcast);
             listStreams();
-            setLoggerEnvironment();
         });
 
-        $('#applicationId').change(function() {
+        $('#applicationId').change(function () {
             listStreams();
-            setLoggerUserId();
+            app.setLoggerUserId(pcast);
         });
-
-        $('input[type="radio"]').on('change', function () {
-            updateOptions();
-        });
-
-        updateOptions();
 
         $('#secret').change(listStreams);
         $('#createAuthToken').click(createAuthToken);
@@ -917,18 +473,19 @@ requirejs([
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
-        $('.fullscreen').click(handleFullscreenButtonClick);
-
         createPCast();
-        enableSteps();
     };
 
     $(function () {
+        app.init();
         init();
 
         // Plugin might load with delay
         if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = init;
+            sdk.RTC.onload = function() {
+                app.init();
+                init();
+            };
         }
     });
 });

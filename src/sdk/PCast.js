@@ -263,7 +263,7 @@ define([
 
         var that = this;
         var streamType = 'upload';
-        var setupStreamOptions = _.assign(options, {negotiate: true});
+        var setupStreamOptions = _.assign({}, options, {negotiate: true});
 
         if (typeof streamToPublish === 'string') {
             setupStreamOptions.negotiate = false;
@@ -351,7 +351,7 @@ define([
 
         var that = this;
         var streamType = 'download';
-        var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
+        var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
         var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
         streamAnalytix.setProperty('resource', streamType);
@@ -419,6 +419,12 @@ define([
         var that = this;
 
         if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
+            if (!chrome.runtime || !chrome.runtime.sendMessage) { // eslint-disable-line no-undef
+                that._logger.info('Screen sharing NOT available');
+
+                return callback(false);
+            }
+
             try {
                 chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) { // eslint-disable-line no-undef
                     if (response && response.status === 'ok') {

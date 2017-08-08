@@ -1,17 +1,5 @@
 /**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -198,8 +186,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-07T16:16:54Z' || '?';
-	    var releaseVersion = '2017.2.15';
+	    var sdkVersion = '2017-08-09T06:07:34Z' || '?';
+	    var releaseVersion = '2017.2.16';
 
 	    function Logger() {
 	        this._appenders = [];
@@ -532,22 +520,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 
-	    _.assign = function assign(objectA, objectB) {
-	        var newObject = {};
+	    _.argumentsToArray = function(args) {
+	        if (!_.isObject(args) || !args.length) {
+	            throw new Error('Collection must be arguments');
+	        }
 
-	        _.forOwn(objectA, function(value, key) {
-	            newObject[key] = value;
-	        });
+	        var collection = [];
 
-	        _.forOwn(objectB, function(value, key) {
-	            if (objectA.hasOwnProperty(key)) {
-	                return;
+	        for (var i = 0; i < args.length; i++) {
+	            collection.push(args[i]);
+	        }
+
+	        return collection;
+	    };
+
+	    _.assign = function assign(target) {
+	        if (!_.isObject(target)) {
+	            throw new Error('target must be object');
+	        }
+
+	        var sources = _.argumentsToArray(arguments);
+
+	        sources.shift();
+
+	        _.forEach(sources, function(source, index) {
+	            if (!_.isObject(source)) {
+	                throw new Error('source ' + index + ' must be object');
 	            }
 
-	            newObject[key] = value;
+	            _.forOwn(source, function(value, key) {
+	                target[key] = value;
+	            });
 	        });
 
-	        return newObject;
+	        return target;
 	    };
 
 	    _.includes = function includes(collection, value) {
@@ -1338,7 +1344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-08-07T16:16:54Z';
+	        this._version = '2017-08-09T06:07:34Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -14878,7 +14884,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var sdkVersion = '2017-08-07T16:16:54Z';
+	    var sdkVersion = '2017-08-09T06:07:34Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14889,6 +14895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var firefoxInstallationCheckInterval = 100;
 	    var firefoxMaxInstallationChecks = 450;
 	    var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
+	    var maxBandwidthForSdPlayback = 1280000; // Safe limit for getting SD only playback
 
 	    function PCast(options) {
 	        options = options || {};
@@ -15105,7 +15112,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var that = this;
 	        var streamType = 'upload';
-	        var setupStreamOptions = _.assign(options, {negotiate: true});
+	        var setupStreamOptions = _.assign({}, options, {negotiate: true});
 
 	        if (typeof streamToPublish === 'string') {
 	            setupStreamOptions.negotiate = false;
@@ -15193,7 +15200,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        var that = this;
 	        var streamType = 'download';
-	        var setupStreamOptions = _.assign(options, {negotiate: options.negotiate !== false});
+	        var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
 	        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
 	        streamAnalytix.setProperty('resource', streamType);
@@ -15261,6 +15268,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var that = this;
 
 	        if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
+	            if (!chrome.runtime || !chrome.runtime.sendMessage) { // eslint-disable-line no-undef
+	                that._logger.info('Screen sharing NOT available');
+
+	                return callback(false);
+	            }
+
 	            try {
 	                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) { // eslint-disable-line no-undef
 	                    if (response && response.status === 'ok') {
@@ -16775,6 +16788,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            };
 
 	                            if (options.isDrmProtectedContent) {
+	                                checkBrowserSupportForWidevineDRM.call(that);
+	                                unwrapLicenseResponse.call(that, player);
 	                                addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
 	                                    if (!err) {
 	                                        loadPlayer(updatedPlayerConfig);
@@ -17037,13 +17052,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	        callback.call(that, internalMediaStream.mediaStream);
 	    }
 
+	    function checkBrowserSupportForWidevineDRM() {
+	        var error;
+
+	        if (!_.isFunction(Uint8Array)) {
+	            error = 'Uint8Array support required for DRM';
+	            this._logger.error(error);
+
+	            throw new Error(error);
+	        }
+
+	        if (!_.isFunction(window.atob)) {
+	            error = 'window.atob support required for DRM';
+	            this._logger.error(error);
+
+	            throw new Error(error);
+	        }
+	    }
+
+	    function unwrapLicenseResponse(player) {
+	        var that = this;
+
+	        player.getNetworkingEngine().registerResponseFilter(function (type, response) {
+	            // Only manipulate license responses:
+	            if (type.toString() === that._shaka.net.NetworkingEngine.RequestType.LICENSE.toString()) {
+	                var binaryResponseAsTypedArray = new Uint8Array(response.data);
+	                var responseAsString = String.fromCharCode.apply(null, binaryResponseAsTypedArray);
+	                var parsedResponse = JSON.parse(responseAsString);
+	                var base64License = parsedResponse.license;
+	                var decodedLicense = window.atob(base64License);
+
+	                response.data = new Uint8Array(decodedLicense.length);
+
+	                for (var i = 0; i < decodedLicense.length; ++i) {
+	                    response.data[i] = decodedLicense.charCodeAt(i);
+	                }
+
+	                if (!isHDPlaybackAllowedByWidevine(parsedResponse.allowedTracks)) {
+	                    disableHdPlayback(player);
+	                }
+	            }
+	        });
+	    }
+
+	    function isHDPlaybackAllowedByWidevine(allowedTracks) {
+	        var minQualityLevelForHD = '720';
+
+	        return _.includes(allowedTracks, minQualityLevelForHD);
+	    }
+
+	    function disableHdPlayback(player) {
+	        player.configure({restrictions: {maxVideoBandwidth: maxBandwidthForSdPlayback}});
+	    }
+
 	    function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
 	        if (!playerConfig.drm) {
 	            playerConfig.drm = {};
-	        }
-
-	        if (!playerConfig.drm.servers) {
-	            playerConfig.drm.servers = {};
 	        }
 
 	        if (!playerConfig.drm.advanced) {
@@ -17060,10 +17124,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        // Add browser specific DRM calls here
 	        // Currently we support Widevine only
-	        addWidevineConfigToPlayerConfig.call(this, playerConfig, callback, options);
+	        addWidevineConfigToPlayerConfig.call(this, playerConfig, options, callback);
 	    }
 
-	    function addWidevineConfigToPlayerConfig(playerConfig, callback, options) {
+	    function addWidevineConfigToPlayerConfig(playerConfig, options, callback) {
 	        playerConfig['manifest']['dash']['customScheme'] = function (element) {
 	            if (element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
 	                return [{
@@ -19791,7 +19855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    function addMetricToRecords(metric, since, sessionId, streamId, environment, version, value) {
-	        var record = _.assign(value, {
+	        var record = _.assign({}, value, {
 	            metric: metric,
 	            timestamp: _.isoString(),
 	            sessionId: sessionId,
@@ -19911,7 +19975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-07T16:16:54Z' || '?';
+	    var sdkVersion = '2017-08-09T06:07:34Z' || '?';
 
 	    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
 	        assert.stringNotEmpty(sessionId, 'sessionId');
@@ -20068,12 +20132,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        var listenForContinuation = function(event) {
-	            if (!videoStalled || !video.buffered.length || (event.type === 'progress' && video.buffered.end(video.buffered.length) === lastProgress)) {
+	            var bufferLength = video.buffered.length;
+	            var hasNotProgressedSinceLastProgressEvent = bufferLength > 0 && event.type === 'progress' && video.buffered.end(bufferLength - 1) === lastProgress;
+
+	            if (!videoStalled || !bufferLength || hasNotProgressedSinceLastProgressEvent) {
 	                return;
 	            }
 
 	            if (event.type === 'progress') {
-	                lastProgress = video.buffered.end(video.buffered.length);
+	                lastProgress = video.buffered.end(bufferLength - 1);
 	            }
 
 	            var timeSinceStop = _.now() - videoStalled;
@@ -20087,7 +20154,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 
 	        phenixRTC.addEventListener(video, 'stalled', listenForStall);
-	        phenixRTC.addEventListener(video, 'paused', listenForStall);
+	        phenixRTC.addEventListener(video, 'pause', listenForStall);
 	        phenixRTC.addEventListener(video, 'suspend', listenForStall);
 	        phenixRTC.addEventListener(video, 'play', listenForContinuation);
 	        phenixRTC.addEventListener(video, 'playing', listenForContinuation);
@@ -20095,7 +20162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._disposables.push(function() {
 	            phenixRTC.removeEventListener(video, 'stalled', listenForStall);
-	            phenixRTC.removeEventListener(video, 'paused', listenForStall);
+	            phenixRTC.removeEventListener(video, 'pause', listenForStall);
 	            phenixRTC.removeEventListener(video, 'suspend', listenForStall);
 	            phenixRTC.removeEventListener(video, 'play', listenForContinuation);
 	            phenixRTC.removeEventListener(video, 'playing', listenForContinuation);
@@ -20127,9 +20194,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function recordMetricRecord(record, since) {
 	        assert.stringNotEmpty(record.metric, 'record.metric');
 
-	        record = _.assign(this._properties, record);
+	        var annotatedRecord = _.assign({}, this._properties, record);
 
-	        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, record);
+	        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, annotatedRecord);
 	    }
 
 	    return StreamAnalytix;
@@ -21439,6 +21506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
 	                return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
 	            });
+
 	            if (streamToUpdate) {
 	                streamToUpdate._update(stream);
 	            } else {
@@ -23265,10 +23333,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return callback(null, instantiateResponse);
 	            }
 
-	            var remoteOptions = _.assign(options, {
+	            var remoteOptions = _.assign({
 	                connectOptions: [],
 	                capabilities: []
-	            });
+	            }, options);
 
 	            if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
 	                remoteOptions.capabilities.push('publish-uri');
@@ -23527,11 +23595,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            subscriber.setStreamEndedCallback(subscriberEndedCallback);
 
 	            var expressSubscriber = createExpressSubscriber.call(that, subscriber, renderer);
-
-	            callback(null, {
+	            var subscribeResponse = {
 	                status: 'ok',
 	                mediaStream: expressSubscriber
-	            });
+	            };
+
+	            if (renderer) {
+	                subscribeResponse.renderer = renderer;
+	            }
+
+	            callback(null, subscribeResponse);
 	        });
 	    }
 
@@ -23779,7 +23852,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 
 	    function appendAuthDataTo(data) {
-	        return _.assign(data, this._authenticationData);
+	        return _.assign({}, data, this._authenticationData);
 	    }
 
 	    function handleResponse(callback, error, response) {
@@ -23866,7 +23939,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 
 	            var roomService = roomServiceResponse.roomService;
-	            var roomToCreate = _.assign(options.room, {});
+	            var roomToCreate = _.assign({}, options.room);
 
 	            if (!roomToCreate.description) {
 	                roomToCreate.description = roomDescription;
@@ -23894,7 +23967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(options, 'options');
 	        assert.isObject(options.room, 'options.room');
 
-	        var createRoomOptions = _.assign(options, {});
+	        var createRoomOptions = _.assign({}, options);
 
 	        createRoomOptions.room.type = roomEnums.types.channel.name;
 
@@ -23995,16 +24068,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            assert.isObject(options.videoElement, 'options.videoElement');
 	        }
 
-	        var channelOptions = _.assign(options, {
+	        var channelOptions = _.assign({
 	            type: roomEnums.types.channel.name,
 	            role: memberEnums.roles.audience.name
-	        });
+	        }, options);
 	        var lastMediaStream;
 	        var lastStreamId;
 	        var that = this;
 
 	        var joinRoomCallback = function(error, response) {
-	            var channelResponse = !response || _.assign(response, {});
+	            var channelResponse = !response || _.assign({}, response);
 
 	            if (response && response.roomService) {
 	                var leaveRoom = response.roomService.leaveRoom;
@@ -24131,15 +24204,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            roomService.start(role, screenName);
 
-	            var publishOptions = _.assign(options, {
+	            var publishOptions = _.assign({
 	                monitor: {
 	                    callback: _.bind(monitorSubsciberOrPublisher, that, callback),
 	                    options: {conditionCountForNotificationThreshold: 8}
 	                }
-	            });
+	            }, options);
 
 	            if (options.streamUri) {
-	                var remoteOptions = _.assign(publishOptions, {connectOptions: []});
+	                var remoteOptions = _.assign({connectOptions: []}, publishOptions);
 	                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
 	                    return option.startsWith('room-id');
 	                });
@@ -24155,7 +24228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                that._pcastExpress.publishRemote(remoteOptions, callback);
 	            } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-	                var localOptions = _.assign(publishOptions, {tags: []});
+	                var localOptions = _.assign({tags: []}, publishOptions);
 	                var hasChannelTag = _.find(localOptions.tags, function(tag) {
 	                    return tag.startsWith('channelId');
 	                });
@@ -24179,7 +24252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        assert.isObject(options, 'options');
 	        assert.isFunction(callback, 'callback');
 
-	        var channelOptions = _.assign(options, {});
+	        var channelOptions = _.assign({}, options);
 
 	        options.room.type = roomEnums.types.channel.name;
 
@@ -24208,21 +24281,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return callback(null, {status: response.status});
 	            }
 
-	            var mediaStream = response.mediaStream;
-
-	            if (count > 1) {
-	                return callback(null, {
-	                    status: 'ok',
-	                    mediaStream: mediaStream,
-	                    reason: 'stream-failure-recovered'
-	                });
-	            }
-
-	            callback(null, {
+	            var subscribeResponse = _.assign({}, response, {
 	                status: 'ok',
-	                mediaStream: mediaStream,
 	                reason: successReason
 	            });
+
+	            if (count > 1) {
+	                subscribeResponse.reason = 'stream-failure-recovered';
+
+	                return callback(null, subscribeResponse);
+	            }
+
+	            callback(null, subscribeResponse);
 	        });
 	    }
 

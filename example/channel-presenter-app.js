@@ -108,14 +108,6 @@ requirejs([
                 channelPublisher = response.publisher;
                 publisherPlayer = new Player('channelVideo');
 
-                publisherPlayer.onToggleAudio = function(enabled) {
-                    return enabled ? channelPublisher.disableAudio() : channelPublisher.enableAudio();
-                };
-
-                publisherPlayer.onToggleVideo = function(enabled) {
-                    return enabled ? channelPublisher.disableVideo() : channelPublisher.enableVideo();
-                };
-
                 publisherPlayer.start(channelPublisher);
 
                 $('#stopPublisher').removeClass('disabled');

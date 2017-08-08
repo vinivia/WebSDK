@@ -87,36 +87,26 @@
             display: none;
         }
 
-        .video-container, .video-controls{
-            display: inline-block;
+        .video-container, .video-controls {
+            display: block;
+            clear: both;
         }
 
         .video-control {
+            top: 1px;
             cursor: pointer;
-            right: 30px;
-            top: -4px;
-            padding: 4px;
+            padding: 10px;
             background: grey;
             border-radius: 6px;
+            position: relative;
+            display: inline-block;
+            line-height: 1;
+            font-size: 200%;
+            vertical-align: text-top;
         }
 
         .video-control:hover {
             color:white;
-        }
-
-        .video-control:nth-child(1):nth-last-child(1) {
-            right: 30px;
-        }
-
-        .video-control:nth-child(1):nth-last-child(2),
-        .video-control:nth-child(2):nth-last-child(1) {
-            right: 56px;
-        }
-
-        .video-control:nth-child(1):nth-last-child(3),
-        .video-control:nth-child(2):nth-last-child(2),
-        .video-control:nth-child(3):nth-last-child(1) {
-            right: 82px;
         }
 
         .toggle-off.glyphicon-facetime-video:before {
@@ -219,7 +209,7 @@
 
     <div class="row text-center">
         <div id="videoList" class="col-md-4 col-md-offset-4 text-center">
-            <video id="channelVideo" class="remote" width="640" height="480" autoplay muted></video>
+            <video id="channelVideo" class="remote" width="640" height="480" autoplay playsinline muted></video>
         </div>
     </div>
 </div>

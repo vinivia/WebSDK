@@ -64,7 +64,7 @@ define([
     };
 
     function appendAuthDataTo(data) {
-        return _.assign(data, this._authenticationData);
+        return _.assign({}, data, this._authenticationData);
     }
 
     function handleResponse(callback, error, response) {
