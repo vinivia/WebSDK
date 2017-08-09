@@ -514,14 +514,39 @@ define([
                         onRoomEvent(event);
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
-
-                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(3);
-
                         var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function (member) {
                             return member.getSessionId() === 'member2';
                         });
 
                         expect(updatedMemberModel._screenName.getValue()).to.be.equal('James');
+                    });
+
+                    it('MemberUpdated event with new screen name does not override other local changes to member', function () {
+                        var updatedMember2 = {
+                            state: member.states.passive.name,
+                            sessionId: 'member2',
+                            screenName: 'James',
+                            role: member.roles.participant.name,
+                            streams: [stream1],
+                            lastUpdate: 125
+                        };
+                        var event = {
+                            eventType: room.events.memberUpdated.name,
+                            roomId: 'TestRoom123',
+                            members: [updatedMember2]
+                        };
+
+                        var currentRoom = roomService.getObservableActiveRoom().getValue();
+                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function (member) {
+                            return member.getSessionId() === 'member2';
+                        });
+                        var observableState = updatedMemberModel.getObservableState();
+
+                        observableState.setValue(member.states.active.name);
+                        onRoomEvent(event);
+
+                        expect(updatedMemberModel.getObservableScreenName().getValue()).to.be.equal('James');
+                        expect(updatedMemberModel.getObservableState().getValue()).to.be.equal(member.states.active.name);
                     });
 
                     it('MemberUpdated event updates self screenName', function () {

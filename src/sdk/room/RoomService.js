@@ -28,6 +28,8 @@ define([
 ], function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
+    var notInRoomResponse = _.freeze({status: 'not-in-room'});
+
     function RoomService(pcast) {
         assert.isObject(pcast, 'pcast');
         assert.isFunction(pcast.getLogger, 'pcast.getLogger');
@@ -298,8 +300,11 @@ define([
             return;
         }
 
-        room._updateMembers(members);
-        cachedRoom._updateMembers(members);
+        // To help reduce conflicts when different properties are sequentially changing
+        var membersWithOnlyPropertiesThatChanged = getDifferencesBetweenCachedRoomMembersAndUpdatedMembers.call(this, members);
+
+        room._updateMembers(membersWithOnlyPropertiesThatChanged);
+        cachedRoom._updateMembers(membersWithOnlyPropertiesThatChanged);
 
         this._logger.info('[%s] Room has [%d] updated members', roomId, members.length);
     }
@@ -373,9 +378,23 @@ define([
         }
     }
 
+    function getDifferencesBetweenCachedRoomMembersAndUpdatedMembers(members) {
+        var that = this;
+
+        return _.map(members, function (member) {
+            var cachedMember = findMemberInObservableRoom(member.sessionId, that._cachedRoom);
+            var placeholderMember = new Member(null, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+            var memberWithOnlyDifferentProperties = buildMemberForRequest(placeholderMember, cachedMember);
+
+            memberWithOnlyDifferentProperties.lastUpdate = member.lastUpdate;
+
+            return memberWithOnlyDifferentProperties;
+        });
+    }
+
     // Requests to server
     function buildMemberForRequest(member, memberToCompare) {
-        var memberForRequest = findDifferencesInSelf(member, memberToCompare);
+        var memberForRequest = findDifferencesInMember(member, memberToCompare);
 
         memberForRequest.sessionId = member.getSessionId();
         // Last valid update from server. Handles collisions.
@@ -384,7 +403,7 @@ define([
         return memberForRequest;
     }
 
-    function findDifferencesInSelf(member, memberToCompare) {
+    function findDifferencesInMember(member, memberToCompare) {
         if (memberToCompare === null) {
             return member.toJson();
         }
@@ -502,7 +521,9 @@ define([
 
     function leaveRoomRequest(callback) {
         if (!this._activeRoom.getValue()) {
-            return this._logger.warn('Unable to leave room. Not currently in a room.');
+            this._logger.warn('Unable to leave room. Not currently in a room.');
+
+            return callback(null, notInRoomResponse);
         }
 
         this._authService.assertAuthorized();
@@ -548,7 +569,7 @@ define([
         if (!this._activeRoom.getValue()) {
             this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-            return callback('not-in-room');
+            return callback(null, notInRoomResponse);
         }
 
         this._authService.assertAuthorized();
@@ -584,7 +605,7 @@ define([
         if (!this._activeRoom.getValue()) {
             this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-            return callback('not-in-room');
+            return callback(null, notInRoomResponse);
         }
 
         this._authService.assertAuthorized();

@@ -1,5 +1,17 @@
 /**
- * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -171,8 +183,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var defaultCategory= 'websdk';
 	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-09T06:07:34Z' || '?';
-	    var releaseVersion = '2017.2.16';
+	    var sdkVersion = '2017-08-10T00:03:34Z' || '?';
+	    var releaseVersion = '2017.2.17';
 
 	    function Logger() {
 	        this._appenders = [];
@@ -1329,7 +1341,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    'use strict';
 
 	    function Http() {
-	        this._version = '2017-08-09T06:07:34Z';
+	        this._version = '2017-08-10T00:03:34Z';
 	    }
 
 	    Http.prototype.get = function get(url, callback, settings) {
@@ -4958,7 +4970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'NETWORK_LOADING': 2,
 	        'NETWORK_NO_SOURCE': 3
 	    });
-	    var sdkVersion = '2017-08-09T06:07:34Z';
+	    var sdkVersion = '2017-08-10T00:03:34Z';
 	    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
 	    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
 	        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -10049,7 +10061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
 	    var defaultEnvironment = 'production' || '?';
-	    var sdkVersion = '2017-08-09T06:07:34Z' || '?';
+	    var sdkVersion = '2017-08-10T00:03:34Z' || '?';
 
 	    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
 	        assert.stringNotEmpty(sessionId, 'sessionId');
@@ -10309,6 +10321,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __webpack_require__(40)
 	], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable, ObservableArray, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
 	    'use strict';
+
+	    var notInRoomResponse = _.freeze({status: 'not-in-room'});
 
 	    function RoomService(pcast) {
 	        assert.isObject(pcast, 'pcast');
@@ -10580,8 +10594,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 
-	        room._updateMembers(members);
-	        cachedRoom._updateMembers(members);
+	        // To help reduce conflicts when different properties are sequentially changing
+	        var membersWithOnlyPropertiesThatChanged = getDifferencesBetweenCachedRoomMembersAndUpdatedMembers.call(this, members);
+
+	        room._updateMembers(membersWithOnlyPropertiesThatChanged);
+	        cachedRoom._updateMembers(membersWithOnlyPropertiesThatChanged);
 
 	        this._logger.info('[%s] Room has [%d] updated members', roomId, members.length);
 	    }
@@ -10655,9 +10672,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
+	    function getDifferencesBetweenCachedRoomMembersAndUpdatedMembers(members) {
+	        var that = this;
+
+	        return _.map(members, function (member) {
+	            var cachedMember = findMemberInObservableRoom(member.sessionId, that._cachedRoom);
+	            var placeholderMember = new Member(null, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+	            var memberWithOnlyDifferentProperties = buildMemberForRequest(placeholderMember, cachedMember);
+
+	            memberWithOnlyDifferentProperties.lastUpdate = member.lastUpdate;
+
+	            return memberWithOnlyDifferentProperties;
+	        });
+	    }
+
 	    // Requests to server
 	    function buildMemberForRequest(member, memberToCompare) {
-	        var memberForRequest = findDifferencesInSelf(member, memberToCompare);
+	        var memberForRequest = findDifferencesInMember(member, memberToCompare);
 
 	        memberForRequest.sessionId = member.getSessionId();
 	        // Last valid update from server. Handles collisions.
@@ -10666,7 +10697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return memberForRequest;
 	    }
 
-	    function findDifferencesInSelf(member, memberToCompare) {
+	    function findDifferencesInMember(member, memberToCompare) {
 	        if (memberToCompare === null) {
 	            return member.toJson();
 	        }
@@ -10784,7 +10815,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    function leaveRoomRequest(callback) {
 	        if (!this._activeRoom.getValue()) {
-	            return this._logger.warn('Unable to leave room. Not currently in a room.');
+	            this._logger.warn('Unable to leave room. Not currently in a room.');
+
+	            return callback(null, notInRoomResponse);
 	        }
 
 	        this._authService.assertAuthorized();
@@ -10830,7 +10863,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!this._activeRoom.getValue()) {
 	            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-	            return callback('not-in-room');
+	            return callback(null, notInRoomResponse);
 	        }
 
 	        this._authService.assertAuthorized();
@@ -10866,7 +10899,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!this._activeRoom.getValue()) {
 	            this._logger.warn('Not in a room. Please Enter a room before updating member.');
 
-	            return callback('not-in-room');
+	            return callback(null, notInRoomResponse);
 	        }
 
 	        this._authService.assertAuthorized();
