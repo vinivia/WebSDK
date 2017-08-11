@@ -45,7 +45,9 @@ define('app-setup', [
             $('#phenix').addClass('danger');
         }
 
-        if (!shaka.Player.isBrowserSupported()) {
+        const canPlayHls = document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe';
+
+        if (!canPlayHls && !shaka.Player.isBrowserSupported()) {
             shaka.polyfill.installAll();
         }
 
