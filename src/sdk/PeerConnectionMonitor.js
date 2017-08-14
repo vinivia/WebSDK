@@ -15,8 +15,9 @@
  */
 define([
     'phenix-web-lodash-light',
+    'phenix-web-assert',
     'phenix-rtc'
-], function (_, phenixRTC) {
+], function (_, assert, phenixRTC) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -27,17 +28,9 @@ define([
     var defaultConditionCountForNotificationThreshold = 3;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {
-        if (typeof name !== 'string') {
-            throw new Error('Must pass a valid "name"');
-        }
-
-        if (typeof peerConnection !== 'object') {
-            throw new Error('Must pass a valid "peerConnection"');
-        }
-
-        if (typeof logger !== 'object') {
-            throw new Error('Must pass a valid "logger"');
-        }
+        assert.isString(name, 'name');
+        assert.isObject(peerConnection, 'peerConnection');
+        assert.isObject(logger, 'logger');
 
         this._name = name;
         this._peerConnection = peerConnection;
@@ -53,25 +46,11 @@ define([
     };
 
     function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
-        if (typeof name !== 'string') {
-            throw new Error('Must pass a valid "name"');
-        }
-
-        if (typeof peerConnection !== 'object') {
-            throw new Error('Must pass a valid "peerConnection"');
-        }
-
-        if (typeof options !== 'object') {
-            throw new Error('Must pass a valid "options"');
-        }
-
-        if (typeof activeCallback !== 'function') {
-            throw new Error('Must pass a valid "activeCallback"');
-        }
-
-        if (typeof monitorCallback !== 'function') {
-            throw new Error('Must pass a valid "monitorCallback"');
-        }
+        assert.isString(name, 'name');
+        assert.isObject(peerConnection, 'peerConnection');
+        assert.isObject(options, 'options');
+        assert.isFunction(activeCallback, 'activeCallback');
+        assert.isFunction(monitorCallback, 'monitorCallback');
 
         if (options.direction !== 'inbound' && options.direction !== 'outbound') {
             throw new Error('Invalid monitoring direction');
@@ -97,12 +76,16 @@ define([
         function nextCheck() {
             var selector = null;
 
-            getStats(peerConnection, selector, function successCallback(report) {
+            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
                 var hasFrameRate = false;
                 var hasVideoBitRate = false;
                 var hasAudioBitRate = false;
                 var readable = false;
                 var writable = false;
+
+                if (!activeCallback()) {
+                    return that._logger.info('[%s] Finished monitoring of peer connection', name);
+                }
 
                 function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
                     var trackId = stats.ssrc;
@@ -110,9 +93,18 @@ define([
 
                     switch (phenixRTC.browser) {
                     case 'Firefox':
-                        writable = readable |= stats.selected && stats.state === 'succeeded';
+                    case 'Edge':
+                    case 'IE':
+                        writable = readable |= stats.selected &&
+                            stats.state === 'succeeded' ||
+                            phenixRTC.browser === 'IE' ||
+                            phenixRTC.browser === 'Edge';
 
-                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp')) {
+                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
+                            if (phenixRTC.browser === 'Edge' && stats.bytesSent === 0) {
+                                stats.bytesSent = estimateBytesFromNumberOfPacketsAndMediaType(stats.packetsSent, stats.mediaType);
+                            }
+
                             currentBytes = new StatsBytes(stats.bytesSent);
 
                             switch (stats.mediaType) {
@@ -139,7 +131,11 @@ define([
                             }
                         }
 
-                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp')) {
+                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
+                            if (phenixRTC.browser === 'Edge' && stats.bytesReceived === 0) {
+                                stats.bytesReceived = estimateBytesFromNumberOfPacketsAndMediaType(stats.packetsReceived, stats.mediaType);
+                            }
+
                             currentBytes = new StatsBytes(stats.bytesReceived);
 
                             switch (stats.mediaType) {
@@ -169,6 +165,7 @@ define([
                         }
 
                         break;
+                    case 'Chrome':
                     default:
                         if (stats.googWritable === 'true') {
                             writable = true;
@@ -238,14 +235,16 @@ define([
                     }
                 }
 
+                if (!report) {
+                    throw new Error('Report must be a valid PeerConnection.getStats Report');
+                }
+
                 if (report.forEach) {
                     report.forEach(eachStats);
                 } else {
-                    for (var reportId in report) {
-                        var stats = report[reportId];
-
+                    _.forOwn(report, function(stats, reportId) {
                         eachStats(stats, reportId);
-                    }
+                    });
                 }
 
                 var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
@@ -263,12 +262,6 @@ define([
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
                     that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
                         name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
-                }
-
-                if (!activeCallback()) {
-                    that._logger.info('[%s] Finished monitoring of peer connection', name);
-
-                    return;
                 }
 
                 if (monitorState
@@ -321,43 +314,88 @@ define([
         this.value = value || 0;
     }
 
-    function normalizeStatsReport(response) {
-        if (phenixRTC.browser === 'Firefox') {
-            return response;
+    function estimateBytesFromNumberOfPacketsAndMediaType(packets, mediaType) {
+        var packetsReceivedNum = parseInt(packets) || 0;
+
+        if (mediaType === 'audio') {
+            return packetsReceivedNum * 100;
         }
 
-        var normalizedReport = {};
-
-        response.result().forEach(function (report) {
-            var normalizedStatistics = {
-                id: report.id,
-                type: report.type
-            };
-
-            report.names().forEach(function (name) {
-                normalizedStatistics[name] = report.stat(name);
-            });
-
-            normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-        });
-
-        return normalizedReport;
+        if (mediaType === 'video') {
+            return packetsReceivedNum * 1080;
+        }
     }
 
-    function getStats(peerConnection, selector, successCallback, monitorCallback) {
+    function normalizeStatsReport(response, peerConnection) {
+        var normalizedReport = {};
+
         switch (phenixRTC.browser) {
+        case 'Firefox':
+            return response;
+        case 'IE':
+            _.forOwn(response, function(value, key) {
+                if (!_.startsWith(key, 'ssrc')) {
+                    return;
+                }
+
+                normalizedReport[value.id] = value;
+            });
+
+            return normalizedReport;
+        case 'Edge':
+            response.forEach(function (report) {
+                normalizedReport[report.id] = report;
+                normalizedReport[report.id].mediaType = getMediaTypeByCodecFromSdp(peerConnection, report.codecId);
+            });
+
+            return normalizedReport;
+        case 'Chrome':
+        default:
+            response.result().forEach(function (report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.names().forEach(function (name) {
+                    normalizedStatistics[name] = report.stat(name);
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        }
+    }
+
+    function getStats(peerConnection, selector, activeCallback, successCallback, monitorCallback) {
+        if (!activeCallback()) {
+            return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
+        }
+
+        switch (phenixRTC.browser) {
+        case 'Edge':
         case 'Firefox':
             return peerConnection.getStats(selector)
                 .then(function (response) {
-                    var report = normalizeStatsReport(response);
+                    var report = normalizeStatsReport(response, peerConnection);
 
                     successCallback(report);
                 }).catch(function (e) {
                     monitorCallback('error', e);
                 });
+        case 'IE':
+            return peerConnection.getStats(selector, function (response) {
+                var report = normalizeStatsReport(response, peerConnection);
+
+                successCallback(report);
+            }, function (e) {
+                monitorCallback('error', e);
+            });
+        case 'Chrome':
         default:
             return peerConnection.getStats(function (response) {
-                var report = normalizeStatsReport(response);
+                var report = normalizeStatsReport(response, peerConnection);
 
                 successCallback(report);
             }, selector, function (e) {
@@ -393,9 +431,29 @@ define([
         return [];
     }
 
+    function getMediaTypeByCodecFromSdp(peerConnection, codec) {
+        if (!codec) {
+            return;
+        }
+
+        var mediaType;
+
+        findInSdpSections(peerConnection, function(section) {
+            if (_.startsWith(section, 'video') && _.includes(section.toLowerCase(), codec.toLowerCase())) {
+                mediaType = 'video';
+            }
+
+            if (_.startsWith(section, 'audio') && _.includes(section.toLowerCase(), codec.toLowerCase())) {
+                mediaType = 'audio';
+            }
+        });
+
+        return mediaType;
+    }
+
     function hasMediaSectionsInSdp(peerConnection) {
         var indexOfSection = findInSdpSections(peerConnection, function(section) {
-            return section.startsWith('video') || section.startsWith('audio');
+            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
         });
 
         return _.isNumber(indexOfSection);
@@ -403,8 +461,8 @@ define([
 
     function hasActiveAudioInSdp(peerConnection) {
         var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (section.startsWith('audio')) {
-                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1;
+            if (_.startsWith(section, 'audio')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
             }
 
             return false;
@@ -415,8 +473,8 @@ define([
 
     function hasActiveVideoInSdp(peerConnection) {
         var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (section.startsWith('video')) {
-                return section.indexOf('a=inactive') === -1 && remoteSections[index].indexOf('a=inactive') === -1;
+            if (_.startsWith(section, 'video')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
             }
 
             return false;

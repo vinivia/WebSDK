@@ -35,7 +35,7 @@ var configs = [{
     ],
     resolve: {
         alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
-            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc'),
+            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min'),
             'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
             'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
             'phenix-web-logging': path.resolve(__dirname, 'node_modules', 'phenix-web-logging'),

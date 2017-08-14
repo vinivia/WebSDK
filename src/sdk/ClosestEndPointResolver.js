@@ -22,13 +22,14 @@ define([
     var measurementsPerEndPoint = 4;
     var endpointClosenessThreshold = 30;
 
-    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger) {
+    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger, sessionAnalytix) {
         this._done = false;
         this._minTime = Number.MAX_VALUE;
         this._minResponseText = '';
         this._onClosestEndpointFound = onClosestEndpointFound;
         this._logger = logger;
         this._version = version;
+        this._sessionAnalytix = sessionAnalytix;
     }
 
     ClosestEndPointResolver.prototype.isResolved = function isResolved() {
@@ -84,7 +85,10 @@ define([
                 var time = end - start;
                 var timeAboveThreshold = time > endpointClosenessThreshold;
 
-                that._logger.info('[%s] End point [%s] latency is [%s] ms', measurement, endPoint, time);
+                that._sessionAnalytix.recordMetric('RoundTripTime', {uint64: time}, null, {
+                    resource: endPoint,
+                    kind: 'https'
+                });
 
                 measurement++;
 

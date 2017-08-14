@@ -47,15 +47,17 @@ define([
         this._properties[name] = value;
     };
 
-    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue) {
+    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
         assert.isStringNotEmpty(metric, 'metric');
 
-        recordMetricRecord.call(this, {
+        var record = _.assign({}, {
             metric: metric,
             elapsed: this.elapsed(),
             value: value,
             previousValue: previousValue
-        }, since());
+        }, additionalProperties || {});
+
+        recordMetricRecord.call(this, record, since());
     };
 
     StreamAnalytix.prototype.setStreamId = function(streamId) {
@@ -107,6 +109,7 @@ define([
 
     StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
+        var startRecordingFirstFrame = _.now();
         var timeOfFirstFrame;
 
         var listenForFirstFrame = function() {
@@ -114,16 +117,15 @@ define([
                 return;
             }
 
-            that.recordMetric('TimeToFirstFrame');
+            timeOfFirstFrame = _.now() - startRecordingFirstFrame;
 
-            timeOfFirstFrame = _.now();
+            that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
+            logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
 
-            logMetric.call(that, 'First frame');
-
-            phenixRTC.removeEventListener(video, 'loadeddata', listenForFirstFrame);
+            _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
         };
 
-        phenixRTC.addEventListener(video, 'loadeddata', listenForFirstFrame);
+        _.addEventListener(video, 'loadeddata', listenForFirstFrame);
     };
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
@@ -153,10 +155,12 @@ define([
         // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
 
         // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
-        phenixRTC.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+        _.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+        _.addEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
 
         this._disposables.add(new disposable.Disposable(function() {
-            phenixRTC.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+            _.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+            _.removeEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
         }));
     };
 
@@ -179,9 +183,10 @@ define([
 
         var listenForContinuation = function(event) {
             var bufferLength = video.buffered.length;
-            var hasNotProgressedSinceLastProgressEvent = bufferLength > 0 && event.type === 'progress' && video.buffered.end(bufferLength - 1) === lastProgress;
+            var hasNotProgressedSinceLastProgressEvent = event.type === 'playing' ||
+                bufferLength > 0 ? (event.type === 'progress' || event.type === 'timeupdate') && video.buffered.end(bufferLength - 1) === lastProgress : true;
 
-            if (!videoStalled || !bufferLength || hasNotProgressedSinceLastProgressEvent) {
+            if (!videoStalled || (!bufferLength && phenixRTC.browser !== 'Edge') || hasNotProgressedSinceLastProgressEvent) {
                 return;
             }
 
@@ -199,20 +204,22 @@ define([
             videoStalled = null;
         };
 
-        phenixRTC.addEventListener(video, 'stalled', listenForStall);
-        phenixRTC.addEventListener(video, 'pause', listenForStall);
-        phenixRTC.addEventListener(video, 'suspend', listenForStall);
-        phenixRTC.addEventListener(video, 'play', listenForContinuation);
-        phenixRTC.addEventListener(video, 'playing', listenForContinuation);
-        phenixRTC.addEventListener(video, 'progress', listenForContinuation);
+        _.addEventListener(video, 'stalled', listenForStall);
+        _.addEventListener(video, 'pause', listenForStall);
+        _.addEventListener(video, 'suspend', listenForStall);
+        _.addEventListener(video, 'play', listenForContinuation);
+        _.addEventListener(video, 'playing', listenForContinuation);
+        _.addEventListener(video, 'progress', listenForContinuation);
+        _.addEventListener(video, 'timeupdate', listenForContinuation);
 
         this._disposables.add(new disposable.Disposable(function() {
-            phenixRTC.removeEventListener(video, 'stalled', listenForStall);
-            phenixRTC.removeEventListener(video, 'pause', listenForStall);
-            phenixRTC.removeEventListener(video, 'suspend', listenForStall);
-            phenixRTC.removeEventListener(video, 'play', listenForContinuation);
-            phenixRTC.removeEventListener(video, 'playing', listenForContinuation);
-            phenixRTC.removeEventListener(video, 'progress', listenForContinuation);
+            _.removeEventListener(video, 'stalled', listenForStall);
+            _.removeEventListener(video, 'pause', listenForStall);
+            _.removeEventListener(video, 'suspend', listenForStall);
+            _.removeEventListener(video, 'play', listenForContinuation);
+            _.removeEventListener(video, 'playing', listenForContinuation);
+            _.removeEventListener(video, 'progress', listenForContinuation);
+            _.removeEventListener(video, 'timeupdate', listenForContinuation);
         }));
     };
 

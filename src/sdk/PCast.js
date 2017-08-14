@@ -25,8 +25,9 @@ define([
     './DimensionsChangedMonitor',
     './analytix/metricsTransmitterFactory',
     './analytix/StreamAnalytix',
+    './analytix/SessionAnalytix',
     'phenix-rtc'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, SessionAnalytix, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -55,7 +56,8 @@ define([
         this._version = sdkVersion;
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
-        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger);
+        this._sessionAnalytix = new SessionAnalytix(this._logger, this._metricsTransmitter);
+        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionAnalytix);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
@@ -67,7 +69,7 @@ define([
             addLinkHeaderElement.call(this);
         }
 
-        phenixRTC.addEventListener(window, 'unload', function (pcast) {
+        _.addEventListener(window, 'unload', function (pcast) {
             return function () {
                 pcast.stop();
             };
@@ -156,6 +158,7 @@ define([
                 that._logger.info('Discovered end point [%s] with RTT [%s]', endPoint.uri, endPoint.roundTripTime);
 
                 that._networkOneWayLatency = endPoint.roundTripTime / 2;
+                that._resolvedEndPoint = endPoint.uri;
 
                 instantiateProtocol.call(that, endPoint.uri);
             });
@@ -174,38 +177,28 @@ define([
 
         try {
             var reason = '';
+            var that = this;
 
-            for (var streamId in this._mediaStreams) {
-                if (this._mediaStreams.hasOwnProperty(streamId)) {
-                    endStream.call(this, streamId, reason);
+            _.forOwn(this._mediaStreams, function(mediaStream, streamId) {
+                endStream.call(that, streamId, reason);
+            });
+            _.forOwn(this._publishers, function(publisher, publisherStreamId) {
+                endStream.call(that, publisherStreamId, reason);
+
+                if (!_.includes(publisher.getOptions(), 'detached')) {
+                    publisher.stop(reason);
                 }
-            }
+            });
+            _.forOwn(this._peerConnections, function(mediaStream, peerConnectionStreamId) {
+                endStream.call(that, peerConnectionStreamId, reason);
+            });
+            _.forEach(this._gumStreams, function(gumStream) {
+                var tracks = gumStream.getTracks();
 
-            for (var publisherStreamId in this._publishers) {
-                if (this._publishers.hasOwnProperty(publisherStreamId)) {
-                    var publisher = this._publishers[publisherStreamId];
-
-                    endStream.call(this, publisherStreamId, reason);
-
-                    if (!_.includes(publisher.getOptions(), 'detached')) {
-                        publisher.stop(reason);
-                    }
-                }
-            }
-
-            for (var peerConnectionStreamId in this._peerConnections) {
-                if (this._peerConnections.hasOwnProperty(peerConnectionStreamId)) {
-                    endStream.call(this, peerConnectionStreamId, reason);
-                }
-            }
-
-            for (var i = 0; i < this._gumStreams.length; i++) {
-                var tracks = this._gumStreams[i].getTracks();
-
-                for (var j = 0; j < tracks.length; j++) {
-                    tracks[j].stop();
-                }
-            }
+                _.forEach(tracks, function(track) {
+                    track.stop();
+                });
+            });
         } finally {
             if (this._protocol) {
                 this._protocol.disconnect();
@@ -216,10 +209,19 @@ define([
             if (this._logger.setObservableSessionId) {
                 this._logger.setObservableSessionId(null);
             }
+
+            if (this._sessionAnalytixSubscription) {
+                this._sessionAnalytixSubscription.dispose();
+                this._sessionAnalytix.setSessionId(null);
+            }
         }
     };
 
     PCast.prototype.getUserMedia = function (options, callback) {
+        if (phenixRTC.browser === 'IE') {
+            throw new Error('Publishing not supported on IE');
+        }
+
         if (typeof options !== 'object') {
             throw new Error('"options" must be an object');
         }
@@ -232,6 +234,14 @@ define([
     };
 
     PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
+        if (phenixRTC.browser === 'Edge') {
+            throw new Error('Publishing not supported on Edge');
+        }
+
+        if (phenixRTC.browser === 'IE') {
+            throw new Error('Publishing not supported on IE');
+        }
+
         if (!this._started) {
             throw new Error('PCast not started. Unable to publish. Please start pcast first.');
         }
@@ -300,6 +310,10 @@ define([
                 streamAnalytix.setStreamId(streamId);
                 streamAnalytix.setStartOffset(response.createStreamResponse.offset);
                 streamAnalytix.recordMetric('Provisioned');
+                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                    resource: that._resolvedEndPoint,
+                    kind: 'https'
+                });
 
                 if (setupStreamOptions.negotiate === true) {
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
@@ -386,6 +400,10 @@ define([
                 streamAnalytix.setStreamId(streamId);
                 streamAnalytix.setStartOffset(response.createStreamResponse.offset);
                 streamAnalytix.recordMetric('Provisioned');
+                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                    resource: that.getBaseUri(),
+                    kind: 'https'
+                });
 
                 options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
@@ -769,6 +787,13 @@ define([
         if (this._logger.setObservableSessionId) {
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
         }
+
+        if (this._sessionAnalytixSubscription) {
+            this._sessionAnalytixSubscription.dispose();
+            this._sessionAnalytix.setSessionId(null);
+        }
+
+        this._sessionAnalytixSubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionAnalytix.setSessionId, this._sessionAnalytix));
     }
 
     function connected() {
@@ -936,6 +961,8 @@ define([
 
             that._logger.info('[%s] Got remote stream', streamId);
 
+            streamAnalytix.setProperty('kind', 'real-time');
+
             var createMediaStream = function createMediaStream(stream) {
                 var internalMediaStream = {
                     children: [],
@@ -977,7 +1004,13 @@ define([
                                             element.pause();
                                         }
 
-                                        if (element.src) {
+                                        if (phenixRTC.browser === 'Edge') {
+                                            element.src = '';
+                                        }
+
+                                        if (element.src && (phenixRTC.browser === 'IE')) {
+                                            element.src = null;
+                                        } else if (element.src) {
                                             element.src = '';
                                         }
 
@@ -1051,7 +1084,7 @@ define([
 
                             stopWebRTCStream(stream);
 
-                            if (noTracksAreActiveInMaster()) {
+                            if (noTracksAreActiveInMaster() || phenixRTC.browser === 'Edge' || phenixRTC.browser === 'IE') {
                                 destroyMasterMediaStream(reason);
                             }
 
@@ -1244,7 +1277,7 @@ define([
             callback.call(that, internalMediaStream.mediaStream);
         };
 
-        phenixRTC.addEventListener(peerConnection, 'addstream', onAddStream);
+        _.addEventListener(peerConnection, 'addstream', onAddStream);
     }
 
     function setupIceCandidateListener(streamId, peerConnection, callback) {
@@ -1263,7 +1296,7 @@ define([
             }
         };
 
-        phenixRTC.addEventListener(peerConnection, 'icecandidate', onIceCandidate);
+        _.addEventListener(peerConnection, 'icecandidate', onIceCandidate);
     }
 
     function setupStateListener(streamId, peerConnection) {
@@ -1288,11 +1321,11 @@ define([
             that._logger.info('[%s] Connection state changed [%s]', streamId, peerConnection.connectionState);
         };
 
-        phenixRTC.addEventListener(peerConnection, 'negotiationneeded', onNegotiationNeeded);
-        phenixRTC.addEventListener(peerConnection, 'iceconnectionstatechange', onIceConnectionStateChanged);
-        phenixRTC.addEventListener(peerConnection, 'icegatheringstatechange ', onIceGatheringStateChanged);
-        phenixRTC.addEventListener(peerConnection, 'signalingstatechange', onSignalingStateChanged);
-        phenixRTC.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
+        _.addEventListener(peerConnection, 'negotiationneeded', onNegotiationNeeded);
+        _.addEventListener(peerConnection, 'iceconnectionstatechange', onIceConnectionStateChanged);
+        _.addEventListener(peerConnection, 'icegatheringstatechange ', onIceGatheringStateChanged);
+        _.addEventListener(peerConnection, 'signalingstatechange', onSignalingStateChanged);
+        _.addEventListener(peerConnection, 'connectionstatechange', onConnectionStateChanged);
     }
 
     function createPublisher(streamId, callback, streamOptions) {
@@ -1401,6 +1434,18 @@ define([
         that._peerConnections[streamId] = peerConnection;
 
         peerConnection.addStream(mediaStream);
+
+        if (phenixRTC.browser === 'Firefox' || phenixRTC.browser === 'Edge') {
+            if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
+                var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
+
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+            }
+
+            offerSdp += 'a=end-of-candidates';
+
+            offerSdp = offerSdp.replace(/(\na=ice-options:trickle)/g, '');
+        }
 
         var onFailure = function onFailure() {
             if (state.failed) {
@@ -1517,6 +1562,10 @@ define([
                             },
 
                             limitBandwidth: function limitBandwidth(bandwidthLimit) {
+                                if (phenixRTC.browser === 'Edge') {
+                                    return that._logger.warn('Limit bandwidth not support on [%s]', phenixRTC.browser);
+                                }
+
                                 if (typeof bandwidthLimit !== 'number') {
                                     throw new Error('"bandwidthLimit" must be a number');
                                 }
@@ -1681,6 +1730,10 @@ define([
     }
 
     function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, createOptions) {
+        if (phenixRTC.browser === 'IE') {
+            throw new Error('Subscribing in real-time not supported on IE without the PhenixP2P Plugin');
+        }
+
         var that = this;
         var state = {
             failed: false,
@@ -1696,6 +1749,18 @@ define([
         var onIceCandidateCallback = null;
 
         that._peerConnections[streamId] = peerConnection;
+
+        if (phenixRTC.browser === 'Firefox' || phenixRTC.browser === 'Edge') {
+            if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
+                var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
+
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+            }
+
+            offerSdp += 'a=end-of-candidates';
+
+            offerSdp = offerSdp.replace(/(\na=ice-options:trickle)/g, '');
+        }
 
         var onFailure = function onFailure() {
             if (state.failed) {
@@ -1853,6 +1918,8 @@ define([
             }
         };
 
+        streamAnalytix.setProperty('kind', 'dash');
+
         var internalMediaStream = {
             renderer: null,
             isStreamEnded: false,
@@ -1961,11 +2028,11 @@ define([
                                     elementToAttachTo.muted = true;
                                 }
 
-                                player.addEventListener('error', onPlayerError);
+                                _.addEventListener(player, 'error', onPlayerError);
 
-                                elementToAttachTo.addEventListener('stalled', stalled, false);
-                                elementToAttachTo.addEventListener('progress', onProgress, false);
-                                elementToAttachTo.addEventListener('ended', ended, false);
+                                _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
+                                _.addEventListener(elementToAttachTo, 'ended', ended, false);
 
                                 player.load(manifestUri).then(function () {
                                     that._logger.info('[%s] DASH live stream has been loaded', streamId);
@@ -1996,9 +2063,13 @@ define([
                                     var reason = '';
 
                                     if (element) {
-                                        element.removeEventListener('stalled', stalled, false);
-                                        element.removeEventListener('progress', onProgress, false);
-                                        element.removeEventListener('ended', ended, false);
+                                        _.removeEventListener(element, 'stalled', stalled, false);
+                                        _.removeEventListener(element, 'progress', onProgress, false);
+                                        _.removeEventListener(element, 'ended', ended, false);
+
+                                        if (phenixRTC.browser === 'Edge') {
+                                            element.src = '';
+                                        }
                                     }
 
                                     internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
@@ -2326,6 +2397,8 @@ define([
             }
         };
 
+        streamAnalytix.setProperty('kind', 'hls');
+
         var internalMediaStream = {
             renderer: null,
             isStreamEnded: false,
@@ -2436,11 +2509,11 @@ define([
 
                                 internalMediaStream.renderer = this;
 
-                                elementToAttachTo.addEventListener('error', onPlayerError, true);
-                                elementToAttachTo.addEventListener('stalled', stalled, false);
-                                elementToAttachTo.addEventListener('progress', onProgress, false);
-                                elementToAttachTo.addEventListener('ended', ended, false);
-                                elementToAttachTo.addEventListener('waiting', waiting, false);
+                                _.addEventListener(elementToAttachTo, 'error', onPlayerError, true);
+                                _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
+                                _.addEventListener(elementToAttachTo, 'ended', ended, false);
+                                _.addEventListener(elementToAttachTo, 'waiting', waiting, false);
 
                                 elementToAttachTo.play();
 
@@ -2464,11 +2537,11 @@ define([
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
                                     if (element) {
-                                        element.removeEventListener('error', onPlayerError, true);
-                                        element.removeEventListener('stalled', stalled, false);
-                                        element.removeEventListener('progress', onProgress, false);
-                                        element.removeEventListener('ended', ended, false);
-                                        element.removeEventListener('waiting', waiting, false);
+                                        _.removeEventListener(element, 'error', onPlayerError, true);
+                                        _.removeEventListener(element, 'stalled', stalled, false);
+                                        _.removeEventListener(element, 'progress', onProgress, false);
+                                        _.removeEventListener(element, 'ended', ended, false);
+                                        _.removeEventListener(element, 'waiting', waiting, false);
 
                                         element.src = '';
 
@@ -2731,7 +2804,11 @@ define([
     }
 
     function stopWebRTCStream(stream) {
-        if (stream && typeof stream.getTracks === 'function') {
+        if (stream && _.isFunction(stream.stop, 'stream.stop')) {
+            stream.stop();
+        }
+
+        if (stream && _.isFunction(stream.getTracks, 'stream.getTracks')) {
             var tracks = stream.getTracks();
 
             for (var i = 0; i < tracks.length; i++) {
@@ -2803,7 +2880,7 @@ define([
         } else if (_.isFunction(stats.values)) {
             _.forEach(Array.from(stats.values()), function (statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
                         return;
                     }
 
@@ -2813,7 +2890,7 @@ define([
         } else {
             _.forEach(stats, function (statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || statsReport.id.indexOf('rtcp') > -1) {
+                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
                         return;
                     }
 
@@ -2877,14 +2954,14 @@ define([
             return parsedMessage[key] = value;
         }
 
-        var prefixedByKey = value.toLowerCase().indexOf(key.toLowerCase()) === 0;
+        var prefixedByKey = _.startsWith(value.toLowerCase(), key.toLowerCase());
         var valueParsedWithoutKey = prefixedByKey ? value.substring(key.length, value.length).toLowerCase() : value;
 
         parsedMessage[key] = valueParsedWithoutKey;
     }
 
     function applyVendorSpecificLogic(config) {
-        if (phenixRTC.browser.toLowerCase() === 'firefox') {
+        if (phenixRTC.browser === 'Firefox') {
             removeTurnsServers(config);
         }
 
@@ -2896,9 +2973,9 @@ define([
             return config;
         }
 
-        _.forEach(config.iceServers, function (server) {
-            server.urls = _.filter(server.urls, function (url) {
-                return url.indexOf('turns') !== 0;
+        _.forEach(config.iceServers, function(server) {
+            server.urls = _.filter(server.urls, function(url) {
+                return !_.startsWith(url, 'turns');
             });
         });
 

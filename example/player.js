@@ -16,7 +16,7 @@
 
 define('video-player', [
     'jquery',
-    'lodash',
+    'phenix-web-lodash-light',
     'phenix-web-sdk'
 ], function ($, _, sdk) {
     var userAgent = window.navigator.userAgent;
@@ -71,8 +71,10 @@ define('video-player', [
     };
 
     Player.prototype.stop = function stop() {
-        if (this.videoControls) {
+        if (this.videoControls && this.videoControls.remove) {
             this.videoControls.remove();
+        } else if (this.videoControls) {
+            this.videoControls.parentNode.removeChild(this.videoControls);
         }
 
         this.videoControls = null;
@@ -81,7 +83,7 @@ define('video-player', [
             onStreamEnd.call(this);
         }
 
-        sdk.RTC.addEventListener(this.video, 'loadedmetadata', this.onLoadedMetaData);
+        _.removeEventListener(this.video, 'loadedmetadata', this.onLoadedMetaData);
 
         this.onEnd = null;
 
@@ -97,7 +99,7 @@ define('video-player', [
         var newVideo = this.video;
         var that = this;
 
-        sdk.RTC.addEventListener(newVideo, 'loadedmetadata', this.onLoadedMetaData);
+        _.addEventListener(newVideo, 'loadedmetadata', this.onLoadedMetaData);
 
         if (!this.stream) {
             return newVideo;
@@ -272,7 +274,7 @@ define('video-player', [
         this.lastUpdate = 0;
         this.boundOnTimeUpdate = videoElementOnTimeUpdate.bind(this);
 
-        sdk.RTC.addEventListener(videoElement, 'timeupdate', this.boundOnTimeUpdate);
+        _.addEventListener(videoElement, 'timeupdate', this.boundOnTimeUpdate);
 
         if (onEnd) {
             onEnd(onStreamEnd.bind(this));
@@ -290,7 +292,7 @@ define('video-player', [
         videoControls.addClass('hidden');
 
         if (this.boundOnTimeUpdate) {
-            sdk.RTC.removeEventListener(this.video, 'timeupdate', this.boundOnTimeUpdate);
+            _.removeEventListener(this.video, 'timeupdate', this.boundOnTimeUpdate);
         }
 
         this.boundOnTimeUpdate = null;

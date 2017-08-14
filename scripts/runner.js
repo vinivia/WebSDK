@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global process exports */
 var path = require('path');
 var fs = require('fs');
 var spawn = require('child_process').spawn;

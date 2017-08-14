@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define([], function () {
+define([
+    'phenix-web-lodash-light'
+], function (_) {
     'use strict';
 
     var environment = {};
@@ -21,9 +23,9 @@ define([], function () {
     environment.parseEnvFromPcastBaseUri = function (uri) {
         uri = uri.toLowerCase();
 
-        if (uri.indexOf('local') > -1) {
+        if (_.includes(uri, 'local')) {
             return 'local';
-        } else if (uri.indexOf('stg') > -1) {
+        } else if (_.includes(uri, 'stg')) {
             return 'staging';
         }
 

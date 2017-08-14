@@ -41,7 +41,8 @@ define([
         this._smoothedPeakValue = 0.;
         this._clipped = 0.;
         this._scriptProcessor = context.createScriptProcessor(4096, 1, 1);
-        this._scriptProcessor.addEventListener('audioprocess', _.bind(onAudioProcess, this));
+
+        _.addEventListener(this._scriptProcessor, 'audioprocess', _.bind(onAudioProcess, this));
     };
 
     AudioVolumeMeter.prototype.onValue = function onValue(callback) {

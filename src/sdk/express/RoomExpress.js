@@ -336,7 +336,7 @@ define([
             if (options.streamUri) {
                 var remoteOptions = _.assign({connectOptions: []}, publishOptions);
                 var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
-                    return option.startsWith('room-id');
+                    return _.startsWith(option, 'room-id');
                 });
 
                 if (!hasRoomConnectOptions) {
@@ -352,7 +352,7 @@ define([
             } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
                 var localOptions = _.assign({tags: []}, publishOptions);
                 var hasChannelTag = _.find(localOptions.tags, function(tag) {
-                    return tag.startsWith('channelId');
+                    return _.startsWith(tag, 'channelId');
                 });
 
                 if (!hasChannelTag) {
@@ -450,7 +450,7 @@ define([
     var pcastStreamPrefix = 'pcast://phenixp2p.com/';
 
     function parsePcastFromStream(uri) {
-        var hasPrefix = uri.indexOf(pcastStreamPrefix) > -1;
+        var hasPrefix = _.includes(uri, pcastStreamPrefix);
 
         if (!hasPrefix) {
             return null;

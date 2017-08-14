@@ -25,11 +25,11 @@
     "start": "node example/httpserver.js",
     "jpm-run": "jpm run --addon-dir src/firefox",
     "jpm-xpi": "jpm xpi --addon-dir src/firefox",
-    "lint": "eslint ./ --ignore-path .gitignore --ignore-pattern '/dist/*' —-cache",
-    "lint-fix": "eslint ./ --ignore-path .gitignore --ignore-pattern '/dist/*' --fix"
+    "lint": "eslint ./ —-cache",
+    "lint-fix": "eslint ./ --fix"
   },
   "dependencies": {
-    "phenix-rtc": "1.0.10",
+    "phenix-rtc": "2017.3.0",
     "phenix-web-assert": "2017.3.3",
     "phenix-web-disposable": "2017.3.3",
     "phenix-web-http": "2017.3.3",

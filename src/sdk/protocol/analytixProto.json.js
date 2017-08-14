@@ -324,7 +324,7 @@ define([
                 "name": "Metric",
                 "values": [
                     {
-                        "name": "EndPointRoundTripTime",
+                        "name": "RoundTripTime",
                         "id": 0
                     },
                     {
