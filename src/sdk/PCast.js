@@ -46,7 +46,6 @@ define([
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
-    var maxBandwidthForSdPlayback = 1280000; // Safe limit for getting SD only playback
 
     function PCast(options) {
         options = options || {};
@@ -2239,21 +2238,11 @@ define([
                     response.data[i] = decodedLicense.charCodeAt(i);
                 }
 
-                if (!isHDPlaybackAllowedByWidevine(parsedResponse.allowedTracks)) {
-                    disableHdPlayback(player);
+                if (parsedResponse.trackRestrictions) {
+                    player.configure({restrictions: parsedResponse.trackRestrictions});
                 }
             }
         });
-    }
-
-    function isHDPlaybackAllowedByWidevine(allowedTracks) {
-        var minQualityLevelForHD = '720';
-
-        return _.includes(allowedTracks, minQualityLevelForHD);
-    }
-
-    function disableHdPlayback(player) {
-        player.configure({restrictions: {maxVideoBandwidth: maxBandwidthForSdPlayback}});
     }
 
     function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
@@ -2906,8 +2895,8 @@ define([
             return config;
         }
 
-        _.forEach(config.iceServers, function(server) {
-            server.urls = _.filter(server.urls, function(url) {
+        _.forEach(config.iceServers, function (server) {
+            server.urls = _.filter(server.urls, function (url) {
                 return url.indexOf('turns') !== 0;
             });
         });
