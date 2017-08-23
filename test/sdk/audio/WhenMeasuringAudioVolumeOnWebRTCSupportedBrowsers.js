@@ -62,7 +62,7 @@ define([
                     return [{}];
                 };
 
-                sinon.stub(audioContext, "createMediaStreamSource", function () {
+                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function () {
                     return {connect: function () {}};
                 });
 
@@ -78,7 +78,7 @@ define([
                     return [];
                 };
 
-                sinon.stub(audioContext, "createMediaStreamSource", function () {
+                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function () {
                     return {connect: function () {}};
                 });
 

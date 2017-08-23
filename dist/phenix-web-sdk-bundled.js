@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 66);
+/******/ 	return __webpack_require__(__webpack_require__.s = 76);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -111,7 +111,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(30)
+    __webpack_require__(40)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (LodashLight) {
     'use strict';
 
@@ -139,7 +139,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(28)
+    __webpack_require__(33)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (assert) {
     return assert;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -147,12 +147,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-!function(a,b){if(true)module.exports=b();else if("function"==typeof define&&define.amd)define([],b);else{var c=b();for(var d in c)("object"==typeof exports?exports:a)[d]=c[d]}}(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={exports:{},id:d,loaded:!1};return a[d].call(e.exports,e,e.exports,b),e.loaded=!0,e.exports}var c={};return b.m=a,b.c=c,b.p="",b(0)}([function(a,b,c){var d,e;d=[c(1),c(7)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2),c(3),c(4)],e=function(a,b,c){"use strict";var d=new a(navigator.userAgent).detect(),e={RTCPeerConnection:b.RTCPeerConnection,RTCSessionDescription:b.RTCSessionDescription,RTCIceCandidate:b.RTCIceCandidate,getSources:b.getSources,getUserMedia:b.getUserMedia,getStats:b.getStats,attachMediaStream:b.attachMediaStream,reattachMediaStream:b.reattachMediaStream,browser:d.browser,browserVersion:d.version,webrtcSupported:b.webrtcSupported,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0};if(c.isSupported()){e.phenixSupported=!0;var f=new c,g=function(){e.RTCPeerConnection=f.getRTCPeerConnectionConstructor(),e.RTCSessionDescription=f.getRTCSessionDescriptionConstructor(),e.RTCIceCandidate=f.getRTCIceCandidateConstructor(),e.getSources=f.getSourcesDelegate(),e.getUserMedia=f.getUserMediaDelegate(),e.getStats=f.getStatsDelegate(),Function.prototype.bind?(e.attachMediaStream=f.attachMediaStream.bind(f),e.reattachMediaStream=f.reattachMediaStream.bind(f),e.isPhenixEnabled=f.isEnabled.bind(f)):(e.attachMediaStream=function(){f.attachMediaStream.apply(f,arguments)},e.reattachMediaStream=function(){f.reattachMediaStream.apply(f,arguments)},e.isPhenixEnabled=function(){return f.isEnabled()}),e.webrtcSupported=!0,e.phenixSupported=!0,e.phenixVersion=f.getVersion(),e.onLoaded&&e.onLoaded.call()};f.isEnabled()?g():f.onReady(function(a){a&&(g(),e.onload&&"function"==typeof e.onload&&e.onload())}),f.onLoaded(function(){g()})}else e.phenixSupported=!1;return e.addEventListener=function(a,b,c,d){a.phenixSetEventListener?a.phenixSetEventListener(b,c):a.addEventListener?a.addEventListener(b,c,d===!0):a.attachEvent("on"+b,c)},e.removeEventListener=function(a,b,c,d){a.removeEventListener?a.removeEventListener(b,c,d===!0):a.detachEvent("on"+b,c)},e}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";function a(a){this._userAgent=a}return a.prototype.detect=function(){var a="Unknown",b="?",c=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),d=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return c&&c.length>=2?a=c[1]:this._userAgent.match(/^\(?Mozilla/)&&(a="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(a="IE",(d=this._userAgent.match(/MSIE ([0-9]+)/))?(b=parseInt(d[1],10),(d=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(b=parseInt(d[1],10))):(d=this._userAgent.match(/rv:([0-9]+)/))&&(b=parseInt(d[1],10)))),"Chrome"===a&&this._userAgent.match(/OPR\//)?(a="Opera",d=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===a&&this._userAgent.match(/Edge\//)?(a="Edge",d=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==a&&"IE"!==a||!this._userAgent.match(/Opera/)||(a="Opera",d=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==a&&d&&d.length>=3&&(b=parseInt(d[2],10)),{browser:a,version:b}},a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";var b=function(){console.log.apply(console,arguments)}||function(){},c=null,d=null,e=null,f=null,g=null,h=null,i=null,j=null,k=null,l=!1,m=function(a){navigator.mediaDevices.enumerateDevices().then(function(b){var c=[];b.forEach(function(a){"audioinput"===a.kind?c.push({kind:"audio",id:a.deviceId,label:a.label}):"videoinput"===a.kind&&c.push({kind:"video",id:a.deviceId,label:a.label})}),a(c)})};navigator.mozGetUserMedia?(b("Firefox detected",navigator.userAgent),c=mozRTCPeerConnection,d=mozRTCSessionDescription,e=mozRTCIceCandidate,g=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?function(a,b,c){navigator.mediaDevices.getUserMedia(a).then(b)["catch"](c)}:navigator.mozGetUserMedia.bind(navigator),h=function(a,b,c){var d=a.getStats(b).then(c);if("rejected"===d.state)throw new Error(d.message)},k=function(b,c,d){var e=null,f=b.split(":");if(0===f[0].indexOf("stun"))e={url:b};else if(0===f[0].indexOf("turn")){var g=new a(navigator.userAgent).detect();if(g.version<27){var h=b.split("?");0===h[1].indexOf("transport=udp")&&(e={url:h[0],credential:d,username:c})}else e={url:b,credential:d,username:c}}return e},i=function(a,c){b("Attaching media stream");var d=a.muted;return a.mozSrcObject=c,a.play(),d===!0&&(a.muted=!0),a},j=function(a,c){b("Reattaching media stream");var d=a.muted;return a.mozSrcObject=c.mozSrcObject,a.play(),d===!0&&(a.muted=!0),a},MediaStream.prototype.getVideoTracks||(MediaStream.prototype.getVideoTracks=function(){return[]}),MediaStream.prototype.getAudioTracks||(MediaStream.prototype.getAudioTracks=function(){return[]}),f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources?MediaStreamTrack.getSources.bind(MediaStreamTrack):function(a){setTimeout(function(){a([{kind:"audio",id:"default",label:"",facing:""},{kind:"video",id:"default",label:"",facing:""}])},0)},l=!0):navigator.webkitGetUserMedia?(b("Webkit detected",navigator.userAgent),k=function(a,b,c){var d=null,e=a.split(":");return 0===e[0].indexOf("stun")?d={url:a}:0===e[0].indexOf("turn")&&(d={url:a,credential:c,username:b}),d},c=window.webkitRTCPeerConnection,d=window.RTCSessionDescription,e=window.RTCIceCandidate,g=function(a,c,d){var e=function(a){setTimeout(function(){for(var e=a.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){b(a.timeStamp,"Track",g.id,g.label,"ended")},b("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState){try{var h=new Error("User media not available");h.code="unavailable",d(h)}finally{for(var i=0;i<e.length;i++)e[i].stop()}return}}c(a)},100)};navigator.webkitGetUserMedia(a,e,d)},h=function(a,b,c,d){a.getStats(c,b,d)},i=function(a,c){return"undefined"!=typeof a.srcObject?a.srcObject=c:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=c:"undefined"!=typeof a.src?a.src=URL.createObjectURL(c):b("Error attaching stream to element."),a.play(),a},j=function(a,b){return a.src=b.src,a},f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources.bind(MediaStreamTrack),l=!0):b("Browser does not appear to be WebRTC-capable",navigator.userAgent);var n={RTCPeerConnection:c,RTCSessionDescription:d,RTCIceCandidate:e,getSources:f,getUserMedia:g,getStats:h,attachMediaStream:i,reattachMediaStream:j,webrtcSupported:l};return n.exportGlobal=function(){window.RTCPeerConnection=n.RTCPeerConnection,window.RTCSessionDescription=n.RTCSessionDescription,window.RTCIceCandidate=n.RTCIceCandidate},n}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5),c(6)],e=function(a,b){"use strict";function c(){var b=this;this._root=e(),this._version="?";var c=function(a){b._loaded=!0,b._enabled=a===!0,b._version=b._phenixRTC.phenixVersion||"?.?.?.?",h(a?"Phenix RTC "+b._version:"No Phenix RTC"),b._onReady&&b._onReady(b._enabled)};try{this._phenixRTC=f(this._root),this._phenixRTC.onunload=function(){b._loaded=!1};var d=new a;d.waitForReady(this._phenixRTC,c)}catch(g){i("Error while loading Phenix RTC"+g),loaded(!1)}}function d(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function e(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function f(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function g(a,c){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=c,a;var d=new b(a,c);return d.getElement().phenixPresenter=d,d.getElement()}var h=function(){console.log.apply(console,arguments)}||function(){},i=function(){console.error.apply(console,arguments)}||h;return c.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},c.prototype.onLoaded=function(a){this._onLoaded=a},c.prototype.isLoaded=function(){return this._loaded===!0},c.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/))try{new ActiveXObject("PhenixP2P.RTC");return!0}catch(c){return!1}return!1},c.prototype.isEnabled=function(){return d.call(this),this._phenixRTC&&void 0!=this._phenixRTC.phenixVersion},c.prototype.getVersion=function(){return d.call(this),this._version},c.prototype.getRTCPeerConnectionConstructor=function(){return d.call(this),this._phenixRTC.RTCPeerConnection},c.prototype.getRTCSessionDescriptionConstructor=function(){return d.call(this),this._phenixRTC.RTCSessionDescription},c.prototype.getRTCIceCandidateConstructor=function(){return d.call(this),this._phenixRTC.RTCIceCandidate},c.prototype.getSourcesDelegate=function(){var a=this;return function(b){return d.call(a),a._phenixRTC.getSources(b)}},c.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,e){return d.call(a),a._phenixRTC.getUserMedia(b,c,e)}},c.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},c.prototype.attachMediaStream=function(a,b){return d.call(this),g.call(this,a,b)},c.prototype.reattachMediaStream=function(a,b){return d.call(this),this.attachMediaStream(a,b.src)},c}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5)],e=function(a){"use strict";function b(b,d){var e=this;this._ghost=b,this._stream=d,this._events={};var f=function(a){e._loaded=!0,e._enabled=a===!0,a?h.call(e):m("Failed to create Phenix video element"),e._onReady&&e._onReady(e._enabled)};try{this._video=c(),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){e._loaded=!1},j.call(this),document.body&&document.body.contains||l("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost);var g=new a;g.waitForReady(this._video,f)}catch(i){m("Error while loading Phenix RTC"+i),f(!1)}}function c(){var a=document.createElement("object");return a.type="application/x-phenix-video",a}function d(a,b,c){var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&f.call(this,a)),d.push(b)}function e(a,b,c){var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function f(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function g(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function h(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)f.call(this,a[b]);this.hookUpEvents(),i.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function i(){var a=this,b=["style"];if(window.MutationObserver){var c=new MutationObserver(function(c){c.forEach(function(c){"attributes"===c.type&&c.target===a._ghost&&b.indexOf(c.attributeName)===-1&&(a._video[c.attributeName]=a._ghost[c.attributeName])})}),d={attributes:!0};c.observe(a._ghost,d)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),a._ghost.addEventListener?a._ghost.addEventListener("DOMAttrModified",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]},!1):a._ghost.attachEvent("onpropertychange",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]})}function j(){var a=this;if(window.MutationObserver){var b=new MutationObserver(function(b){b.forEach(function(b){if("childList"===b.type)for(var c=0;c<b.addedNodes.length;c++){var d=b.addedNodes[c];b.target!==a._video&&(d===a._ghost?(b.target.replaceChild(a._video,a._ghost),h.call(a)):k(b.target,a._ghost)&&(a._ghost.parentNode.replaceChild(a._video,a._ghost),h.call(a)))}})}),c={childList:!0,attributes:!1,characterData:!1,subtree:!0};b.observe(document.body,c)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),d(a._ghost,"DOMNodeInserted",function(b){a._ghost.parentNode.replaceChild(a._video,a._ghost)},!1)}function k(a,b){for(var c=b.parentNode;null!=c;){if(c==a)return!0;c=c.parentNode}return!1}var l=function(){console.log.apply(console,arguments)}||function(){},m=function(){console.error.apply(console,arguments)}||l;return b.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){g(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,g(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,g(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,g(b,"ended")}),this.addEventListener("loadedmetadata",function(){l("Video loaded metadata",a._video.videoWidth,a._video.videoHeight),b.width=a._video.width,b.height=a._video.height,g(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,g(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,g(b,"resize")})},b.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},b.prototype.getElement=function(){return this._video},b.prototype.addEventListener=function(a,b,c){d.call(this,a,b,c)},b.prototype.removeEventListener=function(a,b,c){e.call(this,a,b,c)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(a){window.RTCPeerConnection=a.RTCPeerConnection,window.RTCSessionDescription=a.RTCSessionDescription,window.RTCIceCandidate=a.RTCIceCandidate};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -171,9 +165,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(18),
-    __webpack_require__(34),
-    __webpack_require__(35)
+    __webpack_require__(20),
+    __webpack_require__(44),
+    __webpack_require__(45)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -184,6 +178,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+!function(a,b){if(true)module.exports=b();else if("function"==typeof define&&define.amd)define([],b);else{var c=b();for(var d in c)("object"==typeof exports?exports:a)[d]=c[d]}}(this,function(){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={exports:{},id:d,loaded:!1};return a[d].call(e.exports,e,e.exports,b),e.loaded=!0,e.exports}var c={};return b.m=a,b.c=c,b.p="",b(0)}([function(a,b,c){var d,e;d=[c(1),c(7)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2),c(3),c(4)],e=function(a,b,c){"use strict";var d=new a(navigator.userAgent).detect(),e={RTCPeerConnection:b.RTCPeerConnection,RTCSessionDescription:b.RTCSessionDescription,RTCIceCandidate:b.RTCIceCandidate,getSources:b.getSources,getUserMedia:b.getUserMedia,getStats:b.getStats,attachMediaStream:b.attachMediaStream,reattachMediaStream:b.reattachMediaStream,browser:d.browser,browserVersion:d.version,webrtcSupported:b.webrtcSupported,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0};if(c.isSupported()){e.phenixSupported=!0;var f=new c,g=function(){e.RTCPeerConnection=f.getRTCPeerConnectionConstructor(),e.RTCSessionDescription=f.getRTCSessionDescriptionConstructor(),e.RTCIceCandidate=f.getRTCIceCandidateConstructor(),e.getSources=f.getSourcesDelegate(),e.getUserMedia=f.getUserMediaDelegate(),e.getStats=f.getStatsDelegate(),Function.prototype.bind?(e.attachMediaStream=f.attachMediaStream.bind(f),e.reattachMediaStream=f.reattachMediaStream.bind(f),e.isPhenixEnabled=f.isEnabled.bind(f)):(e.attachMediaStream=function(){f.attachMediaStream.apply(f,arguments)},e.reattachMediaStream=function(){f.reattachMediaStream.apply(f,arguments)},e.isPhenixEnabled=function(){return f.isEnabled()}),e.webrtcSupported=!0,e.phenixSupported=!0,e.phenixVersion=f.getVersion(),e.onLoaded&&e.onLoaded.call()};f.isEnabled()?g():f.onReady(function(a){a&&(g(),e.onload&&"function"==typeof e.onload&&e.onload())}),f.onLoaded(function(){g()})}else e.phenixSupported=!1;return e.addEventListener=function(a,b,c,d){a.phenixSetEventListener?a.phenixSetEventListener(b,c):a.addEventListener?a.addEventListener(b,c,d===!0):a.attachEvent("on"+b,c)},e.removeEventListener=function(a,b,c,d){a.removeEventListener?a.removeEventListener(b,c,d===!0):a.detachEvent("on"+b,c)},e}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";function a(a){this._userAgent=a}return a.prototype.detect=function(){var a="Unknown",b="?",c=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),d=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return c&&c.length>=2?a=c[1]:this._userAgent.match(/^\(?Mozilla/)&&(a="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(a="IE",(d=this._userAgent.match(/MSIE ([0-9]+)/))?(b=parseInt(d[1],10),(d=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(b=parseInt(d[1],10))):(d=this._userAgent.match(/rv:([0-9]+)/))&&(b=parseInt(d[1],10)))),"Chrome"===a&&this._userAgent.match(/OPR\//)?(a="Opera",d=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===a&&this._userAgent.match(/Edge\//)?(a="Edge",d=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==a&&"IE"!==a||!this._userAgent.match(/Opera/)||(a="Opera",d=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==a&&d&&d.length>=3&&(b=parseInt(d[2],10)),{browser:a,version:b}},a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";var b=function(){console.log.apply(console,arguments)}||function(){},c=null,d=null,e=null,f=null,g=null,h=null,i=null,j=null,k=null,l=!1,m=function(a){navigator.mediaDevices.enumerateDevices().then(function(b){var c=[];b.forEach(function(a){"audioinput"===a.kind?c.push({kind:"audio",id:a.deviceId,label:a.label}):"videoinput"===a.kind&&c.push({kind:"video",id:a.deviceId,label:a.label})}),a(c)})};navigator.mozGetUserMedia?(b("Firefox detected",navigator.userAgent),c=mozRTCPeerConnection,d=mozRTCSessionDescription,e=mozRTCIceCandidate,g=navigator.mediaDevices&&navigator.mediaDevices.getUserMedia?function(a,b,c){navigator.mediaDevices.getUserMedia(a).then(b)["catch"](c)}:navigator.mozGetUserMedia.bind(navigator),h=function(a,b,c){var d=a.getStats(b).then(c);if("rejected"===d.state)throw new Error(d.message)},k=function(b,c,d){var e=null,f=b.split(":");if(0===f[0].indexOf("stun"))e={url:b};else if(0===f[0].indexOf("turn")){var g=new a(navigator.userAgent).detect();if(g.version<27){var h=b.split("?");0===h[1].indexOf("transport=udp")&&(e={url:h[0],credential:d,username:c})}else e={url:b,credential:d,username:c}}return e},i=function(a,c){b("Attaching media stream");var d=a.muted;return a.mozSrcObject=c,a.play(),d===!0&&(a.muted=!0),a},j=function(a,c){b("Reattaching media stream");var d=a.muted;return a.mozSrcObject=c.mozSrcObject,a.play(),d===!0&&(a.muted=!0),a},MediaStream.prototype.getVideoTracks||(MediaStream.prototype.getVideoTracks=function(){return[]}),MediaStream.prototype.getAudioTracks||(MediaStream.prototype.getAudioTracks=function(){return[]}),f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources?MediaStreamTrack.getSources.bind(MediaStreamTrack):function(a){setTimeout(function(){a([{kind:"audio",id:"default",label:"",facing:""},{kind:"video",id:"default",label:"",facing:""}])},0)},l=!0):navigator.webkitGetUserMedia?(b("Webkit detected",navigator.userAgent),k=function(a,b,c){var d=null,e=a.split(":");return 0===e[0].indexOf("stun")?d={url:a}:0===e[0].indexOf("turn")&&(d={url:a,credential:c,username:b}),d},c=window.webkitRTCPeerConnection,d=window.RTCSessionDescription,e=window.RTCIceCandidate,g=function(a,c,d){var e=function(a){setTimeout(function(){for(var e=a.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){b(a.timeStamp,"Track",g.id,g.label,"ended")},b("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState){try{var h=new Error("User media not available");h.code="unavailable",d(h)}finally{for(var i=0;i<e.length;i++)e[i].stop()}return}}c(a)},100)};navigator.webkitGetUserMedia(a,e,d)},h=function(a,b,c,d){a.getStats(c,b,d)},i=function(a,c){return"undefined"!=typeof a.srcObject?a.srcObject=c:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=c:"undefined"!=typeof a.src?a.src=URL.createObjectURL(c):b("Error attaching stream to element."),a.play(),a},j=function(a,b){return a.src=b.src,a},f=navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices?m:MediaStreamTrack.getSources.bind(MediaStreamTrack),l=!0):b("Browser does not appear to be WebRTC-capable",navigator.userAgent);var n={RTCPeerConnection:c,RTCSessionDescription:d,RTCIceCandidate:e,getSources:f,getUserMedia:g,getStats:h,attachMediaStream:i,reattachMediaStream:j,webrtcSupported:l};return n.exportGlobal=function(){window.RTCPeerConnection=n.RTCPeerConnection,window.RTCSessionDescription=n.RTCSessionDescription,window.RTCIceCandidate=n.RTCIceCandidate},n}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5),c(6)],e=function(a,b){"use strict";function c(){var b=this;this._root=e(),this._version="?";var c=function(a){b._loaded=!0,b._enabled=a===!0,b._version=b._phenixRTC.phenixVersion||"?.?.?.?",h(a?"Phenix RTC "+b._version:"No Phenix RTC"),b._onReady&&b._onReady(b._enabled)};try{this._phenixRTC=f(this._root),this._phenixRTC.onunload=function(){b._loaded=!1};var d=new a;d.waitForReady(this._phenixRTC,c)}catch(g){i("Error while loading Phenix RTC"+g),loaded(!1)}}function d(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function e(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function f(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function g(a,c){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=c,a;var d=new b(a,c);return d.getElement().phenixPresenter=d,d.getElement()}var h=function(){console.log.apply(console,arguments)}||function(){},i=function(){console.error.apply(console,arguments)}||h;return c.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},c.prototype.onLoaded=function(a){this._onLoaded=a},c.prototype.isLoaded=function(){return this._loaded===!0},c.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/))try{new ActiveXObject("PhenixP2P.RTC");return!0}catch(c){return!1}return!1},c.prototype.isEnabled=function(){return d.call(this),this._phenixRTC&&void 0!=this._phenixRTC.phenixVersion},c.prototype.getVersion=function(){return d.call(this),this._version},c.prototype.getRTCPeerConnectionConstructor=function(){return d.call(this),this._phenixRTC.RTCPeerConnection},c.prototype.getRTCSessionDescriptionConstructor=function(){return d.call(this),this._phenixRTC.RTCSessionDescription},c.prototype.getRTCIceCandidateConstructor=function(){return d.call(this),this._phenixRTC.RTCIceCandidate},c.prototype.getSourcesDelegate=function(){var a=this;return function(b){return d.call(a),a._phenixRTC.getSources(b)}},c.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,e){return d.call(a),a._phenixRTC.getUserMedia(b,c,e)}},c.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},c.prototype.attachMediaStream=function(a,b){return d.call(this),g.call(this,a,b)},c.prototype.reattachMediaStream=function(a,b){return d.call(this),this.attachMediaStream(a,b.src)},c}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(5)],e=function(a){"use strict";function b(b,d){var e=this;this._ghost=b,this._stream=d,this._events={};var f=function(a){e._loaded=!0,e._enabled=a===!0,a?h.call(e):m("Failed to create Phenix video element"),e._onReady&&e._onReady(e._enabled)};try{this._video=c(),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){e._loaded=!1},j.call(this),document.body&&document.body.contains||l("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost);var g=new a;g.waitForReady(this._video,f)}catch(i){m("Error while loading Phenix RTC"+i),f(!1)}}function c(){var a=document.createElement("object");return a.type="application/x-phenix-video",a}function d(a,b,c){var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&f.call(this,a)),d.push(b)}function e(a,b,c){var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function f(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function g(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function h(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)f.call(this,a[b]);this.hookUpEvents(),i.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function i(){var a=this,b=["style"];if(window.MutationObserver){var c=new MutationObserver(function(c){c.forEach(function(c){"attributes"===c.type&&c.target===a._ghost&&b.indexOf(c.attributeName)===-1&&(a._video[c.attributeName]=a._ghost[c.attributeName])})}),d={attributes:!0};c.observe(a._ghost,d)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),a._ghost.addEventListener?a._ghost.addEventListener("DOMAttrModified",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]},!1):a._ghost.attachEvent("onpropertychange",function(b){a._video[b.target.tagName]=a._ghost[b.target.tagName]})}function j(){var a=this;if(window.MutationObserver){var b=new MutationObserver(function(b){b.forEach(function(b){if("childList"===b.type)for(var c=0;c<b.addedNodes.length;c++){var d=b.addedNodes[c];b.target!==a._video&&(d===a._ghost?(b.target.replaceChild(a._video,a._ghost),h.call(a)):k(b.target,a._ghost)&&(a._ghost.parentNode.replaceChild(a._video,a._ghost),h.call(a)))}})}),c={childList:!0,attributes:!1,characterData:!1,subtree:!0};b.observe(document.body,c)}else l("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),d(a._ghost,"DOMNodeInserted",function(b){a._ghost.parentNode.replaceChild(a._video,a._ghost)},!1)}function k(a,b){for(var c=b.parentNode;null!=c;){if(c==a)return!0;c=c.parentNode}return!1}var l=function(){console.log.apply(console,arguments)}||function(){},m=function(){console.error.apply(console,arguments)}||l;return b.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){g(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,g(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,g(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,g(b,"ended")}),this.addEventListener("loadedmetadata",function(){l("Video loaded metadata",a._video.videoWidth,a._video.videoHeight),b.width=a._video.width,b.height=a._video.height,g(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,g(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,g(b,"resize")})},b.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},b.prototype.getElement=function(){return this._video},b.prototype.addEventListener=function(a,b,c){d.call(this,a,b,c)},b.prototype.removeEventListener=function(a,b,c){e.call(this,a,b,c)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(a){window.RTCPeerConnection=a.RTCPeerConnection,window.RTCSessionDescription=a.RTCSessionDescription,window.RTCIceCandidate=a.RTCIceCandidate};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
 
 /***/ }),
 /* 4 */
@@ -205,11 +205,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(29)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (http) {
-    'use strict';
-
-    return http;
+    __webpack_require__(36),
+    __webpack_require__(37)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (Disposable, DisposableList) {
+    return {
+        Disposable: Disposable,
+        DisposableList: DisposableList
+    };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -217,3302 +219,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(module) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
- Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
-/**
- * @license ByteBuffer.js (c) 2013-2014 Daniel Wirtz <dcode@dcode.io>
- * This version of ByteBuffer.js uses an ArrayBuffer as its backing buffer which is accessed through a DataView and is
- * compatible with modern browsers.
- * Released under the Apache License, Version 2.0
- * see: https://github.com/dcodeIO/ByteBuffer.js for details
- */ //
-(function(global) {
-    "use strict";
-
-    /**
-     * @param {function(new: Long, number, number, boolean=)=} Long
-     * @returns {function(new: ByteBuffer, number=, boolean=, boolean=)}}
-     * @inner
-     */
-    function loadByteBuffer(Long) {
-
-        /**
-         * Constructs a new ByteBuffer.
-         * @class The swiss army knife for binary data in JavaScript.
-         * @exports ByteBuffer
-         * @constructor
-         * @param {number=} capacity Initial capacity. Defaults to {@link ByteBuffer.DEFAULT_CAPACITY}.
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @expose
-         */
-        var ByteBuffer = function(capacity, littleEndian, noAssert) {
-            if (typeof capacity     === 'undefined') capacity     = ByteBuffer.DEFAULT_CAPACITY;
-            if (typeof littleEndian === 'undefined') littleEndian = ByteBuffer.DEFAULT_ENDIAN;
-            if (typeof noAssert     === 'undefined') noAssert     = ByteBuffer.DEFAULT_NOASSERT;
-            if (!noAssert) {
-                capacity = capacity | 0;
-                if (capacity < 0)
-                    throw RangeError("Illegal capacity");
-                littleEndian = !!littleEndian;
-                noAssert = !!noAssert;
-            }
-
-            /**
-             * Backing buffer.
-             * @type {!ArrayBuffer}
-             * @expose
-             */
-            this.buffer = capacity === 0 ? EMPTY_BUFFER : new ArrayBuffer(capacity);
-
-            /**
-             * Data view to manipulate the backing buffer. Becomes `null` if the backing buffer has a capacity of `0`.
-             * @type {?DataView}
-             * @expose
-             */
-            this.view = capacity === 0 ? null : new DataView(this.buffer);
-
-            /**
-             * Absolute read/write offset.
-             * @type {number}
-             * @expose
-             * @see ByteBuffer#flip
-             * @see ByteBuffer#clear
-             */
-            this.offset = 0;
-
-            /**
-             * Marked offset.
-             * @type {number}
-             * @expose
-             * @see ByteBuffer#mark
-             * @see ByteBuffer#reset
-             */
-            this.markedOffset = -1;
-
-            /**
-             * Absolute limit of the contained data. Set to the backing buffer's capacity upon allocation.
-             * @type {number}
-             * @expose
-             * @see ByteBuffer#flip
-             * @see ByteBuffer#clear
-             */
-            this.limit = capacity;
-
-            /**
-             * Whether to use little endian byte order, defaults to `false` for big endian.
-             * @type {boolean}
-             * @expose
-             */
-            this.littleEndian = typeof littleEndian !== 'undefined' ? !!littleEndian : false;
-
-            /**
-             * Whether to skip assertions of offsets and values, defaults to `false`.
-             * @type {boolean}
-             * @expose
-             */
-            this.noAssert = !!noAssert;
-        };
-
-        /**
-         * ByteBuffer version.
-         * @type {string}
-         * @const
-         * @expose
-         */
-        ByteBuffer.VERSION = "3.5.5";
-
-        /**
-         * Little endian constant that can be used instead of its boolean value. Evaluates to `true`.
-         * @type {boolean}
-         * @const
-         * @expose
-         */
-        ByteBuffer.LITTLE_ENDIAN = true;
-
-        /**
-         * Big endian constant that can be used instead of its boolean value. Evaluates to `false`.
-         * @type {boolean}
-         * @const
-         * @expose
-         */
-        ByteBuffer.BIG_ENDIAN = false;
-
-        /**
-         * Default initial capacity of `16`.
-         * @type {number}
-         * @expose
-         */
-        ByteBuffer.DEFAULT_CAPACITY = 16;
-
-        /**
-         * Default endianess of `false` for big endian.
-         * @type {boolean}
-         * @expose
-         */
-        ByteBuffer.DEFAULT_ENDIAN = ByteBuffer.BIG_ENDIAN;
-
-        /**
-         * Default no assertions flag of `false`.
-         * @type {boolean}
-         * @expose
-         */
-        ByteBuffer.DEFAULT_NOASSERT = false;
-
-        /**
-         * A `Long` class for representing a 64-bit two's-complement integer value. May be `null` if Long.js has not been loaded
-         *  and int64 support is not available.
-         * @type {?Long}
-         * @const
-         * @see https://github.com/dcodeIO/Long.js
-         * @expose
-         */
-        ByteBuffer.Long = Long || null;
-
-        /**
-         * @alias ByteBuffer.prototype
-         * @inner
-         */
-        var ByteBufferPrototype = ByteBuffer.prototype;
-
-        // helpers
-
-        /**
-         * @type {!ArrayBuffer}
-         * @inner
-         */
-        var EMPTY_BUFFER = new ArrayBuffer(0);
-
-        /**
-         * String.fromCharCode reference for compile-time renaming.
-         * @type {function(...number):string}
-         * @inner
-         */
-        var stringFromCharCode = String.fromCharCode;
-
-        /**
-         * Creates a source function for a string.
-         * @param {string} s String to read from
-         * @returns {function():number|null} Source function returning the next char code respectively `null` if there are
-         *  no more characters left.
-         * @throws {TypeError} If the argument is invalid
-         * @inner
-         */
-        function stringSource(s) {
-            var i=0; return function() {
-                return i < s.length ? s.charCodeAt(i++) : null;
-            };
-        }
-
-        /**
-         * Creates a destination function for a string.
-         * @returns {function(number=):undefined|string} Destination function successively called with the next char code.
-         *  Returns the final string when called without arguments.
-         * @inner
-         */
-        function stringDestination() {
-            var cs = [], ps = []; return function() {
-                if (arguments.length === 0)
-                    return ps.join('')+stringFromCharCode.apply(String, cs);
-                if (cs.length + arguments.length > 1024)
-                    ps.push(stringFromCharCode.apply(String, cs)),
-                        cs.length = 0;
-                Array.prototype.push.apply(cs, arguments);
-            };
-        }
-
-        /**
-         * Allocates a new ByteBuffer backed by a buffer of the specified capacity.
-         * @param {number=} capacity Initial capacity. Defaults to {@link ByteBuffer.DEFAULT_CAPACITY}.
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer}
-         * @expose
-         */
-        ByteBuffer.allocate = function(capacity, littleEndian, noAssert) {
-            return new ByteBuffer(capacity, littleEndian, noAssert);
-        };
-
-        /**
-         * Concatenates multiple ByteBuffers into one.
-         * @param {!Array.<!ByteBuffer|!ArrayBuffer|!Uint8Array|string>} buffers Buffers to concatenate
-         * @param {(string|boolean)=} encoding String encoding if `buffers` contains a string ("base64", "hex", "binary",
-         *  defaults to "utf8")
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order for the resulting ByteBuffer. Defaults
-         *  to {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values for the resulting ByteBuffer. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} Concatenated ByteBuffer
-         * @expose
-         */
-        ByteBuffer.concat = function(buffers, encoding, littleEndian, noAssert) {
-            if (typeof encoding === 'boolean' || typeof encoding !== 'string') {
-                noAssert = littleEndian;
-                littleEndian = encoding;
-                encoding = undefined;
-            }
-            var capacity = 0;
-            for (var i=0, k=buffers.length, length; i<k; ++i) {
-                if (!ByteBuffer.isByteBuffer(buffers[i]))
-                    buffers[i] = ByteBuffer.wrap(buffers[i], encoding);
-                length = buffers[i].limit - buffers[i].offset;
-                if (length > 0) capacity += length;
-            }
-            if (capacity === 0)
-                return new ByteBuffer(0, littleEndian, noAssert);
-            var bb = new ByteBuffer(capacity, littleEndian, noAssert),
-                bi;
-            var view = new Uint8Array(bb.buffer);
-            i=0; while (i<k) {
-                bi = buffers[i++];
-                length = bi.limit - bi.offset;
-                if (length <= 0) continue;
-                view.set(new Uint8Array(bi.buffer).subarray(bi.offset, bi.limit), bb.offset);
-                bb.offset += length;
-            }
-            bb.limit = bb.offset;
-            bb.offset = 0;
-            return bb;
-        };
-
-        /**
-         * Tests if the specified type is a ByteBuffer.
-         * @param {*} bb ByteBuffer to test
-         * @returns {boolean} `true` if it is a ByteBuffer, otherwise `false`
-         * @expose
-         */
-        ByteBuffer.isByteBuffer = function(bb) {
-            return (bb && bb instanceof ByteBuffer) === true;
-        };
-        /**
-         * Gets the backing buffer type.
-         * @returns {Function} `Buffer` for NB builds, `ArrayBuffer` for AB builds (classes)
-         * @expose
-         */
-        ByteBuffer.type = function() {
-            return ArrayBuffer;
-        };
-
-        /**
-         * Wraps a buffer or a string. Sets the allocated ByteBuffer's {@link ByteBuffer#offset} to `0` and its
-         *  {@link ByteBuffer#limit} to the length of the wrapped data.
-         * @param {!ByteBuffer|!ArrayBuffer|!Uint8Array|string|!Array.<number>} buffer Anything that can be wrapped
-         * @param {(string|boolean)=} encoding String encoding if `buffer` is a string ("base64", "hex", "binary", defaults to
-         *  "utf8")
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} A ByteBuffer wrapping `buffer`
-         * @expose
-         */
-        ByteBuffer.wrap = function(buffer, encoding, littleEndian, noAssert) {
-            if (typeof encoding !== 'string') {
-                noAssert = littleEndian;
-                littleEndian = encoding;
-                encoding = undefined;
-            }
-            if (typeof buffer === 'string') {
-                if (typeof encoding === 'undefined')
-                    encoding = "utf8";
-                switch (encoding) {
-                    case "base64":
-                        return ByteBuffer.fromBase64(buffer, littleEndian);
-                    case "hex":
-                        return ByteBuffer.fromHex(buffer, littleEndian);
-                    case "binary":
-                        return ByteBuffer.fromBinary(buffer, littleEndian);
-                    case "utf8":
-                        return ByteBuffer.fromUTF8(buffer, littleEndian);
-                    case "debug":
-                        return ByteBuffer.fromDebug(buffer, littleEndian);
-                    default:
-                        throw Error("Unsupported encoding: "+encoding);
-                }
-            }
-            if (buffer === null || typeof buffer !== 'object')
-                throw TypeError("Illegal buffer");
-            var bb;
-            if (ByteBuffer.isByteBuffer(buffer)) {
-                bb = ByteBufferPrototype.clone.call(buffer);
-                bb.markedOffset = -1;
-                return bb;
-            }
-            if (buffer instanceof Uint8Array) { // Extract ArrayBuffer from Uint8Array
-                bb = new ByteBuffer(0, littleEndian, noAssert);
-                if (buffer.length > 0) { // Avoid references to more than one EMPTY_BUFFER
-                    bb.buffer = buffer.buffer;
-                    bb.offset = buffer.byteOffset;
-                    bb.limit = buffer.byteOffset + buffer.length;
-                    bb.view = buffer.length > 0 ? new DataView(buffer.buffer) : null;
-                }
-            } else if (buffer instanceof ArrayBuffer) { // Reuse ArrayBuffer
-                bb = new ByteBuffer(0, littleEndian, noAssert);
-                if (buffer.byteLength > 0) {
-                    bb.buffer = buffer;
-                    bb.offset = 0;
-                    bb.limit = buffer.byteLength;
-                    bb.view = buffer.byteLength > 0 ? new DataView(buffer) : null;
-                }
-            } else if (Object.prototype.toString.call(buffer) === "[object Array]") { // Create from octets
-                bb = new ByteBuffer(buffer.length, littleEndian, noAssert);
-                bb.limit = buffer.length;
-                for (i=0; i<buffer.length; ++i)
-                    bb.view.setUint8(i, buffer[i]);
-            } else
-                throw TypeError("Illegal buffer"); // Otherwise fail
-            return bb;
-        };
-
-        // types/ints/int8
-
-        /**
-         * Writes an 8bit signed integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeInt8 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value |= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 1;
-            var capacity0 = this.buffer.byteLength;
-            if (offset > capacity0)
-                this.resize((capacity0 *= 2) > offset ? capacity0 : offset);
-            offset -= 1;
-            this.view.setInt8(offset, value);
-            if (relative) this.offset += 1;
-            return this;
-        };
-
-        /**
-         * Writes an 8bit signed integer. This is an alias of {@link ByteBuffer#writeInt8}.
-         * @function
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeByte = ByteBufferPrototype.writeInt8;
-
-        /**
-         * Reads an 8bit signed integer.
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readInt8 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getInt8(offset);
-            if (relative) this.offset += 1;
-            return value;
-        };
-
-        /**
-         * Reads an 8bit signed integer. This is an alias of {@link ByteBuffer#readInt8}.
-         * @function
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readByte = ByteBufferPrototype.readInt8;
-
-        /**
-         * Writes an 8bit unsigned integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeUint8 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value >>>= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 1;
-            var capacity1 = this.buffer.byteLength;
-            if (offset > capacity1)
-                this.resize((capacity1 *= 2) > offset ? capacity1 : offset);
-            offset -= 1;
-            this.view.setUint8(offset, value);
-            if (relative) this.offset += 1;
-            return this;
-        };
-
-        /**
-         * Reads an 8bit unsigned integer.
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readUint8 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getUint8(offset);
-            if (relative) this.offset += 1;
-            return value;
-        };
-
-        // types/ints/int16
-
-        /**
-         * Writes a 16bit signed integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @throws {TypeError} If `offset` or `value` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.writeInt16 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value |= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 2;
-            var capacity2 = this.buffer.byteLength;
-            if (offset > capacity2)
-                this.resize((capacity2 *= 2) > offset ? capacity2 : offset);
-            offset -= 2;
-            this.view.setInt16(offset, value, this.littleEndian);
-            if (relative) this.offset += 2;
-            return this;
-        };
-
-        /**
-         * Writes a 16bit signed integer. This is an alias of {@link ByteBuffer#writeInt16}.
-         * @function
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @throws {TypeError} If `offset` or `value` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.writeShort = ByteBufferPrototype.writeInt16;
-
-        /**
-         * Reads a 16bit signed integer.
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @returns {number} Value read
-         * @throws {TypeError} If `offset` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.readInt16 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 2 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+2+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getInt16(offset, this.littleEndian);
-            if (relative) this.offset += 2;
-            return value;
-        };
-
-        /**
-         * Reads a 16bit signed integer. This is an alias of {@link ByteBuffer#readInt16}.
-         * @function
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @returns {number} Value read
-         * @throws {TypeError} If `offset` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.readShort = ByteBufferPrototype.readInt16;
-
-        /**
-         * Writes a 16bit unsigned integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @throws {TypeError} If `offset` or `value` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.writeUint16 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value >>>= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 2;
-            var capacity3 = this.buffer.byteLength;
-            if (offset > capacity3)
-                this.resize((capacity3 *= 2) > offset ? capacity3 : offset);
-            offset -= 2;
-            this.view.setUint16(offset, value, this.littleEndian);
-            if (relative) this.offset += 2;
-            return this;
-        };
-
-        /**
-         * Reads a 16bit unsigned integer.
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
-         * @returns {number} Value read
-         * @throws {TypeError} If `offset` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @expose
-         */
-        ByteBufferPrototype.readUint16 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 2 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+2+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getUint16(offset, this.littleEndian);
-            if (relative) this.offset += 2;
-            return value;
-        };
-
-        // types/ints/int32
-
-        /**
-         * Writes a 32bit signed integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @expose
-         */
-        ByteBufferPrototype.writeInt32 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value |= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 4;
-            var capacity4 = this.buffer.byteLength;
-            if (offset > capacity4)
-                this.resize((capacity4 *= 2) > offset ? capacity4 : offset);
-            offset -= 4;
-            this.view.setInt32(offset, value, this.littleEndian);
-            if (relative) this.offset += 4;
-            return this;
-        };
-
-        /**
-         * Writes a 32bit signed integer. This is an alias of {@link ByteBuffer#writeInt32}.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @expose
-         */
-        ByteBufferPrototype.writeInt = ByteBufferPrototype.writeInt32;
-
-        /**
-         * Reads a 32bit signed integer.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readInt32 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 4 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getInt32(offset, this.littleEndian);
-            if (relative) this.offset += 4;
-            return value;
-        };
-
-        /**
-         * Reads a 32bit signed integer. This is an alias of {@link ByteBuffer#readInt32}.
-         * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readInt = ByteBufferPrototype.readInt32;
-
-        /**
-         * Writes a 32bit unsigned integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @expose
-         */
-        ByteBufferPrototype.writeUint32 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value >>>= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 4;
-            var capacity5 = this.buffer.byteLength;
-            if (offset > capacity5)
-                this.resize((capacity5 *= 2) > offset ? capacity5 : offset);
-            offset -= 4;
-            this.view.setUint32(offset, value, this.littleEndian);
-            if (relative) this.offset += 4;
-            return this;
-        };
-
-        /**
-         * Reads a 32bit unsigned integer.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {number} Value read
-         * @expose
-         */
-        ByteBufferPrototype.readUint32 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 4 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getUint32(offset, this.littleEndian);
-            if (relative) this.offset += 4;
-            return value;
-        };
-
-        // types/ints/int64
-
-        if (Long) {
-
-            /**
-             * Writes a 64bit signed integer.
-             * @param {number|!Long} value Value to write
-             * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!ByteBuffer} this
-             * @expose
-             */
-            ByteBufferPrototype.writeInt64 = function(value, offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof value === 'number')
-                        value = Long.fromNumber(value);
-                    else if (typeof value === 'string')
-                        value = Long.fromString(value);
-                    else if (!(value && value instanceof Long))
-                        throw TypeError("Illegal value: "+value+" (not an integer or Long)");
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-                }
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value);
-                offset += 8;
-                var capacity6 = this.buffer.byteLength;
-                if (offset > capacity6)
-                    this.resize((capacity6 *= 2) > offset ? capacity6 : offset);
-                offset -= 8;
-                if (this.littleEndian) {
-                    this.view.setInt32(offset  , value.low , true);
-                    this.view.setInt32(offset+4, value.high, true);
-                } else {
-                    this.view.setInt32(offset  , value.high, false);
-                    this.view.setInt32(offset+4, value.low , false);
-                }
-                if (relative) this.offset += 8;
-                return this;
-            };
-
-            /**
-             * Writes a 64bit signed integer. This is an alias of {@link ByteBuffer#writeInt64}.
-             * @param {number|!Long} value Value to write
-             * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!ByteBuffer} this
-             * @expose
-             */
-            ByteBufferPrototype.writeLong = ByteBufferPrototype.writeInt64;
-
-            /**
-             * Reads a 64bit signed integer.
-             * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!Long}
-             * @expose
-             */
-            ByteBufferPrototype.readInt64 = function(offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 8 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
-                }
-                var value = this.littleEndian
-                    ? new Long(this.view.getInt32(offset  , true ), this.view.getInt32(offset+4, true ), false)
-                    : new Long(this.view.getInt32(offset+4, false), this.view.getInt32(offset  , false), false);
-                if (relative) this.offset += 8;
-                return value;
-            };
-
-            /**
-             * Reads a 64bit signed integer. This is an alias of {@link ByteBuffer#readInt64}.
-             * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!Long}
-             * @expose
-             */
-            ByteBufferPrototype.readLong = ByteBufferPrototype.readInt64;
-
-            /**
-             * Writes a 64bit unsigned integer.
-             * @param {number|!Long} value Value to write
-             * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!ByteBuffer} this
-             * @expose
-             */
-            ByteBufferPrototype.writeUint64 = function(value, offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof value === 'number')
-                        value = Long.fromNumber(value);
-                    else if (typeof value === 'string')
-                        value = Long.fromString(value);
-                    else if (!(value && value instanceof Long))
-                        throw TypeError("Illegal value: "+value+" (not an integer or Long)");
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-                }
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value);
-                offset += 8;
-                var capacity7 = this.buffer.byteLength;
-                if (offset > capacity7)
-                    this.resize((capacity7 *= 2) > offset ? capacity7 : offset);
-                offset -= 8;
-                if (this.littleEndian) {
-                    this.view.setInt32(offset  , value.low , true);
-                    this.view.setInt32(offset+4, value.high, true);
-                } else {
-                    this.view.setInt32(offset  , value.high, false);
-                    this.view.setInt32(offset+4, value.low , false);
-                }
-                if (relative) this.offset += 8;
-                return this;
-            };
-
-            /**
-             * Reads a 64bit unsigned integer.
-             * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-             * @returns {!Long}
-             * @expose
-             */
-            ByteBufferPrototype.readUint64 = function(offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 8 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
-                }
-                var value = this.littleEndian
-                    ? new Long(this.view.getInt32(offset  , true ), this.view.getInt32(offset+4, true ), true)
-                    : new Long(this.view.getInt32(offset+4, false), this.view.getInt32(offset  , false), true);
-                if (relative) this.offset += 8;
-                return value;
-            };
-
-        } // Long
-
-
-        // types/floats/float32
-
-        /**
-         * Writes a 32bit float.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeFloat32 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number')
-                    throw TypeError("Illegal value: "+value+" (not a number)");
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 4;
-            var capacity8 = this.buffer.byteLength;
-            if (offset > capacity8)
-                this.resize((capacity8 *= 2) > offset ? capacity8 : offset);
-            offset -= 4;
-            this.view.setFloat32(offset, value, this.littleEndian);
-            if (relative) this.offset += 4;
-            return this;
-        };
-
-        /**
-         * Writes a 32bit float. This is an alias of {@link ByteBuffer#writeFloat32}.
-         * @function
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeFloat = ByteBufferPrototype.writeFloat32;
-
-        /**
-         * Reads a 32bit float.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {number}
-         * @expose
-         */
-        ByteBufferPrototype.readFloat32 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 4 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getFloat32(offset, this.littleEndian);
-            if (relative) this.offset += 4;
-            return value;
-        };
-
-        /**
-         * Reads a 32bit float. This is an alias of {@link ByteBuffer#readFloat32}.
-         * @function
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
-         * @returns {number}
-         * @expose
-         */
-        ByteBufferPrototype.readFloat = ByteBufferPrototype.readFloat32;
-
-        // types/floats/float64
-
-        /**
-         * Writes a 64bit float.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeFloat64 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number')
-                    throw TypeError("Illegal value: "+value+" (not a number)");
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            offset += 8;
-            var capacity9 = this.buffer.byteLength;
-            if (offset > capacity9)
-                this.resize((capacity9 *= 2) > offset ? capacity9 : offset);
-            offset -= 8;
-            this.view.setFloat64(offset, value, this.littleEndian);
-            if (relative) this.offset += 8;
-            return this;
-        };
-
-        /**
-         * Writes a 64bit float. This is an alias of {@link ByteBuffer#writeFloat64}.
-         * @function
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.writeDouble = ByteBufferPrototype.writeFloat64;
-
-        /**
-         * Reads a 64bit float.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-         * @returns {number}
-         * @expose
-         */
-        ByteBufferPrototype.readFloat64 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 8 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
-            }
-            var value = this.view.getFloat64(offset, this.littleEndian);
-            if (relative) this.offset += 8;
-            return value;
-        };
-
-        /**
-         * Reads a 64bit float. This is an alias of {@link ByteBuffer#readFloat64}.
-         * @function
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
-         * @returns {number}
-         * @expose
-         */
-        ByteBufferPrototype.readDouble = ByteBufferPrototype.readFloat64;
-
-
-        // types/varints/varint32
-
-        /**
-         * Maximum number of bytes required to store a 32bit base 128 variable-length integer.
-         * @type {number}
-         * @const
-         * @expose
-         */
-        ByteBuffer.MAX_VARINT32_BYTES = 5;
-
-        /**
-         * Calculates the actual number of bytes required to store a 32bit base 128 variable-length integer.
-         * @param {number} value Value to encode
-         * @returns {number} Number of bytes required. Capped to {@link ByteBuffer.MAX_VARINT32_BYTES}
-         * @expose
-         */
-        ByteBuffer.calculateVarint32 = function(value) {
-            // ref: src/google/protobuf/io/coded_stream.cc
-            value = value >>> 0;
-                 if (value < 1 << 7 ) return 1;
-            else if (value < 1 << 14) return 2;
-            else if (value < 1 << 21) return 3;
-            else if (value < 1 << 28) return 4;
-            else                      return 5;
-        };
-
-        /**
-         * Zigzag encodes a signed 32bit integer so that it can be effectively used with varint encoding.
-         * @param {number} n Signed 32bit integer
-         * @returns {number} Unsigned zigzag encoded 32bit integer
-         * @expose
-         */
-        ByteBuffer.zigZagEncode32 = function(n) {
-            return (((n |= 0) << 1) ^ (n >> 31)) >>> 0; // ref: src/google/protobuf/wire_format_lite.h
-        };
-
-        /**
-         * Decodes a zigzag encoded signed 32bit integer.
-         * @param {number} n Unsigned zigzag encoded 32bit integer
-         * @returns {number} Signed 32bit integer
-         * @expose
-         */
-        ByteBuffer.zigZagDecode32 = function(n) {
-            return ((n >>> 1) ^ -(n & 1)) | 0; // // ref: src/google/protobuf/wire_format_lite.h
-        };
-
-        /**
-         * Writes a 32bit base 128 variable-length integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {!ByteBuffer|number} this if `offset` is omitted, else the actual number of bytes written
-         * @expose
-         */
-        ByteBufferPrototype.writeVarint32 = function(value, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value |= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            var size = ByteBuffer.calculateVarint32(value),
-                b;
-            offset += size;
-            var capacity10 = this.buffer.byteLength;
-            if (offset > capacity10)
-                this.resize((capacity10 *= 2) > offset ? capacity10 : offset);
-            offset -= size;
-            // ref: http://code.google.com/searchframe#WTeibokF6gE/trunk/src/google/protobuf/io/coded_stream.cc
-            this.view.setUint8(offset, b = value | 0x80);
-            value >>>= 0;
-            if (value >= 1 << 7) {
-                b = (value >> 7) | 0x80;
-                this.view.setUint8(offset+1, b);
-                if (value >= 1 << 14) {
-                    b = (value >> 14) | 0x80;
-                    this.view.setUint8(offset+2, b);
-                    if (value >= 1 << 21) {
-                        b = (value >> 21) | 0x80;
-                        this.view.setUint8(offset+3, b);
-                        if (value >= 1 << 28) {
-                            this.view.setUint8(offset+4, (value >> 28) & 0x0F);
-                            size = 5;
-                        } else {
-                            this.view.setUint8(offset+3, b & 0x7F);
-                            size = 4;
-                        }
-                    } else {
-                        this.view.setUint8(offset+2, b & 0x7F);
-                        size = 3;
-                    }
-                } else {
-                    this.view.setUint8(offset+1, b & 0x7F);
-                    size = 2;
-                }
-            } else {
-                this.view.setUint8(offset, b & 0x7F);
-                size = 1;
-            }
-            if (relative) {
-                this.offset += size;
-                return this;
-            }
-            return size;
-        };
-
-        /**
-         * Writes a zig-zag encoded 32bit base 128 variable-length integer.
-         * @param {number} value Value to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {!ByteBuffer|number} this if `offset` is omitted, else the actual number of bytes written
-         * @expose
-         */
-        ByteBufferPrototype.writeVarint32ZigZag = function(value, offset) {
-            return this.writeVarint32(ByteBuffer.zigZagEncode32(value), offset);
-        };
-
-        /**
-         * Reads a 32bit base 128 variable-length integer.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {number|!{value: number, length: number}} The value read if offset is omitted, else the value read
-         *  and the actual number of bytes read.
-         * @throws {Error} If it's not a valid varint. Has a property `truncated = true` if there is not enough data available
-         *  to fully decode the varint.
-         * @expose
-         */
-        ByteBufferPrototype.readVarint32 = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-            }
-            // ref: src/google/protobuf/io/coded_stream.cc
-            var size = 0,
-                value = 0 >>> 0,
-                temp,
-                ioffset;
-            do {
-                ioffset = offset+size;
-                if (!this.noAssert && ioffset > this.limit) {
-                    var err = Error("Truncated");
-                    err['truncated'] = true;
-                    throw err;
-                }
-                temp = this.view.getUint8(ioffset);
-                if (size < 5)
-                    value |= ((temp&0x7F)<<(7*size)) >>> 0;
-                ++size;
-            } while ((temp & 0x80) === 0x80);
-            value = value | 0; // Make sure to discard the higher order bits
-            if (relative) {
-                this.offset += size;
-                return value;
-            }
-            return {
-                "value": value,
-                "length": size
-            };
-        };
-
-        /**
-         * Reads a zig-zag encoded 32bit base 128 variable-length integer.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {number|!{value: number, length: number}} The value read if offset is omitted, else the value read
-         *  and the actual number of bytes read.
-         * @throws {Error} If it's not a valid varint
-         * @expose
-         */
-        ByteBufferPrototype.readVarint32ZigZag = function(offset) {
-            var val = this.readVarint32(offset);
-            if (typeof val === 'object')
-                val["value"] = ByteBuffer.zigZagDecode32(val["value"]);
-            else
-                val = ByteBuffer.zigZagDecode32(val);
-            return val;
-        };
-
-        // types/varints/varint64
-
-        if (Long) {
-
-            /**
-             * Maximum number of bytes required to store a 64bit base 128 variable-length integer.
-             * @type {number}
-             * @const
-             * @expose
-             */
-            ByteBuffer.MAX_VARINT64_BYTES = 10;
-
-            /**
-             * Calculates the actual number of bytes required to store a 64bit base 128 variable-length integer.
-             * @param {number|!Long} value Value to encode
-             * @returns {number} Number of bytes required. Capped to {@link ByteBuffer.MAX_VARINT64_BYTES}
-             * @expose
-             */
-            ByteBuffer.calculateVarint64 = function(value) {
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value);
-                // ref: src/google/protobuf/io/coded_stream.cc
-                var part0 = value.toInt() >>> 0,
-                    part1 = value.shiftRightUnsigned(28).toInt() >>> 0,
-                    part2 = value.shiftRightUnsigned(56).toInt() >>> 0;
-                if (part2 == 0) {
-                    if (part1 == 0) {
-                        if (part0 < 1 << 14)
-                            return part0 < 1 << 7 ? 1 : 2;
-                        else
-                            return part0 < 1 << 21 ? 3 : 4;
-                    } else {
-                        if (part1 < 1 << 14)
-                            return part1 < 1 << 7 ? 5 : 6;
-                        else
-                            return part1 < 1 << 21 ? 7 : 8;
-                    }
-                } else
-                    return part2 < 1 << 7 ? 9 : 10;
-            };
-
-            /**
-             * Zigzag encodes a signed 64bit integer so that it can be effectively used with varint encoding.
-             * @param {number|!Long} value Signed long
-             * @returns {!Long} Unsigned zigzag encoded long
-             * @expose
-             */
-            ByteBuffer.zigZagEncode64 = function(value) {
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value, false);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value, false);
-                else if (value.unsigned !== false) value = value.toSigned();
-                // ref: src/google/protobuf/wire_format_lite.h
-                return value.shiftLeft(1).xor(value.shiftRight(63)).toUnsigned();
-            };
-
-            /**
-             * Decodes a zigzag encoded signed 64bit integer.
-             * @param {!Long|number} value Unsigned zigzag encoded long or JavaScript number
-             * @returns {!Long} Signed long
-             * @expose
-             */
-            ByteBuffer.zigZagDecode64 = function(value) {
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value, false);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value, false);
-                else if (value.unsigned !== false) value = value.toSigned();
-                // ref: src/google/protobuf/wire_format_lite.h
-                return value.shiftRightUnsigned(1).xor(value.and(Long.ONE).toSigned().negate()).toSigned();
-            };
-
-            /**
-             * Writes a 64bit base 128 variable-length integer.
-             * @param {number|Long} value Value to write
-             * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-             *  written if omitted.
-             * @returns {!ByteBuffer|number} `this` if offset is omitted, else the actual number of bytes written.
-             * @expose
-             */
-            ByteBufferPrototype.writeVarint64 = function(value, offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof value === 'number')
-                        value = Long.fromNumber(value);
-                    else if (typeof value === 'string')
-                        value = Long.fromString(value);
-                    else if (!(value && value instanceof Long))
-                        throw TypeError("Illegal value: "+value+" (not an integer or Long)");
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-                }
-                if (typeof value === 'number')
-                    value = Long.fromNumber(value, false);
-                else if (typeof value === 'string')
-                    value = Long.fromString(value, false);
-                else if (value.unsigned !== false) value = value.toSigned();
-                var size = ByteBuffer.calculateVarint64(value),
-                    part0 = value.toInt() >>> 0,
-                    part1 = value.shiftRightUnsigned(28).toInt() >>> 0,
-                    part2 = value.shiftRightUnsigned(56).toInt() >>> 0;
-                offset += size;
-                var capacity11 = this.buffer.byteLength;
-                if (offset > capacity11)
-                    this.resize((capacity11 *= 2) > offset ? capacity11 : offset);
-                offset -= size;
-                switch (size) {
-                    case 10: this.view.setUint8(offset+9, (part2 >>>  7) & 0x01);
-                    case 9 : this.view.setUint8(offset+8, size !== 9 ? (part2       ) | 0x80 : (part2       ) & 0x7F);
-                    case 8 : this.view.setUint8(offset+7, size !== 8 ? (part1 >>> 21) | 0x80 : (part1 >>> 21) & 0x7F);
-                    case 7 : this.view.setUint8(offset+6, size !== 7 ? (part1 >>> 14) | 0x80 : (part1 >>> 14) & 0x7F);
-                    case 6 : this.view.setUint8(offset+5, size !== 6 ? (part1 >>>  7) | 0x80 : (part1 >>>  7) & 0x7F);
-                    case 5 : this.view.setUint8(offset+4, size !== 5 ? (part1       ) | 0x80 : (part1       ) & 0x7F);
-                    case 4 : this.view.setUint8(offset+3, size !== 4 ? (part0 >>> 21) | 0x80 : (part0 >>> 21) & 0x7F);
-                    case 3 : this.view.setUint8(offset+2, size !== 3 ? (part0 >>> 14) | 0x80 : (part0 >>> 14) & 0x7F);
-                    case 2 : this.view.setUint8(offset+1, size !== 2 ? (part0 >>>  7) | 0x80 : (part0 >>>  7) & 0x7F);
-                    case 1 : this.view.setUint8(offset  , size !== 1 ? (part0       ) | 0x80 : (part0       ) & 0x7F);
-                }
-                if (relative) {
-                    this.offset += size;
-                    return this;
-                } else {
-                    return size;
-                }
-            };
-
-            /**
-             * Writes a zig-zag encoded 64bit base 128 variable-length integer.
-             * @param {number|Long} value Value to write
-             * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-             *  written if omitted.
-             * @returns {!ByteBuffer|number} `this` if offset is omitted, else the actual number of bytes written.
-             * @expose
-             */
-            ByteBufferPrototype.writeVarint64ZigZag = function(value, offset) {
-                return this.writeVarint64(ByteBuffer.zigZagEncode64(value), offset);
-            };
-
-            /**
-             * Reads a 64bit base 128 variable-length integer. Requires Long.js.
-             * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-             *  read if omitted.
-             * @returns {!Long|!{value: Long, length: number}} The value read if offset is omitted, else the value read and
-             *  the actual number of bytes read.
-             * @throws {Error} If it's not a valid varint
-             * @expose
-             */
-            ByteBufferPrototype.readVarint64 = function(offset) {
-                var relative = typeof offset === 'undefined';
-                if (relative) offset = this.offset;
-                if (!this.noAssert) {
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-                }
-                // ref: src/google/protobuf/io/coded_stream.cc
-                var start = offset,
-                    part0 = 0,
-                    part1 = 0,
-                    part2 = 0,
-                    b  = 0;
-                b = this.view.getUint8(offset++); part0  = (b & 0x7F)      ; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part0 |= (b & 0x7F) <<  7; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part0 |= (b & 0x7F) << 14; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part0 |= (b & 0x7F) << 21; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part1  = (b & 0x7F)      ; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part1 |= (b & 0x7F) <<  7; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part1 |= (b & 0x7F) << 14; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part1 |= (b & 0x7F) << 21; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part2  = (b & 0x7F)      ; if (b & 0x80) {
-                b = this.view.getUint8(offset++); part2 |= (b & 0x7F) <<  7; if (b & 0x80) {
-                throw Error("Buffer overrun"); }}}}}}}}}}
-                var value = Long.fromBits(part0 | (part1 << 28), (part1 >>> 4) | (part2) << 24, false);
-                if (relative) {
-                    this.offset = offset;
-                    return value;
-                } else {
-                    return {
-                        'value': value,
-                        'length': offset-start
-                    };
-                }
-            };
-
-            /**
-             * Reads a zig-zag encoded 64bit base 128 variable-length integer. Requires Long.js.
-             * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-             *  read if omitted.
-             * @returns {!Long|!{value: Long, length: number}} The value read if offset is omitted, else the value read and
-             *  the actual number of bytes read.
-             * @throws {Error} If it's not a valid varint
-             * @expose
-             */
-            ByteBufferPrototype.readVarint64ZigZag = function(offset) {
-                var val = this.readVarint64(offset);
-                if (val && val['value'] instanceof Long)
-                    val["value"] = ByteBuffer.zigZagDecode64(val["value"]);
-                else
-                    val = ByteBuffer.zigZagDecode64(val);
-                return val;
-            };
-
-        } // Long
-
-
-        // types/strings/cstring
-
-        /**
-         * Writes a NULL-terminated UTF8 encoded string. For this to work the specified string must not contain any NULL
-         *  characters itself.
-         * @param {string} str String to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  contained in `str` + 1 if omitted.
-         * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written
-         * @expose
-         */
-        ByteBufferPrototype.writeCString = function(str, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            var i,
-                k = str.length;
-            if (!this.noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-                for (i=0; i<k; ++i) {
-                    if (str.charCodeAt(i) === 0)
-                        throw RangeError("Illegal str: Contains NULL-characters");
-                }
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            // UTF8 strings do not contain zero bytes in between except for the zero character, so:
-            k = utfx.calculateUTF16asUTF8(stringSource(str))[1];
-            offset += k+1;
-            var capacity12 = this.buffer.byteLength;
-            if (offset > capacity12)
-                this.resize((capacity12 *= 2) > offset ? capacity12 : offset);
-            offset -= k+1;
-            utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
-                this.view.setUint8(offset++, b);
-            }.bind(this));
-            this.view.setUint8(offset++, 0);
-            if (relative) {
-                this.offset = offset;
-                return this;
-            }
-            return k;
-        };
-
-        /**
-         * Reads a NULL-terminated UTF8 encoded string. For this to work the string read must not contain any NULL characters
-         *  itself.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
-         *  read and the actual number of bytes read.
-         * @expose
-         */
-        ByteBufferPrototype.readCString = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-            }
-            var start = offset,
-                temp;
-            // UTF8 strings do not contain zero bytes in between except for the zero character itself, so:
-            var sd, b = -1;
-            utfx.decodeUTF8toUTF16(function() {
-                if (b === 0) return null;
-                if (offset >= this.limit)
-                    throw RangeError("Illegal range: Truncated data, "+offset+" < "+this.limit);
-                return (b = this.view.getUint8(offset++)) === 0 ? null : b;
-            }.bind(this), sd = stringDestination(), true);
-            if (relative) {
-                this.offset = offset;
-                return sd();
-            } else {
-                return {
-                    "string": sd(),
-                    "length": offset - start
-                };
-            }
-        };
-
-        // types/strings/istring
-
-        /**
-         * Writes a length as uint32 prefixed UTF8 encoded string.
-         * @param {string} str String to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {!ByteBuffer|number} `this` if `offset` is omitted, else the actual number of bytes written
-         * @expose
-         * @see ByteBuffer#writeVarint32
-         */
-        ByteBufferPrototype.writeIString = function(str, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            var start = offset,
-                k;
-            k = utfx.calculateUTF16asUTF8(stringSource(str), this.noAssert)[1];
-            offset += 4+k;
-            var capacity13 = this.buffer.byteLength;
-            if (offset > capacity13)
-                this.resize((capacity13 *= 2) > offset ? capacity13 : offset);
-            offset -= 4+k;
-            this.view.setUint32(offset, k, this.littleEndian);
-            offset += 4;
-            utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
-                this.view.setUint8(offset++, b);
-            }.bind(this));
-            if (offset !== start + 4 + k)
-                throw RangeError("Illegal range: Truncated data, "+offset+" == "+(offset+4+k));
-            if (relative) {
-                this.offset = offset;
-                return this;
-            }
-            return offset - start;
-        };
-
-        /**
-         * Reads a length as uint32 prefixed UTF8 encoded string.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
-         *  read and the actual number of bytes read.
-         * @expose
-         * @see ByteBuffer#readVarint32
-         */
-        ByteBufferPrototype.readIString = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 4 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
-            }
-            var temp = 0,
-                start = offset,
-                str;
-            temp = this.view.getUint32(offset, this.littleEndian);
-            offset += 4;
-            var k = offset + temp,
-                sd;
-            utfx.decodeUTF8toUTF16(function() {
-                return offset < k ? this.view.getUint8(offset++) : null;
-            }.bind(this), sd = stringDestination(), this.noAssert);
-            str = sd();
-            if (relative) {
-                this.offset = offset;
-                return str;
-            } else {
-                return {
-                    'string': str,
-                    'length': offset - start
-                };
-            }
-        };
-
-        // types/strings/utf8string
-
-        /**
-         * Metrics representing number of UTF8 characters. Evaluates to `c`.
-         * @type {string}
-         * @const
-         * @expose
-         */
-        ByteBuffer.METRICS_CHARS = 'c';
-
-        /**
-         * Metrics representing number of bytes. Evaluates to `b`.
-         * @type {string}
-         * @const
-         * @expose
-         */
-        ByteBuffer.METRICS_BYTES = 'b';
-
-        /**
-         * Writes an UTF8 encoded string.
-         * @param {string} str String to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} if omitted.
-         * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written.
-         * @expose
-         */
-        ByteBufferPrototype.writeUTF8String = function(str, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            var k;
-            var start = offset;
-            k = utfx.calculateUTF16asUTF8(stringSource(str))[1];
-            offset += k;
-            var capacity14 = this.buffer.byteLength;
-            if (offset > capacity14)
-                this.resize((capacity14 *= 2) > offset ? capacity14 : offset);
-            offset -= k;
-            utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
-                this.view.setUint8(offset++, b);
-            }.bind(this));
-            if (relative) {
-                this.offset = offset;
-                return this;
-            }
-            return offset - start;
-        };
-
-        /**
-         * Writes an UTF8 encoded string. This is an alias of {@link ByteBuffer#writeUTF8String}.
-         * @function
-         * @param {string} str String to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} if omitted.
-         * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written.
-         * @expose
-         */
-        ByteBufferPrototype.writeString = ByteBufferPrototype.writeUTF8String;
-
-        /**
-         * Calculates the number of UTF8 characters of a string. JavaScript itself uses UTF-16, so that a string's
-         *  `length` property does not reflect its actual UTF8 size if it contains code points larger than 0xFFFF.
-         * @function
-         * @param {string} str String to calculate
-         * @returns {number} Number of UTF8 characters
-         * @expose
-         */
-        ByteBuffer.calculateUTF8Chars = function(str) {
-            return utfx.calculateUTF16asUTF8(stringSource(str))[0];
-        };
-
-        /**
-         * Calculates the number of UTF8 bytes of a string.
-         * @function
-         * @param {string} str String to calculate
-         * @returns {number} Number of UTF8 bytes
-         * @expose
-         */
-        ByteBuffer.calculateUTF8Bytes = function(str) {
-            return utfx.calculateUTF16asUTF8(stringSource(str))[1];
-        };
-
-        /**
-         * Reads an UTF8 encoded string.
-         * @param {number} length Number of characters or bytes to read.
-         * @param {string=} metrics Metrics specifying what `length` is meant to count. Defaults to
-         *  {@link ByteBuffer.METRICS_CHARS}.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
-         *  read and the actual number of bytes read.
-         * @expose
-         */
-        ByteBufferPrototype.readUTF8String = function(length, metrics, offset) {
-            if (typeof metrics === 'number') {
-                offset = metrics;
-                metrics = undefined;
-            }
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (typeof metrics === 'undefined') metrics = ByteBuffer.METRICS_CHARS;
-            if (!this.noAssert) {
-                if (typeof length !== 'number' || length % 1 !== 0)
-                    throw TypeError("Illegal length: "+length+" (not an integer)");
-                length |= 0;
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            var i = 0,
-                start = offset,
-                sd;
-            if (metrics === ByteBuffer.METRICS_CHARS) { // The same for node and the browser
-                sd = stringDestination();
-                utfx.decodeUTF8(function() {
-                    return i < length && offset < this.limit ? this.view.getUint8(offset++) : null;
-                }.bind(this), function(cp) {
-                    ++i; utfx.UTF8toUTF16(cp, sd);
-                }.bind(this));
-                if (i !== length)
-                    throw RangeError("Illegal range: Truncated data, "+i+" == "+length);
-                if (relative) {
-                    this.offset = offset;
-                    return sd();
-                } else {
-                    return {
-                        "string": sd(),
-                        "length": offset - start
-                    };
-                }
-            } else if (metrics === ByteBuffer.METRICS_BYTES) {
-                if (!this.noAssert) {
-                    if (typeof offset !== 'number' || offset % 1 !== 0)
-                        throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                    offset >>>= 0;
-                    if (offset < 0 || offset + length > this.buffer.byteLength)
-                        throw RangeError("Illegal offset: 0 <= "+offset+" (+"+length+") <= "+this.buffer.byteLength);
-                }
-                var k = offset + length;
-                utfx.decodeUTF8toUTF16(function() {
-                    return offset < k ? this.view.getUint8(offset++) : null;
-                }.bind(this), sd = stringDestination(), this.noAssert);
-                if (offset !== k)
-                    throw RangeError("Illegal range: Truncated data, "+offset+" == "+k);
-                if (relative) {
-                    this.offset = offset;
-                    return sd();
-                } else {
-                    return {
-                        'string': sd(),
-                        'length': offset - start
-                    };
-                }
-            } else
-                throw TypeError("Unsupported metrics: "+metrics);
-        };
-
-        /**
-         * Reads an UTF8 encoded string. This is an alias of {@link ByteBuffer#readUTF8String}.
-         * @function
-         * @param {number} length Number of characters or bytes to read
-         * @param {number=} metrics Metrics specifying what `n` is meant to count. Defaults to
-         *  {@link ByteBuffer.METRICS_CHARS}.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
-         *  read and the actual number of bytes read.
-         * @expose
-         */
-        ByteBufferPrototype.readString = ByteBufferPrototype.readUTF8String;
-
-        // types/strings/vstring
-
-        /**
-         * Writes a length as varint32 prefixed UTF8 encoded string.
-         * @param {string} str String to write
-         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted.
-         * @returns {!ByteBuffer|number} `this` if `offset` is omitted, else the actual number of bytes written
-         * @expose
-         * @see ByteBuffer#writeVarint32
-         */
-        ByteBufferPrototype.writeVString = function(str, offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            var start = offset,
-                k, l;
-            k = utfx.calculateUTF16asUTF8(stringSource(str), this.noAssert)[1];
-            l = ByteBuffer.calculateVarint32(k);
-            offset += l+k;
-            var capacity15 = this.buffer.byteLength;
-            if (offset > capacity15)
-                this.resize((capacity15 *= 2) > offset ? capacity15 : offset);
-            offset -= l+k;
-            offset += this.writeVarint32(k, offset);
-            utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
-                this.view.setUint8(offset++, b);
-            }.bind(this));
-            if (offset !== start+k+l)
-                throw RangeError("Illegal range: Truncated data, "+offset+" == "+(offset+k+l));
-            if (relative) {
-                this.offset = offset;
-                return this;
-            }
-            return offset - start;
-        };
-
-        /**
-         * Reads a length as varint32 prefixed UTF8 encoded string.
-         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
-         *  read and the actual number of bytes read.
-         * @expose
-         * @see ByteBuffer#readVarint32
-         */
-        ByteBufferPrototype.readVString = function(offset) {
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 1 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
-            }
-            var temp = this.readVarint32(offset),
-                start = offset,
-                str;
-            offset += temp['length'];
-            temp = temp['value'];
-            var k = offset + temp,
-                sd = stringDestination();
-            utfx.decodeUTF8toUTF16(function() {
-                return offset < k ? this.view.getUint8(offset++) : null;
-            }.bind(this), sd, this.noAssert);
-            str = sd();
-            if (relative) {
-                this.offset = offset;
-                return str;
-            } else {
-                return {
-                    'string': str,
-                    'length': offset - start
-                };
-            }
-        };
-
-
-        /**
-         * Appends some data to this ByteBuffer. This will overwrite any contents behind the specified offset up to the appended
-         *  data's length.
-         * @param {!ByteBuffer|!ArrayBuffer|!Uint8Array|string} source Data to append. If `source` is a ByteBuffer, its offsets
-         *  will be modified according to the performed read operation.
-         * @param {(string|number)=} encoding Encoding if `data` is a string ("base64", "hex", "binary", defaults to "utf8")
-         * @param {number=} offset Offset to append at. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         * @example A relative `<01 02>03.append(<04 05>)` will result in `<01 02 04 05>, 04 05|`
-         * @example An absolute `<01 02>03.append(04 05>, 1)` will result in `<01 04>05, 04 05|`
-         */
-        ByteBufferPrototype.append = function(source, encoding, offset) {
-            if (typeof encoding === 'number' || typeof encoding !== 'string') {
-                offset = encoding;
-                encoding = undefined;
-            }
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            if (!(source instanceof ByteBuffer))
-                source = ByteBuffer.wrap(source, encoding);
-            var length = source.limit - source.offset;
-            if (length <= 0) return this; // Nothing to append
-            offset += length;
-            var capacity16 = this.buffer.byteLength;
-            if (offset > capacity16)
-                this.resize((capacity16 *= 2) > offset ? capacity16 : offset);
-            offset -= length;
-            new Uint8Array(this.buffer, offset).set(new Uint8Array(source.buffer).subarray(source.offset, source.limit));
-            source.offset += length;
-            if (relative) this.offset += length;
-            return this;
-        };
-
-        /**
-         * Appends this ByteBuffer's contents to another ByteBuffer. This will overwrite any contents at and after the
-            specified offset up to the length of this ByteBuffer's data.
-         * @param {!ByteBuffer} target Target ByteBuffer
-         * @param {number=} offset Offset to append to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  read if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         * @see ByteBuffer#append
-         */
-        ByteBufferPrototype.appendTo = function(target, offset) {
-            target.append(this, offset);
-            return this;
-        };
-
-        /**
-         * Enables or disables assertions of argument types and offsets. Assertions are enabled by default but you can opt to
-         *  disable them if your code already makes sure that everything is valid.
-         * @param {boolean} assert `true` to enable assertions, otherwise `false`
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.assert = function(assert) {
-            this.noAssert = !assert;
-            return this;
-        };
-
-        /**
-         * Gets the capacity of this ByteBuffer's backing buffer.
-         * @returns {number} Capacity of the backing buffer
-         * @expose
-         */
-        ByteBufferPrototype.capacity = function() {
-            return this.buffer.byteLength;
-        };
-
-        /**
-         * Clears this ByteBuffer's offsets by setting {@link ByteBuffer#offset} to `0` and {@link ByteBuffer#limit} to the
-         *  backing buffer's capacity. Discards {@link ByteBuffer#markedOffset}.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.clear = function() {
-            this.offset = 0;
-            this.limit = this.buffer.byteLength;
-            this.markedOffset = -1;
-            return this;
-        };
-
-        /**
-         * Creates a cloned instance of this ByteBuffer, preset with this ByteBuffer's values for {@link ByteBuffer#offset},
-         *  {@link ByteBuffer#markedOffset} and {@link ByteBuffer#limit}.
-         * @param {boolean=} copy Whether to copy the backing buffer or to return another view on the same, defaults to `false`
-         * @returns {!ByteBuffer} Cloned instance
-         * @expose
-         */
-        ByteBufferPrototype.clone = function(copy) {
-            var bb = new ByteBuffer(0, this.littleEndian, this.noAssert);
-            if (copy) {
-                var buffer = new ArrayBuffer(this.buffer.byteLength);
-                new Uint8Array(buffer).set(this.buffer);
-                bb.buffer = buffer;
-                bb.view = new DataView(buffer);
-            } else {
-                bb.buffer = this.buffer;
-                bb.view = this.view;
-            }
-            bb.offset = this.offset;
-            bb.markedOffset = this.markedOffset;
-            bb.limit = this.limit;
-            return bb;
-        };
-
-        /**
-         * Compacts this ByteBuffer to be backed by a {@link ByteBuffer#buffer} of its contents' length. Contents are the bytes
-         *  between {@link ByteBuffer#offset} and {@link ByteBuffer#limit}. Will set `offset = 0` and `limit = capacity` and
-         *  adapt {@link ByteBuffer#markedOffset} to the same relative position if set.
-         * @param {number=} begin Offset to start at, defaults to {@link ByteBuffer#offset}
-         * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.compact = function(begin, end) {
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            if (begin === 0 && end === this.buffer.byteLength)
-                return this; // Already compacted
-            var len = end - begin;
-            if (len === 0) {
-                this.buffer = EMPTY_BUFFER;
-                this.view = null;
-                if (this.markedOffset >= 0) this.markedOffset -= begin;
-                this.offset = 0;
-                this.limit = 0;
-                return this;
-            }
-            var buffer = new ArrayBuffer(len);
-            new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(begin, end));
-            this.buffer = buffer;
-            this.view = new DataView(buffer);
-            if (this.markedOffset >= 0) this.markedOffset -= begin;
-            this.offset = 0;
-            this.limit = len;
-            return this;
-        };
-
-        /**
-         * Creates a copy of this ByteBuffer's contents. Contents are the bytes between {@link ByteBuffer#offset} and
-         *  {@link ByteBuffer#limit}.
-         * @param {number=} begin Begin offset, defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
-         * @returns {!ByteBuffer} Copy
-         * @expose
-         */
-        ByteBufferPrototype.copy = function(begin, end) {
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            if (begin === end)
-                return new ByteBuffer(0, this.littleEndian, this.noAssert);
-            var capacity = end - begin,
-                bb = new ByteBuffer(capacity, this.littleEndian, this.noAssert);
-            bb.offset = 0;
-            bb.limit = capacity;
-            if (bb.markedOffset >= 0) bb.markedOffset -= begin;
-            this.copyTo(bb, 0, begin, end);
-            return bb;
-        };
-
-        /**
-         * Copies this ByteBuffer's contents to another ByteBuffer. Contents are the bytes between {@link ByteBuffer#offset} and
-         *  {@link ByteBuffer#limit}.
-         * @param {!ByteBuffer} target Target ByteBuffer
-         * @param {number=} targetOffset Offset to copy to. Will use and increase the target's {@link ByteBuffer#offset}
-         *  by the number of bytes copied if omitted.
-         * @param {number=} sourceOffset Offset to start copying from. Will use and increase {@link ByteBuffer#offset} by the
-         *  number of bytes copied if omitted.
-         * @param {number=} sourceLimit Offset to end copying from, defaults to {@link ByteBuffer#limit}
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.copyTo = function(target, targetOffset, sourceOffset, sourceLimit) {
-            var relative,
-                targetRelative;
-            if (!this.noAssert) {
-                if (!ByteBuffer.isByteBuffer(target))
-                    throw TypeError("Illegal target: Not a ByteBuffer");
-            }
-            targetOffset = (targetRelative = typeof targetOffset === 'undefined') ? target.offset : targetOffset | 0;
-            sourceOffset = (relative = typeof sourceOffset === 'undefined') ? this.offset : sourceOffset | 0;
-            sourceLimit = typeof sourceLimit === 'undefined' ? this.limit : sourceLimit | 0;
-
-            if (targetOffset < 0 || targetOffset > target.buffer.byteLength)
-                throw RangeError("Illegal target range: 0 <= "+targetOffset+" <= "+target.buffer.byteLength);
-            if (sourceOffset < 0 || sourceLimit > this.buffer.byteLength)
-                throw RangeError("Illegal source range: 0 <= "+sourceOffset+" <= "+this.buffer.byteLength);
-
-            var len = sourceLimit - sourceOffset;
-            if (len === 0)
-                return target; // Nothing to copy
-
-            target.ensureCapacity(targetOffset + len);
-
-            new Uint8Array(target.buffer).set(new Uint8Array(this.buffer).subarray(sourceOffset, sourceLimit), targetOffset);
-
-            if (relative) this.offset += len;
-            if (targetRelative) target.offset += len;
-
-            return this;
-        };
-
-        /**
-         * Makes sure that this ByteBuffer is backed by a {@link ByteBuffer#buffer} of at least the specified capacity. If the
-         *  current capacity is exceeded, it will be doubled. If double the current capacity is less than the required capacity,
-         *  the required capacity will be used instead.
-         * @param {number} capacity Required capacity
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.ensureCapacity = function(capacity) {
-            var current = this.buffer.byteLength;
-            if (current < capacity)
-                return this.resize((current *= 2) > capacity ? current : capacity);
-            return this;
-        };
-
-        /**
-         * Overwrites this ByteBuffer's contents with the specified value. Contents are the bytes between
-         *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}.
-         * @param {number|string} value Byte value to fill with. If given as a string, the first character is used.
-         * @param {number=} begin Begin offset. Will use and increase {@link ByteBuffer#offset} by the number of bytes
-         *  written if omitted. defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
-         * @returns {!ByteBuffer} this
-         * @expose
-         * @example `someByteBuffer.clear().fill(0)` fills the entire backing buffer with zeroes
-         */
-        ByteBufferPrototype.fill = function(value, begin, end) {
-            var relative = typeof begin === 'undefined';
-            if (relative) begin = this.offset;
-            if (typeof value === 'string' && value.length > 0)
-                value = value.charCodeAt(0);
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof value !== 'number' || value % 1 !== 0)
-                    throw TypeError("Illegal value: "+value+" (not an integer)");
-                value |= 0;
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            if (begin >= end)
-                return this; // Nothing to fill
-            while (begin < end) this.view.setUint8(begin++, value);
-            if (relative) this.offset = begin;
-            return this;
-        };
-
-        /**
-         * Makes this ByteBuffer ready for a new sequence of write or relative read operations. Sets `limit = offset` and
-         *  `offset = 0`. Make sure always to flip a ByteBuffer when all relative read or write operations are complete.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.flip = function() {
-            this.limit = this.offset;
-            this.offset = 0;
-            return this;
-        };
-        /**
-         * Marks an offset on this ByteBuffer to be used later.
-         * @param {number=} offset Offset to mark. Defaults to {@link ByteBuffer#offset}.
-         * @returns {!ByteBuffer} this
-         * @throws {TypeError} If `offset` is not a valid number
-         * @throws {RangeError} If `offset` is out of bounds
-         * @see ByteBuffer#reset
-         * @expose
-         */
-        ByteBufferPrototype.mark = function(offset) {
-            offset = typeof offset === 'undefined' ? this.offset : offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            this.markedOffset = offset;
-            return this;
-        };
-        /**
-         * Sets the byte order.
-         * @param {boolean} littleEndian `true` for little endian byte order, `false` for big endian
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.order = function(littleEndian) {
-            if (!this.noAssert) {
-                if (typeof littleEndian !== 'boolean')
-                    throw TypeError("Illegal littleEndian: Not a boolean");
-            }
-            this.littleEndian = !!littleEndian;
-            return this;
-        };
-
-        /**
-         * Switches (to) little endian byte order.
-         * @param {boolean=} littleEndian Defaults to `true`, otherwise uses big endian
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.LE = function(littleEndian) {
-            this.littleEndian = typeof littleEndian !== 'undefined' ? !!littleEndian : true;
-            return this;
-        };
-
-        /**
-         * Switches (to) big endian byte order.
-         * @param {boolean=} bigEndian Defaults to `true`, otherwise uses little endian
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.BE = function(bigEndian) {
-            this.littleEndian = typeof bigEndian !== 'undefined' ? !bigEndian : false;
-            return this;
-        };
-        /**
-         * Prepends some data to this ByteBuffer. This will overwrite any contents before the specified offset up to the
-         *  prepended data's length. If there is not enough space available before the specified `offset`, the backing buffer
-         *  will be resized and its contents moved accordingly.
-         * @param {!ByteBuffer|string|!ArrayBuffer} source Data to prepend. If `source` is a ByteBuffer, its offset will be
-         *  modified according to the performed read operation.
-         * @param {(string|number)=} encoding Encoding if `data` is a string ("base64", "hex", "binary", defaults to "utf8")
-         * @param {number=} offset Offset to prepend at. Will use and decrease {@link ByteBuffer#offset} by the number of bytes
-         *  prepended if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         * @example A relative `00<01 02 03>.prepend(<04 05>)` results in `<04 05 01 02 03>, 04 05|`
-         * @example An absolute `00<01 02 03>.prepend(<04 05>, 2)` results in `04<05 02 03>, 04 05|`
-         */
-        ByteBufferPrototype.prepend = function(source, encoding, offset) {
-            if (typeof encoding === 'number' || typeof encoding !== 'string') {
-                offset = encoding;
-                encoding = undefined;
-            }
-            var relative = typeof offset === 'undefined';
-            if (relative) offset = this.offset;
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
-                offset >>>= 0;
-                if (offset < 0 || offset + 0 > this.buffer.byteLength)
-                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
-            }
-            if (!(source instanceof ByteBuffer))
-                source = ByteBuffer.wrap(source, encoding);
-            var len = source.limit - source.offset;
-            if (len <= 0) return this; // Nothing to prepend
-            var diff = len - offset;
-            var arrayView;
-            if (diff > 0) { // Not enough space before offset, so resize + move
-                var buffer = new ArrayBuffer(this.buffer.byteLength + diff);
-                arrayView = new Uint8Array(buffer);
-                arrayView.set(new Uint8Array(this.buffer).subarray(offset, this.buffer.byteLength), len);
-                this.buffer = buffer;
-                this.view = new DataView(buffer);
-                this.offset += diff;
-                if (this.markedOffset >= 0) this.markedOffset += diff;
-                this.limit += diff;
-                offset += diff;
-            } else {
-                arrayView = new Uint8Array(this.buffer);
-            }
-            arrayView.set(new Uint8Array(source.buffer).subarray(source.offset, source.limit), offset - len);
-            source.offset = source.limit;
-            if (relative)
-                this.offset -= len;
-            return this;
-        };
-
-        /**
-         * Prepends this ByteBuffer to another ByteBuffer. This will overwrite any contents before the specified offset up to the
-         *  prepended data's length. If there is not enough space available before the specified `offset`, the backing buffer
-         *  will be resized and its contents moved accordingly.
-         * @param {!ByteBuffer} target Target ByteBuffer
-         * @param {number=} offset Offset to prepend at. Will use and decrease {@link ByteBuffer#offset} by the number of bytes
-         *  prepended if omitted.
-         * @returns {!ByteBuffer} this
-         * @expose
-         * @see ByteBuffer#prepend
-         */
-        ByteBufferPrototype.prependTo = function(target, offset) {
-            target.prepend(this, offset);
-            return this;
-        };
-        /**
-         * Prints debug information about this ByteBuffer's contents.
-         * @param {function(string)=} out Output function to call, defaults to console.log
-         * @expose
-         */
-        ByteBufferPrototype.printDebug = function(out) {
-            if (typeof out !== 'function') out = console.log.bind(console);
-            out(
-                this.toString()+"\n"+
-                "-------------------------------------------------------------------\n"+
-                this.toDebug(/* columns */ true)
-            );
-        };
-
-        /**
-         * Gets the number of remaining readable bytes. Contents are the bytes between {@link ByteBuffer#offset} and
-         *  {@link ByteBuffer#limit}, so this returns `limit - offset`.
-         * @returns {number} Remaining readable bytes. May be negative if `offset > limit`.
-         * @expose
-         */
-        ByteBufferPrototype.remaining = function() {
-            return this.limit - this.offset;
-        };
-        /**
-         * Resets this ByteBuffer's {@link ByteBuffer#offset}. If an offset has been marked through {@link ByteBuffer#mark}
-         *  before, `offset` will be set to {@link ByteBuffer#markedOffset}, which will then be discarded. If no offset has been
-         *  marked, sets `offset = 0`.
-         * @returns {!ByteBuffer} this
-         * @see ByteBuffer#mark
-         * @expose
-         */
-        ByteBufferPrototype.reset = function() {
-            if (this.markedOffset >= 0) {
-                this.offset = this.markedOffset;
-                this.markedOffset = -1;
-            } else {
-                this.offset = 0;
-            }
-            return this;
-        };
-        /**
-         * Resizes this ByteBuffer to be backed by a buffer of at least the given capacity. Will do nothing if already that
-         *  large or larger.
-         * @param {number} capacity Capacity required
-         * @returns {!ByteBuffer} this
-         * @throws {TypeError} If `capacity` is not a number
-         * @throws {RangeError} If `capacity < 0`
-         * @expose
-         */
-        ByteBufferPrototype.resize = function(capacity) {
-            if (!this.noAssert) {
-                if (typeof capacity !== 'number' || capacity % 1 !== 0)
-                    throw TypeError("Illegal capacity: "+capacity+" (not an integer)");
-                capacity |= 0;
-                if (capacity < 0)
-                    throw RangeError("Illegal capacity: 0 <= "+capacity);
-            }
-            if (this.buffer.byteLength < capacity) {
-                var buffer = new ArrayBuffer(capacity);
-                new Uint8Array(buffer).set(new Uint8Array(this.buffer));
-                this.buffer = buffer;
-                this.view = new DataView(buffer);
-            }
-            return this;
-        };
-        /**
-         * Reverses this ByteBuffer's contents.
-         * @param {number=} begin Offset to start at, defaults to {@link ByteBuffer#offset}
-         * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.reverse = function(begin, end) {
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            if (begin === end)
-                return this; // Nothing to reverse
-            Array.prototype.reverse.call(new Uint8Array(this.buffer).subarray(begin, end));
-            this.view = new DataView(this.buffer); // FIXME: Why exactly is this necessary?
-            return this;
-        };
-        /**
-         * Skips the next `length` bytes. This will just advance
-         * @param {number} length Number of bytes to skip. May also be negative to move the offset back.
-         * @returns {!ByteBuffer} this
-         * @expose
-         */
-        ByteBufferPrototype.skip = function(length) {
-            if (!this.noAssert) {
-                if (typeof length !== 'number' || length % 1 !== 0)
-                    throw TypeError("Illegal length: "+length+" (not an integer)");
-                length |= 0;
-            }
-            var offset = this.offset + length;
-            if (!this.noAssert) {
-                if (offset < 0 || offset > this.buffer.byteLength)
-                    throw RangeError("Illegal length: 0 <= "+this.offset+" + "+length+" <= "+this.buffer.byteLength);
-            }
-            this.offset = offset;
-            return this;
-        };
-
-        /**
-         * Slices this ByteBuffer by creating a cloned instance with `offset = begin` and `limit = end`.
-         * @param {number=} begin Begin offset, defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
-         * @returns {!ByteBuffer} Clone of this ByteBuffer with slicing applied, backed by the same {@link ByteBuffer#buffer}
-         * @expose
-         */
-        ByteBufferPrototype.slice = function(begin, end) {
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            var bb = this.clone();
-            bb.offset = begin;
-            bb.limit = end;
-            return bb;
-        };
-        /**
-         * Returns a copy of the backing buffer that contains this ByteBuffer's contents. Contents are the bytes between
-         *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}. Will transparently {@link ByteBuffer#flip} this
-         *  ByteBuffer if `offset > limit` but the actual offsets remain untouched.
-         * @param {boolean=} forceCopy If `true` returns a copy, otherwise returns a view referencing the same memory if
-         *  possible. Defaults to `false`
-         * @returns {!ArrayBuffer} Contents as an ArrayBuffer
-         * @expose
-         */
-        ByteBufferPrototype.toBuffer = function(forceCopy) {
-            var offset = this.offset,
-                limit = this.limit;
-            if (offset > limit) {
-                var t = offset;
-                offset = limit;
-                limit = t;
-            }
-            if (!this.noAssert) {
-                if (typeof offset !== 'number' || offset % 1 !== 0)
-                    throw TypeError("Illegal offset: Not an integer");
-                offset >>>= 0;
-                if (typeof limit !== 'number' || limit % 1 !== 0)
-                    throw TypeError("Illegal limit: Not an integer");
-                limit >>>= 0;
-                if (offset < 0 || offset > limit || limit > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+offset+" <= "+limit+" <= "+this.buffer.byteLength);
-            }
-            // NOTE: It's not possible to have another ArrayBuffer reference the same memory as the backing buffer. This is
-            // possible with Uint8Array#subarray only, but we have to return an ArrayBuffer by contract. So:
-            if (!forceCopy && offset === 0 && limit === this.buffer.byteLength) {
-                return this.buffer;
-            }
-            if (offset === limit) {
-                return EMPTY_BUFFER;
-            }
-            var buffer = new ArrayBuffer(limit - offset);
-            new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(offset, limit), 0);
-            return buffer;
-        };
-
-        /**
-         * Returns a raw buffer compacted to contain this ByteBuffer's contents. Contents are the bytes between
-         *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}. Will transparently {@link ByteBuffer#flip} this
-         *  ByteBuffer if `offset > limit` but the actual offsets remain untouched. This is an alias of
-         *  {@link ByteBuffer#toBuffer}.
-         * @function
-         * @param {boolean=} forceCopy If `true` returns a copy, otherwise returns a view referencing the same memory.
-         *  Defaults to `false`
-         * @returns {!ArrayBuffer} Contents as an ArrayBuffer
-         * @expose
-         */
-        ByteBufferPrototype.toArrayBuffer = ByteBufferPrototype.toBuffer;
-
-
-        /**
-         * Converts the ByteBuffer's contents to a string.
-         * @param {string=} encoding Output encoding. Returns an informative string representation if omitted but also allows
-         *  direct conversion to "utf8", "hex", "base64" and "binary" encoding. "debug" returns a hex representation with
-         *  highlighted offsets.
-         * @param {number=} begin Offset to begin at, defaults to {@link ByteBuffer#offset}
-         * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
-         * @returns {string} String representation
-         * @throws {Error} If `encoding` is invalid
-         * @expose
-         */
-        ByteBufferPrototype.toString = function(encoding, begin, end) {
-            if (typeof encoding === 'undefined')
-                return "ByteBufferAB(offset="+this.offset+",markedOffset="+this.markedOffset+",limit="+this.limit+",capacity="+this.capacity()+")";
-            if (typeof encoding === 'number')
-                encoding = "utf8",
-                begin = encoding,
-                end = begin;
-            switch (encoding) {
-                case "utf8":
-                    return this.toUTF8(begin, end);
-                case "base64":
-                    return this.toBase64(begin, end);
-                case "hex":
-                    return this.toHex(begin, end);
-                case "binary":
-                    return this.toBinary(begin, end);
-                case "debug":
-                    return this.toDebug();
-                case "columns":
-                    return this.toColumns();
-                default:
-                    throw Error("Unsupported encoding: "+encoding);
-            }
-        };
-
-        // lxiv-embeddable
-
-        /**
-         * lxiv-embeddable (c) 2014 Daniel Wirtz <dcode@dcode.io>
-         * Released under the Apache License, Version 2.0
-         * see: https://github.com/dcodeIO/lxiv for details
-         */
-        var lxiv = function() {
-            "use strict";
-
-            /**
-             * lxiv namespace.
-             * @type {!Object.<string,*>}
-             * @exports lxiv
-             */
-            var lxiv = {};
-
-            /**
-             * Character codes for output.
-             * @type {!Array.<number>}
-             * @inner
-             */
-            var aout = [
-                65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
-                81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102,
-                103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118,
-                119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 43, 47
-            ];
-
-            /**
-             * Character codes for input.
-             * @type {!Array.<number>}
-             * @inner
-             */
-            var ain = [];
-            for (var i=0, k=aout.length; i<k; ++i)
-                ain[aout[i]] = i;
-
-            /**
-             * Encodes bytes to base64 char codes.
-             * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if
-             *  there are no more bytes left.
-             * @param {!function(number)} dst Characters destination as a function successively called with each encoded char
-             *  code.
-             */
-            lxiv.encode = function(src, dst) {
-                var b, t;
-                while ((b = src()) !== null) {
-                    dst(aout[(b>>2)&0x3f]);
-                    t = (b&0x3)<<4;
-                    if ((b = src()) !== null) {
-                        t |= (b>>4)&0xf;
-                        dst(aout[(t|((b>>4)&0xf))&0x3f]);
-                        t = (b&0xf)<<2;
-                        if ((b = src()) !== null)
-                            dst(aout[(t|((b>>6)&0x3))&0x3f]),
-                            dst(aout[b&0x3f]);
-                        else
-                            dst(aout[t&0x3f]),
-                            dst(61);
-                    } else
-                        dst(aout[t&0x3f]),
-                        dst(61),
-                        dst(61);
-                }
-            };
-
-            /**
-             * Decodes base64 char codes to bytes.
-             * @param {!function():number|null} src Characters source as a function returning the next char code respectively
-             *  `null` if there are no more characters left.
-             * @param {!function(number)} dst Bytes destination as a function successively called with the next byte.
-             * @throws {Error} If a character code is invalid
-             */
-            lxiv.decode = function(src, dst) {
-                var c, t1, t2;
-                function fail(c) {
-                    throw Error("Illegal character code: "+c);
-                }
-                while ((c = src()) !== null) {
-                    t1 = ain[c];
-                    if (typeof t1 === 'undefined') fail(c);
-                    if ((c = src()) !== null) {
-                        t2 = ain[c];
-                        if (typeof t2 === 'undefined') fail(c);
-                        dst((t1<<2)>>>0|(t2&0x30)>>4);
-                        if ((c = src()) !== null) {
-                            t1 = ain[c];
-                            if (typeof t1 === 'undefined')
-                                if (c === 61) break; else fail(c);
-                            dst(((t2&0xf)<<4)>>>0|(t1&0x3c)>>2);
-                            if ((c = src()) !== null) {
-                                t2 = ain[c];
-                                if (typeof t2 === 'undefined')
-                                    if (c === 61) break; else fail(c);
-                                dst(((t1&0x3)<<6)>>>0|t2);
-                            }
-                        }
-                    }
-                }
-            };
-
-            /**
-             * Tests if a string is valid base64.
-             * @param {string} str String to test
-             * @returns {boolean} `true` if valid, otherwise `false`
-             */
-            lxiv.test = function(str) {
-                return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(str);
-            };
-
-            return lxiv;
-        }();
-
-        // encodings/base64
-
-        /**
-         * Encodes this ByteBuffer's contents to a base64 encoded string.
-         * @param {number=} begin Offset to begin at, defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}.
-         * @returns {string} Base64 encoded string
-         * @expose
-         */
-        ByteBufferPrototype.toBase64 = function(begin, end) {
-            if (typeof begin === 'undefined')
-                begin = this.offset;
-            if (typeof end === 'undefined')
-                end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            var sd; lxiv.encode(function() {
-                return begin < end ? this.view.getUint8(begin++) : null;
-            }.bind(this), sd = stringDestination());
-            return sd();
-        };
-
-        /**
-         * Decodes a base64 encoded string to a ByteBuffer.
-         * @param {string} str String to decode
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} ByteBuffer
-         * @expose
-         */
-        ByteBuffer.fromBase64 = function(str, littleEndian, noAssert) {
-            if (!noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-                if (str.length % 4 !== 0)
-                    throw TypeError("Illegal str: Length not a multiple of 4");
-            }
-            var bb = new ByteBuffer(str.length/4*3, littleEndian, noAssert),
-                i = 0;
-            lxiv.decode(stringSource(str), function(b) {
-                bb.view.setUint8(i++, b);
-            });
-            bb.limit = i;
-            return bb;
-        };
-
-        /**
-         * Encodes a binary string to base64 like `window.btoa` does.
-         * @param {string} str Binary string
-         * @returns {string} Base64 encoded string
-         * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.btoa
-         * @expose
-         */
-        ByteBuffer.btoa = function(str) {
-            return ByteBuffer.fromBinary(str).toBase64();
-        };
-
-        /**
-         * Decodes a base64 encoded string to binary like `window.atob` does.
-         * @param {string} b64 Base64 encoded string
-         * @returns {string} Binary string
-         * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.atob
-         * @expose
-         */
-        ByteBuffer.atob = function(b64) {
-            return ByteBuffer.fromBase64(b64).toBinary();
-        };
-
-        // encodings/binary
-
-        /**
-         * Encodes this ByteBuffer to a binary encoded string, that is using only characters 0x00-0xFF as bytes.
-         * @param {number=} begin Offset to begin at. Defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end Offset to end at. Defaults to {@link ByteBuffer#limit}.
-         * @returns {string} Binary encoded string
-         * @throws {RangeError} If `offset > limit`
-         * @expose
-         */
-        ByteBufferPrototype.toBinary = function(begin, end) {
-            begin = typeof begin === 'undefined' ? this.offset : begin;
-            end = typeof end === 'undefined' ? this.limit : end;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            if (begin === end)
-                return "";
-            var cc = [], pt = [];
-            while (begin < end) {
-                cc.push(this.view.getUint8(begin++));
-                if (cc.length >= 1024)
-                    pt.push(String.fromCharCode.apply(String, cc)),
-                    cc = [];
-            }
-            return pt.join('') + String.fromCharCode.apply(String, cc);
-        };
-
-        /**
-         * Decodes a binary encoded string, that is using only characters 0x00-0xFF as bytes, to a ByteBuffer.
-         * @param {string} str String to decode
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} ByteBuffer
-         * @expose
-         */
-        ByteBuffer.fromBinary = function(str, littleEndian, noAssert) {
-            if (!noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-            }
-            var i = 0, k = str.length, charCode,
-                bb = new ByteBuffer(k, littleEndian, noAssert);
-            while (i<k) {
-                charCode = str.charCodeAt(i);
-                if (!noAssert && charCode > 255)
-                    throw RangeError("Illegal charCode at "+i+": 0 <= "+charCode+" <= 255");
-                bb.view.setUint8(i++, charCode);
-            }
-            bb.limit = k;
-            return bb;
-        };
-
-        // encodings/debug
-
-        /**
-         * Encodes this ByteBuffer to a hex encoded string with marked offsets. Offset symbols are:
-         * * `<` : offset,
-         * * `'` : markedOffset,
-         * * `>` : limit,
-         * * `|` : offset and limit,
-         * * `[` : offset and markedOffset,
-         * * `]` : markedOffset and limit,
-         * * `!` : offset, markedOffset and limit
-         * @param {boolean=} columns If `true` returns two columns hex + ascii, defaults to `false`
-         * @returns {string|!Array.<string>} Debug string or array of lines if `asArray = true`
-         * @expose
-         * @example `>00'01 02<03` contains four bytes with `limit=0, markedOffset=1, offset=3`
-         * @example `00[01 02 03>` contains four bytes with `offset=markedOffset=1, limit=4`
-         * @example `00|01 02 03` contains four bytes with `offset=limit=1, markedOffset=-1`
-         * @example `|` contains zero bytes with `offset=limit=0, markedOffset=-1`
-         */
-        ByteBufferPrototype.toDebug = function(columns) {
-            var i = -1,
-                k = this.buffer.byteLength,
-                b,
-                hex = "",
-                asc = "",
-                out = "";
-            while (i<k) {
-                if (i !== -1) {
-                    b = this.view.getUint8(i);
-                    if (b < 0x10) hex += "0"+b.toString(16).toUpperCase();
-                    else hex += b.toString(16).toUpperCase();
-                    if (columns) {
-                        asc += b > 32 && b < 127 ? String.fromCharCode(b) : '.';
-                    }
-                }
-                ++i;
-                if (columns) {
-                    if (i > 0 && i % 16 === 0 && i !== k) {
-                        while (hex.length < 3*16+3) hex += " ";
-                        out += hex+asc+"\n";
-                        hex = asc = "";
-                    }
-                }
-                if (i === this.offset && i === this.limit)
-                    hex += i === this.markedOffset ? "!" : "|";
-                else if (i === this.offset)
-                    hex += i === this.markedOffset ? "[" : "<";
-                else if (i === this.limit)
-                    hex += i === this.markedOffset ? "]" : ">";
-                else
-                    hex += i === this.markedOffset ? "'" : (columns || (i !== 0 && i !== k) ? " " : "");
-            }
-            if (columns && hex !== " ") {
-                while (hex.length < 3*16+3) hex += " ";
-                out += hex+asc+"\n";
-            }
-            return columns ? out : hex;
-        };
-
-        /**
-         * Decodes a hex encoded string with marked offsets to a ByteBuffer.
-         * @param {string} str Debug string to decode (not be generated with `columns = true`)
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} ByteBuffer
-         * @expose
-         * @see ByteBuffer#toDebug
-         */
-        ByteBuffer.fromDebug = function(str, littleEndian, noAssert) {
-            var k = str.length,
-                bb = new ByteBuffer(((k+1)/3)|0, littleEndian, noAssert);
-            var i = 0, j = 0, ch, b,
-                rs = false, // Require symbol next
-                ho = false, hm = false, hl = false, // Already has offset, markedOffset, limit?
-                fail = false;
-            while (i<k) {
-                switch (ch = str.charAt(i++)) {
-                    case '!':
-                        if (!noAssert) {
-                            if (ho || hm || hl) {
-                                fail = true; break;
-                            }
-                            ho = hm = hl = true;
-                        }
-                        bb.offset = bb.markedOffset = bb.limit = j;
-                        rs = false;
-                        break;
-                    case '|':
-                        if (!noAssert) {
-                            if (ho || hl) {
-                                fail = true; break;
-                            }
-                            ho = hl = true;
-                        }
-                        bb.offset = bb.limit = j;
-                        rs = false;
-                        break;
-                    case '[':
-                        if (!noAssert) {
-                            if (ho || hm) {
-                                fail = true; break;
-                            }
-                            ho = hm = true;
-                        }
-                        bb.offset = bb.markedOffset = j;
-                        rs = false;
-                        break;
-                    case '<':
-                        if (!noAssert) {
-                            if (ho) {
-                                fail = true; break;
-                            }
-                            ho = true;
-                        }
-                        bb.offset = j;
-                        rs = false;
-                        break;
-                    case ']':
-                        if (!noAssert) {
-                            if (hl || hm) {
-                                fail = true; break;
-                            }
-                            hl = hm = true;
-                        }
-                        bb.limit = bb.markedOffset = j;
-                        rs = false;
-                        break;
-                    case '>':
-                        if (!noAssert) {
-                            if (hl) {
-                                fail = true; break;
-                            }
-                            hl = true;
-                        }
-                        bb.limit = j;
-                        rs = false;
-                        break;
-                    case "'":
-                        if (!noAssert) {
-                            if (hm) {
-                                fail = true; break;
-                            }
-                            hm = true;
-                        }
-                        bb.markedOffset = j;
-                        rs = false;
-                        break;
-                    case ' ':
-                        rs = false;
-                        break;
-                    default:
-                        if (!noAssert) {
-                            if (rs) {
-                                fail = true; break;
-                            }
-                        }
-                        b = parseInt(ch+str.charAt(i++), 16);
-                        if (!noAssert) {
-                            if (isNaN(b) || b < 0 || b > 255)
-                                throw TypeError("Illegal str: Not a debug encoded string");
-                        }
-                        bb.view.setUint8(j++, b);
-                        rs = true;
-                }
-                if (fail)
-                    throw TypeError("Illegal str: Invalid symbol at "+i);
-            }
-            if (!noAssert) {
-                if (!ho || !hl)
-                    throw TypeError("Illegal str: Missing offset or limit");
-                if (j<bb.buffer.byteLength)
-                    throw TypeError("Illegal str: Not a debug encoded string (is it hex?) "+j+" < "+k);
-            }
-            return bb;
-        };
-
-        // encodings/hex
-
-        /**
-         * Encodes this ByteBuffer's contents to a hex encoded string.
-         * @param {number=} begin Offset to begin at. Defaults to {@link ByteBuffer#offset}.
-         * @param {number=} end Offset to end at. Defaults to {@link ByteBuffer#limit}.
-         * @returns {string} Hex encoded string
-         * @expose
-         */
-        ByteBufferPrototype.toHex = function(begin, end) {
-            begin = typeof begin === 'undefined' ? this.offset : begin;
-            end = typeof end === 'undefined' ? this.limit : end;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            var out = new Array(end - begin),
-                b;
-            while (begin < end) {
-                b = this.view.getUint8(begin++);
-                if (b < 0x10)
-                    out.push("0", b.toString(16));
-                else out.push(b.toString(16));
-            }
-            return out.join('');
-        };
-
-        /**
-         * Decodes a hex encoded string to a ByteBuffer.
-         * @param {string} str String to decode
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} ByteBuffer
-         * @expose
-         */
-        ByteBuffer.fromHex = function(str, littleEndian, noAssert) {
-            if (!noAssert) {
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-                if (str.length % 2 !== 0)
-                    throw TypeError("Illegal str: Length not a multiple of 2");
-            }
-            var k = str.length,
-                bb = new ByteBuffer((k / 2) | 0, littleEndian),
-                b;
-            for (var i=0, j=0; i<k; i+=2) {
-                b = parseInt(str.substring(i, i+2), 16);
-                if (!noAssert)
-                    if (!isFinite(b) || b < 0 || b > 255)
-                        throw TypeError("Illegal str: Contains non-hex characters");
-                bb.view.setUint8(j++, b);
-            }
-            bb.limit = j;
-            return bb;
-        };
-
-        // utfx-embeddable
-
-        /**
-         * utfx-embeddable (c) 2014 Daniel Wirtz <dcode@dcode.io>
-         * Released under the Apache License, Version 2.0
-         * see: https://github.com/dcodeIO/utfx for details
-         */
-        var utfx = function() {
-            "use strict";
-
-            /**
-             * utfx namespace.
-             * @inner
-             * @type {!Object.<string,*>}
-             */
-            var utfx = {};
-
-            /**
-             * Maximum valid code point.
-             * @type {number}
-             * @const
-             */
-            utfx.MAX_CODEPOINT = 0x10FFFF;
-
-            /**
-             * Encodes UTF8 code points to UTF8 bytes.
-             * @param {(!function():number|null) | number} src Code points source, either as a function returning the next code point
-             *  respectively `null` if there are no more code points left or a single numeric code point.
-             * @param {!function(number)} dst Bytes destination as a function successively called with the next byte
-             */
-            utfx.encodeUTF8 = function(src, dst) {
-                var cp = null;
-                if (typeof src === 'number')
-                    cp = src,
-                    src = function() { return null; };
-                while (cp !== null || (cp = src()) !== null) {
-                    if (cp < 0x80)
-                        dst(cp&0x7F);
-                    else if (cp < 0x800)
-                        dst(((cp>>6)&0x1F)|0xC0),
-                        dst((cp&0x3F)|0x80);
-                    else if (cp < 0x10000)
-                        dst(((cp>>12)&0x0F)|0xE0),
-                        dst(((cp>>6)&0x3F)|0x80),
-                        dst((cp&0x3F)|0x80);
-                    else
-                        dst(((cp>>18)&0x07)|0xF0),
-                        dst(((cp>>12)&0x3F)|0x80),
-                        dst(((cp>>6)&0x3F)|0x80),
-                        dst((cp&0x3F)|0x80);
-                    cp = null;
-                }
-            };
-
-            /**
-             * Decodes UTF8 bytes to UTF8 code points.
-             * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if there
-             *  are no more bytes left.
-             * @param {!function(number)} dst Code points destination as a function successively called with each decoded code point.
-             * @throws {RangeError} If a starting byte is invalid in UTF8
-             * @throws {Error} If the last sequence is truncated. Has an array property `bytes` holding the
-             *  remaining bytes.
-             */
-            utfx.decodeUTF8 = function(src, dst) {
-                var a, b, c, d, fail = function(b) {
-                    b = b.slice(0, b.indexOf(null));
-                    var err = Error(b.toString());
-                    err.name = "TruncatedError";
-                    err['bytes'] = b;
-                    throw err;
-                };
-                while ((a = src()) !== null) {
-                    if ((a&0x80) === 0)
-                        dst(a);
-                    else if ((a&0xE0) === 0xC0)
-                        ((b = src()) === null) && fail([a, b]),
-                        dst(((a&0x1F)<<6) | (b&0x3F));
-                    else if ((a&0xF0) === 0xE0)
-                        ((b=src()) === null || (c=src()) === null) && fail([a, b, c]),
-                        dst(((a&0x0F)<<12) | ((b&0x3F)<<6) | (c&0x3F));
-                    else if ((a&0xF8) === 0xF0)
-                        ((b=src()) === null || (c=src()) === null || (d=src()) === null) && fail([a, b, c ,d]),
-                        dst(((a&0x07)<<18) | ((b&0x3F)<<12) | ((c&0x3F)<<6) | (d&0x3F));
-                    else throw RangeError("Illegal starting byte: "+a);
-                }
-            };
-
-            /**
-             * Converts UTF16 characters to UTF8 code points.
-             * @param {!function():number|null} src Characters source as a function returning the next char code respectively
-             *  `null` if there are no more characters left.
-             * @param {!function(number)} dst Code points destination as a function successively called with each converted code
-             *  point.
-             */
-            utfx.UTF16toUTF8 = function(src, dst) {
-                var c1, c2 = null;
-                while (true) {
-                    if ((c1 = c2 !== null ? c2 : src()) === null)
-                        break;
-                    if (c1 >= 0xD800 && c1 <= 0xDFFF) {
-                        if ((c2 = src()) !== null) {
-                            if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
-                                dst((c1-0xD800)*0x400+c2-0xDC00+0x10000);
-                                c2 = null; continue;
-                            }
-                        }
-                    }
-                    dst(c1);
-                }
-                if (c2 !== null) dst(c2);
-            };
-
-            /**
-             * Converts UTF8 code points to UTF16 characters.
-             * @param {(!function():number|null) | number} src Code points source, either as a function returning the next code point
-             *  respectively `null` if there are no more code points left or a single numeric code point.
-             * @param {!function(number)} dst Characters destination as a function successively called with each converted char code.
-             * @throws {RangeError} If a code point is out of range
-             */
-            utfx.UTF8toUTF16 = function(src, dst) {
-                var cp = null;
-                if (typeof src === 'number')
-                    cp = src, src = function() { return null; };
-                while (cp !== null || (cp = src()) !== null) {
-                    if (cp <= 0xFFFF)
-                        dst(cp);
-                    else
-                        cp -= 0x10000,
-                        dst((cp>>10)+0xD800),
-                        dst((cp%0x400)+0xDC00);
-                    cp = null;
-                }
-            };
-
-            /**
-             * Converts and encodes UTF16 characters to UTF8 bytes.
-             * @param {!function():number|null} src Characters source as a function returning the next char code respectively `null`
-             *  if there are no more characters left.
-             * @param {!function(number)} dst Bytes destination as a function successively called with the next byte.
-             */
-            utfx.encodeUTF16toUTF8 = function(src, dst) {
-                utfx.UTF16toUTF8(src, function(cp) {
-                    utfx.encodeUTF8(cp, dst);
-                });
-            };
-
-            /**
-             * Decodes and converts UTF8 bytes to UTF16 characters.
-             * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if there
-             *  are no more bytes left.
-             * @param {!function(number)} dst Characters destination as a function successively called with each converted char code.
-             * @throws {RangeError} If a starting byte is invalid in UTF8
-             * @throws {Error} If the last sequence is truncated. Has an array property `bytes` holding the remaining bytes.
-             */
-            utfx.decodeUTF8toUTF16 = function(src, dst) {
-                utfx.decodeUTF8(src, function(cp) {
-                    utfx.UTF8toUTF16(cp, dst);
-                });
-            };
-
-            /**
-             * Calculates the byte length of an UTF8 code point.
-             * @param {number} cp UTF8 code point
-             * @returns {number} Byte length
-             */
-            utfx.calculateCodePoint = function(cp) {
-                return (cp < 0x80) ? 1 : (cp < 0x800) ? 2 : (cp < 0x10000) ? 3 : 4;
-            };
-
-            /**
-             * Calculates the number of UTF8 bytes required to store UTF8 code points.
-             * @param {(!function():number|null)} src Code points source as a function returning the next code point respectively
-             *  `null` if there are no more code points left.
-             * @returns {number} The number of UTF8 bytes required
-             */
-            utfx.calculateUTF8 = function(src) {
-                var cp, l=0;
-                while ((cp = src()) !== null)
-                    l += utfx.calculateCodePoint(cp);
-                return l;
-            };
-
-            /**
-             * Calculates the number of UTF8 code points respectively UTF8 bytes required to store UTF16 char codes.
-             * @param {(!function():number|null)} src Characters source as a function returning the next char code respectively
-             *  `null` if there are no more characters left.
-             * @returns {!Array.<number>} The number of UTF8 code points at index 0 and the number of UTF8 bytes required at index 1.
-             */
-            utfx.calculateUTF16asUTF8 = function(src) {
-                var n=0, l=0;
-                utfx.UTF16toUTF8(src, function(cp) {
-                    ++n; l += utfx.calculateCodePoint(cp);
-                });
-                return [n,l];
-            };
-
-            return utfx;
-        }();
-
-        // encodings/utf8
-
-        /**
-         * Encodes this ByteBuffer's contents between {@link ByteBuffer#offset} and {@link ByteBuffer#limit} to an UTF8 encoded
-         *  string.
-         * @returns {string} Hex encoded string
-         * @throws {RangeError} If `offset > limit`
-         * @expose
-         */
-        ByteBufferPrototype.toUTF8 = function(begin, end) {
-            if (typeof begin === 'undefined') begin = this.offset;
-            if (typeof end === 'undefined') end = this.limit;
-            if (!this.noAssert) {
-                if (typeof begin !== 'number' || begin % 1 !== 0)
-                    throw TypeError("Illegal begin: Not an integer");
-                begin >>>= 0;
-                if (typeof end !== 'number' || end % 1 !== 0)
-                    throw TypeError("Illegal end: Not an integer");
-                end >>>= 0;
-                if (begin < 0 || begin > end || end > this.buffer.byteLength)
-                    throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
-            }
-            var sd; try {
-                utfx.decodeUTF8toUTF16(function() {
-                    return begin < end ? this.view.getUint8(begin++) : null;
-                }.bind(this), sd = stringDestination());
-            } catch (e) {
-                if (begin !== end)
-                    throw RangeError("Illegal range: Truncated data, "+begin+" != "+end);
-            }
-            return sd();
-        };
-
-        /**
-         * Decodes an UTF8 encoded string to a ByteBuffer.
-         * @param {string} str String to decode
-         * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
-         *  {@link ByteBuffer.DEFAULT_ENDIAN}.
-         * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
-         *  {@link ByteBuffer.DEFAULT_NOASSERT}.
-         * @returns {!ByteBuffer} ByteBuffer
-         * @expose
-         */
-        ByteBuffer.fromUTF8 = function(str, littleEndian, noAssert) {
-            if (!noAssert)
-                if (typeof str !== 'string')
-                    throw TypeError("Illegal str: Not a string");
-            var bb = new ByteBuffer(utfx.calculateUTF16asUTF8(stringSource(str), true)[1], littleEndian, noAssert),
-                i = 0;
-            utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
-                bb.view.setUint8(i++, b);
-            });
-            bb.limit = i;
-            return bb;
-        };
-
-
-        return ByteBuffer;
-    }
-
-    /* CommonJS */ if ("function" === 'function' && typeof module === 'object' && module && typeof exports === 'object' && exports)
-        module['exports'] = (function() {
-            var Long; try { Long = __webpack_require__(17); } catch (e) {}
-            return loadByteBuffer(Long);
-        })();
-    /* AMD */ else if (true)
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(17)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Long) { return loadByteBuffer(Long); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(39)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (http) {
+    'use strict';
+
+    return http;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-    /* Global */ else
-        (global["dcodeIO"] = global["dcodeIO"] || {})["ByteBuffer"] = loadByteBuffer(global["dcodeIO"]["Long"]);
-
-})(this);
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(39)(module)))
 
 /***/ }),
 /* 6 */
@@ -3534,9 +263,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(32),
-    __webpack_require__(31),
-    __webpack_require__(7)
+    __webpack_require__(42),
+    __webpack_require__(41),
+    __webpack_require__(8)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ConsoleAppender, logging) {
     'use strict';
 
@@ -3553,6 +282,3761 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+ Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+ http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+
+/**
+ * @license bytebuffer.js (c) 2015 Daniel Wirtz <dcode@dcode.io>
+ * Backing buffer: ArrayBuffer, Accessor: Uint8Array
+ * Released under the Apache License, Version 2.0
+ * see: https://github.com/dcodeIO/bytebuffer.js for details
+ */
+(function(global, factory) {
+
+    /* AMD */ if (true)
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(32)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    /* CommonJS */ else if (typeof require === 'function' && typeof module === "object" && module && module["exports"])
+        module['exports'] = (function() {
+            var Long; try { Long = require("long"); } catch (e) {}
+            return factory(Long);
+        })();
+    /* Global */ else
+        (global["dcodeIO"] = global["dcodeIO"] || {})["ByteBuffer"] = factory(global["dcodeIO"]["Long"]);
+
+})(this, function(Long) {
+    "use strict";
+
+    /**
+     * Constructs a new ByteBuffer.
+     * @class The swiss army knife for binary data in JavaScript.
+     * @exports ByteBuffer
+     * @constructor
+     * @param {number=} capacity Initial capacity. Defaults to {@link ByteBuffer.DEFAULT_CAPACITY}.
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @expose
+     */
+    var ByteBuffer = function(capacity, littleEndian, noAssert) {
+        if (typeof capacity === 'undefined')
+            capacity = ByteBuffer.DEFAULT_CAPACITY;
+        if (typeof littleEndian === 'undefined')
+            littleEndian = ByteBuffer.DEFAULT_ENDIAN;
+        if (typeof noAssert === 'undefined')
+            noAssert = ByteBuffer.DEFAULT_NOASSERT;
+        if (!noAssert) {
+            capacity = capacity | 0;
+            if (capacity < 0)
+                throw RangeError("Illegal capacity");
+            littleEndian = !!littleEndian;
+            noAssert = !!noAssert;
+        }
+
+        /**
+         * Backing ArrayBuffer.
+         * @type {!ArrayBuffer}
+         * @expose
+         */
+        this.buffer = capacity === 0 ? EMPTY_BUFFER : new ArrayBuffer(capacity);
+
+        /**
+         * Uint8Array utilized to manipulate the backing buffer. Becomes `null` if the backing buffer has a capacity of `0`.
+         * @type {?Uint8Array}
+         * @expose
+         */
+        this.view = capacity === 0 ? null : new Uint8Array(this.buffer);
+
+        /**
+         * Absolute read/write offset.
+         * @type {number}
+         * @expose
+         * @see ByteBuffer#flip
+         * @see ByteBuffer#clear
+         */
+        this.offset = 0;
+
+        /**
+         * Marked offset.
+         * @type {number}
+         * @expose
+         * @see ByteBuffer#mark
+         * @see ByteBuffer#reset
+         */
+        this.markedOffset = -1;
+
+        /**
+         * Absolute limit of the contained data. Set to the backing buffer's capacity upon allocation.
+         * @type {number}
+         * @expose
+         * @see ByteBuffer#flip
+         * @see ByteBuffer#clear
+         */
+        this.limit = capacity;
+
+        /**
+         * Whether to use little endian byte order, defaults to `false` for big endian.
+         * @type {boolean}
+         * @expose
+         */
+        this.littleEndian = littleEndian;
+
+        /**
+         * Whether to skip assertions of offsets and values, defaults to `false`.
+         * @type {boolean}
+         * @expose
+         */
+        this.noAssert = noAssert;
+    };
+
+    /**
+     * ByteBuffer version.
+     * @type {string}
+     * @const
+     * @expose
+     */
+    ByteBuffer.VERSION = "5.0.1";
+
+    /**
+     * Little endian constant that can be used instead of its boolean value. Evaluates to `true`.
+     * @type {boolean}
+     * @const
+     * @expose
+     */
+    ByteBuffer.LITTLE_ENDIAN = true;
+
+    /**
+     * Big endian constant that can be used instead of its boolean value. Evaluates to `false`.
+     * @type {boolean}
+     * @const
+     * @expose
+     */
+    ByteBuffer.BIG_ENDIAN = false;
+
+    /**
+     * Default initial capacity of `16`.
+     * @type {number}
+     * @expose
+     */
+    ByteBuffer.DEFAULT_CAPACITY = 16;
+
+    /**
+     * Default endianess of `false` for big endian.
+     * @type {boolean}
+     * @expose
+     */
+    ByteBuffer.DEFAULT_ENDIAN = ByteBuffer.BIG_ENDIAN;
+
+    /**
+     * Default no assertions flag of `false`.
+     * @type {boolean}
+     * @expose
+     */
+    ByteBuffer.DEFAULT_NOASSERT = false;
+
+    /**
+     * A `Long` class for representing a 64-bit two's-complement integer value. May be `null` if Long.js has not been loaded
+     *  and int64 support is not available.
+     * @type {?Long}
+     * @const
+     * @see https://github.com/dcodeIO/long.js
+     * @expose
+     */
+    ByteBuffer.Long = Long || null;
+
+    /**
+     * @alias ByteBuffer.prototype
+     * @inner
+     */
+    var ByteBufferPrototype = ByteBuffer.prototype;
+
+    /**
+     * An indicator used to reliably determine if an object is a ByteBuffer or not.
+     * @type {boolean}
+     * @const
+     * @expose
+     * @private
+     */
+    ByteBufferPrototype.__isByteBuffer__;
+
+    Object.defineProperty(ByteBufferPrototype, "__isByteBuffer__", {
+        value: true,
+        enumerable: false,
+        configurable: false
+    });
+
+    // helpers
+
+    /**
+     * @type {!ArrayBuffer}
+     * @inner
+     */
+    var EMPTY_BUFFER = new ArrayBuffer(0);
+
+    /**
+     * String.fromCharCode reference for compile-time renaming.
+     * @type {function(...number):string}
+     * @inner
+     */
+    var stringFromCharCode = String.fromCharCode;
+
+    /**
+     * Creates a source function for a string.
+     * @param {string} s String to read from
+     * @returns {function():number|null} Source function returning the next char code respectively `null` if there are
+     *  no more characters left.
+     * @throws {TypeError} If the argument is invalid
+     * @inner
+     */
+    function stringSource(s) {
+        var i=0; return function() {
+            return i < s.length ? s.charCodeAt(i++) : null;
+        };
+    }
+
+    /**
+     * Creates a destination function for a string.
+     * @returns {function(number=):undefined|string} Destination function successively called with the next char code.
+     *  Returns the final string when called without arguments.
+     * @inner
+     */
+    function stringDestination() {
+        var cs = [], ps = []; return function() {
+            if (arguments.length === 0)
+                return ps.join('')+stringFromCharCode.apply(String, cs);
+            if (cs.length + arguments.length > 1024)
+                ps.push(stringFromCharCode.apply(String, cs)),
+                    cs.length = 0;
+            Array.prototype.push.apply(cs, arguments);
+        };
+    }
+
+    /**
+     * Gets the accessor type.
+     * @returns {Function} `Buffer` under node.js, `Uint8Array` respectively `DataView` in the browser (classes)
+     * @expose
+     */
+    ByteBuffer.accessor = function() {
+        return Uint8Array;
+    };
+    /**
+     * Allocates a new ByteBuffer backed by a buffer of the specified capacity.
+     * @param {number=} capacity Initial capacity. Defaults to {@link ByteBuffer.DEFAULT_CAPACITY}.
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer}
+     * @expose
+     */
+    ByteBuffer.allocate = function(capacity, littleEndian, noAssert) {
+        return new ByteBuffer(capacity, littleEndian, noAssert);
+    };
+
+    /**
+     * Concatenates multiple ByteBuffers into one.
+     * @param {!Array.<!ByteBuffer|!ArrayBuffer|!Uint8Array|string>} buffers Buffers to concatenate
+     * @param {(string|boolean)=} encoding String encoding if `buffers` contains a string ("base64", "hex", "binary",
+     *  defaults to "utf8")
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order for the resulting ByteBuffer. Defaults
+     *  to {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values for the resulting ByteBuffer. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer} Concatenated ByteBuffer
+     * @expose
+     */
+    ByteBuffer.concat = function(buffers, encoding, littleEndian, noAssert) {
+        if (typeof encoding === 'boolean' || typeof encoding !== 'string') {
+            noAssert = littleEndian;
+            littleEndian = encoding;
+            encoding = undefined;
+        }
+        var capacity = 0;
+        for (var i=0, k=buffers.length, length; i<k; ++i) {
+            if (!ByteBuffer.isByteBuffer(buffers[i]))
+                buffers[i] = ByteBuffer.wrap(buffers[i], encoding);
+            length = buffers[i].limit - buffers[i].offset;
+            if (length > 0) capacity += length;
+        }
+        if (capacity === 0)
+            return new ByteBuffer(0, littleEndian, noAssert);
+        var bb = new ByteBuffer(capacity, littleEndian, noAssert),
+            bi;
+        i=0; while (i<k) {
+            bi = buffers[i++];
+            length = bi.limit - bi.offset;
+            if (length <= 0) continue;
+            bb.view.set(bi.view.subarray(bi.offset, bi.limit), bb.offset);
+            bb.offset += length;
+        }
+        bb.limit = bb.offset;
+        bb.offset = 0;
+        return bb;
+    };
+
+    /**
+     * Tests if the specified type is a ByteBuffer.
+     * @param {*} bb ByteBuffer to test
+     * @returns {boolean} `true` if it is a ByteBuffer, otherwise `false`
+     * @expose
+     */
+    ByteBuffer.isByteBuffer = function(bb) {
+        return (bb && bb["__isByteBuffer__"]) === true;
+    };
+    /**
+     * Gets the backing buffer type.
+     * @returns {Function} `Buffer` under node.js, `ArrayBuffer` in the browser (classes)
+     * @expose
+     */
+    ByteBuffer.type = function() {
+        return ArrayBuffer;
+    };
+    /**
+     * Wraps a buffer or a string. Sets the allocated ByteBuffer's {@link ByteBuffer#offset} to `0` and its
+     *  {@link ByteBuffer#limit} to the length of the wrapped data.
+     * @param {!ByteBuffer|!ArrayBuffer|!Uint8Array|string|!Array.<number>} buffer Anything that can be wrapped
+     * @param {(string|boolean)=} encoding String encoding if `buffer` is a string ("base64", "hex", "binary", defaults to
+     *  "utf8")
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer} A ByteBuffer wrapping `buffer`
+     * @expose
+     */
+    ByteBuffer.wrap = function(buffer, encoding, littleEndian, noAssert) {
+        if (typeof encoding !== 'string') {
+            noAssert = littleEndian;
+            littleEndian = encoding;
+            encoding = undefined;
+        }
+        if (typeof buffer === 'string') {
+            if (typeof encoding === 'undefined')
+                encoding = "utf8";
+            switch (encoding) {
+                case "base64":
+                    return ByteBuffer.fromBase64(buffer, littleEndian);
+                case "hex":
+                    return ByteBuffer.fromHex(buffer, littleEndian);
+                case "binary":
+                    return ByteBuffer.fromBinary(buffer, littleEndian);
+                case "utf8":
+                    return ByteBuffer.fromUTF8(buffer, littleEndian);
+                case "debug":
+                    return ByteBuffer.fromDebug(buffer, littleEndian);
+                default:
+                    throw Error("Unsupported encoding: "+encoding);
+            }
+        }
+        if (buffer === null || typeof buffer !== 'object')
+            throw TypeError("Illegal buffer");
+        var bb;
+        if (ByteBuffer.isByteBuffer(buffer)) {
+            bb = ByteBufferPrototype.clone.call(buffer);
+            bb.markedOffset = -1;
+            return bb;
+        }
+        if (buffer instanceof Uint8Array) { // Extract ArrayBuffer from Uint8Array
+            bb = new ByteBuffer(0, littleEndian, noAssert);
+            if (buffer.length > 0) { // Avoid references to more than one EMPTY_BUFFER
+                bb.buffer = buffer.buffer;
+                bb.offset = buffer.byteOffset;
+                bb.limit = buffer.byteOffset + buffer.byteLength;
+                bb.view = new Uint8Array(buffer.buffer);
+            }
+        } else if (buffer instanceof ArrayBuffer) { // Reuse ArrayBuffer
+            bb = new ByteBuffer(0, littleEndian, noAssert);
+            if (buffer.byteLength > 0) {
+                bb.buffer = buffer;
+                bb.offset = 0;
+                bb.limit = buffer.byteLength;
+                bb.view = buffer.byteLength > 0 ? new Uint8Array(buffer) : null;
+            }
+        } else if (Object.prototype.toString.call(buffer) === "[object Array]") { // Create from octets
+            bb = new ByteBuffer(buffer.length, littleEndian, noAssert);
+            bb.limit = buffer.length;
+            for (var i=0; i<buffer.length; ++i)
+                bb.view[i] = buffer[i];
+        } else
+            throw TypeError("Illegal buffer"); // Otherwise fail
+        return bb;
+    };
+
+    /**
+     * Writes the array as a bitset.
+     * @param {Array<boolean>} value Array of booleans to write
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `length` if omitted.
+     * @returns {!ByteBuffer}
+     * @expose
+     */
+    ByteBufferPrototype.writeBitSet = function(value, offset) {
+      var relative = typeof offset === 'undefined';
+      if (relative) offset = this.offset;
+      if (!this.noAssert) {
+        if (!(value instanceof Array))
+          throw TypeError("Illegal BitSet: Not an array");
+        if (typeof offset !== 'number' || offset % 1 !== 0)
+            throw TypeError("Illegal offset: "+offset+" (not an integer)");
+        offset >>>= 0;
+        if (offset < 0 || offset + 0 > this.buffer.byteLength)
+            throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+      }
+
+      var start = offset,
+          bits = value.length,
+          bytes = (bits >> 3),
+          bit = 0,
+          k;
+
+      offset += this.writeVarint32(bits,offset);
+
+      while(bytes--) {
+        k = (!!value[bit++] & 1) |
+            ((!!value[bit++] & 1) << 1) |
+            ((!!value[bit++] & 1) << 2) |
+            ((!!value[bit++] & 1) << 3) |
+            ((!!value[bit++] & 1) << 4) |
+            ((!!value[bit++] & 1) << 5) |
+            ((!!value[bit++] & 1) << 6) |
+            ((!!value[bit++] & 1) << 7);
+        this.writeByte(k,offset++);
+      }
+
+      if(bit < bits) {
+        var m = 0; k = 0;
+        while(bit < bits) k = k | ((!!value[bit++] & 1) << (m++));
+        this.writeByte(k,offset++);
+      }
+
+      if (relative) {
+        this.offset = offset;
+        return this;
+      }
+      return offset - start;
+    }
+
+    /**
+     * Reads a BitSet as an array of booleans.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `length` if omitted.
+     * @returns {Array<boolean>
+     * @expose
+     */
+    ByteBufferPrototype.readBitSet = function(offset) {
+      var relative = typeof offset === 'undefined';
+      if (relative) offset = this.offset;
+
+      var ret = this.readVarint32(offset),
+          bits = ret.value,
+          bytes = (bits >> 3),
+          bit = 0,
+          value = [],
+          k;
+
+      offset += ret.length;
+
+      while(bytes--) {
+        k = this.readByte(offset++);
+        value[bit++] = !!(k & 0x01);
+        value[bit++] = !!(k & 0x02);
+        value[bit++] = !!(k & 0x04);
+        value[bit++] = !!(k & 0x08);
+        value[bit++] = !!(k & 0x10);
+        value[bit++] = !!(k & 0x20);
+        value[bit++] = !!(k & 0x40);
+        value[bit++] = !!(k & 0x80);
+      }
+
+      if(bit < bits) {
+        var m = 0;
+        k = this.readByte(offset++);
+        while(bit < bits) value[bit++] = !!((k >> (m++)) & 1);
+      }
+
+      if (relative) {
+        this.offset = offset;
+      }
+      return value;
+    }
+    /**
+     * Reads the specified number of bytes.
+     * @param {number} length Number of bytes to read
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `length` if omitted.
+     * @returns {!ByteBuffer}
+     * @expose
+     */
+    ByteBufferPrototype.readBytes = function(length, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + length > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+length+") <= "+this.buffer.byteLength);
+        }
+        var slice = this.slice(offset, offset + length);
+        if (relative) this.offset += length;
+        return slice;
+    };
+
+    /**
+     * Writes a payload of bytes. This is an alias of {@link ByteBuffer#append}.
+     * @function
+     * @param {!ByteBuffer|!ArrayBuffer|!Uint8Array|string} source Data to write. If `source` is a ByteBuffer, its offsets
+     *  will be modified according to the performed read operation.
+     * @param {(string|number)=} encoding Encoding if `data` is a string ("base64", "hex", "binary", defaults to "utf8")
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeBytes = ByteBufferPrototype.append;
+
+    // types/ints/int8
+
+    /**
+     * Writes an 8bit signed integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeInt8 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value |= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 1;
+        var capacity0 = this.buffer.byteLength;
+        if (offset > capacity0)
+            this.resize((capacity0 *= 2) > offset ? capacity0 : offset);
+        offset -= 1;
+        this.view[offset] = value;
+        if (relative) this.offset += 1;
+        return this;
+    };
+
+    /**
+     * Writes an 8bit signed integer. This is an alias of {@link ByteBuffer#writeInt8}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeByte = ByteBufferPrototype.writeInt8;
+
+    /**
+     * Reads an 8bit signed integer.
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readInt8 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+        }
+        var value = this.view[offset];
+        if ((value & 0x80) === 0x80) value = -(0xFF - value + 1); // Cast to signed
+        if (relative) this.offset += 1;
+        return value;
+    };
+
+    /**
+     * Reads an 8bit signed integer. This is an alias of {@link ByteBuffer#readInt8}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readByte = ByteBufferPrototype.readInt8;
+
+    /**
+     * Writes an 8bit unsigned integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeUint8 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value >>>= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 1;
+        var capacity1 = this.buffer.byteLength;
+        if (offset > capacity1)
+            this.resize((capacity1 *= 2) > offset ? capacity1 : offset);
+        offset -= 1;
+        this.view[offset] = value;
+        if (relative) this.offset += 1;
+        return this;
+    };
+
+    /**
+     * Writes an 8bit unsigned integer. This is an alias of {@link ByteBuffer#writeUint8}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeUInt8 = ByteBufferPrototype.writeUint8;
+
+    /**
+     * Reads an 8bit unsigned integer.
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readUint8 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+        }
+        var value = this.view[offset];
+        if (relative) this.offset += 1;
+        return value;
+    };
+
+    /**
+     * Reads an 8bit unsigned integer. This is an alias of {@link ByteBuffer#readUint8}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `1` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readUInt8 = ByteBufferPrototype.readUint8;
+
+    // types/ints/int16
+
+    /**
+     * Writes a 16bit signed integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @throws {TypeError} If `offset` or `value` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.writeInt16 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value |= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 2;
+        var capacity2 = this.buffer.byteLength;
+        if (offset > capacity2)
+            this.resize((capacity2 *= 2) > offset ? capacity2 : offset);
+        offset -= 2;
+        if (this.littleEndian) {
+            this.view[offset+1] = (value & 0xFF00) >>> 8;
+            this.view[offset  ] =  value & 0x00FF;
+        } else {
+            this.view[offset]   = (value & 0xFF00) >>> 8;
+            this.view[offset+1] =  value & 0x00FF;
+        }
+        if (relative) this.offset += 2;
+        return this;
+    };
+
+    /**
+     * Writes a 16bit signed integer. This is an alias of {@link ByteBuffer#writeInt16}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @throws {TypeError} If `offset` or `value` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.writeShort = ByteBufferPrototype.writeInt16;
+
+    /**
+     * Reads a 16bit signed integer.
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @returns {number} Value read
+     * @throws {TypeError} If `offset` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.readInt16 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 2 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+2+") <= "+this.buffer.byteLength);
+        }
+        var value = 0;
+        if (this.littleEndian) {
+            value  = this.view[offset  ];
+            value |= this.view[offset+1] << 8;
+        } else {
+            value  = this.view[offset  ] << 8;
+            value |= this.view[offset+1];
+        }
+        if ((value & 0x8000) === 0x8000) value = -(0xFFFF - value + 1); // Cast to signed
+        if (relative) this.offset += 2;
+        return value;
+    };
+
+    /**
+     * Reads a 16bit signed integer. This is an alias of {@link ByteBuffer#readInt16}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @returns {number} Value read
+     * @throws {TypeError} If `offset` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.readShort = ByteBufferPrototype.readInt16;
+
+    /**
+     * Writes a 16bit unsigned integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @throws {TypeError} If `offset` or `value` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.writeUint16 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value >>>= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 2;
+        var capacity3 = this.buffer.byteLength;
+        if (offset > capacity3)
+            this.resize((capacity3 *= 2) > offset ? capacity3 : offset);
+        offset -= 2;
+        if (this.littleEndian) {
+            this.view[offset+1] = (value & 0xFF00) >>> 8;
+            this.view[offset  ] =  value & 0x00FF;
+        } else {
+            this.view[offset]   = (value & 0xFF00) >>> 8;
+            this.view[offset+1] =  value & 0x00FF;
+        }
+        if (relative) this.offset += 2;
+        return this;
+    };
+
+    /**
+     * Writes a 16bit unsigned integer. This is an alias of {@link ByteBuffer#writeUint16}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @throws {TypeError} If `offset` or `value` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.writeUInt16 = ByteBufferPrototype.writeUint16;
+
+    /**
+     * Reads a 16bit unsigned integer.
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @returns {number} Value read
+     * @throws {TypeError} If `offset` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.readUint16 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 2 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+2+") <= "+this.buffer.byteLength);
+        }
+        var value = 0;
+        if (this.littleEndian) {
+            value  = this.view[offset  ];
+            value |= this.view[offset+1] << 8;
+        } else {
+            value  = this.view[offset  ] << 8;
+            value |= this.view[offset+1];
+        }
+        if (relative) this.offset += 2;
+        return value;
+    };
+
+    /**
+     * Reads a 16bit unsigned integer. This is an alias of {@link ByteBuffer#readUint16}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `2` if omitted.
+     * @returns {number} Value read
+     * @throws {TypeError} If `offset` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.readUInt16 = ByteBufferPrototype.readUint16;
+
+    // types/ints/int32
+
+    /**
+     * Writes a 32bit signed integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @expose
+     */
+    ByteBufferPrototype.writeInt32 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value |= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 4;
+        var capacity4 = this.buffer.byteLength;
+        if (offset > capacity4)
+            this.resize((capacity4 *= 2) > offset ? capacity4 : offset);
+        offset -= 4;
+        if (this.littleEndian) {
+            this.view[offset+3] = (value >>> 24) & 0xFF;
+            this.view[offset+2] = (value >>> 16) & 0xFF;
+            this.view[offset+1] = (value >>>  8) & 0xFF;
+            this.view[offset  ] =  value         & 0xFF;
+        } else {
+            this.view[offset  ] = (value >>> 24) & 0xFF;
+            this.view[offset+1] = (value >>> 16) & 0xFF;
+            this.view[offset+2] = (value >>>  8) & 0xFF;
+            this.view[offset+3] =  value         & 0xFF;
+        }
+        if (relative) this.offset += 4;
+        return this;
+    };
+
+    /**
+     * Writes a 32bit signed integer. This is an alias of {@link ByteBuffer#writeInt32}.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @expose
+     */
+    ByteBufferPrototype.writeInt = ByteBufferPrototype.writeInt32;
+
+    /**
+     * Reads a 32bit signed integer.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readInt32 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 4 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
+        }
+        var value = 0;
+        if (this.littleEndian) {
+            value  = this.view[offset+2] << 16;
+            value |= this.view[offset+1] <<  8;
+            value |= this.view[offset  ];
+            value += this.view[offset+3] << 24 >>> 0;
+        } else {
+            value  = this.view[offset+1] << 16;
+            value |= this.view[offset+2] <<  8;
+            value |= this.view[offset+3];
+            value += this.view[offset  ] << 24 >>> 0;
+        }
+        value |= 0; // Cast to signed
+        if (relative) this.offset += 4;
+        return value;
+    };
+
+    /**
+     * Reads a 32bit signed integer. This is an alias of {@link ByteBuffer#readInt32}.
+     * @param {number=} offset Offset to read from. Will use and advance {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readInt = ByteBufferPrototype.readInt32;
+
+    /**
+     * Writes a 32bit unsigned integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @expose
+     */
+    ByteBufferPrototype.writeUint32 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value >>>= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 4;
+        var capacity5 = this.buffer.byteLength;
+        if (offset > capacity5)
+            this.resize((capacity5 *= 2) > offset ? capacity5 : offset);
+        offset -= 4;
+        if (this.littleEndian) {
+            this.view[offset+3] = (value >>> 24) & 0xFF;
+            this.view[offset+2] = (value >>> 16) & 0xFF;
+            this.view[offset+1] = (value >>>  8) & 0xFF;
+            this.view[offset  ] =  value         & 0xFF;
+        } else {
+            this.view[offset  ] = (value >>> 24) & 0xFF;
+            this.view[offset+1] = (value >>> 16) & 0xFF;
+            this.view[offset+2] = (value >>>  8) & 0xFF;
+            this.view[offset+3] =  value         & 0xFF;
+        }
+        if (relative) this.offset += 4;
+        return this;
+    };
+
+    /**
+     * Writes a 32bit unsigned integer. This is an alias of {@link ByteBuffer#writeUint32}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @expose
+     */
+    ByteBufferPrototype.writeUInt32 = ByteBufferPrototype.writeUint32;
+
+    /**
+     * Reads a 32bit unsigned integer.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readUint32 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 4 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
+        }
+        var value = 0;
+        if (this.littleEndian) {
+            value  = this.view[offset+2] << 16;
+            value |= this.view[offset+1] <<  8;
+            value |= this.view[offset  ];
+            value += this.view[offset+3] << 24 >>> 0;
+        } else {
+            value  = this.view[offset+1] << 16;
+            value |= this.view[offset+2] <<  8;
+            value |= this.view[offset+3];
+            value += this.view[offset  ] << 24 >>> 0;
+        }
+        if (relative) this.offset += 4;
+        return value;
+    };
+
+    /**
+     * Reads a 32bit unsigned integer. This is an alias of {@link ByteBuffer#readUint32}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number} Value read
+     * @expose
+     */
+    ByteBufferPrototype.readUInt32 = ByteBufferPrototype.readUint32;
+
+    // types/ints/int64
+
+    if (Long) {
+
+        /**
+         * Writes a 64bit signed integer.
+         * @param {number|!Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!ByteBuffer} this
+         * @expose
+         */
+        ByteBufferPrototype.writeInt64 = function(value, offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof value === 'number')
+                    value = Long.fromNumber(value);
+                else if (typeof value === 'string')
+                    value = Long.fromString(value);
+                else if (!(value && value instanceof Long))
+                    throw TypeError("Illegal value: "+value+" (not an integer or Long)");
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+            }
+            if (typeof value === 'number')
+                value = Long.fromNumber(value);
+            else if (typeof value === 'string')
+                value = Long.fromString(value);
+            offset += 8;
+            var capacity6 = this.buffer.byteLength;
+            if (offset > capacity6)
+                this.resize((capacity6 *= 2) > offset ? capacity6 : offset);
+            offset -= 8;
+            var lo = value.low,
+                hi = value.high;
+            if (this.littleEndian) {
+                this.view[offset+3] = (lo >>> 24) & 0xFF;
+                this.view[offset+2] = (lo >>> 16) & 0xFF;
+                this.view[offset+1] = (lo >>>  8) & 0xFF;
+                this.view[offset  ] =  lo         & 0xFF;
+                offset += 4;
+                this.view[offset+3] = (hi >>> 24) & 0xFF;
+                this.view[offset+2] = (hi >>> 16) & 0xFF;
+                this.view[offset+1] = (hi >>>  8) & 0xFF;
+                this.view[offset  ] =  hi         & 0xFF;
+            } else {
+                this.view[offset  ] = (hi >>> 24) & 0xFF;
+                this.view[offset+1] = (hi >>> 16) & 0xFF;
+                this.view[offset+2] = (hi >>>  8) & 0xFF;
+                this.view[offset+3] =  hi         & 0xFF;
+                offset += 4;
+                this.view[offset  ] = (lo >>> 24) & 0xFF;
+                this.view[offset+1] = (lo >>> 16) & 0xFF;
+                this.view[offset+2] = (lo >>>  8) & 0xFF;
+                this.view[offset+3] =  lo         & 0xFF;
+            }
+            if (relative) this.offset += 8;
+            return this;
+        };
+
+        /**
+         * Writes a 64bit signed integer. This is an alias of {@link ByteBuffer#writeInt64}.
+         * @param {number|!Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!ByteBuffer} this
+         * @expose
+         */
+        ByteBufferPrototype.writeLong = ByteBufferPrototype.writeInt64;
+
+        /**
+         * Reads a 64bit signed integer.
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!Long}
+         * @expose
+         */
+        ByteBufferPrototype.readInt64 = function(offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 8 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
+            }
+            var lo = 0,
+                hi = 0;
+            if (this.littleEndian) {
+                lo  = this.view[offset+2] << 16;
+                lo |= this.view[offset+1] <<  8;
+                lo |= this.view[offset  ];
+                lo += this.view[offset+3] << 24 >>> 0;
+                offset += 4;
+                hi  = this.view[offset+2] << 16;
+                hi |= this.view[offset+1] <<  8;
+                hi |= this.view[offset  ];
+                hi += this.view[offset+3] << 24 >>> 0;
+            } else {
+                hi  = this.view[offset+1] << 16;
+                hi |= this.view[offset+2] <<  8;
+                hi |= this.view[offset+3];
+                hi += this.view[offset  ] << 24 >>> 0;
+                offset += 4;
+                lo  = this.view[offset+1] << 16;
+                lo |= this.view[offset+2] <<  8;
+                lo |= this.view[offset+3];
+                lo += this.view[offset  ] << 24 >>> 0;
+            }
+            var value = new Long(lo, hi, false);
+            if (relative) this.offset += 8;
+            return value;
+        };
+
+        /**
+         * Reads a 64bit signed integer. This is an alias of {@link ByteBuffer#readInt64}.
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!Long}
+         * @expose
+         */
+        ByteBufferPrototype.readLong = ByteBufferPrototype.readInt64;
+
+        /**
+         * Writes a 64bit unsigned integer.
+         * @param {number|!Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!ByteBuffer} this
+         * @expose
+         */
+        ByteBufferPrototype.writeUint64 = function(value, offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof value === 'number')
+                    value = Long.fromNumber(value);
+                else if (typeof value === 'string')
+                    value = Long.fromString(value);
+                else if (!(value && value instanceof Long))
+                    throw TypeError("Illegal value: "+value+" (not an integer or Long)");
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+            }
+            if (typeof value === 'number')
+                value = Long.fromNumber(value);
+            else if (typeof value === 'string')
+                value = Long.fromString(value);
+            offset += 8;
+            var capacity7 = this.buffer.byteLength;
+            if (offset > capacity7)
+                this.resize((capacity7 *= 2) > offset ? capacity7 : offset);
+            offset -= 8;
+            var lo = value.low,
+                hi = value.high;
+            if (this.littleEndian) {
+                this.view[offset+3] = (lo >>> 24) & 0xFF;
+                this.view[offset+2] = (lo >>> 16) & 0xFF;
+                this.view[offset+1] = (lo >>>  8) & 0xFF;
+                this.view[offset  ] =  lo         & 0xFF;
+                offset += 4;
+                this.view[offset+3] = (hi >>> 24) & 0xFF;
+                this.view[offset+2] = (hi >>> 16) & 0xFF;
+                this.view[offset+1] = (hi >>>  8) & 0xFF;
+                this.view[offset  ] =  hi         & 0xFF;
+            } else {
+                this.view[offset  ] = (hi >>> 24) & 0xFF;
+                this.view[offset+1] = (hi >>> 16) & 0xFF;
+                this.view[offset+2] = (hi >>>  8) & 0xFF;
+                this.view[offset+3] =  hi         & 0xFF;
+                offset += 4;
+                this.view[offset  ] = (lo >>> 24) & 0xFF;
+                this.view[offset+1] = (lo >>> 16) & 0xFF;
+                this.view[offset+2] = (lo >>>  8) & 0xFF;
+                this.view[offset+3] =  lo         & 0xFF;
+            }
+            if (relative) this.offset += 8;
+            return this;
+        };
+
+        /**
+         * Writes a 64bit unsigned integer. This is an alias of {@link ByteBuffer#writeUint64}.
+         * @function
+         * @param {number|!Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!ByteBuffer} this
+         * @expose
+         */
+        ByteBufferPrototype.writeUInt64 = ByteBufferPrototype.writeUint64;
+
+        /**
+         * Reads a 64bit unsigned integer.
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!Long}
+         * @expose
+         */
+        ByteBufferPrototype.readUint64 = function(offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 8 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
+            }
+            var lo = 0,
+                hi = 0;
+            if (this.littleEndian) {
+                lo  = this.view[offset+2] << 16;
+                lo |= this.view[offset+1] <<  8;
+                lo |= this.view[offset  ];
+                lo += this.view[offset+3] << 24 >>> 0;
+                offset += 4;
+                hi  = this.view[offset+2] << 16;
+                hi |= this.view[offset+1] <<  8;
+                hi |= this.view[offset  ];
+                hi += this.view[offset+3] << 24 >>> 0;
+            } else {
+                hi  = this.view[offset+1] << 16;
+                hi |= this.view[offset+2] <<  8;
+                hi |= this.view[offset+3];
+                hi += this.view[offset  ] << 24 >>> 0;
+                offset += 4;
+                lo  = this.view[offset+1] << 16;
+                lo |= this.view[offset+2] <<  8;
+                lo |= this.view[offset+3];
+                lo += this.view[offset  ] << 24 >>> 0;
+            }
+            var value = new Long(lo, hi, true);
+            if (relative) this.offset += 8;
+            return value;
+        };
+
+        /**
+         * Reads a 64bit unsigned integer. This is an alias of {@link ByteBuffer#readUint64}.
+         * @function
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+         * @returns {!Long}
+         * @expose
+         */
+        ByteBufferPrototype.readUInt64 = ByteBufferPrototype.readUint64;
+
+    } // Long
+
+
+    // types/floats/float32
+
+    /*
+     ieee754 - https://github.com/feross/ieee754
+
+     The MIT License (MIT)
+
+     Copyright (c) Feross Aboukhadijeh
+
+     Permission is hereby granted, free of charge, to any person obtaining a copy
+     of this software and associated documentation files (the "Software"), to deal
+     in the Software without restriction, including without limitation the rights
+     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+     copies of the Software, and to permit persons to whom the Software is
+     furnished to do so, subject to the following conditions:
+
+     The above copyright notice and this permission notice shall be included in
+     all copies or substantial portions of the Software.
+
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+     LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+     THE SOFTWARE.
+    */
+
+    /**
+     * Reads an IEEE754 float from a byte array.
+     * @param {!Array} buffer
+     * @param {number} offset
+     * @param {boolean} isLE
+     * @param {number} mLen
+     * @param {number} nBytes
+     * @returns {number}
+     * @inner
+     */
+    function ieee754_read(buffer, offset, isLE, mLen, nBytes) {
+        var e, m,
+            eLen = nBytes * 8 - mLen - 1,
+            eMax = (1 << eLen) - 1,
+            eBias = eMax >> 1,
+            nBits = -7,
+            i = isLE ? (nBytes - 1) : 0,
+            d = isLE ? -1 : 1,
+            s = buffer[offset + i];
+
+        i += d;
+
+        e = s & ((1 << (-nBits)) - 1);
+        s >>= (-nBits);
+        nBits += eLen;
+        for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+        m = e & ((1 << (-nBits)) - 1);
+        e >>= (-nBits);
+        nBits += mLen;
+        for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+
+        if (e === 0) {
+            e = 1 - eBias;
+        } else if (e === eMax) {
+            return m ? NaN : ((s ? -1 : 1) * Infinity);
+        } else {
+            m = m + Math.pow(2, mLen);
+            e = e - eBias;
+        }
+        return (s ? -1 : 1) * m * Math.pow(2, e - mLen);
+    }
+
+    /**
+     * Writes an IEEE754 float to a byte array.
+     * @param {!Array} buffer
+     * @param {number} value
+     * @param {number} offset
+     * @param {boolean} isLE
+     * @param {number} mLen
+     * @param {number} nBytes
+     * @inner
+     */
+    function ieee754_write(buffer, value, offset, isLE, mLen, nBytes) {
+        var e, m, c,
+            eLen = nBytes * 8 - mLen - 1,
+            eMax = (1 << eLen) - 1,
+            eBias = eMax >> 1,
+            rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
+            i = isLE ? 0 : (nBytes - 1),
+            d = isLE ? 1 : -1,
+            s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0;
+
+        value = Math.abs(value);
+
+        if (isNaN(value) || value === Infinity) {
+            m = isNaN(value) ? 1 : 0;
+            e = eMax;
+        } else {
+            e = Math.floor(Math.log(value) / Math.LN2);
+            if (value * (c = Math.pow(2, -e)) < 1) {
+                e--;
+                c *= 2;
+            }
+            if (e + eBias >= 1) {
+                value += rt / c;
+            } else {
+                value += rt * Math.pow(2, 1 - eBias);
+            }
+            if (value * c >= 2) {
+                e++;
+                c /= 2;
+            }
+
+            if (e + eBias >= eMax) {
+                m = 0;
+                e = eMax;
+            } else if (e + eBias >= 1) {
+                m = (value * c - 1) * Math.pow(2, mLen);
+                e = e + eBias;
+            } else {
+                m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen);
+                e = 0;
+            }
+        }
+
+        for (; mLen >= 8; buffer[offset + i] = m & 0xff, i += d, m /= 256, mLen -= 8) {}
+
+        e = (e << mLen) | m;
+        eLen += mLen;
+        for (; eLen > 0; buffer[offset + i] = e & 0xff, i += d, e /= 256, eLen -= 8) {}
+
+        buffer[offset + i - d] |= s * 128;
+    }
+
+    /**
+     * Writes a 32bit float.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeFloat32 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number')
+                throw TypeError("Illegal value: "+value+" (not a number)");
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 4;
+        var capacity8 = this.buffer.byteLength;
+        if (offset > capacity8)
+            this.resize((capacity8 *= 2) > offset ? capacity8 : offset);
+        offset -= 4;
+        ieee754_write(this.view, value, offset, this.littleEndian, 23, 4);
+        if (relative) this.offset += 4;
+        return this;
+    };
+
+    /**
+     * Writes a 32bit float. This is an alias of {@link ByteBuffer#writeFloat32}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeFloat = ByteBufferPrototype.writeFloat32;
+
+    /**
+     * Reads a 32bit float.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number}
+     * @expose
+     */
+    ByteBufferPrototype.readFloat32 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 4 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
+        }
+        var value = ieee754_read(this.view, offset, this.littleEndian, 23, 4);
+        if (relative) this.offset += 4;
+        return value;
+    };
+
+    /**
+     * Reads a 32bit float. This is an alias of {@link ByteBuffer#readFloat32}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `4` if omitted.
+     * @returns {number}
+     * @expose
+     */
+    ByteBufferPrototype.readFloat = ByteBufferPrototype.readFloat32;
+
+    // types/floats/float64
+
+    /**
+     * Writes a 64bit float.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeFloat64 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number')
+                throw TypeError("Illegal value: "+value+" (not a number)");
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        offset += 8;
+        var capacity9 = this.buffer.byteLength;
+        if (offset > capacity9)
+            this.resize((capacity9 *= 2) > offset ? capacity9 : offset);
+        offset -= 8;
+        ieee754_write(this.view, value, offset, this.littleEndian, 52, 8);
+        if (relative) this.offset += 8;
+        return this;
+    };
+
+    /**
+     * Writes a 64bit float. This is an alias of {@link ByteBuffer#writeFloat64}.
+     * @function
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.writeDouble = ByteBufferPrototype.writeFloat64;
+
+    /**
+     * Reads a 64bit float.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+     * @returns {number}
+     * @expose
+     */
+    ByteBufferPrototype.readFloat64 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 8 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+8+") <= "+this.buffer.byteLength);
+        }
+        var value = ieee754_read(this.view, offset, this.littleEndian, 52, 8);
+        if (relative) this.offset += 8;
+        return value;
+    };
+
+    /**
+     * Reads a 64bit float. This is an alias of {@link ByteBuffer#readFloat64}.
+     * @function
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by `8` if omitted.
+     * @returns {number}
+     * @expose
+     */
+    ByteBufferPrototype.readDouble = ByteBufferPrototype.readFloat64;
+
+
+    // types/varints/varint32
+
+    /**
+     * Maximum number of bytes required to store a 32bit base 128 variable-length integer.
+     * @type {number}
+     * @const
+     * @expose
+     */
+    ByteBuffer.MAX_VARINT32_BYTES = 5;
+
+    /**
+     * Calculates the actual number of bytes required to store a 32bit base 128 variable-length integer.
+     * @param {number} value Value to encode
+     * @returns {number} Number of bytes required. Capped to {@link ByteBuffer.MAX_VARINT32_BYTES}
+     * @expose
+     */
+    ByteBuffer.calculateVarint32 = function(value) {
+        // ref: src/google/protobuf/io/coded_stream.cc
+        value = value >>> 0;
+             if (value < 1 << 7 ) return 1;
+        else if (value < 1 << 14) return 2;
+        else if (value < 1 << 21) return 3;
+        else if (value < 1 << 28) return 4;
+        else                      return 5;
+    };
+
+    /**
+     * Zigzag encodes a signed 32bit integer so that it can be effectively used with varint encoding.
+     * @param {number} n Signed 32bit integer
+     * @returns {number} Unsigned zigzag encoded 32bit integer
+     * @expose
+     */
+    ByteBuffer.zigZagEncode32 = function(n) {
+        return (((n |= 0) << 1) ^ (n >> 31)) >>> 0; // ref: src/google/protobuf/wire_format_lite.h
+    };
+
+    /**
+     * Decodes a zigzag encoded signed 32bit integer.
+     * @param {number} n Unsigned zigzag encoded 32bit integer
+     * @returns {number} Signed 32bit integer
+     * @expose
+     */
+    ByteBuffer.zigZagDecode32 = function(n) {
+        return ((n >>> 1) ^ -(n & 1)) | 0; // // ref: src/google/protobuf/wire_format_lite.h
+    };
+
+    /**
+     * Writes a 32bit base 128 variable-length integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer|number} this if `offset` is omitted, else the actual number of bytes written
+     * @expose
+     */
+    ByteBufferPrototype.writeVarint32 = function(value, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value |= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        var size = ByteBuffer.calculateVarint32(value),
+            b;
+        offset += size;
+        var capacity10 = this.buffer.byteLength;
+        if (offset > capacity10)
+            this.resize((capacity10 *= 2) > offset ? capacity10 : offset);
+        offset -= size;
+        value >>>= 0;
+        while (value >= 0x80) {
+            b = (value & 0x7f) | 0x80;
+            this.view[offset++] = b;
+            value >>>= 7;
+        }
+        this.view[offset++] = value;
+        if (relative) {
+            this.offset = offset;
+            return this;
+        }
+        return size;
+    };
+
+    /**
+     * Writes a zig-zag encoded (signed) 32bit base 128 variable-length integer.
+     * @param {number} value Value to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer|number} this if `offset` is omitted, else the actual number of bytes written
+     * @expose
+     */
+    ByteBufferPrototype.writeVarint32ZigZag = function(value, offset) {
+        return this.writeVarint32(ByteBuffer.zigZagEncode32(value), offset);
+    };
+
+    /**
+     * Reads a 32bit base 128 variable-length integer.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {number|!{value: number, length: number}} The value read if offset is omitted, else the value read
+     *  and the actual number of bytes read.
+     * @throws {Error} If it's not a valid varint. Has a property `truncated = true` if there is not enough data available
+     *  to fully decode the varint.
+     * @expose
+     */
+    ByteBufferPrototype.readVarint32 = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+        }
+        var c = 0,
+            value = 0 >>> 0,
+            b;
+        do {
+            if (!this.noAssert && offset > this.limit) {
+                var err = Error("Truncated");
+                err['truncated'] = true;
+                throw err;
+            }
+            b = this.view[offset++];
+            if (c < 5)
+                value |= (b & 0x7f) << (7*c);
+            ++c;
+        } while ((b & 0x80) !== 0);
+        value |= 0;
+        if (relative) {
+            this.offset = offset;
+            return value;
+        }
+        return {
+            "value": value,
+            "length": c
+        };
+    };
+
+    /**
+     * Reads a zig-zag encoded (signed) 32bit base 128 variable-length integer.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {number|!{value: number, length: number}} The value read if offset is omitted, else the value read
+     *  and the actual number of bytes read.
+     * @throws {Error} If it's not a valid varint
+     * @expose
+     */
+    ByteBufferPrototype.readVarint32ZigZag = function(offset) {
+        var val = this.readVarint32(offset);
+        if (typeof val === 'object')
+            val["value"] = ByteBuffer.zigZagDecode32(val["value"]);
+        else
+            val = ByteBuffer.zigZagDecode32(val);
+        return val;
+    };
+
+    // types/varints/varint64
+
+    if (Long) {
+
+        /**
+         * Maximum number of bytes required to store a 64bit base 128 variable-length integer.
+         * @type {number}
+         * @const
+         * @expose
+         */
+        ByteBuffer.MAX_VARINT64_BYTES = 10;
+
+        /**
+         * Calculates the actual number of bytes required to store a 64bit base 128 variable-length integer.
+         * @param {number|!Long} value Value to encode
+         * @returns {number} Number of bytes required. Capped to {@link ByteBuffer.MAX_VARINT64_BYTES}
+         * @expose
+         */
+        ByteBuffer.calculateVarint64 = function(value) {
+            if (typeof value === 'number')
+                value = Long.fromNumber(value);
+            else if (typeof value === 'string')
+                value = Long.fromString(value);
+            // ref: src/google/protobuf/io/coded_stream.cc
+            var part0 = value.toInt() >>> 0,
+                part1 = value.shiftRightUnsigned(28).toInt() >>> 0,
+                part2 = value.shiftRightUnsigned(56).toInt() >>> 0;
+            if (part2 == 0) {
+                if (part1 == 0) {
+                    if (part0 < 1 << 14)
+                        return part0 < 1 << 7 ? 1 : 2;
+                    else
+                        return part0 < 1 << 21 ? 3 : 4;
+                } else {
+                    if (part1 < 1 << 14)
+                        return part1 < 1 << 7 ? 5 : 6;
+                    else
+                        return part1 < 1 << 21 ? 7 : 8;
+                }
+            } else
+                return part2 < 1 << 7 ? 9 : 10;
+        };
+
+        /**
+         * Zigzag encodes a signed 64bit integer so that it can be effectively used with varint encoding.
+         * @param {number|!Long} value Signed long
+         * @returns {!Long} Unsigned zigzag encoded long
+         * @expose
+         */
+        ByteBuffer.zigZagEncode64 = function(value) {
+            if (typeof value === 'number')
+                value = Long.fromNumber(value, false);
+            else if (typeof value === 'string')
+                value = Long.fromString(value, false);
+            else if (value.unsigned !== false) value = value.toSigned();
+            // ref: src/google/protobuf/wire_format_lite.h
+            return value.shiftLeft(1).xor(value.shiftRight(63)).toUnsigned();
+        };
+
+        /**
+         * Decodes a zigzag encoded signed 64bit integer.
+         * @param {!Long|number} value Unsigned zigzag encoded long or JavaScript number
+         * @returns {!Long} Signed long
+         * @expose
+         */
+        ByteBuffer.zigZagDecode64 = function(value) {
+            if (typeof value === 'number')
+                value = Long.fromNumber(value, false);
+            else if (typeof value === 'string')
+                value = Long.fromString(value, false);
+            else if (value.unsigned !== false) value = value.toSigned();
+            // ref: src/google/protobuf/wire_format_lite.h
+            return value.shiftRightUnsigned(1).xor(value.and(Long.ONE).toSigned().negate()).toSigned();
+        };
+
+        /**
+         * Writes a 64bit base 128 variable-length integer.
+         * @param {number|Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+         *  written if omitted.
+         * @returns {!ByteBuffer|number} `this` if offset is omitted, else the actual number of bytes written.
+         * @expose
+         */
+        ByteBufferPrototype.writeVarint64 = function(value, offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof value === 'number')
+                    value = Long.fromNumber(value);
+                else if (typeof value === 'string')
+                    value = Long.fromString(value);
+                else if (!(value && value instanceof Long))
+                    throw TypeError("Illegal value: "+value+" (not an integer or Long)");
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+            }
+            if (typeof value === 'number')
+                value = Long.fromNumber(value, false);
+            else if (typeof value === 'string')
+                value = Long.fromString(value, false);
+            else if (value.unsigned !== false) value = value.toSigned();
+            var size = ByteBuffer.calculateVarint64(value),
+                part0 = value.toInt() >>> 0,
+                part1 = value.shiftRightUnsigned(28).toInt() >>> 0,
+                part2 = value.shiftRightUnsigned(56).toInt() >>> 0;
+            offset += size;
+            var capacity11 = this.buffer.byteLength;
+            if (offset > capacity11)
+                this.resize((capacity11 *= 2) > offset ? capacity11 : offset);
+            offset -= size;
+            switch (size) {
+                case 10: this.view[offset+9] = (part2 >>>  7) & 0x01;
+                case 9 : this.view[offset+8] = size !== 9 ? (part2       ) | 0x80 : (part2       ) & 0x7F;
+                case 8 : this.view[offset+7] = size !== 8 ? (part1 >>> 21) | 0x80 : (part1 >>> 21) & 0x7F;
+                case 7 : this.view[offset+6] = size !== 7 ? (part1 >>> 14) | 0x80 : (part1 >>> 14) & 0x7F;
+                case 6 : this.view[offset+5] = size !== 6 ? (part1 >>>  7) | 0x80 : (part1 >>>  7) & 0x7F;
+                case 5 : this.view[offset+4] = size !== 5 ? (part1       ) | 0x80 : (part1       ) & 0x7F;
+                case 4 : this.view[offset+3] = size !== 4 ? (part0 >>> 21) | 0x80 : (part0 >>> 21) & 0x7F;
+                case 3 : this.view[offset+2] = size !== 3 ? (part0 >>> 14) | 0x80 : (part0 >>> 14) & 0x7F;
+                case 2 : this.view[offset+1] = size !== 2 ? (part0 >>>  7) | 0x80 : (part0 >>>  7) & 0x7F;
+                case 1 : this.view[offset  ] = size !== 1 ? (part0       ) | 0x80 : (part0       ) & 0x7F;
+            }
+            if (relative) {
+                this.offset += size;
+                return this;
+            } else {
+                return size;
+            }
+        };
+
+        /**
+         * Writes a zig-zag encoded 64bit base 128 variable-length integer.
+         * @param {number|Long} value Value to write
+         * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+         *  written if omitted.
+         * @returns {!ByteBuffer|number} `this` if offset is omitted, else the actual number of bytes written.
+         * @expose
+         */
+        ByteBufferPrototype.writeVarint64ZigZag = function(value, offset) {
+            return this.writeVarint64(ByteBuffer.zigZagEncode64(value), offset);
+        };
+
+        /**
+         * Reads a 64bit base 128 variable-length integer. Requires Long.js.
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+         *  read if omitted.
+         * @returns {!Long|!{value: Long, length: number}} The value read if offset is omitted, else the value read and
+         *  the actual number of bytes read.
+         * @throws {Error} If it's not a valid varint
+         * @expose
+         */
+        ByteBufferPrototype.readVarint64 = function(offset) {
+            var relative = typeof offset === 'undefined';
+            if (relative) offset = this.offset;
+            if (!this.noAssert) {
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+            }
+            // ref: src/google/protobuf/io/coded_stream.cc
+            var start = offset,
+                part0 = 0,
+                part1 = 0,
+                part2 = 0,
+                b  = 0;
+            b = this.view[offset++]; part0  = (b & 0x7F)      ; if ( b & 0x80                                                   ) {
+            b = this.view[offset++]; part0 |= (b & 0x7F) <<  7; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part0 |= (b & 0x7F) << 14; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part0 |= (b & 0x7F) << 21; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part1  = (b & 0x7F)      ; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part1 |= (b & 0x7F) <<  7; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part1 |= (b & 0x7F) << 14; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part1 |= (b & 0x7F) << 21; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part2  = (b & 0x7F)      ; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            b = this.view[offset++]; part2 |= (b & 0x7F) <<  7; if ((b & 0x80) || (this.noAssert && typeof b === 'undefined')) {
+            throw Error("Buffer overrun"); }}}}}}}}}}
+            var value = Long.fromBits(part0 | (part1 << 28), (part1 >>> 4) | (part2) << 24, false);
+            if (relative) {
+                this.offset = offset;
+                return value;
+            } else {
+                return {
+                    'value': value,
+                    'length': offset-start
+                };
+            }
+        };
+
+        /**
+         * Reads a zig-zag encoded 64bit base 128 variable-length integer. Requires Long.js.
+         * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+         *  read if omitted.
+         * @returns {!Long|!{value: Long, length: number}} The value read if offset is omitted, else the value read and
+         *  the actual number of bytes read.
+         * @throws {Error} If it's not a valid varint
+         * @expose
+         */
+        ByteBufferPrototype.readVarint64ZigZag = function(offset) {
+            var val = this.readVarint64(offset);
+            if (val && val['value'] instanceof Long)
+                val["value"] = ByteBuffer.zigZagDecode64(val["value"]);
+            else
+                val = ByteBuffer.zigZagDecode64(val);
+            return val;
+        };
+
+    } // Long
+
+
+    // types/strings/cstring
+
+    /**
+     * Writes a NULL-terminated UTF8 encoded string. For this to work the specified string must not contain any NULL
+     *  characters itself.
+     * @param {string} str String to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  contained in `str` + 1 if omitted.
+     * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written
+     * @expose
+     */
+    ByteBufferPrototype.writeCString = function(str, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        var i,
+            k = str.length;
+        if (!this.noAssert) {
+            if (typeof str !== 'string')
+                throw TypeError("Illegal str: Not a string");
+            for (i=0; i<k; ++i) {
+                if (str.charCodeAt(i) === 0)
+                    throw RangeError("Illegal str: Contains NULL-characters");
+            }
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        // UTF8 strings do not contain zero bytes in between except for the zero character, so:
+        k = utfx.calculateUTF16asUTF8(stringSource(str))[1];
+        offset += k+1;
+        var capacity12 = this.buffer.byteLength;
+        if (offset > capacity12)
+            this.resize((capacity12 *= 2) > offset ? capacity12 : offset);
+        offset -= k+1;
+        utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
+            this.view[offset++] = b;
+        }.bind(this));
+        this.view[offset++] = 0;
+        if (relative) {
+            this.offset = offset;
+            return this;
+        }
+        return k;
+    };
+
+    /**
+     * Reads a NULL-terminated UTF8 encoded string. For this to work the string read must not contain any NULL characters
+     *  itself.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
+     *  read and the actual number of bytes read.
+     * @expose
+     */
+    ByteBufferPrototype.readCString = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+        }
+        var start = offset,
+            temp;
+        // UTF8 strings do not contain zero bytes in between except for the zero character itself, so:
+        var sd, b = -1;
+        utfx.decodeUTF8toUTF16(function() {
+            if (b === 0) return null;
+            if (offset >= this.limit)
+                throw RangeError("Illegal range: Truncated data, "+offset+" < "+this.limit);
+            b = this.view[offset++];
+            return b === 0 ? null : b;
+        }.bind(this), sd = stringDestination(), true);
+        if (relative) {
+            this.offset = offset;
+            return sd();
+        } else {
+            return {
+                "string": sd(),
+                "length": offset - start
+            };
+        }
+    };
+
+    // types/strings/istring
+
+    /**
+     * Writes a length as uint32 prefixed UTF8 encoded string.
+     * @param {string} str String to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer|number} `this` if `offset` is omitted, else the actual number of bytes written
+     * @expose
+     * @see ByteBuffer#writeVarint32
+     */
+    ByteBufferPrototype.writeIString = function(str, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof str !== 'string')
+                throw TypeError("Illegal str: Not a string");
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        var start = offset,
+            k;
+        k = utfx.calculateUTF16asUTF8(stringSource(str), this.noAssert)[1];
+        offset += 4+k;
+        var capacity13 = this.buffer.byteLength;
+        if (offset > capacity13)
+            this.resize((capacity13 *= 2) > offset ? capacity13 : offset);
+        offset -= 4+k;
+        if (this.littleEndian) {
+            this.view[offset+3] = (k >>> 24) & 0xFF;
+            this.view[offset+2] = (k >>> 16) & 0xFF;
+            this.view[offset+1] = (k >>>  8) & 0xFF;
+            this.view[offset  ] =  k         & 0xFF;
+        } else {
+            this.view[offset  ] = (k >>> 24) & 0xFF;
+            this.view[offset+1] = (k >>> 16) & 0xFF;
+            this.view[offset+2] = (k >>>  8) & 0xFF;
+            this.view[offset+3] =  k         & 0xFF;
+        }
+        offset += 4;
+        utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
+            this.view[offset++] = b;
+        }.bind(this));
+        if (offset !== start + 4 + k)
+            throw RangeError("Illegal range: Truncated data, "+offset+" == "+(offset+4+k));
+        if (relative) {
+            this.offset = offset;
+            return this;
+        }
+        return offset - start;
+    };
+
+    /**
+     * Reads a length as uint32 prefixed UTF8 encoded string.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
+     *  read and the actual number of bytes read.
+     * @expose
+     * @see ByteBuffer#readVarint32
+     */
+    ByteBufferPrototype.readIString = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 4 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+4+") <= "+this.buffer.byteLength);
+        }
+        var start = offset;
+        var len = this.readUint32(offset);
+        var str = this.readUTF8String(len, ByteBuffer.METRICS_BYTES, offset += 4);
+        offset += str['length'];
+        if (relative) {
+            this.offset = offset;
+            return str['string'];
+        } else {
+            return {
+                'string': str['string'],
+                'length': offset - start
+            };
+        }
+    };
+
+    // types/strings/utf8string
+
+    /**
+     * Metrics representing number of UTF8 characters. Evaluates to `c`.
+     * @type {string}
+     * @const
+     * @expose
+     */
+    ByteBuffer.METRICS_CHARS = 'c';
+
+    /**
+     * Metrics representing number of bytes. Evaluates to `b`.
+     * @type {string}
+     * @const
+     * @expose
+     */
+    ByteBuffer.METRICS_BYTES = 'b';
+
+    /**
+     * Writes an UTF8 encoded string.
+     * @param {string} str String to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} if omitted.
+     * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written.
+     * @expose
+     */
+    ByteBufferPrototype.writeUTF8String = function(str, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        var k;
+        var start = offset;
+        k = utfx.calculateUTF16asUTF8(stringSource(str))[1];
+        offset += k;
+        var capacity14 = this.buffer.byteLength;
+        if (offset > capacity14)
+            this.resize((capacity14 *= 2) > offset ? capacity14 : offset);
+        offset -= k;
+        utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
+            this.view[offset++] = b;
+        }.bind(this));
+        if (relative) {
+            this.offset = offset;
+            return this;
+        }
+        return offset - start;
+    };
+
+    /**
+     * Writes an UTF8 encoded string. This is an alias of {@link ByteBuffer#writeUTF8String}.
+     * @function
+     * @param {string} str String to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} if omitted.
+     * @returns {!ByteBuffer|number} this if offset is omitted, else the actual number of bytes written.
+     * @expose
+     */
+    ByteBufferPrototype.writeString = ByteBufferPrototype.writeUTF8String;
+
+    /**
+     * Calculates the number of UTF8 characters of a string. JavaScript itself uses UTF-16, so that a string's
+     *  `length` property does not reflect its actual UTF8 size if it contains code points larger than 0xFFFF.
+     * @param {string} str String to calculate
+     * @returns {number} Number of UTF8 characters
+     * @expose
+     */
+    ByteBuffer.calculateUTF8Chars = function(str) {
+        return utfx.calculateUTF16asUTF8(stringSource(str))[0];
+    };
+
+    /**
+     * Calculates the number of UTF8 bytes of a string.
+     * @param {string} str String to calculate
+     * @returns {number} Number of UTF8 bytes
+     * @expose
+     */
+    ByteBuffer.calculateUTF8Bytes = function(str) {
+        return utfx.calculateUTF16asUTF8(stringSource(str))[1];
+    };
+
+    /**
+     * Calculates the number of UTF8 bytes of a string. This is an alias of {@link ByteBuffer.calculateUTF8Bytes}.
+     * @function
+     * @param {string} str String to calculate
+     * @returns {number} Number of UTF8 bytes
+     * @expose
+     */
+    ByteBuffer.calculateString = ByteBuffer.calculateUTF8Bytes;
+
+    /**
+     * Reads an UTF8 encoded string.
+     * @param {number} length Number of characters or bytes to read.
+     * @param {string=} metrics Metrics specifying what `length` is meant to count. Defaults to
+     *  {@link ByteBuffer.METRICS_CHARS}.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
+     *  read and the actual number of bytes read.
+     * @expose
+     */
+    ByteBufferPrototype.readUTF8String = function(length, metrics, offset) {
+        if (typeof metrics === 'number') {
+            offset = metrics;
+            metrics = undefined;
+        }
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (typeof metrics === 'undefined') metrics = ByteBuffer.METRICS_CHARS;
+        if (!this.noAssert) {
+            if (typeof length !== 'number' || length % 1 !== 0)
+                throw TypeError("Illegal length: "+length+" (not an integer)");
+            length |= 0;
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        var i = 0,
+            start = offset,
+            sd;
+        if (metrics === ByteBuffer.METRICS_CHARS) { // The same for node and the browser
+            sd = stringDestination();
+            utfx.decodeUTF8(function() {
+                return i < length && offset < this.limit ? this.view[offset++] : null;
+            }.bind(this), function(cp) {
+                ++i; utfx.UTF8toUTF16(cp, sd);
+            });
+            if (i !== length)
+                throw RangeError("Illegal range: Truncated data, "+i+" == "+length);
+            if (relative) {
+                this.offset = offset;
+                return sd();
+            } else {
+                return {
+                    "string": sd(),
+                    "length": offset - start
+                };
+            }
+        } else if (metrics === ByteBuffer.METRICS_BYTES) {
+            if (!this.noAssert) {
+                if (typeof offset !== 'number' || offset % 1 !== 0)
+                    throw TypeError("Illegal offset: "+offset+" (not an integer)");
+                offset >>>= 0;
+                if (offset < 0 || offset + length > this.buffer.byteLength)
+                    throw RangeError("Illegal offset: 0 <= "+offset+" (+"+length+") <= "+this.buffer.byteLength);
+            }
+            var k = offset + length;
+            utfx.decodeUTF8toUTF16(function() {
+                return offset < k ? this.view[offset++] : null;
+            }.bind(this), sd = stringDestination(), this.noAssert);
+            if (offset !== k)
+                throw RangeError("Illegal range: Truncated data, "+offset+" == "+k);
+            if (relative) {
+                this.offset = offset;
+                return sd();
+            } else {
+                return {
+                    'string': sd(),
+                    'length': offset - start
+                };
+            }
+        } else
+            throw TypeError("Unsupported metrics: "+metrics);
+    };
+
+    /**
+     * Reads an UTF8 encoded string. This is an alias of {@link ByteBuffer#readUTF8String}.
+     * @function
+     * @param {number} length Number of characters or bytes to read
+     * @param {number=} metrics Metrics specifying what `n` is meant to count. Defaults to
+     *  {@link ByteBuffer.METRICS_CHARS}.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
+     *  read and the actual number of bytes read.
+     * @expose
+     */
+    ByteBufferPrototype.readString = ByteBufferPrototype.readUTF8String;
+
+    // types/strings/vstring
+
+    /**
+     * Writes a length as varint32 prefixed UTF8 encoded string.
+     * @param {string} str String to write
+     * @param {number=} offset Offset to write to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer|number} `this` if `offset` is omitted, else the actual number of bytes written
+     * @expose
+     * @see ByteBuffer#writeVarint32
+     */
+    ByteBufferPrototype.writeVString = function(str, offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof str !== 'string')
+                throw TypeError("Illegal str: Not a string");
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        var start = offset,
+            k, l;
+        k = utfx.calculateUTF16asUTF8(stringSource(str), this.noAssert)[1];
+        l = ByteBuffer.calculateVarint32(k);
+        offset += l+k;
+        var capacity15 = this.buffer.byteLength;
+        if (offset > capacity15)
+            this.resize((capacity15 *= 2) > offset ? capacity15 : offset);
+        offset -= l+k;
+        offset += this.writeVarint32(k, offset);
+        utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
+            this.view[offset++] = b;
+        }.bind(this));
+        if (offset !== start+k+l)
+            throw RangeError("Illegal range: Truncated data, "+offset+" == "+(offset+k+l));
+        if (relative) {
+            this.offset = offset;
+            return this;
+        }
+        return offset - start;
+    };
+
+    /**
+     * Reads a length as varint32 prefixed UTF8 encoded string.
+     * @param {number=} offset Offset to read from. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {string|!{string: string, length: number}} The string read if offset is omitted, else the string
+     *  read and the actual number of bytes read.
+     * @expose
+     * @see ByteBuffer#readVarint32
+     */
+    ByteBufferPrototype.readVString = function(offset) {
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 1 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+1+") <= "+this.buffer.byteLength);
+        }
+        var start = offset;
+        var len = this.readVarint32(offset);
+        var str = this.readUTF8String(len['value'], ByteBuffer.METRICS_BYTES, offset += len['length']);
+        offset += str['length'];
+        if (relative) {
+            this.offset = offset;
+            return str['string'];
+        } else {
+            return {
+                'string': str['string'],
+                'length': offset - start
+            };
+        }
+    };
+
+
+    /**
+     * Appends some data to this ByteBuffer. This will overwrite any contents behind the specified offset up to the appended
+     *  data's length.
+     * @param {!ByteBuffer|!ArrayBuffer|!Uint8Array|string} source Data to append. If `source` is a ByteBuffer, its offsets
+     *  will be modified according to the performed read operation.
+     * @param {(string|number)=} encoding Encoding if `data` is a string ("base64", "hex", "binary", defaults to "utf8")
+     * @param {number=} offset Offset to append at. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     * @example A relative `<01 02>03.append(<04 05>)` will result in `<01 02 04 05>, 04 05|`
+     * @example An absolute `<01 02>03.append(04 05>, 1)` will result in `<01 04>05, 04 05|`
+     */
+    ByteBufferPrototype.append = function(source, encoding, offset) {
+        if (typeof encoding === 'number' || typeof encoding !== 'string') {
+            offset = encoding;
+            encoding = undefined;
+        }
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        if (!(source instanceof ByteBuffer))
+            source = ByteBuffer.wrap(source, encoding);
+        var length = source.limit - source.offset;
+        if (length <= 0) return this; // Nothing to append
+        offset += length;
+        var capacity16 = this.buffer.byteLength;
+        if (offset > capacity16)
+            this.resize((capacity16 *= 2) > offset ? capacity16 : offset);
+        offset -= length;
+        this.view.set(source.view.subarray(source.offset, source.limit), offset);
+        source.offset += length;
+        if (relative) this.offset += length;
+        return this;
+    };
+
+    /**
+     * Appends this ByteBuffer's contents to another ByteBuffer. This will overwrite any contents at and after the
+        specified offset up to the length of this ByteBuffer's data.
+     * @param {!ByteBuffer} target Target ByteBuffer
+     * @param {number=} offset Offset to append to. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  read if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     * @see ByteBuffer#append
+     */
+    ByteBufferPrototype.appendTo = function(target, offset) {
+        target.append(this, offset);
+        return this;
+    };
+
+    /**
+     * Enables or disables assertions of argument types and offsets. Assertions are enabled by default but you can opt to
+     *  disable them if your code already makes sure that everything is valid.
+     * @param {boolean} assert `true` to enable assertions, otherwise `false`
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.assert = function(assert) {
+        this.noAssert = !assert;
+        return this;
+    };
+
+    /**
+     * Gets the capacity of this ByteBuffer's backing buffer.
+     * @returns {number} Capacity of the backing buffer
+     * @expose
+     */
+    ByteBufferPrototype.capacity = function() {
+        return this.buffer.byteLength;
+    };
+    /**
+     * Clears this ByteBuffer's offsets by setting {@link ByteBuffer#offset} to `0` and {@link ByteBuffer#limit} to the
+     *  backing buffer's capacity. Discards {@link ByteBuffer#markedOffset}.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.clear = function() {
+        this.offset = 0;
+        this.limit = this.buffer.byteLength;
+        this.markedOffset = -1;
+        return this;
+    };
+
+    /**
+     * Creates a cloned instance of this ByteBuffer, preset with this ByteBuffer's values for {@link ByteBuffer#offset},
+     *  {@link ByteBuffer#markedOffset} and {@link ByteBuffer#limit}.
+     * @param {boolean=} copy Whether to copy the backing buffer or to return another view on the same, defaults to `false`
+     * @returns {!ByteBuffer} Cloned instance
+     * @expose
+     */
+    ByteBufferPrototype.clone = function(copy) {
+        var bb = new ByteBuffer(0, this.littleEndian, this.noAssert);
+        if (copy) {
+            bb.buffer = new ArrayBuffer(this.buffer.byteLength);
+            bb.view = new Uint8Array(bb.buffer);
+        } else {
+            bb.buffer = this.buffer;
+            bb.view = this.view;
+        }
+        bb.offset = this.offset;
+        bb.markedOffset = this.markedOffset;
+        bb.limit = this.limit;
+        return bb;
+    };
+
+    /**
+     * Compacts this ByteBuffer to be backed by a {@link ByteBuffer#buffer} of its contents' length. Contents are the bytes
+     *  between {@link ByteBuffer#offset} and {@link ByteBuffer#limit}. Will set `offset = 0` and `limit = capacity` and
+     *  adapt {@link ByteBuffer#markedOffset} to the same relative position if set.
+     * @param {number=} begin Offset to start at, defaults to {@link ByteBuffer#offset}
+     * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.compact = function(begin, end) {
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        if (begin === 0 && end === this.buffer.byteLength)
+            return this; // Already compacted
+        var len = end - begin;
+        if (len === 0) {
+            this.buffer = EMPTY_BUFFER;
+            this.view = null;
+            if (this.markedOffset >= 0) this.markedOffset -= begin;
+            this.offset = 0;
+            this.limit = 0;
+            return this;
+        }
+        var buffer = new ArrayBuffer(len);
+        var view = new Uint8Array(buffer);
+        view.set(this.view.subarray(begin, end));
+        this.buffer = buffer;
+        this.view = view;
+        if (this.markedOffset >= 0) this.markedOffset -= begin;
+        this.offset = 0;
+        this.limit = len;
+        return this;
+    };
+
+    /**
+     * Creates a copy of this ByteBuffer's contents. Contents are the bytes between {@link ByteBuffer#offset} and
+     *  {@link ByteBuffer#limit}.
+     * @param {number=} begin Begin offset, defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
+     * @returns {!ByteBuffer} Copy
+     * @expose
+     */
+    ByteBufferPrototype.copy = function(begin, end) {
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        if (begin === end)
+            return new ByteBuffer(0, this.littleEndian, this.noAssert);
+        var capacity = end - begin,
+            bb = new ByteBuffer(capacity, this.littleEndian, this.noAssert);
+        bb.offset = 0;
+        bb.limit = capacity;
+        if (bb.markedOffset >= 0) bb.markedOffset -= begin;
+        this.copyTo(bb, 0, begin, end);
+        return bb;
+    };
+
+    /**
+     * Copies this ByteBuffer's contents to another ByteBuffer. Contents are the bytes between {@link ByteBuffer#offset} and
+     *  {@link ByteBuffer#limit}.
+     * @param {!ByteBuffer} target Target ByteBuffer
+     * @param {number=} targetOffset Offset to copy to. Will use and increase the target's {@link ByteBuffer#offset}
+     *  by the number of bytes copied if omitted.
+     * @param {number=} sourceOffset Offset to start copying from. Will use and increase {@link ByteBuffer#offset} by the
+     *  number of bytes copied if omitted.
+     * @param {number=} sourceLimit Offset to end copying from, defaults to {@link ByteBuffer#limit}
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.copyTo = function(target, targetOffset, sourceOffset, sourceLimit) {
+        var relative,
+            targetRelative;
+        if (!this.noAssert) {
+            if (!ByteBuffer.isByteBuffer(target))
+                throw TypeError("Illegal target: Not a ByteBuffer");
+        }
+        targetOffset = (targetRelative = typeof targetOffset === 'undefined') ? target.offset : targetOffset | 0;
+        sourceOffset = (relative = typeof sourceOffset === 'undefined') ? this.offset : sourceOffset | 0;
+        sourceLimit = typeof sourceLimit === 'undefined' ? this.limit : sourceLimit | 0;
+
+        if (targetOffset < 0 || targetOffset > target.buffer.byteLength)
+            throw RangeError("Illegal target range: 0 <= "+targetOffset+" <= "+target.buffer.byteLength);
+        if (sourceOffset < 0 || sourceLimit > this.buffer.byteLength)
+            throw RangeError("Illegal source range: 0 <= "+sourceOffset+" <= "+this.buffer.byteLength);
+
+        var len = sourceLimit - sourceOffset;
+        if (len === 0)
+            return target; // Nothing to copy
+
+        target.ensureCapacity(targetOffset + len);
+
+        target.view.set(this.view.subarray(sourceOffset, sourceLimit), targetOffset);
+
+        if (relative) this.offset += len;
+        if (targetRelative) target.offset += len;
+
+        return this;
+    };
+
+    /**
+     * Makes sure that this ByteBuffer is backed by a {@link ByteBuffer#buffer} of at least the specified capacity. If the
+     *  current capacity is exceeded, it will be doubled. If double the current capacity is less than the required capacity,
+     *  the required capacity will be used instead.
+     * @param {number} capacity Required capacity
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.ensureCapacity = function(capacity) {
+        var current = this.buffer.byteLength;
+        if (current < capacity)
+            return this.resize((current *= 2) > capacity ? current : capacity);
+        return this;
+    };
+
+    /**
+     * Overwrites this ByteBuffer's contents with the specified value. Contents are the bytes between
+     *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}.
+     * @param {number|string} value Byte value to fill with. If given as a string, the first character is used.
+     * @param {number=} begin Begin offset. Will use and increase {@link ByteBuffer#offset} by the number of bytes
+     *  written if omitted. defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
+     * @returns {!ByteBuffer} this
+     * @expose
+     * @example `someByteBuffer.clear().fill(0)` fills the entire backing buffer with zeroes
+     */
+    ByteBufferPrototype.fill = function(value, begin, end) {
+        var relative = typeof begin === 'undefined';
+        if (relative) begin = this.offset;
+        if (typeof value === 'string' && value.length > 0)
+            value = value.charCodeAt(0);
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof value !== 'number' || value % 1 !== 0)
+                throw TypeError("Illegal value: "+value+" (not an integer)");
+            value |= 0;
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        if (begin >= end)
+            return this; // Nothing to fill
+        while (begin < end) this.view[begin++] = value;
+        if (relative) this.offset = begin;
+        return this;
+    };
+
+    /**
+     * Makes this ByteBuffer ready for a new sequence of write or relative read operations. Sets `limit = offset` and
+     *  `offset = 0`. Make sure always to flip a ByteBuffer when all relative read or write operations are complete.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.flip = function() {
+        this.limit = this.offset;
+        this.offset = 0;
+        return this;
+    };
+    /**
+     * Marks an offset on this ByteBuffer to be used later.
+     * @param {number=} offset Offset to mark. Defaults to {@link ByteBuffer#offset}.
+     * @returns {!ByteBuffer} this
+     * @throws {TypeError} If `offset` is not a valid number
+     * @throws {RangeError} If `offset` is out of bounds
+     * @see ByteBuffer#reset
+     * @expose
+     */
+    ByteBufferPrototype.mark = function(offset) {
+        offset = typeof offset === 'undefined' ? this.offset : offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        this.markedOffset = offset;
+        return this;
+    };
+    /**
+     * Sets the byte order.
+     * @param {boolean} littleEndian `true` for little endian byte order, `false` for big endian
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.order = function(littleEndian) {
+        if (!this.noAssert) {
+            if (typeof littleEndian !== 'boolean')
+                throw TypeError("Illegal littleEndian: Not a boolean");
+        }
+        this.littleEndian = !!littleEndian;
+        return this;
+    };
+
+    /**
+     * Switches (to) little endian byte order.
+     * @param {boolean=} littleEndian Defaults to `true`, otherwise uses big endian
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.LE = function(littleEndian) {
+        this.littleEndian = typeof littleEndian !== 'undefined' ? !!littleEndian : true;
+        return this;
+    };
+
+    /**
+     * Switches (to) big endian byte order.
+     * @param {boolean=} bigEndian Defaults to `true`, otherwise uses little endian
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.BE = function(bigEndian) {
+        this.littleEndian = typeof bigEndian !== 'undefined' ? !bigEndian : false;
+        return this;
+    };
+    /**
+     * Prepends some data to this ByteBuffer. This will overwrite any contents before the specified offset up to the
+     *  prepended data's length. If there is not enough space available before the specified `offset`, the backing buffer
+     *  will be resized and its contents moved accordingly.
+     * @param {!ByteBuffer|string|!ArrayBuffer} source Data to prepend. If `source` is a ByteBuffer, its offset will be
+     *  modified according to the performed read operation.
+     * @param {(string|number)=} encoding Encoding if `data` is a string ("base64", "hex", "binary", defaults to "utf8")
+     * @param {number=} offset Offset to prepend at. Will use and decrease {@link ByteBuffer#offset} by the number of bytes
+     *  prepended if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     * @example A relative `00<01 02 03>.prepend(<04 05>)` results in `<04 05 01 02 03>, 04 05|`
+     * @example An absolute `00<01 02 03>.prepend(<04 05>, 2)` results in `04<05 02 03>, 04 05|`
+     */
+    ByteBufferPrototype.prepend = function(source, encoding, offset) {
+        if (typeof encoding === 'number' || typeof encoding !== 'string') {
+            offset = encoding;
+            encoding = undefined;
+        }
+        var relative = typeof offset === 'undefined';
+        if (relative) offset = this.offset;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: "+offset+" (not an integer)");
+            offset >>>= 0;
+            if (offset < 0 || offset + 0 > this.buffer.byteLength)
+                throw RangeError("Illegal offset: 0 <= "+offset+" (+"+0+") <= "+this.buffer.byteLength);
+        }
+        if (!(source instanceof ByteBuffer))
+            source = ByteBuffer.wrap(source, encoding);
+        var len = source.limit - source.offset;
+        if (len <= 0) return this; // Nothing to prepend
+        var diff = len - offset;
+        if (diff > 0) { // Not enough space before offset, so resize + move
+            var buffer = new ArrayBuffer(this.buffer.byteLength + diff);
+            var view = new Uint8Array(buffer);
+            view.set(this.view.subarray(offset, this.buffer.byteLength), len);
+            this.buffer = buffer;
+            this.view = view;
+            this.offset += diff;
+            if (this.markedOffset >= 0) this.markedOffset += diff;
+            this.limit += diff;
+            offset += diff;
+        } else {
+            var arrayView = new Uint8Array(this.buffer);
+        }
+        this.view.set(source.view.subarray(source.offset, source.limit), offset - len);
+
+        source.offset = source.limit;
+        if (relative)
+            this.offset -= len;
+        return this;
+    };
+
+    /**
+     * Prepends this ByteBuffer to another ByteBuffer. This will overwrite any contents before the specified offset up to the
+     *  prepended data's length. If there is not enough space available before the specified `offset`, the backing buffer
+     *  will be resized and its contents moved accordingly.
+     * @param {!ByteBuffer} target Target ByteBuffer
+     * @param {number=} offset Offset to prepend at. Will use and decrease {@link ByteBuffer#offset} by the number of bytes
+     *  prepended if omitted.
+     * @returns {!ByteBuffer} this
+     * @expose
+     * @see ByteBuffer#prepend
+     */
+    ByteBufferPrototype.prependTo = function(target, offset) {
+        target.prepend(this, offset);
+        return this;
+    };
+    /**
+     * Prints debug information about this ByteBuffer's contents.
+     * @param {function(string)=} out Output function to call, defaults to console.log
+     * @expose
+     */
+    ByteBufferPrototype.printDebug = function(out) {
+        if (typeof out !== 'function') out = console.log.bind(console);
+        out(
+            this.toString()+"\n"+
+            "-------------------------------------------------------------------\n"+
+            this.toDebug(/* columns */ true)
+        );
+    };
+
+    /**
+     * Gets the number of remaining readable bytes. Contents are the bytes between {@link ByteBuffer#offset} and
+     *  {@link ByteBuffer#limit}, so this returns `limit - offset`.
+     * @returns {number} Remaining readable bytes. May be negative if `offset > limit`.
+     * @expose
+     */
+    ByteBufferPrototype.remaining = function() {
+        return this.limit - this.offset;
+    };
+    /**
+     * Resets this ByteBuffer's {@link ByteBuffer#offset}. If an offset has been marked through {@link ByteBuffer#mark}
+     *  before, `offset` will be set to {@link ByteBuffer#markedOffset}, which will then be discarded. If no offset has been
+     *  marked, sets `offset = 0`.
+     * @returns {!ByteBuffer} this
+     * @see ByteBuffer#mark
+     * @expose
+     */
+    ByteBufferPrototype.reset = function() {
+        if (this.markedOffset >= 0) {
+            this.offset = this.markedOffset;
+            this.markedOffset = -1;
+        } else {
+            this.offset = 0;
+        }
+        return this;
+    };
+    /**
+     * Resizes this ByteBuffer to be backed by a buffer of at least the given capacity. Will do nothing if already that
+     *  large or larger.
+     * @param {number} capacity Capacity required
+     * @returns {!ByteBuffer} this
+     * @throws {TypeError} If `capacity` is not a number
+     * @throws {RangeError} If `capacity < 0`
+     * @expose
+     */
+    ByteBufferPrototype.resize = function(capacity) {
+        if (!this.noAssert) {
+            if (typeof capacity !== 'number' || capacity % 1 !== 0)
+                throw TypeError("Illegal capacity: "+capacity+" (not an integer)");
+            capacity |= 0;
+            if (capacity < 0)
+                throw RangeError("Illegal capacity: 0 <= "+capacity);
+        }
+        if (this.buffer.byteLength < capacity) {
+            var buffer = new ArrayBuffer(capacity);
+            var view = new Uint8Array(buffer);
+            view.set(this.view);
+            this.buffer = buffer;
+            this.view = view;
+        }
+        return this;
+    };
+    /**
+     * Reverses this ByteBuffer's contents.
+     * @param {number=} begin Offset to start at, defaults to {@link ByteBuffer#offset}
+     * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.reverse = function(begin, end) {
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        if (begin === end)
+            return this; // Nothing to reverse
+        Array.prototype.reverse.call(this.view.subarray(begin, end));
+        return this;
+    };
+    /**
+     * Skips the next `length` bytes. This will just advance
+     * @param {number} length Number of bytes to skip. May also be negative to move the offset back.
+     * @returns {!ByteBuffer} this
+     * @expose
+     */
+    ByteBufferPrototype.skip = function(length) {
+        if (!this.noAssert) {
+            if (typeof length !== 'number' || length % 1 !== 0)
+                throw TypeError("Illegal length: "+length+" (not an integer)");
+            length |= 0;
+        }
+        var offset = this.offset + length;
+        if (!this.noAssert) {
+            if (offset < 0 || offset > this.buffer.byteLength)
+                throw RangeError("Illegal length: 0 <= "+this.offset+" + "+length+" <= "+this.buffer.byteLength);
+        }
+        this.offset = offset;
+        return this;
+    };
+
+    /**
+     * Slices this ByteBuffer by creating a cloned instance with `offset = begin` and `limit = end`.
+     * @param {number=} begin Begin offset, defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end End offset, defaults to {@link ByteBuffer#limit}.
+     * @returns {!ByteBuffer} Clone of this ByteBuffer with slicing applied, backed by the same {@link ByteBuffer#buffer}
+     * @expose
+     */
+    ByteBufferPrototype.slice = function(begin, end) {
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        var bb = this.clone();
+        bb.offset = begin;
+        bb.limit = end;
+        return bb;
+    };
+    /**
+     * Returns a copy of the backing buffer that contains this ByteBuffer's contents. Contents are the bytes between
+     *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}.
+     * @param {boolean=} forceCopy If `true` returns a copy, otherwise returns a view referencing the same memory if
+     *  possible. Defaults to `false`
+     * @returns {!ArrayBuffer} Contents as an ArrayBuffer
+     * @expose
+     */
+    ByteBufferPrototype.toBuffer = function(forceCopy) {
+        var offset = this.offset,
+            limit = this.limit;
+        if (!this.noAssert) {
+            if (typeof offset !== 'number' || offset % 1 !== 0)
+                throw TypeError("Illegal offset: Not an integer");
+            offset >>>= 0;
+            if (typeof limit !== 'number' || limit % 1 !== 0)
+                throw TypeError("Illegal limit: Not an integer");
+            limit >>>= 0;
+            if (offset < 0 || offset > limit || limit > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+offset+" <= "+limit+" <= "+this.buffer.byteLength);
+        }
+        // NOTE: It's not possible to have another ArrayBuffer reference the same memory as the backing buffer. This is
+        // possible with Uint8Array#subarray only, but we have to return an ArrayBuffer by contract. So:
+        if (!forceCopy && offset === 0 && limit === this.buffer.byteLength)
+            return this.buffer;
+        if (offset === limit)
+            return EMPTY_BUFFER;
+        var buffer = new ArrayBuffer(limit - offset);
+        new Uint8Array(buffer).set(new Uint8Array(this.buffer).subarray(offset, limit), 0);
+        return buffer;
+    };
+
+    /**
+     * Returns a raw buffer compacted to contain this ByteBuffer's contents. Contents are the bytes between
+     *  {@link ByteBuffer#offset} and {@link ByteBuffer#limit}. This is an alias of {@link ByteBuffer#toBuffer}.
+     * @function
+     * @param {boolean=} forceCopy If `true` returns a copy, otherwise returns a view referencing the same memory.
+     *  Defaults to `false`
+     * @returns {!ArrayBuffer} Contents as an ArrayBuffer
+     * @expose
+     */
+    ByteBufferPrototype.toArrayBuffer = ByteBufferPrototype.toBuffer;
+
+    /**
+     * Converts the ByteBuffer's contents to a string.
+     * @param {string=} encoding Output encoding. Returns an informative string representation if omitted but also allows
+     *  direct conversion to "utf8", "hex", "base64" and "binary" encoding. "debug" returns a hex representation with
+     *  highlighted offsets.
+     * @param {number=} begin Offset to begin at, defaults to {@link ByteBuffer#offset}
+     * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}
+     * @returns {string} String representation
+     * @throws {Error} If `encoding` is invalid
+     * @expose
+     */
+    ByteBufferPrototype.toString = function(encoding, begin, end) {
+        if (typeof encoding === 'undefined')
+            return "ByteBufferAB(offset="+this.offset+",markedOffset="+this.markedOffset+",limit="+this.limit+",capacity="+this.capacity()+")";
+        if (typeof encoding === 'number')
+            encoding = "utf8",
+            begin = encoding,
+            end = begin;
+        switch (encoding) {
+            case "utf8":
+                return this.toUTF8(begin, end);
+            case "base64":
+                return this.toBase64(begin, end);
+            case "hex":
+                return this.toHex(begin, end);
+            case "binary":
+                return this.toBinary(begin, end);
+            case "debug":
+                return this.toDebug();
+            case "columns":
+                return this.toColumns();
+            default:
+                throw Error("Unsupported encoding: "+encoding);
+        }
+    };
+
+    // lxiv-embeddable
+
+    /**
+     * lxiv-embeddable (c) 2014 Daniel Wirtz <dcode@dcode.io>
+     * Released under the Apache License, Version 2.0
+     * see: https://github.com/dcodeIO/lxiv for details
+     */
+    var lxiv = function() {
+        "use strict";
+
+        /**
+         * lxiv namespace.
+         * @type {!Object.<string,*>}
+         * @exports lxiv
+         */
+        var lxiv = {};
+
+        /**
+         * Character codes for output.
+         * @type {!Array.<number>}
+         * @inner
+         */
+        var aout = [
+            65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80,
+            81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 97, 98, 99, 100, 101, 102,
+            103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118,
+            119, 120, 121, 122, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 43, 47
+        ];
+
+        /**
+         * Character codes for input.
+         * @type {!Array.<number>}
+         * @inner
+         */
+        var ain = [];
+        for (var i=0, k=aout.length; i<k; ++i)
+            ain[aout[i]] = i;
+
+        /**
+         * Encodes bytes to base64 char codes.
+         * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if
+         *  there are no more bytes left.
+         * @param {!function(number)} dst Characters destination as a function successively called with each encoded char
+         *  code.
+         */
+        lxiv.encode = function(src, dst) {
+            var b, t;
+            while ((b = src()) !== null) {
+                dst(aout[(b>>2)&0x3f]);
+                t = (b&0x3)<<4;
+                if ((b = src()) !== null) {
+                    t |= (b>>4)&0xf;
+                    dst(aout[(t|((b>>4)&0xf))&0x3f]);
+                    t = (b&0xf)<<2;
+                    if ((b = src()) !== null)
+                        dst(aout[(t|((b>>6)&0x3))&0x3f]),
+                        dst(aout[b&0x3f]);
+                    else
+                        dst(aout[t&0x3f]),
+                        dst(61);
+                } else
+                    dst(aout[t&0x3f]),
+                    dst(61),
+                    dst(61);
+            }
+        };
+
+        /**
+         * Decodes base64 char codes to bytes.
+         * @param {!function():number|null} src Characters source as a function returning the next char code respectively
+         *  `null` if there are no more characters left.
+         * @param {!function(number)} dst Bytes destination as a function successively called with the next byte.
+         * @throws {Error} If a character code is invalid
+         */
+        lxiv.decode = function(src, dst) {
+            var c, t1, t2;
+            function fail(c) {
+                throw Error("Illegal character code: "+c);
+            }
+            while ((c = src()) !== null) {
+                t1 = ain[c];
+                if (typeof t1 === 'undefined') fail(c);
+                if ((c = src()) !== null) {
+                    t2 = ain[c];
+                    if (typeof t2 === 'undefined') fail(c);
+                    dst((t1<<2)>>>0|(t2&0x30)>>4);
+                    if ((c = src()) !== null) {
+                        t1 = ain[c];
+                        if (typeof t1 === 'undefined')
+                            if (c === 61) break; else fail(c);
+                        dst(((t2&0xf)<<4)>>>0|(t1&0x3c)>>2);
+                        if ((c = src()) !== null) {
+                            t2 = ain[c];
+                            if (typeof t2 === 'undefined')
+                                if (c === 61) break; else fail(c);
+                            dst(((t1&0x3)<<6)>>>0|t2);
+                        }
+                    }
+                }
+            }
+        };
+
+        /**
+         * Tests if a string is valid base64.
+         * @param {string} str String to test
+         * @returns {boolean} `true` if valid, otherwise `false`
+         */
+        lxiv.test = function(str) {
+            return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(str);
+        };
+
+        return lxiv;
+    }();
+
+    // encodings/base64
+
+    /**
+     * Encodes this ByteBuffer's contents to a base64 encoded string.
+     * @param {number=} begin Offset to begin at, defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end Offset to end at, defaults to {@link ByteBuffer#limit}.
+     * @returns {string} Base64 encoded string
+     * @throws {RangeError} If `begin` or `end` is out of bounds
+     * @expose
+     */
+    ByteBufferPrototype.toBase64 = function(begin, end) {
+        if (typeof begin === 'undefined')
+            begin = this.offset;
+        if (typeof end === 'undefined')
+            end = this.limit;
+        begin = begin | 0; end = end | 0;
+        if (begin < 0 || end > this.capacity || begin > end)
+            throw RangeError("begin, end");
+        var sd; lxiv.encode(function() {
+            return begin < end ? this.view[begin++] : null;
+        }.bind(this), sd = stringDestination());
+        return sd();
+    };
+
+    /**
+     * Decodes a base64 encoded string to a ByteBuffer.
+     * @param {string} str String to decode
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @returns {!ByteBuffer} ByteBuffer
+     * @expose
+     */
+    ByteBuffer.fromBase64 = function(str, littleEndian) {
+        if (typeof str !== 'string')
+            throw TypeError("str");
+        var bb = new ByteBuffer(str.length/4*3, littleEndian),
+            i = 0;
+        lxiv.decode(stringSource(str), function(b) {
+            bb.view[i++] = b;
+        });
+        bb.limit = i;
+        return bb;
+    };
+
+    /**
+     * Encodes a binary string to base64 like `window.btoa` does.
+     * @param {string} str Binary string
+     * @returns {string} Base64 encoded string
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.btoa
+     * @expose
+     */
+    ByteBuffer.btoa = function(str) {
+        return ByteBuffer.fromBinary(str).toBase64();
+    };
+
+    /**
+     * Decodes a base64 encoded string to binary like `window.atob` does.
+     * @param {string} b64 Base64 encoded string
+     * @returns {string} Binary string
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/Window.atob
+     * @expose
+     */
+    ByteBuffer.atob = function(b64) {
+        return ByteBuffer.fromBase64(b64).toBinary();
+    };
+
+    // encodings/binary
+
+    /**
+     * Encodes this ByteBuffer to a binary encoded string, that is using only characters 0x00-0xFF as bytes.
+     * @param {number=} begin Offset to begin at. Defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end Offset to end at. Defaults to {@link ByteBuffer#limit}.
+     * @returns {string} Binary encoded string
+     * @throws {RangeError} If `offset > limit`
+     * @expose
+     */
+    ByteBufferPrototype.toBinary = function(begin, end) {
+        if (typeof begin === 'undefined')
+            begin = this.offset;
+        if (typeof end === 'undefined')
+            end = this.limit;
+        begin |= 0; end |= 0;
+        if (begin < 0 || end > this.capacity() || begin > end)
+            throw RangeError("begin, end");
+        if (begin === end)
+            return "";
+        var chars = [],
+            parts = [];
+        while (begin < end) {
+            chars.push(this.view[begin++]);
+            if (chars.length >= 1024)
+                parts.push(String.fromCharCode.apply(String, chars)),
+                chars = [];
+        }
+        return parts.join('') + String.fromCharCode.apply(String, chars);
+    };
+
+    /**
+     * Decodes a binary encoded string, that is using only characters 0x00-0xFF as bytes, to a ByteBuffer.
+     * @param {string} str String to decode
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @returns {!ByteBuffer} ByteBuffer
+     * @expose
+     */
+    ByteBuffer.fromBinary = function(str, littleEndian) {
+        if (typeof str !== 'string')
+            throw TypeError("str");
+        var i = 0,
+            k = str.length,
+            charCode,
+            bb = new ByteBuffer(k, littleEndian);
+        while (i<k) {
+            charCode = str.charCodeAt(i);
+            if (charCode > 0xff)
+                throw RangeError("illegal char code: "+charCode);
+            bb.view[i++] = charCode;
+        }
+        bb.limit = k;
+        return bb;
+    };
+
+    // encodings/debug
+
+    /**
+     * Encodes this ByteBuffer to a hex encoded string with marked offsets. Offset symbols are:
+     * * `<` : offset,
+     * * `'` : markedOffset,
+     * * `>` : limit,
+     * * `|` : offset and limit,
+     * * `[` : offset and markedOffset,
+     * * `]` : markedOffset and limit,
+     * * `!` : offset, markedOffset and limit
+     * @param {boolean=} columns If `true` returns two columns hex + ascii, defaults to `false`
+     * @returns {string|!Array.<string>} Debug string or array of lines if `asArray = true`
+     * @expose
+     * @example `>00'01 02<03` contains four bytes with `limit=0, markedOffset=1, offset=3`
+     * @example `00[01 02 03>` contains four bytes with `offset=markedOffset=1, limit=4`
+     * @example `00|01 02 03` contains four bytes with `offset=limit=1, markedOffset=-1`
+     * @example `|` contains zero bytes with `offset=limit=0, markedOffset=-1`
+     */
+    ByteBufferPrototype.toDebug = function(columns) {
+        var i = -1,
+            k = this.buffer.byteLength,
+            b,
+            hex = "",
+            asc = "",
+            out = "";
+        while (i<k) {
+            if (i !== -1) {
+                b = this.view[i];
+                if (b < 0x10) hex += "0"+b.toString(16).toUpperCase();
+                else hex += b.toString(16).toUpperCase();
+                if (columns)
+                    asc += b > 32 && b < 127 ? String.fromCharCode(b) : '.';
+            }
+            ++i;
+            if (columns) {
+                if (i > 0 && i % 16 === 0 && i !== k) {
+                    while (hex.length < 3*16+3) hex += " ";
+                    out += hex+asc+"\n";
+                    hex = asc = "";
+                }
+            }
+            if (i === this.offset && i === this.limit)
+                hex += i === this.markedOffset ? "!" : "|";
+            else if (i === this.offset)
+                hex += i === this.markedOffset ? "[" : "<";
+            else if (i === this.limit)
+                hex += i === this.markedOffset ? "]" : ">";
+            else
+                hex += i === this.markedOffset ? "'" : (columns || (i !== 0 && i !== k) ? " " : "");
+        }
+        if (columns && hex !== " ") {
+            while (hex.length < 3*16+3)
+                hex += " ";
+            out += hex + asc + "\n";
+        }
+        return columns ? out : hex;
+    };
+
+    /**
+     * Decodes a hex encoded string with marked offsets to a ByteBuffer.
+     * @param {string} str Debug string to decode (not be generated with `columns = true`)
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer} ByteBuffer
+     * @expose
+     * @see ByteBuffer#toDebug
+     */
+    ByteBuffer.fromDebug = function(str, littleEndian, noAssert) {
+        var k = str.length,
+            bb = new ByteBuffer(((k+1)/3)|0, littleEndian, noAssert);
+        var i = 0, j = 0, ch, b,
+            rs = false, // Require symbol next
+            ho = false, hm = false, hl = false, // Already has offset (ho), markedOffset (hm), limit (hl)?
+            fail = false;
+        while (i<k) {
+            switch (ch = str.charAt(i++)) {
+                case '!':
+                    if (!noAssert) {
+                        if (ho || hm || hl) {
+                            fail = true;
+                            break;
+                        }
+                        ho = hm = hl = true;
+                    }
+                    bb.offset = bb.markedOffset = bb.limit = j;
+                    rs = false;
+                    break;
+                case '|':
+                    if (!noAssert) {
+                        if (ho || hl) {
+                            fail = true;
+                            break;
+                        }
+                        ho = hl = true;
+                    }
+                    bb.offset = bb.limit = j;
+                    rs = false;
+                    break;
+                case '[':
+                    if (!noAssert) {
+                        if (ho || hm) {
+                            fail = true;
+                            break;
+                        }
+                        ho = hm = true;
+                    }
+                    bb.offset = bb.markedOffset = j;
+                    rs = false;
+                    break;
+                case '<':
+                    if (!noAssert) {
+                        if (ho) {
+                            fail = true;
+                            break;
+                        }
+                        ho = true;
+                    }
+                    bb.offset = j;
+                    rs = false;
+                    break;
+                case ']':
+                    if (!noAssert) {
+                        if (hl || hm) {
+                            fail = true;
+                            break;
+                        }
+                        hl = hm = true;
+                    }
+                    bb.limit = bb.markedOffset = j;
+                    rs = false;
+                    break;
+                case '>':
+                    if (!noAssert) {
+                        if (hl) {
+                            fail = true;
+                            break;
+                        }
+                        hl = true;
+                    }
+                    bb.limit = j;
+                    rs = false;
+                    break;
+                case "'":
+                    if (!noAssert) {
+                        if (hm) {
+                            fail = true;
+                            break;
+                        }
+                        hm = true;
+                    }
+                    bb.markedOffset = j;
+                    rs = false;
+                    break;
+                case ' ':
+                    rs = false;
+                    break;
+                default:
+                    if (!noAssert) {
+                        if (rs) {
+                            fail = true;
+                            break;
+                        }
+                    }
+                    b = parseInt(ch+str.charAt(i++), 16);
+                    if (!noAssert) {
+                        if (isNaN(b) || b < 0 || b > 255)
+                            throw TypeError("Illegal str: Not a debug encoded string");
+                    }
+                    bb.view[j++] = b;
+                    rs = true;
+            }
+            if (fail)
+                throw TypeError("Illegal str: Invalid symbol at "+i);
+        }
+        if (!noAssert) {
+            if (!ho || !hl)
+                throw TypeError("Illegal str: Missing offset or limit");
+            if (j<bb.buffer.byteLength)
+                throw TypeError("Illegal str: Not a debug encoded string (is it hex?) "+j+" < "+k);
+        }
+        return bb;
+    };
+
+    // encodings/hex
+
+    /**
+     * Encodes this ByteBuffer's contents to a hex encoded string.
+     * @param {number=} begin Offset to begin at. Defaults to {@link ByteBuffer#offset}.
+     * @param {number=} end Offset to end at. Defaults to {@link ByteBuffer#limit}.
+     * @returns {string} Hex encoded string
+     * @expose
+     */
+    ByteBufferPrototype.toHex = function(begin, end) {
+        begin = typeof begin === 'undefined' ? this.offset : begin;
+        end = typeof end === 'undefined' ? this.limit : end;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        var out = new Array(end - begin),
+            b;
+        while (begin < end) {
+            b = this.view[begin++];
+            if (b < 0x10)
+                out.push("0", b.toString(16));
+            else out.push(b.toString(16));
+        }
+        return out.join('');
+    };
+
+    /**
+     * Decodes a hex encoded string to a ByteBuffer.
+     * @param {string} str String to decode
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer} ByteBuffer
+     * @expose
+     */
+    ByteBuffer.fromHex = function(str, littleEndian, noAssert) {
+        if (!noAssert) {
+            if (typeof str !== 'string')
+                throw TypeError("Illegal str: Not a string");
+            if (str.length % 2 !== 0)
+                throw TypeError("Illegal str: Length not a multiple of 2");
+        }
+        var k = str.length,
+            bb = new ByteBuffer((k / 2) | 0, littleEndian),
+            b;
+        for (var i=0, j=0; i<k; i+=2) {
+            b = parseInt(str.substring(i, i+2), 16);
+            if (!noAssert)
+                if (!isFinite(b) || b < 0 || b > 255)
+                    throw TypeError("Illegal str: Contains non-hex characters");
+            bb.view[j++] = b;
+        }
+        bb.limit = j;
+        return bb;
+    };
+
+    // utfx-embeddable
+
+    /**
+     * utfx-embeddable (c) 2014 Daniel Wirtz <dcode@dcode.io>
+     * Released under the Apache License, Version 2.0
+     * see: https://github.com/dcodeIO/utfx for details
+     */
+    var utfx = function() {
+        "use strict";
+
+        /**
+         * utfx namespace.
+         * @inner
+         * @type {!Object.<string,*>}
+         */
+        var utfx = {};
+
+        /**
+         * Maximum valid code point.
+         * @type {number}
+         * @const
+         */
+        utfx.MAX_CODEPOINT = 0x10FFFF;
+
+        /**
+         * Encodes UTF8 code points to UTF8 bytes.
+         * @param {(!function():number|null) | number} src Code points source, either as a function returning the next code point
+         *  respectively `null` if there are no more code points left or a single numeric code point.
+         * @param {!function(number)} dst Bytes destination as a function successively called with the next byte
+         */
+        utfx.encodeUTF8 = function(src, dst) {
+            var cp = null;
+            if (typeof src === 'number')
+                cp = src,
+                src = function() { return null; };
+            while (cp !== null || (cp = src()) !== null) {
+                if (cp < 0x80)
+                    dst(cp&0x7F);
+                else if (cp < 0x800)
+                    dst(((cp>>6)&0x1F)|0xC0),
+                    dst((cp&0x3F)|0x80);
+                else if (cp < 0x10000)
+                    dst(((cp>>12)&0x0F)|0xE0),
+                    dst(((cp>>6)&0x3F)|0x80),
+                    dst((cp&0x3F)|0x80);
+                else
+                    dst(((cp>>18)&0x07)|0xF0),
+                    dst(((cp>>12)&0x3F)|0x80),
+                    dst(((cp>>6)&0x3F)|0x80),
+                    dst((cp&0x3F)|0x80);
+                cp = null;
+            }
+        };
+
+        /**
+         * Decodes UTF8 bytes to UTF8 code points.
+         * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if there
+         *  are no more bytes left.
+         * @param {!function(number)} dst Code points destination as a function successively called with each decoded code point.
+         * @throws {RangeError} If a starting byte is invalid in UTF8
+         * @throws {Error} If the last sequence is truncated. Has an array property `bytes` holding the
+         *  remaining bytes.
+         */
+        utfx.decodeUTF8 = function(src, dst) {
+            var a, b, c, d, fail = function(b) {
+                b = b.slice(0, b.indexOf(null));
+                var err = Error(b.toString());
+                err.name = "TruncatedError";
+                err['bytes'] = b;
+                throw err;
+            };
+            while ((a = src()) !== null) {
+                if ((a&0x80) === 0)
+                    dst(a);
+                else if ((a&0xE0) === 0xC0)
+                    ((b = src()) === null) && fail([a, b]),
+                    dst(((a&0x1F)<<6) | (b&0x3F));
+                else if ((a&0xF0) === 0xE0)
+                    ((b=src()) === null || (c=src()) === null) && fail([a, b, c]),
+                    dst(((a&0x0F)<<12) | ((b&0x3F)<<6) | (c&0x3F));
+                else if ((a&0xF8) === 0xF0)
+                    ((b=src()) === null || (c=src()) === null || (d=src()) === null) && fail([a, b, c ,d]),
+                    dst(((a&0x07)<<18) | ((b&0x3F)<<12) | ((c&0x3F)<<6) | (d&0x3F));
+                else throw RangeError("Illegal starting byte: "+a);
+            }
+        };
+
+        /**
+         * Converts UTF16 characters to UTF8 code points.
+         * @param {!function():number|null} src Characters source as a function returning the next char code respectively
+         *  `null` if there are no more characters left.
+         * @param {!function(number)} dst Code points destination as a function successively called with each converted code
+         *  point.
+         */
+        utfx.UTF16toUTF8 = function(src, dst) {
+            var c1, c2 = null;
+            while (true) {
+                if ((c1 = c2 !== null ? c2 : src()) === null)
+                    break;
+                if (c1 >= 0xD800 && c1 <= 0xDFFF) {
+                    if ((c2 = src()) !== null) {
+                        if (c2 >= 0xDC00 && c2 <= 0xDFFF) {
+                            dst((c1-0xD800)*0x400+c2-0xDC00+0x10000);
+                            c2 = null; continue;
+                        }
+                    }
+                }
+                dst(c1);
+            }
+            if (c2 !== null) dst(c2);
+        };
+
+        /**
+         * Converts UTF8 code points to UTF16 characters.
+         * @param {(!function():number|null) | number} src Code points source, either as a function returning the next code point
+         *  respectively `null` if there are no more code points left or a single numeric code point.
+         * @param {!function(number)} dst Characters destination as a function successively called with each converted char code.
+         * @throws {RangeError} If a code point is out of range
+         */
+        utfx.UTF8toUTF16 = function(src, dst) {
+            var cp = null;
+            if (typeof src === 'number')
+                cp = src, src = function() { return null; };
+            while (cp !== null || (cp = src()) !== null) {
+                if (cp <= 0xFFFF)
+                    dst(cp);
+                else
+                    cp -= 0x10000,
+                    dst((cp>>10)+0xD800),
+                    dst((cp%0x400)+0xDC00);
+                cp = null;
+            }
+        };
+
+        /**
+         * Converts and encodes UTF16 characters to UTF8 bytes.
+         * @param {!function():number|null} src Characters source as a function returning the next char code respectively `null`
+         *  if there are no more characters left.
+         * @param {!function(number)} dst Bytes destination as a function successively called with the next byte.
+         */
+        utfx.encodeUTF16toUTF8 = function(src, dst) {
+            utfx.UTF16toUTF8(src, function(cp) {
+                utfx.encodeUTF8(cp, dst);
+            });
+        };
+
+        /**
+         * Decodes and converts UTF8 bytes to UTF16 characters.
+         * @param {!function():number|null} src Bytes source as a function returning the next byte respectively `null` if there
+         *  are no more bytes left.
+         * @param {!function(number)} dst Characters destination as a function successively called with each converted char code.
+         * @throws {RangeError} If a starting byte is invalid in UTF8
+         * @throws {Error} If the last sequence is truncated. Has an array property `bytes` holding the remaining bytes.
+         */
+        utfx.decodeUTF8toUTF16 = function(src, dst) {
+            utfx.decodeUTF8(src, function(cp) {
+                utfx.UTF8toUTF16(cp, dst);
+            });
+        };
+
+        /**
+         * Calculates the byte length of an UTF8 code point.
+         * @param {number} cp UTF8 code point
+         * @returns {number} Byte length
+         */
+        utfx.calculateCodePoint = function(cp) {
+            return (cp < 0x80) ? 1 : (cp < 0x800) ? 2 : (cp < 0x10000) ? 3 : 4;
+        };
+
+        /**
+         * Calculates the number of UTF8 bytes required to store UTF8 code points.
+         * @param {(!function():number|null)} src Code points source as a function returning the next code point respectively
+         *  `null` if there are no more code points left.
+         * @returns {number} The number of UTF8 bytes required
+         */
+        utfx.calculateUTF8 = function(src) {
+            var cp, l=0;
+            while ((cp = src()) !== null)
+                l += (cp < 0x80) ? 1 : (cp < 0x800) ? 2 : (cp < 0x10000) ? 3 : 4;
+            return l;
+        };
+
+        /**
+         * Calculates the number of UTF8 code points respectively UTF8 bytes required to store UTF16 char codes.
+         * @param {(!function():number|null)} src Characters source as a function returning the next char code respectively
+         *  `null` if there are no more characters left.
+         * @returns {!Array.<number>} The number of UTF8 code points at index 0 and the number of UTF8 bytes required at index 1.
+         */
+        utfx.calculateUTF16asUTF8 = function(src) {
+            var n=0, l=0;
+            utfx.UTF16toUTF8(src, function(cp) {
+                ++n; l += (cp < 0x80) ? 1 : (cp < 0x800) ? 2 : (cp < 0x10000) ? 3 : 4;
+            });
+            return [n,l];
+        };
+
+        return utfx;
+    }();
+
+    // encodings/utf8
+
+    /**
+     * Encodes this ByteBuffer's contents between {@link ByteBuffer#offset} and {@link ByteBuffer#limit} to an UTF8 encoded
+     *  string.
+     * @returns {string} Hex encoded string
+     * @throws {RangeError} If `offset > limit`
+     * @expose
+     */
+    ByteBufferPrototype.toUTF8 = function(begin, end) {
+        if (typeof begin === 'undefined') begin = this.offset;
+        if (typeof end === 'undefined') end = this.limit;
+        if (!this.noAssert) {
+            if (typeof begin !== 'number' || begin % 1 !== 0)
+                throw TypeError("Illegal begin: Not an integer");
+            begin >>>= 0;
+            if (typeof end !== 'number' || end % 1 !== 0)
+                throw TypeError("Illegal end: Not an integer");
+            end >>>= 0;
+            if (begin < 0 || begin > end || end > this.buffer.byteLength)
+                throw RangeError("Illegal range: 0 <= "+begin+" <= "+end+" <= "+this.buffer.byteLength);
+        }
+        var sd; try {
+            utfx.decodeUTF8toUTF16(function() {
+                return begin < end ? this.view[begin++] : null;
+            }.bind(this), sd = stringDestination());
+        } catch (e) {
+            if (begin !== end)
+                throw RangeError("Illegal range: Truncated data, "+begin+" != "+end);
+        }
+        return sd();
+    };
+
+    /**
+     * Decodes an UTF8 encoded string to a ByteBuffer.
+     * @param {string} str String to decode
+     * @param {boolean=} littleEndian Whether to use little or big endian byte order. Defaults to
+     *  {@link ByteBuffer.DEFAULT_ENDIAN}.
+     * @param {boolean=} noAssert Whether to skip assertions of offsets and values. Defaults to
+     *  {@link ByteBuffer.DEFAULT_NOASSERT}.
+     * @returns {!ByteBuffer} ByteBuffer
+     * @expose
+     */
+    ByteBuffer.fromUTF8 = function(str, littleEndian, noAssert) {
+        if (!noAssert)
+            if (typeof str !== 'string')
+                throw TypeError("Illegal str: Not a string");
+        var bb = new ByteBuffer(utfx.calculateUTF16asUTF8(stringSource(str), true)[1], littleEndian, noAssert),
+            i = 0;
+        utfx.encodeUTF16toUTF8(stringSource(str), function(b) {
+            bb.view[i++] = b;
+        });
+        bb.limit = i;
+        return bb;
+    };
+
+    return ByteBuffer;
+});
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3590,34 +4074,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(33)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (NetworkConnectionMonitor) {
-    'use strict';
-
-    return NetworkConnectionMonitor;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3637,111 +4093,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(27),
-    __webpack_require__(60),
-    __webpack_require__(61),
-    __webpack_require__(59),
-    __webpack_require__(58)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (ProtoBuf, mqProto, pcastProto, chatProto, analytixProto) {
-    'use strict';
-
-    function MQProtocol(logger) {
-        this._logger = logger;
-
-        var builder = ProtoBuf.loadJson(mqProto);
-
-        builder = ProtoBuf.loadJson(pcastProto, builder);
-        builder = ProtoBuf.loadJson(chatProto, builder);
-        builder = ProtoBuf.loadJson(analytixProto, builder);
-
-        this._builders = builder.build();
-        this._apiVersion = 3;
-    }
-
-    MQProtocol.prototype.getApiVersion = function () {
-        return this._apiVersion;
+    __webpack_require__(47),
+    __webpack_require__(46)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (WebSocketProto, BatchHttpProto) {
+    return {
+        WebSocketProto: WebSocketProto,
+        BatchHttpProto: BatchHttpProto
     };
-
-    MQProtocol.prototype.encode = function (type, data) {
-        if (typeof type !== 'string') {
-            throw new Error("'type' must be a string");
-        }
-
-        if (typeof data !== 'object') {
-            throw new Error("'data' must be an object");
-        }
-
-        var builder = getBuilder.call(this, type);
-
-        return builder.encode(data);
-    };
-
-    MQProtocol.prototype.decode = function (type, value) {
-        if (typeof type !== 'string') {
-            throw new Error("'type' must be a string");
-        }
-
-        var builder = getBuilder.call(this, type);
-
-        return convertTypes(builder.decode(value));
-    };
-
-    function getBuilder(type) {
-        var fragments = type.split('.');
-        var builder = this._builders;
-
-        for (var i = 0; i < fragments.length - 1; i++) {
-            builder = builder[fragments[i]];
-
-            if (!builder) {
-                throw new Error('Unsupported type "' + type + '"');
-            }
-        }
-
-        builder = builder[fragments[fragments.length - 1]];
-
-        if (typeof builder !== 'function') {
-            throw new Error('Unsupported type "' + type + '"');
-        }
-
-        return builder;
-    }
-
-    function convertTypes(message) {
-        if (message && message.$type && message.$type.children) {
-            for (var key in message.$type.children) {
-                var child = message.$type.children[key];
-                var value = message[child.name];
-                var type = child && child.element ? child.element.resolvedType : null;
-
-                if (type && type.className === 'Message' && type.children) {
-                    message[child.name] = convertTypes(value);
-                } else if (type && type.className === 'Enum' && type.children) {
-                    // Stringify Enums
-                    var metaValue = null;
-
-                    for (var i = 0; i < type.children.length; i++) {
-                        if (type.children[i].id === value) {
-                            metaValue = type.children[i];
-
-                            break;
-                        }
-                    }
-
-                    if (metaValue && metaValue.name) {
-                        message[child.name] = metaValue.name;
-                    }
-                } else if (value && typeof value.toNumber === 'function') {
-                    // Convert long to numbers
-                    message[child.name] = value.toNumber();
-                }
-            }
-        }
-
-        return message;
-    }
-
-    return MQProtocol;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -3766,8 +4124,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(4),
-    __webpack_require__(42)
+    __webpack_require__(5),
+    __webpack_require__(53)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, http, ClosestEndPointResolver) {
     'use strict';
 
@@ -3880,7 +4238,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(6),
-    __webpack_require__(57)
+    __webpack_require__(68)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging, analytixAppenderFactory) {
     'use strict';
 
@@ -3890,7 +4248,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole) {
         if (baseUri) {
-            assert.stringNotEmpty(baseUri, 'baseUri');
+            assert.isStringNotEmpty(baseUri, 'baseUri');
         }
 
         var logger = new logging.Logger();
@@ -4079,16 +4437,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
+    __webpack_require__(2),
     __webpack_require__(11),
-    __webpack_require__(4),
-    __webpack_require__(44),
+    __webpack_require__(5),
+    __webpack_require__(55),
     __webpack_require__(10),
-    __webpack_require__(45),
-    __webpack_require__(43),
-    __webpack_require__(48),
-    __webpack_require__(47),
-    __webpack_require__(2)
+    __webpack_require__(56),
+    __webpack_require__(54),
+    __webpack_require__(59),
+    __webpack_require__(58),
+    __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, phenixRTC) {
     'use strict';
 
@@ -4098,7 +4456,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-08-14T21:49:04Z';
+    var sdkVersion = '2017-08-24T21:31:31Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -4109,7 +4467,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
-    var maxBandwidthForSdPlayback = 1280000; // Safe limit for getting SD only playback
 
     function PCast(options) {
         options = options || {};
@@ -4827,8 +5184,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._protocol.on('reconnecting', _.bind(reconnecting, this));
         this._protocol.on('reconnected', _.bind(reconnected, this));
         this._protocol.on('disconnected', _.bind(disconnected, this));
-        this._protocol.on('streamEnded', _.bind(streamEnded, this));
-        this._protocol.on('dataQuality', _.bind(dataQuality, this));
+        this._protocol.on('pcast.StreamEnded', _.bind(streamEnded, this));
+        this._protocol.on('pcast.StreamDataQuality', _.bind(dataQuality, this));
 
         if (this._logger.setObservableSessionId) {
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
@@ -6302,21 +6659,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     response.data[i] = decodedLicense.charCodeAt(i);
                 }
 
-                if (!isHDPlaybackAllowedByWidevine(parsedResponse.allowedTracks)) {
-                    disableHdPlayback(player);
+                if (parsedResponse.trackRestrictions) {
+                    player.configure({restrictions: parsedResponse.trackRestrictions});
                 }
             }
         });
-    }
-
-    function isHDPlaybackAllowedByWidevine(allowedTracks) {
-        var minQualityLevelForHD = '720';
-
-        return _.includes(allowedTracks, minQualityLevelForHD);
-    }
-
-    function disableHdPlayback(player) {
-        player.configure({restrictions: {maxVideoBandwidth: maxBandwidthForSdPlayback}});
     }
 
     function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
@@ -6969,8 +7316,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return config;
         }
 
-        _.forEach(config.iceServers, function(server) {
-            server.urls = _.filter(server.urls, function(url) {
+        _.forEach(config.iceServers, function (server) {
+            server.urls = _.filter(server.urls, function (url) {
                 return url.indexOf('turns') !== 0;
             });
         });
@@ -7004,10 +7351,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(41),
+    __webpack_require__(52),
     __webpack_require__(14),
     __webpack_require__(16),
-    __webpack_require__(2)
+    __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCast, RoomService, rtc) {
     'use strict';
 
@@ -7017,7 +7364,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
+        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
         assert.isObject(options.authenticationData, 'options.authenticationData');
 
         this._pcast = null;
@@ -7140,7 +7487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     PCastExpress.prototype.publishRemote = function publish(options, callback) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.streamUri, 'options.streamUri');
+        assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
 
         if (options.capabilities) {
             assert.isArray(options.capabilities, 'options.capabilities');
@@ -7225,7 +7572,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     PCastExpress.prototype.subscribe = function subscribe(options, callback) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.streamId, 'options.streamId');
+        assert.isStringNotEmpty(options.streamId, 'options.streamId');
         assert.isObject(options.capabilities, 'options.capabilities');
 
         if (options.videoElement) {
@@ -7666,15 +8013,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(19),
-    __webpack_require__(22),
-    __webpack_require__(62),
-    __webpack_require__(21),
-    __webpack_require__(55),
+    __webpack_require__(2),
+    __webpack_require__(4),
+    __webpack_require__(23),
+    __webpack_require__(27),
+    __webpack_require__(71),
+    __webpack_require__(26),
+    __webpack_require__(66),
     __webpack_require__(13),
     __webpack_require__(12)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
@@ -7700,8 +8048,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     RoomService.prototype.start = function start(role, screenName) {
-        assert.stringNotEmpty(role, 'role');
-        assert.stringNotEmpty(screenName, 'screenName');
+        assert.isStringNotEmpty(role, 'role');
+        assert.isStringNotEmpty(screenName, 'screenName');
 
         var myState = member.states.passive.name;
         var mySessionId = this._authService.getPCastSessionId();
@@ -7713,11 +8061,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var self = new Member(roomService, myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
 
         this._self = new observable.Observable(self);
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
 
-        var disposeOfRoomEventHandler = this._protocol.on('roomEvent', _.bind(onRoomEvent, this));
+        var disposeOfRoomEventHandler = this._protocol.on('chat.RoomEvent', _.bind(onRoomEvent, this));
 
-        this._disposables.push(disposeOfRoomEventHandler);
+        this._disposables.add(disposeOfRoomEventHandler);
 
         setupSubscriptions.call(this);
 
@@ -7726,34 +8074,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     RoomService.prototype.getRoomInfo = function getRoomInfo(roomId, alias, callback) {
         if (roomId) {
-            assert.stringNotEmpty('roomId', roomId);
+            assert.isStringNotEmpty(roomId, 'roomId');
         } else {
-            assert.stringNotEmpty('alias', alias);
+            assert.isStringNotEmpty(alias, 'alias');
         }
 
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         getRoomInfoRequest.call(this, roomId, alias, callback);
     };
 
     RoomService.prototype.createRoom = function createRoom(room, callback) {
         assert.isObject(room, 'room');
-        assert.stringNotEmpty(room.name, 'room.name');
-        assert.stringNotEmpty(room.type, 'room.type');
+        assert.isStringNotEmpty(room.name, 'room.name');
+        assert.isStringNotEmpty(room.type, 'room.type');
         assert.isString(room.description, 'room.description');
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         createRoomRequest.call(this, room, callback);
     };
 
     RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
         if (roomId) {
-            assert.stringNotEmpty('roomId', roomId);
+            assert.isStringNotEmpty(roomId, 'roomId');
         } else {
-            assert.stringNotEmpty('alias', alias);
+            assert.isStringNotEmpty(alias, 'alias');
         }
 
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         enterRoomRequest.call(this, roomId, alias, callback);
     };
@@ -7781,20 +8129,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     RoomService.prototype.updateSelf = function updateSelf(callback) {
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         updateMemberRequest.call(this, this.getSelf(), callback);
     };
 
     RoomService.prototype.updateMember = function updateMember(member, callback) {
-        assert.isFunction(callback);
-        assert.isObject(member);
+        assert.isFunction(callback, 'callback');
+        assert.isObject(member, 'member');
 
         updateMemberRequest.call(this, member, callback);
     };
 
     RoomService.prototype.updateRoom = function updateRoom(callback) {
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         updateRoomRequest.call(this, callback);
     };
@@ -7811,7 +8159,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     RoomService.prototype.revertMemberChanges = function revertMemberChanges(member) {
-        assert.isObject(member);
+        assert.isObject(member, 'member');
 
         var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
         var activeMember = findMemberInObservableRoom(member.getSessionId(), this._activeRoom);
@@ -7828,7 +8176,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     RoomService.prototype.stop = function stop() {
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     function resetSelf(sessionId) {
@@ -8010,21 +8360,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
         var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
 
-        this._disposables.push(selfSubscription.dispose);
-        this._disposables.push(pcastStatusSubscription.dispose);
-        this._disposables.push(pcastSessionIdSubscription.dispose);
-    }
-
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
-        }
+        this._disposables.add(selfSubscription);
+        this._disposables.add(pcastStatusSubscription);
+        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function getDifferencesBetweenCachedRoomMembersAndUpdatedMembers(members) {
@@ -8336,6 +8674,2141 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(4)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable) {
+    'use strict';
+
+    function Event() {
+        this._listeners = [];
+    }
+
+    Event.prototype.fire = function (args, context) {
+        fireEvent.call(this, args, context);
+    };
+
+    Event.prototype.fireAsync = function (args, context, callback) {
+        fireEvent.call(this, args, context, callback || function () {});
+    };
+
+    Event.prototype.listen = function (listener) {
+        var that = this;
+
+        assert.isFunction(listener, 'listener');
+
+        that._listeners.push(listener);
+
+        return new disposable.Disposable(function () {
+            that._listeners = _.remove(that._listeners, function (item) {
+                return item === listener;
+            });
+        });
+    };
+
+    Event.prototype.size = function () {
+        return this._listeners.length;
+    };
+
+    Event.prototype.dispose = function () {
+        this._listeners = [];
+    };
+
+    Event.prototype.toString = function () {
+        return 'Event|' + this.size();
+    };
+
+    function fireEvent(args, context, asyncCallback) {
+        var that = this;
+
+        if (_.isNullOrUndefined(args)) {
+            args = [];
+        }
+
+        assert.isArray(args, 'args');
+
+        var notifyListeners = function notifyListeners() {
+            _.forEach(that._listeners, function (listener) {
+                listener.apply(context, args);
+            });
+        };
+
+        if (asyncCallback) {
+            setTimeout(function () {
+                notifyListeners();
+                asyncCallback();
+            }, 0);
+        } else {
+            notifyListeners();
+        }
+    }
+
+    return Event;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(17),
+    __webpack_require__(38)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
+    return {
+        Event: Event,
+        NamedEvents: NamedEvents
+    };
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(43)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (NetworkConnectionMonitor) {
+    'use strict';
+
+    return NetworkConnectionMonitor;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(4)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable) {
+    'use strict';
+
+    function Observable(initialValue, beforeChange) {
+        this.latestValue = null;
+        this.subscribeCallbacks = {};
+        this.subscriptionTimeout = 100;
+        this.subscriptionCount = 0;
+        this.resetOnChange = false;
+        this.lastChangeTime = 0;
+        this.isPendingChanges = false;
+        this.beforeChange = beforeChange;
+
+        setLatestValue.call(this, initialValue);
+    }
+
+    Observable.prototype.getValue = function getValue() {
+        return clone(this.latestValue);
+    };
+
+    Observable.prototype.setValue = function setValue(value) {
+        if (value !== this.latestValue) {
+            setLatestValue.call(this, value);
+            onSubscribeCallback.call(this, this.subscriptionTimeout);
+        }
+    };
+
+    Observable.prototype.subscribe = function subscribe(callback, options) {
+        assert.isFunction(callback, 'callback');
+
+        if (options) {
+            assert.isObject(options, 'options');
+        }
+
+        var that = this;
+        var key = _.uniqueId();
+        var listenForChanges;
+
+        that.subscribeCallbacks[key] = callback;
+        that.subscriptionCount += 1;
+
+        if (options) {
+            if (options.initial === 'notify') {
+                onSubscribeCallback.call(that, that.subscriptionTimeout, true);
+            }
+
+            if (options.listenForChanges) {
+                listenForChanges = setInterval(function() {
+                    var valueAtInterval = options.listenForChanges.callback();
+
+                    if (valueAtInterval !== that.latestValue) {
+                        that.setValue(valueAtInterval);
+                    }
+                }, options.listenForChanges.timeout);
+            }
+        }
+
+        return new disposable.Disposable(function dispose() {
+            delete that.subscribeCallbacks[key];
+
+            if (listenForChanges) {
+                clearInterval(listenForChanges);
+
+                listenForChanges = null;
+            }
+
+            that.subscriptionCount -= 1;
+        });
+    };
+
+    Observable.prototype.extend = function extend(options) {
+        assert.isObject(options, 'options');
+
+        switch (options.method) {
+        case 'notifyWhenChangesStop':
+            this.subscriptionTimeout = options.timeout;
+            this.resetOnChange = true;
+
+            break;
+        case 'notifyAtFixedRate':
+            this.subscriptionTimeout = options.timeout;
+
+            break;
+        default:
+            break;
+        }
+
+        if (_.isNumber(options.rateLimit)) {
+            this.subscriptionTimeout = options.rateLimit;
+        }
+
+        return this;
+    };
+
+    function clone(value) {
+        if (typeof value === 'undefined' || value === null) {
+            return value;
+        }
+
+        // Necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
+        if (_.isArray(value)) {
+            return value.slice();
+        }
+
+        return value;
+    }
+
+    function setLatestValue(value) {
+        var valueToSet = value;
+
+        if (this.beforeChange) {
+            valueToSet = this.beforeChange(value);
+        }
+
+        this.latestValue = clone(valueToSet);
+    }
+
+    function onSubscribeCallback(timeoutLength, noTimeout) {
+        this.lastChangeTime = _.now();
+
+        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
+            this.isPendingChanges = true;
+
+            if (noTimeout) {
+                return notifySubscribers.call(this);
+            }
+
+            continueAfterTimeout.call(this, timeoutLength);
+        }
+    }
+
+    function continueAfterTimeout(timeoutLength) {
+        var that = this;
+
+        setTimeout(function() {
+            var timeElapsedSinceLastChange = _.now() - that.lastChangeTime;
+
+            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
+                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
+            } else {
+                notifySubscribers.call(that);
+            }
+        }, timeoutLength);
+    }
+
+    function notifySubscribers() {
+        try {
+            executeSubscriptionCallbacks.call(this);
+        } finally {
+            this.isPendingChanges = false;
+        }
+    }
+
+    function executeSubscriptionCallbacks() {
+        var that = this;
+
+        _.forOwn(that.subscribeCallbacks, function (callback) {
+            if (_.isFunction(callback)) {
+                callback(that.latestValue);
+            }
+        });
+    }
+
+    return Observable;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(51),
+    __webpack_require__(48)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, ProtoBuf, mqProto) {
+    'use strict';
+
+    function MQProtocol(protocols, apiVersion) {
+        var builder = ProtoBuf.loadJson(mqProto);
+
+        _.forEach(protocols, function(protocol) {
+            builder = ProtoBuf.loadJson(protocol, builder);
+        });
+
+        this._builders = builder.build();
+        this._apiVersion = apiVersion || 3;
+    }
+
+    MQProtocol.prototype.getApiVersion = function () {
+        return this._apiVersion;
+    };
+
+    MQProtocol.prototype.encode = function (type, data) {
+        if (typeof type !== 'string') {
+            throw new Error("'type' must be a string");
+        }
+
+        if (typeof data !== 'object') {
+            throw new Error("'data' must be an object");
+        }
+
+        var builder = getBuilder.call(this, type);
+
+        return builder.encode(data);
+    };
+
+    MQProtocol.prototype.decode = function (type, value) {
+        if (typeof type !== 'string') {
+            throw new Error("'type' must be a string");
+        }
+
+        var builder = getBuilder.call(this, type);
+
+        return convertTypes(builder.decode(value));
+    };
+
+    function getBuilder(type) {
+        var fragments = type.split('.');
+        var builder = this._builders;
+
+        for (var i = 0; i < fragments.length - 1; i++) {
+            builder = builder[fragments[i]];
+
+            if (!builder) {
+                throw new Error('Unsupported type "' + type + '"');
+            }
+        }
+
+        builder = builder[fragments[fragments.length - 1]];
+
+        if (typeof builder !== 'function') {
+            throw new Error('Unsupported type "' + type + '"');
+        }
+
+        return builder;
+    }
+
+    function convertTypes(message) {
+        if (message && message.$type && message.$type.children) {
+            for (var key in message.$type.children) {
+                var child = message.$type.children[key];
+                var value = message[child.name];
+                var type = child && child.element ? child.element.resolvedType : null;
+
+                if (type && type.className === 'Message' && type.children) {
+                    message[child.name] = convertTypes(value);
+                } else if (type && type.className === 'Enum' && type.children) {
+                    // Stringify Enums
+                    var metaValue = null;
+
+                    for (var i = 0; i < type.children.length; i++) {
+                        if (type.children[i].id === value) {
+                            metaValue = type.children[i];
+
+                            break;
+                        }
+                    }
+
+                    if (metaValue && metaValue.name) {
+                        message[child.name] = metaValue.name;
+                    }
+                } else if (value && typeof value.toNumber === 'function') {
+                    // Convert long to numbers
+                    message[child.name] = value.toNumber();
+                }
+            }
+        }
+
+        return message;
+    }
+
+    return MQProtocol;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(49)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (ReconnectingWebSocket) {
+    'use strict';
+
+    return ReconnectingWebSocket;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+    'use strict';
+
+    function AuthenticationService(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+        if (this._pcast === pcast) {
+            return;
+        }
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+        this._protocol = pcast.getProtocol();
+
+        assert.isObject(this._logger, 'this._logger');
+        assert.isObject(this._protocol, 'this._protocol');
+        assert.isFunction(this._protocol.getObservableSessionId, 'this._protocol.getObservableSessionId');
+        assert.isFunction(this._pcast.getObservableStatus, 'this._pcast.getObservableStatus');
+
+        this._sessionId = this._protocol.getObservableSessionId();
+        this._status = this._pcast.getObservableStatus();
+    }
+
+    AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
+        if (!validPCastStatus(this.getPCastStatus())) {
+            throw new Error('Unable to perform action. Status [%s]. Please wait to reconnect.', this.getPCastStatus());
+        }
+
+        if (!validPCastSessionId(this.getPCastSessionId())) {
+            throw new Error('Unable to perform action. Invalid sessionId [%s]', this.getPCastSessionId());
+        }
+    };
+
+    AuthenticationService.prototype.getObservableSessionId = function getObservableSessionId() {
+        return this._sessionId;
+    };
+
+    AuthenticationService.prototype.getObservableStatus = function getObservableStatus() {
+        return this._status;
+    };
+
+    AuthenticationService.prototype.getPCastSessionId = function getPCastSessionId() {
+        return this._sessionId.getValue();
+    };
+
+    AuthenticationService.prototype.getPCastStatus = function getPCastStatus() {
+        return this._status.getValue();
+    };
+
+    function validPCastSessionId(sessionId) {
+        return sessionId !== null && sessionId !== undefined && sessionId !== '';
+    }
+
+    function validPCastStatus(status) {
+        return status !== null && status !== undefined && status !== '' && status.toLowerCase() !== 'offline';
+    }
+
+    return AuthenticationService;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    'use strict';
+
+    var environment = {};
+
+    environment.parseEnvFromPcastBaseUri = function (uri) {
+        uri = uri.toLowerCase();
+
+        if (uri.indexOf('local') > -1) {
+            return 'local';
+        } else if (uri.indexOf('stg') > -1) {
+            return 'staging';
+        }
+
+        return 'production';
+    };
+
+    return environment;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    'use strict';
+
+    var analytixProto = {
+        "package": "analytix",
+        "messages": [
+            {
+                "name": "LogData",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "LogLevel",
+                        "name": "level",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "category",
+                        "id": 3
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "message",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "source",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "fullQualifiedName",
+                        "id": 11
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 6
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "userId",
+                        "id": 7
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "environment",
+                        "id": 8
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "version",
+                        "id": 9
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "float",
+                        "name": "runtime",
+                        "id": 10
+                    }
+                ]
+            },
+            {
+                "name": "StoreLogRecords",
+                "fields": [
+                    {
+                        "rule": "repeated",
+                        "type": "LogData",
+                        "name": "records",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "StoreLogRecordsResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint64",
+                        "name": "storedRecords",
+                        "id": 2
+                    }
+                ]
+            },
+            {
+                "name": "MetricValue",
+                "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "string",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "float",
+                        "name": "float",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "uint64",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "int64",
+                        "name": "int64",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bool",
+                        "name": "boolean",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 6
+                    }
+                ]
+            },
+            {
+                "name": "MetricData",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "source",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "resource",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "kind",
+                        "id": 6
+                    },
+                    {
+                        "rule": "required",
+                        "type": "Metric",
+                        "name": "metric",
+                        "id": 7
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "MetricValue",
+                        "name": "value",
+                        "id": 8
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "MetricValue",
+                        "name": "previousValue",
+                        "id": 9
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "elapsed",
+                        "id": 10
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "fullQualifiedName",
+                        "id": 11
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "environment",
+                        "id": 12
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "version",
+                        "id": 13
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "tool",
+                        "id": 14
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "toolVersion",
+                        "id": 15
+                    },
+                    {
+                        "rule": "required",
+                        "type": "float",
+                        "name": "runtime",
+                        "id": 16
+                    }
+                ]
+            },
+            {
+                "name": "SubmitMetricRecords",
+                "fields": [
+                    {
+                        "rule": "repeated",
+                        "type": "MetricData",
+                        "name": "records",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "SubmitMetricRecordsResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint64",
+                        "name": "storedRecords",
+                        "id": 2
+                    }
+                ]
+            }
+        ],
+        "enums": [
+            {
+                "name": "LogLevel",
+                "values": [
+                    {
+                        "name": "Trace",
+                        "id": 0
+                    },
+                    {
+                        "name": "Debug",
+                        "id": 1
+                    },
+                    {
+                        "name": "Info",
+                        "id": 2
+                    },
+                    {
+                        "name": "Warn",
+                        "id": 3
+                    },
+                    {
+                        "name": "Error",
+                        "id": 4
+                    },
+                    {
+                        "name": "Fatal",
+                        "id": 5
+                    }
+                ]
+            },
+            {
+                "name": "Metric",
+                "values": [
+                    {
+                        "name": "EndPointRoundTripTime",
+                        "id": 0
+                    },
+                    {
+                        "name": "Initialized",
+                        "id": 1
+                    },
+                    {
+                        "name": "Provisioned",
+                        "id": 2
+                    },
+                    {
+                        "name": "SetupCompleted",
+                        "id": 3
+                    },
+                    {
+                        "name": "Offset",
+                        "id": 4
+                    },
+                    {
+                        "name": "TimeToFirstFrame",
+                        "id": 5
+                    },
+                    {
+                        "name": "Playing",
+                        "id": 6
+                    },
+                    {
+                        "name": "Stalled",
+                        "id": 7
+                    },
+                    {
+                        "name": "Buffering",
+                        "id": 8
+                    },
+                    {
+                        "name": "Stopped",
+                        "id": 9
+                    },
+                    {
+                        "name": "BitRateAdaptation",
+                        "id": 10
+                    },
+                    {
+                        "name": "ResolutionChanged",
+                        "id": 11
+                    },
+                    {
+                        "name": "FrameRateChanged",
+                        "id": 12
+                    },
+                    {
+                        "name": "FramesDropped",
+                        "id": 13
+                    },
+                    {
+                        "name": "PacketsLost",
+                        "id": 14
+                    },
+                    {
+                        "name": "PictureLost",
+                        "id": 15
+                    },
+                    {
+                        "name": "PlayoutDelayChanged",
+                        "id": 16
+                    },
+                    {
+                        "name": "CodecChanged",
+                        "id": 17
+                    },
+                    {
+                        "name": "MetricDropped",
+                        "id": 18
+                    }
+                ]
+            }
+        ]
+    };
+
+    return analytixProto;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(2),
+    __webpack_require__(72),
+    __webpack_require__(12)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Stream, member) {
+    'use strict';
+    var memberRoles = member.roles;
+    var memberStates = member.states;
+
+    function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+        this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
+    }
+
+    Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+        assert.isString(sessionId, 'sessionId');
+        assert.isString(screenName, 'screenName');
+        assert.isArray(streams, 'streams');
+        assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
+
+        if (roomService) {
+            assert.isObject(roomService, 'roomService');
+        }
+
+        this._sessionId = new observable.Observable(sessionId);
+        this._screenName = new observable.Observable(screenName);
+        this._streams = new observable.ObservableArray([]);
+
+        this._state = new observable.Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
+        this._role = new observable.Observable(role, assertIsValidMemberRole);
+        this._lastUpdate = new observable.Observable(lastUpdate, _.utc);
+        this._roomService = roomService;
+
+        this.setStreams(streams);
+    };
+
+    Member.prototype.getObservableState = function getObservableState() {
+        return this._state;
+    };
+
+    Member.prototype.getSessionId = function getSessionId() {
+        return this._sessionId.getValue();
+    };
+
+    Member.prototype.getObservableScreenName = function getObservableScreenName() {
+        return this._screenName;
+    };
+
+    Member.prototype.getObservableRole = function getObservableRole() {
+        return this._role;
+    };
+
+    Member.prototype.getObservableStreams = function getObservableStreams() {
+        return this._streams;
+    };
+
+    Member.prototype.getObservableLastUpdate = function getObservableLastUpdate() {
+        return this._lastUpdate;
+    };
+
+    Member.prototype.getLastUpdate = function getLastUpdate() {
+        return this._lastUpdate.getValue();
+    };
+
+    Member.prototype.getStreams = function getStreams() {
+        return _.map(this._streams.getValue(), function mapToJson(stream) {
+            return stream.toJson();
+        });
+    };
+
+    Member.prototype.commitChanges = function commitChanges(callback) {
+        assert.isObject(this._roomService, 'this._roomService');
+
+        this._roomService.updateMember(this, callback);
+    };
+
+    Member.prototype.reload = function reload() {
+        assert.isObject(this._roomService, 'this._roomService');
+
+        this._roomService.revertMemberChanges(this);
+    };
+
+    Member.prototype.setStreams = function setStreams(streams) {
+        var newStreams = _.map(streams, function(stream) {
+            return createNewObservableStream(stream);
+        });
+
+        this._streams.setValue(newStreams);
+    };
+
+    Member.prototype.toString = function toString() {
+        return this.getObservableRole().getValue() + '[' + this.getObservableScreenName().getValue() + ',' + this.getSessionId() + ']';
+    };
+
+    Member.prototype.toJson = function toJson() {
+        var member = {
+            sessionId: this._sessionId.getValue(),
+            screenName: this._screenName.getValue(),
+            role: this._role.getValue(),
+            state: this._state.getValue(),
+            streams: [],
+            lastUpdate: this._lastUpdate.getValue()
+        };
+
+        _.forEach(this._streams.getValue(), function(stream) {
+            member.streams.push(stream.toJson());
+        });
+
+        return member;
+    };
+
+    Member.prototype._update = function update(member) {
+        if (!_.isObject(member)) {
+            return;
+        }
+
+        if (member.hasOwnProperty('state')) {
+            this._state.setValue(member.state);
+        }
+
+        if (member.hasOwnProperty('screenName')) {
+            this._screenName.setValue(member.screenName);
+        }
+
+        if (member.hasOwnProperty('role')) {
+            this._role.setValue(member.role);
+        }
+
+        if (member.hasOwnProperty('lastUpdate')) {
+            this._lastUpdate.setValue(member.lastUpdate);
+        }
+
+        if (member.hasOwnProperty('streams')) {
+            updateStreams.call(this, member.streams);
+        }
+    };
+
+    function createNewObservableStream(stream) {
+        return new Stream(stream.uri, stream.type, stream.audioState, stream.videoState);
+    }
+
+    function updateStreams(streams) {
+        // Iterate through new streams object, update those that have changed, push new ones, remove old ones
+        var oldObservableStreams = this._streams.getValue();
+        var newObservableStreams = [];
+
+        _.forEach(streams, function (stream) {
+            var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
+                return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
+            });
+
+            if (streamToUpdate) {
+                streamToUpdate._update(stream);
+            } else {
+                streamToUpdate = createNewObservableStream(stream);
+            }
+
+            newObservableStreams.push(streamToUpdate);
+        });
+
+        this._streams.setValue(newObservableStreams);
+    }
+
+    function assertIsValidMemberRole(role) {
+        role = _.getEnumName(memberRoles, role);
+
+        if (!role) {
+            throw new Error('"role" must be a valid member role');
+        }
+
+        return role;
+    }
+
+    function assertIsValidMemberState(state) {
+        state = _.getEnumName(memberStates, state);
+
+        if (!state) {
+            throw new Error('"state" must be a valid member state');
+        }
+
+        return state;
+    }
+
+    return Member;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(2),
+    __webpack_require__(26),
+    __webpack_require__(13)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Member, room) {
+    'use strict';
+    var roomTypes = room.types;
+
+    function Room(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+        this.init(roomService, id, alias, name, description, type, members, bridgeId, pin);
+    }
+
+    Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(description, 'description');
+        assert.isArray(members, 'members');
+
+        if (id) {
+            assert.isStringNotEmpty(id, 'id');
+        }
+
+        if (alias) {
+            assert.isStringNotEmpty(alias, 'alias');
+        }
+
+        if (bridgeId) {
+            assert.isStringNotEmpty(bridgeId, 'bridgeId');
+        }
+
+        if (pin) {
+            assert.isStringNotEmpty(pin, 'pin');
+        }
+
+        if (roomService) {
+            assert.isObject(roomService, 'roomService');
+        }
+
+        this._roomId = new observable.Observable(id);
+        this._alias = new observable.Observable(alias);
+        this._name = new observable.Observable(name);
+        this._description = new observable.Observable(description);
+        this._type = new observable.Observable(type, assertIsValidRoomType);
+        this._members = new observable.ObservableArray([]).extend({
+            method: "notifyWhenChangesStop",
+            timeout: 400
+        });
+        this._options = new observable.ObservableArray();
+        this._bridgeId = new observable.Observable(bridgeId);
+        this._pin = new observable.Observable(pin);
+        this._roomService = roomService;
+
+        setMembers.call(this, members);
+    };
+
+    Room.prototype.getRoomId = function getRoomId() {
+        return this._roomId.getValue();
+    };
+
+    Room.prototype.getObservableAlias = function getObservableAlias() {
+        return this._alias;
+    };
+
+    Room.prototype.getObservableName = function getObservableName() {
+        return this._name;
+    };
+
+    Room.prototype.getObservableDescription = function getObservableDescription() {
+        return this._description;
+    };
+
+    Room.prototype.getObservableType = function getObservableType() {
+        return this._type;
+    };
+
+    Room.prototype.getObservableMembers = function getObservableMembers() {
+        return this._members;
+    };
+
+    Room.prototype.getObservableBridgeId = function getObservableBridgeId() {
+        return this._bridgeId;
+    };
+
+    Room.prototype.getObservablePin = function getObservablePin() {
+        return this._pin;
+    };
+
+    Room.prototype.toString = function toString() {
+        return this._type.getValue() + '[' + this._roomId.getValue() + ']';
+    };
+
+    Room.prototype.toJson = function toJson() {
+        return {
+            roomId: this._roomId.getValue(),
+            alias: this._alias.getValue(),
+            name: this._name.getValue(),
+            description: this._description.getValue(),
+            type: this._type.getValue(),
+            pin: this._pin.getValue(),
+            bridgeId: this._bridgeId.getValue()
+        };
+    };
+
+    Room.prototype.commitChanges = function commitChanges(callback) {
+        assert.isObject(this._roomService, 'this._roomService');
+
+        this._roomService.updateRoom(this, callback);
+    };
+
+    Room.prototype.reload = function reload() {
+        assert.isObject(this._roomService, 'this._roomService');
+
+        this._roomService.revertRoomChanges(this);
+    };
+
+    Room.prototype._update = function update(room) {
+        if (!_.isObject(room)) {
+            return;
+        }
+
+        if (room.roomId) {
+            this._roomId.setValue(room.roomId);
+        }
+
+        if (room.alias) {
+            this._alias.setValue(room.alias);
+        }
+
+        if (room.name) {
+            this._name.setValue(room.name);
+        }
+
+        if (room.description) {
+            this._description.setValue(room.description);
+        }
+
+        if (room.type) {
+            this._type.setValue(room.type);
+        }
+
+        if (room.options) {
+            this._options.setValue(room.options);
+        }
+
+        if (room.bridgeId) {
+            this._bridgeId.setValue(room.bridgeId);
+        }
+
+        if (room.pin) {
+            this._pin.setValue(room.pin);
+        }
+
+        if (room.members) {
+            // DO NOTHING -- members updated by member events
+        }
+    };
+
+    Room.prototype._addMembers = function addMembers(members) {
+        var that = this;
+
+        var newMembers = mapMembers(members);
+
+        _.forEach(newMembers, function (member) {
+            that._members.push(member);
+        });
+    };
+
+    Room.prototype._removeMembers = function removeMembers(members) {
+        var that = this;
+
+        _.forEach(members, function(member) {
+            that._members.remove(function(observableMember) {
+                return member.sessionId === observableMember.getSessionId()
+                    && member.lastUpdate >= observableMember.getObservableLastUpdate().getValue();
+            });
+        });
+    };
+
+    Room.prototype._updateMembers = function updateMembers(members) {
+        _.forEach(this._members.getValue(), function (observableMember) {
+            var memberToUpdate = _.find(members, function(member) {
+                return observableMember.getSessionId() === member.sessionId && member.lastUpdate > observableMember.getObservableLastUpdate().getValue();
+            });
+
+            if (memberToUpdate) {
+                observableMember._update(memberToUpdate);
+            }
+        });
+    };
+
+    function setMembers(members) {
+        var newMembers = mapMembers(members, this._roomService);
+
+        this._members.setValue(newMembers);
+    }
+
+    function mapMembers(members, roomService) {
+        return _.map(members, function(member) {
+            return new Member(roomService, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+        });
+    }
+
+    function assertIsValidRoomType(type) {
+        type = _.getEnumName(roomTypes, type);
+
+        if (!type) {
+            throw new Error('"type" must be a valid room type');
+        }
+
+        return type;
+    }
+
+    return Room;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(11),
+    __webpack_require__(10),
+    __webpack_require__(60),
+    __webpack_require__(63),
+    __webpack_require__(61)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
+    'use strict';
+
+    function AudioSpeakerDetector(userMediaStreams, options) {
+        assert.isArray(userMediaStreams, 'userMediaStreams');
+
+        options = options || {};
+
+        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+        this._audioContext = options.audioContext || new AudioContext();
+        this._nativeAudioContext = this._audioContext.getNativeAudioContext();
+        this._onSpeakingChanged = null;
+        this._userMediaStreams = userMediaStreams;
+        this._disposeOfAudioContext = !_.isObject(options.audioContext);
+        this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
+
+        _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
+    }
+
+    AudioSpeakerDetector.prototype.start = function start(options, callback) {
+        assert.isFunction(callback, 'callback');
+
+        this._onSpeakingChanged = callback;
+
+        options = options || {};
+
+        _.forEach(this._userMediaStreams, _.bind(setupSpeakingDetection, this, options));
+    };
+
+    AudioSpeakerDetector.prototype.stop = function stop() {
+        _.forEach(this.getAudioVolumeMeters(), function(meter) {
+            meter.onValue(function() {});
+        });
+
+        this._onSpeakingChanged = null;
+    };
+
+    AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
+        assert.isObject(stream, 'stream');
+
+        return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+    };
+
+    AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
+        return this._audioVolumeMeterFactory.getAudioVolumeMeters();
+    };
+
+    AudioSpeakerDetector.prototype.dispose = function dispose() {
+        if (this._disposeOfAudioContext) {
+            this._nativeAudioContext.close();
+        }
+
+        this._audioVolumeMeterFactory.stopAllMeters();
+
+        this._userMediaStreams = null;
+    };
+
+    AudioSpeakerDetector.prototype.toString = function toString() {
+        return 'AudioSpeakerDetector';
+    };
+
+    function setupAudioVolumeMeter(options, stream) {
+        assert.isObject(stream, 'stream');
+        assert.isObject(options, 'options');
+
+        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+
+        audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
+        audioVolumeMeter.connect(stream);
+    }
+
+    function setupSpeakingDetection(options, stream) {
+        assert.isObject(stream, 'stream');
+        assert.isObject(options, 'options');
+
+        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
+
+        if (options.alpha) {
+            audioVolumeMeter.setAlpha(options.alpha);
+        }
+
+        audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
+        audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
+    }
+
+    return AudioSpeakerDetector;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 30 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(11),
+    __webpack_require__(10),
+    __webpack_require__(64)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
+    'use strict';
+
+    function BandwidthMonitor(publishers, options) {
+        assert.isArray(publishers, 'userMediaStreams');
+
+        options = options || {};
+
+        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+        this._publisherAdjusters = [];
+        this._publishers = publishers;
+    }
+
+    BandwidthMonitor.prototype.start = function start(roomService, options) {
+        options = options || {};
+
+        _.forEach(this._publishers, _.bind(setupPublisherAdjusters, this, roomService, options));
+    };
+
+    BandwidthMonitor.prototype.stop = function stop() {
+        _.forEach(this._publisherAdjusters, function closePublisherAdjusters(adjuster) {
+            adjuster.close();
+        });
+
+        this._publisherAdjusters = [];
+    };
+
+    BandwidthMonitor.prototype.toString = function toString() {
+        return 'BandwidthMonitor';
+    };
+
+    function setupPublisherAdjusters(roomService, options, publisher) {
+        var publisherAdjuster = new PublisherBandwidthAdjuster(publisher);
+
+        publisherAdjuster.connect(roomService, options);
+
+        this._publisherAdjusters.push(publisherAdjuster);
+    }
+
+    return BandwidthMonitor;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(15),
+    __webpack_require__(13),
+    __webpack_require__(12)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums) {
+    'use strict';
+
+    function RoomExpress(options) {
+        assert.isObject(options, 'options');
+        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
+        assert.isObject(options.authenticationData, 'options.authenticationData');
+
+        this._pcastExpress = new PCastExpress(options);
+        this._roomServices = [];
+    }
+
+    RoomExpress.prototype.stop = function stop() {
+        this._pcastExpress.stop();
+    };
+
+    RoomExpress.prototype.getPCastExpress = function getPCastExpress() {
+        return this._pcastExpress;
+    };
+
+    RoomExpress.prototype.createRoom = function createRoom(options, callback) {
+        assert.isFunction(callback, 'callback');
+        assert.isObject(options.room, 'options.room');
+        assert.isStringNotEmpty(options.room.name, 'options.room.name');
+        assert.isStringNotEmpty(options.room.type, 'options.room.type');
+
+        if (options.room.description) {
+            assert.isStringNotEmpty(options.room.description, 'options.room.description');
+        }
+
+        var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
+
+        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (roomServiceResponse.status !== 'ok') {
+                return callback(null, roomServiceResponse);
+            }
+
+            var roomService = roomServiceResponse.roomService;
+            var roomToCreate = _.assign({}, options.room);
+
+            if (!roomToCreate.description) {
+                roomToCreate.description = roomDescription;
+            }
+
+            roomService.createRoom(roomToCreate, function (error, roomResponse) {
+                if (error) {
+                    roomService.stop();
+
+                    return callback(error);
+                }
+
+                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
+                    roomService.stop();
+                }
+
+                roomResponse.roomService = roomService;
+
+                return callback(null, roomResponse);
+            });
+        });
+    };
+
+    RoomExpress.prototype.createChannel = function createChannel(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isObject(options.room, 'options.room');
+
+        var createRoomOptions = _.assign({}, options);
+
+        createRoomOptions.room.type = roomEnums.types.channel.name;
+
+        this.createRoom(createRoomOptions, callback);
+    };
+
+    RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(joinRoomCallback, 'joinRoomCallback');
+        assert.isFunction(membersChangedCallback, 'membersChangedCallback');
+        assert.isStringNotEmpty(options.role, 'options.role');
+
+        if (options.screenName) {
+            assert.isStringNotEmpty(options.screenName, 'options.screenName');
+        }
+
+        if (options.roomId) {
+            assert.isStringNotEmpty(options.roomId, 'options.roomId');
+        }
+
+        if (options.alias) {
+            assert.isStringNotEmpty(options.alias, 'options.alias');
+        }
+
+        var that = this;
+        var role = options.role;
+        var screenName = options.screenName || _.uniqueId();
+
+        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
+            if (error) {
+                return joinRoomCallback(error);
+            }
+
+            if (roomServiceResponse.status !== 'ok') {
+                return joinRoomCallback(null, roomServiceResponse);
+            }
+
+            var roomService = roomServiceResponse.roomService;
+
+            that._roomServices.push(roomService);
+
+            roomService.start(role, screenName);
+
+            roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
+                if (error) {
+                    roomService.stop();
+
+                    return joinRoomCallback(error);
+                }
+
+                if (roomResponse.status === 'not-found') {
+                    roomService.stop();
+
+                    return joinRoomCallback(null, {status: 'room-not-found'});
+                }
+
+                if (roomResponse.status !== 'ok') {
+                    roomService.stop();
+
+                    return joinRoomCallback(null, roomResponse);
+                }
+
+                var room = roomResponse.room;
+                var roomServiceLeaveRoom = roomService.leaveRoom;
+
+                roomService.leaveRoom = function leaveRoom(callback) {
+                    roomServiceLeaveRoom.call(roomService, function(error, response) {
+                        if (error) {
+                            roomService.stop();
+
+                            return callback(error);
+                        }
+
+                        if (response.status !== 'ok') {
+                            return callback(null, response);
+                        }
+
+                        roomService.stop();
+                    });
+                };
+
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
+                that._membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+            });
+        });
+    };
+
+    RoomExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(joinChannelCallback, 'joinChannelCallback');
+        assert.isFunction(subscriberCallback, 'subscriberCallback');
+
+        if (options.videoElement) {
+            assert.isObject(options.videoElement, 'options.videoElement');
+        }
+
+        var channelOptions = _.assign({
+            type: roomEnums.types.channel.name,
+            role: memberEnums.roles.audience.name
+        }, options);
+        var lastMediaStream;
+        var lastStreamId;
+        var that = this;
+
+        var joinRoomCallback = function(error, response) {
+            var channelResponse = !response || _.assign({}, response);
+
+            if (response && response.roomService) {
+                var leaveRoom = response.roomService.leaveRoom;
+
+                channelResponse.roomService.leaveRoom = function(callback) {
+                    if (lastMediaStream) {
+                        lastMediaStream.stop();
+                    }
+
+                    leaveRoom(callback);
+                };
+            }
+
+            joinChannelCallback(error, channelResponse);
+        };
+
+        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members) {
+            var presenters = _.filter(members, function(member) {
+                return member.getObservableRole().getValue() === memberEnums.roles.presenter.name;
+            });
+            var mostRecentPresenter = _.reduce(presenters, function(presenterA, presenterB) {
+                if (!presenterA) {
+                    return presenterB;
+                }
+
+                return presenterA.getLastUpdate() > presenterB.getLastUpdate() ? presenterA : presenterB;
+            });
+
+            if (!mostRecentPresenter) {
+                return subscriberCallback(null, {status: 'no-stream-playing'});
+            }
+
+            var presenterStream = mostRecentPresenter.getObservableStreams().getValue()[0];
+
+            if (!presenterStream) {
+                return subscriberCallback(null, {status: 'no-stream-playing'});
+            }
+
+            var streamId = parsePcastFromStream(presenterStream.getUri());
+
+            if (!streamId) {
+                return subscriberCallback(null, {status: 'no-stream-playing'});
+            }
+
+            if (streamId === lastStreamId) {
+                return;
+            } else if (lastStreamId) {
+                lastMediaStream.stop();
+            }
+
+            var subscribeOptions = {
+                capabilities: options.capabilities,
+                videoElement: options.videoElement,
+                streamId: streamId,
+                monitor: {
+                    callback: _.bind(monitorSubsciberOrPublisher, that, subscriberCallback),
+                    options: {conditionCountForNotificationThreshold: 8}
+                }
+            };
+
+            var successReason = lastStreamId ? 'stream-override' : 'stream-started';
+
+            lastStreamId = streamId;
+
+            var mediaStreamCallback = function mediaStreamCallback(error, response) {
+                if (response && response.mediaStream) {
+                    lastMediaStream = response.mediaStream;
+                } else {
+                    lastStreamId = null;
+                    lastMediaStream = null;
+                }
+
+                subscriberCallback(error, response);
+            };
+
+            subscribeToMemberStream.call(that, subscribeOptions, mediaStreamCallback, successReason);
+        });
+    };
+
+    RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+        assert.isObject(options.room, 'options.room');
+
+        if (options.streamUri) {
+            assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
+        } else if (options.mediaConstraints) {
+            assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
+        } else {
+            assert.isObject(options.userMediaStream, 'options.userMediaStream');
+        }
+
+        if (options.videoElement) {
+            assert.isObject(options.videoElement, 'options.videoElement');
+        }
+
+        if (options.screenName) {
+            assert.isStringNotEmpty(options.screenName, 'options.screenName');
+        }
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.tags) {
+            assert.isArray(options.tags, 'options.tags');
+        }
+
+        var that = this;
+        var role = memberEnums.roles.audience.name;
+        var screenName = options.screenName || _.uniqueId();
+
+        this.createRoom(options, function(error, createRoomResponse) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
+                return callback(null, createRoomResponse);
+            }
+
+            var roomService = createRoomResponse.roomService;
+            var room = createRoomResponse.room;
+
+            roomService.start(role, screenName);
+
+            var publishOptions = _.assign({
+                monitor: {
+                    callback: _.bind(monitorSubsciberOrPublisher, that, callback),
+                    options: {conditionCountForNotificationThreshold: 8}
+                }
+            }, options);
+
+            if (options.streamUri) {
+                var remoteOptions = _.assign({connectOptions: []}, publishOptions);
+                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
+                    return option.startsWith('room-id');
+                });
+
+                if (!hasRoomConnectOptions) {
+                    remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
+                        'room-id=' + room.getRoomId(),
+                        'member-role=Presenter',
+                        'member-stream-type=Presentation',
+                        'screen-name=' + screenName
+                    ]);
+                }
+
+                that._pcastExpress.publishRemote(remoteOptions, callback);
+            } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
+                var localOptions = _.assign({tags: []}, publishOptions);
+                var hasChannelTag = _.find(localOptions.tags, function(tag) {
+                    return tag.startsWith('channelId');
+                });
+
+                if (!hasChannelTag) {
+                    localOptions.tags = localOptions.tags.concat([
+                        'channelId:' + room.getRoomId()
+                    ]);
+                }
+
+                if (!_.includes(localOptions.capabilities, 'channel')) {
+                    localOptions.capabilities.push('channel');
+                }
+
+                that._pcastExpress.publish(localOptions, callback);
+            }
+        });
+    };
+
+    RoomExpress.prototype.publishToChannel = function publishToChannel(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+
+        var channelOptions = _.assign({}, options);
+
+        options.room.type = roomEnums.types.channel.name;
+
+        this.publishToRoom(channelOptions, callback);
+    };
+
+    function subscribeToMemberStream(subscribeOptions, callback, successReason) {
+        var that = this;
+
+        var count = 0;
+
+        that._pcastExpress.subscribe(subscribeOptions, function(error, response) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (response.status !== 'ok' && response.status !== 'streaming-not-ready') {
+                return callback(null, response);
+            }
+
+            count++;
+
+            if (response.status === 'streaming-not-ready' && count < 3) {
+                return setTimeout(response.retry, count * count * 1000);
+            } else if (response.status === 'streaming-not-ready' && count >= 3) {
+                return callback(null, {status: response.status});
+            }
+
+            var subscribeResponse = _.assign({}, response, {
+                status: 'ok',
+                reason: successReason
+            });
+
+            if (count > 1) {
+                subscribeResponse.reason = 'stream-failure-recovered';
+
+                return callback(null, subscribeResponse);
+            }
+
+            callback(null, subscribeResponse);
+        });
+    }
+
+    function monitorSubsciberOrPublisher(callback, error, response) {
+        if (error) {
+            return callback(error);
+        }
+
+        if (response.retry) {
+            return response.retry();
+        }
+
+        callback(error, response);
+    }
+
+    function getDefaultRoomDescription(type) {
+        switch(type) {
+        case roomEnums.types.channel.name:
+            return 'Room Channel';
+        case roomEnums.types.moderatedChat.name:
+            return 'Moderated Chat';
+        case roomEnums.types.multiPartyChat.name:
+            return 'Multi Party Chat';
+        case roomEnums.types.townHall.name:
+            return 'Town Hall';
+        case roomEnums.types.directChat.name:
+            return 'Direct Chat';
+        default:
+            throw new Error('Unsupported Room Type');
+        }
+    }
+
+    var pcastStreamPrefix = 'pcast://phenixp2p.com/';
+
+    function parsePcastFromStream(uri) {
+        var hasPrefix = uri.indexOf(pcastStreamPrefix) > -1;
+
+        if (!hasPrefix) {
+            return null;
+        }
+
+        return uri.replace(pcastStreamPrefix, '');
+    }
+
+    function addPublishedStreams(publishedStream) { // eslint-disable-line no-unused-vars
+        var self = this._roomService.getSelf();
+        var streams = self.getStreams();
+
+        publishedStream.uri = 'pcast://phenixp2p.com/' + publishedStream.uri;
+        streams.push(publishedStream);
+        self.setStreams(streams);
+    }
+
+    return RoomExpress;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -9553,7 +12026,524 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 18 */
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
+    var Assert = function() {
+
+    };
+
+    Assert.prototype.isObject = function isObject(obj, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must be an object';
+
+        if (!_.isObject(obj)) {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isArray = function isArray(array, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must be an array';
+
+        if (!_.isArray(array)) {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isString = function isString(string, name) {
+        var error = '"' + name + '" must be a string';
+
+        if (!_.isString(name)) {
+            throw new Error('"name" must be a string');
+        }
+
+        if (!_.isString(string)) {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isBoolean = function isBoolean(bool, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must be a string';
+
+        if (!_.isBoolean(bool)) {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isNumber = function isNumber(number, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must be a number';
+
+        if (!_.isNumber(number)) {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isFunction = function isFunction(callback, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must be a function';
+
+        if (!_.isFunction(callback)) {
+            throw new Error(error);
+        }
+    };
+
+    // TODO (dcy) remove once all dependencies have been updated
+    Assert.prototype.stringNotEmpty = function stringNotEmpty(string, name) {
+        Assert.prototype.isStringNotEmpty(string, name);
+    };
+
+    Assert.prototype.isStringNotEmpty = function stringNotEmpty(string, name) {
+        Assert.prototype.isString('name', name);
+
+        var error = '"' + name + '" must not be empty';
+
+        Assert.prototype.isString(string, name);
+
+        if (string === '') {
+            throw new Error(error);
+        }
+    };
+
+    Assert.prototype.isInstanceOf = function (object, clazz, name) {
+        Assert.prototype.isString('name', name);
+
+        if (!_.isObject(object)) {
+            throw new Error('"' + name + '" must be an instance');
+        }
+
+        if (!(object instanceof clazz)) {
+            throw new Error('"' + name + '" must be a valid instance of class');
+        }
+    };
+
+    Assert.prototype.isNotUndefined = function (value, name) {
+        Assert.prototype.isString('name', name);
+
+        if (_.isUndefined(value)) {
+            throw new Error('"' + name + '" must not be undefined');
+        }
+    };
+
+    return new Assert();
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(18),
+    __webpack_require__(19),
+    __webpack_require__(5),
+    __webpack_require__(2)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, NetworkConnectionMonitor, http, observable) {
+    var networkDisconnectHysteresisInterval = 0;
+    var events = {
+        capacity: 'capacity',
+        error: 'error',
+        response: 'response'
+    };
+
+    function BatchHttp(uri, options, serializeRequest, deserializeResponse) {
+        assert.isStringNotEmpty(uri, 'uri');
+
+        options = options || {};
+
+        assert.isObject(options, 'options');
+
+        if (options.requestType) {
+            assert.isStringNotEmpty(options.requestType, 'options.requestType');
+        }
+
+        if (options.maxAttempts) {
+            assert.isNumber(options.maxAttempts, 'options.maxAttempts');
+        }
+
+        if (options.maxBufferedRecords) {
+            assert.isNumber(options.maxBufferedRecords, 'options.maxBufferedRecords');
+        }
+
+        if (options.maxBatchSize) {
+            assert.isNumber(options.maxBatchSize, 'options.maxBatchSize');
+        }
+
+        if (options.contentType) {
+            assert.isStringNotEmpty(options.contentType, 'options.maxBatchSize');
+        }
+
+        if (serializeRequest) {
+            assert.isFunction(serializeRequest, 'serializeRequest');
+        }
+
+        if (deserializeResponse) {
+            assert.isFunction(deserializeResponse, 'deserializeResponse');
+        }
+
+        this._requestType = options.requestType || 'POST';
+        this._maxAttempts = options.maxAttempts || 3;
+        this._maxBufferedRecords = options.maxBufferedRecords || 1000;
+        this._maxBatchSize = options.maxBatchSize || 100;
+        this._contentType = options.contentType || 'application/json';
+        this._serializeRequest = serializeRequest;
+        this._deserializeResponse = deserializeResponse;
+        this._uri = uri;
+        this._records = [];
+        this._isEnabled = true;
+        this._namedEvents = new event.NamedEvents();
+        this._canSendRequestObservable = new observable.Observable(true);
+        this._canSendRequestSubscription = this._canSendRequestObservable.subscribe(_.bind(sendMessagesIfAble, this));
+        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
+        this._pending = false;
+        this._offline = false;
+    }
+
+    BatchHttp.prototype.on = function on(eventName, callback) {
+        assert.isStringNotEmpty(eventName, 'eventName');
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen(eventName, callback);
+    };
+
+    BatchHttp.prototype.addRecord = function(record) {
+        this._records.push(record);
+
+        sendMessagesIfAble.call(this);
+        deleteRecordsIfAtCapacity.call(this);
+    };
+
+    BatchHttp.prototype.addRecordToBeginning = function(record) {
+        this._records.unshift(record);
+
+        sendMessagesIfAble.call(this);
+        deleteRecordsIfAtCapacity.call(this);
+    };
+
+    BatchHttp.prototype.dispose = function dispose() {
+        this._records = [];
+
+        if (this._namedEvents) {
+            this._namedEvents.dispose();
+        }
+
+        if (this._canSendRequestSubscription) {
+            this._canSendRequestSubscription.dispose();
+        }
+    };
+
+    function deleteRecordsIfAtCapacity() {
+        if (this._records.length > this._maxBufferedRecords) {
+            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
+
+            this._records = this._records.slice(deleteRecords);
+
+            this._namedEvents.fireAsync(events.capacity, [null, {numberOfDeletedRecords: deleteRecords}]);
+        }
+    }
+
+    function sendMessagesIfAble() {
+        if (!this._canSendRequestObservable.getValue() || this._records.length === 0) {
+            return;
+        }
+
+        setStatus.call(this, true, this._offline);
+
+        var storeRecords = {records: _.take(this._records, this._maxBatchSize)};
+
+        this._records = this._records.slice(this._maxBatchSize);
+
+        var that = this;
+
+        try {
+            sendHttpRequest.call(this, this._uri, storeRecords, function onTimeout() {
+                setTimeout(function waitForDisconnectTimeout() {
+                    that._records = that._records.concat(storeRecords.records);
+                }, networkDisconnectHysteresisInterval);
+            });
+        } catch (e) {
+            setStatus.call(this, false, this._offline);
+
+            return that._namedEvents.fire(events.error, [e]);
+        }
+    }
+
+    function createAndStartNetworkConnectionMonitor() {
+        var that = this;
+        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
+
+        function onReconnect() {
+            setStatus.call(that, that._pending, false);
+        }
+
+        function onDisconnect() {
+            setStatus.call(that, that._pending, false);
+        }
+
+        networkConnectionMonitor.start(onReconnect, onDisconnect);
+
+        return networkConnectionMonitor;
+    }
+
+    function sendHttpRequest(url, dataToSend, onTimeout) {
+        var that = this;
+
+        var data = this._serializeRequest ? this._serializeRequest(_.assign({}, dataToSend)) : dataToSend;
+
+        function handleResponse(error, result) {
+            setStatus.call(that, false, that._offline);
+
+            if (error) {
+                if (error.message === 'timeout') {
+                    return onTimeout();
+                }
+
+                return that._namedEvents.fire(events.error, [error]);
+            }
+
+            var response = that._deserializeResponse ? that._deserializeResponse(result) : result;
+
+            return that._namedEvents.fire(events.response, [response]);
+        }
+
+        switch (this._requestType) {
+        case 'POST':
+            return http.postWithRetry(url, data, {contentType: this._contentType}, handleResponse, this._maxAttempts);
+        default:
+            throw new Error('Invalid request type');
+        }
+    }
+
+    function setStatus(pending, offline) {
+        this._pending = pending;
+        this._offline = offline;
+
+        this._canSendRequestObservable.setValue(!pending && !offline);
+    }
+
+    return BatchHttp;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(34)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (BatchHttp) {
+    'use strict';
+
+    return BatchHttp;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+    'use strict';
+
+    /**
+     * Create a new disposable object.
+     *
+     * @param cleanup The callback to perform whatever cleanup is required when this object is disposed.
+     * @constructor
+     */
+    function Disposable(cleanup) {
+        assert.isFunction(cleanup, 'cleanup');
+
+        this._cleanup = cleanup;
+    }
+
+    Disposable.prototype.dispose = function () {
+        return this._cleanup.call();
+    };
+
+    Disposable.prototype.toString = function () {
+        return _.toString(this);
+    };
+
+    return Disposable;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
+    'use strict';
+
+    function DisposableList() {
+        this._list = [];
+    }
+
+    DisposableList.prototype.add = function (disposable) {
+        if (!disposable || !_.isFunction(disposable.dispose)) {
+            throw new Error('"disposable" must be a disposable or implement dispose');
+        }
+
+        this._list.push(disposable);
+    };
+
+    DisposableList.prototype.dispose = function () {
+        var results = [];
+
+        _.forEach(this._list, function (disposable) {
+            results.push(disposable.dispose());
+        });
+
+        this._list = [];
+
+        return results;
+    };
+
+    DisposableList.prototype.toString = function () {
+        return _.toString(this);
+    };
+
+    return DisposableList;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(17)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Event) {
+    'use strict';
+
+    function NamedEvents() {
+        this._events = {};
+    }
+
+    NamedEvents.prototype.fire = function (name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fire(args, context);
+        }
+    };
+
+    NamedEvents.prototype.fireAsync = function (name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fireAsync(args, context);
+        }
+    };
+
+    NamedEvents.prototype.listen = function listen(name, listener) {
+        assert.isStringNotEmpty(name, 'name');
+
+        var event = _.includes(_.keys(this._events), name) ? this._events[name] : (this._events[name] = new Event());
+
+        return event.listen(listener);
+    };
+
+    NamedEvents.prototype.size = function size(name) {
+        if (_.includes(_.keys(this._events), name)) {
+            return this._events[name].size();
+        }
+
+        return 0;
+    };
+
+    NamedEvents.prototype.dispose = function dispose() {
+        _.forOwn(this._events, function (event) {
+            event.dispose();
+        });
+
+        this._events = {};
+    };
+
+    NamedEvents.prototype.toString = function toString() {
+        return 'NamedEvents|' + _.keys(this._events).length;
+    };
+
+    return NamedEvents;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9577,174 +12567,1291 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
     'use strict';
 
-    function Observable(initialValue, beforeChange) {
-        this.latestValue = null;
-        this.subscribeCallbacks = {};
-        this.subscriptionTimeout = 100;
-        this.subscriptionCount = 0;
-        this.resetOnChange = false;
-        this.lastChangeTime = 0;
-        this.isPendingChanges = false;
-        this.beforeChange = beforeChange;
+    var requestMethods = {
+        get: 'GET',
+        post: 'POST'
+    };
+    var defaultTimeout = 3000;
 
-        setLatestValue.call(this, initialValue);
+    function Http() {
+
     }
 
-    Observable.prototype.getValue = function getValue() {
-        return clone(this.latestValue);
+    Http.prototype.get = function get(url, settings, callback) {
+        settings = settings || {};
+
+        validateSettings(settings);
+
+        var requestUrl = appendQueryParameters(settings.queryParameters || {}, url);
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethods.get, requestUrl, callback);
+
+        if (!xhr) {
+            return callback(getUnsupportedError());
+        }
+
+        if (settings.mimeType) {
+            xhr.overrideMimeType(settings.mimeType);
+        }
+
+        appendDataTypeHeaders(xhr, settings);
+
+        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
+
+        xhr.timeout = settings.timeout || defaultTimeout;
+
+        xhr.send();
     };
 
-    Observable.prototype.setValue = function setValue(value) {
-        if (value !== this.latestValue) {
-            setLatestValue.call(this, value);
-            onSubscribeCallback.call(this, this.subscriptionTimeout);
+    Http.prototype.post = function postWithRetry(url, data, settings, callback) {
+        settings = settings || {};
+
+        validateSettings(settings);
+
+        var requestUrl = appendQueryParameters(settings.queryParameters || {}, url);
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethods.post, requestUrl, callback);
+
+        if (!xhr) {
+            return callback(getUnsupportedError());
         }
+
+        appendDataTypeHeaders(xhr, settings);
+
+        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
+
+        xhr.timeout = settings.timeout || 15000;
+
+        xhr.send(data);
     };
 
-    Observable.prototype.subscribe = function subscribe(callback, options) {
-        assert.isFunction(callback);
-
-        if (options) {
-            assert.isObject(options);
+    Http.prototype.getWithRetry = function getWithRetry(url, settings, callback, maxAttempts, attempt) {
+        if (!_.isNumber(attempt)) {
+            attempt = 1;
         }
 
-        var that = this;
-        var key = _.uniqueId();
-        var listenForChanges;
+        var shouldRetry = attempt < maxAttempts;
+        var retry = _.bind(getWithRetry, this, url, settings, callback, maxAttempts, attempt + 1);
+        var getRetryCallback = _.bind(retryCallback, this, shouldRetry, retry, callback);
 
-        that.subscribeCallbacks[key] = callback;
-        that.subscriptionCount += 1;
-
-        if (options) {
-            if (options.initial === 'notify') {
-                onSubscribeCallback.call(that, that.subscriptionTimeout, true);
-            }
-
-            if (options.listenForChanges) {
-                listenForChanges = setInterval(function() {
-                    var valueAtInterval = options.listenForChanges.callback();
-
-                    if (valueAtInterval !== that.latestValue) {
-                        that.setValue(valueAtInterval);
-                    }
-                }, options.listenForChanges.timeout);
-            }
-        }
-
-        function dispose() {
-            delete that.subscribeCallbacks[key];
-
-            if (listenForChanges) {
-                clearInterval(listenForChanges);
-
-                listenForChanges = null;
-            }
-
-            that.subscriptionCount -= 1;
-        }
-
-        return {dispose: dispose};
+        this.get(url, settings, getRetryCallback);
     };
 
-    Observable.prototype.extend = function extend(options) {
-        assert.isObject(options);
+    Http.prototype.postWithRetry = function postWithRetry(url, data, settings, callback, maxAttempts, attempt) {
+        if (!_.isNumber(attempt)) {
+            attempt = 1;
+        }
 
-        switch (options.method) {
-        case 'notifyWhenChangesStop':
-            this.subscriptionTimeout = options.timeout;
-            this.resetOnChange = true;
+        var shouldRetry = attempt < maxAttempts;
+        var retry = _.bind(postWithRetry, this, url, data, settings, callback, maxAttempts, attempt + 1);
+        var postRetryCallback = _.bind(retryCallback, this, shouldRetry, retry, callback);
+
+        this.post(url, data, settings, postRetryCallback);
+    };
+
+    function validateSettings(settings) {
+        assert.isObject(settings, 'settings');
+
+        if (settings.queryParameters) {
+            assert.isObject(settings.queryParameters, 'settings.queryParameters');
+        }
+
+        if (settings.mimeType) {
+            assert.stringNotEmpty(settings.mimeType, 'settings.mimeType');
+        }
+
+        if (settings.responseType) {
+            assert.stringNotEmpty(settings.responseType, 'settings.responseType');
+        }
+
+        if (settings.contentType) {
+            assert.stringNotEmpty(settings.contentType, 'settings.contentType');
+        }
+
+        if (!_.isNullOrUndefined(settings.timeout)) {
+            assert.isNumber(settings.timeout, 'settings.timeout');
+        }
+    }
+
+    function appendQueryParameters(queryParameters, url) {
+        var queryParameterString = _.reduce(queryParameters, function(paramString, value, key) {
+            paramString += !paramString ? '?' : '&';
+
+            return paramString + key.toString() + '=' + value.toString();
+        }, '');
+
+        return queryParameterString.length > 0 ? url + queryParameterString : url;
+    }
+
+    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
+        var xhr = new XMLHttpRequest();
+
+        if ('withCredentials' in xhr) {
+            // Most browsers.
+            xhr.open(requestMethod, requestUrl, true);
+        } else if (typeof XDomainRequest !== 'undefined') {
+            // IE8 & IE9
+            xhr = new XDomainRequest();
+            xhr.open(requestMethod, requestUrl);
+        } else {
+            return;
+        }
+
+        return xhr;
+    }
+
+    function getUnsupportedError() {
+        // CORS not supported.
+        var err = new Error('unsupported');
+
+        err.code = 'unsupported';
+
+        return err;
+    }
+
+    function appendDataTypeHeaders(xhr, settings) {
+        var contentType = !settings.contentType ? 'application/json' : settings.contentType;
+        var responseType = !settings.responseType ? settings.contentType || 'application/json' : settings.responseType;
+
+        switch (contentType.toLowerCase()) {
+        case 'application/protobuf':
+            xhr.setRequestHeader('Content-type', 'application/protobuf');
 
             break;
-        case 'notifyAtFixedRate':
-            this.subscriptionTimeout = options.timeout;
+        case 'application/json':
+            xhr.setRequestHeader('Content-type', 'application/json');
 
             break;
         default:
+            xhr.setRequestHeader('Content-type', contentType);
+
             break;
         }
 
-        if (_.isNumber(options.rateLimit)) {
-            this.subscriptionTimeout = options.rateLimit;
+        switch (responseType.toLowerCase()) {
+        case 'application/protobuf':
+            xhr.setRequestHeader('Accept', 'application/protobuf');
+
+            break;
+        case 'application/json':
+            xhr.setRequestHeader('Accept', 'application/json');
+
+            break;
+        default:
+            xhr.setRequestHeader('Accept', responseType);
+
+            break;
         }
+    }
+
+    function handleReadyStateChange(xhr, callback) {
+        if (xhr.readyState === 4 /* DONE */) {
+            if (xhr.status === 200) {
+                callback(null, xhr.responseText);
+            } else {
+                var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
+                err.code = xhr.status;
+
+                if (xhr.status >= 500 && xhr.status < 600) {
+                    err.retryable = true;
+                }
+
+                callback(err);
+            }
+        }
+    }
+
+    function retryCallback(shouldRetry, retry, callback, err, response) {
+        if (err) {
+            if (shouldRetry && err.retryable) {
+                retry();
+            } else {
+                callback(err);
+            }
+        } else {
+            callback(null, response);
+        }
+    }
+
+    return new Http();
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    'use strict';
+
+    var _ = function() {
+
+    };
+
+    _.bind = function bind(callback, that) {
+        var argsAfterContext = Array.prototype.slice.call(arguments, 2);
+
+        return function boundFunction() {
+            if (!_.isFunction(callback)) {
+                throw new TypeError('_.bind - callback must be a function');
+            }
+
+            var combinedArguments = argsAfterContext.concat(Array.prototype.slice.call(arguments));
+
+            return callback.apply(that, combinedArguments);
+        };
+    };
+
+    _.now = function now() {
+        return new Date().getTime();
+    };
+
+    _.utc = function utc(date) {
+        if (_.isNumber(date)) {
+            return date;
+        } else if (!date) {
+            return NaN;
+        }
+
+        return Math.floor(date);
+    };
+
+    _.isoString = function isoString() {
+        var now = new Date();
+
+        if (now.toISOString) {
+            return now.toISOString();
+        }
+
+        return now.getUTCFullYear() +
+            '-' + _.pad(now.getUTCMonth() + 1, 2) +
+            '-' + _.pad(now.getUTCDate(), 2) +
+            'T' + _.pad(now.getUTCHours(), 2) +
+            ':' + _.pad(now.getUTCMinutes(), 2) +
+            ':' + _.pad(now.getUTCSeconds(), 2) +
+            '.' + (now.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
+            'Z';
+    };
+
+    _.map = function map(collection, callback) {
+        assertIsObject(collection, 'collection');
+
+        var newArray = [];
+
+        if (collection.constructor === Array) {
+            _.forEach(collection, function mapCollection(item, index) {
+                if (_.isString(callback) && _.isObject(item)) {
+                    newArray.push(item[callback]);
+                } else if (_.isFunction(callback)) {
+                    newArray.push(callback(item, index));
+                }
+            });
+        } else {
+            _.forOwn(collection, function mapCollection(value, key) {
+                if (_.isFunction(callback)) {
+                    newArray.push(callback(value, key));
+                }
+            });
+        }
+
+        return newArray;
+    };
+
+    _.values = function (collection) {
+        if (!_.isObject(collection) || _.isArray(collection)) {
+            throw new Error('Collection must be an object.');
+        }
+
+        return _.map(collection, function (value) {
+            return value;
+        });
+    };
+
+    _.keys = function (collection) {
+        if (!_.isObject(collection) || _.isArray(collection)) {
+            throw new Error('Collection must be an object.');
+        }
+
+        return _.map(collection, function (value, key) {
+            return key;
+        });
+    };
+
+    _.forEach = function forEach(collection, callback) {
+        if (!_.isFunction(callback)) {
+            throw new Error('Callback must be a function');
+        }
+
+        assertIsArray(collection, 'collection');
+
+        for (var i = 0; i < collection.length; i++) {
+            callback(collection[i], i);
+        }
+    };
+
+    _.forOwn = function forOwn(objectWithProperties, callback) {
+        if (!_.isFunction(callback)) {
+            throw new Error('Callback must be a function');
+        }
+
+        assertIsObject(objectWithProperties, 'objectWithProperties');
+
+        var keys = Object.keys(objectWithProperties);
+
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+
+            if (objectWithProperties.hasOwnProperty(key) || Object.prototype.hasOwnProperty.call(objectWithProperties, key)) {
+                callback(objectWithProperties[key], key);
+            }
+        }
+    };
+
+    _.argumentsToArray = function(args) {
+        if (!_.isObject(args) || !args.length) {
+            throw new Error('Collection must be arguments');
+        }
+
+        var collection = [];
+
+        for (var i = 0; i < args.length; i++) {
+            collection.push(args[i]);
+        }
+
+        return collection;
+    };
+
+    _.assign = function assign(target) {
+        assertIsObject(target, 'target');
+
+        var sources = _.argumentsToArray(arguments);
+
+        sources.shift();
+
+        _.forEach(sources, function(source, index) {
+            assertIsObject(source, 'source ' + index);
+
+            _.forOwn(source, function(value, key) {
+                target[key] = value;
+            });
+        });
+
+        return target;
+    };
+
+    _.includes = function includes(collection, value) {
+        if (_.isString(collection)) {
+            assertIsString(value, 'Includes value and search parameter');
+
+            return collection.indexOf(value) > -1;
+        }
+
+        if (_.isUndefined(collection) || _.isUndefined(value)) {
+            return false;
+        }
+
+        assertIsObject(collection, 'collection');
+
+        var hasValue = false;
+
+        var checkCollection = function checkCollection(currentValue) {
+            if (currentValue === value) {
+                hasValue = true;
+            }
+        };
+
+        if (collection.constructor === Array) {
+            _.forEach(collection, checkCollection);
+        } else {
+            _.forOwn(collection, checkCollection);
+        }
+
+        return hasValue;
+    };
+
+    _.reduce = function reduce(collection, callback, initialValue) {
+        assertIsObject(collection, 'collection');
+
+        var result = initialValue === _.noop() ? null : initialValue;
+
+        if (collection.constructor === Array) {
+            _.forEach(collection, function (item) {
+                result = callback(result, item);
+            });
+        } else {
+            _.forOwn(collection, function (value, key) {
+                result = callback(result, value, key);
+            });
+        }
+
+        return result;
+    };
+
+    _.sample = function sample(collection) {
+        assertIsArray(collection, 'collection');
+
+        return collection[Math.floor(Math.random() * collection.length)];
+    };
+
+    _.uniqueId = function () {
+        return (_.now() * Math.random()).toString();
+    };
+
+    _.find = function find(collection, callback, initialIndex) {
+        assertIsArray(collection, 'collection');
+
+        var hasItem;
+
+        _.forEach(collection, function findInCollection(value, index) {
+            if (callback(value) && index >= (initialIndex || 0)) {
+                hasItem = value;
+
+                return hasItem;
+            }
+        });
+
+        return hasItem;
+    };
+
+    _.findIndex = function find(collection, callback, initialIndex) {
+        assertIsArray(collection, 'collection');
+
+        var hasItem;
+
+        _.forEach(collection, function findInCollection(value, index) {
+            if (callback(value, index) && index >= (initialIndex || 0)) {
+                hasItem = index;
+
+                return hasItem;
+            }
+        });
+
+        return hasItem;
+    };
+
+    _.filter = function filter(collection, callback) {
+        assertIsArray(collection, 'collection');
+
+        var newCollection = [];
+
+        _.forEach(collection, function findInCollection(value) {
+            if (callback(value)) {
+                newCollection.push(value);
+            }
+        });
+
+        return newCollection;
+    };
+
+    _.remove = function remove(collection, callback) {
+        assertIsArray(collection, 'collection');
+
+        var filterCallback = function filterCallback(value) {
+            return !callback(value);
+        };
+
+        return _.filter(collection, filterCallback);
+    };
+
+    _.take = function take(collection, size) {
+        assertIsArray(collection, 'collection');
+
+        return collection.slice(0, size);
+    };
+
+    _.hasDifferences = function hasDifferences(collectionA, collectionB, deep) {
+        return _.findDifferences(collectionA, collectionB, deep).length > 0;
+    };
+
+    _.findDifferences = function findDifferences(collectionA, collectionB, deep) {
+        var differences = [];
+        var visitedKeys = {};
+
+        function getDifferences(value, indexOrKey) {
+            visitedKeys[indexOrKey] = 1;
+
+            if ((_.isObject(value) || _.isArray(value)) && deep) {
+                if (!_.hasIndexOrKey(collectionB, indexOrKey)) {
+                    differences.push(indexOrKey);
+                } else if (!_.sameTypes(collectionA[indexOrKey], collectionB[indexOrKey])) {
+                    differences.push(indexOrKey);
+                } else if (_.hasDifferences(collectionA[indexOrKey], collectionB[indexOrKey], deep)) {
+                    differences.push(indexOrKey);
+                }
+            } else if (collectionA[indexOrKey] !== collectionB[indexOrKey]) {
+                differences.push(indexOrKey);
+            }
+        }
+
+        if (_.isArray(collectionA) && _.isArray(collectionB)) {
+            if (collectionA.length > collectionB.length) {
+                _.forEach(collectionA, getDifferences);
+            } else {
+                _.forEach(collectionB, getDifferences);
+            }
+        } else if (_.isObject(collectionA) && _.isObject(collectionB) && !_.isArray(collectionA) && !_.isArray(collectionB)) {
+            _.forOwn(collectionA, getDifferences);
+
+            _.forOwn(collectionB, function (value, key) {
+                if (!visitedKeys.hasOwnProperty(key)) {
+                    differences.push(key);
+                }
+            });
+        } else {
+            throw new Error('Object types do not match');
+        }
+
+        return differences;
+    };
+
+    _.hasIndexOrKey = function hasIndexOrKey(collection, indexOrKey) {
+        if (_.isArray(collection)) {
+            return collection.length > parseInt(indexOrKey);
+        } else if (_.isObject(collection)) {
+            return collection.hasOwnProperty(indexOrKey);
+        }
+
+        return false;
+    };
+
+    _.startsWith = function startsWith(value, prefix) {
+        assertIsString(value, 'value');
+        assertIsString(prefix, 'prefix');
+
+        return value.indexOf(prefix) === 0;
+    };
+
+    _.sameTypes = function sameTypes(first, second) {
+        if (_.isNullOrUndefined(first) || _.isNullOrUndefined(second)) {
+            return _.isNullOrUndefined(first) && _.isNullOrUndefined(second);
+        }
+
+        if (_.isArray(first) || _.isArray(second)) {
+            return _.isArray(first) && _.isArray(second);
+        }
+
+        return typeof first === typeof second;
+    };
+
+    _.freeze = function freeze(obj) {
+        if ('freeze' in Object) {
+            return Object.freeze(obj);
+        }
+
+        return obj;
+    };
+
+    _.noop = function () {
+        return undefined;
+    };
+
+    _.isObject = function isObject(obj) {
+        if (obj === null) {
+            return false;
+        }
+
+        return typeof obj === 'object';
+    };
+
+    _.isArray = function isArray(array) {
+        if (!_.isObject(array)) {
+            return false;
+        }
+
+        return array.constructor === Array;
+    };
+
+    _.isString = function isString(string) {
+        return typeof string === 'string';
+    };
+
+    _.isNumber = function isNumber(number) {
+        if (isNaN(number)) {
+            return false;
+        }
+
+        return typeof number === 'number';
+    };
+
+    _.isBoolean = function isBoolean(bool) {
+        return typeof bool === 'boolean';
+    };
+
+    _.isFunction = function isFunction(func) {
+        return typeof func === 'function';
+    };
+
+    _.isNullOrUndefined = function isNullOrUndefined(value) {
+        return value === null || value === undefined;
+    };
+
+    _.isUndefined = function isUndefined(value) {
+        return value === undefined;
+    };
+
+    _.getEnumName = function getEnumName(enums, nameOrId) {
+        var enumObject = null;
+
+        var enumArray = _.map(enums, function (value) {
+            return value;
+        });
+
+        if (_.isNumber(nameOrId)) {
+            enumObject = _.find(enumArray, function (current) {
+                return current.id === nameOrId;
+            });
+        } else if (_.isString(nameOrId)) {
+            enumObject = _.find(enumArray, function (current) {
+                return current.name.toLowerCase() === nameOrId.toLowerCase();
+            });
+        }
+
+        if (enumObject) {
+            return enumObject.name;
+        }
+
+        return null;
+    };
+
+    _.toString = function toString(data) {
+        if (_.isString(data)) {
+            return data;
+        }
+
+        if (_.isBoolean(data)) {
+            return data ? 'true' : 'false';
+        }
+
+        if (_.isNumber(data)) {
+            return data.toString();
+        }
+
+        var toStringStr = '';
+
+        if (data) {
+            if (_.isFunction(data.toString)) {
+                toStringStr = data.toString();
+            } else if (_.isObject(data.toString)) {
+                try {
+                    toStringStr = data.toString();
+                } catch (e) {
+                    toStringStr = '[object invalid toString()]';
+                }
+            }
+        }
+
+        if (toStringStr.indexOf('[object') !== 0) {
+            return toStringStr;
+        }
+
+        var cache = [];
+
+        return toStringStr + JSON.stringify(data, function (key, value) {
+            if (_.isObject(value) && !_.isNullOrUndefined(value)) {
+                if (_.includes(cache, value)) {
+                    return '<recursive>';
+                }
+
+                cache.push(value);
+            }
+
+            return key === '' ? value : _.toString(value);
+        });
+    };
+
+    _.pad = function padNumber(value, numberToPad) {
+        assertIsNumber(value, 'value');
+        assertIsNumber(numberToPad, 'numberToPad');
+
+        var valueLength = value.toString().length;
+
+        for (var i = 0; i < numberToPad - valueLength; i++) {
+            value = '0' + value.toString();
+        }
+
+        return value.toString();
+    };
+
+    _.addEventListener = function addEventListener(target, eventName, listener, useCapture) {
+        assertIsObject(target, 'target');
+        assertIsString(eventName, 'eventName');
+        assertIsFunction(listener, 'listener');
+
+        if (target.phenixAddEventListener) {
+            target.phenixAddEventListener.call(target, eventName, listener, !!useCapture);
+        } else if (target.addEventListener) {
+            target.addEventListener(eventName, listener, !!useCapture);
+        } else if (target.attachEvent) {
+            target.attachEvent("on" + eventName, listener);
+        }
+    };
+
+    _.removeEventListener = function removeEventListener(target, eventName, listener, useCapture) {
+        assertIsObject(target, 'target');
+        assertIsString(eventName, 'eventName');
+        assertIsFunction(listener, 'listener');
+
+        if (target.phenixRemoveEventListener) {
+            target.phenixRemoveEventListener.call(target, eventName, listener, !!useCapture);
+        } else if(target.removeEventListener) {
+            target.removeEventListener(eventName, listener, !!useCapture);
+        } else if (target.detachEvent) {
+            target.detachEvent("on" + eventName, listener);
+        }
+    };
+
+    var assertIsArray = function assertIsArray(collection) {
+        if (!_.isArray(collection)) {
+            throw new Error('Array must be an array.');
+        }
+    };
+
+    var assertIsNumber = function assertIsNumber(number, name) {
+        assertIsString(name, 'name');
+
+        if (!_.isNumber(number)) {
+            throw new Error(name + ' must be a number.');
+        }
+    };
+
+    var assertIsObject = function assertIsObject(collection, name) {
+        assertIsString(name, 'name');
+
+        if (!_.isObject(collection)) {
+            throw new Error('collection type not supported - ' + name +' must be an array or object.');
+        }
+    };
+
+    var assertIsFunction = function assertIsFunction(callback, name) {
+        assertIsString(name, 'name');
+
+        if (!_.isFunction(callback)) {
+            throw new Error(name + ' must be a function.');
+        }
+    };
+
+    var assertIsString = function assertIsFunction(value, name) {
+        if (!_.isString(value)) {
+            throw new Error('Name must be a string.');
+        }
+
+        if (!_.isString(value)) {
+            throw new Error(name + ' must be a string.');
+        }
+    };
+
+    return _;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(8)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging) {
+    'use strict';
+
+    function ConsoleAppender() {
+        this._minLevel = logging.level.TRACE;
+    }
+
+    ConsoleAppender.prototype.setThreshold = function setThreshold(level) {
+        assert.isNumber(level, 'level');
+
+        this._minLevel = level;
+    };
+
+    ConsoleAppender.prototype.getThreshold = function getThreshold() {
+        return this._minLevel;
+    };
+
+    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, environment, version, context) {
+        if (context.level < this._minLevel) {
+            return;
+        }
+
+        messages[0] = since + ' [' + category + '] ' + level + ' ' + messages[0];
+
+        if (context.level > logging.level.INFO) {
+            logError(messages);
+        } else {
+            log(messages);
+        }
+    };
+
+    var log = function (args) {
+        console.log.apply(console, args);
+    } || function () { };
+
+    var logError = function (args) {
+        console.error.apply(console, args);
+    } || log;
+
+    return ConsoleAppender;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(8)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging) {
+    'use strict';
+
+    var defaultCategory= 'websdk';
+    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+    var defaultEnvironment = 'production' || '?';
+    var sdkVersion = '2017-08-24T21:31:31Z' || '?';
+    var releaseVersion = '2017.3.1';
+
+    function Logger() {
+        this._appenders = [];
+        this._userId = null;
+        this._sessionId = null;
+        this._environment = defaultEnvironment;
+        this._applicationVersion = sdkVersion;
+    }
+
+    Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.TRACE});
+    };
+
+    Logger.prototype.debug = function debug(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.DEBUG});
+    };
+
+    Logger.prototype.info = function info(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.INFO});
+    };
+
+    Logger.prototype.warn = function warn(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.WARN});
+    };
+
+    Logger.prototype.error = function error(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.ERROR});
+    };
+
+    Logger.prototype.fatal = function fatal(/* formatStr, [parameter], ...*/) {
+        return log.call(this, arguments, {level: logging.level.FATAL});
+    };
+
+    Logger.prototype.addAppender = function addAppender(appender) {
+        assert.isObject(appender, 'appender');
+        assert.isFunction(appender.log, 'appender.log');
+
+        this._appenders.push(appender);
+    };
+
+    Logger.prototype.getAppenders = function getAppenders() {
+        return this._appenders;
+    };
+
+    Logger.prototype.getUserId = function getUserId() {
+        return this._userId;
+    };
+
+    Logger.prototype.setUserId = function setUserId(userId) {
+        this._userId = userId;
+    };
+
+    Logger.prototype.getEnvironment = function getEnvironment() {
+        return this._environment;
+    };
+
+    Logger.prototype.setEnvironment = function setEnvironment(environment) {
+        this._environment = environment;
+    };
+
+    Logger.prototype.getApplicationVersion = function getApplicationVersion() {
+        return this._applicationVersion;
+    };
+
+    Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
+        this._applicationVersion = version;
+    };
+
+    Logger.prototype.getObservableSessionId = function getObservableSessionId() {
+        return this._observableSessionId;
+    };
+
+    Logger.prototype.setObservableSessionId = function setObservableSessionId(observableSessionId) {
+        this._observableSessionId = observableSessionId;
+
+        if (this._sessionIdSubscription) {
+            this._sessionIdSubscription.dispose();
+        }
+
+        if (observableSessionId) {
+            assert.isObject(observableSessionId, 'observableSessionId');
+
+            this._sessionIdSubscription = this._observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
+        }
+    };
+
+    function onSessionIdChange(sessionId) {
+        this._sessionId = sessionId;
+
+        if (!sessionId) {
+            this.info('Websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+        } else {
+            this.info('Session started on websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
+        }
+    }
+
+    function log(messages, context) {
+        var now = _.now();
+        var since = (now - start) / 1000;
+        var level = convertLevel(context.level);
+        var category = context.name || defaultCategory;
+        var that = this;
+
+        _.forEach(this._appenders, function(appender) {
+            try {
+                appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
+            } catch (e) { } // eslint-disable-line no-empty
+        });
+    }
+
+    function convertLevel(jsLoggerLevel) {
+        switch (jsLoggerLevel) {
+        case logging.level.TRACE:
+            return 'Trace';
+        case logging.level.DEBUG:
+            return 'Debug';
+        case logging.level.INFO:
+            return 'Info';
+        case logging.level.WARN:
+            return 'Warn';
+        case logging.level.ERROR:
+            return 'Error';
+        case logging.level.FATAL:
+            return 'Fatal';
+        default:
+            throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
+        }
+    }
+
+    var stringify = function stringify(args) {
+        if (args.length === 0) {
+            return;
+        }
+
+        var newArgs = [];
+        var errorStacks = [];
+
+        _.forEach(args, function(arg) {
+            newArgs.push(_.toString(arg));
+
+            if (arg instanceof Error) {
+                errorStacks.push(arg.stack);
+            }
+        });
+
+        return format(newArgs.concat(errorStacks));
+    };
+
+    var format = function format(args) {
+        var fmt = args[0];
+        var idx = 0;
+
+        while (fmt.indexOf && args.length > 1 && idx >= 0) {
+            idx = fmt.indexOf('%', idx);
+
+            if (idx > 0) {
+                var type = fmt.substring(idx + 1, idx + 2);
+
+                switch (type) {
+                case '%':
+                    // Escaped '%%' turns into '%'
+                    fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
+                    idx++;
+
+                    break;
+                case 's':
+                case 'd':
+                    // Replace '%d' or '%s' with the argument
+                    args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
+                    args.splice(1, 1);
+
+                    break;
+                default:
+                    return args;
+                }
+            }
+        }
+
+        return args;
+    };
+
+    return Logger;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
+    'use strict';
+
+    var defaultOfflineTimeoutLength = 15000;
+
+    function NetworkConnectionMonitor(offlineTimeoutLength, logger) {
+        this._logger = logger;
+        this._timeout = null;
+        this._onOnline = null;
+        this._onOffline = null;
+        this._offlineHysteresisTimeout = _.isNumber(offlineTimeoutLength) ? offlineTimeoutLength : defaultOfflineTimeoutLength;
+        this._stopped = false;
+    }
+
+    NetworkConnectionMonitor.prototype.start = function start(onlineCallback, offlineCallback) {
+        this._onOnline = _.bind(handleOnline, this, onlineCallback);
+        this._onOffline = _.bind(handleOfflineWithHysteresis, this, offlineCallback);
+
+        _.addEventListener(window, 'online', this._onOnline);
+        _.addEventListener(window, 'offline', this._onOffline);
+
+        this._stopped = false;
+    };
+
+    NetworkConnectionMonitor.prototype.stop = function stop() {
+        if (this._stopped) {
+            return;
+        }
+
+        _.removeEventListener(window, 'online', this._onOnline);
+        _.removeEventListener(window, 'offline', this._onOffline);
+
+        this._onOnline = null;
+        this._onOffline = null;
+        this._stopped = true;
+    };
+
+    function handleOfflineWithHysteresis(offlineCallback, event) { // eslint-disable-line no-unused-vars
+        var that = this;
+
+        if (that._logger) {
+            that._logger.warn('Network Disconnect Detected. Waiting for reconnect.');
+        }
+
+        that._offlineHysteresisTimeoutElapsed = false;
+
+        that.offlineTimeout = setTimeout(function() {
+            that._offlineHysteresisTimeoutElapsed = true;
+
+            if (!offlineCallback || !that._onOffline) {
+                return;
+            }
+
+            if (that._logger) {
+                that._logger.warn('Network not reconnected after [%s]. Going Offline.', that._offlineHysteresisTimeout);
+            }
+
+            offlineCallback();
+        }, that._offlineHysteresisTimeout);
+    }
+
+    function handleOnline(onlineCallback, event) { // eslint-disable-line no-unused-vars
+        if (this._logger) {
+            this._logger.info('Network Reconnected.');
+        }
+
+        if (this.offlineTimeout) {
+            clearTimeout(this.offlineTimeout);
+
+            this.offlineTimeout = null;
+        }
+
+        if (onlineCallback && this._onOnline) {
+            onlineCallback(this._offlineHysteresisTimeoutElapsed);
+        }
+    }
+
+    return NetworkConnectionMonitor;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 44 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(20)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
+    'use strict';
+
+    function ObservableArray(initialValues, beforeChange) {
+        var valuesToSet = initialValues;
+
+        if (valuesToSet === undefined || valuesToSet === null) {
+            valuesToSet = [];
+        }
+
+        assert.isArray(valuesToSet, 'valuesToSet');
+
+        this.observableArray = new Observable(valuesToSet, beforeChange);
+    }
+
+    ObservableArray.prototype.getValue = function getValue() {
+        return this.observableArray.getValue();
+    };
+
+    ObservableArray.prototype.setValue = function setValue(values) {
+        if (values === undefined || values === null) {
+            values = [];
+        }
+
+        if (values !== undefined) {
+            assert.isArray(values, 'values');
+        }
+
+        return this.observableArray.setValue(values);
+    };
+
+    ObservableArray.prototype.subscribe = function subscribe(callback, options) {
+        return this.observableArray.subscribe(callback, options);
+    };
+
+    ObservableArray.prototype.push = function push(value) {
+        var array = this.observableArray.getValue();
+        array.push(value);
+
+        this.observableArray.setValue(array);
+    };
+
+    ObservableArray.prototype.pop = function pop() {
+        var array = this.observableArray.getValue();
+        var value = array.pop();
+
+        this.observableArray.setValue(array);
+
+        return value;
+    };
+
+    ObservableArray.prototype.remove = function remove(valueOrFunction) {
+        var array = this.observableArray.getValue();
+
+        var filterFunction = function (value) {
+            return _.isFunction(valueOrFunction) ? valueOrFunction(value) : value === valueOrFunction;
+        };
+
+        var valuesToRemove = _.filter(array, filterFunction);
+
+        if (valuesToRemove.length > 0) {
+            this.observableArray.setValue(_.remove(array, filterFunction));
+        }
+
+        return valuesToRemove;
+    };
+
+    ObservableArray.prototype.removeAll = function removeAll() {
+        var array = this.observableArray.getValue();
+
+        this.observableArray.setValue([]);
+
+        return array;
+    };
+
+    ObservableArray.prototype.extend = function extend(options) {
+        this.observableArray.extend(options);
 
         return this;
     };
 
-    function clone(value) {
-        if (typeof value === 'undefined' || value === null) {
-            return value;
-        }
-
-        // Necessary for observable array. Subsequent comparison must not be equal in order to trigger updates.
-        if (_.isArray(value)) {
-            return value.slice();
-        }
-
-        return value;
-    }
-
-    function setLatestValue(value) {
-        var valueToSet = value;
-
-        if (this.beforeChange) {
-            valueToSet = this.beforeChange(value);
-        }
-
-        this.latestValue = clone(valueToSet);
-    }
-
-    function onSubscribeCallback(timeoutLength, noTimeout) {
-        this.lastChangeTime = _.now();
-
-        if (!this.isPendingChanges && this.subscriptionCount !== 0) {
-            this.isPendingChanges = true;
-
-            if (noTimeout) {
-                return notifySubscribers.call(this);
-            }
-
-            continueAfterTimeout.call(this, timeoutLength);
-        }
-    }
-
-    function continueAfterTimeout(timeoutLength) {
-        var that = this;
-
-        setTimeout(function() {
-            var timeElapsedSinceLastChange = _.now() - that.lastChangeTime;
-
-            if (that.resetOnChange && timeElapsedSinceLastChange < that.subscriptionTimeout) {
-                continueAfterTimeout.call(that, that.subscriptionTimeout - timeElapsedSinceLastChange);
-            } else {
-                notifySubscribers.call(that);
-            }
-        }, timeoutLength);
-    }
-
-    function notifySubscribers() {
-        try {
-            executeSubscriptionCallbacks.call(this);
-        } finally {
-            this.isPendingChanges = false;
-        }
-    }
-
-    function executeSubscriptionCallbacks() {
-        var that = this;
-
-        _.forOwn(that.subscribeCallbacks, function (callback) {
-            if (_.isFunction(callback)) {
-                callback(that.latestValue);
-            }
-        });
-    }
-
-    return Observable;
+    return ObservableArray;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 19 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9768,316 +13875,45 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
     'use strict';
 
-    function AuthenticationService(pcast) {
-        assert.isObject(pcast, 'pcast');
-        assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
-        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
-        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+    function ObservableMonitor(observable) {
+        assert.isObject(observable, 'observable');
 
-        if (this._pcast === pcast) {
-            return;
-        }
-
-        this._pcast = pcast;
-        this._logger = pcast.getLogger();
-        this._protocol = pcast.getProtocol();
-
-        assert.isObject(this._logger, 'this._logger');
-        assert.isObject(this._protocol, 'this._protocol');
-        assert.isFunction(this._protocol.getObservableSessionId, 'this._protocol.getObservableSessionId');
-        assert.isFunction(this._pcast.getObservableStatus, 'this._pcast.getObservableStatus');
-
-        this._sessionId = this._protocol.getObservableSessionId();
-        this._status = this._pcast.getObservableStatus();
+        this._observable = observable;
+        this._listenerSubscription = null;
+        this._isEnabled = false;
     }
 
-    AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
-        if (!validPCastStatus(this.getPCastStatus())) {
-            throw new Error('Unable to perform action. Status [%s]. Please wait to reconnect.', this.getPCastStatus());
-        }
+    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
+        this._isEnabled = true;
 
-        if (!validPCastSessionId(this.getPCastSessionId())) {
-            throw new Error('Unable to perform action. Invalid sessionId [%s]', this.getPCastSessionId());
-        }
-    };
-
-    AuthenticationService.prototype.getObservableSessionId = function getObservableSessionId() {
-        return this._sessionId;
-    };
-
-    AuthenticationService.prototype.getObservableStatus = function getObservableStatus() {
-        return this._status;
-    };
-
-    AuthenticationService.prototype.getPCastSessionId = function getPCastSessionId() {
-        return this._sessionId.getValue();
-    };
-
-    AuthenticationService.prototype.getPCastStatus = function getPCastStatus() {
-        return this._status.getValue();
-    };
-
-    function validPCastSessionId(sessionId) {
-        return sessionId !== null && sessionId !== undefined && sessionId !== '';
-    }
-
-    function validPCastStatus(status) {
-        return status !== null && status !== undefined && status !== '' && status.toLowerCase() !== 'offline';
-    }
-
-    return AuthenticationService;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-    'use strict';
-
-    var environment = {};
-
-    environment.parseEnvFromPcastBaseUri = function (uri) {
-        uri = uri.toLowerCase();
-
-        if (uri.indexOf('local') > -1) {
-            return 'local';
-        } else if (uri.indexOf('stg') > -1) {
-            return 'staging';
-        }
-
-        return 'production';
-    };
-
-    return environment;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(63),
-    __webpack_require__(12)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Stream, member) {
-    'use strict';
-    var memberRoles = member.roles;
-    var memberStates = member.states;
-
-    function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
-        this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
-    }
-
-    Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
-        assert.isString(sessionId, 'sessionId');
-        assert.isString(screenName, 'screenName');
-        assert.isArray(streams, 'streams');
-        assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
-
-        if (roomService) {
-            assert.isObject(roomService);
-        }
-
-        this._sessionId = new observable.Observable(sessionId);
-        this._screenName = new observable.Observable(screenName);
-        this._streams = new observable.ObservableArray([]);
-
-        this._state = new observable.Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
-        this._role = new observable.Observable(role, assertIsValidMemberRole);
-        this._lastUpdate = new observable.Observable(lastUpdate, _.utc);
-        this._roomService = roomService;
-
-        this.setStreams(streams);
-    };
-
-    Member.prototype.getObservableState = function getObservableState() {
-        return this._state;
-    };
-
-    Member.prototype.getSessionId = function getSessionId() {
-        return this._sessionId.getValue();
-    };
-
-    Member.prototype.getObservableScreenName = function getObservableScreenName() {
-        return this._screenName;
-    };
-
-    Member.prototype.getObservableRole = function getObservableRole() {
-        return this._role;
-    };
-
-    Member.prototype.getObservableStreams = function getObservableStreams() {
-        return this._streams;
-    };
-
-    Member.prototype.getObservableLastUpdate = function getObservableLastUpdate() {
-        return this._lastUpdate;
-    };
-
-    Member.prototype.getLastUpdate = function getLastUpdate() {
-        return this._lastUpdate.getValue();
-    };
-
-    Member.prototype.getStreams = function getStreams() {
-        return _.map(this._streams.getValue(), function mapToJson(stream) {
-            return stream.toJson();
-        });
-    };
-
-    Member.prototype.commitChanges = function commitChanges(callback) {
-        assert.isObject(this._roomService);
-
-        this._roomService.updateMember(this, callback);
-    };
-
-    Member.prototype.reload = function reload() {
-        assert.isObject(this._roomService);
-
-        this._roomService.revertMemberChanges(this);
-    };
-
-    Member.prototype.setStreams = function setStreams(streams) {
-        var newStreams = _.map(streams, function(stream) {
-            return createNewObservableStream(stream);
-        });
-
-        this._streams.setValue(newStreams);
-    };
-
-    Member.prototype.toString = function toString() {
-        return this.getObservableRole().getValue() + '[' + this.getObservableScreenName().getValue() + ',' + this.getSessionId() + ']';
-    };
-
-    Member.prototype.toJson = function toJson() {
-        var member = {
-            sessionId: this._sessionId.getValue(),
-            screenName: this._screenName.getValue(),
-            role: this._role.getValue(),
-            state: this._state.getValue(),
-            streams: [],
-            lastUpdate: this._lastUpdate.getValue()
-        };
-
-        _.forEach(this._streams.getValue(), function(stream) {
-            member.streams.push(stream.toJson());
-        });
-
-        return member;
-    };
-
-    Member.prototype._update = function update(member) {
-        if (!_.isObject(member)) {
-            return;
-        }
-
-        if (member.hasOwnProperty('state')) {
-            this._state.setValue(member.state);
-        }
-
-        if (member.hasOwnProperty('screenName')) {
-            this._screenName.setValue(member.screenName);
-        }
-
-        if (member.hasOwnProperty('role')) {
-            this._role.setValue(member.role);
-        }
-
-        if (member.hasOwnProperty('lastUpdate')) {
-            this._lastUpdate.setValue(member.lastUpdate);
-        }
-
-        if (member.hasOwnProperty('streams')) {
-            updateStreams.call(this, member.streams);
-        }
-    };
-
-    function createNewObservableStream(stream) {
-        return new Stream(stream.uri, stream.type, stream.audioState, stream.videoState);
-    }
-
-    function updateStreams(streams) {
-        // Iterate through new streams object, update those that have changed, push new ones, remove old ones
-        var oldObservableStreams = this._streams.getValue();
-        var newObservableStreams = [];
-
-        _.forEach(streams, function (stream) {
-            var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
-                return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
-            });
-
-            if (streamToUpdate) {
-                streamToUpdate._update(stream);
-            } else {
-                streamToUpdate = createNewObservableStream(stream);
+        this._listenerSubscription = this._observable.subscribe(_.noop, {
+            listenForChanges: {
+                callback: checkForChanges,
+                timeout: timeout || 500
             }
-
-            newObservableStreams.push(streamToUpdate);
         });
+    };
 
-        this._streams.setValue(newObservableStreams);
-    }
+    ObservableMonitor.prototype.stop = function stop() {
+        this._isEnabled = false;
 
-    function assertIsValidMemberRole(role) {
-        role = _.getEnumName(memberRoles, role);
-
-        if (!role) {
-            throw new Error('"role" must be a valid member role');
+        if (this._listenerSubscription) {
+            this._listenerSubscription.dispose();
         }
 
-        return role;
-    }
+        this._listenerSubscription = null;
+    };
 
-    function assertIsValidMemberState(state) {
-        state = _.getEnumName(memberStates, state);
+    ObservableMonitor.prototype.isEnabled = function isEnabled() {
+        return this._isEnabled;
+    };
 
-        if (!state) {
-            throw new Error('"state" must be a valid member state');
-        }
-
-        return state;
-    }
-
-    return Member;
+    return ObservableMonitor;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 22 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10098,228 +13934,338 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
+    __webpack_require__(35),
     __webpack_require__(21),
-    __webpack_require__(13)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Member, room) {
-    'use strict';
-    var roomTypes = room.types;
+    __webpack_require__(7)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, BatchHttp, MQProtocol, ByteBuffer) {
+    function BatchHttpProtocol(uri, protocols, type, options, apiVersion) {
+        assert.isStringNotEmpty(uri, 'uri');
+        assert.isArray(protocols, 'protocols');
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(options, 'options');
 
-    function Room(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        this.init(roomService, id, alias, name, description, type, members, bridgeId, pin);
+        var bufferedHttpOptions = _.assign({}, options || {}, {contentType: 'application/protobuf'});
+        var mqProtocol = new MQProtocol(protocols, apiVersion);
+
+        return new BatchHttp(uri, bufferedHttpOptions, _.bind(prepareRequest, this, mqProtocol, type), _.bind(prepareResponse, this, mqProtocol, type));
     }
 
-    Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        assert.stringNotEmpty(name, 'name');
-        assert.stringNotEmpty(description, 'description');
-        assert.isArray(members, 'members');
+    function prepareRequest(mqProtocol, type, data) {
+        return mqProtocol.encode(type, data).toBinary();
+    }
 
-        if (id) {
-            assert.stringNotEmpty(id, 'id');
+    function prepareResponse(mqProtocol, type, data) {
+        return mqProtocol.decode(type + 'Response', ByteBuffer.fromBinary(data));
+    }
+
+    return BatchHttpProtocol;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(18),
+    __webpack_require__(22),
+    __webpack_require__(21),
+    __webpack_require__(7)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, ReconnectingWebSocket, MQProtocol, ByteBuffer) {
+    'use strict';
+
+    function WebSocketProtocol(uri, logger, protocols, apiVersion) {
+        assert.isStringNotEmpty(uri, 'uri');
+        assert.isObject(logger, 'logger');
+        assert.isArray(protocols, 'protocols');
+
+        this._uri = uri;
+        this._logger = logger;
+        this._mqProtocol = new MQProtocol(protocols, apiVersion);
+        this._logger.info('Connecting to [%s]', uri);
+
+        this._nextRequestId = 0;
+        this._namedEvents = new event.NamedEvents();
+        this._requests = {};
+
+        this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
+
+        this._webSocket.onmessage = _.bind(onMessage, this);
+        this._webSocket.onconnected = _.bind(onConnected, this);
+        this._webSocket.onreconnecting = _.bind(onReconnecting, this);
+        this._webSocket.onreconnected = _.bind(onReconnected, this);
+        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
+        this._webSocket.onerror = _.bind(onError, this);
+
+        this._disconnected = false;
+    }
+
+    WebSocketProtocol.prototype.on = function (eventName, handler) {
+        assert.isStringNotEmpty(eventName, 'eventName');
+        assert.isFunction(handler, 'handler');
+
+        return this._namedEvents.listen(eventName, handler);
+    };
+
+    WebSocketProtocol.prototype.sendRequest = function sendRequest(type, message, callback) {
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(message, 'message');
+
+        if (callback) {
+            assert.isFunction(callback, 'callback');
         }
 
-        if (alias) {
-            assert.stringNotEmpty(alias, 'alias');
-        }
-
-        if (bridgeId) {
-            assert.stringNotEmpty(bridgeId, 'bridgeId');
-        }
-
-        if (pin) {
-            assert.stringNotEmpty(pin, 'pin');
-        }
-
-        if (roomService) {
-            assert.isObject(roomService, 'roomService');
-        }
-
-        this._roomId = new observable.Observable(id);
-        this._alias = new observable.Observable(alias);
-        this._name = new observable.Observable(name);
-        this._description = new observable.Observable(description);
-        this._type = new observable.Observable(type, assertIsValidRoomType);
-        this._members = new observable.ObservableArray([]).extend({
-            method: "notifyWhenChangesStop",
-            timeout: 400
-        });
-        this._options = new observable.ObservableArray();
-        this._bridgeId = new observable.Observable(bridgeId);
-        this._pin = new observable.Observable(pin);
-        this._roomService = roomService;
-
-        setMembers.call(this, members);
-    };
-
-    Room.prototype.getRoomId = function getRoomId() {
-        return this._roomId.getValue();
-    };
-
-    Room.prototype.getObservableAlias = function getObservableAlias() {
-        return this._alias;
-    };
-
-    Room.prototype.getObservableName = function getObservableName() {
-        return this._name;
-    };
-
-    Room.prototype.getObservableDescription = function getObservableDescription() {
-        return this._description;
-    };
-
-    Room.prototype.getObservableType = function getObservableType() {
-        return this._type;
-    };
-
-    Room.prototype.getObservableMembers = function getObservableMembers() {
-        return this._members;
-    };
-
-    Room.prototype.getObservableBridgeId = function getObservableBridgeId() {
-        return this._bridgeId;
-    };
-
-    Room.prototype.getObservablePin = function getObservablePin() {
-        return this._pin;
-    };
-
-    Room.prototype.toString = function toString() {
-        return this._type.getValue() + '[' + this._roomId.getValue() + ']';
-    };
-
-    Room.prototype.toJson = function toJson() {
-        return {
-            roomId: this._roomId.getValue(),
-            alias: this._alias.getValue(),
-            name: this._name.getValue(),
-            description: this._description.getValue(),
-            type: this._type.getValue(),
-            pin: this._pin.getValue(),
-            bridgeId: this._bridgeId.getValue()
+        var requestId = (this._nextRequestId++).toString();
+        var request = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, message)
         };
+
+        this._requests[requestId] = callback;
+
+        return this._webSocket.send(this._mqProtocol.encode('mq.Request', request).toString('base64'));
     };
 
-    Room.prototype.commitChanges = function commitChanges(callback) {
-        assert.isObject(this._roomService);
+    WebSocketProtocol.prototype.disconnect = function () {
+        this._disconnected = true;
 
-        this._roomService.updateRoom(this, callback);
+        return this._webSocket.disconnect();
     };
 
-    Room.prototype.reload = function reload() {
-        assert.isObject(this._roomService);
-
-        this._roomService.revertRoomChanges(this);
+    WebSocketProtocol.prototype.getApiVersion = function getApiVersion() {
+        return this._mqProtocol.getApiVersion();
     };
 
-    Room.prototype._update = function update(room) {
-        if (!_.isObject(room)) {
-            return;
-        }
-
-        if (room.roomId) {
-            this._roomId.setValue(room.roomId);
-        }
-
-        if (room.alias) {
-            this._alias.setValue(room.alias);
-        }
-
-        if (room.name) {
-            this._name.setValue(room.name);
-        }
-
-        if (room.description) {
-            this._description.setValue(room.description);
-        }
-
-        if (room.type) {
-            this._type.setValue(room.type);
-        }
-
-        if (room.options) {
-            this._options.setValue(room.options);
-        }
-
-        if (room.bridgeId) {
-            this._bridgeId.setValue(room.bridgeId);
-        }
-
-        if (room.pin) {
-            this._pin.setValue(room.pin);
-        }
-
-        if (room.members) {
-            // DO NOTHING -- members updated by member events
-        }
+    WebSocketProtocol.prototype.toString = function () {
+        return 'Proto[' + this._webSocket.toString() + ']';
     };
 
-    Room.prototype._addMembers = function addMembers(members) {
-        var that = this;
+    function triggerEvent(eventName, args) {
+        this._namedEvents.fire(eventName, args, this);
+    }
 
-        var newMembers = mapMembers(members);
+    function onMessage(evt) {
+        var response;
+        var message;
+        var callback;
 
-        _.forEach(newMembers, function (member) {
-            that._members.push(member);
-        });
-    };
+        try {
+            response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
+            callback = this._requests[response.requestId];
 
-    Room.prototype._removeMembers = function removeMembers(members) {
-        var that = this;
+            this._logger.info('>> [%s]', response.type);
 
-        _.forEach(members, function(member) {
-            that._members.remove(function(observableMember) {
-                return member.sessionId === observableMember.getSessionId()
-                    && member.lastUpdate >= observableMember.getObservableLastUpdate().getValue();
-            });
-        });
-    };
+            message = this._mqProtocol.decode(response.type, response.payload);
+        } catch (e) {
+            this._logger.error(e);
 
-    Room.prototype._updateMembers = function updateMembers(members) {
-        _.forEach(this._members.getValue(), function (observableMember) {
-            var memberToUpdate = _.find(members, function(member) {
-                return observableMember.getSessionId() === member.sessionId && member.lastUpdate > observableMember.getObservableLastUpdate().getValue();
-            });
-
-            if (memberToUpdate) {
-                observableMember._update(memberToUpdate);
+            if (callback) {
+                return callback(e);
             }
-        });
-    };
 
-    function setMembers(members) {
-        var newMembers = mapMembers(members, this._roomService);
-
-        this._members.setValue(newMembers);
-    }
-
-    function mapMembers(members, roomService) {
-        return _.map(members, function(member) {
-            return new Member(roomService, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
-        });
-    }
-
-    function assertIsValidRoomType(type) {
-        type = _.getEnumName(roomTypes, type);
-
-        if (!type) {
-            throw new Error('"type" must be a valid room type');
+            throw e;
         }
 
-        return type;
+        triggerEvent.call(this, response.type, [message]);
+
+        if (callback) {
+            delete this._requests[response.requestId];
+
+            if (response.type === 'mq.Error') {
+                var error = message;
+
+                callback(error, null);
+            } else {
+                callback(null, message);
+            }
+        }
     }
 
-    return Room;
+    function onReconnecting(evt) { // eslint-disable-line no-unused-vars
+        triggerEvent.call(this, 'reconnecting');
+    }
+
+    function onConnected(evt) { // eslint-disable-line no-unused-vars
+        triggerEvent.call(this, 'connected');
+    }
+
+    function onReconnected(evt) { // eslint-disable-line no-unused-vars
+        triggerEvent.call(this, 'reconnected');
+    }
+
+    function onDisconnected(evt) {
+        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
+
+        if (this._disconnected) {
+            this._namedEvents.dispose();
+        }
+    }
+
+    function onError(evt) {
+        triggerEvent.call(this, 'error', [evt.data]);
+    }
+
+    return WebSocketProtocol;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 23 */
-/***/ (function(module, exports) {
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/* (ignored) */
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+    'use strict';
+
+    var mqProto = {
+        "package": "mq",
+        "messages": [
+            {
+                "name": "Request",
+                "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "requestId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "type",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "encoding",
+                        "id": 4
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 5
+                    }
+                ]
+            },
+            {
+                "name": "Response",
+                "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "requestId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "type",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "encoding",
+                        "id": 4
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 5
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "double",
+                        "name": "wallTime",
+                        "id": 6
+                    }
+                ]
+            },
+            {
+                "name": "Error",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "reason",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "PingPong",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "uint64",
+                        "name": "originTimestamp",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "count",
+                        "id": 2
+                    }
+                ]
+            }
+        ]
+    };
+
+    return mqProto;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 24 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10340,651 +14286,477 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(11),
-    __webpack_require__(10),
-    __webpack_require__(49),
-    __webpack_require__(52),
-    __webpack_require__(50)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
+    __webpack_require__(19)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, NetworkConnectionMonitor) {
     'use strict';
 
-    function AudioSpeakerDetector(userMediaStreams, options) {
-        assert.isArray(userMediaStreams, 'userMediaStreams');
-
-        options = options || {};
-
-        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
-        this._audioContext = options.audioContext || new AudioContext();
-        this._nativeAudioContext = this._audioContext.getNativeAudioContext();
-        this._onSpeakingChanged = null;
-        this._userMediaStreams = userMediaStreams;
-        this._disposeOfAudioContext = !_.isObject(options.audioContext);
-        this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
-
-        _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
-    }
-
-    AudioSpeakerDetector.prototype.start = function start(options, callback) {
-        assert.isFunction(callback, 'callback');
-
-        this._onSpeakingChanged = callback;
-
-        options = options || {};
-
-        _.forEach(this._userMediaStreams, _.bind(setupSpeakingDetection, this, options));
+    var networkDisconnectHysteresisInterval = 15000;
+    var waitForDisconnectEventTimeout = 1000;
+    var defaultReconnectBackoffInterval = 1000;
+    var defaultMaxReconnectAttempts = 4;
+    var closeReasons = {
+        byebye: {
+            code: 1000,
+            reason: 'byebye',
+            desc: 'Client closed'
+        },
+        backoffLimitReached: {
+            code: 4000,
+            reason: 'backoff-limit-reached',
+            desc: 'Reached the limit in terms of the number of reconnects'
+        },
+        networkDisconnect: {
+            code: 4001,
+            reason: 'network-disconnect',
+            desc: 'Network connection monitor determined loss to internet connectivity'
+        },
+        reconnecting: {
+            code: 4002,
+            reason: 'reconnecting',
+            desc: 'Closing WebSocket in order to attempt to establish another connection'
+        }
+    };
+    var readyStates = {
+        connecting: {
+            code: 0,
+            state: 'CONNECTING',
+            desc: 'The connection is not yet open'
+        },
+        open: {
+            code: 1,
+            state: 'OPEN',
+            desc: 'The connection is open and ready to communicate'
+        },
+        closing: {
+            code: 2,
+            state: 'CLOSING',
+            desc: 'The connection is in the process of closing'
+        },
+        closed: {
+            code: 3,
+            state: 'CLOSED',
+            desc: 'The connection is closed or could not be opened'
+        }
     };
 
-    AudioSpeakerDetector.prototype.stop = function stop() {
-        _.forEach(this.getAudioVolumeMeters(), function(meter) {
-            meter.onValue(function() {});
-        });
+    function ReconnectingWebSocket(uri, logger, maxReconnectAttempts, reconnectBackoffInterval) {
+        assert.isStringNotEmpty(uri, 'uri');
+        assert.isObject(logger, 'logger');
 
-        this._onSpeakingChanged = null;
-    };
-
-    AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
-        assert.isObject(stream, 'stream');
-
-        return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-    };
-
-    AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
-        return this._audioVolumeMeterFactory.getAudioVolumeMeters();
-    };
-
-    AudioSpeakerDetector.prototype.dispose = function dispose() {
-        if (this._disposeOfAudioContext) {
-            this._nativeAudioContext.close();
+        if (!_.isNullOrUndefined(maxReconnectAttempts)) {
+            assert.isNumber(maxReconnectAttempts, 'maxReconnectAttempts');
+        } else {
+            maxReconnectAttempts = defaultMaxReconnectAttempts;
         }
 
-        this._audioVolumeMeterFactory.stopAllMeters();
+        this._uri = uri;
+        this._logger = logger;
+        this._maxReconnectAttempts = maxReconnectAttempts;
+        this._reconnectBackoffInterval = reconnectBackoffInterval || defaultReconnectBackoffInterval;
+        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
+        this._hasAttemptedReconnect = false;
+        this._stopped = false;
 
-        this._userMediaStreams = null;
-    };
+        this._logger.info('Connecting to [%s]', uri);
 
-    AudioSpeakerDetector.prototype.toString = function toString() {
-        return 'AudioSpeakerDetector';
-    };
-
-    function setupAudioVolumeMeter(options, stream) {
-        assert.isObject(stream, 'stream');
-        assert.isObject(options, 'options');
-
-        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-
-        audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
-        audioVolumeMeter.connect(stream);
+        this._webSocket = createWebSocket.call(this, onOpen, onClose);
+        this._networkConnectionMonitor.start(_.bind(onNetworkReconnect, this), _.bind(onNetworkDisconnect, this));
     }
 
-    function setupSpeakingDetection(options, stream) {
-        assert.isObject(stream, 'stream');
-        assert.isObject(options, 'options');
+    ReconnectingWebSocket.prototype.onmessage = null;
+    ReconnectingWebSocket.prototype.onconnected = null;
+    ReconnectingWebSocket.prototype.onreconnecting = null;
+    ReconnectingWebSocket.prototype.onreconnected = null;
+    ReconnectingWebSocket.prototype.ondisconnected = null;
+    ReconnectingWebSocket.prototype.onerror = null;
 
-        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
-
-        if (options.alpha) {
-            audioVolumeMeter.setAlpha(options.alpha);
-        }
-
-        audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
-        audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
-    }
-
-    return AudioSpeakerDetector;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(11),
-    __webpack_require__(10),
-    __webpack_require__(53)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
-    'use strict';
-
-    function BandwidthMonitor(publishers, options) {
-        assert.isArray(publishers, 'userMediaStreams');
-
-        options = options || {};
-
-        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
-        this._publisherAdjusters = [];
-        this._publishers = publishers;
-    }
-
-    BandwidthMonitor.prototype.start = function start(roomService, options) {
-        options = options || {};
-
-        _.forEach(this._publishers, _.bind(setupPublisherAdjusters, this, roomService, options));
+    ReconnectingWebSocket.prototype.send = function (message) {
+        return this._webSocket.send(message);
     };
 
-    BandwidthMonitor.prototype.stop = function stop() {
-        _.forEach(this._publisherAdjusters, function closePublisherAdjusters(adjuster) {
-            adjuster.close();
-        });
-
-        this._publisherAdjusters = [];
-    };
-
-    BandwidthMonitor.prototype.toString = function toString() {
-        return 'BandwidthMonitor';
-    };
-
-    function setupPublisherAdjusters(roomService, options, publisher) {
-        var publisherAdjuster = new PublisherBandwidthAdjuster(publisher);
-
-        publisherAdjuster.connect(roomService, options);
-
-        this._publisherAdjusters.push(publisherAdjuster);
-    }
-
-    return BandwidthMonitor;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(15),
-    __webpack_require__(13),
-    __webpack_require__(12)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, PCastExpress, roomEnums, memberEnums) {
-    'use strict';
-
-    function RoomExpress(options) {
-        assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
-        assert.isObject(options.authenticationData, 'options.authenticationData');
-
-        this._pcastExpress = new PCastExpress(options);
-        this._roomServices = [];
-    }
-
-    RoomExpress.prototype.stop = function stop() {
-        this._pcastExpress.stop();
-    };
-
-    RoomExpress.prototype.getPCastExpress = function getPCastExpress() {
-        return this._pcastExpress;
-    };
-
-    RoomExpress.prototype.createRoom = function createRoom(options, callback) {
-        assert.isFunction(callback, 'callback');
-        assert.isObject(options.room, 'options.room');
-        assert.stringNotEmpty(options.room.name, 'options.room.name');
-        assert.stringNotEmpty(options.room.type, 'options.room.type');
-
-        if (options.room.description) {
-            assert.stringNotEmpty(options.room.description, 'options.room.description');
-        }
-
-        var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
-
-        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (roomServiceResponse.status !== 'ok') {
-                return callback(null, roomServiceResponse);
-            }
-
-            var roomService = roomServiceResponse.roomService;
-            var roomToCreate = _.assign({}, options.room);
-
-            if (!roomToCreate.description) {
-                roomToCreate.description = roomDescription;
-            }
-
-            roomService.createRoom(roomToCreate, function (error, roomResponse) {
-                if (error) {
-                    roomService.stop();
-
-                    return callback(error);
-                }
-
-                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
-                    roomService.stop();
-                }
-
-                roomResponse.roomService = roomService;
-
-                return callback(null, roomResponse);
-            });
-        });
-    };
-
-    RoomExpress.prototype.createChannel = function createChannel(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isObject(options.room, 'options.room');
-
-        var createRoomOptions = _.assign({}, options);
-
-        createRoomOptions.room.type = roomEnums.types.channel.name;
-
-        this.createRoom(createRoomOptions, callback);
-    };
-
-    RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(joinRoomCallback, 'joinRoomCallback');
-        assert.isFunction(membersChangedCallback, 'membersChangedCallback');
-        assert.stringNotEmpty(options.role, 'options.role');
-
-        if (options.screenName) {
-            assert.stringNotEmpty(options.screenName, 'options.screenName');
-        }
-
-        if (options.roomId) {
-            assert.stringNotEmpty(options.roomId, 'options.roomId');
-        }
-
-        if (options.alias) {
-            assert.stringNotEmpty(options.alias, 'options.alias');
-        }
+    ReconnectingWebSocket.prototype.reconnect = function (attempt) {
+        this._webSocket.onclose = null;
+        this._webSocket.onerror = null;
+        this._hasAttemptedReconnect = true;
 
         var that = this;
-        var role = options.role;
-        var screenName = options.screenName || _.uniqueId();
+        var backoffTimeout;
 
-        this._pcastExpress.createRoomService(function(error, roomServiceResponse) {
-            if (error) {
-                return joinRoomCallback(error);
-            }
-
-            if (roomServiceResponse.status !== 'ok') {
-                return joinRoomCallback(null, roomServiceResponse);
-            }
-
-            var roomService = roomServiceResponse.roomService;
-
-            that._roomServices.push(roomService);
-
-            roomService.start(role, screenName);
-
-            roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
-                if (error) {
-                    roomService.stop();
-
-                    return joinRoomCallback(error);
-                }
-
-                if (roomResponse.status === 'not-found') {
-                    roomService.stop();
-
-                    return joinRoomCallback(null, {status: 'room-not-found'});
-                }
-
-                if (roomResponse.status !== 'ok') {
-                    roomService.stop();
-
-                    return joinRoomCallback(null, roomResponse);
-                }
-
-                var room = roomResponse.room;
-                var roomServiceLeaveRoom = roomService.leaveRoom;
-
-                roomService.leaveRoom = function leaveRoom(callback) {
-                    roomServiceLeaveRoom.call(roomService, function(error, response) {
-                        if (error) {
-                            roomService.stop();
-
-                            return callback(error);
-                        }
-
-                        if (response.status !== 'ok') {
-                            return callback(null, response);
-                        }
-
-                        roomService.stop();
-                    });
-                };
-
-                joinRoomCallback(null, {
-                    status: 'ok',
-                    roomService: roomService
-                });
-
-                that._membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-            });
-        });
-    };
-
-    RoomExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(joinChannelCallback, 'joinChannelCallback');
-        assert.isFunction(subscriberCallback, 'subscriberCallback');
-
-        if (options.videoElement) {
-            assert.isObject(options.videoElement, 'options.videoElement');
+        if (!_.isNumber(attempt)) {
+            attempt = 1;
         }
 
-        var channelOptions = _.assign({
-            type: roomEnums.types.channel.name,
-            role: memberEnums.roles.audience.name
-        }, options);
-        var lastMediaStream;
-        var lastStreamId;
-        var that = this;
+        if (this._stopped) {
+            return this._logger.info('Client has stopped WebSocket after [%s] reconnect attempts', attempt - 1);
+        }
 
-        var joinRoomCallback = function(error, response) {
-            var channelResponse = !response || _.assign({}, response);
+        if (attempt > this._maxReconnectAttempts) {
+            this._logger.warn('Unable to reconnect WebSocket after [%s] attempts', this._maxReconnectAttempts);
 
-            if (response && response.roomService) {
-                var leaveRoom = response.roomService.leaveRoom;
+            return closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.backoffLimitReached);
+        }
 
-                channelResponse.roomService.leaveRoom = function(callback) {
-                    if (lastMediaStream) {
-                        lastMediaStream.stop();
+        closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.reconnecting);
+
+        try {
+            this._webSocket = createWebSocket.call(that, function onOpenEvent() {
+                if (backoffTimeout) {
+                    clearTimeout(backoffTimeout);
+                }
+
+                that._hasAttemptedReconnect = false;
+                that._webSocket.onclose = _.bind(onClose, that);
+
+                return onReconnect.call(that);
+            }, function onCloseEvent() {
+                if (attempt + 1 > that._maxReconnectAttempts) {
+                    if (backoffTimeout) {
+                        clearTimeout(backoffTimeout);
                     }
 
-                    leaveRoom(callback);
-                };
-            }
-
-            joinChannelCallback(error, channelResponse);
-        };
-
-        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members) {
-            var presenters = _.filter(members, function(member) {
-                return member.getObservableRole().getValue() === memberEnums.roles.presenter.name;
+                    reconnectIfNotOpen.call(that, attempt);
+                }
             });
-            var mostRecentPresenter = _.reduce(presenters, function(presenterA, presenterB) {
-                if (!presenterA) {
-                    return presenterB;
-                }
+        } catch(e) {
+            this._logger.warn('Unable to create WebSocket connection [%s]', e);
+            // Swallow error - we will alert client of failure after timeouts.
+        }
 
-                return presenterA.getLastUpdate() > presenterB.getLastUpdate() ? presenterA : presenterB;
-            });
-
-            if (!mostRecentPresenter) {
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
-
-            var presenterStream = mostRecentPresenter.getObservableStreams().getValue()[0];
-
-            if (!presenterStream) {
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
-
-            var streamId = parsePcastFromStream(presenterStream.getUri());
-
-            if (!streamId) {
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
-
-            if (streamId === lastStreamId) {
-                return;
-            } else if (lastStreamId) {
-                lastMediaStream.stop();
-            }
-
-            var subscribeOptions = {
-                capabilities: options.capabilities,
-                videoElement: options.videoElement,
-                streamId: streamId,
-                monitor: {
-                    callback: _.bind(monitorSubsciberOrPublisher, that, subscriberCallback),
-                    options: {conditionCountForNotificationThreshold: 8}
-                }
-            };
-
-            var successReason = lastStreamId ? 'stream-override' : 'stream-started';
-
-            lastStreamId = streamId;
-
-            var mediaStreamCallback = function mediaStreamCallback(error, response) {
-                if (response && response.mediaStream) {
-                    lastMediaStream = response.mediaStream;
-                } else {
-                    lastStreamId = null;
-                    lastMediaStream = null;
-                }
-
-                subscriberCallback(error, response);
-            };
-
-            subscribeToMemberStream.call(that, subscribeOptions, mediaStreamCallback, successReason);
-        });
+        backoffTimeout = reconnectWithBackoff.call(this, attempt);
     };
 
-    RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-        assert.isObject(options.room, 'options.room');
+    ReconnectingWebSocket.prototype.disconnect = function () {
+        this._networkConnectionMonitor.stop();
+        this._stopped = true;
 
-        if (options.streamUri) {
-            assert.stringNotEmpty(options.streamUri, 'options.streamUri');
-        } else if (options.mediaConstraints) {
-            assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
-        } else {
-            assert.isObject(options.userMediaStream, 'options.userMediaStream');
-        }
-
-        if (options.videoElement) {
-            assert.isObject(options.videoElement, 'options.videoElement');
-        }
-
-        if (options.screenName) {
-            assert.stringNotEmpty(options.screenName, 'options.screenName');
-        }
-
-        if (options.capabilities) {
-            assert.isArray(options.capabilities);
-        }
-
-        if (options.tags) {
-            assert.isArray(options.tags);
-        }
-
-        var that = this;
-        var role = memberEnums.roles.audience.name;
-        var screenName = options.screenName || _.uniqueId();
-
-        this.createRoom(options, function(error, createRoomResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
-                return callback(null, createRoomResponse);
-            }
-
-            var roomService = createRoomResponse.roomService;
-            var room = createRoomResponse.room;
-
-            roomService.start(role, screenName);
-
-            var publishOptions = _.assign({
-                monitor: {
-                    callback: _.bind(monitorSubsciberOrPublisher, that, callback),
-                    options: {conditionCountForNotificationThreshold: 8}
-                }
-            }, options);
-
-            if (options.streamUri) {
-                var remoteOptions = _.assign({connectOptions: []}, publishOptions);
-                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
-                    return option.startsWith('room-id');
-                });
-
-                if (!hasRoomConnectOptions) {
-                    remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
-                        'room-id=' + room.getRoomId(),
-                        'member-role=Presenter',
-                        'member-stream-type=Presentation',
-                        'screen-name=' + screenName
-                    ]);
-                }
-
-                that._pcastExpress.publishRemote(remoteOptions, callback);
-            } else if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-                var localOptions = _.assign({tags: []}, publishOptions);
-                var hasChannelTag = _.find(localOptions.tags, function(tag) {
-                    return tag.startsWith('channelId');
-                });
-
-                if (!hasChannelTag) {
-                    localOptions.tags = localOptions.tags.concat([
-                        'channelId:' + room.getRoomId()
-                    ]);
-                }
-
-                if (!_.includes(localOptions.capabilities, 'channel')) {
-                    localOptions.capabilities.push('channel');
-                }
-
-                that._pcastExpress.publish(localOptions, callback);
-            }
-        });
+        return this._webSocket.close(closeReasons.byebye.code, closeReasons.byebye.reason);
     };
 
-    RoomExpress.prototype.publishToChannel = function publishToChannel(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-
-        var channelOptions = _.assign({}, options);
-
-        options.room.type = roomEnums.types.channel.name;
-
-        this.publishToRoom(channelOptions, callback);
+    ReconnectingWebSocket.prototype.toString = function () {
+        return 'ReconnectedWebSocket[' + this._uri + ',' + this._webSocket.readyState + ']';
     };
 
-    function subscribeToMemberStream(subscribeOptions, callback, successReason) {
-        var that = this;
+    function closeWebSocketOrTriggerDisconnectEvent(evt) {
+        if (this._webSocket.readyState === readyStates.closed.code) {
+            return onClose.call(this, evt);
+        }
 
-        var count = 0;
-
-        that._pcastExpress.subscribe(subscribeOptions, function(error, response) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (response.status !== 'ok' && response.status !== 'streaming-not-ready') {
-                return callback(null, response);
-            }
-
-            count++;
-
-            if (response.status === 'streaming-not-ready' && count < 3) {
-                return setTimeout(response.retry, count * count * 1000);
-            } else if (response.status === 'streaming-not-ready' && count >= 3) {
-                return callback(null, {status: response.status});
-            }
-
-            var subscribeResponse = _.assign({}, response, {
-                status: 'ok',
-                reason: successReason
-            });
-
-            if (count > 1) {
-                subscribeResponse.reason = 'stream-failure-recovered';
-
-                return callback(null, subscribeResponse);
-            }
-
-            callback(null, subscribeResponse);
-        });
+        return this._webSocket.close(evt.code, evt.reason);
     }
 
-    function monitorSubsciberOrPublisher(callback, error, response) {
-        if (error) {
-            return callback(error);
-        }
+    function createWebSocket(onOpenCallback, onCloseCallback) {
+        var webSocket = new WebSocket(this._uri);
 
-        if (response.retry) {
-            return response.retry();
-        }
+        webSocket.onopen = _.bind(onOpenCallback, this);
+        webSocket.onclose = _.bind(onCloseCallback, this);
+        webSocket.onmessage = _.bind(onMessage, this);
+        webSocket.onerror = _.bind(onError, this);
 
-        callback(error, response);
+        return webSocket;
     }
 
-    function getDefaultRoomDescription(type) {
-        switch(type) {
-        case roomEnums.types.channel.name:
-            return 'Room Channel';
-        case roomEnums.types.moderatedChat.name:
-            return 'Moderated Chat';
-        case roomEnums.types.multiPartyChat.name:
-            return 'Multi Party Chat';
-        case roomEnums.types.townHall.name:
-            return 'Town Hall';
-        case roomEnums.types.directChat.name:
-            return 'Direct Chat';
+    function reconnectWithBackoff(attempt) {
+        var that = this;
+
+        return setTimeout(function () {
+            reconnectIfNotOpen.call(that, attempt);
+        }, attempt * attempt * this._reconnectBackoffInterval);
+    }
+
+    function reconnectIfNotOpen(attempt) {
+        if (this._webSocket.readyState === readyStates.open.code) {
+            return;
+        }
+
+        this.reconnect(attempt + 1);
+    }
+
+    function onClose(evt) {
+        switch (evt.code) {
+        case closeReasons.reconnecting.code:
+            return;
+        case closeReasons.byebye.code:
+        case closeReasons.backoffLimitReached.code:
+        case closeReasons.networkDisconnect.code:
+            return onDisconnect.call(this, evt);
         default:
-            throw new Error('Unsupported Room Type');
+            if (this._hasAttemptedReconnect) {
+                return;
+            }
+
+            return onReconnecting.call(this, evt);
         }
     }
 
-    var pcastStreamPrefix = 'pcast://phenixp2p.com/';
+    function onReconnecting(evt) {
+        this._logger.info('Attempting to re-establish socket connection after disconnect event with code [%s] and reason [%s]', evt.code, evt.reason);
 
-    function parsePcastFromStream(uri) {
-        var hasPrefix = uri.indexOf(pcastStreamPrefix) > -1;
-
-        if (!hasPrefix) {
-            return null;
+        if (this.onreconnecting) {
+            this.onreconnecting(evt);
         }
 
-        return uri.replace(pcastStreamPrefix, '');
+        this.reconnect();
     }
 
-    function addPublishedStreams(publishedStream) { // eslint-disable-line no-unused-vars
-        var self = this._roomService.getSelf();
-        var streams = self.getStreams();
+    function onOpen(evt) {
+        this._logger.info('Connected');
 
-        publishedStream.uri = 'pcast://phenixp2p.com/' + publishedStream.uri;
-        streams.push(publishedStream);
-        self.setStreams(streams);
+        if (this.onconnected) {
+            this.onconnected(evt);
+        }
     }
 
-    return RoomExpress;
+    function onReconnect(evt) {
+        this._logger.info('Successfully reconnected to WebSocket');
+
+        if (this.onreconnected) {
+            this.onreconnected(evt);
+        }
+    }
+
+    function onDisconnect(evt) {
+        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
+
+        if (this.ondisconnected) {
+            this.ondisconnected(evt);
+        }
+    }
+
+    function onError(evt) {
+        this._logger.error('An error occurred [%s]', evt.data);
+
+        if (this.onerror) {
+            this.onerror(evt);
+        }
+    }
+
+    function onMessage(evt) {
+        this._logger.debug('>> [%s]', evt.data);
+
+        if (this.onmessage) {
+            this.onmessage(evt);
+        }
+    }
+
+    function onNetworkReconnect(didGoOffline) {
+        var that = this;
+
+        setTimeout(function() {
+            if (that._stopped) {
+                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.');
+            }
+
+            if (that._webSocket.readyState !== readyStates.open.code) {
+                return that.reconnect();
+            }
+
+            if (didGoOffline) {
+                return onOpen.call(that);
+            }
+        }, waitForDisconnectEventTimeout);
+    }
+
+    function onNetworkDisconnect() {
+        // Don't close the WebSocket.
+        onDisconnect.call(this, closeReasons.networkDisconnect);
+    }
+
+    return ReconnectingWebSocket;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 27 */
+/* 50 */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -11004,14 +14776,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 
 /**
- * @license ProtoBuf.js (c) 2013 Daniel Wirtz <dcode@dcode.io>
+ * @license protobuf.js (c) 2013 Daniel Wirtz <dcode@dcode.io>
  * Released under the Apache License, Version 2.0
- * see: https://github.com/dcodeIO/ProtoBuf.js for details
+ * see: https://github.com/dcodeIO/protobuf.js for details
  */
 (function(global, factory) {
 
     /* AMD */ if (true)
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(7)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -11049,7 +14821,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
      * @const
      * @expose
      */
-    ProtoBuf.VERSION = "4.1.2";
+    ProtoBuf.VERSION = "5.0.0";
 
     /**
      * Wire types.
@@ -11343,7 +15115,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(40);
+                var fs = __webpack_require__(75);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -12063,6 +15835,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 "enums": [],
                 "messages": [],
                 "options": {},
+                "services": [],
                 "oneofs": {}
                 // "extensions": undefined
             };
@@ -12089,10 +15862,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     this._parseMessage(msg);
                 else if (token === "option")
                     this._parseOption(msg);
+                else if (token === "service")
+                    this._parseService(msg);
                 else if (token === "extensions")
                     this._parseExtensions(msg);
                 else if (token === "extend")
                     this._parseExtend(msg);
+                else if (token === "reserved")
+                    this._parseMessageReserved(msg);
                 else if (Lang.TYPEREF.test(token)) {
                     if (!this.proto3)
                         throw Error("illegal field rule: "+token);
@@ -12103,6 +15880,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             this.tn.omit(";");
             parent["messages"].push(msg);
             return msg;
+        };
+
+        /**
+         * Parses a message's reserved ids / names statement.
+         * @param {!Object} msg Message definition
+         * @private
+         */
+        ParserPrototype._parseMessageReserved = function(msg) {
+            // TODO: This currently just skips a reserved statement for compatibility.
+            // Valid formats are
+            //   reserved 2, 15, 9 to 11;
+            // for reserved ids or
+            //   reserved "foo", "bar";
+            // for reserved names.
+            while (this.tn.peek() !== ';')
+                this.tn.next();
+            this.tn.skip(";");
         };
 
         /**
@@ -13809,7 +17603,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         return binaryAsBase64 ? obj.toBase64() : obj.toBuffer();
                     // Convert Longs to proper objects or strings
                     if (ProtoBuf.Long.isLong(obj))
-                        return longsAsStrings ? obj.toString() : new ProtoBuf.Long(obj);
+                        return longsAsStrings ? obj.toString() : ProtoBuf.Long.fromValue(obj);
                     var clone;
                     // Clone arrays
                     if (Array.isArray(obj)) {
@@ -15564,7 +19358,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (typeof filename === 'string') {
 
                 if (ProtoBuf.Util.IS_NODE)
-                    filename = __webpack_require__(23)['resolve'](filename);
+                    filename = __webpack_require__(28)['resolve'](filename);
                 if (this.files[filename] === true)
                     return this.reset();
                 this.files[filename] = true;
@@ -15573,7 +19367,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 var root = filename.root;
                 if (ProtoBuf.Util.IS_NODE)
-                    root = __webpack_require__(23)['resolve'](root);
+                    root = __webpack_require__(28)['resolve'](root);
                 if (root.indexOf("\\") >= 0 || filename.file.indexOf("\\") >= 0)
                     delim = '\\';
                 var fname = root + delim + filename.file;
@@ -16166,849 +19960,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     return ProtoBuf;
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(38)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(50)))
 
 /***/ }),
-/* 28 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
-    var Assert = function() {
-
-    };
-
-    Assert.prototype.isObject = function isObject(obj, name) {
-        var error = '"' + name + '" must be an object';
-
-        if (!_.isObject(obj)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.isArray = function isArray(array, name) {
-        var error = '"' + name + '" must be an array';
-
-        if (!_.isArray(array)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.isString = function isString(string, name) {
-        var error = '"' + name + '" must be a string';
-
-        if (!_.isString(string)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.isBoolean = function isBoolean(bool, name) {
-        var error = '"' + name + '" must be a string';
-
-        if (!_.isBoolean(bool)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.isNumber = function isNumber(number, name) {
-        var error = '"' + name + '" must be a number';
-
-        if (!_.isNumber(number)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.isFunction = function isFunction(callback, name) {
-        var error = '"' + name + '" must be a function';
-
-        if (!_.isFunction(callback)) {
-            throw new Error(error);
-        }
-    };
-
-    Assert.prototype.stringNotEmpty = function stringNotEmpty(string, name) {
-        var error = '"' + name + '" must not be empty';
-
-        this.isString(string, name);
-
-        if (string === '') {
-            throw new Error(error);
-        }
-    };
-
-    return new Assert();
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
-    'use strict';
-
-    var requestMethods = {
-        get: 'GET',
-        post: 'POST'
-    };
-    var defaultTimeout = 3000;
-
-    function Http() {
-
-    }
-
-    Http.prototype.get = function get(url, settings, callback) {
-        settings = settings || {};
-
-        validateSettings(settings);
-
-        var requestUrl = appendQueryParameters(settings.queryParameters || {}, url);
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethods.get, requestUrl, callback);
-
-        if (!xhr) {
-            return callback(getUnsupportedError());
-        }
-
-        if (settings.mimeType) {
-            xhr.overrideMimeType(settings.mimeType);
-        }
-
-        appendDataTypeHeaders(xhr, settings);
-
-        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
-
-        xhr.timeout = settings.timeout || defaultTimeout;
-
-        xhr.send();
-    };
-
-    Http.prototype.post = function postWithRetry(url, data, settings, callback) {
-        settings = settings || {};
-
-        validateSettings(settings);
-
-        var requestUrl = appendQueryParameters(settings.queryParameters || {}, url);
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethods.post, requestUrl, callback);
-
-        if (!xhr) {
-            return callback(getUnsupportedError());
-        }
-
-        appendDataTypeHeaders(xhr, settings);
-
-        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
-
-        xhr.timeout = settings.timeout || 15000;
-
-        xhr.send(data);
-    };
-
-    Http.prototype.getWithRetry = function getWithRetry(url, settings, callback, maxAttempts, attempt) {
-        if (!_.isNumber(attempt)) {
-            attempt = 1;
-        }
-
-        var shouldRetry = attempt < maxAttempts;
-        var retry = _.bind(getWithRetry, this, url, settings, callback, maxAttempts, attempt + 1);
-        var getRetryCallback = _.bind(retryCallback, this, shouldRetry, retry, callback);
-
-        this.get(url, settings, getRetryCallback);
-    };
-
-    Http.prototype.postWithRetry = function postWithRetry(url, data, settings, callback, maxAttempts, attempt) {
-        if (!_.isNumber(attempt)) {
-            attempt = 1;
-        }
-
-        var shouldRetry = attempt < maxAttempts;
-        var retry = _.bind(postWithRetry, this, url, data, settings, callback, maxAttempts, attempt + 1);
-        var postRetryCallback = _.bind(retryCallback, this, shouldRetry, retry, callback);
-
-        this.post(url, data, settings, postRetryCallback);
-    };
-
-    function validateSettings(settings) {
-        assert.isObject(settings, 'settings');
-
-        if (settings.queryParameters) {
-            assert.isObject(settings.queryParameters, 'settings.queryParameters');
-        }
-
-        if (settings.mimeType) {
-            assert.stringNotEmpty(settings.mimeType, 'settings.mimeType');
-        }
-
-        if (settings.responseType) {
-            assert.stringNotEmpty(settings.responseType, 'settings.responseType');
-        }
-
-        if (settings.contentType) {
-            assert.stringNotEmpty(settings.contentType, 'settings.contentType');
-        }
-
-        if (!_.isNullOrUndefined(settings.timeout)) {
-            assert.isNumber(settings.timeout, 'settings.timeout');
-        }
-    }
-
-    function appendQueryParameters(queryParameters, url) {
-        var queryParameterString = _.reduce(queryParameters, function(paramString, value, key) {
-            paramString += !paramString ? '?' : '&';
-
-            return paramString + key.toString() + '=' + value.toString();
-        }, '');
-
-        return queryParameterString.length > 0 ? url + queryParameterString : url;
-    }
-
-    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
-        var xhr = new XMLHttpRequest();
-
-        if ('withCredentials' in xhr) {
-            // Most browsers.
-            xhr.open(requestMethod, requestUrl, true);
-        } else if (typeof XDomainRequest !== 'undefined') {
-            // IE8 & IE9
-            xhr = new XDomainRequest();
-            xhr.open(requestMethod, requestUrl);
-        } else {
-            return;
-        }
-
-        return xhr;
-    }
-
-    function getUnsupportedError() {
-        // CORS not supported.
-        var err = new Error('unsupported');
-
-        err.code = 'unsupported';
-
-        return err;
-    }
-
-    function appendDataTypeHeaders(xhr, settings) {
-        var contentType = !settings.contentType ? 'application/json' : settings.contentType;
-        var responseType = !settings.responseType ? settings.contentType || 'application/json' : settings.responseType;
-
-        switch (contentType.toLowerCase()) {
-        case 'application/protobuf':
-            xhr.setRequestHeader('Content-type', 'application/protobuf');
-
-            break;
-        case 'application/json':
-            xhr.setRequestHeader('Content-type', 'application/json');
-
-            break;
-        default:
-            xhr.setRequestHeader('Content-type', contentType);
-
-            break;
-        }
-
-        switch (responseType.toLowerCase()) {
-        case 'application/protobuf':
-            xhr.setRequestHeader('Accept', 'application/protobuf');
-
-            break;
-        case 'application/json':
-            xhr.setRequestHeader('Accept', 'application/json');
-
-            break;
-        default:
-            xhr.setRequestHeader('Accept', responseType);
-
-            break;
-        }
-    }
-
-    function handleReadyStateChange(xhr, callback) {
-        if (xhr.readyState === 4 /* DONE */) {
-            if (xhr.status === 200) {
-                callback(null, xhr.responseText);
-            } else {
-                var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
-                err.code = xhr.status;
-
-                if (xhr.status >= 500 && xhr.status < 600) {
-                    err.retryable = true;
-                }
-
-                callback(err);
-            }
-        }
-    }
-
-    function retryCallback(shouldRetry, retry, callback, err, response) {
-        if (err) {
-            if (shouldRetry && err.retryable) {
-                retry();
-            } else {
-                callback(err);
-            }
-        } else {
-            callback(null, response);
-        }
-    }
-
-    return new Http();
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 30 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-    'use strict';
-
-    var _ = function() {
-
-    };
-
-    _.bind = function bind(callback, that) {
-        var argsAfterContext = Array.prototype.slice.call(arguments, 2);
-
-        return function boundFunction() {
-            if (!_.isFunction(callback)) {
-                throw new TypeError('_.bind - callback must be a function');
-            }
-
-            var combinedArguments = argsAfterContext.concat(Array.prototype.slice.call(arguments));
-
-            return callback.apply(that, combinedArguments);
-        };
-    };
-
-    _.now = function now() {
-        return new Date().getTime();
-    };
-
-    _.utc = function utc(date) {
-        if (_.isNumber(date)) {
-            return date;
-        } else if (!date) {
-            return NaN;
-        }
-
-        return Math.floor(date);
-    };
-
-    _.isoString = function isoString() {
-        var now = new Date();
-
-        if (now.toISOString) {
-            return now.toISOString();
-        }
-
-        return now.getUTCFullYear() +
-            '-' + _.pad(now.getUTCMonth() + 1, 2) +
-            '-' + _.pad(now.getUTCDate(), 2) +
-            'T' + _.pad(now.getUTCHours(), 2) +
-            ':' + _.pad(now.getUTCMinutes(), 2) +
-            ':' + _.pad(now.getUTCSeconds(), 2) +
-            '.' + (now.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
-            'Z';
-    };
-
-    _.map = function map(collection, callback) {
-        if (!_.isObject(collection)) {
-            throw new Error('Collection must be an object or array.');
-        }
-
-        var newArray = [];
-
-        if (collection.constructor === Array) {
-            _.forEach(collection, function mapCollection(item, index) {
-                if (_.isString(callback) && _.isObject(item)) {
-                    newArray.push(item[callback]);
-                } else if (_.isFunction(callback)) {
-                    newArray.push(callback(item, index));
-                }
-            });
-        } else {
-            _.forOwn(collection, function mapCollection(value, key) {
-                if (_.isFunction(callback)) {
-                    newArray.push(callback(value, key));
-                }
-            });
-        }
-
-        return newArray;
-    };
-
-    _.values = function (collection) {
-        if (!_.isObject(collection) || _.isArray(collection)) {
-            throw new Error('Collection must be an object.');
-        }
-
-        return _.map(collection, function (value) {
-            return value;
-        });
-    };
-
-    _.keys = function (collection) {
-        if (!_.isObject(collection) || _.isArray(collection)) {
-            throw new Error('Collection must be an object.');
-        }
-
-        return _.map(collection, function (value, key) {
-            return key;
-        });
-    };
-
-    _.forEach = function forEach(collection, callback) {
-        if (!_.isFunction(callback)) {
-            throw new Error('Callback must be a function');
-        }
-
-        assertIsArray(collection);
-
-        for (var i = 0; i < collection.length; i++) {
-            callback(collection[i], i);
-        }
-    };
-
-    _.forOwn = function forOwn(objectWithProperties, callback) {
-        if (!_.isFunction(callback)) {
-            throw new Error('Callback must be a function');
-        }
-
-        if (!_.isObject(objectWithProperties)) {
-            throw new Error('objectWithProperties must be an object.');
-        }
-
-        var keys = Object.keys(objectWithProperties);
-
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-
-            if (objectWithProperties.hasOwnProperty(key)) {
-                callback(objectWithProperties[key], key);
-            }
-        }
-    };
-
-    _.argumentsToArray = function(args) {
-        if (!_.isObject(args) || !args.length) {
-            throw new Error('Collection must be arguments');
-        }
-
-        var collection = [];
-
-        for (var i = 0; i < args.length; i++) {
-            collection.push(args[i]);
-        }
-
-        return collection;
-    };
-
-    _.assign = function assign(target) {
-        if (!_.isObject(target)) {
-            throw new Error('target must be object');
-        }
-
-        var sources = _.argumentsToArray(arguments);
-
-        sources.shift();
-
-        _.forEach(sources, function(source, index) {
-            if (!_.isObject(source)) {
-                throw new Error('source ' + index + ' must be object');
-            }
-
-            _.forOwn(source, function(value, key) {
-                target[key] = value;
-            });
-        });
-
-        return target;
-    };
-
-    _.includes = function includes(collection, value) {
-        if (!_.isObject(collection)) {
-            throw new Error('collection type not supported. Collection must be an array or object.');
-        }
-
-        var hasValue = false;
-
-        var checkCollection = function checkCollection(currentValue) {
-            if (currentValue === value) {
-                hasValue = true;
-            }
-        };
-
-        if (collection.constructor === Array) {
-            _.forEach(collection, checkCollection);
-        } else {
-            _.forOwn(collection, checkCollection);
-        }
-
-        return hasValue;
-    };
-
-    _.reduce = function reduce(collection, callback, initialValue) {
-        if (!_.isObject(collection)) {
-            throw new Error('collection type not supported. Collection must be an array or object.');
-        }
-
-        var result = initialValue === _.noop() ? null : initialValue;
-
-        if (collection.constructor === Array) {
-            _.forEach(collection, function (item) {
-                result = callback(result, item);
-            });
-        } else {
-            _.forOwn(collection, function (value, key) {
-                result = callback(result, value, key);
-            });
-        }
-
-        return result;
-    };
-
-    _.sample = function sample(collection) {
-        assertIsArray(collection);
-
-        return collection[Math.floor(Math.random() * collection.length)];
-    };
-
-    _.uniqueId = function () {
-        return (_.now() * Math.random()).toString();
-    };
-
-    _.find = function find(collection, callback, initialIndex) {
-        assertIsArray(collection);
-
-        var hasItem;
-
-        _.forEach(collection, function findInCollection(value, index) {
-            if (callback(value) && index >= (initialIndex || 0)) {
-                hasItem = value;
-
-                return hasItem;
-            }
-        });
-
-        return hasItem;
-    };
-
-    _.findIndex = function find(collection, callback, initialIndex) {
-        assertIsArray(collection);
-
-        var hasItem;
-
-        _.forEach(collection, function findInCollection(value, index) {
-            if (callback(value, index) && index >= (initialIndex || 0)) {
-                hasItem = index;
-
-                return hasItem;
-            }
-        });
-
-        return hasItem;
-    };
-
-    _.filter = function filter(collection, callback) {
-        assertIsArray(collection);
-
-        var newCollection = [];
-
-        _.forEach(collection, function findInCollection(value) {
-            if (callback(value)) {
-                newCollection.push(value);
-            }
-        });
-
-        return newCollection;
-    };
-
-    _.remove = function remove(collection, callback) {
-        assertIsArray(collection);
-
-        var filterCallback = function filterCallback(value) {
-            return !callback(value);
-        };
-
-        return _.filter(collection, filterCallback);
-    };
-
-    _.take = function take(collection, size) {
-        assertIsArray(collection);
-
-        return collection.slice(0, size);
-    };
-
-    _.hasDifferences = function hasDifferences(collectionA, collectionB, deep) {
-        return _.findDifferences(collectionA, collectionB, deep).length > 0;
-    };
-
-    _.findDifferences = function findDifferences(collectionA, collectionB, deep) {
-        var differences = [];
-        var visitedKeys = {};
-
-        function getDifferences(value, indexOrKey) {
-            visitedKeys[indexOrKey] = 1;
-
-            if ((_.isObject(value) || _.isArray(value)) && deep) {
-                if (!_.hasIndexOrKey(collectionB, indexOrKey)) {
-                    differences.push(indexOrKey);
-                } else if (!_.sameTypes(collectionA[indexOrKey], collectionB[indexOrKey])) {
-                    differences.push(indexOrKey);
-                } else if (_.hasDifferences(collectionA[indexOrKey], collectionB[indexOrKey], deep)) {
-                    differences.push(indexOrKey);
-                }
-            } else if (collectionA[indexOrKey] !== collectionB[indexOrKey]) {
-                differences.push(indexOrKey);
-            }
-        }
-
-        if (_.isArray(collectionA) && _.isArray(collectionB)) {
-            if (collectionA.length > collectionB.length) {
-                _.forEach(collectionA, getDifferences);
-            } else {
-                _.forEach(collectionB, getDifferences);
-            }
-        } else if (_.isObject(collectionA) && _.isObject(collectionB) && !_.isArray(collectionA) && !_.isArray(collectionB)) {
-            _.forOwn(collectionA, getDifferences);
-
-            _.forOwn(collectionB, function (value, key) {
-                if (!visitedKeys.hasOwnProperty(key)) {
-                    differences.push(key);
-                }
-            });
-        } else {
-            throw new Error('Object types do not match');
-        }
-
-        return differences;
-    };
-
-    _.hasIndexOrKey = function hasIndexOrKey(collection, indexOrKey) {
-        if (_.isArray(collection)) {
-            return collection.length > parseInt(indexOrKey);
-        } else if (_.isObject(collection)) {
-            return collection.hasOwnProperty(indexOrKey);
-        }
-
-        return false;
-    };
-
-    _.sameTypes = function sameTypes(first, second) {
-        if (_.isNullOrUndefined(first) || _.isNullOrUndefined(second)) {
-            return _.isNullOrUndefined(first) && _.isNullOrUndefined(second);
-        }
-
-        if (_.isArray(first) || _.isArray(second)) {
-            return _.isArray(first) && _.isArray(second);
-        }
-
-        return typeof first === typeof second;
-    };
-
-    _.freeze = function freeze(obj) {
-        if ('freeze' in Object) {
-            return Object.freeze(obj);
-        }
-
-        return obj;
-    };
-
-    _.noop = function () {
-        return undefined;
-    };
-
-    _.isObject = function isObject(obj) {
-        if (obj === null) {
-            return false;
-        }
-
-        return typeof obj === 'object';
-    };
-
-    _.isArray = function isArray(array) {
-        if (!_.isObject(array)) {
-            return false;
-        }
-
-        return array.constructor === Array;
-    };
-
-    _.isString = function isString(string) {
-        return typeof string === 'string';
-    };
-
-    _.isNumber = function isNumber(number) {
-        if (isNaN(number)) {
-            return false;
-        }
-
-        return typeof number === 'number';
-    };
-
-    _.isBoolean = function isBoolean(bool) {
-        return typeof bool === 'boolean';
-    };
-
-    _.isFunction = function isFunction(func) {
-        return typeof func === 'function';
-    };
-
-    _.isNullOrUndefined = function isNullOrUndefined(value) {
-        return value === null || value === undefined;
-    };
-
-    _.getEnumName = function getEnumName(enums, nameOrId) {
-        var enumObject = null;
-
-        var enumArray = _.map(enums, function (value) {
-            return value;
-        });
-
-        if (_.isNumber(nameOrId)) {
-            enumObject = _.find(enumArray, function (current) {
-                return current.id === nameOrId;
-            });
-        } else if (_.isString(nameOrId)) {
-            enumObject = _.find(enumArray, function (current) {
-                return current.name.toLowerCase() === nameOrId.toLowerCase();
-            });
-        }
-
-        if (enumObject) {
-            return enumObject.name;
-        }
-
-        return null;
-    };
-
-    _.toString = function toString(data) {
-        if (_.isString(data)) {
-            return data;
-        }
-
-        if (_.isBoolean(data)) {
-            return data ? 'true' : 'false';
-        }
-
-        if (_.isNumber(data)) {
-            return data.toString();
-        }
-
-        var toStringStr = '';
-
-        if (data) {
-            if (_.isFunction(data.toString)) {
-                toStringStr = data.toString();
-            } else if (_.isObject(data.toString)) {
-                try {
-                    toStringStr = data.toString();
-                } catch (e) {
-                    toStringStr = '[object invalid toString()]';
-                }
-            }
-        }
-
-        if (toStringStr.indexOf('[object') !== 0) {
-            return toStringStr;
-        }
-
-        var cache = [];
-
-        return toStringStr + JSON.stringify(data, function (key, value) {
-            if (_.isObject(value) && !_.isNullOrUndefined(value)) {
-                if (_.includes(cache, value)) {
-                    return '<recursive>';
-                }
-
-                cache.push(value);
-            }
-
-            return key === '' ? value : _.toString(value);
-        });
-    };
-
-    _.pad = function padNumber(value, numberToPad) {
-        assertIsNumber(value);
-        assertIsNumber(numberToPad);
-
-        var valueLength = value.toString().length;
-
-        for (var i = 0; i < numberToPad - valueLength; i++) {
-            value = '0' + value.toString();
-        }
-
-        return value.toString();
-    };
-
-    var assertIsArray = function isArray(collection) {
-        if (!_.isArray(collection)) {
-            throw new Error('Array must be an array.');
-        }
-    };
-
-    var assertIsNumber = function isArray(number) {
-        if (!_.isNumber(number)) {
-            throw new Error('Number must be a number.');
-        }
-    };
-
-    return _;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 31 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17029,1133 +19984,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging) {
-    'use strict';
-
-    function ConsoleAppender() {
-        this._minLevel = logging.level.TRACE;
-    }
-
-    ConsoleAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level);
-
-        this._minLevel = level;
-    };
-
-    ConsoleAppender.prototype.getThreshold = function getThreshold() {
-        return this._minLevel;
-    };
-
-    ConsoleAppender.prototype.log = function (since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel) {
-            return;
-        }
-
-        messages[0] = since + ' [' + category + '] ' + level + ' ' + messages[0];
-
-        if (context.level > logging.level.INFO) {
-            logError(messages);
-        } else {
-            log(messages);
-        }
-    };
-
-    var log = function (args) {
-        console.log.apply(console, args);
-    } || function () { };
-
-    var logError = function (args) {
-        console.error.apply(console, args);
-    } || log;
-
-    return ConsoleAppender;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 32 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging) {
-    'use strict';
-
-    var defaultCategory= 'websdk';
-    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
-    var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-08-14T21:49:04Z' || '?';
-    var releaseVersion = '2017.3.0';
-
-    function Logger() {
-        this._appenders = [];
-        this._userId = null;
-        this._sessionId = null;
-        this._environment = defaultEnvironment;
-        this._applicationVersion = sdkVersion;
-    }
-
-    Logger.prototype.trace = function trace(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.TRACE});
-    };
-
-    Logger.prototype.debug = function debug(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.DEBUG});
-    };
-
-    Logger.prototype.info = function info(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.INFO});
-    };
-
-    Logger.prototype.warn = function warn(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.WARN});
-    };
-
-    Logger.prototype.error = function error(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.ERROR});
-    };
-
-    Logger.prototype.fatal = function fatal(/* formatStr, [parameter], ...*/) {
-        return log.call(this, arguments, {level: logging.level.FATAL});
-    };
-
-    Logger.prototype.addAppender = function addAppender(appender) {
-        assert.isObject(appender, 'appender');
-        assert.isFunction(appender.log, 'appender.log');
-
-        this._appenders.push(appender);
-    };
-
-    Logger.prototype.getAppenders = function getAppenders() {
-        return this._appenders;
-    };
-
-    Logger.prototype.getUserId = function getUserId() {
-        return this._userId;
-    };
-
-    Logger.prototype.setUserId = function setUserId(userId) {
-        this._userId = userId;
-    };
-
-    Logger.prototype.getEnvironment = function getEnvironment() {
-        return this._environment;
-    };
-
-    Logger.prototype.setEnvironment = function setEnvironment(environment) {
-        this._environment = environment;
-    };
-
-    Logger.prototype.getApplicationVersion = function getApplicationVersion() {
-        return this._applicationVersion;
-    };
-
-    Logger.prototype.setApplicationVersion = function setApplicationVersion(version) {
-        this._applicationVersion = version;
-    };
-
-    Logger.prototype.getObservableSessionId = function getObservableSessionId() {
-        return this._observableSessionId;
-    };
-
-    Logger.prototype.setObservableSessionId = function setObservableSessionId(observableSessionId) {
-        this._observableSessionId = observableSessionId;
-
-        if (this._sessionIdSubscription) {
-            this._sessionIdSubscription.dispose();
-        }
-
-        if (observableSessionId) {
-            assert.isObject(observableSessionId, 'observableSessionId');
-
-            this._sessionIdSubscription = this._observableSessionId.subscribe(_.bind(onSessionIdChange, this), {initial: 'notify'});
-        }
-    };
-
-    function onSessionIdChange(sessionId) {
-        this._sessionId = sessionId;
-
-        if (!sessionId) {
-            this.info('Websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
-        } else {
-            this.info('Session started on websdk version [%s] ([%s]), user agent [%s]', sdkVersion, releaseVersion, navigator.userAgent);
-        }
-    }
-
-    function log(messages, context) {
-        var now = _.now();
-        var since = (now - start) / 1000;
-        var level = convertLevel(context.level);
-        var category = context.name || defaultCategory;
-        var that = this;
-
-        _.forEach(this._appenders, function(appender) {
-            try {
-                appender.log(since, level, category, stringify(Array.prototype.slice.call(messages)), that._sessionId, that._userId, that._environment, that._applicationVersion, context);
-            } catch (e) { } // eslint-disable-line no-empty
-        });
-    }
-
-    function convertLevel(jsLoggerLevel) {
-        switch (jsLoggerLevel) {
-        case logging.level.TRACE:
-            return 'Trace';
-        case logging.level.DEBUG:
-            return 'Debug';
-        case logging.level.INFO:
-            return 'Info';
-        case logging.level.WARN:
-            return 'Warn';
-        case logging.level.ERROR:
-            return 'Error';
-        case logging.level.FATAL:
-            return 'Fatal';
-        default:
-            throw new Error('Unsupported Logging Level ' + jsLoggerLevel);
-        }
-    }
-
-    var stringify = function stringify(args) {
-        if (args.length === 0) {
-            return;
-        }
-
-        var newArgs = [];
-        var errorStacks = [];
-
-        _.forEach(args, function(arg) {
-            newArgs.push(_.toString(arg));
-
-            if (arg instanceof Error) {
-                errorStacks.push(arg.stack);
-            }
-        });
-
-        return format(newArgs.concat(errorStacks));
-    };
-
-    var format = function format(args) {
-        var fmt = args[0];
-        var idx = 0;
-
-        while (fmt.indexOf && args.length > 1 && idx >= 0) {
-            idx = fmt.indexOf('%', idx);
-
-            if (idx > 0) {
-                var type = fmt.substring(idx + 1, idx + 2);
-
-                switch (type) {
-                case '%':
-                    // Escaped '%%' turns into '%'
-                    fmt = fmt.substring(0, idx) + fmt.substring(idx + 1);
-                    idx++;
-
-                    break;
-                case 's':
-                case 'd':
-                    // Replace '%d' or '%s' with the argument
-                    args[0] = fmt = fmt.substring(0, idx) + args[1] + fmt.substring(idx + 2);
-                    args.splice(1, 1);
-
-                    break;
-                default:
-                    return args;
-                }
-            }
-        }
-
-        return args;
-    };
-
-    return Logger;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, phenixRTC) {
-    'use strict';
-
-    var defaultOfflineTimeoutLength = 15000;
-
-    function NetworkConnectionMonitor(offlineTimeoutLength, logger) {
-        this._logger = logger;
-        this._timeout = null;
-        this._onOnline = null;
-        this._onOffline = null;
-        this._offlineHysteresisTimeout = _.isNumber(offlineTimeoutLength) ? offlineTimeoutLength : defaultOfflineTimeoutLength;
-    }
-
-    NetworkConnectionMonitor.prototype.start = function start(onlineCallback, offlineCallback) {
-        this._onOnline = _.bind(handleOnline, this, onlineCallback);
-        this._onOffline = _.bind(handleOfflineWithHysteresis, this, offlineCallback);
-
-        phenixRTC.addEventListener(window, 'online', this._onOnline, false);
-        phenixRTC.addEventListener(window, 'offline', this._onOffline, false);
-    };
-
-    NetworkConnectionMonitor.prototype.stop = function stop() {
-        phenixRTC.removeEventListener(window, 'online', this._onOnline, false);
-        phenixRTC.removeEventListener(window, 'offline', this._onOffline, false);
-
-        this._onOnline = null;
-        this._onOffline = null;
-    };
-
-    function handleOfflineWithHysteresis(offlineCallback, event) { // eslint-disable-line no-unused-vars
-        var that = this;
-
-        if (that._logger) {
-            that._logger.warn('Network Disconnect Detected. Waiting for reconnect.');
-        }
-
-        that._offlineHysteresisTimeoutElapsed = false;
-
-        that.offlineTimeout = setTimeout(function() {
-            that._offlineHysteresisTimeoutElapsed = true;
-
-            if (!offlineCallback || !that._onOffline) {
-                return;
-            }
-
-            if (that._logger) {
-                that._logger.warn('Network not reconnected after [%s]. Going Offline.', that._offlineHysteresisTimeout);
-            }
-
-            offlineCallback();
-        }, that._offlineHysteresisTimeout);
-    }
-
-    function handleOnline(onlineCallback, event) { // eslint-disable-line no-unused-vars
-        if (this._logger) {
-            this._logger.info('Network Reconnected.');
-        }
-
-        if (this.offlineTimeout) {
-            clearTimeout(this.offlineTimeout);
-
-            this.offlineTimeout = null;
-        }
-
-        if (onlineCallback && this._onOnline) {
-            onlineCallback(this._offlineHysteresisTimeoutElapsed);
-        }
-    }
-
-    return NetworkConnectionMonitor;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(18)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, Observable) {
-    'use strict';
-
-    function ObservableArray(initialValues, beforeChange) {
-        var valuesToSet = initialValues;
-
-        if (valuesToSet === undefined || valuesToSet === null) {
-            valuesToSet = [];
-        }
-
-        assert.isArray(valuesToSet);
-
-        this.observableArray = new Observable(valuesToSet, beforeChange);
-    }
-
-    ObservableArray.prototype.getValue = function getValue() {
-        return this.observableArray.getValue();
-    };
-
-    ObservableArray.prototype.setValue = function setValue(values) {
-        if (values === undefined || values === null) {
-            values = [];
-        }
-
-        if (values !== undefined) {
-            assert.isArray(values);
-        }
-
-        return this.observableArray.setValue(values);
-    };
-
-    ObservableArray.prototype.subscribe = function subscribe(callback, options) {
-        return this.observableArray.subscribe(callback, options);
-    };
-
-    ObservableArray.prototype.push = function push(value) {
-        var array = this.observableArray.getValue();
-        array.push(value);
-
-        this.observableArray.setValue(array);
-    };
-
-    ObservableArray.prototype.pop = function pop() {
-        var array = this.observableArray.getValue();
-        var value = array.pop();
-
-        this.observableArray.setValue(array);
-
-        return value;
-    };
-
-    ObservableArray.prototype.remove = function remove(valueOrFunction) {
-        var array = this.observableArray.getValue();
-
-        var filterFunction = function (value) {
-            return _.isFunction(valueOrFunction) ? valueOrFunction(value) : value === valueOrFunction;
-        };
-
-        var valuesToRemove = _.filter(array, filterFunction);
-
-        if (valuesToRemove.length > 0) {
-            this.observableArray.setValue(_.remove(array, filterFunction));
-        }
-
-        return valuesToRemove;
-    };
-
-    ObservableArray.prototype.removeAll = function removeAll() {
-        var array = this.observableArray.getValue();
-
-        this.observableArray.setValue([]);
-
-        return array;
-    };
-
-    ObservableArray.prototype.extend = function extend(options) {
-        this.observableArray.extend(options);
-
-        return this;
-    };
-
-    return ObservableArray;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
-    'use strict';
-
-    function ObservableMonitor(observable) {
-        assert.isObject(observable, 'observable');
-
-        this._observable = observable;
-        this._listenerSubscription = null;
-        this._isEnabled = false;
-    }
-
-    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
-        this._isEnabled = true;
-
-        this._listenerSubscription = this._observable.subscribe(_.noop, {
-            listenForChanges: {
-                callback: checkForChanges,
-                timeout: timeout || 500
-            }
-        });
-    };
-
-    ObservableMonitor.prototype.stop = function stop() {
-        this._isEnabled = false;
-
-        if (this._listenerSubscription) {
-            this._listenerSubscription.dispose();
-        }
-
-        this._listenerSubscription = null;
-    };
-
-    ObservableMonitor.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
-
-    return ObservableMonitor;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(8)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, NetworkConnectionMonitor) {
-    'use strict';
-
-    var networkDisconnectHysteresisInterval = 15000;
-    var waitForDisconnectEventTimeout = 1000;
-    var defaultReconnectBackoffInterval = 1000;
-    var defaultMaxReconnectAttempts = 4;
-    var closeReasons = {
-        byebye: {
-            code: 1000,
-            reason: 'byebye',
-            desc: 'Client closed'
-        },
-        backoffLimitReached: {
-            code: 4000,
-            reason: 'backoff-limit-reached',
-            desc: 'Reached the limit in terms of the number of reconnects'
-        },
-        networkDisconnect: {
-            code: 4001,
-            reason: 'network-disconnect',
-            desc: 'Network connection monitor determined loss to internet connectivity'
-        },
-        reconnecting: {
-            code: 4002,
-            reason: 'reconnecting',
-            desc: 'Closing WebSocket in order to attempt to establish another connection'
-        }
-    };
-    var readyStates = {
-        connecting: {
-            code: 0,
-            state: 'CONNECTING',
-            desc: 'The connection is not yet open'
-        },
-        open: {
-            code: 1,
-            state: 'OPEN',
-            desc: 'The connection is open and ready to communicate'
-        },
-        closing: {
-            code: 2,
-            state: 'CLOSING',
-            desc: 'The connection is in the process of closing'
-        },
-        closed: {
-            code: 3,
-            state: 'CLOSED',
-            desc: 'The connection is closed or could not be opened'
-        }
-    };
-
-    function ReconnectingWebSocket(uri, logger, maxReconnectAttempts, reconnectBackoffInterval) {
-        assert.stringNotEmpty(uri, 'uri');
-        assert.isObject(logger, 'logger');
-
-        if (!_.isNullOrUndefined(maxReconnectAttempts)) {
-            assert.isNumber(maxReconnectAttempts);
-        } else {
-            maxReconnectAttempts = defaultMaxReconnectAttempts;
-        }
-
-        this._uri = uri;
-        this._logger = logger;
-        this._maxReconnectAttempts = maxReconnectAttempts;
-        this._reconnectBackoffInterval = reconnectBackoffInterval || defaultReconnectBackoffInterval;
-        this._networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval, this._logger);
-        this._hasAttemptedReconnect = false;
-        this._stopped = false;
-
-        this._logger.info('Connecting to [%s]', uri);
-
-        this._webSocket = createWebSocket.call(this, onOpen, onClose);
-        this._networkConnectionMonitor.start(_.bind(onNetworkReconnect, this), _.bind(onNetworkDisconnect, this));
-    }
-
-    ReconnectingWebSocket.prototype.onmessage = null;
-    ReconnectingWebSocket.prototype.onconnected = null;
-    ReconnectingWebSocket.prototype.onreconnecting = null;
-    ReconnectingWebSocket.prototype.onreconnected = null;
-    ReconnectingWebSocket.prototype.ondisconnected = null;
-    ReconnectingWebSocket.prototype.onerror = null;
-
-    ReconnectingWebSocket.prototype.send = function (message) {
-        return this._webSocket.send(message);
-    };
-
-    ReconnectingWebSocket.prototype.reconnect = function (attempt) {
-        this._webSocket.onclose = null;
-        this._webSocket.onerror = null;
-        this._hasAttemptedReconnect = true;
-
-        var that = this;
-        var backoffTimeout;
-
-        if (!_.isNumber(attempt)) {
-            attempt = 1;
-        }
-
-        if (this._stopped) {
-            return this._logger.info('Client has stopped WebSocket after [%s] reconnect attempts', attempt - 1);
-        }
-
-        if (attempt > this._maxReconnectAttempts) {
-            this._logger.warn('Unable to reconnect WebSocket after [%s] attempts', this._maxReconnectAttempts);
-
-            return closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.backoffLimitReached);
-        }
-
-        closeWebSocketOrTriggerDisconnectEvent.call(this, closeReasons.reconnecting);
-
-        try {
-            this._webSocket = createWebSocket.call(that, function onOpenEvent() {
-                if (backoffTimeout) {
-                    clearTimeout(backoffTimeout);
-                }
-
-                that._hasAttemptedReconnect = false;
-                that._webSocket.onclose = _.bind(onClose, that);
-
-                return onReconnect.call(that);
-            }, function onCloseEvent() {
-                if (attempt + 1 > that._maxReconnectAttempts) {
-                    if (backoffTimeout) {
-                        clearTimeout(backoffTimeout);
-                    }
-
-                    reconnectIfNotOpen.call(that, attempt);
-                }
-            });
-        } catch(e) {
-            this._logger.warn('Unable to create WebSocket connection [%s]', e);
-            // Swallow error - we will alert client of failure after timeouts.
-        }
-
-        backoffTimeout = reconnectWithBackoff.call(this, attempt);
-    };
-
-    ReconnectingWebSocket.prototype.disconnect = function () {
-        this._networkConnectionMonitor.stop();
-        this._stopped = true;
-
-        return this._webSocket.close(closeReasons.byebye.code, closeReasons.byebye.reason);
-    };
-
-    ReconnectingWebSocket.prototype.toString = function () {
-        return 'ReconnectedWebSocket[' + this._uri + ',' + this._webSocket.readyState + ']';
-    };
-
-    function closeWebSocketOrTriggerDisconnectEvent(evt) {
-        if (this._webSocket.readyState === readyStates.closed.code) {
-            return onClose.call(this, evt);
-        }
-
-        return this._webSocket.close(evt.code, evt.reason);
-    }
-
-    function createWebSocket(onOpenCallback, onCloseCallback) {
-        var webSocket = new WebSocket(this._uri);
-
-        webSocket.onopen = _.bind(onOpenCallback, this);
-        webSocket.onclose = _.bind(onCloseCallback, this);
-        webSocket.onmessage = _.bind(onMessage, this);
-        webSocket.onerror = _.bind(onError, this);
-
-        return webSocket;
-    }
-
-    function reconnectWithBackoff(attempt) {
-        var that = this;
-
-        return setTimeout(function () {
-            reconnectIfNotOpen.call(that, attempt);
-        }, attempt * attempt * this._reconnectBackoffInterval);
-    }
-
-    function reconnectIfNotOpen(attempt) {
-        if (this._webSocket.readyState === readyStates.open.code) {
-            return;
-        }
-
-        this.reconnect(attempt + 1);
-    }
-
-    function onClose(evt) {
-        switch (evt.code) {
-        case closeReasons.reconnecting.code:
-            return;
-        case closeReasons.byebye.code:
-        case closeReasons.backoffLimitReached.code:
-        case closeReasons.networkDisconnect.code:
-            return onDisconnect.call(this, evt);
-        default:
-            if (this._hasAttemptedReconnect) {
-                return;
-            }
-
-            return onReconnecting.call(this, evt);
-        }
-    }
-
-    function onReconnecting(evt) {
-        this._logger.info('Attempting to re-establish socket connection after disconnect event with code [%s] and reason [%s]', evt.code, evt.reason);
-
-        if (this.onreconnecting) {
-            this.onreconnecting(evt);
-        }
-
-        this.reconnect();
-    }
-
-    function onOpen(evt) {
-        this._logger.info('Connected');
-
-        if (this.onconnected) {
-            this.onconnected(evt);
-        }
-    }
-
-    function onReconnect(evt) {
-        this._logger.info('Successfully reconnected to WebSocket');
-
-        if (this.onreconnected) {
-            this.onreconnected(evt);
-        }
-    }
-
-    function onDisconnect(evt) {
-        this._logger.info('Disconnected [%s]: [%s]', evt.code, evt.reason);
-
-        if (this.ondisconnected) {
-            this.ondisconnected(evt);
-        }
-    }
-
-    function onError(evt) {
-        this._logger.error('An error occurred [%s]', evt.data);
-
-        if (this.onerror) {
-            this.onerror(evt);
-        }
-    }
-
-    function onMessage(evt) {
-        this._logger.debug('>> [%s]', evt.data);
-
-        if (this.onmessage) {
-            this.onmessage(evt);
-        }
-    }
-
-    function onNetworkReconnect(didGoOffline) {
-        var that = this;
-
-        setTimeout(function() {
-            if (that._stopped) {
-                return that._logger.info('Unable to go back online after network reconnect. Client has stopped WebSocket.');
-            }
-
-            if (that._webSocket.readyState !== readyStates.open.code) {
-                return that.reconnect();
-            }
-
-            if (didGoOffline) {
-                return onOpen.call(that);
-            }
-        }, waitForDisconnectEventTimeout);
-    }
-
-    function onNetworkDisconnect() {
-        // Don't close the WebSocket.
-        onDisconnect.call(this, closeReasons.networkDisconnect);
-    }
-
-    return ReconnectingWebSocket;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(36)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (ReconnectingWebSocket) {
-    'use strict';
-
-    return ReconnectingWebSocket;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports) {
-
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-    throw new Error('setTimeout has not been defined');
-}
-function defaultClearTimeout () {
-    throw new Error('clearTimeout has not been defined');
-}
-(function () {
-    try {
-        if (typeof setTimeout === 'function') {
-            cachedSetTimeout = setTimeout;
-        } else {
-            cachedSetTimeout = defaultSetTimout;
-        }
-    } catch (e) {
-        cachedSetTimeout = defaultSetTimout;
-    }
-    try {
-        if (typeof clearTimeout === 'function') {
-            cachedClearTimeout = clearTimeout;
-        } else {
-            cachedClearTimeout = defaultClearTimeout;
-        }
-    } catch (e) {
-        cachedClearTimeout = defaultClearTimeout;
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    // if setTimeout wasn't available but was latter defined
-    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-        cachedSetTimeout = setTimeout;
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    // if clearTimeout wasn't available but was latter defined
-    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-        cachedClearTimeout = clearTimeout;
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) { return [] }
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-    return {};
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 41 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(4)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http) {
     'use strict';
 
     function AdminAPI(backendUri, authenticationData) {
-        assert.stringNotEmpty(backendUri, 'backendUri');
+        assert.isStringNotEmpty(backendUri, 'backendUri');
         assert.isObject(authenticationData, 'authenticationData');
 
         this._backendUri = backendUri;
@@ -18169,7 +20003,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
         var data = appendAuthDataTo.call(this, {
@@ -18181,7 +20015,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
         var data = appendAuthDataTo.call(this, {
@@ -18220,7 +20054,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 42 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18240,7 +20074,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(4)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, http) {
     'use strict';
 
@@ -18344,7 +20178,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18477,7 +20311,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18498,87 +20332,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
+    __webpack_require__(2),
+    __webpack_require__(22),
     __webpack_require__(9),
-    __webpack_require__(37),
-    __webpack_require__(5),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
+    __webpack_require__(3),
+    __webpack_require__(70),
+    __webpack_require__(69)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, ReconnectingWebSocket, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
-        if (typeof uri !== 'string') {
-            throw new Error('Must pass a valid "uri"');
-        }
+        assert.isStringNotEmpty(uri, 'uri');
+        assert.isString(deviceId, 'deviceId');
+        assert.isStringNotEmpty(version, 'version');
+        assert.isObject(logger, 'logger');
 
-        if (typeof deviceId !== 'string') {
-            throw new Error('Must pass a valid "deviceId"');
-        }
-
-        if (typeof version !== 'string') {
-            throw new Error('Must pass a valid "version"');
-        }
-
-        if (typeof logger !== 'object') {
-            throw new Error('Must pass a valid "logger"');
-        }
-
-        this._uri = uri;
         this._deviceId = deviceId;
         this._version = version;
         this._logger = logger;
-        this._mqProtocol = new MQProtocol(this._logger);
+        this._proto = new proto.WebSocketProto(uri, this._logger, [pcastProto, chatProto]);
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
 
-        this._logger.info('Connecting to [%s]', uri);
+        var that = this;
 
-        this._nextRequestId = 0;
-        this._events = {};
-        this._requests = {};
-
-        this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
-
-        this._webSocket.onmessage = _.bind(onMessage, this);
-        this._webSocket.onconnected = _.bind(onConnected, this);
-        this._webSocket.onreconnecting = _.bind(onReconnecting, this);
-        this._webSocket.onreconnected = _.bind(onReconnected, this);
-        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
-        this._webSocket.onerror = _.bind(onError, this);
+        this._proto.on('pcast.AuthenticateResponse', function(message) {
+            that._observableSessionId.setValue(message.sessionId);
+        });
     }
 
     PCastProtocol.prototype.on = function (eventName, handler) {
-        if (typeof eventName !== 'string') {
-            throw new Error('"eventName" must be a string');
-        }
-
-        if (typeof handler !== 'function') {
-            throw new Error('"handler" must be a function');
-        }
-
-        var handlers = getEventHandlers.call(this, eventName);
-
-        handlers.push(handler);
-
-        return _.bind(removeEventHandler, this, eventName, handler);
+        return this._proto.on(eventName, handler);
     };
 
     PCastProtocol.prototype.disconnect = function () {
         this._observableSessionId.setValue(null);
 
-        return this._webSocket.disconnect();
+        return this._proto.disconnect();
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
-        if (typeof authToken !== 'string') {
-            throw new Error('"authToken" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(authToken, 'authToken');
+        assert.isFunction(callback, 'callback');
 
         var authenticate = {
-            apiVersion: this._mqProtocol.getApiVersion(),
+            apiVersion: this._proto.getApiVersion(),
             clientVersion: this._version,
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
@@ -18590,7 +20387,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             authenticate.sessionId = this.getSessionId();
         }
 
-        return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
+        return this._proto.sendRequest('pcast.Authenticate', authenticate, callback);
     };
 
     PCastProtocol.prototype.getSessionId = function () {
@@ -18602,38 +20399,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PCastProtocol.prototype.bye = function (reason, callback) {
-        if (typeof reason !== 'string') {
-            throw new Error('"reason" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(reason, 'reason');
+        assert.isFunction(callback, 'callback');
 
         var bye = {
             sessionId: this.getSessionId(),
             reason: reason
         };
 
-        return sendRequest.call(this, 'pcast.Bye', bye, callback);
+        return this._proto.sendRequest('pcast.Bye', bye, callback);
     };
 
     PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
-        if (typeof streamType !== 'string') {
-            throw new Error('"streamType" must be a string');
-        }
-
-        if (typeof streamToken !== 'string') {
-            throw new Error('"streamToken" must be a string');
-        }
-
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamType, 'streamType');
+        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
 
         var browser = phenixRTC.browser || 'UnknownBrowser';
         var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
@@ -18652,7 +20433,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
                 options: [streamType, browser, browserWithVersion],
-                apiVersion: this._mqProtocol.getApiVersion()
+                apiVersion: this._proto.getApiVersion()
             };
         }
 
@@ -18664,21 +20445,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             setupStream.createStream.options.push('no-video');
         }
 
-        return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
+        return this._proto.sendRequest('pcast.SetupStream', setupStream, callback);
     };
 
     PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof sdp !== 'string') {
-            throw new Error('"sdp" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(sdp, 'sdp');
+        assert.isFunction(callback, 'callback');
 
         var setRemoteDescription = {
             streamId: streamId,
@@ -18686,113 +20459,69 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 type: 'Answer',
                 sdp: sdp
             },
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.SetRemoteDescription', setRemoteDescription, callback);
+        return this._proto.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
     PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isArray(candidates, 'candidates');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
 
-        if (!(candidates instanceof Array)) {
-            throw new Error('"candidates" must be an array');
-        }
+        var sanitizedCandidates = _.map(candidates, function(candidate, index) {
+            assert.isStringNotEmpty(candidate.candidate, 'candidate[' + index + '].candidate');
+            assert.isNumber(candidate.sdpMLineIndex, 'candidate[' + index + '].sdpMLineIndex');
+            assert.isStringNotEmpty(candidate.sdpMid, 'candidate[' + index + '].sdpMid');
 
-        if (!(options instanceof Array)) {
-            throw new Error('"options" must be an array');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
-        var sanitizedCandidates = [];
-        for (var i = 0; i < candidates.length; i++) {
-            var candidate = candidates[i];
-
-            if (typeof candidate.candidate !== 'string') {
-                throw new Error('"candidates[' + i + '].candidate" must be a string');
-            }
-
-            if (typeof candidate.sdpMLineIndex !== 'number') {
-                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
-            }
-
-            if (typeof candidate.sdpMid !== 'string') {
-                throw new Error('"candidates[' + i + '].sdpMid" must be a string');
-            }
-
-            sanitizedCandidates.push({
+            return {
                 candidate: candidate.candidate,
                 sdpMLineIndex: candidate.sdpMLineIndex,
                 sdpMid: candidate.sdpMid
-            });
-        }
+            };
+        });
 
         var addIceCandidates = {
             streamId: streamId,
             candidates: sanitizedCandidates,
             options: options,
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.AddIceCandidates', addIceCandidates, callback);
+        return this._proto.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
     };
 
     PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof signalingState !== 'string') {
-            throw new Error('"signalingState" must be a string');
-        }
-
-        if (typeof iceGatheringState !== 'string') {
-            throw new Error('"iceGatheringState" must be a string');
-        }
-
-        if (typeof iceConnectionState !== 'string') {
-            throw new Error('"iceConnectionState" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(signalingState, 'signalingState');
+        assert.isStringNotEmpty(iceGatheringState, 'iceGatheringState');
+        assert.isStringNotEmpty(iceConnectionState, 'iceConnectionState');
+        assert.isFunction(callback, 'callback');
 
         var updateStreamState = {
             streamId: streamId,
             signalingState: signalingState,
             iceGatheringState: iceGatheringState,
             iceConnectionState: iceConnectionState,
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.UpdateStreamState', updateStreamState, callback);
+        return this._proto.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
     };
 
     PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof reason !== 'string') {
-            throw new Error('"reason" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isString(reason, 'reason');
+        assert.isFunction(callback, 'callback');
 
         var destroyStream = {
             streamId: streamId,
             reason: reason
         };
 
-        return sendRequest.call(this, 'pcast.DestroyStream', destroyStream, callback);
+        return this._proto.sendRequest('pcast.DestroyStream', destroyStream, callback);
     };
 
     PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
@@ -18810,14 +20539,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             sessionId: this.getSessionId()
         };
 
-        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
+        return this._proto.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
     PCastProtocol.prototype.createRoom = function (room, callback) {
         assert.isObject(room, 'room');
-        assert.stringNotEmpty(room.name, 'room.name');
-        assert.stringNotEmpty(room.type, 'room.type');
-        assert.stringNotEmpty(room.description, 'room.description');
+        assert.isStringNotEmpty(room.name, 'room.name');
+        assert.isStringNotEmpty(room.type, 'room.type');
+        assert.isStringNotEmpty(room.description, 'room.description');
         assert.isFunction(callback, 'callback');
 
         var createRoom = {
@@ -18825,7 +20554,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             room: room
         };
 
-        return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);
+        return this._proto.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
     PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -18847,7 +20576,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, callback);
+        return this._proto.sendRequest('chat.JoinRoom', joinRoom, callback);
     };
 
     PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -18861,7 +20590,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.LeaveRoom', leaveRoom, callback);
+        return this._proto.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
     PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
@@ -18877,7 +20606,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.UpdateMember', updateMember, callback);
+        return this._proto.sendRequest('chat.UpdateMember', updateMember, callback);
     };
 
     PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -18891,11 +20620,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.UpdateRoom', updateRoom, callback);
+        return this._proto.sendRequest('chat.UpdateRoom', updateRoom, callback);
     };
 
     PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isObject(chatMessage, 'chatMessage');
 
         var sendMessage = {
@@ -18903,12 +20632,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             chatMessage: chatMessage
         };
 
-        return sendRequest.call(this, 'chat.SendMessageToRoom', sendMessage, callback);
+        return this._proto.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
     };
 
     PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
 
         var fetchRoomConversation = {
@@ -18918,12 +20647,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             options: ['Subscribe']
         };
 
-        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(roomId, 'roomId');
 
         if (!beforeMessageId || !afterMessageId) {
             assert.isNumber(batchSize, 'batchSize');
@@ -18937,126 +20666,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         if (beforeMessageId) {
-            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+            assert.isStringNotEmpty(beforeMessageId, 'beforeMessageId');
 
             fetchRoomConversation.beforeMessageId = beforeMessageId;
         }
 
         if (afterMessageId) {
-            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+            assert.isStringNotEmpty(afterMessageId, 'afterMessageId');
 
             fetchRoomConversation.afterMessageId = afterMessageId;
         }
 
-        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.toString = function () {
         return 'PCastProtocol[' + this._webSocket.toString() + ']';
     };
 
-    function sendRequest(type, message, callback) {
-        var requestId = (this._nextRequestId++).toString();
-        var request = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message)
-        };
-
-        this._requests[requestId] = callback;
-
-        return this._webSocket.send(this._mqProtocol.encode('mq.Request', request).toString('base64'));
-    }
-
-    function getEventHandlers(eventName) {
-        var handlers = this._events[eventName];
-
-        if (!handlers) {
-            this._events[eventName] = handlers = [];
-        }
-
-        return handlers;
-    }
-
-    function removeEventHandler(eventName, handler) {
-        var handlers = this._events[eventName];
-
-        _.remove(handlers, function removeHandler(currentHandler) {
-            return currentHandler === handler;
-        });
-
-        this._events[eventName] = handlers;
-    }
-
-    function triggerEvent(eventName, args) {
-        var handlers = this._events[eventName];
-
-        if (handlers) {
-            for (var i = 0; i < handlers.length; i++) {
-                handlers[i].apply(this, args);
-            }
-        }
-    }
-
-    function onMessage(evt) {
-        var response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
-        this._logger.info('>> [%s]', response.type);
-
-        var message = this._mqProtocol.decode(response.type, response.payload);
-
-        if (response.type === 'pcast.AuthenticateResponse') {
-            this._observableSessionId.setValue(message.sessionId);
-        } else if (response.type === 'pcast.StreamEnded') {
-            triggerEvent.call(this, 'streamEnded', [message]);
-        } else if (response.type === 'pcast.StreamDataQuality') {
-            triggerEvent.call(this, 'dataQuality', [message]);
-        } else if (response.type === 'chat.RoomEvent') {
-            triggerEvent.call(this, 'roomEvent', [message]);
-        } else if (response.type === 'chat.RoomConversationEvent') {
-            triggerEvent.call(this, 'roomChatEvent', [message]);
-        }
-
-        var callback = this._requests[response.requestId];
-
-        if (callback) {
-            delete this._requests[response.requestId];
-
-            if (response.type === 'mq.Error') {
-                var error = message;
-
-                callback(error, null);
-            } else {
-                callback(null, message);
-            }
-        }
-    }
-
-    function onReconnecting(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'reconnecting');
-    }
-
-    function onConnected(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'connected');
-    }
-
-    function onReconnected(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'reconnected');
-    }
-
-    function onDisconnected(evt) {
-        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
-    }
-
-    function onError(evt) {
-        triggerEvent.call(this, 'error', [evt.data]);
-    }
-
     return PCastProtocol;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19076,7 +20709,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(2)
+    __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, phenixRTC) {
     'use strict';
 
@@ -19511,7 +21144,111 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(9),
+    __webpack_require__(3),
+    __webpack_require__(25)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, proto, rtc, analytixProto) {
+    function MetricsTransmitter(uri) {
+        assert.isString(uri, 'uri');
+
+        this._loggingUrl = '/analytix/metrics';
+        this._domain = location.hostname;
+        this._isEnabled = true;
+        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.SubmitMetricRecords', {
+            maxAttempts: 3,
+            maxBufferedRecords: 1000,
+            maxBatchSize: 512
+        });
+
+        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+    }
+
+    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
+        return this._isEnabled;
+    };
+
+    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
+        assert.isBoolean(enabled, 'enabled');
+
+        this._isEnabled = enabled;
+    };
+
+    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+        if (!this._isEnabled) {
+            return;
+        }
+
+        assert.isStringNotEmpty(metric, 'metric');
+        assert.isObject(value, 'value');
+
+        this._mostRecentRuntime = since;
+        this._mostRecentSessionId = sessionId;
+        this._mostRecentStreamId = streamId;
+        this._mostRecentEnvironment = environment;
+        this._mostRecentVersion = version;
+
+        addMetricToRecords.call(this, metric, value);
+    };
+
+    function addMetricToRecords(metric, value) {
+        var record = _.assign({}, value, {
+            metric: metric,
+            timestamp: _.isoString(),
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+
+        this._batchHttpProtocol.addRecord(record);
+    }
+
+    function onCapacity(deleteRecords) {
+        this._batchHttpProtocol.addRecordToBeginning({
+            metric: 'MetricDropped',
+            value: {uint64: deleteRecords},
+            timestamp: _.isoString(),
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+    }
+
+    return MetricsTransmitter;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19533,200 +21270,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(5),
-    __webpack_require__(9),
-    __webpack_require__(8),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc) {
-    var networkDisconnectHysteresisInterval = 0;
-
-    function MetricsTransmitter() {
-        this._loggingUrl = '/analytix/metrics';
-        this._domain = location.hostname;
-        this._protocol = new MQProtocol();
-        this._maxAttempts = 3;
-        this._maxBufferedRecords = 1000;
-        this._maxBatchSize = 512;
-        this._records = [];
-        this._pending = false;
-        this._baseUri = '';
-        this._isEnabled = true;
-        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
-        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-    }
-
-    MetricsTransmitter.prototype.setUri = function setUri(uri) {
-        assert.stringNotEmpty(uri, 'uri');
-
-        this._baseUri = uri;
-    };
-
-    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
-
-    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled);
-
-        this._isEnabled = enabled;
-    };
-
-    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
-        assert.stringNotEmpty(metric, 'metric');
-        assert.isObject(value, 'value');
-
-        addMetricToRecords.call(this, metric, since, sessionId, streamId, environment, version, value);
-
-        deleteRecordsIfAtCapacity.call(this, since, sessionId, streamId, environment, version);
-
-        sendBatchMessagesIfNonePending.call(this);
-    };
-
-    function createAndStartNetworkConnectionMonitor() {
-        var that = this;
-        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
-
-        function onReconnect() {
-            that._isOffline = false;
-
-            sendBatchMessagesIfNonePending.call(that);
-        }
-
-        function onDisconnect() {
-            that._isOffline = true;
-        }
-
-        networkConnectionMonitor.start(onReconnect, onDisconnect);
-
-        return networkConnectionMonitor;
-    }
-
-    function addMetricToRecords(metric, since, sessionId, streamId, environment, version, value) {
-        var record = _.assign({}, value, {
-            metric: metric,
-            timestamp: _.isoString(),
-            sessionId: sessionId,
-            streamId: streamId,
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            environment: environment,
-            version: version,
-            runtime: since
-        });
-
-        this._records.push(record);
-    }
-
-    function deleteRecordsIfAtCapacity(since, sessionId, streamId, environment, version) {
-        if (this._records.length > this._maxBufferedRecords) {
-            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
-
-            this._records = this._records.slice(deleteRecords);
-            this._records.unshift({
-                timestamp: _.isoString(),
-                sessionId: sessionId,
-                streamId: streamId,
-                source: this._browser,
-                metric: 'MetricDropped',
-                value: {uint64: deleteRecords},
-                fullQualifiedName: this._domain,
-                environment: environment,
-                version: version,
-                runtime: since
-            });
-        }
-    }
-
-    function sendBatchMessagesIfNonePending() {
-        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
-            return;
-        }
-
-        var submitMetricRecords = {records: _.take(this._records, this._maxBatchSize)};
-
-        this._records = this._records.slice(this._maxBatchSize);
-        this._pending = true;
-
-        var that = this;
-
-        try {
-            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, submitMetricRecords, function onTimeout() {
-                setTimeout(function waitForDisconnectTimeout() {
-                    if (!that._isOffline) {
-                        return;
-                    }
-
-                    that._records = that._records.concat(submitMetricRecords.records);
-                }, networkDisconnectHysteresisInterval);
-            });
-        } catch (e) {
-            this._pending = false;
-
-            throw e;
-        }
-    }
-
-    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
-        var that = this;
-
-        var data = this._protocol.encode('analytix.SubmitMetricRecords', dataToEncode).toBinary();
-
-        function handlePost(error, result) {
-            that._pending = false;
-
-            if (error) {
-                if (error.message === 'timeout') {
-                    onTimeout();
-                }
-
-                return {
-                    status: 'error',
-                    storedRecords: 0
-                };
-            }
-
-            return that._protocol.decode('analytix.SubmitMetricRecordsResponse', ByteBuffer.fromBinary(result));
-        }
-
-        http.postWithRetry(url, data, {contentType: 'application/protobuf'}, handlePost, this._maxAttempts);
-    }
-
-    return MetricsTransmitter;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, phenixRTC) {
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-08-14T21:49:04Z' || '?';
+    var sdkVersion = '2017-08-24T21:31:31Z' || '?';
 
     function StreamAnalytix(sessionId, logger, metricsTransmitter) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
 
         this._environment = defaultEnvironment;
         this._version = sdkVersion;
@@ -19735,20 +21288,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
         this._start = _.now();
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
 
         logMetric.call(this, 'Stream initializing');
     }
 
     StreamAnalytix.prototype.setProperty = function(name, value) {
-        assert.stringNotEmpty(name, 'name');
-        assert.stringNotEmpty(value, 'value');
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
     StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue) {
-        assert.stringNotEmpty(metric, 'metric');
+        assert.isStringNotEmpty(metric, 'metric');
 
         recordMetricRecord.call(this, {
             metric: metric,
@@ -19759,7 +21312,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     StreamAnalytix.prototype.setStreamId = function(streamId) {
-        assert.stringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(streamId, 'streamId');
 
         if (this._streamId) {
             throw new Error('Stream ID can only be set once.');
@@ -19798,9 +21351,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     StreamAnalytix.prototype.stop = function() {
-        _.forEach(this._disposables, function(dispose) {
-            dispose();
-        });
+        this._disposables.dispose();
 
         this.recordMetric('Stopped');
 
@@ -19857,9 +21408,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
         phenixRTC.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
 
-        this._disposables.push(function() {
+        this._disposables.add(new disposable.Disposable(function() {
             phenixRTC.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-        });
+        }));
     };
 
     StreamAnalytix.prototype.recordRebuffering = function(video) {
@@ -19908,14 +21459,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         phenixRTC.addEventListener(video, 'playing', listenForContinuation);
         phenixRTC.addEventListener(video, 'progress', listenForContinuation);
 
-        this._disposables.push(function() {
+        this._disposables.add(new disposable.Disposable(function() {
             phenixRTC.removeEventListener(video, 'stalled', listenForStall);
             phenixRTC.removeEventListener(video, 'pause', listenForStall);
             phenixRTC.removeEventListener(video, 'suspend', listenForStall);
             phenixRTC.removeEventListener(video, 'play', listenForContinuation);
             phenixRTC.removeEventListener(video, 'playing', listenForContinuation);
             phenixRTC.removeEventListener(video, 'progress', listenForContinuation);
-        });
+        }));
     };
 
     function logMetric() {
@@ -19940,7 +21491,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function recordMetricRecord(record, since) {
-        assert.stringNotEmpty(record.metric, 'record.metric');
+        assert.isStringNotEmpty(record.metric, 'record.metric');
 
         var annotatedRecord = _.assign({}, this._properties, record);
 
@@ -19952,7 +21503,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19973,8 +21524,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(20),
-    __webpack_require__(46)
+    __webpack_require__(24),
+    __webpack_require__(57)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -20001,11 +21552,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     function createNewTransmitter(uri) {
-        var transmitter = new MetricsTransmitter();
+        var transmitter = new MetricsTransmitter(uri);
 
-        if (uri) {
-            transmitter.setUri(uri);
-        } else {
+        if (!uri) {
             transmitter.setEnabled(false);
         }
 
@@ -20017,7 +21566,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20064,7 +21613,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 50 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20092,7 +21641,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultSilenceHysteresisInterval = 1500;
 
     function AudioSpeakerDetectionAlgorithm(logger) {
-        assert.isObject(logger);
+        assert.isObject(logger, 'logger');
 
         this._logger = logger;
 
@@ -20184,7 +21733,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20211,7 +21760,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultAlpha = 1/16;
 
     function AudioVolumeMeter(logger) {
-        assert.isObject(logger);
+        assert.isObject(logger, 'logger');
 
         this._logger = logger;
     }
@@ -20250,7 +21799,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
-        assert.isNumber(alpha);
+        assert.isNumber(alpha, 'alpha');
 
         this._alpha = parseFloat(alpha);
     };
@@ -20325,7 +21874,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20346,7 +21895,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(51)
+    __webpack_require__(62)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -20365,7 +21914,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     AudioVolumeMeterFactory.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
         assert.isObject(stream, 'stream');
-        assert.stringNotEmpty(stream.id, 'streamId');
+        assert.isStringNotEmpty(stream.id, 'streamId');
 
         if (!this._audioVolumeMeters[stream.id]) {
             this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger);
@@ -20387,7 +21936,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20485,7 +22034,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20506,9 +22055,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(19)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, AuthenticationService) {
+    __webpack_require__(2),
+    __webpack_require__(4),
+    __webpack_require__(23)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, AuthenticationService) {
     'use strict';
 
     function ChatService(pcast) {
@@ -20533,15 +22083,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         }
 
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
         this._roomMessagesListeners = {};
 
         this._enabled.setValue(true);
         setupSubscriptions.call(this);
 
-        var disposeOfConversationHandler = this._protocol.on('roomChatEvent', _.bind(onRoomConversationEvent, this));
+        var disposeOfConversationHandler = this._protocol.on('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
 
-        this._disposables.push(disposeOfConversationHandler);
+        this._disposables.add(disposeOfConversationHandler);
     };
 
     ChatService.prototype.stop = function stop() {
@@ -20549,7 +22099,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         }
 
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     ChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
@@ -20580,8 +22132,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
         var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(onSessionIdChange, this));
 
-        this._disposables.push(pcastStatusSubscription.dispose);
-        this._disposables.push(pcastSessionIdSubscription.dispose);
+        this._disposables.add(pcastStatusSubscription);
+        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function setupChatListener(roomId, onReceiveMessages) {
@@ -20589,21 +22141,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._roomMessagesListeners[roomId] = onReceiveMessages;
 
-        var disposeOfHandler = function() {
+        var disposeOfHandler = new disposable.Disposable(function() {
             if (that._roomMessagesListeners[roomId] === onReceiveMessages) {
                 delete that._roomMessagesListeners[roomId];
             }
-        };
+        });
 
-        this._disposables.push(disposeOfHandler);
+        this._disposables.add(disposeOfHandler);
 
         return disposeOfHandler;
     }
 
     function onRoomConversationEvent(event) {
         assert.isObject(event, 'event');
-        assert.stringNotEmpty(event.roomId, 'event.roomId');
-        assert.stringNotEmpty(event.eventType, 'event.eventType');
+        assert.isStringNotEmpty(event.roomId, 'event.roomId');
+        assert.isStringNotEmpty(event.eventType, 'event.eventType');
         assert.isArray(event.chatMessages, 'event.chatMessages');
 
         switch (event.eventType) {
@@ -20648,7 +22200,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function getMessagesRequest(roomId, batchSize, afterMessageId, beforeMessageId, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isFunction(callback, 'callback');
 
         if (!beforeMessageId || !afterMessageId) {
@@ -20656,11 +22208,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (beforeMessageId) {
-            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+            assert.isStringNotEmpty(beforeMessageId, 'beforeMessageId');
         }
 
         if (afterMessageId) {
-            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+            assert.isStringNotEmpty(afterMessageId, 'afterMessageId');
         }
 
         assertEnabled.call(this);
@@ -20698,7 +22250,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function subscribeToRoomConversationRequest(roomId, batchSize) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
 
         assertEnabled.call(this);
@@ -20744,11 +22296,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function sendMessageRequest(roomId, screenName, role, lastUpdate, message, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
-        assert.stringNotEmpty(screenName, 'screenName');
-        assert.stringNotEmpty(role, 'role');
+        assert.isStringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(screenName, 'screenName');
+        assert.isStringNotEmpty(role, 'role');
         assert.isNumber(lastUpdate, 'lastUpdate');
-        assert.stringNotEmpty(message, 'message');
+        assert.isStringNotEmpty(message, 'message');
         assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
@@ -20811,24 +22363,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
-        }
-    }
-
     return ChatService;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20849,9 +22389,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(54)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, ChatService) {
+    __webpack_require__(2),
+    __webpack_require__(4),
+    __webpack_require__(65)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, ChatService) {
     'use strict';
 
     var defaultBatchSize = 0;
@@ -20868,7 +22409,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._chatService = new ChatService(this._pcast);
         this._chatMessages = new observable.ObservableArray([]);
         this._latestMessageQueue = [];
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
         this._chatRoomId = null;
     }
 
@@ -20885,7 +22426,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         disposeOfMessageSubscription.call(this);
 
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     RoomChatService.prototype.getObservableChatMessages = function getObservableChatMessages() {
@@ -20933,7 +22476,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function setupSubscriptions() {
         var roomSubscription = this._roomService.getObservableActiveRoom().subscribe(_.bind(onRoomChange, this));
 
-        this._disposables.push(roomSubscription.dispose);
+        this._disposables.add(roomSubscription);
     }
 
     function setupMessageSubscription() {
@@ -20981,24 +22524,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     }
 
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
-        }
-    }
-
     return RoomChatService;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21019,33 +22550,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(4),
-    __webpack_require__(5),
+    __webpack_require__(3),
+    __webpack_require__(6),
     __webpack_require__(9),
-    __webpack_require__(8),
-    __webpack_require__(2),
-    __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
-    var networkDisconnectHysteresisInterval = 0;
+    __webpack_require__(25)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, rtc, logging, proto, analytixProto) {
+    function AnalytixAppender(uri) {
+        assert.isString(uri, 'uri');
 
-    function AnalytixAppender() {
         this._loggingUrl = '/analytix/logs';
         this._domain = location.hostname;
-        this._protocol = new MQProtocol();
-        this._maxAttempts = 3;
-        this._maxBufferedRecords = 1000;
-        this._maxBatchSize = 100;
-        this._records = [];
-        this._pending = false;
-        this._baseUri = '';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
-        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._mostRecentRuntime = 0;
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.StoreLogRecords', {
+            maxAttempts: 3,
+            maxBufferedRecords: 1000,
+            maxBatchSize: 512
+        });
+
+        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
     }
 
     AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level);
+        assert.isNumber(level, 'level');
 
         this._minLevel = level;
     };
@@ -21054,147 +22583,62 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._minLevel;
     };
 
-    AnalytixAppender.prototype.setUri = function setUri(uri) {
-        assert.stringNotEmpty(uri, 'uri');
-
-        this._baseUri = uri;
-    };
-
     AnalytixAppender.prototype.isEnabled = function isEnabled() {
         return this._isEnabled;
     };
 
     AnalytixAppender.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled);
+        assert.isBoolean(enabled, 'enabled');
 
         this._isEnabled = enabled;
     };
 
     AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel) {
+        if (context.level < this._minLevel || !this._isEnabled) {
             return;
         }
 
         assert.isArray(messages, 'messages');
 
-        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
+        this._mostRecentRuntime = since;
+        this._mostRecentSessionId = sessionId;
+        this._mostRecentUserId = userId;
+        this._mostRecentEnvironment = environment;
+        this._mostRecentVersion = version;
 
-        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId, environment, version);
-
-        sendBatchMessagesIfNonePending.call(this);
+        addMessagesToRecords.call(this, level, category, messages);
     };
 
-    function createAndStartNetworkConnectionMonitor() {
-        var that = this;
-        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
-
-        function onReconnect() {
-            that._isOffline = false;
-
-            sendBatchMessagesIfNonePending.call(that);
-        }
-
-        function onDisconnect() {
-            that._isOffline = true;
-        }
-
-        networkConnectionMonitor.start(onReconnect, onDisconnect);
-
-        return networkConnectionMonitor;
-    }
-
-    function addMessagesToRecords(since, level, category, messages, sessionId, userId, environment, version) {
-        var message = messages.join(' ');
-        var record = {
+    function addMessagesToRecords(level, category, messages) {
+        this._batchHttpProtocol.addRecord({
             level: level,
             timestamp: _.isoString(),
             category: category,
-            message: message,
+            message: messages.join(' '),
             source: this._browser,
             fullQualifiedName: this._domain,
-            sessionId: sessionId,
-            userId: userId,
-            environment: environment,
-            version: version,
-            runtime: since
-        };
-
-        this._records.push(record);
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
     }
 
-    function deleteRecordsIfAtCapacity(since, sessionId, userId, environment, version) {
-        if (this._records.length > this._maxBufferedRecords) {
-            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
-
-            this._records = this._records.slice(deleteRecords);
-            this._records.unshift({
-                level: 'Warn',
-                timestamp: _.isoString(),
-                category: 'websdk/analytixLogger',
-                message: 'Deleted ' + deleteRecords + ' records',
-                source: this._browser,
-                fullQualifiedName: this._domain,
-                sessionId: sessionId,
-                userId: userId,
-                environment: environment,
-                version: version,
-                runtime: since
-            });
-        }
-    }
-
-    function sendBatchMessagesIfNonePending() {
-        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
-            return;
-        }
-
-        var storeLogRecords = {records: _.take(this._records, this._maxBatchSize)};
-
-        this._records = this._records.slice(this._maxBatchSize);
-        this._pending = true;
-
-        var that = this;
-
-        try {
-            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords, function onTimeout() {
-                setTimeout(function waitForDisconnectTimeout() {
-                    if (!that._isOffline) {
-                        return;
-                    }
-
-                    that._records = that._records.concat(storeLogRecords.records);
-                }, networkDisconnectHysteresisInterval);
-            });
-        } catch (e) {
-            this._pending = false;
-
-            throw e;
-        }
-    }
-
-    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
-        var that = this;
-
-        var data = this._protocol.encode('analytix.StoreLogRecords', dataToEncode).toBinary();
-
-        function handlePost(error, result) {
-            that._pending = false;
-
-            if (error) {
-                if (error.message === 'timeout') {
-                    onTimeout();
-                }
-
-                return {
-                    status: 'error',
-                    storedRecords: 0
-                };
-            }
-
-            return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));
-        }
-
-        http.postWithRetry(url, data, {contentType: 'application/protobuf'}, handlePost, this._maxAttempts);
+    function onCapacity(deleteRecords) {
+        this._batchHttpProtocol.addRecordToBeginning({
+            level: 'Warn',
+            timestamp: _.isoString(),
+            category: 'websdk/analytixLogger',
+            message: 'Deleted ' + deleteRecords + ' records',
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
     }
 
     return AnalytixAppender;
@@ -21202,7 +22646,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21223,8 +22667,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(20),
-    __webpack_require__(56)
+    __webpack_require__(24),
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, AnalytixAppender) {
     var config = {
         urls: {
@@ -21251,11 +22695,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     function createNewAppender(uri) {
-        var appender = new AnalytixAppender();
+        var appender = new AnalytixAppender(uri);
 
-        if (uri) {
-            appender.setUri(uri);
-        } else {
+        if (!uri) {
             appender.setEnabled(false);
         }
 
@@ -21267,421 +22709,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-    'use strict';
-
-    var analytixProto = {
-        "package": "analytix",
-        "messages": [
-            {
-                "name": "LogData",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "LogLevel",
-                        "name": "level",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 2
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "category",
-                        "id": 3
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "message",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "source",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "fullQualifiedName",
-                        "id": 11
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 6
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "userId",
-                        "id": 7
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "environment",
-                        "id": 8
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "version",
-                        "id": 9
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "float",
-                        "name": "runtime",
-                        "id": 10
-                    }
-                ]
-            },
-            {
-                "name": "StoreLogRecords",
-                "fields": [
-                    {
-                        "rule": "repeated",
-                        "type": "LogData",
-                        "name": "records",
-                        "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "StoreLogRecordsResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "uint64",
-                        "name": "storedRecords",
-                        "id": 2
-                    }
-                ]
-            },
-            {
-                "name": "MetricValue",
-                "fields": [
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "string",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "float",
-                        "name": "float",
-                        "id": 2
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "uint64",
-                        "name": "uint64",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "int64",
-                        "name": "int64",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "bool",
-                        "name": "boolean",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 6
-                    }
-                ]
-            },
-            {
-                "name": "MetricData",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 2
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "streamId",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "source",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "resource",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "kind",
-                        "id": 6
-                    },
-                    {
-                        "rule": "required",
-                        "type": "Metric",
-                        "name": "metric",
-                        "id": 7
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "MetricValue",
-                        "name": "value",
-                        "id": 8
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "MetricValue",
-                        "name": "previousValue",
-                        "id": 9
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "uint64",
-                        "name": "elapsed",
-                        "id": 10
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "fullQualifiedName",
-                        "id": 11
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "environment",
-                        "id": 12
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "version",
-                        "id": 13
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "tool",
-                        "id": 14
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "toolVersion",
-                        "id": 15
-                    },
-                    {
-                        "rule": "required",
-                        "type": "float",
-                        "name": "runtime",
-                        "id": 16
-                    }
-                ]
-            },
-            {
-                "name": "SubmitMetricRecords",
-                "fields": [
-                    {
-                        "rule": "repeated",
-                        "type": "MetricData",
-                        "name": "records",
-                        "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "SubmitMetricRecordsResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "uint64",
-                        "name": "storedRecords",
-                        "id": 2
-                    }
-                ]
-            }
-        ],
-        "enums": [
-            {
-                "name": "LogLevel",
-                "values": [
-                    {
-                        "name": "Trace",
-                        "id": 0
-                    },
-                    {
-                        "name": "Debug",
-                        "id": 1
-                    },
-                    {
-                        "name": "Info",
-                        "id": 2
-                    },
-                    {
-                        "name": "Warn",
-                        "id": 3
-                    },
-                    {
-                        "name": "Error",
-                        "id": 4
-                    },
-                    {
-                        "name": "Fatal",
-                        "id": 5
-                    }
-                ]
-            },
-            {
-                "name": "Metric",
-                "values": [
-                    {
-                        "name": "EndPointRoundTripTime",
-                        "id": 0
-                    },
-                    {
-                        "name": "Initialized",
-                        "id": 1
-                    },
-                    {
-                        "name": "Provisioned",
-                        "id": 2
-                    },
-                    {
-                        "name": "SetupCompleted",
-                        "id": 3
-                    },
-                    {
-                        "name": "Offset",
-                        "id": 4
-                    },
-                    {
-                        "name": "TimeToFirstFrame",
-                        "id": 5
-                    },
-                    {
-                        "name": "Playing",
-                        "id": 6
-                    },
-                    {
-                        "name": "Stalled",
-                        "id": 7
-                    },
-                    {
-                        "name": "Buffering",
-                        "id": 8
-                    },
-                    {
-                        "name": "Stopped",
-                        "id": 9
-                    },
-                    {
-                        "name": "BitRateAdaptation",
-                        "id": 10
-                    },
-                    {
-                        "name": "ResolutionChanged",
-                        "id": 11
-                    },
-                    {
-                        "name": "FrameRateChanged",
-                        "id": 12
-                    },
-                    {
-                        "name": "FramesDropped",
-                        "id": 13
-                    },
-                    {
-                        "name": "PacketsLost",
-                        "id": 14
-                    },
-                    {
-                        "name": "PictureLost",
-                        "id": 15
-                    },
-                    {
-                        "name": "PlayoutDelayChanged",
-                        "id": 16
-                    },
-                    {
-                        "name": "CodecChanged",
-                        "id": 17
-                    },
-                    {
-                        "name": "MetricDropped",
-                        "id": 18
-                    }
-                ]
-            }
-        ]
-    };
-
-    return analytixProto;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 59 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22565,144 +23593,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-    'use strict';
-
-    var mqProto = {
-        "package": "mq",
-        "messages": [
-            {
-                "name": "Request",
-                "fields": [
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "requestId",
-                        "id": 2
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "type",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "encoding",
-                        "id": 4
-                    },
-                    {
-                        "rule": "required",
-                        "type": "bytes",
-                        "name": "payload",
-                        "id": 5
-                    }
-                ]
-            },
-            {
-                "name": "Response",
-                "fields": [
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "requestId",
-                        "id": 2
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "type",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "encoding",
-                        "id": 4
-                    },
-                    {
-                        "rule": "required",
-                        "type": "bytes",
-                        "name": "payload",
-                        "id": 5
-                    },
-                    {
-                        "rule": "repeated",
-                        "type": "double",
-                        "name": "wallTime",
-                        "id": 6
-                    }
-                ]
-            },
-            {
-                "name": "Error",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "reason",
-                        "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "PingPong",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "uint64",
-                        "name": "originTimestamp",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "uint64",
-                        "name": "count",
-                        "id": 2
-                    }
-                ]
-            }
-        ]
-    };
-
-    return mqProto;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 61 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24406,7 +25297,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24427,8 +25318,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(22)
+    __webpack_require__(2),
+    __webpack_require__(27)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Room) {
     'use strict';
 
@@ -24527,7 +25418,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24548,9 +25439,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(64),
-    __webpack_require__(65)
+    __webpack_require__(2),
+    __webpack_require__(73),
+    __webpack_require__(74)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, stream, track) {
     'use strict';
 
@@ -24634,7 +25525,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 64 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24678,7 +25569,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24722,7 +25613,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 75 */
+/***/ (function(module, exports) {
+
+/* (ignored) */
+
+/***/ }),
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24744,14 +25641,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(2),
+    __webpack_require__(3),
     __webpack_require__(6),
     __webpack_require__(14),
     __webpack_require__(16),
-    __webpack_require__(24),
-    __webpack_require__(25),
+    __webpack_require__(29),
+    __webpack_require__(30),
     __webpack_require__(15),
-    __webpack_require__(26)
+    __webpack_require__(31)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, PCastExpress, RoomExpress) {
     window.PhenixPCast = PCast;
 

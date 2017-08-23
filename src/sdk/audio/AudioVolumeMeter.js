@@ -22,7 +22,7 @@ define([
     var defaultAlpha = 1/16;
 
     function AudioVolumeMeter(logger) {
-        assert.isObject(logger);
+        assert.isObject(logger, 'logger');
 
         this._logger = logger;
     }
@@ -61,7 +61,7 @@ define([
     };
 
     AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
-        assert.isNumber(alpha);
+        assert.isNumber(alpha, 'alpha');
 
         this._alpha = parseFloat(alpha);
     };

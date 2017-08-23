@@ -35,7 +35,7 @@ define([
 
     AudioVolumeMeterFactory.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
         assert.isObject(stream, 'stream');
-        assert.stringNotEmpty(stream.id, 'streamId');
+        assert.isStringNotEmpty(stream.id, 'streamId');
 
         if (!this._audioVolumeMeters[stream.id]) {
             this._audioVolumeMeters[stream.id] = new AudioVolumeMeter(this._logger);

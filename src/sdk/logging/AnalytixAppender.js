@@ -16,33 +16,31 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-web-http',
-    'ByteBuffer',
-    '../MQProtocol',
-    'phenix-web-network-connection-monitor',
     'phenix-rtc',
-    'phenix-web-logging'
-], function (_, assert, http, ByteBuffer, MQProtocol, NetworkConnectionMonitor, rtc, logging) {
-    var networkDisconnectHysteresisInterval = 0;
+    'phenix-web-logging',
+    'phenix-web-proto',
+    '../protocol/analytixProto.json'
+], function (_, assert, rtc, logging, proto, analytixProto) {
+    function AnalytixAppender(uri) {
+        assert.isString(uri, 'uri');
 
-    function AnalytixAppender() {
         this._loggingUrl = '/analytix/logs';
         this._domain = location.hostname;
-        this._protocol = new MQProtocol();
-        this._maxAttempts = 3;
-        this._maxBufferedRecords = 1000;
-        this._maxBatchSize = 100;
-        this._records = [];
-        this._pending = false;
-        this._baseUri = '';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
-        this._networkConnectionMonitor = createAndStartNetworkConnectionMonitor.call(this);
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._mostRecentRuntime = 0;
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.StoreLogRecords', {
+            maxAttempts: 3,
+            maxBufferedRecords: 1000,
+            maxBatchSize: 512
+        });
+
+        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
     }
 
     AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level);
+        assert.isNumber(level, 'level');
 
         this._minLevel = level;
     };
@@ -51,147 +49,62 @@ define([
         return this._minLevel;
     };
 
-    AnalytixAppender.prototype.setUri = function setUri(uri) {
-        assert.stringNotEmpty(uri, 'uri');
-
-        this._baseUri = uri;
-    };
-
     AnalytixAppender.prototype.isEnabled = function isEnabled() {
         return this._isEnabled;
     };
 
     AnalytixAppender.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled);
+        assert.isBoolean(enabled, 'enabled');
 
         this._isEnabled = enabled;
     };
 
     AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel) {
+        if (context.level < this._minLevel || !this._isEnabled) {
             return;
         }
 
         assert.isArray(messages, 'messages');
 
-        addMessagesToRecords.call(this, since, level, category, messages, sessionId, userId, environment, version);
+        this._mostRecentRuntime = since;
+        this._mostRecentSessionId = sessionId;
+        this._mostRecentUserId = userId;
+        this._mostRecentEnvironment = environment;
+        this._mostRecentVersion = version;
 
-        deleteRecordsIfAtCapacity.call(this, since, sessionId, userId, environment, version);
-
-        sendBatchMessagesIfNonePending.call(this);
+        addMessagesToRecords.call(this, level, category, messages);
     };
 
-    function createAndStartNetworkConnectionMonitor() {
-        var that = this;
-        var networkConnectionMonitor = new NetworkConnectionMonitor(networkDisconnectHysteresisInterval);
-
-        function onReconnect() {
-            that._isOffline = false;
-
-            sendBatchMessagesIfNonePending.call(that);
-        }
-
-        function onDisconnect() {
-            that._isOffline = true;
-        }
-
-        networkConnectionMonitor.start(onReconnect, onDisconnect);
-
-        return networkConnectionMonitor;
-    }
-
-    function addMessagesToRecords(since, level, category, messages, sessionId, userId, environment, version) {
-        var message = messages.join(' ');
-        var record = {
+    function addMessagesToRecords(level, category, messages) {
+        this._batchHttpProtocol.addRecord({
             level: level,
             timestamp: _.isoString(),
             category: category,
-            message: message,
+            message: messages.join(' '),
             source: this._browser,
             fullQualifiedName: this._domain,
-            sessionId: sessionId,
-            userId: userId,
-            environment: environment,
-            version: version,
-            runtime: since
-        };
-
-        this._records.push(record);
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
     }
 
-    function deleteRecordsIfAtCapacity(since, sessionId, userId, environment, version) {
-        if (this._records.length > this._maxBufferedRecords) {
-            var deleteRecords = this._records.length - (this._maxBufferedRecords / 2);
-
-            this._records = this._records.slice(deleteRecords);
-            this._records.unshift({
-                level: 'Warn',
-                timestamp: _.isoString(),
-                category: 'websdk/analytixLogger',
-                message: 'Deleted ' + deleteRecords + ' records',
-                source: this._browser,
-                fullQualifiedName: this._domain,
-                sessionId: sessionId,
-                userId: userId,
-                environment: environment,
-                version: version,
-                runtime: since
-            });
-        }
-    }
-
-    function sendBatchMessagesIfNonePending() {
-        if (this._pending || !this._baseUri || !this._isEnabled || this._isOffline || this._records.length === 0) {
-            return;
-        }
-
-        var storeLogRecords = {records: _.take(this._records, this._maxBatchSize)};
-
-        this._records = this._records.slice(this._maxBatchSize);
-        this._pending = true;
-
-        var that = this;
-
-        try {
-            sendEncodedHttpRequest.call(this, this._baseUri + this._loggingUrl, storeLogRecords, function onTimeout() {
-                setTimeout(function waitForDisconnectTimeout() {
-                    if (!that._isOffline) {
-                        return;
-                    }
-
-                    that._records = that._records.concat(storeLogRecords.records);
-                }, networkDisconnectHysteresisInterval);
-            });
-        } catch (e) {
-            this._pending = false;
-
-            throw e;
-        }
-    }
-
-    function sendEncodedHttpRequest(url, dataToEncode, onTimeout) {
-        var that = this;
-
-        var data = this._protocol.encode('analytix.StoreLogRecords', dataToEncode).toBinary();
-
-        function handlePost(error, result) {
-            that._pending = false;
-
-            if (error) {
-                if (error.message === 'timeout') {
-                    onTimeout();
-                }
-
-                return {
-                    status: 'error',
-                    storedRecords: 0
-                };
-            }
-
-            return that._protocol.decode('analytix.StoreLogRecordsResponse', ByteBuffer.fromBinary(result));
-        }
-
-        http.postWithRetry(url, data, {contentType: 'application/protobuf'}, handlePost, this._maxAttempts);
+    function onCapacity(deleteRecords) {
+        this._batchHttpProtocol.addRecordToBeginning({
+            level: 'Warn',
+            timestamp: _.isoString(),
+            category: 'websdk/analytixLogger',
+            message: 'Deleted ' + deleteRecords + ' records',
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
     }
 
     return AnalytixAppender;

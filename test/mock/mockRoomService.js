@@ -36,7 +36,7 @@ define([
         var room = sinon.createStubInstance(Room);
 
         room.getObservableMembers.restore();
-        room.getObservableMembers = sinon.stub(room, 'getObservableMembers', function () {
+        room.getObservableMembers = sinon.stub(room, 'getObservableMembers').callsFake(function () {
             return new observable.Observable(members);
         });
 
@@ -48,7 +48,7 @@ define([
             roomService.getObservableActiveRoom.restore();
         }
 
-        roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom', function () {
+        roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom').callsFake(function () {
             return new observable.Observable(room);
         });
     };

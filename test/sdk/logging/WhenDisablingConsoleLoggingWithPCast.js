@@ -23,7 +23,7 @@ define([
 ], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
     describe('When Disabling Console Logging with PCast', function () {
         var httpStubber = new HttpStubber();
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcast;
@@ -35,6 +35,8 @@ define([
         });
 
         beforeEach(function () {
+            websocketStubber = new WebSocketStubber();
+
             pcast = new PCast({
                 uri: 'wss://mockURI',
                 disableConsoleLogging: true
@@ -44,7 +46,8 @@ define([
 
             pcast.start('mockAuthToken', function(){}, function(){}, function(){});
 
-            websocketStubber.triggerOpen();
+            websocketStubber.triggerConnected();
+            websocketStubber.stubSetupStream();
         });
 
         after(function() {

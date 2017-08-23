@@ -22,7 +22,7 @@ requirejs.config({
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
         'protobuf': 'protobuf/dist/ProtoBuf.min',
-        'bootstrap-notify': 'remarkable-bootstrap-notify/dist/bootstrap-notify.min',
+        'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'Long': 'long/dist/long.min',
         'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
@@ -35,7 +35,9 @@ requirejs.config({
         'phenix-web-logging': 'phenix-web-logging/dist/phenix-web-logging.min',
         'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable.min',
         'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
-        'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min'
+        'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
+        'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
+        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable'
     }
 });
 

@@ -35,7 +35,7 @@ define([
         assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
 
         if (roomService) {
-            assert.isObject(roomService);
+            assert.isObject(roomService, 'roomService');
         }
 
         this._sessionId = new observable.Observable(sessionId);
@@ -85,13 +85,13 @@ define([
     };
 
     Member.prototype.commitChanges = function commitChanges(callback) {
-        assert.isObject(this._roomService);
+        assert.isObject(this._roomService, 'this._roomService');
 
         this._roomService.updateMember(this, callback);
     };
 
     Member.prototype.reload = function reload() {
-        assert.isObject(this._roomService);
+        assert.isObject(this._roomService, 'this._roomService');
 
         this._roomService.revertMemberChanges(this);
     };

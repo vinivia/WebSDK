@@ -58,7 +58,9 @@ define(['phenix-web-lodash-light'], function (_) {
     };
 
     HttpStubber.prototype.restore = function() {
-        this.xhr.restore();
+        if (this.xhr && this.xhr.restore) {
+            this.xhr.restore();
+        }
 
         this.xhr = null;
         this._handlers = {};

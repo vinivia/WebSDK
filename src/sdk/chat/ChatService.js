@@ -17,8 +17,9 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
+    'phenix-web-disposable',
     '../authentication/AuthenticationService'
-], function (_, assert, observable, AuthenticationService) {
+], function (_, assert, observable, disposable, AuthenticationService) {
     'use strict';
 
     function ChatService(pcast) {
@@ -43,15 +44,15 @@ define([
             return;
         }
 
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
         this._roomMessagesListeners = {};
 
         this._enabled.setValue(true);
         setupSubscriptions.call(this);
 
-        var disposeOfConversationHandler = this._protocol.on('roomChatEvent', _.bind(onRoomConversationEvent, this));
+        var disposeOfConversationHandler = this._protocol.on('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
 
-        this._disposables.push(disposeOfConversationHandler);
+        this._disposables.add(disposeOfConversationHandler);
     };
 
     ChatService.prototype.stop = function stop() {
@@ -59,7 +60,9 @@ define([
             return;
         }
 
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     ChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
@@ -90,8 +93,8 @@ define([
         var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
         var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(onSessionIdChange, this));
 
-        this._disposables.push(pcastStatusSubscription.dispose);
-        this._disposables.push(pcastSessionIdSubscription.dispose);
+        this._disposables.add(pcastStatusSubscription);
+        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function setupChatListener(roomId, onReceiveMessages) {
@@ -99,21 +102,21 @@ define([
 
         this._roomMessagesListeners[roomId] = onReceiveMessages;
 
-        var disposeOfHandler = function() {
+        var disposeOfHandler = new disposable.Disposable(function() {
             if (that._roomMessagesListeners[roomId] === onReceiveMessages) {
                 delete that._roomMessagesListeners[roomId];
             }
-        };
+        });
 
-        this._disposables.push(disposeOfHandler);
+        this._disposables.add(disposeOfHandler);
 
         return disposeOfHandler;
     }
 
     function onRoomConversationEvent(event) {
         assert.isObject(event, 'event');
-        assert.stringNotEmpty(event.roomId, 'event.roomId');
-        assert.stringNotEmpty(event.eventType, 'event.eventType');
+        assert.isStringNotEmpty(event.roomId, 'event.roomId');
+        assert.isStringNotEmpty(event.eventType, 'event.eventType');
         assert.isArray(event.chatMessages, 'event.chatMessages');
 
         switch (event.eventType) {
@@ -158,7 +161,7 @@ define([
     }
 
     function getMessagesRequest(roomId, batchSize, afterMessageId, beforeMessageId, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isFunction(callback, 'callback');
 
         if (!beforeMessageId || !afterMessageId) {
@@ -166,11 +169,11 @@ define([
         }
 
         if (beforeMessageId) {
-            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+            assert.isStringNotEmpty(beforeMessageId, 'beforeMessageId');
         }
 
         if (afterMessageId) {
-            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+            assert.isStringNotEmpty(afterMessageId, 'afterMessageId');
         }
 
         assertEnabled.call(this);
@@ -208,7 +211,7 @@ define([
     }
 
     function subscribeToRoomConversationRequest(roomId, batchSize) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
 
         assertEnabled.call(this);
@@ -254,11 +257,11 @@ define([
     }
 
     function sendMessageRequest(roomId, screenName, role, lastUpdate, message, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
-        assert.stringNotEmpty(screenName, 'screenName');
-        assert.stringNotEmpty(role, 'role');
+        assert.isStringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(screenName, 'screenName');
+        assert.isStringNotEmpty(role, 'role');
         assert.isNumber(lastUpdate, 'lastUpdate');
-        assert.stringNotEmpty(message, 'message');
+        assert.isStringNotEmpty(message, 'message');
         assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
@@ -318,18 +321,6 @@ define([
 
         if (chatMessage.from) {
             chatMessage.from.lastUpdate = _.utc(chatMessage.from.lastUpdate);
-        }
-    }
-
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
         }
     }
 

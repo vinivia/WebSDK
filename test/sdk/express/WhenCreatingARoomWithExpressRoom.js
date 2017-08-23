@@ -78,7 +78,7 @@ define([
             };
 
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room, callback) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
                 callback(null, response);
             });
         });
@@ -93,7 +93,7 @@ define([
 
         it('Expect createRoom protocol to be called with required values', function () {
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room) {
                 expect(room.name).to.be.equal(mockRoom.name);
                 expect(room.type).to.be.equal(mockRoom.type);
                 expect(room.description).to.not.be.empty;
@@ -104,7 +104,7 @@ define([
 
         it('Expect createRoom protocol to be called with default description value', function () {
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room) {
                 expect(room.description).to.be.equal('Multi Party Chat');
             });
 
@@ -113,7 +113,7 @@ define([
 
         it('Expect room to be returned from createRoom', function () {
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room, callback) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
                 callback(null, {
                     status: 'ok',
                     room: room

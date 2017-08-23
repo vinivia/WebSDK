@@ -23,7 +23,7 @@ define([
     var defaultSilenceHysteresisInterval = 1500;
 
     function AudioSpeakerDetectionAlgorithm(logger) {
-        assert.isObject(logger);
+        assert.isObject(logger, 'logger');
 
         this._logger = logger;
 

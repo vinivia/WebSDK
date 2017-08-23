@@ -17,86 +17,49 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
-    './MQProtocol',
     'phenix-web-reconnecting-websocket',
-    'ByteBuffer',
-    'phenix-rtc'
-], function (_, assert, observable, MQProtocol, ReconnectingWebSocket, ByteBuffer, phenixRTC) {
+    'phenix-web-proto',
+    'phenix-rtc',
+    './protocol/pcastProto.json',
+    './protocol/chatProto.json'
+], function (_, assert, observable, ReconnectingWebSocket, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
-        if (typeof uri !== 'string') {
-            throw new Error('Must pass a valid "uri"');
-        }
+        assert.isStringNotEmpty(uri, 'uri');
+        assert.isString(deviceId, 'deviceId');
+        assert.isStringNotEmpty(version, 'version');
+        assert.isObject(logger, 'logger');
 
-        if (typeof deviceId !== 'string') {
-            throw new Error('Must pass a valid "deviceId"');
-        }
-
-        if (typeof version !== 'string') {
-            throw new Error('Must pass a valid "version"');
-        }
-
-        if (typeof logger !== 'object') {
-            throw new Error('Must pass a valid "logger"');
-        }
-
-        this._uri = uri;
         this._deviceId = deviceId;
         this._version = version;
         this._logger = logger;
-        this._mqProtocol = new MQProtocol(this._logger);
+        this._proto = new proto.WebSocketProto(uri, this._logger, [pcastProto, chatProto]);
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
 
-        this._logger.info('Connecting to [%s]', uri);
+        var that = this;
 
-        this._nextRequestId = 0;
-        this._events = {};
-        this._requests = {};
-
-        this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
-
-        this._webSocket.onmessage = _.bind(onMessage, this);
-        this._webSocket.onconnected = _.bind(onConnected, this);
-        this._webSocket.onreconnecting = _.bind(onReconnecting, this);
-        this._webSocket.onreconnected = _.bind(onReconnected, this);
-        this._webSocket.ondisconnected = _.bind(onDisconnected, this);
-        this._webSocket.onerror = _.bind(onError, this);
+        this._proto.on('pcast.AuthenticateResponse', function(message) {
+            that._observableSessionId.setValue(message.sessionId);
+        });
     }
 
     PCastProtocol.prototype.on = function (eventName, handler) {
-        if (typeof eventName !== 'string') {
-            throw new Error('"eventName" must be a string');
-        }
-
-        if (typeof handler !== 'function') {
-            throw new Error('"handler" must be a function');
-        }
-
-        var handlers = getEventHandlers.call(this, eventName);
-
-        handlers.push(handler);
-
-        return _.bind(removeEventHandler, this, eventName, handler);
+        return this._proto.on(eventName, handler);
     };
 
     PCastProtocol.prototype.disconnect = function () {
         this._observableSessionId.setValue(null);
 
-        return this._webSocket.disconnect();
+        return this._proto.disconnect();
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
-        if (typeof authToken !== 'string') {
-            throw new Error('"authToken" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(authToken, 'authToken');
+        assert.isFunction(callback, 'callback');
 
         var authenticate = {
-            apiVersion: this._mqProtocol.getApiVersion(),
+            apiVersion: this._proto.getApiVersion(),
             clientVersion: this._version,
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
@@ -108,7 +71,7 @@ define([
             authenticate.sessionId = this.getSessionId();
         }
 
-        return sendRequest.call(this, 'pcast.Authenticate', authenticate, callback);
+        return this._proto.sendRequest('pcast.Authenticate', authenticate, callback);
     };
 
     PCastProtocol.prototype.getSessionId = function () {
@@ -120,38 +83,22 @@ define([
     };
 
     PCastProtocol.prototype.bye = function (reason, callback) {
-        if (typeof reason !== 'string') {
-            throw new Error('"reason" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(reason, 'reason');
+        assert.isFunction(callback, 'callback');
 
         var bye = {
             sessionId: this.getSessionId(),
             reason: reason
         };
 
-        return sendRequest.call(this, 'pcast.Bye', bye, callback);
+        return this._proto.sendRequest('pcast.Bye', bye, callback);
     };
 
     PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
-        if (typeof streamType !== 'string') {
-            throw new Error('"streamType" must be a string');
-        }
-
-        if (typeof streamToken !== 'string') {
-            throw new Error('"streamToken" must be a string');
-        }
-
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamType, 'streamType');
+        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
 
         var browser = phenixRTC.browser || 'UnknownBrowser';
         var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
@@ -170,7 +117,7 @@ define([
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
                 options: [streamType, browser, browserWithVersion],
-                apiVersion: this._mqProtocol.getApiVersion()
+                apiVersion: this._proto.getApiVersion()
             };
         }
 
@@ -182,21 +129,13 @@ define([
             setupStream.createStream.options.push('no-video');
         }
 
-        return sendRequest.call(this, 'pcast.SetupStream', setupStream, callback);
+        return this._proto.sendRequest('pcast.SetupStream', setupStream, callback);
     };
 
     PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof sdp !== 'string') {
-            throw new Error('"sdp" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(sdp, 'sdp');
+        assert.isFunction(callback, 'callback');
 
         var setRemoteDescription = {
             streamId: streamId,
@@ -204,113 +143,69 @@ define([
                 type: 'Answer',
                 sdp: sdp
             },
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.SetRemoteDescription', setRemoteDescription, callback);
+        return this._proto.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
     PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isArray(candidates, 'candidates');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
 
-        if (!(candidates instanceof Array)) {
-            throw new Error('"candidates" must be an array');
-        }
+        var sanitizedCandidates = _.map(candidates, function(candidate, index) {
+            assert.isStringNotEmpty(candidate.candidate, 'candidate[' + index + '].candidate');
+            assert.isNumber(candidate.sdpMLineIndex, 'candidate[' + index + '].sdpMLineIndex');
+            assert.isStringNotEmpty(candidate.sdpMid, 'candidate[' + index + '].sdpMid');
 
-        if (!(options instanceof Array)) {
-            throw new Error('"options" must be an array');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
-        var sanitizedCandidates = [];
-        for (var i = 0; i < candidates.length; i++) {
-            var candidate = candidates[i];
-
-            if (typeof candidate.candidate !== 'string') {
-                throw new Error('"candidates[' + i + '].candidate" must be a string');
-            }
-
-            if (typeof candidate.sdpMLineIndex !== 'number') {
-                throw new Error('"candidates[' + i + '].sdpMLineIndex" must be a number');
-            }
-
-            if (typeof candidate.sdpMid !== 'string') {
-                throw new Error('"candidates[' + i + '].sdpMid" must be a string');
-            }
-
-            sanitizedCandidates.push({
+            return {
                 candidate: candidate.candidate,
                 sdpMLineIndex: candidate.sdpMLineIndex,
                 sdpMid: candidate.sdpMid
-            });
-        }
+            };
+        });
 
         var addIceCandidates = {
             streamId: streamId,
             candidates: sanitizedCandidates,
             options: options,
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.AddIceCandidates', addIceCandidates, callback);
+        return this._proto.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
     };
 
     PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof signalingState !== 'string') {
-            throw new Error('"signalingState" must be a string');
-        }
-
-        if (typeof iceGatheringState !== 'string') {
-            throw new Error('"iceGatheringState" must be a string');
-        }
-
-        if (typeof iceConnectionState !== 'string') {
-            throw new Error('"iceConnectionState" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(signalingState, 'signalingState');
+        assert.isStringNotEmpty(iceGatheringState, 'iceGatheringState');
+        assert.isStringNotEmpty(iceConnectionState, 'iceConnectionState');
+        assert.isFunction(callback, 'callback');
 
         var updateStreamState = {
             streamId: streamId,
             signalingState: signalingState,
             iceGatheringState: iceGatheringState,
             iceConnectionState: iceConnectionState,
-            apiVersion: this._mqProtocol.getApiVersion()
+            apiVersion: this._proto.getApiVersion()
         };
 
-        return sendRequest.call(this, 'pcast.UpdateStreamState', updateStreamState, callback);
+        return this._proto.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
     };
 
     PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
-        if (typeof streamId !== 'string') {
-            throw new Error('"streamId" must be a string');
-        }
-
-        if (typeof reason !== 'string') {
-            throw new Error('"reason" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isStringNotEmpty(streamId, 'streamId');
+        assert.isString(reason, 'reason');
+        assert.isFunction(callback, 'callback');
 
         var destroyStream = {
             streamId: streamId,
             reason: reason
         };
 
-        return sendRequest.call(this, 'pcast.DestroyStream', destroyStream, callback);
+        return this._proto.sendRequest('pcast.DestroyStream', destroyStream, callback);
     };
 
     PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
@@ -328,14 +223,14 @@ define([
             sessionId: this.getSessionId()
         };
 
-        return sendRequest.call(this, 'chat.GetRoomInfo', getRoomInfo, callback);
+        return this._proto.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
     PCastProtocol.prototype.createRoom = function (room, callback) {
         assert.isObject(room, 'room');
-        assert.stringNotEmpty(room.name, 'room.name');
-        assert.stringNotEmpty(room.type, 'room.type');
-        assert.stringNotEmpty(room.description, 'room.description');
+        assert.isStringNotEmpty(room.name, 'room.name');
+        assert.isStringNotEmpty(room.type, 'room.type');
+        assert.isStringNotEmpty(room.description, 'room.description');
         assert.isFunction(callback, 'callback');
 
         var createRoom = {
@@ -343,7 +238,7 @@ define([
             room: room
         };
 
-        return sendRequest.call(this, 'chat.CreateRoom', createRoom, callback);
+        return this._proto.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
     PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -365,7 +260,7 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.JoinRoom', joinRoom, callback);
+        return this._proto.sendRequest('chat.JoinRoom', joinRoom, callback);
     };
 
     PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -379,7 +274,7 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.LeaveRoom', leaveRoom, callback);
+        return this._proto.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
     PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
@@ -395,7 +290,7 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.UpdateMember', updateMember, callback);
+        return this._proto.sendRequest('chat.UpdateMember', updateMember, callback);
     };
 
     PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -409,11 +304,11 @@ define([
             timestamp: timestamp
         };
 
-        return sendRequest.call(this, 'chat.UpdateRoom', updateRoom, callback);
+        return this._proto.sendRequest('chat.UpdateRoom', updateRoom, callback);
     };
 
     PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isObject(chatMessage, 'chatMessage');
 
         var sendMessage = {
@@ -421,12 +316,12 @@ define([
             chatMessage: chatMessage
         };
 
-        return sendRequest.call(this, 'chat.SendMessageToRoom', sendMessage, callback);
+        return this._proto.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
     };
 
     PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
 
         var fetchRoomConversation = {
@@ -436,12 +331,12 @@ define([
             options: ['Subscribe']
         };
 
-        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
-        assert.stringNotEmpty(roomId, 'roomId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(roomId, 'roomId');
 
         if (!beforeMessageId || !afterMessageId) {
             assert.isNumber(batchSize, 'batchSize');
@@ -455,119 +350,23 @@ define([
         };
 
         if (beforeMessageId) {
-            assert.stringNotEmpty(beforeMessageId, 'beforeMessageId');
+            assert.isStringNotEmpty(beforeMessageId, 'beforeMessageId');
 
             fetchRoomConversation.beforeMessageId = beforeMessageId;
         }
 
         if (afterMessageId) {
-            assert.stringNotEmpty(afterMessageId, 'afterMessageId');
+            assert.isStringNotEmpty(afterMessageId, 'afterMessageId');
 
             fetchRoomConversation.afterMessageId = afterMessageId;
         }
 
-        return sendRequest.call(this, 'chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.toString = function () {
         return 'PCastProtocol[' + this._webSocket.toString() + ']';
     };
-
-    function sendRequest(type, message, callback) {
-        var requestId = (this._nextRequestId++).toString();
-        var request = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message)
-        };
-
-        this._requests[requestId] = callback;
-
-        return this._webSocket.send(this._mqProtocol.encode('mq.Request', request).toString('base64'));
-    }
-
-    function getEventHandlers(eventName) {
-        var handlers = this._events[eventName];
-
-        if (!handlers) {
-            this._events[eventName] = handlers = [];
-        }
-
-        return handlers;
-    }
-
-    function removeEventHandler(eventName, handler) {
-        var handlers = this._events[eventName];
-
-        _.remove(handlers, function removeHandler(currentHandler) {
-            return currentHandler === handler;
-        });
-
-        this._events[eventName] = handlers;
-    }
-
-    function triggerEvent(eventName, args) {
-        var handlers = this._events[eventName];
-
-        if (handlers) {
-            for (var i = 0; i < handlers.length; i++) {
-                handlers[i].apply(this, args);
-            }
-        }
-    }
-
-    function onMessage(evt) {
-        var response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
-        this._logger.info('>> [%s]', response.type);
-
-        var message = this._mqProtocol.decode(response.type, response.payload);
-
-        if (response.type === 'pcast.AuthenticateResponse') {
-            this._observableSessionId.setValue(message.sessionId);
-        } else if (response.type === 'pcast.StreamEnded') {
-            triggerEvent.call(this, 'streamEnded', [message]);
-        } else if (response.type === 'pcast.StreamDataQuality') {
-            triggerEvent.call(this, 'dataQuality', [message]);
-        } else if (response.type === 'chat.RoomEvent') {
-            triggerEvent.call(this, 'roomEvent', [message]);
-        } else if (response.type === 'chat.RoomConversationEvent') {
-            triggerEvent.call(this, 'roomChatEvent', [message]);
-        }
-
-        var callback = this._requests[response.requestId];
-
-        if (callback) {
-            delete this._requests[response.requestId];
-
-            if (response.type === 'mq.Error') {
-                var error = message;
-
-                callback(error, null);
-            } else {
-                callback(null, message);
-            }
-        }
-    }
-
-    function onReconnecting(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'reconnecting');
-    }
-
-    function onConnected(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'connected');
-    }
-
-    function onReconnected(evt) { // eslint-disable-line no-unused-vars
-        triggerEvent.call(this, 'reconnected');
-    }
-
-    function onDisconnected(evt) {
-        triggerEvent.call(this, 'disconnected', [evt.code, evt.reason]);
-    }
-
-    function onError(evt) {
-        triggerEvent.call(this, 'error', [evt.data]);
-    }
 
     return PCastProtocol;
 });

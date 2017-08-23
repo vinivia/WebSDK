@@ -20,6 +20,7 @@ var browsers = [];
 var isWin = /^win/.test(process.platform);
 var isOSX = /^darwin/.test(process.platform);
 var isLinux = /^linux/.test(process.platform);
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 if (isWin) {
     browsers.push('IE');
@@ -63,17 +64,11 @@ module.exports = function (config) {
 
         webpack: {
             devtool: 'inline-source-map',
-            resolve: {
-                alias: {
-                    ByteBuffer: 'bytebuffer',
-                    Long: 'long',
-                    'sdk': path.resolve(__dirname, '../src/sdk')
-                },
-                modules: ['3p', 'node_modules']
-            }, // Resolve test dependencies to src
+            resolve: {alias: {'sdk': path.resolve(__dirname, '../src/sdk')}}, // Resolve test dependencies to src
             plugins: [
                 new webpack.DefinePlugin({'process.env.PHENIX_APPLICATION_ID': JSON.stringify(process.env.PHENIX_APPLICATION_ID)}),
-                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)})
+                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)}),
+                new CaseSensitivePathsPlugin()
             ]
         },
 

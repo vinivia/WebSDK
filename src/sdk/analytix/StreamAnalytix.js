@@ -16,8 +16,9 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
+    'phenix-web-disposable',
     'phenix-rtc'
-], function (_, assert, phenixRTC) {
+], function (_, assert, disposable, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
@@ -25,7 +26,7 @@ define([
     var sdkVersion = '%SDKVERSION%' || '?';
 
     function StreamAnalytix(sessionId, logger, metricsTransmitter) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
 
         this._environment = defaultEnvironment;
         this._version = sdkVersion;
@@ -34,20 +35,20 @@ define([
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
         this._start = _.now();
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
 
         logMetric.call(this, 'Stream initializing');
     }
 
     StreamAnalytix.prototype.setProperty = function(name, value) {
-        assert.stringNotEmpty(name, 'name');
-        assert.stringNotEmpty(value, 'value');
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
     StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue) {
-        assert.stringNotEmpty(metric, 'metric');
+        assert.isStringNotEmpty(metric, 'metric');
 
         recordMetricRecord.call(this, {
             metric: metric,
@@ -58,7 +59,7 @@ define([
     };
 
     StreamAnalytix.prototype.setStreamId = function(streamId) {
-        assert.stringNotEmpty(streamId, 'streamId');
+        assert.isStringNotEmpty(streamId, 'streamId');
 
         if (this._streamId) {
             throw new Error('Stream ID can only be set once.');
@@ -97,9 +98,7 @@ define([
     };
 
     StreamAnalytix.prototype.stop = function() {
-        _.forEach(this._disposables, function(dispose) {
-            dispose();
-        });
+        this._disposables.dispose();
 
         this.recordMetric('Stopped');
 
@@ -156,9 +155,9 @@ define([
         // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
         phenixRTC.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
 
-        this._disposables.push(function() {
+        this._disposables.add(new disposable.Disposable(function() {
             phenixRTC.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-        });
+        }));
     };
 
     StreamAnalytix.prototype.recordRebuffering = function(video) {
@@ -207,14 +206,14 @@ define([
         phenixRTC.addEventListener(video, 'playing', listenForContinuation);
         phenixRTC.addEventListener(video, 'progress', listenForContinuation);
 
-        this._disposables.push(function() {
+        this._disposables.add(new disposable.Disposable(function() {
             phenixRTC.removeEventListener(video, 'stalled', listenForStall);
             phenixRTC.removeEventListener(video, 'pause', listenForStall);
             phenixRTC.removeEventListener(video, 'suspend', listenForStall);
             phenixRTC.removeEventListener(video, 'play', listenForContinuation);
             phenixRTC.removeEventListener(video, 'playing', listenForContinuation);
             phenixRTC.removeEventListener(video, 'progress', listenForContinuation);
-        });
+        }));
     };
 
     function logMetric() {
@@ -239,7 +238,7 @@ define([
     }
 
     function recordMetricRecord(record, since) {
-        assert.stringNotEmpty(record.metric, 'record.metric');
+        assert.isStringNotEmpty(record.metric, 'record.metric');
 
         var annotatedRecord = _.assign({}, this._properties, record);
 

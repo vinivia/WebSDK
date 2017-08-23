@@ -30,7 +30,7 @@ define([
         };
 
         var httpStubber;
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var roomExpress;
@@ -38,13 +38,15 @@ define([
         before(function() {
             chromeRuntimeStubber.stub();
             peerConnectionStubber.stub();
-            websocketStubber.stubAuthRequest();
         });
 
         beforeEach(function () {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
 
             roomExpress = new RoomExpress({
                 backendUri: mockBackendUri,
@@ -72,6 +74,7 @@ define([
 
         afterEach(function() {
             httpStubber.restore();
+            websocketStubber.restore();
             roomExpress.stop();
         });
 
@@ -101,7 +104,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect stream ended reason of ended to trigger callback with reason ended', function (done) {
@@ -130,7 +133,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
     });
 });

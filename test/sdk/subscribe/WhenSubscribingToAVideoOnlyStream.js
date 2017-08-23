@@ -22,7 +22,7 @@ define([
 ], function (_, PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     describe('When Subscribing to a Video Only Stream', function () { // eslint-disable-line mocha/no-exclusive-tests
         var httpStubber = new HttpStubber();
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var pcast;
 
@@ -34,16 +34,20 @@ define([
         beforeEach(function () {
             pcast = new PCast({uri: 'wss://mockURI'});
 
+            websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
             pcast.start('mockAuthToken', function(){}, function(){}, function(){});
 
-            websocketStubber.triggerOpen();
+            websocketStubber.triggerConnected();
+        });
+
+        afterEach(function() {
+            websocketStubber.restore();
         });
 
         after(function() {
             pcast.stop();
-            websocketStubber.restore();
             httpStubber.restore();
             chromeRuntimeStubber.restore();
         });

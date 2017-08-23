@@ -64,7 +64,7 @@ define([
             sinon.assert.calledOnce(stubChatService.stop);
         });
 
-        describe('When chat service is started', function () {
+        describe('When room chat service is started', function () {
             beforeEach(function () {
                 roomChatService.start();
             });
@@ -109,12 +109,12 @@ define([
                 roomObservable = new observable.Observable(room);
 
                 stubRoomService.getObservableActiveRoom.restore();
-                stubRoomService.getObservableActiveRoom = sinon.stub(stubRoomService, 'getObservableActiveRoom', function () {
+                stubRoomService.getObservableActiveRoom = sinon.stub(stubRoomService, 'getObservableActiveRoom').callsFake(function () {
                     return roomObservable;
                 });
 
                 stubChatService.subscribeAndLoadMessages.restore();
-                stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages', function (roomId, batchSize, callback) {
+                stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages').callsFake(function (roomId, batchSize, callback) {
                     newMessagesCallback = callback;
                 });
 
@@ -126,8 +126,13 @@ define([
             });
 
             afterEach(function () {
-                stubRoomService.getObservableActiveRoom.restore();
-                stubChatService.subscribeAndLoadMessages.restore();
+                if (stubRoomService.getObservableActiveRoom.restore) {
+                    stubRoomService.getObservableActiveRoom.restore();
+                }
+
+                if (stubChatService.subscribeAndLoadMessages.restore) {
+                    stubChatService.subscribeAndLoadMessages.restore();
+                }
 
                 roomChatService.stop();
             });

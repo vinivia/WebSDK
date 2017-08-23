@@ -24,7 +24,7 @@ define([
 
     function RoomExpress(options) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
+        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
         assert.isObject(options.authenticationData, 'options.authenticationData');
 
         this._pcastExpress = new PCastExpress(options);
@@ -42,11 +42,11 @@ define([
     RoomExpress.prototype.createRoom = function createRoom(options, callback) {
         assert.isFunction(callback, 'callback');
         assert.isObject(options.room, 'options.room');
-        assert.stringNotEmpty(options.room.name, 'options.room.name');
-        assert.stringNotEmpty(options.room.type, 'options.room.type');
+        assert.isStringNotEmpty(options.room.name, 'options.room.name');
+        assert.isStringNotEmpty(options.room.type, 'options.room.type');
 
         if (options.room.description) {
-            assert.stringNotEmpty(options.room.description, 'options.room.description');
+            assert.isStringNotEmpty(options.room.description, 'options.room.description');
         }
 
         var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
@@ -100,18 +100,18 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(joinRoomCallback, 'joinRoomCallback');
         assert.isFunction(membersChangedCallback, 'membersChangedCallback');
-        assert.stringNotEmpty(options.role, 'options.role');
+        assert.isStringNotEmpty(options.role, 'options.role');
 
         if (options.screenName) {
-            assert.stringNotEmpty(options.screenName, 'options.screenName');
+            assert.isStringNotEmpty(options.screenName, 'options.screenName');
         }
 
         if (options.roomId) {
-            assert.stringNotEmpty(options.roomId, 'options.roomId');
+            assert.isStringNotEmpty(options.roomId, 'options.roomId');
         }
 
         if (options.alias) {
-            assert.stringNotEmpty(options.alias, 'options.alias');
+            assert.isStringNotEmpty(options.alias, 'options.alias');
         }
 
         var that = this;
@@ -285,7 +285,7 @@ define([
         assert.isObject(options.room, 'options.room');
 
         if (options.streamUri) {
-            assert.stringNotEmpty(options.streamUri, 'options.streamUri');
+            assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
         } else if (options.mediaConstraints) {
             assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
         } else {
@@ -297,15 +297,15 @@ define([
         }
 
         if (options.screenName) {
-            assert.stringNotEmpty(options.screenName, 'options.screenName');
+            assert.isStringNotEmpty(options.screenName, 'options.screenName');
         }
 
         if (options.capabilities) {
-            assert.isArray(options.capabilities);
+            assert.isArray(options.capabilities, 'options.capabilities');
         }
 
         if (options.tags) {
-            assert.isArray(options.tags);
+            assert.isArray(options.tags, 'options.tags');
         }
 
         var that = this;

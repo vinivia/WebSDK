@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'Long',
+    'long',
     'sdk/room/Member',
     'sdk/room/member.json',
     'sdk/room/stream.json',
@@ -127,7 +127,7 @@ define([
 
         describe('When committing changes on member', function () {
             it('CommitChanges calls roomService updateMember', function () {
-                stubRoomService.updateMember = sinon.stub(stubRoomService, 'updateMember', function (member) {
+                stubRoomService.updateMember = sinon.stub(stubRoomService, 'updateMember').callsFake(function (member) {
                     expect(member).to.be.equal(testMember);
                 });
 
@@ -140,7 +140,7 @@ define([
 
         describe('When reverting changes on member', function () {
             it('Reload calls roomService updateMember', function () {
-                stubRoomService.revertMemberChanges = sinon.stub(stubRoomService, 'revertMemberChanges', function (member) {
+                stubRoomService.revertMemberChanges = sinon.stub(stubRoomService, 'revertMemberChanges').callsFake(function (member) {
                     expect(member).to.be.equal(testMember);
                 });
 

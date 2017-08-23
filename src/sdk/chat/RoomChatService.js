@@ -17,8 +17,9 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
+    'phenix-web-disposable',
     './ChatService'
-], function (_, assert, observable, ChatService) {
+], function (_, assert, observable, disposable, ChatService) {
     'use strict';
 
     var defaultBatchSize = 0;
@@ -35,7 +36,7 @@ define([
         this._chatService = new ChatService(this._pcast);
         this._chatMessages = new observable.ObservableArray([]);
         this._latestMessageQueue = [];
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
         this._chatRoomId = null;
     }
 
@@ -52,7 +53,9 @@ define([
 
         disposeOfMessageSubscription.call(this);
 
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     RoomChatService.prototype.getObservableChatMessages = function getObservableChatMessages() {
@@ -100,7 +103,7 @@ define([
     function setupSubscriptions() {
         var roomSubscription = this._roomService.getObservableActiveRoom().subscribe(_.bind(onRoomChange, this));
 
-        this._disposables.push(roomSubscription.dispose);
+        this._disposables.add(roomSubscription);
     }
 
     function setupMessageSubscription() {
@@ -146,18 +149,6 @@ define([
 
             that._chatMessages.setValue(messages);
         });
-    }
-
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
-        }
     }
 
     return RoomChatService;

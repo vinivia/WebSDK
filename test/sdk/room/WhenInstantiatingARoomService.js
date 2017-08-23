@@ -69,7 +69,7 @@ define([
 
     var screenName = 'MyRoom';
     var roomId = '';
-    var alias = '';
+    var alias = 'RoomAlias';
     var role = member.roles.presenter.name;
 
     describe('When instantiating a RoomService', function () {
@@ -102,27 +102,27 @@ define([
             };
 
             mockProtocol.enterRoom.restore();
-            mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+            mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest, timestamp, callback) {
                 callback(null, response);
             });
 
             mockProtocol.leaveRoom.restore();
-            mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
+            mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom').callsFake(function (roomId, timestamp, callback) {
                 callback(null, response);
             });
 
             mockProtocol.createRoom.restore();
-            mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom', function (room, callback) {
+            mockProtocol.createRoom = sinon.stub(mockProtocol, 'createRoom').callsFake(function (room, callback) {
                 callback(null, response);
             });
 
             mockProtocol.updateMember.restore();
-            mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+            mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (member, timestamp, callback) {
                 callback(null, response);
             });
 
             mockProtocol.updateRoom.restore();
-            mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (room, timestamp, callback) {
+            mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom').callsFake(function (room, timestamp, callback) {
                 callback(null, response);
             });
         });
@@ -257,7 +257,7 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom('', '', function () {
+                roomService.enterRoom('', alias, function () {
                     roomService.leaveRoom(function (error, response) {
                         expect(response.status).to.not.be.equal('ok');
                     });
@@ -271,7 +271,7 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom('', '', function () {
+                roomService.enterRoom('', alias, function () {
                     roomService.leaveRoom(function (error, response) {
                         expect(response).to.be.not.ok;
                         expect(error).to.be.ok;
@@ -288,7 +288,7 @@ define([
                     callback(null, response);
                 };
 
-                roomService.getRoomInfo('', 'alias', function (error, response) {
+                roomService.getRoomInfo('', alias, function (error, response) {
                     expect(response.room).to.be.an.instanceof(ImmutableRoom);
                     expect(response.status).to.be.equal('ok');
                 });
@@ -339,7 +339,7 @@ define([
 
             it('Self in enterRoomRequest should have all values', function () {
                 mockProtocol.enterRoom.restore();
-                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest) {
+                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest) {
                     expect(selfForRequest.sessionId).to.be.a('string');
                     expect(selfForRequest.screenName).to.be.a('string');
                     expect(selfForRequest.role).to.be.a('string');
@@ -358,7 +358,7 @@ define([
 
             it('Self not returned from Enter Room does not throw error.', function () {
                 mockProtocol.enterRoom.restore();
-                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest, timestamp, callback) {
                     response = {
                         status: 'ok',
                         room: mockRoom,
@@ -393,8 +393,10 @@ define([
                     response.room.members = [member1, member2, self];
 
                     mockProtocol.on.restore();
-                    mockProtocol.on = sinon.stub(mockProtocol, 'on', function (eventName, roomEventHandler) {
+                    mockProtocol.on = sinon.stub(mockProtocol, 'on').callsFake(function (eventName, roomEventHandler) {
                         onRoomEvent = roomEventHandler;
+
+                        return {dispose: function() {}};
                     });
 
                     roomService.start(role, screenName);
@@ -636,7 +638,7 @@ define([
 
                     it('Published Streams updated with 2 streams results in request with 2 streams', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (member, timestamp, callback) {
                             expect(member.streams.length).to.be.equal(2);
                             callback(null, response);
                             done();
@@ -652,7 +654,7 @@ define([
 
                     it('Published Streams updated with no streams results in request with no streams', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (member, timestamp, callback) {
                             expect(member.streams.length).to.be.equal(0);
                             callback(null, response);
                             done();
@@ -665,7 +667,7 @@ define([
 
                     it('Screen Name Updated results in request with updated screen name', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (member, timestamp, callback) {
                             expect(member.screenName).to.be.equal('MyNewScreenName');
                             callback(null, response);
                             done();
@@ -680,7 +682,7 @@ define([
 
                     it('Screen Name Updated does not include state property when state has not changed', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (member) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (member) {
                             expect(member.state).to.be.undefined;
                             done();
                         });
@@ -694,7 +696,7 @@ define([
 
                     it('Role Updated results in request with updated role when valid role passed in', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (memberToUpdate, timestamp, callback) {
                             expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
                             callback(null, response);
                             done();
@@ -743,7 +745,7 @@ define([
 
                     it('Update description yields change in description value on cached room', function () {
                         mockProtocol.updateRoom.restore();
-                        mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom', function (roomToUpdate, timestamp, callback) {
+                        mockProtocol.updateRoom = sinon.stub(mockProtocol, 'updateRoom').callsFake(function (roomToUpdate, timestamp, callback) {
                             expect(roomToUpdate.description).to.be.equal('newDescription');
 
                             callback(null, response);
@@ -779,7 +781,7 @@ define([
                 describe('When Streams updated', function () {
                     it('Role Updated results in request with updated role when valid role passed in', function (done) {
                         mockProtocol.updateMember.restore();
-                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember', function (memberToUpdate, timestamp, callback) {
+                        mockProtocol.updateMember = sinon.stub(mockProtocol, 'updateMember').callsFake(function (memberToUpdate, timestamp, callback) {
                             expect(memberToUpdate.role).to.be.equal(member.roles.presenter.name);
                             callback(null, response);
                             done();
@@ -796,7 +798,7 @@ define([
                 describe('When Session Id updated', function () {
                     it('Session Id update causes member to leave and then enter room', function (done) {
                         mockProtocol.enterRoom.restore();
-                        mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+                        mockProtocol.enterRoom = sinon.stub(mockProtocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest, timestamp, callback) {
                             sinon.assert.calledOnce(mockProtocol.leaveRoom);
                             sinon.assert.calledOnce(mockProtocol.enterRoom);
                             callback(null, response);
@@ -804,7 +806,7 @@ define([
                         });
 
                         mockProtocol.leaveRoom.restore();
-                        mockProtocol.leaveRoom = sinon.stub(mockProtocol, 'leaveRoom', function (roomId, timestamp, callback) {
+                        sinon.stub(mockProtocol, 'leaveRoom').callsFake(function (roomId, timestamp, callback) {
                             callback(null, response);
                         });
 

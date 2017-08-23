@@ -44,11 +44,9 @@ define([
     };
 
     function createNewAppender(uri) {
-        var appender = new AnalytixAppender();
+        var appender = new AnalytixAppender(uri);
 
-        if (uri) {
-            appender.setUri(uri);
-        } else {
+        if (!uri) {
             appender.setEnabled(false);
         }
 

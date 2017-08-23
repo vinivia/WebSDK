@@ -61,11 +61,19 @@ define([
             return sessionId;
         };
 
+        if (protocol.on.restore) {
+            protocol.on.restore();
+        }
+
+        protocol.on = sinon.stub(protocol, 'on').callsFake(function() {
+            return {dispose: function(){}};
+        });
+
         if (pcast.start.restore) {
             pcast.start.restore();
         }
 
-        pcast.start = sinon.stub(pcast, 'start', function(authToken, authenticationCallback, onlineCallback) {
+        pcast.start = sinon.stub(pcast, 'start').callsFake(function(authToken, authenticationCallback, onlineCallback) {
             authenticationCallback(pcast, 'ok', sessionId.getValue());
             onlineCallback();
         });

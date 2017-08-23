@@ -27,7 +27,7 @@ define([
         };
         var mockRoom = {
             roomId: 'TestRoom123',
-            alias: '',
+            alias: 'TestRoom123Alias',
             name: 'Test123',
             description: 'My Test Room',
             bridgeId: '',
@@ -79,7 +79,7 @@ define([
             };
 
             protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom', function (roomId, alias, selfForRequest, timestamp, callback) {
+            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest, timestamp, callback) {
                 callback(null, response);
             });
         });
@@ -94,7 +94,7 @@ define([
 
         it('Expect joinRoom protocol to be called with just roomId', function () {
             protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom', function (roomId) {
+            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId) {
                 expect(roomId).to.be.equal(mockRoom.roomId);
             });
 
@@ -106,7 +106,7 @@ define([
 
         it('Expect joinRoom protocol to be called with just alias', function () {
             protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom', function (roomId, alias) {
+            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias) {
                 expect(alias).to.be.equal(mockRoom.alias);
             });
 
@@ -118,7 +118,7 @@ define([
 
         it('Expect joinRoom protocol without alias or roomId to throw an error', function () {
             protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom', function (roomId, alias) {
+            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias) {
                 expect(alias).to.be.equal(mockRoom.alias);
             });
 
@@ -128,14 +128,20 @@ define([
         });
 
         it('Expect joinRoom callback to return response object with a roomService and active room', function () {
-            roomExpress.joinRoom({role: member.roles.participant.name}, function(error, response) {
+            roomExpress.joinRoom({
+                role: member.roles.participant.name,
+                alias: 'roomAlias'
+            }, function(error, response) {
                 expect(response.roomService).to.exist;
                 expect(response.roomService.getObservableActiveRoom().getValue()).to.exist;
             }, function(){});
         });
 
         it('Expect member subscription callback to trigger when members changed after successfully joining a room', function (done) {
-            roomExpress.joinRoom({role: member.roles.participant.name}, function(error, response) {
+            roomExpress.joinRoom({
+                role: member.roles.participant.name,
+                alias: 'roomAlias'
+            }, function(error, response) {
                 response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([{}]);
             }, function(members){
                 expect(members.length).to.be.equal(1);

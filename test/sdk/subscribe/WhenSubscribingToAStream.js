@@ -22,7 +22,7 @@ define([
 ], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
     describe('When Subscribing to a Stream', function () {
         var httpStubber = new HttpStubber();
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcast;
@@ -34,6 +34,8 @@ define([
         });
 
         beforeEach(function () {
+            websocketStubber = new WebSocketStubber();
+
             pcast = new PCast({uri: 'wss://mockURI'});
         });
 
@@ -41,6 +43,10 @@ define([
             httpStubber.restore();
             chromeRuntimeStubber.restore();
             peerConnectionStubber.restore();
+        });
+
+        afterEach(function() {
+            websocketStubber.restore();
         });
 
         it('Has method subscribe', function () {
@@ -54,12 +60,14 @@ define([
         });
 
         describe('When pcast has been started', function() {
-            beforeEach(function() {
+            beforeEach(function(done) {
                 websocketStubber.stubAuthRequest();
 
-                pcast.start('mockAuthToken', function(){}, function(){}, function(){});
+                pcast.start('mockAuthToken', function(){}, function(){
+                    done();
+                }, function(){});
 
-                websocketStubber.triggerOpen();
+                websocketStubber.triggerConnected();
             });
 
             afterEach(function() {
@@ -68,7 +76,7 @@ define([
             });
 
             it('Expect an error to not be thrown when subscribing', function () {
-                websocketStubber.restore();
+                websocketStubber.stubSetupStream();
 
                 expect(function () {
                     pcast.subscribe('mockStreamToken', function() {}, {});

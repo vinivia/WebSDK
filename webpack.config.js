@@ -16,28 +16,9 @@
 /* global __dirname module */
 var webpack = require('webpack');
 var path = require('path');
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 var configs = [{
-    entry: path.join(__dirname, 'src', 'web-sdk.js'),
-    devtool: 'source-map',
-    target: 'web',
-    output: {
-        path: './dist',
-        filename: 'phenix-web-sdk.js',
-        libraryTarget: 'umd'
-    },
-    plugins: [
-        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}})
-    ],
-    externals: [
-        {
-            'phenix-rtc': true,
-            'protobuf': true,
-            'ByteBuffer': true
-        }
-    ],
-    resolve: {modules: ['3p', 'node_modules']}
-}, {
     entry: path.join(__dirname, 'src', 'web-sdk.js'),
     devtool: 'source-map',
     target: 'web',
@@ -49,7 +30,8 @@ var configs = [{
         umdNamedDefine: true
     },
     plugins: [
-        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}})
+        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}}),
+        new CaseSensitivePathsPlugin()
     ],
     resolve: {
         alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
@@ -57,15 +39,14 @@ var configs = [{
             'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
             'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
             'phenix-web-logging': path.resolve(__dirname, 'node_modules', 'phenix-web-logging'),
+            'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable'),
+            'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event'),
             'phenix-web-http': path.resolve(__dirname, 'node_modules', 'phenix-web-http'),
+            'phenix-web-proto': path.resolve(__dirname, 'node_modules', 'phenix-web-proto'),
             'phenix-web-network-connection-monitor': path.resolve(__dirname, 'node_modules', 'phenix-web-network-connection-monitor'),
             'phenix-web-observable': path.resolve(__dirname, 'node_modules', 'phenix-web-observable'),
-            'phenix-web-reconnecting-web-socket': path.resolve(__dirname, 'node_modules', 'phenix-web-reconnecting-web-socket'),
-            'fs': path.resolve(__dirname, 'src', 'dummyFs.js'),
-            'ByteBuffer': 'bytebuffer',
-            'Long': 'long'
-        },
-        modules: ['3p', 'node_modules']
+            'phenix-web-reconnecting-web-socket': path.resolve(__dirname, 'node_modules', 'phenix-web-reconnecting-web-socket')
+        }
     }
 }];
 

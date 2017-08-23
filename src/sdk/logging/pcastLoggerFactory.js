@@ -27,7 +27,7 @@ define([
 
     PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole) {
         if (baseUri) {
-            assert.stringNotEmpty(baseUri, 'baseUri');
+            assert.isStringNotEmpty(baseUri, 'baseUri');
         }
 
         var logger = new logging.Logger();

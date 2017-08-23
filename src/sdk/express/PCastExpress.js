@@ -29,7 +29,7 @@ define([
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.backendUri, 'options.backendUri');
+        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
         assert.isObject(options.authenticationData, 'options.authenticationData');
 
         this._pcast = null;
@@ -152,7 +152,7 @@ define([
 
     PCastExpress.prototype.publishRemote = function publish(options, callback) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.streamUri, 'options.streamUri');
+        assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
 
         if (options.capabilities) {
             assert.isArray(options.capabilities, 'options.capabilities');
@@ -237,7 +237,7 @@ define([
 
     PCastExpress.prototype.subscribe = function subscribe(options, callback) {
         assert.isObject(options, 'options');
-        assert.stringNotEmpty(options.streamId, 'options.streamId');
+        assert.isStringNotEmpty(options.streamId, 'options.streamId');
         assert.isObject(options.capabilities, 'options.capabilities');
 
         if (options.videoElement) {

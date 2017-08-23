@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 define([
-    'Long',
+    'long',
     'phenix-web-observable',
     'sdk/authentication/AuthenticationService',
     'sdk/chat/ChatService',
@@ -43,12 +43,12 @@ define([
             };
 
             mockProtocol.subscribeToRoomConversation.restore();
-            mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+            mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                 callback(null, response);
             });
 
             mockProtocol.sendMessageToRoom.restore();
-            mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom', function (roomId, chatMessage, callback) {
+            mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom').callsFake(function (roomId, chatMessage, callback) {
                 callback(null, response);
             });
         });
@@ -90,7 +90,7 @@ define([
                 response.chatMessages = [{id: '1'}];
 
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(null, response);
                 });
 
@@ -106,7 +106,7 @@ define([
                 }];
 
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(null, response);
                 });
 
@@ -119,7 +119,7 @@ define([
                 response.status = 'no-room';
 
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(null, response);
                 });
 
@@ -131,7 +131,7 @@ define([
 
             it('Expect subscribeAndLoadMessages to return an error when error returned from protocol', function () {
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(new Error('Error'), null);
                 });
 
@@ -149,7 +149,7 @@ define([
 
             it('Expect sendMessageToRoom to return an error when error returned from protocol', function () {
                 mockProtocol.sendMessageToRoom.restore();
-                mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom', function (roomId, chatService, callback) {
+                mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom').callsFake(function (roomId, chatService, callback) {
                     callback(new Error('Error'), null);
                 });
 
@@ -165,8 +165,10 @@ define([
 
             beforeEach(function () {
                 mockProtocol.on.restore();
-                mockProtocol.on = sinon.stub(mockProtocol, 'on', function (eventName, chatEventHandler) {
+                mockProtocol.on = sinon.stub(mockProtocol, 'on').callsFake(function (eventName, chatEventHandler) {
                     onChatEvent = chatEventHandler;
+
+                    return {dispose: function() {}};
                 });
 
                 chatService.start();
@@ -179,7 +181,7 @@ define([
 
             it('Message event returns list of messages to handler', function () {
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(null, response);
                 });
 
@@ -239,7 +241,7 @@ define([
 
             beforeEach(function () {
                 mockProtocol.getMessages.restore();
-                mockProtocol.getMessages = sinon.stub(mockProtocol, 'getMessages', function (sessionId, roomId, batchSize, beforeMessageId, afterMessageId, callback) {
+                mockProtocol.getMessages = sinon.stub(mockProtocol, 'getMessages').callsFake(function (sessionId, roomId, batchSize, beforeMessageId, afterMessageId, callback) {
                     messagesCallback = callback;
                 });
 
@@ -334,7 +336,7 @@ define([
             beforeEach(function () {
                 sessionIdObservable = new observable.Observable('mockPCastSessionId');
 
-                AuthenticationService.prototype.getObservableSessionId = sinon.stub(AuthenticationService.prototype, 'getObservableSessionId', function () {
+                AuthenticationService.prototype.getObservableSessionId = sinon.stub(AuthenticationService.prototype, 'getObservableSessionId').callsFake(function () {
                     return sessionIdObservable;
                 });
 
@@ -348,7 +350,7 @@ define([
 
             it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function (done) {
                 mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation', function (sessionId, roomId, batchSize, callback) {
+                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
                     callback(null, response);
                 });
 
@@ -369,7 +371,11 @@ define([
             beforeEach(function () {
                 statusObservable = new observable.Observable('online');
 
-                AuthenticationService.prototype.getObservableStatus = sinon.stub(AuthenticationService.prototype, 'getObservableStatus', function () {
+                if (AuthenticationService.prototype.getObservableStatus.restore) {
+                    AuthenticationService.prototype.getObservableStatus.restore();
+                }
+
+                AuthenticationService.prototype.getObservableStatus = sinon.stub(AuthenticationService.prototype, 'getObservableStatus').callsFake(function () {
                     return statusObservable;
                 });
 
@@ -377,7 +383,10 @@ define([
             });
 
             afterEach(function () {
-                AuthenticationService.prototype.getObservableStatus.restore();
+                if (AuthenticationService.prototype.getObservableStatus.restore) {
+                    AuthenticationService.prototype.getObservableStatus.restore();
+                }
+
                 chatService.stop();
             });
 

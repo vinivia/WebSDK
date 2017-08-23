@@ -29,7 +29,7 @@ define([
         };
 
         var httpStubber;
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcastExpress;
@@ -39,13 +39,15 @@ define([
         before(function() {
             chromeRuntimeStubber.stub();
             peerConnectionStubber.stub();
-            websocketStubber.stubAuthRequest();
         });
 
         beforeEach(function () {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
                 backendUri: mockBackendUri,
@@ -63,6 +65,7 @@ define([
 
         afterEach(function() {
             httpStubber.restore();
+            websocketStubber.restore();
             pcastExpress.stop();
         });
 
@@ -79,7 +82,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor to return a response with retry', function (done) {
@@ -107,7 +110,7 @@ define([
                 }
             }, function() {});
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor retry to setup a new subscription', function (done) {
@@ -146,7 +149,7 @@ define([
                 }
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function (done) {
@@ -187,7 +190,7 @@ define([
                 }
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
     });
 });

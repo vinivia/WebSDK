@@ -29,7 +29,7 @@ define([
         };
 
         var httpStubber;
-        var websocketStubber = new WebSocketStubber();
+        var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcastExpress;
@@ -37,13 +37,15 @@ define([
         before(function() {
             chromeRuntimeStubber.stub();
             peerConnectionStubber.stub();
-            websocketStubber.stubAuthRequest();
         });
 
         beforeEach(function () {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
                 backendUri: mockBackendUri,
@@ -61,6 +63,7 @@ define([
 
         afterEach(function() {
             httpStubber.restore();
+            websocketStubber.restore();
             pcastExpress.stop();
         });
 
@@ -83,7 +86,7 @@ define([
                 });
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         it('Expect retry to cause publisher callback to be called twice', function (done) {
@@ -114,7 +117,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         it('Expect reason of error to automatically retry publisher without triggering callback', function (done) {
@@ -141,7 +144,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         it('Expect reason of custom to automatically return no retry function', function (done) {
@@ -162,7 +165,7 @@ define([
                 });
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         it('Expect reason of capacity to automatically retry after a timeout', function (done) {
@@ -193,7 +196,7 @@ define([
                 done();
             });
 
-            setTimeout(websocketStubber.triggerOpen.bind(websocketStubber), 0);
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
     });
 });

@@ -763,8 +763,8 @@ define([
         this._protocol.on('reconnecting', _.bind(reconnecting, this));
         this._protocol.on('reconnected', _.bind(reconnected, this));
         this._protocol.on('disconnected', _.bind(disconnected, this));
-        this._protocol.on('streamEnded', _.bind(streamEnded, this));
-        this._protocol.on('dataQuality', _.bind(dataQuality, this));
+        this._protocol.on('pcast.StreamEnded', _.bind(streamEnded, this));
+        this._protocol.on('pcast.StreamDataQuality', _.bind(dataQuality, this));
 
         if (this._logger.setObservableSessionId) {
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());

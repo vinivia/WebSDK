@@ -15,14 +15,13 @@
  */
 define([
     'phenix-web-lodash-light',
-    'ByteBuffer',
-    'sdk/MQProtocol'
-], function (_, ByteBuffer, MQProtocol) {
-    var webSocketClone = WebSocket;
+    'phenix-web-proto',
+    'phenix-web-event'
+], function (_, proto, event) {
+    var webSocketProtoClone = proto.WebSocketProto;
 
     function WebSocketStubber() {
-        this._mockWebSocket = null;
-        this._mqProtocol = new MQProtocol({});
+        this._mockWebProtoSocket = null;
         this._handlers = {};
         this._defaultResponse = {
             message: {status: 'ok'},
@@ -39,10 +38,20 @@ define([
     WebSocketStubber.prototype.stubAuthRequest = function(callback) {
         setupStubIfNoneExist.call(this);
 
+        var that = this;
+
         this.stubResponse('pcast.Authenticate', {
             status: 'ok',
             sessionId: 'MockSessionId'
-        }, callback);
+        }, function() {
+            if (that._namedEvents) {
+                that._namedEvents.fire('pcast.AuthenticateResponse', [{sessionId: 'MockSessionId'}]);
+            }
+
+            if (callback) {
+                callback.apply(callback, arguments);
+            }
+        });
     };
 
     WebSocketStubber.prototype.stubSetupStream = function(callback) {
@@ -51,6 +60,7 @@ define([
             createStreamResponse: {
                 status: 'ok',
                 streamId: 'mockStreamId',
+                offset: 100,
                 createOfferDescriptionResponse: {
                     status: 'ok',
                     sessionDescription: {sdp: 'mockSdp'}
@@ -76,76 +86,59 @@ define([
     WebSocketStubber.prototype.stubMessage = function(type, message) {
         setupStubIfNoneExist.call(this);
 
-        if (this._mockWebSocket.onmessage) {
-            this._mockWebSocket.onmessage({
-                data: encodeMessage.call(this, {
-                    type: type,
-                    requestId: '10000'
-                }, message, false)
-            });
+        if (this._namedEvents) {
+            this._namedEvents.fire(type, [message]);
+        }
+    };
+
+    WebSocketStubber.prototype.triggerConnected = function() {
+        if (this._namedEvents) {
+            this._namedEvents.fire('connected');
         }
     };
 
     WebSocketStubber.prototype.restore = function() {
-        if (this._mockWebSocket) {
-            this._mockWebSocket.send = sinon.stub();
-            this._mockWebSocket.close = sinon.stub();
-            this._mockWebSocket = null;
+        if (this._mockWebProtoSocket) {
+            this._mockWebProtoSocket.disconnect();
+            this._mockWebProtoSocket = null;
         }
 
-        WebSocket = webSocketClone; // eslint-disable-line no-global-assign
-    };
-
-    WebSocketStubber.prototype.triggerOpen = function() {
-        this._mockWebSocket.onopen();
+        proto.WebSocketProto = webSocketProtoClone; // eslint-disable-line no-global-assign
     };
 
     function setupStubIfNoneExist() {
         var that = this;
 
-        if (that._mockWebSocket) {
+        if (that._mockWebProtoSocket) {
             return;
         }
 
-        that._mockWebSocket = {
-            readyState: 1,
-            close: sinon.stub(),
-            send: function(encodedMessage) {
-                var response = decodeResponse.call(that, encodedMessage);
-                var message = decodeMessage.call(that, encodedMessage);
-                var handler = that._handlers[response.type] || that._defaultResponse;
+        that._namedEvents = new event.NamedEvents();
 
-                that._mockWebSocket.onmessage({data: encodeMessage.call(that, response, handler.message, true)});
+        that._mockWebProtoSocket = {
+            disconnect: function() {
+                that._namedEvents.dispose();
+            },
+            sendRequest: function(type, message, callback) {
+                var handler = that._handlers[type] || that._defaultResponse;
 
                 if (_.isFunction(handler.callback)) {
-                    handler.callback(response, message);
+                    handler.callback(type, message, callback);
                 }
+
+                callback(null, handler.message);
+            },
+            on: function(eventName, callback) {
+                return that._namedEvents.listen(eventName, callback);
+            },
+            getApiVersion: function() {
+                return 'version';
             }
         };
 
-        WebSocket = function() { // eslint-disable-line no-global-assign
-            return that._mockWebSocket;
+        proto.WebSocketProto = function() { // eslint-disable-line no-global-assign
+            return that._mockWebProtoSocket;
         };
-    }
-
-    function decodeResponse(encodedMessage) {
-        return this._mqProtocol.decode('mq.Request', ByteBuffer.wrap(encodedMessage, 'base64'));
-    }
-
-    function decodeMessage(encodedMessage) {
-        var response = this._mqProtocol.decode('mq.Request', ByteBuffer.wrap(encodedMessage, 'base64'));
-
-        return this._mqProtocol.decode(response.type, response.payload);
-    }
-
-    function encodeMessage(request, message, includeResponse) {
-        var type = request.type + (includeResponse ? 'Response' : '');
-
-        return this._mqProtocol.encode('mq.Response', {
-            requestId: request.requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message)
-        }).toString('base64');
     }
 
     return WebSocketStubber;

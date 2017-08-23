@@ -142,7 +142,7 @@ define([
 
         describe('When committing changes on member', function () {
             it('CommitChanges calls roomService updateMember', function () {
-                stubRoomService.updateRoom = sinon.stub(stubRoomService, 'updateRoom', function (room) {
+                stubRoomService.updateRoom = sinon.stub(stubRoomService, 'updateRoom').callsFake(function (room) {
                     expect(room).to.be.equal(testRoom);
                 });
 
@@ -155,7 +155,7 @@ define([
 
         describe('When reverting changes on room', function () {
             it('Reload calls roomService updateRoom', function () {
-                stubRoomService.revertRoomChanges = sinon.stub(stubRoomService, 'revertRoomChanges', function (room) {
+                stubRoomService.revertRoomChanges = sinon.stub(stubRoomService, 'revertRoomChanges').callsFake(function (room) {
                     expect(room).to.be.equal(testRoom);
                 });
 

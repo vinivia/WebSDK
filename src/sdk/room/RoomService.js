@@ -17,6 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
+    'phenix-web-disposable',
     '../authentication/AuthenticationService',
     './Room',
     './ImmutableRoom',
@@ -24,7 +25,7 @@ define([
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, observable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
+], function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
@@ -50,8 +51,8 @@ define([
     }
 
     RoomService.prototype.start = function start(role, screenName) {
-        assert.stringNotEmpty(role, 'role');
-        assert.stringNotEmpty(screenName, 'screenName');
+        assert.isStringNotEmpty(role, 'role');
+        assert.isStringNotEmpty(screenName, 'screenName');
 
         var myState = member.states.passive.name;
         var mySessionId = this._authService.getPCastSessionId();
@@ -63,11 +64,11 @@ define([
         var self = new Member(roomService, myState, mySessionId, myScreenName, role, myStreams, myLastUpdate);
 
         this._self = new observable.Observable(self);
-        this._disposables = [];
+        this._disposables = new disposable.DisposableList();
 
-        var disposeOfRoomEventHandler = this._protocol.on('roomEvent', _.bind(onRoomEvent, this));
+        var disposeOfRoomEventHandler = this._protocol.on('chat.RoomEvent', _.bind(onRoomEvent, this));
 
-        this._disposables.push(disposeOfRoomEventHandler);
+        this._disposables.add(disposeOfRoomEventHandler);
 
         setupSubscriptions.call(this);
 
@@ -76,34 +77,34 @@ define([
 
     RoomService.prototype.getRoomInfo = function getRoomInfo(roomId, alias, callback) {
         if (roomId) {
-            assert.stringNotEmpty('roomId', roomId);
+            assert.isStringNotEmpty(roomId, 'roomId');
         } else {
-            assert.stringNotEmpty('alias', alias);
+            assert.isStringNotEmpty(alias, 'alias');
         }
 
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         getRoomInfoRequest.call(this, roomId, alias, callback);
     };
 
     RoomService.prototype.createRoom = function createRoom(room, callback) {
         assert.isObject(room, 'room');
-        assert.stringNotEmpty(room.name, 'room.name');
-        assert.stringNotEmpty(room.type, 'room.type');
+        assert.isStringNotEmpty(room.name, 'room.name');
+        assert.isStringNotEmpty(room.type, 'room.type');
         assert.isString(room.description, 'room.description');
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         createRoomRequest.call(this, room, callback);
     };
 
     RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
         if (roomId) {
-            assert.stringNotEmpty('roomId', roomId);
+            assert.isStringNotEmpty(roomId, 'roomId');
         } else {
-            assert.stringNotEmpty('alias', alias);
+            assert.isStringNotEmpty(alias, 'alias');
         }
 
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         enterRoomRequest.call(this, roomId, alias, callback);
     };
@@ -131,20 +132,20 @@ define([
     };
 
     RoomService.prototype.updateSelf = function updateSelf(callback) {
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         updateMemberRequest.call(this, this.getSelf(), callback);
     };
 
     RoomService.prototype.updateMember = function updateMember(member, callback) {
-        assert.isFunction(callback);
-        assert.isObject(member);
+        assert.isFunction(callback, 'callback');
+        assert.isObject(member, 'member');
 
         updateMemberRequest.call(this, member, callback);
     };
 
     RoomService.prototype.updateRoom = function updateRoom(callback) {
-        assert.isFunction(callback);
+        assert.isFunction(callback, 'callback');
 
         updateRoomRequest.call(this, callback);
     };
@@ -161,7 +162,7 @@ define([
     };
 
     RoomService.prototype.revertMemberChanges = function revertMemberChanges(member) {
-        assert.isObject(member);
+        assert.isObject(member, 'member');
 
         var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
         var activeMember = findMemberInObservableRoom(member.getSessionId(), this._activeRoom);
@@ -178,7 +179,9 @@ define([
     };
 
     RoomService.prototype.stop = function stop() {
-        disposeOfArray(this._disposables);
+        if (this._disposables) {
+            this._disposables.dispose();
+        }
     };
 
     function resetSelf(sessionId) {
@@ -360,21 +363,9 @@ define([
         var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
         var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
 
-        this._disposables.push(selfSubscription.dispose);
-        this._disposables.push(pcastStatusSubscription.dispose);
-        this._disposables.push(pcastSessionIdSubscription.dispose);
-    }
-
-    function disposeOfArray(arrayOfDisposables) {
-        if (!_.isArray(arrayOfDisposables)) {
-            return;
-        }
-
-        for (var i = 0; i < arrayOfDisposables.length; i++) {
-            if (typeof arrayOfDisposables[i] === 'function') {
-                arrayOfDisposables[i]();
-            }
-        }
+        this._disposables.add(selfSubscription);
+        this._disposables.add(pcastStatusSubscription);
+        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function getDifferencesBetweenCachedRoomMembersAndUpdatedMembers(members) {

@@ -28,24 +28,24 @@ define([
     }
 
     Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        assert.stringNotEmpty(name, 'name');
-        assert.stringNotEmpty(description, 'description');
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(description, 'description');
         assert.isArray(members, 'members');
 
         if (id) {
-            assert.stringNotEmpty(id, 'id');
+            assert.isStringNotEmpty(id, 'id');
         }
 
         if (alias) {
-            assert.stringNotEmpty(alias, 'alias');
+            assert.isStringNotEmpty(alias, 'alias');
         }
 
         if (bridgeId) {
-            assert.stringNotEmpty(bridgeId, 'bridgeId');
+            assert.isStringNotEmpty(bridgeId, 'bridgeId');
         }
 
         if (pin) {
-            assert.stringNotEmpty(pin, 'pin');
+            assert.isStringNotEmpty(pin, 'pin');
         }
 
         if (roomService) {
@@ -118,13 +118,13 @@ define([
     };
 
     Room.prototype.commitChanges = function commitChanges(callback) {
-        assert.isObject(this._roomService);
+        assert.isObject(this._roomService, 'this._roomService');
 
         this._roomService.updateRoom(this, callback);
     };
 
     Room.prototype.reload = function reload() {
-        assert.isObject(this._roomService);
+        assert.isObject(this._roomService, 'this._roomService');
 
         this._roomService.revertRoomChanges(this);
     };

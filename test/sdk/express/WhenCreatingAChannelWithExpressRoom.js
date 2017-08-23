@@ -78,7 +78,7 @@ define([
             };
 
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room, callback) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
                 callback(null, response);
             });
         });
@@ -93,7 +93,7 @@ define([
 
         it('Expect createRoom protocol to be called with channel type', function () {
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (createdRoom) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (createdRoom) {
                 expect(createdRoom.type).to.be.equal(room.types.channel.name);
             });
 
@@ -102,7 +102,7 @@ define([
 
         it('Expect room to be returned from createChannel', function () {
             protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom', function (room, callback) {
+            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
                 callback(null, {
                     status: 'ok',
                     room: room

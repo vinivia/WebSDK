@@ -16,6 +16,7 @@
 /* global module __dirname process */
 var path = require('path');
 var webpack = require('webpack');
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 module.exports = function (config) {
     config.set({
@@ -42,21 +43,15 @@ module.exports = function (config) {
 
         webpack: {
             devtool: 'inline-source-map',
-            resolve: {
-                alias: {
-                    ByteBuffer: 'bytebuffer',
-                    Long: 'long',
-                    'sdk': path.resolve(__dirname, '../src/sdk')
-                },
-                modules: ['3p', 'node_modules']
-            }, // Resolve test dependencies to src
+            resolve: {alias: {'sdk': path.resolve(__dirname, '../src/sdk')}}, // Resolve test dependencies to src
             plugins: [
                 new webpack.DefinePlugin({'process.env.PHENIX_APPLICATION_ID': JSON.stringify(process.env.PHENIX_APPLICATION_ID)}),
-                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)})
+                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)}),
+                new CaseSensitivePathsPlugin()
             ]
         },
 
-        webpackMiddleware: {stats: 'errors-only'},
+        webpackMiddleware: {stats: 'verbose'},
 
         // Test results reporter to use
         // possible values: 'dots', 'progress'

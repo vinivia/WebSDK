@@ -35,7 +35,7 @@ define([
                 pcastLoggerFactory.createPCastLogger.restore();
             }
 
-            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger', function() {
+            pcastLoggerStub = sinon.stub(pcastLoggerFactory, 'createPCastLogger').callsFake(function() {
                 return sinon.createStubInstance(logging.Logger);
             }); // Disable requests to external source
 

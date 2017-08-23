@@ -21,7 +21,7 @@ define([
     'use strict';
 
     function AdminAPI(backendUri, authenticationData) {
-        assert.stringNotEmpty(backendUri, 'backendUri');
+        assert.isStringNotEmpty(backendUri, 'backendUri');
         assert.isObject(authenticationData, 'authenticationData');
 
         this._backendUri = backendUri;
@@ -35,7 +35,7 @@ define([
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
         var data = appendAuthDataTo.call(this, {
@@ -47,7 +47,7 @@ define([
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, callback) {
-        assert.stringNotEmpty(sessionId, 'sessionId');
+        assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
         var data = appendAuthDataTo.call(this, {

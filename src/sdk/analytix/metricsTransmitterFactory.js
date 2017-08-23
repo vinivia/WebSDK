@@ -44,11 +44,9 @@ define([
     };
 
     function createNewTransmitter(uri) {
-        var transmitter = new MetricsTransmitter();
+        var transmitter = new MetricsTransmitter(uri);
 
-        if (uri) {
-            transmitter.setUri(uri);
-        } else {
+        if (!uri) {
             transmitter.setEnabled(false);
         }
 
