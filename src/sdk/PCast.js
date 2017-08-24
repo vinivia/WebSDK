@@ -847,6 +847,7 @@ define([
         case 'ended':
             return 'ended';
         case 'server-error':
+        case 'session-error':
         case 'not-ready':
         case 'error':
         case 'died':
