@@ -4460,7 +4460,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-08-25T23:07:45Z';
+    var sdkVersion = '2017-08-26T05:24:16Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -13536,8 +13536,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-08-25T23:07:45Z' || '?';
-    var releaseVersion = '2017.3.1';
+    var sdkVersion = '2017-08-26T05:24:16Z' || '?';
+    var releaseVersion = '2017.3.2';
 
     function Logger() {
         this._appenders = [];
@@ -21420,7 +21420,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-08-25T23:07:45Z' || '?';
+    var sdkVersion = '2017-08-26T05:24:16Z' || '?';
 
     function SessionAnalytix(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -21579,7 +21579,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-08-25T23:07:45Z' || '?';
+    var sdkVersion = '2017-08-26T05:24:16Z' || '?';
 
     function StreamAnalytix(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
