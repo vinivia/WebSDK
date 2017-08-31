@@ -37,7 +37,7 @@ requirejs.config({
         'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
         'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
         'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
-        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable'
+        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min'
     }
 });
 
@@ -117,7 +117,7 @@ requirejs([
                     message: 'Successfully joined Channel "' + channelAlias + '"'
                 });
 
-                leaveChannelCallback = response.leaveChannel;
+                leaveChannelCallback = response.roomService.stop;
 
                 $('#leaveChannel').removeClass('disabled');
             }, function subscriberCallback(error, response) {

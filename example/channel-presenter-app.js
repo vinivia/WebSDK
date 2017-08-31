@@ -134,10 +134,6 @@ requirejs([
                 publisherPlayer = null;
             }
 
-            if (roomExpress) {
-                roomExpress.stop();
-            }
-
             $('#stopPublisher').addClass('disabled');
         };
 

@@ -122,10 +122,17 @@ define([
             that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
             logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
 
-            _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
+            timeToFirstFrameListenerDisposable.dispose();
         };
 
         _.addEventListener(video, 'loadeddata', listenForFirstFrame);
+
+        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
+            _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
+        });
+
+        // Ensure TTFF is not recorded if stop is called before first frame
+        this._disposables.add(timeToFirstFrameListenerDisposable);
     };
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats

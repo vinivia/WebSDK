@@ -69,11 +69,21 @@ define([
             addLinkHeaderElement.call(this);
         }
 
-        _.addEventListener(window, 'unload', function (pcast) {
-            return function () {
-                pcast.stop();
-            };
-        }(this));
+        var that = this;
+
+        _.addEventListener(window, 'unload', function () {
+            that._logger.info('Window Unload Event Triggered');
+
+            return that.stop();
+        });
+
+        if (!options.disableBeforeUnload) {
+            _.addEventListener(window, 'beforeunload', function() {
+                that._logger.info('Window Before Unload Event Triggered');
+
+                return that.stop();
+            });
+        }
     }
 
     PCast.prototype.getBaseUri = function () {

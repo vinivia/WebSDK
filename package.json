@@ -1,9 +1,9 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2017.3.2",
+  "version": "2017.3.3",
   "license": "Apache-2.0",
   "private": false,
-  "main": "phenix-web-sdk-bundled.min.js",
+  "main": "phenix-web-sdk.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/PhenixP2P/WebSDK.git"
@@ -31,14 +31,15 @@
   "dependencies": {
     "phenix-rtc": "2017.3.0",
     "phenix-web-assert": "2017.3.3",
+    "phenix-web-batch-http": "2017.3.4",
     "phenix-web-disposable": "2017.3.3",
     "phenix-web-http": "2017.3.3",
     "phenix-web-lodash-light": "2017.3.3",
     "phenix-web-logging": "2017.3.3",
-    "phenix-web-network-connection-monitor": "2017.3.3",
+    "phenix-web-network-connection-monitor": "2017.3.4",
     "phenix-web-observable": "2017.3.3",
-    "phenix-web-proto": "2017.3.3",
-    "phenix-web-reconnecting-websocket": "2017.3.3"
+    "phenix-web-proto": "2017.3.4",
+    "phenix-web-reconnecting-websocket": "2017.3.4"
   },
   "engines": {
     "node": "8.4.0"

@@ -48,12 +48,6 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
-                uri: 'wss://mockURI'
-            });
-
             websocketStubber.stubSetupStream();
             websocketStubber.stubResponse('chat.CreateRoom', {
                 status: 'ok',
@@ -65,6 +59,12 @@ define([
                     type: room.types.channel.name
                 }
             });
+
+            roomExpress = new RoomExpress({
+                backendUri: mockBackendUri,
+                authenticationData: mockAuthData,
+                uri: 'wss://mockURI'
+            });
         });
 
         after(function() {
@@ -75,7 +75,7 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.stop();
+            roomExpress.dispose();
         });
 
         it('Expect stream ended reason of censored to trigger a callback and re-publish', function (done) {

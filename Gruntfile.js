@@ -87,6 +87,6 @@ module.exports = function (grunt) {
             }
         },
         webpack: webpackConfigs,
-        uglify: {minify: {files: {'dist/phenix-web-sdk-bundled.min.js': ['dist/phenix-web-sdk-bundled.js']}}}
+        uglify: {minify: {files: {'dist/phenix-web-sdk.min.js': ['dist/phenix-web-sdk.js']}}}
     });
 };

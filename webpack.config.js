@@ -24,7 +24,7 @@ var configs = [{
     target: 'web',
     output: {
         path: './dist',
-        filename: 'phenix-web-sdk-bundled.js',
+        filename: 'phenix-web-sdk.js',
         library: 'phenix-web-sdk',
         libraryTarget: 'umd',
         umdNamedDefine: true
@@ -38,6 +38,7 @@ var configs = [{
             'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min'),
             'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
             'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
+            'phenix-web-batch-http': path.resolve(__dirname, 'node_modules', 'phenix-web-batch-http'),
             'phenix-web-logging': path.resolve(__dirname, 'node_modules', 'phenix-web-logging'),
             'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable'),
             'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event'),

@@ -15,10 +15,12 @@
  */
 define([
     'sdk/express/RoomExpress',
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
     '../../../test/mock/mockPCast',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function (RoomExpress, MockPCast, room, member) {
+], function (RoomExpress, HttpStubber, WebSocketStubber, MockPCast, room, member) {
     describe('When Joining a Room with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -36,33 +38,20 @@ define([
             members: []
         };
 
-        var requests = [];
-
-        before(function() {
-            this.xhr = sinon.useFakeXMLHttpRequest();
-
-            var authResponse = {
-                status: 'ok',
-                authenticationToken: 'newToken'
-            };
-
-            this.xhr.onCreate = function (req) {
-                requests.push(req);
-                req.respond(200, null, authResponse);
-            };
-        });
-        after(function() {
-            this.xhr.restore();
-        });
-        afterEach(function() {
-            requests = [];
-        });
-
+        var httpStubber;
+        var websocketStubber;
         var roomExpress;
         var protocol;
         var response;
 
         beforeEach(function() {
+            httpStubber = new HttpStubber();
+            httpStubber.stubAuthRequest();
+            httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
             roomExpress = new RoomExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData
@@ -85,7 +74,9 @@ define([
         });
 
         afterEach(function() {
-            roomExpress.stop();
+            httpStubber.restore();
+            websocketStubber.restore();
+            roomExpress.dispose();
         });
 
         it('Has method joinRoom', function () {

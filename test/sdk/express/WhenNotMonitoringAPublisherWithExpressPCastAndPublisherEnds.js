@@ -64,7 +64,7 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            pcastExpress.stop();
+            pcastExpress.dispose();
         });
 
         it('Expect reason of censored to not cause retry or trigger callback', function (done) {

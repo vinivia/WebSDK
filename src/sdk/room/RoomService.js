@@ -51,6 +51,10 @@ define([
     }
 
     RoomService.prototype.start = function start(role, screenName) {
+        if (this._self.getValue()) {
+            return this._logger.warn('RoomService already started.');
+        }
+
         assert.isStringNotEmpty(role, 'role');
         assert.isStringNotEmpty(screenName, 'screenName');
 
@@ -71,6 +75,8 @@ define([
         this._disposables.add(disposeOfRoomEventHandler);
 
         setupSubscriptions.call(this);
+
+        this._started = true;
 
         return self;
     };
@@ -179,6 +185,21 @@ define([
     };
 
     RoomService.prototype.stop = function stop() {
+        var activeRoom = this._activeRoom.getValue();
+        var that = this;
+
+        if (activeRoom) {
+            this.leaveRoom(function(error, response) {
+                if (error) {
+                    that._logger.warn('Unable to leave room', error);
+                }
+
+                if (response && response.status !== 'ok') {
+                    that._logger.warn('Unable to leave room. Status: [%s]', response.status);
+                }
+            });
+        }
+
         if (this._disposables) {
             this._disposables.dispose();
         }
@@ -188,15 +209,16 @@ define([
         var self = this._self.getValue().toJson();
         var roomService = this;
 
-        this._self.setValue(new Member(roomService, self.state, sessionId, self.screenName, self.role, self.streams, self.lastUpdate));
+        this._self.setValue(new Member(roomService, self.state, sessionId || '', self.screenName, self.role, self.streams, self.lastUpdate));
     }
 
     function resetRoom() {
         var that = this;
 
         var activeRoom = that._activeRoom.getValue();
+        var selfSessionId = that._self.getValue().getSessionId();
 
-        if (!_.isObject(activeRoom)) {
+        if (!_.isObject(activeRoom) || !selfSessionId) {
             return;
         }
 

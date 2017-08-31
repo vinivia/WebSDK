@@ -66,7 +66,7 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            pcastExpress.stop();
+            pcastExpress.dispose();
         });
 
         it('Has method subscribe', function () {

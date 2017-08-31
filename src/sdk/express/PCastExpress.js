@@ -18,9 +18,8 @@ define([
     'phenix-web-assert',
     '../AdminAPI',
     '../PCast',
-    '../room/RoomService',
     'phenix-rtc'
-], function (_, assert, AdminAPI, PCast, RoomService, rtc) {
+], function (_, assert, AdminAPI, PCast, rtc) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -32,23 +31,29 @@ define([
         assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
         assert.isObject(options.authenticationData, 'options.authenticationData');
 
+        if (options.authToken) {
+            assert.isStringNotEmpty(options.authToken, 'options.authToken');
+        }
+
+        if (options.onError) {
+            assert.isFunction(options.onError, 'options.onError');
+        }
+
         this._pcast = null;
         this._subscribers = {};
         this._publishers = {};
-        this._roomServices = {};
         this._adminAPI = new AdminAPI(options.backendUri, options.authenticationData);
         this._pcast = new PCast(options);
+        this._logger = this._pcast.getLogger();
+        this._isInstantiated = false;
+        this._reauthCount = 0;
+        this._authToken = options.authToken;
+        this._onError = options.onError;
+
+        instantiatePCast.call(this);
     }
 
-    PCastExpress.prototype.stop = function stop() {
-        if (_.values(this._roomServices).length) {
-            _.forOwn(this._roomServices, function (roomService) {
-                roomService.stop();
-            });
-
-            this._roomServices = {};
-        }
-
+    PCastExpress.prototype.dispose = function dispose() {
         if (this._pcast) {
             this._pcast.stop();
         }
@@ -58,20 +63,16 @@ define([
         return this._pcast;
     };
 
+    PCastExpress.prototype.getAdminAPI = function getAdminAPI() {
+        return this._adminAPI;
+    };
+
     PCastExpress.prototype.getUserMedia = function(options, callback) {
         var that = this;
 
         assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
 
-        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (instantiateResponse.status !== 'ok') {
-                return callback(null, instantiateResponse);
-            }
-
+        this.waitForOnline(function() {
             that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
                 if (e) {
                     return callback(e);
@@ -119,17 +120,13 @@ define([
             }
         }
 
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
         var that = this;
 
-        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (instantiateResponse.status !== 'ok') {
-                return callback(null, instantiateResponse);
-            }
-
+        this.waitForOnline(function() {
             if (options.userMediaStream) {
                 return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, callback);
             }
@@ -195,17 +192,13 @@ define([
             }
         }
 
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
         var that = this;
 
-        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (instantiateResponse.status !== 'ok') {
-                return callback(null, instantiateResponse);
-            }
-
+        this.waitForOnline(function() {
             var remoteOptions = _.assign({
                 connectOptions: [],
                 capabilities: []
@@ -253,15 +246,15 @@ define([
             }
         }
 
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
         var that = this;
 
-        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (instantiateResponse.status !== 'ok') {
-                return callback(null, instantiateResponse);
+        this.waitForOnline(function() {
+            if (options.streamToken) {
+                return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
             that._adminAPI.createStreamTokenForSubscribing(that._pcast.getProtocol().getSessionId(), options.capabilities, options.streamId, function(error, response) {
@@ -278,60 +271,117 @@ define([
         });
     };
 
-    PCastExpress.prototype.createRoomService = function createRoomService(callback) {
-        var that = this;
-        var uniqueId = _.uniqueId();
+    PCastExpress.prototype.waitForOnline = function waitForOnline(callback) {
+        if (this._pcast.getStatus() === 'online') {
+            return callback();
+        }
 
-        instantiatePCastIfNoneExist.call(this, function(error, instantiateResponse) {
-            if (error) {
-                return callback(error);
+        var subscription = this._pcast.getObservableStatus().subscribe(function(status) {
+            if (status !== 'online') {
+                return;
             }
 
-            if (instantiateResponse.status !== 'ok') {
-                return callback(null, instantiateResponse);
-            }
+            subscription.dispose();
 
-            that._roomServices[uniqueId] = new RoomService(that._pcast);
-
-            var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
-
-            callback(null, {
-                status: 'ok',
-                roomService: expressRoomService
-            });
+            return callback();
         });
     };
 
-    function instantiatePCastIfNoneExist(callback) {
-        if (this._pcast && this._pcast.getStatus() !== 'offline') {
-            return callback(null, {status: 'ok'});
+    function instantiatePCast() {
+        var that = this;
+
+        if (this._authToken) {
+            return this._pcast.start(this._authToken,
+                function authenticationToken(pcast, status, sessionId) {
+                    handlePCastInstantiated.call(that, null, {
+                        status: status,
+                        sessionId: sessionId
+                    });
+                },
+                function onlineCallback() {
+                    handlePCastInstantiated.call(that, null, {status: 'ok'});
+                }, function offlineCallback() {
+                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                });
+        }
+
+        this._adminAPI.createAuthenticationToken(function(error, response) {
+            if (error) {
+                return handlePCastInstantiated.call(that, error);
+            }
+
+            if (response.status !== 'ok') {
+                return handlePCastInstantiated.call(that, null, response);
+            }
+
+            that._pcast.start(response.authenticationToken,
+                function authenticationToken(pcast, status, sessionId) {
+                    handlePCastInstantiated.call(that, null, {
+                        status: status,
+                        sessionId: sessionId
+                    });
+                },
+                function onlineCallback() {
+                    handlePCastInstantiated.call(that, null, {status: 'ok'});
+                }, function offlineCallback() {
+                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                });
+        });
+    }
+
+    function handlePCastInstantiated(error, response) {
+        if (error) {
+            return handleError.call(this, error);
         }
 
         var that = this;
 
-        this._adminAPI.createAuthenticationToken(function(error, response) {
-            if (error) {
-                return callback(error);
-            }
+        if (response && response.status !== 'ok' && response.status !== 'offline') {
+            that._reauthCount++;
 
-            if (response.status !== 'ok') {
-                return callback(null, response);
-            }
+            switch (response.status) {
+            case 'unauthorized':
+                if (that._reauthCount > 1) {
+                    return handleError.call(this, new Error(response.status));
+                }
 
-            that._pcast.start(response.authenticationToken,
-                function authenticationToken() {},
-                function onlineCallback() {
-                    callback(null, {status: 'ok'});
-                }, function offlineCallback() {
-                    callback(null, {status: 'offline'});
-                });
-        });
+                return instantiatePCast.call(that);
+            case 'capacity':
+            case 'network-unavailable':
+                return setTimeout(function () {
+                    instantiatePCast.call(that);
+                }, capacityBackoffTimeout * that._reauthCount * that._reauthCount);
+            case 'failed':
+            default:
+                return handleError.call(this, new Error(response.status));
+            }
+        }
+
+        this._reauthCount = 0;
+
+        if (!that._isInstantiated) {
+            that._logger.info('Express API successfully instantiated');
+        }
+
+        that._isInstantiated = true;
+    }
+
+    function handleError(e) {
+        if (!this._onError) {
+            throw e;
+        }
+
+        this._onError(e);
     }
 
     function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
         var that = this;
 
         assert.isArray(options.capabilities, 'options.capabilities');
+
+        if (options.streamToken) {
+            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, callback);
+        }
 
         that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
             if (error) {
@@ -546,21 +596,6 @@ define([
         subscriber.setStreamEndedCallback = function() {};
 
         return subscriber;
-    }
-
-    function createExpressRoomService(roomService, uniqueId) {
-        var that = this;
-        var roomServiceStop = roomService.stop;
-
-        roomService.stop = function() {
-            roomServiceStop.call(roomService);
-
-            delete that._roomServices[uniqueId];
-
-            // StopPCastIfNoActiveStreams.call(that);
-        };
-
-        return roomService;
     }
 
     function setStreamAudioTracksState(stream, newState) {

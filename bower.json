@@ -10,7 +10,7 @@
   "homepage": "https://phenixp2p.com/docs",
   "private": false,
   "main": [
-    "dist/phenix-web-sdk-bundled.min.js"
+    "dist/phenix-web-sdk.min.js"
   ],
   "moduleType": [
     "globals",
