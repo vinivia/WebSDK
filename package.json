@@ -41,7 +41,7 @@
     "phenix-web-reconnecting-websocket": "2017.3.3"
   },
   "engines": {
-    "node": "6.10.2"
+    "node": "8.4.0"
   },
   "devDependencies": {
     "animate.css": "3.5.2",
