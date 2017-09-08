@@ -291,8 +291,12 @@ define([
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
+            if (!checkifStreamingIsAvailable(presenterStream.getUri()) && _.includes(options.capabilities, 'streaming')) {
+                return subscriberCallback(null, {status: 'streaming-not-available'});
+            }
+
             var streamId = parseStreamIdFromStreamUri(presenterStream.getUri());
-            var streamToken = parseStreamTokenFromStreamUri(presenterStream.getUri());
+            var streamToken = parseStreamTokenFromStreamUri(presenterStream.getUri(), options.capabilities);
 
             if (!streamId) {
                 return subscriberCallback(null, {status: 'no-stream-playing'});
@@ -567,13 +571,33 @@ define([
             return joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
         }
 
-        this._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', options.capabilities, publisher.getStreamId(), function(error, createStreamTokenResponse) {
+        this._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', [], publisher.getStreamId(), function(error, createStreamTokenResponse) {
             if (error) {
                 return callback(error);
             }
 
             if (createStreamTokenResponse.status !== 'ok') {
                 return callback(null, createStreamTokenResponse);
+            }
+
+            if (_.includes(options.capabilities, 'streaming')) {
+                return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming'], publisher.getStreamId(), function(error, createStreamTokenWithStreamingResponse) {
+                    if (error) {
+                        return callback(error);
+                    }
+
+                    if (createStreamTokenResponse.status !== 'ok') {
+                        return callback(null, createStreamTokenResponse);
+                    }
+
+                    var joinRoomOptions = _.assign({}, options, {
+                        roomId: room.getRoomId(),
+                        streams: [mapStreamToMemberStream(publisher, streamEnums.types.presentation.name, createStreamTokenResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken)],
+                        role: memberEnums.roles.presenter.name
+                    });
+
+                    joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
+                });
             }
 
             var joinRoomOptions = _.assign({}, options, {
@@ -696,7 +720,20 @@ define([
         return uri.replace(pcastStreamPrefix, '').split('?')[0];
     }
 
-    function parseStreamTokenFromStreamUri(uri) {
+    function checkifStreamingIsAvailable(uri) {
+        var queryParamString = uri.split('?');
+        var deferToCreateToken = true;
+
+        if (queryParamString.length !== 2) {
+            return deferToCreateToken;
+        }
+
+        var queryParamsString = queryParamString[1];
+
+        return _.includes(queryParamsString, 'streamTokenStreaming');
+    }
+
+    function parseStreamTokenFromStreamUri(uri, capabilities) {
         var queryParamString = uri.split('?');
         var streamToken = '';
 
@@ -704,10 +741,17 @@ define([
             return streamToken;
         }
 
-        var queryParams = queryParamString[1].split('&');
+        var queryParamsString = queryParamString[1];
+        var queryParams = queryParamsString.split('&');
 
         _.forEach(queryParams, function(param) {
-            if (param.split('=')[0] === 'streamToken') {
+            var key = param.split('=')[0];
+
+            if (key === 'streamToken' && !_.includes(capabilities, 'streaming')) {
+                streamToken = param.split('=')[1];
+            }
+
+            if (key === 'streamTokenStreaming' && _.includes(capabilities, 'streaming')) {
                 streamToken = param.split('=')[1];
             }
         });
@@ -731,7 +775,7 @@ define([
         self.setStreams(streams);
     }
 
-    function mapStreamToMemberStream(publisher, type, viewerStreamToken) {
+    function mapStreamToMemberStream(publisher, type, viewerStreamToken, viewerStreamTokenStreaming) {
         var mediaStream = publisher.getStream();
         var audioTracks = mediaStream ? mediaStream.getAudioTracks() : null;
         var videoTracks = mediaStream ? mediaStream.getVideoTracks() : null;
@@ -747,6 +791,10 @@ define([
 
         if (viewerStreamToken) {
             publishedStream.uri = publishedStream.uri + '?streamToken=' + viewerStreamToken;
+        }
+
+        if (viewerStreamTokenStreaming) {
+            publishedStream.uri = publishedStream.uri + '&streamTokenStreaming=' + viewerStreamTokenStreaming;
         }
 
         return publishedStream;
