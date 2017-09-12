@@ -23,11 +23,11 @@ define([
     './PCastEndPoint',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
-    './analytix/metricsTransmitterFactory',
-    './analytix/StreamAnalytix',
-    './analytix/SessionAnalytix',
+    './telemetry/metricsTransmitterFactory',
+    './telemetry/StreamTelemetry',
+    './telemetry/SessionTelemetry',
     'phenix-rtc'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, SessionAnalytix, phenixRTC) {
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -56,8 +56,8 @@ define([
         this._version = sdkVersion;
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
-        this._sessionAnalytix = new SessionAnalytix(this._logger, this._metricsTransmitter);
-        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionAnalytix);
+        this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
+        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
@@ -220,9 +220,9 @@ define([
                 this._logger.setObservableSessionId(null);
             }
 
-            if (this._sessionAnalytixSubscription) {
-                this._sessionAnalytixSubscription.dispose();
-                this._sessionAnalytix.setSessionId(null);
+            if (this._sessionTelemetrySubscription) {
+                this._sessionTelemetrySubscription.dispose();
+                this._sessionTelemetry.setSessionId(null);
             }
         }
     };
@@ -295,9 +295,9 @@ define([
             setupStreamOptions.tags = tags;
         }
 
-        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+        var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
-        streamAnalytix.setProperty('resource', streamType);
+        streamTelemetry.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -317,10 +317,10 @@ define([
             } else {
                 var streamId = response.createStreamResponse.streamId;
 
-                streamAnalytix.setStreamId(streamId);
-                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Provisioned');
-                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.setStreamId(streamId);
+                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                streamTelemetry.recordMetric('Provisioned');
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
                     resource: that._resolvedEndPoint,
                     kind: 'https'
                 });
@@ -329,8 +329,8 @@ define([
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamAnalytix, function (phenixPublisher, error) {
-                        streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamTelemetry, function (phenixPublisher, error) {
+                        streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                         if (error) {
                             callback.call(that, that, 'failed', null);
@@ -341,7 +341,7 @@ define([
                 }
 
                 return createPublisher.call(that, streamId, function (phenixPublisher, error) {
-                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -375,9 +375,9 @@ define([
         var that = this;
         var streamType = 'download';
         var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
-        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+        var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
-        streamAnalytix.setProperty('resource', streamType);
+        streamTelemetry.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -407,18 +407,18 @@ define([
                     create = createLiveViewer;
                 }
 
-                streamAnalytix.setStreamId(streamId);
-                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Provisioned');
-                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.setStreamId(streamId);
+                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                streamTelemetry.recordMetric('Provisioned');
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
                     resource: that.getBaseUri(),
                     kind: 'https'
                 });
 
                 options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
-                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                return create.call(that, streamId, offerSdp, streamTelemetry, function (phenixMediaStream, error) {
+                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -798,12 +798,12 @@ define([
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
         }
 
-        if (this._sessionAnalytixSubscription) {
-            this._sessionAnalytixSubscription.dispose();
-            this._sessionAnalytix.setSessionId(null);
+        if (this._sessionTelemetrySubscription) {
+            this._sessionTelemetrySubscription.dispose();
+            this._sessionTelemetry.setSessionId(null);
         }
 
-        this._sessionAnalytixSubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionAnalytix.setSessionId, this._sessionAnalytix));
+        this._sessionTelemetrySubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionTelemetry.setSessionId, this._sessionTelemetry));
     }
 
     function connected() {
@@ -953,7 +953,7 @@ define([
         delete this._peerConnections[streamId];
     }
 
-    function setupStreamAddedListener(streamId, state, peerConnection, streamAnalytix, callback, options) {
+    function setupStreamAddedListener(streamId, state, peerConnection, streamTelemetry, callback, options) {
         var that = this;
         var onAddStream = function onAddStream(event) {
             if (state.failed) {
@@ -971,7 +971,7 @@ define([
 
             that._logger.info('[%s] Got remote stream', streamId);
 
-            streamAnalytix.setProperty('kind', 'real-time');
+            streamTelemetry.setProperty('kind', 'real-time');
 
             var createMediaStream = function createMediaStream(stream) {
                 var internalMediaStream = {
@@ -989,9 +989,9 @@ define([
                                 start: function start(elementToAttachTo) {
                                     element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
-                                    streamAnalytix.recordTimeToFirstFrame(element);
-                                    streamAnalytix.recordRebuffering(element);
-                                    streamAnalytix.recordVideoResolutionChanges(element);
+                                    streamTelemetry.recordTimeToFirstFrame(element);
+                                    streamTelemetry.recordRebuffering(element);
+                                    streamTelemetry.recordVideoResolutionChanges(element);
 
                                     if (options.receiveAudio === false) {
                                         element.muted = true;
@@ -1007,7 +1007,7 @@ define([
                                 stop: function stop() {
                                     dimensionsChangedMonitor.stop();
 
-                                    streamAnalytix.stop();
+                                    streamTelemetry.stop();
 
                                     if (element) {
                                         if (typeof element.pause === 'function') {
@@ -1425,7 +1425,7 @@ define([
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, createOptions, streamOptions) {
+    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamTelemetry, callback, createOptions, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -1715,7 +1715,7 @@ define([
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, function (mediaStream) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
             remoteMediaStream = mediaStream;
@@ -1739,7 +1739,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, createOptions) {
+    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamTelemetry, callback, createOptions) {
         if (phenixRTC.browser === 'IE') {
             throw new Error('Subscribing in real-time not supported on IE without the PhenixP2P Plugin');
         }
@@ -1859,7 +1859,7 @@ define([
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, createOptions);
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, callback, createOptions);
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
@@ -1875,7 +1875,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, streamAnalytix, callback, options) {
+    function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
@@ -1888,9 +1888,9 @@ define([
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamAnalytix, callback, options);
+            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamAnalytix, callback, options);
+            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamTelemetry, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -1898,7 +1898,7 @@ define([
         return callback.call(that, undefined, 'failed');
     }
 
-    function createShakaLiveViewer(streamId, uri, streamAnalytix, callback, options) {
+    function createShakaLiveViewer(streamId, uri, streamTelemetry, callback, options) {
         var that = this;
 
         if (!that._shaka) {
@@ -1928,7 +1928,7 @@ define([
             }
         };
 
-        streamAnalytix.setProperty('kind', 'dash');
+        streamTelemetry.setProperty('kind', 'dash');
 
         var internalMediaStream = {
             renderer: null,
@@ -2000,9 +2000,9 @@ define([
                             player = new shaka.Player(elementToAttachTo);
                             internalMediaStream.renderer = this;
 
-                            streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
-                            streamAnalytix.recordRebuffering(elementToAttachTo);
-                            streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+                            streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+                            streamTelemetry.recordRebuffering(elementToAttachTo);
+                            streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
 
                             var playerConfig = {
                                 abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
@@ -2066,7 +2066,7 @@ define([
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
 
-                            streamAnalytix.stop();
+                            streamTelemetry.stop();
 
                             if (player) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -2391,7 +2391,7 @@ define([
         return u8Array;
     }
 
-    function createHlsLiveViewer(streamId, uri, streamAnalytix, callback, options) {
+    function createHlsLiveViewer(streamId, uri, streamTelemetry, callback, options) {
         var that = this;
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -2407,7 +2407,7 @@ define([
             }
         };
 
-        streamAnalytix.setProperty('kind', 'hls');
+        streamTelemetry.setProperty('kind', 'hls');
 
         var internalMediaStream = {
             renderer: null,
@@ -2513,9 +2513,9 @@ define([
                                     elementToAttachTo.muted = true;
                                 }
 
-                                streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
-                                streamAnalytix.recordRebuffering(elementToAttachTo);
-                                streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+                                streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+                                streamTelemetry.recordRebuffering(elementToAttachTo);
+                                streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
 
                                 internalMediaStream.renderer = this;
 
@@ -2542,7 +2542,7 @@ define([
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
 
-                            streamAnalytix.stop();
+                            streamTelemetry.stop();
 
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {

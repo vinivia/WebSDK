@@ -22,7 +22,7 @@ define([
 
     var maxAttempts = 4;
 
-    function PCastEndPoint(version, baseUri, logger, sessionAnalytix) {
+    function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
         if (typeof version !== 'string') {
             throw new Error('Must pass a valid "version"');
         }
@@ -38,7 +38,7 @@ define([
         this._version = version;
         this._baseUri = baseUri;
         this._logger = logger;
-        this._sessionAnalytix = sessionAnalytix;
+        this._sessionTelemetry = sessionTelemetry;
     }
 
     PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
@@ -71,7 +71,7 @@ define([
                     return callback(err);
                 }
 
-                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger, that._sessionAnalytix);
+                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger, that._sessionTelemetry);
 
                 closestEndPointResolver.resolveAll(endPoints);
             });

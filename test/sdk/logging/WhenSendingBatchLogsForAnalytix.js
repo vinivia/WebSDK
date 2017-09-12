@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/AnalytixAppender',
+    'sdk/logging/TelemetryAppender',
     'phenix-web-logging'
-], function (AnalytixAppender, logging) {
-    describe('When Sending Batch Logs For Analytix', function () {
+], function (TelemetryAppender, logging) {
+    describe('When Sending Batch Logs For Telemetry', function () {
         var requests;
-        var analytixAppender;
+        var telemetryAppender;
 
         var sessionId = 'mockSessionId';
 
@@ -32,82 +32,82 @@ define([
                 requests.push(req);
             };
 
-            analytixAppender = new AnalytixAppender('stg');
+            telemetryAppender = new TelemetryAppender('stg');
         });
 
         afterEach(function() {
             this.xhr.restore();
 
-            analytixAppender.setEnabled(false);
+            telemetryAppender.setEnabled(false);
         });
 
         it('has property log that is a function', function () {
-            expect(analytixAppender.log).to.be.a('function');
+            expect(telemetryAppender.log).to.be.a('function');
         });
 
         it('has property setThreshold that is a function', function () {
-            expect(analytixAppender.setThreshold).to.be.a('function');
+            expect(telemetryAppender.setThreshold).to.be.a('function');
         });
 
         it('has property getThreshold that is a function', function () {
-            expect(analytixAppender.getThreshold).to.be.a('function');
+            expect(telemetryAppender.getThreshold).to.be.a('function');
         });
 
         it('expects logging without enabled does not trigger http request', function () {
-            analytixAppender.setEnabled(false);
-            analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
+            telemetryAppender.setEnabled(false);
+            telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             expect(requests[0]).to.not.be.ok;
         });
 
         it('expects logging does trigger http request', function () {
-            analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
+            telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             expect(requests[0]).to.be.ok;
         });
 
         it('expects threshold to be set when setThreshold is passed a log level', function () {
-            analytixAppender.setThreshold(logging.level.WARN);
+            telemetryAppender.setThreshold(logging.level.WARN);
 
-            expect(analytixAppender.getThreshold()).to.be.equal(logging.level.WARN);
+            expect(telemetryAppender.getThreshold()).to.be.equal(logging.level.WARN);
         });
 
         it('expects log of warn to be logged when threshold is warn', function () {
-            analytixAppender.setThreshold(logging.level.WARN);
-            analytixAppender._records = [];
+            telemetryAppender.setThreshold(logging.level.WARN);
+            telemetryAppender._records = [];
 
-            analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
-            analytixAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
-            analytixAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
+            telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
+            telemetryAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
+            telemetryAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
             expect(requests.length).to.be.equal(0);
 
-            analytixAppender.log(0, 'Warn', '', ['Message'], sessionId, '', '', '', {level: logging.level.WARN});
+            telemetryAppender.log(0, 'Warn', '', ['Message'], sessionId, '', '', '', {level: logging.level.WARN});
             expect(requests.length).to.be.equal(1);
         });
 
         it('expects log of error to be logged when threshold is warn', function () {
-            analytixAppender.setThreshold(logging.level.WARN);
-            analytixAppender._records = [];
+            telemetryAppender.setThreshold(logging.level.WARN);
+            telemetryAppender._records = [];
 
-            analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
-            analytixAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
-            analytixAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
+            telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
+            telemetryAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
+            telemetryAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
             expect(requests.length).to.be.equal(0);
 
-            analytixAppender.log(0, 'Error', '', ['Message'], sessionId, '', '', '', {level: logging.level.ERROR});
+            telemetryAppender.log(0, 'Error', '', ['Message'], sessionId, '', '', '', {level: logging.level.ERROR});
             expect(requests.length).to.be.equal(1);
         });
 
         it('expects log of fatal to be logged when threshold is warn', function () {
-            analytixAppender.setThreshold(logging.level.WARN);
-            analytixAppender._records = [];
+            telemetryAppender.setThreshold(logging.level.WARN);
+            telemetryAppender._records = [];
 
-            analytixAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
-            analytixAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
-            analytixAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
+            telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
+            telemetryAppender.log(0, 'Debug', '', ['Message'], sessionId, '', '', '', {level: logging.level.DEBUG});
+            telemetryAppender.log(0, 'Info', '', ['Message'], sessionId, '', '', '', {level: logging.level.INFO});
             expect(requests.length).to.be.equal(0);
 
-            analytixAppender.log(0, 'Fatal', '', ['Message'], sessionId, '', '', '', {level: logging.level.FATAL});
+            telemetryAppender.log(0, 'Fatal', '', ['Message'], sessionId, '', '', '', {level: logging.level.FATAL});
             expect(requests.length).to.be.equal(1);
         });
     });

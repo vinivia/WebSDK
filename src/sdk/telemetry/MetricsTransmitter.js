@@ -16,21 +16,18 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc',
-    'phenix-web-logging',
     'phenix-web-proto',
-    '../protocol/analytixProto.json'
-], function (_, assert, rtc, logging, proto, analytixProto) {
-    function AnalytixAppender(uri) {
+    'phenix-rtc',
+    '../protocol/telemetryProto.json'
+], function (_, assert, proto, rtc, telemetryProto) {
+    function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
 
-        this._loggingUrl = '/analytix/logs';
+        this._loggingUrl = '/telemetry/metrics';
         this._domain = location.hostname;
-        this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._mostRecentRuntime = 0;
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.StoreLogRecords', {
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
             maxAttempts: 3,
             maxBufferedRecords: 1000,
             maxBatchSize: 512
@@ -39,73 +36,63 @@ define([
         this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
     }
 
-    AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level, 'level');
-
-        this._minLevel = level;
-    };
-
-    AnalytixAppender.prototype.getThreshold = function getThreshold() {
-        return this._minLevel;
-    };
-
-    AnalytixAppender.prototype.isEnabled = function isEnabled() {
+    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
         return this._isEnabled;
     };
 
-    AnalytixAppender.prototype.setEnabled = function setEnabled(enabled) {
+    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
         assert.isBoolean(enabled, 'enabled');
 
         this._isEnabled = enabled;
     };
 
-    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel || !this._isEnabled) {
+    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+        if (!this._isEnabled) {
             return;
         }
 
-        assert.isArray(messages, 'messages');
+        assert.isStringNotEmpty(metric, 'metric');
+        assert.isObject(value, 'value');
 
         this._mostRecentRuntime = since;
         this._mostRecentSessionId = sessionId;
-        this._mostRecentUserId = userId;
+        this._mostRecentStreamId = streamId;
         this._mostRecentEnvironment = environment;
         this._mostRecentVersion = version;
 
-        addMessagesToRecords.call(this, level, category, messages);
+        addMetricToRecords.call(this, metric, value);
     };
 
-    function addMessagesToRecords(level, category, messages) {
-        this._batchHttpProtocol.addRecord({
-            level: level,
+    function addMetricToRecords(metric, value) {
+        var record = _.assign({}, value, {
+            metric: metric,
             timestamp: _.isoString(),
-            category: category,
-            message: messages.join(' '),
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
             source: this._browser,
             fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
             environment: this._mostRecentEnvironment,
             version: this._mostRecentVersion,
             runtime: this._mostRecentRuntime
         });
+
+        this._batchHttpProtocol.addRecord(record);
     }
 
     function onCapacity(deleteRecords) {
         this._batchHttpProtocol.addRecordToBeginning({
-            level: 'Warn',
+            metric: 'MetricDropped',
+            value: {uint64: deleteRecords},
             timestamp: _.isoString(),
-            category: 'websdk/analytixLogger',
-            message: 'Deleted ' + deleteRecords + ' records',
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
             source: this._browser,
             fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
             environment: this._mostRecentEnvironment,
             version: this._mostRecentVersion,
             runtime: this._mostRecentRuntime
         });
     }
 
-    return AnalytixAppender;
+    return MetricsTransmitter;
 });

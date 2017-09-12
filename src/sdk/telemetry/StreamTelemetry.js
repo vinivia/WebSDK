@@ -25,7 +25,7 @@ define([
     var defaultEnvironment = '%ENVIRONMENT%' || '?';
     var sdkVersion = '%SDKVERSION%' || '?';
 
-    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
+    function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
 
         this._environment = defaultEnvironment;
@@ -40,14 +40,14 @@ define([
         logMetric.call(this, 'Stream initializing');
     }
 
-    StreamAnalytix.prototype.setProperty = function(name, value) {
+    StreamTelemetry.prototype.setProperty = function(name, value) {
         assert.isStringNotEmpty(name, 'name');
         assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
-    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
+    StreamTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
         assert.isStringNotEmpty(metric, 'metric');
 
         var record = _.assign({}, {
@@ -60,7 +60,7 @@ define([
         recordMetricRecord.call(this, record, since());
     };
 
-    StreamAnalytix.prototype.setStreamId = function(streamId) {
+    StreamTelemetry.prototype.setStreamId = function(streamId) {
         assert.isStringNotEmpty(streamId, 'streamId');
 
         if (this._streamId) {
@@ -77,7 +77,7 @@ define([
         }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
     };
 
-    StreamAnalytix.prototype.setStartOffset = function(startOffset) {
+    StreamTelemetry.prototype.setStartOffset = function(startOffset) {
         assert.isNumber(startOffset, 'startOffset');
 
         if (this._startOffset) {
@@ -89,17 +89,17 @@ define([
         this.recordMetric('Offset', {uint64: startOffset});
     };
 
-    StreamAnalytix.prototype.getStartOffset = function () {
+    StreamTelemetry.prototype.getStartOffset = function () {
         return this._startOffset;
     };
 
-    StreamAnalytix.prototype.elapsed = function () {
+    StreamTelemetry.prototype.elapsed = function () {
         var now = _.now();
 
         return now - this._start;
     };
 
-    StreamAnalytix.prototype.stop = function() {
+    StreamTelemetry.prototype.stop = function() {
         this._disposables.dispose();
 
         this.recordMetric('Stopped');
@@ -107,7 +107,7 @@ define([
         logMetric.call(this, 'Stream stopped');
     };
 
-    StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
+    StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
         var startRecordingFirstFrame = _.now();
         var timeOfFirstFrame;
@@ -137,7 +137,7 @@ define([
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
 
-    StreamAnalytix.prototype.recordVideoResolutionChanges = function(video) {
+    StreamTelemetry.prototype.recordVideoResolutionChanges = function(video) {
         var that = this;
         var lastResolution = {
             width: video.videoWidth,
@@ -171,7 +171,7 @@ define([
         }));
     };
 
-    StreamAnalytix.prototype.recordRebuffering = function(video) {
+    StreamTelemetry.prototype.recordRebuffering = function(video) {
         var that = this;
         var videoStalled;
         var lastProgress;
@@ -237,12 +237,12 @@ define([
             throw new Error('Invalid logging arguments.');
         }
 
-        var streamAnalytixPrepend = '[%s] [StreamAnalytix] [%s] ';
-        var message = streamAnalytixPrepend + args[0];
+        var streamTelemetryPrepend = '[%s] [StreamTelemetry] [%s] ';
+        var message = streamTelemetryPrepend + args[0];
         var loggingArguments = args.slice(1);
-        var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
 
-        this._logger.debug.apply(this._logger, analytixArguments);
+        this._logger.debug.apply(this._logger, telemetryArguments);
     }
 
     function since() {
@@ -259,5 +259,5 @@ define([
         this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, annotatedRecord);
     }
 
-    return StreamAnalytix;
+    return StreamTelemetry;
 });

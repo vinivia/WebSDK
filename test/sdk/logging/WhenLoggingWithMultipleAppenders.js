@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 define([
-    'sdk/logging/analytixAppenderFactory',
+    'sdk/logging/telemetryAppenderFactory',
     'phenix-web-logging'
-], function (analytixAppenderFactory, logging) {
+], function (telemetryAppenderFactory, logging) {
     describe('When Logging With Multiple Appenders', function () {
         var logger;
         var consoleAppender = new logging.ConsoleAppender();
-        var analytixAppender = analytixAppenderFactory.getAppender();
+        var telemetryAppender = telemetryAppenderFactory.getAppender();
 
         beforeEach(function() {
             logger = new logging.Logger();
@@ -50,63 +50,63 @@ define([
             expect(logger.fatal).to.be.a('function');
         });
 
-        describe('When logger has both analytix and console appenders', function() {
-            var analytixAppenderStub;
+        describe('When logger has both telemetry and console appenders', function() {
+            var telemetryAppenderStub;
             var consoleAppenderStub;
 
             beforeEach(function() {
-                analytixAppenderStub = sinon.stub(analytixAppender, 'log'); // Disable requests to external source
+                telemetryAppenderStub = sinon.stub(telemetryAppender, 'log'); // Disable requests to external source
                 consoleAppenderStub = sinon.stub(consoleAppender, 'log');
                 logger = new logging.Logger();
 
-                logger.addAppender(analytixAppender);
+                logger.addAppender(telemetryAppender);
                 logger.addAppender(consoleAppender);
             });
 
             afterEach(function() {
-                analytixAppenderStub.restore();
+                telemetryAppenderStub.restore();
                 consoleAppenderStub.restore();
             });
 
-            it('Expect Trace to trigger console logger and not analytix logger', function () {
+            it('Expect Trace to trigger console logger and not telemetry logger', function () {
                 logger.trace('Trace Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
 
-            it('Expect Debug to trigger console logger and not analytix logger', function () {
+            it('Expect Debug to trigger console logger and not telemetry logger', function () {
                 logger.debug('Debug Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
 
-            it('Expect Info to trigger analytix and console loggers', function () {
+            it('Expect Info to trigger telemetry and console loggers', function () {
                 logger.info('Info Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
 
-            it('Expect Warn to trigger analytix and console loggers', function () {
+            it('Expect Warn to trigger telemetry and console loggers', function () {
                 logger.warn('Warn Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
 
-            it('Expect Error to trigger analytix and console loggers', function () {
+            it('Expect Error to trigger telemetry and console loggers', function () {
                 logger.error('Error Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
 
-            it('Expect Fatal to trigger analytix and console loggers', function () {
+            it('Expect Fatal to trigger telemetry and console loggers', function () {
                 logger.fatal('Fatal Message');
 
-                sinon.assert.calledOnce(analytixAppenderStub);
+                sinon.assert.calledOnce(telemetryAppenderStub);
                 sinon.assert.calledOnce(consoleAppenderStub);
             });
         });

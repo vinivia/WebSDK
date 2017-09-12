@@ -17,41 +17,41 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     '../environment',
-    './AnalytixAppender'
-], function (_, assert, environment, AnalytixAppender) {
+    './MetricsTransmitter'
+], function (_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
             local: '',
-            staging: 'https://analytix-stg.phenixp2p.com',
-            production: 'https://analytix.phenixp2p.com'
+            staging: 'https://telemetry-stg.phenixp2p.com',
+            production: 'https://telemetry.phenixp2p.com'
         }
     };
 
-    function AnalytixAppenderFactory() {
-        this._analytixAppenders = {};
+    function MetricsTransmitterFactory() {
+        this._metricsTransmitters = {};
     }
 
-    AnalytixAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
+    MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
         var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
 
-        var analytixServerUrl = config.urls[env];
+        var telemetryServerUrl = config.urls[env];
 
-        if (!this._analytixAppenders[env]) {
-            this._analytixAppenders[env] = createNewAppender.call(this, analytixServerUrl);
+        if (!this._metricsTransmitters[env]) {
+            this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl);
         }
 
-        return this._analytixAppenders[env];
+        return this._metricsTransmitters[env];
     };
 
-    function createNewAppender(uri) {
-        var appender = new AnalytixAppender(uri);
+    function createNewTransmitter(uri) {
+        var transmitter = new MetricsTransmitter(uri);
 
         if (!uri) {
-            appender.setEnabled(false);
+            transmitter.setEnabled(false);
         }
 
-        return appender;
+        return transmitter;
     }
 
-    return new AnalytixAppenderFactory();
+    return new MetricsTransmitterFactory();
 });

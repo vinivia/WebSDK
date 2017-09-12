@@ -17,8 +17,8 @@ define([
 ], function () {
     'use strict';
 
-    var analytixProto = {
-        "package": "analytix",
+    var telemetryProto = {
+        "package": "telemetry",
         "messages": [
             {
                 "name": "LogData",
@@ -404,5 +404,5 @@ define([
         ]
     };
 
-    return analytixProto;
+    return telemetryProto;
 });

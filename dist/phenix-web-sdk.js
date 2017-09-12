@@ -4163,7 +4163,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var maxAttempts = 4;
 
-    function PCastEndPoint(version, baseUri, logger, sessionAnalytix) {
+    function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
         if (typeof version !== 'string') {
             throw new Error('Must pass a valid "version"');
         }
@@ -4179,7 +4179,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._version = version;
         this._baseUri = baseUri;
         this._logger = logger;
-        this._sessionAnalytix = sessionAnalytix;
+        this._sessionTelemetry = sessionTelemetry;
     }
 
     PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
@@ -4212,7 +4212,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(err);
                 }
 
-                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger, that._sessionAnalytix);
+                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger, that._sessionTelemetry);
 
                 closestEndPointResolver.resolveAll(endPoints);
             });
@@ -4271,8 +4271,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(6),
-    __webpack_require__(71)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging, analytixAppenderFactory) {
+    __webpack_require__(67)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
     function PCastLoggerFactory() {
@@ -4285,15 +4285,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         var logger = new logging.Logger();
-        var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
+        var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
 
-        analytixAppender.setThreshold(logging.level.INFO);
+        telemetryAppender.setThreshold(logging.level.INFO);
 
         if (!disableConsole) {
             logger.addAppender(new logging.ConsoleAppender());
         }
 
-        logger.addAppender(analytixAppender);
+        logger.addAppender(telemetryAppender);
 
         logger.isPCastLogger = true;
 
@@ -4477,11 +4477,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(11),
     __webpack_require__(58),
     __webpack_require__(56),
-    __webpack_require__(62),
-    __webpack_require__(61),
-    __webpack_require__(60),
+    __webpack_require__(75),
+    __webpack_require__(74),
+    __webpack_require__(73),
     __webpack_require__(4)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamAnalytix, SessionAnalytix, phenixRTC) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -4490,7 +4490,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-08T14:43:31Z';
+    var sdkVersion = '2017-09-12T00:09:00Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -4510,8 +4510,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._version = sdkVersion;
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
-        this._sessionAnalytix = new SessionAnalytix(this._logger, this._metricsTransmitter);
-        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionAnalytix);
+        this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
+        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
         this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
         this._screenSharingEnabled = false;
@@ -4674,9 +4674,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 this._logger.setObservableSessionId(null);
             }
 
-            if (this._sessionAnalytixSubscription) {
-                this._sessionAnalytixSubscription.dispose();
-                this._sessionAnalytix.setSessionId(null);
+            if (this._sessionTelemetrySubscription) {
+                this._sessionTelemetrySubscription.dispose();
+                this._sessionTelemetry.setSessionId(null);
             }
         }
     };
@@ -4749,9 +4749,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             setupStreamOptions.tags = tags;
         }
 
-        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+        var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
-        streamAnalytix.setProperty('resource', streamType);
+        streamTelemetry.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -4771,10 +4771,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             } else {
                 var streamId = response.createStreamResponse.streamId;
 
-                streamAnalytix.setStreamId(streamId);
-                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Provisioned');
-                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.setStreamId(streamId);
+                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                streamTelemetry.recordMetric('Provisioned');
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
                     resource: that._resolvedEndPoint,
                     kind: 'https'
                 });
@@ -4783,8 +4783,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamAnalytix, function (phenixPublisher, error) {
-                        streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamTelemetry, function (phenixPublisher, error) {
+                        streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                         if (error) {
                             callback.call(that, that, 'failed', null);
@@ -4795,7 +4795,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 return createPublisher.call(that, streamId, function (phenixPublisher, error) {
-                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -4829,9 +4829,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
         var streamType = 'download';
         var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
-        var streamAnalytix = new StreamAnalytix(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+        var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
-        streamAnalytix.setProperty('resource', streamType);
+        streamTelemetry.setProperty('resource', streamType);
 
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
             if (error) {
@@ -4861,18 +4861,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     create = createLiveViewer;
                 }
 
-                streamAnalytix.setStreamId(streamId);
-                streamAnalytix.setStartOffset(response.createStreamResponse.offset);
-                streamAnalytix.recordMetric('Provisioned');
-                streamAnalytix.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.setStreamId(streamId);
+                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                streamTelemetry.recordMetric('Provisioned');
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
                     resource: that.getBaseUri(),
                     kind: 'https'
                 });
 
                 options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                return create.call(that, streamId, offerSdp, streamAnalytix, function (phenixMediaStream, error) {
-                    streamAnalytix.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+                return create.call(that, streamId, offerSdp, streamTelemetry, function (phenixMediaStream, error) {
+                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
                         callback.call(that, that, 'failed', null);
@@ -5252,12 +5252,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
         }
 
-        if (this._sessionAnalytixSubscription) {
-            this._sessionAnalytixSubscription.dispose();
-            this._sessionAnalytix.setSessionId(null);
+        if (this._sessionTelemetrySubscription) {
+            this._sessionTelemetrySubscription.dispose();
+            this._sessionTelemetry.setSessionId(null);
         }
 
-        this._sessionAnalytixSubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionAnalytix.setSessionId, this._sessionAnalytix));
+        this._sessionTelemetrySubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionTelemetry.setSessionId, this._sessionTelemetry));
     }
 
     function connected() {
@@ -5407,7 +5407,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         delete this._peerConnections[streamId];
     }
 
-    function setupStreamAddedListener(streamId, state, peerConnection, streamAnalytix, callback, options) {
+    function setupStreamAddedListener(streamId, state, peerConnection, streamTelemetry, callback, options) {
         var that = this;
         var onAddStream = function onAddStream(event) {
             if (state.failed) {
@@ -5425,7 +5425,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             that._logger.info('[%s] Got remote stream', streamId);
 
-            streamAnalytix.setProperty('kind', 'real-time');
+            streamTelemetry.setProperty('kind', 'real-time');
 
             var createMediaStream = function createMediaStream(stream) {
                 var internalMediaStream = {
@@ -5443,9 +5443,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                                 start: function start(elementToAttachTo) {
                                     element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
 
-                                    streamAnalytix.recordTimeToFirstFrame(element);
-                                    streamAnalytix.recordRebuffering(element);
-                                    streamAnalytix.recordVideoResolutionChanges(element);
+                                    streamTelemetry.recordTimeToFirstFrame(element);
+                                    streamTelemetry.recordRebuffering(element);
+                                    streamTelemetry.recordVideoResolutionChanges(element);
 
                                     if (options.receiveAudio === false) {
                                         element.muted = true;
@@ -5461,7 +5461,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                                 stop: function stop() {
                                     dimensionsChangedMonitor.stop();
 
-                                    streamAnalytix.stop();
+                                    streamTelemetry.stop();
 
                                     if (element) {
                                         if (typeof element.pause === 'function') {
@@ -5879,7 +5879,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         callback(publisher);
     }
 
-    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamAnalytix, callback, createOptions, streamOptions) {
+    function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamTelemetry, callback, createOptions, streamOptions) {
         var that = this;
         var state = {
             failed: false,
@@ -6169,7 +6169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, function (mediaStream) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, function (mediaStream) {
             var publisher = that._publishers[streamId];
 
             remoteMediaStream = mediaStream;
@@ -6193,7 +6193,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamAnalytix, callback, createOptions) {
+    function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamTelemetry, callback, createOptions) {
         if (phenixRTC.browser === 'IE') {
             throw new Error('Subscribing in real-time not supported on IE without the PhenixP2P Plugin');
         }
@@ -6313,7 +6313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamAnalytix, callback, createOptions);
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, callback, createOptions);
         setupIceCandidateListener.call(that, streamId, peerConnection, function onIceCandidate(candidate) {
             if (onIceCandidateCallback) {
                 onIceCandidateCallback(candidate);
@@ -6329,7 +6329,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, streamAnalytix, callback, options) {
+    function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
@@ -6342,9 +6342,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamAnalytix, callback, options);
+            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamAnalytix, callback, options);
+            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamTelemetry, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -6352,7 +6352,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return callback.call(that, undefined, 'failed');
     }
 
-    function createShakaLiveViewer(streamId, uri, streamAnalytix, callback, options) {
+    function createShakaLiveViewer(streamId, uri, streamTelemetry, callback, options) {
         var that = this;
 
         if (!that._shaka) {
@@ -6382,7 +6382,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
         };
 
-        streamAnalytix.setProperty('kind', 'dash');
+        streamTelemetry.setProperty('kind', 'dash');
 
         var internalMediaStream = {
             renderer: null,
@@ -6454,9 +6454,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                             player = new shaka.Player(elementToAttachTo);
                             internalMediaStream.renderer = this;
 
-                            streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
-                            streamAnalytix.recordRebuffering(elementToAttachTo);
-                            streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+                            streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+                            streamTelemetry.recordRebuffering(elementToAttachTo);
+                            streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
 
                             var playerConfig = {
                                 abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
@@ -6520,7 +6520,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
 
-                            streamAnalytix.stop();
+                            streamTelemetry.stop();
 
                             if (player) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -6845,7 +6845,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return u8Array;
     }
 
-    function createHlsLiveViewer(streamId, uri, streamAnalytix, callback, options) {
+    function createHlsLiveViewer(streamId, uri, streamTelemetry, callback, options) {
         var that = this;
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
@@ -6861,7 +6861,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
         };
 
-        streamAnalytix.setProperty('kind', 'hls');
+        streamTelemetry.setProperty('kind', 'hls');
 
         var internalMediaStream = {
             renderer: null,
@@ -6967,9 +6967,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                                     elementToAttachTo.muted = true;
                                 }
 
-                                streamAnalytix.recordTimeToFirstFrame(elementToAttachTo);
-                                streamAnalytix.recordRebuffering(elementToAttachTo);
-                                streamAnalytix.recordVideoResolutionChanges(elementToAttachTo);
+                                streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+                                streamTelemetry.recordRebuffering(elementToAttachTo);
+                                streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
 
                                 internalMediaStream.renderer = this;
 
@@ -6996,7 +6996,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         stop: function stop() {
                             dimensionsChangedMonitor.stop();
 
-                            streamAnalytix.stop();
+                            streamTelemetry.stop();
 
                             if (element) {
                                 var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -8173,9 +8173,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(24),
     __webpack_require__(28),
-    __webpack_require__(74),
+    __webpack_require__(70),
     __webpack_require__(27),
-    __webpack_require__(69),
+    __webpack_require__(65),
     __webpack_require__(14),
     __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
@@ -9543,8 +9543,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
     'use strict';
 
-    var analytixProto = {
-        "package": "analytix",
+    var telemetryProto = {
+        "package": "telemetry",
         "messages": [
             {
                 "name": "LogData",
@@ -9930,7 +9930,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         ]
     };
 
-    return analytixProto;
+    return telemetryProto;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -9957,7 +9957,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(75),
+    __webpack_require__(71),
     __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Stream, member) {
     'use strict';
@@ -10495,9 +10495,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(12),
     __webpack_require__(11),
-    __webpack_require__(63),
-    __webpack_require__(66),
-    __webpack_require__(64)
+    __webpack_require__(59),
+    __webpack_require__(62),
+    __webpack_require__(60)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
@@ -10613,7 +10613,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(12),
     __webpack_require__(11),
-    __webpack_require__(67)
+    __webpack_require__(63)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
@@ -14109,8 +14109,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-08T14:43:31Z' || '?';
-    var releaseVersion = '2017.3.3';
+    var sdkVersion = '2017-09-12T00:09:00Z' || '?';
+    var releaseVersion = '2017.3.5';
 
     function Logger() {
         this._appenders = [];
@@ -20646,14 +20646,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var measurementsPerEndPoint = 4;
     var endpointClosenessThreshold = 30;
 
-    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger, sessionAnalytix) {
+    function ClosestEndPointResolver(onClosestEndpointFound, version, baseUri, logger, sessionTelemetry) {
         this._done = false;
         this._minTime = Number.MAX_VALUE;
         this._minResponseText = '';
         this._onClosestEndpointFound = onClosestEndpointFound;
         this._logger = logger;
         this._version = version;
-        this._sessionAnalytix = sessionAnalytix;
+        this._sessionTelemetry = sessionTelemetry;
     }
 
     ClosestEndPointResolver.prototype.isResolved = function isResolved() {
@@ -20709,7 +20709,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var time = end - start;
                 var timeAboveThreshold = time > endpointClosenessThreshold;
 
-                that._sessionAnalytix.recordMetric('RoundTripTime', {uint64: time}, null, {
+                that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: time}, null, {
                     resource: endPoint,
                     kind: 'https'
                 });
@@ -20905,8 +20905,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(22),
     __webpack_require__(10),
     __webpack_require__(4),
-    __webpack_require__(73),
-    __webpack_require__(72)
+    __webpack_require__(69),
+    __webpack_require__(68)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, ReconnectingWebSocket, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -21790,600 +21790,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(10),
-    __webpack_require__(4),
-    __webpack_require__(26)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, proto, rtc, analytixProto) {
-    function MetricsTransmitter(uri) {
-        assert.isString(uri, 'uri');
-
-        this._loggingUrl = '/analytix/metrics';
-        this._domain = location.hostname;
-        this._isEnabled = true;
-        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.SubmitMetricRecords', {
-            maxAttempts: 3,
-            maxBufferedRecords: 1000,
-            maxBatchSize: 512
-        });
-
-        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
-    }
-
-    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
-
-    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled, 'enabled');
-
-        this._isEnabled = enabled;
-    };
-
-    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
-        if (!this._isEnabled) {
-            return;
-        }
-
-        assert.isStringNotEmpty(metric, 'metric');
-        assert.isObject(value, 'value');
-
-        this._mostRecentRuntime = since;
-        this._mostRecentSessionId = sessionId;
-        this._mostRecentStreamId = streamId;
-        this._mostRecentEnvironment = environment;
-        this._mostRecentVersion = version;
-
-        addMetricToRecords.call(this, metric, value);
-    };
-
-    function addMetricToRecords(metric, value) {
-        var record = _.assign({}, value, {
-            metric: metric,
-            timestamp: _.isoString(),
-            sessionId: this._mostRecentSessionId,
-            streamId: this._mostRecentStreamId,
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-
-        this._batchHttpProtocol.addRecord(record);
-    }
-
-    function onCapacity(deleteRecords) {
-        this._batchHttpProtocol.addRecordToBeginning({
-            metric: 'MetricDropped',
-            value: {uint64: deleteRecords},
-            timestamp: _.isoString(),
-            sessionId: this._mostRecentSessionId,
-            streamId: this._mostRecentStreamId,
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    return MetricsTransmitter;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 60 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable) {
-    'use strict';
-
-    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
-    var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-08T14:43:31Z' || '?';
-
-    function SessionAnalytix(logger, metricsTransmitter) {
-        this._environment = defaultEnvironment;
-        this._version = sdkVersion;
-        this._sessionId = null;
-        this._properties = {
-            resource: 'Session',
-            kind: 'Event'
-        };
-        this._logger = logger;
-        this._metricsTransmitter = metricsTransmitter;
-        this._start = _.now();
-        this._disposables = new disposable.DisposableList();
-        this._records = [];
-    }
-
-    SessionAnalytix.prototype.setSessionId = function(sessionId) {
-        if (!sessionId && this._sessionId) {
-            recordMetricRecord.call(this, {
-                metric: 'Stopped',
-                elapsed: this.elapsed()
-            }, since());
-        }
-
-        this._sessionId = sessionId;
-
-        if (sessionId) {
-            recordMetricRecord.call(this, {
-                metric: 'Initialized',
-                elapsed: this.elapsed()
-            }, since());
-
-            recordAllMetrics.call(this);
-        }
-    };
-
-    SessionAnalytix.prototype.setProperty = function(name, value) {
-        assert.isStringNotEmpty(name, 'name');
-        assert.isStringNotEmpty(value, 'value');
-
-        this._properties[name] = value;
-    };
-
-    SessionAnalytix.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
-        assert.isStringNotEmpty(metric, 'metric');
-
-        var record = _.assign({}, {
-            metric: metric,
-            elapsed: this.elapsed(),
-            value: value,
-            previousValue: previousValue
-        }, additionalProperties || {});
-
-        recordMetricRecord.call(this, record, since());
-    };
-
-    SessionAnalytix.prototype.elapsed = function () {
-        var now = _.now();
-
-        return now - this._start;
-    };
-
-    SessionAnalytix.prototype.stop = function() {
-        this._disposables.dispose();
-
-        this.recordMetric('Stopped');
-
-        logMetric.call(this, 'Stream stopped');
-    };
-
-    function logMetric() {
-        var args = Array.prototype.slice.call(arguments);
-
-        if (args.length === 0) {
-            throw new Error('Invalid logging arguments.');
-        }
-
-        var sessionAnalytixPrepend = '[%s] [SessionAnalytix] [%s] ';
-        var message = sessionAnalytixPrepend + args[0];
-        var loggingArguments = args.slice(1);
-        var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
-
-        this._logger.debug.apply(this._logger, analytixArguments);
-    }
-
-    function since() {
-        var now = _.now();
-
-        return (now - start) / 1000;
-    }
-
-    function recordMetricRecord(record, since) {
-        assert.isStringNotEmpty(record.metric, 'record.metric');
-
-        if (!this._sessionId) {
-            return this._records.push({
-                record: record,
-                since: since
-            });
-        }
-
-        var annotatedRecord = _.assign({}, this._properties, record);
-
-        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, null, this._environment, this._version, annotatedRecord);
-    }
-
-    function recordAllMetrics() {
-        if (!this._sessionId) {
-            return;
-        }
-
-        var that = this;
-        var numberOfRecordsToPush = this._records.length;
-
-        while (numberOfRecordsToPush > 0) {
-            var records = this._records.splice(numberOfRecordsToPush-1, 1);
-
-            if (records.length === 1) {
-                recordMetricRecord.call(that, records[0].record, records[0].since);
-            }
-
-            numberOfRecordsToPush--;
-        }
-    }
-
-    return SessionAnalytix;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 61 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(4)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, phenixRTC) {
-    'use strict';
-
-    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
-    var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-08T14:43:31Z' || '?';
-
-    function StreamAnalytix(sessionId, logger, metricsTransmitter) {
-        assert.isStringNotEmpty(sessionId, 'sessionId');
-
-        this._environment = defaultEnvironment;
-        this._version = sdkVersion;
-        this._sessionId = sessionId;
-        this._properties = {};
-        this._logger = logger;
-        this._metricsTransmitter = metricsTransmitter;
-        this._start = _.now();
-        this._disposables = new disposable.DisposableList();
-
-        logMetric.call(this, 'Stream initializing');
-    }
-
-    StreamAnalytix.prototype.setProperty = function(name, value) {
-        assert.isStringNotEmpty(name, 'name');
-        assert.isStringNotEmpty(value, 'value');
-
-        this._properties[name] = value;
-    };
-
-    StreamAnalytix.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
-        assert.isStringNotEmpty(metric, 'metric');
-
-        var record = _.assign({}, {
-            metric: metric,
-            elapsed: this.elapsed(),
-            value: value,
-            previousValue: previousValue
-        }, additionalProperties || {});
-
-        recordMetricRecord.call(this, record, since());
-    };
-
-    StreamAnalytix.prototype.setStreamId = function(streamId) {
-        assert.isStringNotEmpty(streamId, 'streamId');
-
-        if (this._streamId) {
-            throw new Error('Stream ID can only be set once.');
-        }
-
-        this._streamId = streamId;
-
-        var now = _.now();
-
-        recordMetricRecord.call(this, {
-            metric: 'Initialized',
-            elapsed: this.elapsed() - now + this._start // Adjust for delay to get the stream ID
-        }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
-    };
-
-    StreamAnalytix.prototype.setStartOffset = function(startOffset) {
-        assert.isNumber(startOffset, 'startOffset');
-
-        if (this._startOffset) {
-            throw new Error('Start offset can only be set once.');
-        }
-
-        this._startOffset = startOffset;
-
-        this.recordMetric('Offset', {uint64: startOffset});
-    };
-
-    StreamAnalytix.prototype.getStartOffset = function () {
-        return this._startOffset;
-    };
-
-    StreamAnalytix.prototype.elapsed = function () {
-        var now = _.now();
-
-        return now - this._start;
-    };
-
-    StreamAnalytix.prototype.stop = function() {
-        this._disposables.dispose();
-
-        this.recordMetric('Stopped');
-
-        logMetric.call(this, 'Stream stopped');
-    };
-
-    StreamAnalytix.prototype.recordTimeToFirstFrame = function(video) {
-        var that = this;
-        var startRecordingFirstFrame = _.now();
-        var timeOfFirstFrame;
-
-        var listenForFirstFrame = function() {
-            if (timeOfFirstFrame) {
-                return;
-            }
-
-            timeOfFirstFrame = _.now() - startRecordingFirstFrame;
-
-            that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
-            logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
-
-            timeToFirstFrameListenerDisposable.dispose();
-        };
-
-        _.addEventListener(video, 'loadeddata', listenForFirstFrame);
-
-        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
-            _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
-        });
-
-        // Ensure TTFF is not recorded if stop is called before first frame
-        this._disposables.add(timeToFirstFrameListenerDisposable);
-    };
-
-    // TODO(dy) Add logging for bit rate changes using PC.getStats
-
-    StreamAnalytix.prototype.recordVideoResolutionChanges = function(video) {
-        var that = this;
-        var lastResolution = {
-            width: video.videoWidth,
-            height: video.videoHeight
-        };
-
-        var listenForResolutionChangeOnProgress = function() {
-            if (lastResolution.width === video.videoWidth && lastResolution.height === video.videoHeight) {
-                return;
-            }
-
-            that.recordMetric('ResolutionChanged', {string: video.videoWidth + 'x' + video.videoHeight}, {string: lastResolution.width + 'x' + lastResolution.height});
-
-            lastResolution = {
-                width: video.videoWidth,
-                height: video.videoHeight
-            };
-
-            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
-        };
-
-        // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
-
-        // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
-        _.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-        _.addEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
-
-        this._disposables.add(new disposable.Disposable(function() {
-            _.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-            _.removeEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
-        }));
-    };
-
-    StreamAnalytix.prototype.recordRebuffering = function(video) {
-        var that = this;
-        var videoStalled;
-        var lastProgress;
-
-        var listenForStall = function() {
-            if (videoStalled) {
-                return;
-            }
-
-            that.recordMetric('Stalled');
-
-            videoStalled = _.now();
-
-            logMetric.call(that, '[buffering] Stream has stalled');
-        };
-
-        var listenForContinuation = function(event) {
-            var bufferLength = video.buffered.length;
-            var hasNotProgressedSinceLastProgressEvent = event.type === 'playing' ||
-                bufferLength > 0 ? (event.type === 'progress' || event.type === 'timeupdate') && video.buffered.end(bufferLength - 1) === lastProgress : true;
-
-            if (!videoStalled || (!bufferLength && phenixRTC.browser !== 'Edge') || hasNotProgressedSinceLastProgressEvent) {
-                return;
-            }
-
-            if (event.type === 'progress') {
-                lastProgress = video.buffered.end(bufferLength - 1);
-            }
-
-            var timeSinceStop = _.now() - videoStalled;
-
-            that.recordMetric('Buffering', {uint64: timeSinceStop});
-            that.recordMetric('Playing');
-
-            logMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
-
-            videoStalled = null;
-        };
-
-        _.addEventListener(video, 'stalled', listenForStall);
-        _.addEventListener(video, 'pause', listenForStall);
-        _.addEventListener(video, 'suspend', listenForStall);
-        _.addEventListener(video, 'play', listenForContinuation);
-        _.addEventListener(video, 'playing', listenForContinuation);
-        _.addEventListener(video, 'progress', listenForContinuation);
-        _.addEventListener(video, 'timeupdate', listenForContinuation);
-
-        this._disposables.add(new disposable.Disposable(function() {
-            _.removeEventListener(video, 'stalled', listenForStall);
-            _.removeEventListener(video, 'pause', listenForStall);
-            _.removeEventListener(video, 'suspend', listenForStall);
-            _.removeEventListener(video, 'play', listenForContinuation);
-            _.removeEventListener(video, 'playing', listenForContinuation);
-            _.removeEventListener(video, 'progress', listenForContinuation);
-            _.removeEventListener(video, 'timeupdate', listenForContinuation);
-        }));
-    };
-
-    function logMetric() {
-        var args = Array.prototype.slice.call(arguments);
-
-        if (args.length === 0) {
-            throw new Error('Invalid logging arguments.');
-        }
-
-        var streamAnalytixPrepend = '[%s] [StreamAnalytix] [%s] ';
-        var message = streamAnalytixPrepend + args[0];
-        var loggingArguments = args.slice(1);
-        var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
-
-        this._logger.debug.apply(this._logger, analytixArguments);
-    }
-
-    function since() {
-        var now = _.now();
-
-        return (now - start) / 1000;
-    }
-
-    function recordMetricRecord(record, since) {
-        assert.isStringNotEmpty(record.metric, 'record.metric');
-
-        var annotatedRecord = _.assign({}, this._properties, record);
-
-        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, annotatedRecord);
-    }
-
-    return StreamAnalytix;
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 62 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(25),
-    __webpack_require__(59)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
-    var config = {
-        urls: {
-            local: '',
-            staging: 'https://analytix-stg.phenixp2p.com',
-            production: 'https://analytix.phenixp2p.com'
-        }
-    };
-
-    function MetricsTransmitterFactory() {
-        this._metricsTransmitters = {};
-    }
-
-    MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
-        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
-
-        var analytixServerUrl = config.urls[env];
-
-        if (!this._metricsTransmitters[env]) {
-            this._metricsTransmitters[env] = createNewTransmitter.call(this, analytixServerUrl);
-        }
-
-        return this._metricsTransmitters[env];
-    };
-
-    function createNewTransmitter(uri) {
-        var transmitter = new MetricsTransmitter(uri);
-
-        if (!uri) {
-            transmitter.setEnabled(false);
-        }
-
-        return transmitter;
-    }
-
-    return new MetricsTransmitterFactory();
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 63 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
     'use strict';
 
@@ -22412,7 +21818,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 64 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22532,7 +21938,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22674,7 +22080,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22695,7 +22101,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(65)
+    __webpack_require__(61)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -22736,7 +22142,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 67 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22834,7 +22240,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 68 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23168,7 +22574,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23191,7 +22597,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(2),
     __webpack_require__(3),
-    __webpack_require__(68)
+    __webpack_require__(64)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, ChatService) {
     'use strict';
 
@@ -23329,7 +22735,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23354,17 +22760,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(6),
     __webpack_require__(10),
     __webpack_require__(26)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, rtc, logging, proto, analytixProto) {
-    function AnalytixAppender(uri) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, rtc, logging, proto, telemetryProto) {
+    function TelemetryAppender(uri) {
         assert.isString(uri, 'uri');
 
-        this._loggingUrl = '/analytix/logs';
+        this._loggingUrl = '/telemetry/logs';
         this._domain = location.hostname;
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
         this._mostRecentRuntime = 0;
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [analytixProto], 'analytix.StoreLogRecords', {
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
             maxAttempts: 3,
             maxBufferedRecords: 1000,
             maxBatchSize: 512
@@ -23373,27 +22779,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
     }
 
-    AnalytixAppender.prototype.setThreshold = function setThreshold(level) {
+    TelemetryAppender.prototype.setThreshold = function setThreshold(level) {
         assert.isNumber(level, 'level');
 
         this._minLevel = level;
     };
 
-    AnalytixAppender.prototype.getThreshold = function getThreshold() {
+    TelemetryAppender.prototype.getThreshold = function getThreshold() {
         return this._minLevel;
     };
 
-    AnalytixAppender.prototype.isEnabled = function isEnabled() {
+    TelemetryAppender.prototype.isEnabled = function isEnabled() {
         return this._isEnabled;
     };
 
-    AnalytixAppender.prototype.setEnabled = function setEnabled(enabled) {
+    TelemetryAppender.prototype.setEnabled = function setEnabled(enabled) {
         assert.isBoolean(enabled, 'enabled');
 
         this._isEnabled = enabled;
     };
 
-    AnalytixAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
+    TelemetryAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
         if (context.level < this._minLevel || !this._isEnabled) {
             return;
         }
@@ -23429,7 +22835,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._batchHttpProtocol.addRecordToBeginning({
             level: 'Warn',
             timestamp: _.isoString(),
-            category: 'websdk/analytixLogger',
+            category: 'websdk/telemetryLogger',
             message: 'Deleted ' + deleteRecords + ' records',
             source: this._browser,
             fullQualifiedName: this._domain,
@@ -23441,12 +22847,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     }
 
-    return AnalytixAppender;
+    return TelemetryAppender;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23468,34 +22874,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(25),
-    __webpack_require__(70)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, AnalytixAppender) {
+    __webpack_require__(66)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
             local: '',
-            staging: 'https://analytix-stg.phenixp2p.com',
-            production: 'https://analytix.phenixp2p.com'
+            staging: 'https://telemetry-stg.phenixp2p.com',
+            production: 'https://telemetry.phenixp2p.com'
         }
     };
 
-    function AnalytixAppenderFactory() {
-        this._analytixAppenders = {};
+    function TelemetryAppenderFactory() {
+        this._telemetryAppenders = {};
     }
 
-    AnalytixAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
+    TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
         var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
 
-        var analytixServerUrl = config.urls[env];
+        var telemetryServerUrl = config.urls[env];
 
-        if (!this._analytixAppenders[env]) {
-            this._analytixAppenders[env] = createNewAppender.call(this, analytixServerUrl);
+        if (!this._telemetryAppenders[env]) {
+            this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);
         }
 
-        return this._analytixAppenders[env];
+        return this._telemetryAppenders[env];
     };
 
     function createNewAppender(uri) {
-        var appender = new AnalytixAppender(uri);
+        var appender = new TelemetryAppender(uri);
 
         if (!uri) {
             appender.setEnabled(false);
@@ -23504,12 +22910,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return appender;
     }
 
-    return new AnalytixAppenderFactory();
+    return new TelemetryAppenderFactory();
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24393,7 +23799,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26097,7 +25503,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26218,7 +25624,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 75 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26321,6 +25727,600 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     return Stream;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(10),
+    __webpack_require__(4),
+    __webpack_require__(26)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, proto, rtc, telemetryProto) {
+    function MetricsTransmitter(uri) {
+        assert.isString(uri, 'uri');
+
+        this._loggingUrl = '/telemetry/metrics';
+        this._domain = location.hostname;
+        this._isEnabled = true;
+        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
+            maxAttempts: 3,
+            maxBufferedRecords: 1000,
+            maxBatchSize: 512
+        });
+
+        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+    }
+
+    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
+        return this._isEnabled;
+    };
+
+    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
+        assert.isBoolean(enabled, 'enabled');
+
+        this._isEnabled = enabled;
+    };
+
+    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+        if (!this._isEnabled) {
+            return;
+        }
+
+        assert.isStringNotEmpty(metric, 'metric');
+        assert.isObject(value, 'value');
+
+        this._mostRecentRuntime = since;
+        this._mostRecentSessionId = sessionId;
+        this._mostRecentStreamId = streamId;
+        this._mostRecentEnvironment = environment;
+        this._mostRecentVersion = version;
+
+        addMetricToRecords.call(this, metric, value);
+    };
+
+    function addMetricToRecords(metric, value) {
+        var record = _.assign({}, value, {
+            metric: metric,
+            timestamp: _.isoString(),
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+
+        this._batchHttpProtocol.addRecord(record);
+    }
+
+    function onCapacity(deleteRecords) {
+        this._batchHttpProtocol.addRecordToBeginning({
+            metric: 'MetricDropped',
+            value: {uint64: deleteRecords},
+            timestamp: _.isoString(),
+            sessionId: this._mostRecentSessionId,
+            streamId: this._mostRecentStreamId,
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+    }
+
+    return MetricsTransmitter;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable) {
+    'use strict';
+
+    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+    var defaultEnvironment = 'production' || '?';
+    var sdkVersion = '2017-09-12T00:09:00Z' || '?';
+
+    function SessionTelemetry(logger, metricsTransmitter) {
+        this._environment = defaultEnvironment;
+        this._version = sdkVersion;
+        this._sessionId = null;
+        this._properties = {
+            resource: 'Session',
+            kind: 'Event'
+        };
+        this._logger = logger;
+        this._metricsTransmitter = metricsTransmitter;
+        this._start = _.now();
+        this._disposables = new disposable.DisposableList();
+        this._records = [];
+    }
+
+    SessionTelemetry.prototype.setSessionId = function(sessionId) {
+        if (!sessionId && this._sessionId) {
+            recordMetricRecord.call(this, {
+                metric: 'Stopped',
+                elapsed: this.elapsed()
+            }, since());
+        }
+
+        this._sessionId = sessionId;
+
+        if (sessionId) {
+            recordMetricRecord.call(this, {
+                metric: 'Initialized',
+                elapsed: this.elapsed()
+            }, since());
+
+            recordAllMetrics.call(this);
+        }
+    };
+
+    SessionTelemetry.prototype.setProperty = function(name, value) {
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(value, 'value');
+
+        this._properties[name] = value;
+    };
+
+    SessionTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
+        assert.isStringNotEmpty(metric, 'metric');
+
+        var record = _.assign({}, {
+            metric: metric,
+            elapsed: this.elapsed(),
+            value: value,
+            previousValue: previousValue
+        }, additionalProperties || {});
+
+        recordMetricRecord.call(this, record, since());
+    };
+
+    SessionTelemetry.prototype.elapsed = function () {
+        var now = _.now();
+
+        return now - this._start;
+    };
+
+    SessionTelemetry.prototype.stop = function() {
+        this._disposables.dispose();
+
+        this.recordMetric('Stopped');
+
+        logMetric.call(this, 'Stream stopped');
+    };
+
+    function logMetric() {
+        var args = Array.prototype.slice.call(arguments);
+
+        if (args.length === 0) {
+            throw new Error('Invalid logging arguments.');
+        }
+
+        var sessionTelemetryPrepend = '[%s] [SessionTelemetry] [%s] ';
+        var message = sessionTelemetryPrepend + args[0];
+        var loggingArguments = args.slice(1);
+        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+
+        this._logger.debug.apply(this._logger, telemetryArguments);
+    }
+
+    function since() {
+        var now = _.now();
+
+        return (now - start) / 1000;
+    }
+
+    function recordMetricRecord(record, since) {
+        assert.isStringNotEmpty(record.metric, 'record.metric');
+
+        if (!this._sessionId) {
+            return this._records.push({
+                record: record,
+                since: since
+            });
+        }
+
+        var annotatedRecord = _.assign({}, this._properties, record);
+
+        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, null, this._environment, this._version, annotatedRecord);
+    }
+
+    function recordAllMetrics() {
+        if (!this._sessionId) {
+            return;
+        }
+
+        var that = this;
+        var numberOfRecordsToPush = this._records.length;
+
+        while (numberOfRecordsToPush > 0) {
+            var records = this._records.splice(numberOfRecordsToPush-1, 1);
+
+            if (records.length === 1) {
+                recordMetricRecord.call(that, records[0].record, records[0].since);
+            }
+
+            numberOfRecordsToPush--;
+        }
+    }
+
+    return SessionTelemetry;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3),
+    __webpack_require__(4)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, phenixRTC) {
+    'use strict';
+
+    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+    var defaultEnvironment = 'production' || '?';
+    var sdkVersion = '2017-09-12T00:09:00Z' || '?';
+
+    function StreamTelemetry(sessionId, logger, metricsTransmitter) {
+        assert.isStringNotEmpty(sessionId, 'sessionId');
+
+        this._environment = defaultEnvironment;
+        this._version = sdkVersion;
+        this._sessionId = sessionId;
+        this._properties = {};
+        this._logger = logger;
+        this._metricsTransmitter = metricsTransmitter;
+        this._start = _.now();
+        this._disposables = new disposable.DisposableList();
+
+        logMetric.call(this, 'Stream initializing');
+    }
+
+    StreamTelemetry.prototype.setProperty = function(name, value) {
+        assert.isStringNotEmpty(name, 'name');
+        assert.isStringNotEmpty(value, 'value');
+
+        this._properties[name] = value;
+    };
+
+    StreamTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
+        assert.isStringNotEmpty(metric, 'metric');
+
+        var record = _.assign({}, {
+            metric: metric,
+            elapsed: this.elapsed(),
+            value: value,
+            previousValue: previousValue
+        }, additionalProperties || {});
+
+        recordMetricRecord.call(this, record, since());
+    };
+
+    StreamTelemetry.prototype.setStreamId = function(streamId) {
+        assert.isStringNotEmpty(streamId, 'streamId');
+
+        if (this._streamId) {
+            throw new Error('Stream ID can only be set once.');
+        }
+
+        this._streamId = streamId;
+
+        var now = _.now();
+
+        recordMetricRecord.call(this, {
+            metric: 'Initialized',
+            elapsed: this.elapsed() - now + this._start // Adjust for delay to get the stream ID
+        }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
+    };
+
+    StreamTelemetry.prototype.setStartOffset = function(startOffset) {
+        assert.isNumber(startOffset, 'startOffset');
+
+        if (this._startOffset) {
+            throw new Error('Start offset can only be set once.');
+        }
+
+        this._startOffset = startOffset;
+
+        this.recordMetric('Offset', {uint64: startOffset});
+    };
+
+    StreamTelemetry.prototype.getStartOffset = function () {
+        return this._startOffset;
+    };
+
+    StreamTelemetry.prototype.elapsed = function () {
+        var now = _.now();
+
+        return now - this._start;
+    };
+
+    StreamTelemetry.prototype.stop = function() {
+        this._disposables.dispose();
+
+        this.recordMetric('Stopped');
+
+        logMetric.call(this, 'Stream stopped');
+    };
+
+    StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
+        var that = this;
+        var startRecordingFirstFrame = _.now();
+        var timeOfFirstFrame;
+
+        var listenForFirstFrame = function() {
+            if (timeOfFirstFrame) {
+                return;
+            }
+
+            timeOfFirstFrame = _.now() - startRecordingFirstFrame;
+
+            that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
+            logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
+
+            timeToFirstFrameListenerDisposable.dispose();
+        };
+
+        _.addEventListener(video, 'loadeddata', listenForFirstFrame);
+
+        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
+            _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
+        });
+
+        // Ensure TTFF is not recorded if stop is called before first frame
+        this._disposables.add(timeToFirstFrameListenerDisposable);
+    };
+
+    // TODO(dy) Add logging for bit rate changes using PC.getStats
+
+    StreamTelemetry.prototype.recordVideoResolutionChanges = function(video) {
+        var that = this;
+        var lastResolution = {
+            width: video.videoWidth,
+            height: video.videoHeight
+        };
+
+        var listenForResolutionChangeOnProgress = function() {
+            if (lastResolution.width === video.videoWidth && lastResolution.height === video.videoHeight) {
+                return;
+            }
+
+            that.recordMetric('ResolutionChanged', {string: video.videoWidth + 'x' + video.videoHeight}, {string: lastResolution.width + 'x' + lastResolution.height});
+
+            lastResolution = {
+                width: video.videoWidth,
+                height: video.videoHeight
+            };
+
+            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
+        };
+
+        // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
+
+        // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
+        _.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+        _.addEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
+
+        this._disposables.add(new disposable.Disposable(function() {
+            _.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
+            _.removeEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
+        }));
+    };
+
+    StreamTelemetry.prototype.recordRebuffering = function(video) {
+        var that = this;
+        var videoStalled;
+        var lastProgress;
+
+        var listenForStall = function() {
+            if (videoStalled) {
+                return;
+            }
+
+            that.recordMetric('Stalled');
+
+            videoStalled = _.now();
+
+            logMetric.call(that, '[buffering] Stream has stalled');
+        };
+
+        var listenForContinuation = function(event) {
+            var bufferLength = video.buffered.length;
+            var hasNotProgressedSinceLastProgressEvent = event.type === 'playing' ||
+                bufferLength > 0 ? (event.type === 'progress' || event.type === 'timeupdate') && video.buffered.end(bufferLength - 1) === lastProgress : true;
+
+            if (!videoStalled || (!bufferLength && phenixRTC.browser !== 'Edge') || hasNotProgressedSinceLastProgressEvent) {
+                return;
+            }
+
+            if (event.type === 'progress') {
+                lastProgress = video.buffered.end(bufferLength - 1);
+            }
+
+            var timeSinceStop = _.now() - videoStalled;
+
+            that.recordMetric('Buffering', {uint64: timeSinceStop});
+            that.recordMetric('Playing');
+
+            logMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
+
+            videoStalled = null;
+        };
+
+        _.addEventListener(video, 'stalled', listenForStall);
+        _.addEventListener(video, 'pause', listenForStall);
+        _.addEventListener(video, 'suspend', listenForStall);
+        _.addEventListener(video, 'play', listenForContinuation);
+        _.addEventListener(video, 'playing', listenForContinuation);
+        _.addEventListener(video, 'progress', listenForContinuation);
+        _.addEventListener(video, 'timeupdate', listenForContinuation);
+
+        this._disposables.add(new disposable.Disposable(function() {
+            _.removeEventListener(video, 'stalled', listenForStall);
+            _.removeEventListener(video, 'pause', listenForStall);
+            _.removeEventListener(video, 'suspend', listenForStall);
+            _.removeEventListener(video, 'play', listenForContinuation);
+            _.removeEventListener(video, 'playing', listenForContinuation);
+            _.removeEventListener(video, 'progress', listenForContinuation);
+            _.removeEventListener(video, 'timeupdate', listenForContinuation);
+        }));
+    };
+
+    function logMetric() {
+        var args = Array.prototype.slice.call(arguments);
+
+        if (args.length === 0) {
+            throw new Error('Invalid logging arguments.');
+        }
+
+        var streamTelemetryPrepend = '[%s] [StreamTelemetry] [%s] ';
+        var message = streamTelemetryPrepend + args[0];
+        var loggingArguments = args.slice(1);
+        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+
+        this._logger.debug.apply(this._logger, telemetryArguments);
+    }
+
+    function since() {
+        var now = _.now();
+
+        return (now - start) / 1000;
+    }
+
+    function recordMetricRecord(record, since) {
+        assert.isStringNotEmpty(record.metric, 'record.metric');
+
+        var annotatedRecord = _.assign({}, this._properties, record);
+
+        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, this._streamId, this._environment, this._version, annotatedRecord);
+    }
+
+    return StreamTelemetry;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(25),
+    __webpack_require__(72)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
+    var config = {
+        urls: {
+            local: '',
+            staging: 'https://telemetry-stg.phenixp2p.com',
+            production: 'https://telemetry.phenixp2p.com'
+        }
+    };
+
+    function MetricsTransmitterFactory() {
+        this._metricsTransmitters = {};
+    }
+
+    MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
+        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
+
+        var telemetryServerUrl = config.urls[env];
+
+        if (!this._metricsTransmitters[env]) {
+            this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl);
+        }
+
+        return this._metricsTransmitters[env];
+    };
+
+    function createNewTransmitter(uri) {
+        var transmitter = new MetricsTransmitter(uri);
+
+        if (!uri) {
+            transmitter.setEnabled(false);
+        }
+
+        return transmitter;
+    }
+
+    return new MetricsTransmitterFactory();
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 

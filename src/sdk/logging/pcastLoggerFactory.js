@@ -17,8 +17,8 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-logging',
-    './analytixAppenderFactory'
-], function (_, assert, logging, analytixAppenderFactory) {
+    './telemetryAppenderFactory'
+], function (_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
     function PCastLoggerFactory() {
@@ -31,15 +31,15 @@ define([
         }
 
         var logger = new logging.Logger();
-        var analytixAppender = analytixAppenderFactory.getAppender(baseUri);
+        var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
 
-        analytixAppender.setThreshold(logging.level.INFO);
+        telemetryAppender.setThreshold(logging.level.INFO);
 
         if (!disableConsole) {
             logger.addAppender(new logging.ConsoleAppender());
         }
 
-        logger.addAppender(analytixAppender);
+        logger.addAppender(telemetryAppender);
 
         logger.isPCastLogger = true;
 

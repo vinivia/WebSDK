@@ -24,7 +24,7 @@ define([
     var defaultEnvironment = '%ENVIRONMENT%' || '?';
     var sdkVersion = '%SDKVERSION%' || '?';
 
-    function SessionAnalytix(logger, metricsTransmitter) {
+    function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
         this._version = sdkVersion;
         this._sessionId = null;
@@ -39,7 +39,7 @@ define([
         this._records = [];
     }
 
-    SessionAnalytix.prototype.setSessionId = function(sessionId) {
+    SessionTelemetry.prototype.setSessionId = function(sessionId) {
         if (!sessionId && this._sessionId) {
             recordMetricRecord.call(this, {
                 metric: 'Stopped',
@@ -59,14 +59,14 @@ define([
         }
     };
 
-    SessionAnalytix.prototype.setProperty = function(name, value) {
+    SessionTelemetry.prototype.setProperty = function(name, value) {
         assert.isStringNotEmpty(name, 'name');
         assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
-    SessionAnalytix.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
+    SessionTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
         assert.isStringNotEmpty(metric, 'metric');
 
         var record = _.assign({}, {
@@ -79,13 +79,13 @@ define([
         recordMetricRecord.call(this, record, since());
     };
 
-    SessionAnalytix.prototype.elapsed = function () {
+    SessionTelemetry.prototype.elapsed = function () {
         var now = _.now();
 
         return now - this._start;
     };
 
-    SessionAnalytix.prototype.stop = function() {
+    SessionTelemetry.prototype.stop = function() {
         this._disposables.dispose();
 
         this.recordMetric('Stopped');
@@ -100,12 +100,12 @@ define([
             throw new Error('Invalid logging arguments.');
         }
 
-        var sessionAnalytixPrepend = '[%s] [SessionAnalytix] [%s] ';
-        var message = sessionAnalytixPrepend + args[0];
+        var sessionTelemetryPrepend = '[%s] [SessionTelemetry] [%s] ';
+        var message = sessionTelemetryPrepend + args[0];
         var loggingArguments = args.slice(1);
-        var analytixArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
 
-        this._logger.debug.apply(this._logger, analytixArguments);
+        this._logger.debug.apply(this._logger, telemetryArguments);
     }
 
     function since() {
@@ -148,5 +148,5 @@ define([
         }
     }
 
-    return SessionAnalytix;
+    return SessionTelemetry;
 });

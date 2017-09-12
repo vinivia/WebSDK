@@ -17,8 +17,8 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-logging',
     'sdk/logging/pcastLoggerFactory',
-    'sdk/logging/AnalytixAppender'
-], function (_, logging, pcastLoggerFactory, AnalytixAppender) {
+    'sdk/logging/TelemetryAppender'
+], function (_, logging, pcastLoggerFactory, TelemetryAppender) {
     describe('When Instantiating A PCast Logger', function () {
         var logger;
 
@@ -30,10 +30,10 @@ define([
             expect(logger.isPCastLogger).to.be.equal(true);
         });
 
-        it('Expect analytix appender to have threshold of Info', function () {
-            var analytixAppender = getAnalytixAppender(logger);
+        it('Expect telemetry appender to have threshold of Info', function () {
+            var telemetryAppender = getTelemetryAppender(logger);
 
-            expect(analytixAppender.getThreshold()).to.be.equal(logging.level.INFO);
+            expect(telemetryAppender.getThreshold()).to.be.equal(logging.level.INFO);
         });
 
         it('Expect console appender to have threshold of Trace', function () {
@@ -42,9 +42,9 @@ define([
             expect(consoleAppender.getThreshold()).to.be.equal(logging.level.TRACE);
         });
 
-        function getAnalytixAppender(logger) {
+        function getTelemetryAppender(logger) {
             return _.find(logger.getAppenders(), function(appender) {
-                return appender instanceof AnalytixAppender;
+                return appender instanceof TelemetryAppender;
             });
         }
 
