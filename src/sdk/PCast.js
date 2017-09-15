@@ -446,7 +446,7 @@ define([
         var that = this;
 
         if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
-            if (!chrome.runtime || !chrome.runtime.sendMessage) { // eslint-disable-line no-undef
+            if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) { // eslint-disable-line no-undef
                 that._logger.info('Screen sharing NOT available');
 
                 return callback(false);
