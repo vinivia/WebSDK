@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
-    '../../../test/mock/mockPCast',
     'sdk/room/room.json'
-], function (RoomExpress, HttpStubber, WebSocketStubber, MockPCast, room) {
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, room) {
     describe('When Creating a Room with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -30,7 +30,7 @@ define([
             roomId: 'TestRoom123',
             alias: '',
             name: 'Test123',
-            description: '',
+            description: 'Room Description',
             bridgeId: '',
             pin: '',
             type: room.types.multiPartyChat.name,
@@ -40,10 +40,9 @@ define([
         var httpStubber;
         var websocketStubber;
         var roomExpress;
-        var protocol;
         var response;
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -56,20 +55,17 @@ define([
                 authenticationData: mockAuthData
             });
 
-            MockPCast.buildUpMockPCast(roomExpress.getPCastExpress().getPCast());
-
-            protocol = roomExpress.getPCastExpress().getPCast().getProtocol();
-
             response = {
                 status: 'ok',
                 room: mockRoom,
                 members: []
             };
 
-            protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
-                callback(null, response);
-            });
+            websocketStubber.stubResponse('chat.CreateRoom', response);
+
+            roomExpress.getPCastExpress().waitForOnline(done);
+
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         afterEach(function() {
@@ -82,37 +78,37 @@ define([
             expect(roomExpress.createRoom).to.be.a('function');
         });
 
-        it('Expect createRoom protocol to be called with required values', function () {
-            protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room) {
-                expect(room.name).to.be.equal(mockRoom.name);
-                expect(room.type).to.be.equal(mockRoom.type);
-                expect(room.description).to.not.be.empty;
+        it('Expect createRoom protocol to be called with required values', function (done) {
+            websocketStubber.stubResponse('chat.CreateRoom', response, function (type, message) {
+                expect(message.room.name).to.be.equal(mockRoom.name);
+                expect(message.room.type).to.be.equal(mockRoom.type);
+                expect(message.room.description).to.not.be.empty;
+                done();
             });
 
             roomExpress.createRoom({room: mockRoom}, function() {});
         });
 
-        it('Expect createRoom protocol to be called with default description value', function () {
-            protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room) {
-                expect(room.description).to.be.equal('Multi Party Chat');
+        it('Expect createRoom protocol to be called with default description value', function (done) {
+            var roomToCreate = _.assign({}, mockRoom, {description: ''});
+
+            websocketStubber.stubResponse('chat.CreateRoom', roomToCreate, function (type, message) {
+                expect(message.room.description).to.be.equal('Multi Party Chat');
+                done();
             });
 
-            roomExpress.createRoom({room: mockRoom}, function() {});
+            roomExpress.createRoom({room: roomToCreate}, function() {});
         });
 
-        it('Expect room to be returned from createRoom', function () {
-            protocol.createRoom.restore();
-            protocol.createRoom = sinon.stub(protocol, 'createRoom').callsFake(function (room, callback) {
-                callback(null, {
-                    status: 'ok',
-                    room: room
-                });
+        it('Expect room to be returned from createRoom', function (done) {
+            websocketStubber.stubResponse('chat.CreateRoom', {
+                status: 'ok',
+                room: mockRoom
             });
 
             roomExpress.createRoom({room: mockRoom}, function(error, response) {
                 expect(response.room).to.exist;
+                done();
             });
         });
     });

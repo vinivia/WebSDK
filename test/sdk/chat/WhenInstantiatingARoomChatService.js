@@ -14,23 +14,70 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-lodash-light',
+    'sdk/PCast',
+    'sdk/room/RoomService',
     'phenix-web-observable',
     'sdk/chat/RoomChatService',
     'sdk/chat/ChatService',
-    '../../../test/mock/mockRoomService'
-], function (observable, RoomChatService, ChatService, MockRoomService) {
-    var stubRoomService;
-    var stubChatService;
-    var roomChatService;
-
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
+    '../../../test/mock/ChromeRuntimeStubber'
+], function (_, PCast, RoomService, observable, RoomChatService, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     describe('When Instantiating a RoomChatService', function () {
-        beforeEach(function () {
-            stubRoomService = new MockRoomService();
-            stubChatService = sinon.createStubInstance(ChatService);
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var roomService;
+        var stubChatService;
+        var roomChatService;
+        var roomObservable;
+        var room = {
+            getRoomId: function () {
+                return '';
+            }
+        };
 
-            roomChatService = new RoomChatService(stubRoomService);
+        before(function() {
+            chromeRuntimeStubber.stub();
+        });
 
-            roomChatService._chatService = stubChatService;
+        beforeEach(function (done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stub();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
+            var pcast = new PCast();
+
+            pcast.start('AuthToken', function () {}, function onlineCallback () {
+                roomService = new RoomService(pcast);
+                stubChatService = sinon.createStubInstance(ChatService);
+                roomChatService = new RoomChatService(roomService);
+                roomChatService._chatService = stubChatService;
+
+                roomObservable = new observable.Observable(room);
+
+                roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom').callsFake(function () {
+                    return roomObservable;
+                });
+
+                roomService.start('Participant', 'Name');
+
+                done();
+            }, function offlineCallback () {});
+
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
         });
 
         it('Has property start that is a function', function () {
@@ -97,39 +144,21 @@ define([
         });
 
         describe('When Room Changes', function () {
-            var roomObservable;
             var newMessagesCallback;
-            var room = {
-                getRoomId: function () {
-                    return '';
-                }
-            };
 
             beforeEach(function () {
-                roomObservable = new observable.Observable(room);
+                if (stubChatService.subscribeAndLoadMessages.restore) {
+                    stubChatService.subscribeAndLoadMessages.restore();
+                }
 
-                stubRoomService.getObservableActiveRoom.restore();
-                stubRoomService.getObservableActiveRoom = sinon.stub(stubRoomService, 'getObservableActiveRoom').callsFake(function () {
-                    return roomObservable;
-                });
-
-                stubChatService.subscribeAndLoadMessages.restore();
                 stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages').callsFake(function (roomId, batchSize, callback) {
                     newMessagesCallback = callback;
                 });
-
-                roomChatService = new RoomChatService(stubRoomService);
-
-                roomChatService._chatService = stubChatService;
 
                 roomChatService.start();
             });
 
             afterEach(function () {
-                if (stubRoomService.getObservableActiveRoom.restore) {
-                    stubRoomService.getObservableActiveRoom.restore();
-                }
-
                 if (stubChatService.subscribeAndLoadMessages.restore) {
                     stubChatService.subscribeAndLoadMessages.restore();
                 }

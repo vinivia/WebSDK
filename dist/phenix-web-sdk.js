@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 77);
+/******/ 	return __webpack_require__(__webpack_require__.s = 78);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -265,6 +265,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(18),
+    __webpack_require__(41)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
+    return {
+        Event: Event,
+        NamedEvents: NamedEvents
+    };
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(45),
     __webpack_require__(44),
     __webpack_require__(9)
@@ -283,7 +313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -4038,36 +4068,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(18),
-    __webpack_require__(41)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
-    return {
-        Event: Event,
-        NamedEvents: NamedEvents
-    };
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -4126,11 +4126,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(50),
-    __webpack_require__(49)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (WebSocketProto, BatchHttpProto) {
+    __webpack_require__(49),
+    __webpack_require__(22)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (MQWebSocket, BatchHttpProto, MQService) {
     return {
-        WebSocketProto: WebSocketProto,
-        BatchHttpProto: BatchHttpProto
+        MQWebSocket: MQWebSocket,
+        BatchHttpProto: BatchHttpProto,
+        MQService: MQService
     };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -4157,7 +4159,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(5),
-    __webpack_require__(55)
+    __webpack_require__(56)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, http, ClosestEndPointResolver) {
     'use strict';
 
@@ -4270,8 +4272,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(6),
-    __webpack_require__(67)
+    __webpack_require__(7),
+    __webpack_require__(68)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -4473,13 +4475,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(2),
     __webpack_require__(12),
     __webpack_require__(5),
-    __webpack_require__(57),
-    __webpack_require__(11),
     __webpack_require__(58),
-    __webpack_require__(56),
+    __webpack_require__(11),
+    __webpack_require__(59),
+    __webpack_require__(57),
+    __webpack_require__(76),
     __webpack_require__(75),
     __webpack_require__(74),
-    __webpack_require__(73),
     __webpack_require__(4)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
@@ -4490,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-15T22:57:49Z';
+    var sdkVersion = '2017-09-18T19:36:06Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -5241,12 +5243,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function instantiateProtocol(uri) {
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
 
-        this._protocol.on('connected', _.bind(connected, this));
-        this._protocol.on('reconnecting', _.bind(reconnecting, this));
-        this._protocol.on('reconnected', _.bind(reconnected, this));
-        this._protocol.on('disconnected', _.bind(disconnected, this));
-        this._protocol.on('pcast.StreamEnded', _.bind(streamEnded, this));
-        this._protocol.on('pcast.StreamDataQuality', _.bind(dataQuality, this));
+        this._protocol.onEvent('connected', _.bind(connected, this));
+        this._protocol.onEvent('reconnecting', _.bind(reconnecting, this));
+        this._protocol.onEvent('reconnected', _.bind(reconnected, this));
+        this._protocol.onEvent('disconnected', _.bind(disconnected, this));
+        this._protocol.onEvent('pcast.StreamEnded', _.bind(streamEnded, this));
+        this._protocol.onEvent('pcast.StreamDataQuality', _.bind(dataQuality, this));
 
         if (this._logger.setObservableSessionId) {
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());
@@ -8173,9 +8175,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(24),
     __webpack_require__(28),
-    __webpack_require__(70),
+    __webpack_require__(71),
     __webpack_require__(27),
-    __webpack_require__(65),
+    __webpack_require__(66),
     __webpack_require__(14),
     __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
@@ -8223,7 +8225,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._self = new observable.Observable(self);
         this._disposables = new disposable.DisposableList();
 
-        var disposeOfRoomEventHandler = this._protocol.on('chat.RoomEvent', _.bind(onRoomEvent, this));
+        var disposeOfRoomEventHandler = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
 
         this._disposables.add(disposeOfRoomEventHandler);
 
@@ -9170,7 +9172,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(54),
+    __webpack_require__(55),
     __webpack_require__(51)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, ProtoBuf, mqProto) {
     'use strict';
@@ -9293,11 +9295,312 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(52)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (ReconnectingWebSocket) {
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(6),
+    __webpack_require__(3),
+    __webpack_require__(21),
+    __webpack_require__(8)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, disposable, MQProtocol, ByteBuffer) {
     'use strict';
 
-    return ReconnectingWebSocket;
+    var clientRequestIdPrefix = 'C';
+    var continuationStatus = 'continuation';
+    var continuationPollInterval = 2000;
+    var continuationTimeout = 300000;
+    var requestTimeout = 18000;
+
+    function MQService(logger, sendCallback, receiveCallback, protocols, apiVersion) {
+        assert.isObject(logger, 'logger');
+        assert.isFunction(sendCallback, 'sendCallback');
+        assert.isFunction(receiveCallback, 'receiveCallback');
+
+        this._logger = logger;
+        this._mqProtocol = new MQProtocol(protocols, apiVersion);
+
+        this._nextRequestId = 0;
+        this._namedEvents = new event.NamedEvents();
+        this._requests = {};
+        this._responses = {};
+        this._requestListeners = {};
+        this._requestTimeouts = {};
+        this._continuationTimeouts = {};
+
+        this._receiveCallback = receiveCallback;
+        this._sendCallback = sendCallback;
+
+        receiveCallback(_.bind(onMessage, this));
+    }
+
+    MQService.prototype.onEvent = function (eventName, handler) {
+        if (this._disposed) {
+            return this._warn('Proto already disposed of. Unable to listen for event');
+        }
+
+        assert.isStringNotEmpty(eventName, 'eventName');
+        assert.isFunction(handler, 'handler');
+
+        return this._namedEvents.listen(eventName, handler);
+    };
+
+    MQService.prototype.onRequest = function (requestName, handler) {
+        if (this._disposed) {
+            return this._warn('Proto already disposed of. Unable to listen for request');
+        }
+
+        assert.isStringNotEmpty(requestName, 'requestName');
+        assert.isFunction(handler, 'handler');
+
+        if (this._requestListeners[requestName]) {
+            this._logger.warn('May not set multiple handlers for the same request. Overriding existing handlers for request [%s]', requestName);
+        }
+
+        this._requestListeners[requestName] = handler;
+
+        var that = this;
+
+        return new disposable.Disposable(function() {
+            that._requestListeners[requestName] = null;
+        });
+    };
+
+    MQService.prototype.sendRequest = function sendRequest(type, message, callback) {
+        if (this._disposed) {
+            this._warn('Proto already disposed of. Unable to send request');
+
+            return callback(null, {status: 'proto-disposed'});
+        }
+
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(message, 'message');
+
+        if (callback) {
+            assert.isFunction(callback, 'callback');
+        }
+
+        var requestId = clientRequestIdPrefix + (this._nextRequestId++).toString();
+        var request = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, message),
+            messageType: 'Request'
+        };
+
+        this._requests[requestId] = _.bind(handleResponseAndContinuations, this, requestId, type, message, callback);
+
+        return sendRequestWithTimeout.call(this, requestId, request, callback);
+    };
+
+    MQService.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
+        if (this._disposed) {
+            this._warn('Proto already disposed of. Unable to send response');
+
+            return callback(null, {status: 'proto-disposed'});
+        }
+
+        assert.isStringNotEmpty(requestId, 'requestId');
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(message, 'message');
+
+        var start = this._responses[requestId];
+
+        if (!start) {
+            this._logger.error('Already responded to request [%s]', requestId);
+
+            callback(new Error('no-response-handler'));
+        }
+
+        var response = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, message),
+            messageType: 'Response',
+            wallTime: _.now() - start
+        };
+
+        encodeAndSendMessage.call(this, response);
+
+        delete this._responses[requestId];
+
+        return callback(null, {status: 'ok'});
+    };
+
+    MQService.prototype.dispose = function () {
+        this._disposed = true;
+        this._receiveCallback = null;
+        this._sendCallback = null;
+
+        _.forOwn(this._requestTimeouts, function(timeout) {
+            clearTimeout(timeout);
+        });
+
+        _.forOwn(this._continuationTimeouts, function(timeout) {
+            clearTimeout(timeout);
+        });
+
+        this._requests = {};
+        this._responses = {};
+        this._requestListeners = {};
+        this._requestTimeouts = {};
+        this._continuationTimeouts = {};
+
+        this._namedEvents.dispose();
+    };
+
+    MQService.prototype.getApiVersion = function getApiVersion() {
+        return this._mqProtocol.getApiVersion();
+    };
+
+    MQService.prototype.toString = function () {
+        return 'Proto[' + this._webSocket.toString() + ']';
+    };
+
+    function triggerEvent(eventName, args) {
+        this._namedEvents.fire(eventName, args, this);
+    }
+
+    function onMessage(evt) {
+        if (this._disposed) {
+            return this._warn('Proto already disposed of. Unable process message');
+        }
+
+        var message;
+        var messageBody;
+        var callback;
+
+        try {
+            message = this._mqProtocol.decode('mq.Message', ByteBuffer.wrap(evt.data, 'base64'));
+            callback = this._requests[message.requestId];
+
+            this._logger.info('>> [%s] [%s]', message.messageType, message.type);
+
+            messageBody = this._mqProtocol.decode(message.type, message.payload);
+        } catch (e) {
+            this._logger.error(e);
+
+            if (callback) {
+                return callback(e);
+            }
+
+            throw e;
+        }
+
+        switch (message.messageType) {
+        case 'Response':
+            if (messageBody.status !== continuationStatus) {
+                delete this._requests[message.requestId];
+            }
+
+            clearTimeout(this._requestTimeouts[message.requestId]);
+
+            delete this._requestTimeouts[message.requestId];
+
+            if (!callback) {
+                return;
+            }
+
+            if (message.type === 'mq.Error') {
+                var error = messageBody;
+
+                return callback(error, null);
+            }
+
+            return callback(null, messageBody);
+        case 'Request':
+            var sendResponse = _.bind(this.sendResponse, this, message.requestId, message.type + 'Response');
+            var requestListener = this._requestListeners[message.type];
+
+            this._responses[message.requestId] = _.now();
+
+            if (requestListener) {
+                requestListener(messageBody, sendResponse);
+            } else {
+                this._logger.info('Received request without a subscribed listener');
+            }
+
+            break;
+        case 'Event':
+            return triggerEvent.call(this, message.type, [messageBody]);
+        default:
+            return this._logger.warn('>> Unsupported message type [%s]', message.messageType);
+        }
+    }
+
+    function handleResponseAndContinuations(requestId, type, message, callback, error, response) {
+        if (response && response.status === continuationStatus) {
+            if (!this._continuationTimeouts[requestId] && this._requests[requestId]) {
+                this._continuationTimeouts[requestId] = listenForContinuationTimeout.call(this, requestId, callback);
+            }
+
+            return sendRequestWithContinuation.call(this, requestId, type, message, response, callback);
+        }
+
+        clearTimeout(this._continuationTimeouts[requestId]);
+
+        delete this._continuationTimeouts[requestId];
+
+        return callback(error, response);
+    }
+
+    function sendRequestWithContinuation(requestId, type, message, response, callback) {
+        if (!response || (!response.continuationId && !response.routeKey)) {
+            this._logger.warn('Received request for continuation without a continuationId or routeKey');
+
+            return callback();
+        }
+
+        var messageWithContinuation = _.assign({}, message, {
+            continuationId: response.continuationId,
+            routeKey: response.routeKey
+        });
+        var request = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, messageWithContinuation),
+            messageType: 'Request'
+        };
+        var that = this;
+
+        return setTimeout(function() {
+            if (!that._requests[requestId]) {
+                return;
+            }
+
+            return sendRequestWithTimeout.call(that, requestId, request, callback);
+        }, continuationPollInterval);
+    }
+
+    function sendRequestWithTimeout(requestId, request, callback) {
+        if (this._requestTimeouts[requestId]) {
+            clearTimeout(this._requestTimeouts[requestId]);
+        }
+
+        this._requestTimeouts[requestId] = setTimeout(_.bind(handleRequestTimeout, this, requestId, requestTimeout, callback), requestTimeout);
+
+        return encodeAndSendMessage.call(this, request);
+    }
+
+    function encodeAndSendMessage(message) {
+        return this._sendCallback(this._mqProtocol.encode('mq.Message', message).toString('base64'));
+    }
+
+    function listenForContinuationTimeout(requestId, callback) {
+        return setTimeout(_.bind(handleRequestTimeout, this, requestId, continuationTimeout, callback), continuationTimeout);
+    }
+
+    function handleRequestTimeout(requestId, timeout, callback) {
+        if (!this._requests[requestId]) {
+            return;
+        }
+
+        this._logger.warn('Request [%s] has not completed in [%s] ms. Dropping request.', requestId, timeout);
+
+        delete this._requests[requestId];
+
+        return callback(null, {status: 'timeout'});
+    }
+
+    return MQService;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -9957,7 +10260,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(71),
+    __webpack_require__(72),
     __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Stream, member) {
     'use strict';
@@ -10495,9 +10798,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(12),
     __webpack_require__(11),
-    __webpack_require__(59),
-    __webpack_require__(62),
-    __webpack_require__(60)
+    __webpack_require__(60),
+    __webpack_require__(63),
+    __webpack_require__(61)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
@@ -10613,7 +10916,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(12),
     __webpack_require__(11),
-    __webpack_require__(63)
+    __webpack_require__(64)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
@@ -12747,7 +13050,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     Assert.prototype.isBoolean = function isBoolean(bool, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be a string';
+        var error = '"' + name + '" must be a boolean';
 
         if (!_.isBoolean(bool)) {
             throw new Error(error);
@@ -12811,6 +13114,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     };
 
+    Assert.prototype.isValidType = function (type, types, name) {
+        Assert.prototype.isStringNotEmpty(name, 'name');
+
+        type = _.getEnumName(types, type);
+
+        if (_.isNullOrUndefined(type)) {
+            throw new Error('"' + name + '" must be a valid type');
+        }
+
+        return type;
+    };
+
     return new Assert();
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -12837,7 +13152,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(8),
+    __webpack_require__(6),
     __webpack_require__(19),
     __webpack_require__(5),
     __webpack_require__(2),
@@ -13852,11 +14167,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     _.isNullOrUndefined = function isNullOrUndefined(value) {
-        return value === null || value === undefined;
+        return value === null || _.isUndefined(value);
     };
 
     _.isUndefined = function isUndefined(value) {
-        return value === undefined;
+        return typeof value === 'undefined';
     };
 
     _.getEnumName = function getEnumName(enums, nameOrId) {
@@ -14109,7 +14424,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-15T22:57:49Z' || '?';
+    var sdkVersion = '2017-09-18T19:36:06Z' || '?';
     var releaseVersion = '2017.3.5';
 
     function Logger() {
@@ -14317,19 +14632,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(8),
+    __webpack_require__(6),
     __webpack_require__(2),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, event, observable, disposable) {
     'use strict';
 
     function NetworkConnectionMonitor() {
-        this._onlineObservable = (new observable.Observable(navigator.onLine)).extend({timeout: 0});
+        // Support non-browser environments
+        var isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+
+        this._onlineObservable = (new observable.Observable(isOnline)).extend({timeout: 0});
         this._namedEvents = new event.NamedEvents();
 
-        _.addEventListener(window, 'online', _.bind(this._namedEvents.fire, this._namedEvents, 'online', []));
-        _.addEventListener(window, 'offline', _.bind(this._namedEvents.fire, this._namedEvents, 'offline', []));
-        _.addEventListener(window, 'unload', _.bind(this._namedEvents.dispose, this._namedEvents));
+        if (typeof window !== 'undefined') {
+            _.addEventListener(window, 'online', _.bind(this._namedEvents.fire, this._namedEvents, 'online', []));
+            _.addEventListener(window, 'offline', _.bind(this._namedEvents.fire, this._namedEvents, 'offline', []));
+            _.addEventListener(window, 'unload', _.bind(this._namedEvents.dispose, this._namedEvents));
+        }
 
         this._namedEvents.listen('online', _.bind(this._onlineObservable.setValue, this._onlineObservable, true));
         this._namedEvents.listen('offline', _.bind(this._onlineObservable.setValue, this._onlineObservable, false));
@@ -14574,7 +14894,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(38),
     __webpack_require__(21),
-    __webpack_require__(7)
+    __webpack_require__(8)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, BatchHttp, MQProtocol, ByteBuffer) {
     function BatchHttpProtocol(uri, protocols, type, options, apiVersion) {
         assert.isStringNotEmpty(uri, 'uri');
@@ -14622,30 +14942,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(8),
-    __webpack_require__(22),
-    __webpack_require__(21),
-    __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, ReconnectingWebSocket, MQProtocol, ByteBuffer) {
+    __webpack_require__(6),
+    __webpack_require__(53),
+    __webpack_require__(22)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
 
-    function WebSocketProtocol(uri, logger, protocols, apiVersion) {
+    function MQWebSocket(uri, logger, protocols, apiVersion) {
         assert.isStringNotEmpty(uri, 'uri');
         assert.isObject(logger, 'logger');
         assert.isArray(protocols, 'protocols');
 
         this._uri = uri;
         this._logger = logger;
-        this._mqProtocol = new MQProtocol(protocols, apiVersion);
         this._logger.info('Connecting to [%s]', uri);
 
-        this._nextRequestId = 0;
-        this._namedEvents = new event.NamedEvents();
-        this._requests = {};
-
         this._webSocket = new ReconnectingWebSocket(this._uri, this._logger);
+        this._mqService = new MQService(this._logger, _.bind(sendMessage, this), _.bind(setOnMessage, this), protocols, apiVersion);
+        this._namedEvents = new event.NamedEvents();
 
-        this._webSocket.onmessage = _.bind(onMessage, this);
         this._webSocket.onconnected = _.bind(onConnected, this);
         this._webSocket.onreconnecting = _.bind(onReconnecting, this);
         this._webSocket.onreconnected = _.bind(onReconnected, this);
@@ -14655,86 +14970,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disconnected = false;
     }
 
-    WebSocketProtocol.prototype.on = function (eventName, handler) {
-        assert.isStringNotEmpty(eventName, 'eventName');
-        assert.isFunction(handler, 'handler');
+    MQWebSocket.prototype.onEvent = function (eventName, handler) {
+        this._namedEvents.listen(eventName, handler);
 
-        return this._namedEvents.listen(eventName, handler);
+        return this._mqService.onEvent(eventName, handler);
     };
 
-    WebSocketProtocol.prototype.sendRequest = function sendRequest(type, message, callback) {
-        assert.isStringNotEmpty(type, 'type');
-        assert.isObject(message, 'message');
-
-        if (callback) {
-            assert.isFunction(callback, 'callback');
-        }
-
-        var requestId = (this._nextRequestId++).toString();
-        var request = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message)
-        };
-
-        this._requests[requestId] = callback;
-
-        return this._webSocket.send(this._mqProtocol.encode('mq.Request', request).toString('base64'));
+    MQWebSocket.prototype.onRequest = function (requestName, handler) {
+        return this._mqService.onRequest(requestName, handler);
     };
 
-    WebSocketProtocol.prototype.disconnect = function () {
+    MQWebSocket.prototype.sendRequest = function sendRequest(type, message, callback) {
+        return this._mqService.sendRequest(type, message, callback);
+    };
+
+    MQWebSocket.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
+        return this._mqService.sendResponse(requestId, type, message, callback);
+    };
+
+    MQWebSocket.prototype.disconnect = function () {
         this._disconnected = true;
 
         return this._webSocket.disconnect();
     };
 
-    WebSocketProtocol.prototype.getApiVersion = function getApiVersion() {
-        return this._mqProtocol.getApiVersion();
+    MQWebSocket.prototype.getApiVersion = function getApiVersion() {
+        return this._mqService.getApiVersion();
     };
 
-    WebSocketProtocol.prototype.toString = function () {
-        return 'Proto[' + this._webSocket.toString() + ']';
+    MQWebSocket.prototype.toString = function () {
+        return 'MQWebSocket[' + this._webSocket.toString() + ']';
     };
 
     function triggerEvent(eventName, args) {
         this._namedEvents.fire(eventName, args, this);
-    }
-
-    function onMessage(evt) {
-        var response;
-        var message;
-        var callback;
-
-        try {
-            response = this._mqProtocol.decode('mq.Response', ByteBuffer.wrap(evt.data, 'base64'));
-            callback = this._requests[response.requestId];
-
-            this._logger.info('>> [%s]', response.type);
-
-            message = this._mqProtocol.decode(response.type, response.payload);
-        } catch (e) {
-            this._logger.error(e);
-
-            if (callback) {
-                return callback(e);
-            }
-
-            throw e;
-        }
-
-        triggerEvent.call(this, response.type, [message]);
-
-        if (callback) {
-            delete this._requests[response.requestId];
-
-            if (response.type === 'mq.Error') {
-                var error = message;
-
-                callback(error, null);
-            } else {
-                callback(null, message);
-            }
-        }
     }
 
     function onReconnecting(evt) { // eslint-disable-line no-unused-vars
@@ -14754,6 +15023,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (this._disconnected) {
             this._namedEvents.dispose();
+            this._mqService.dispose();
         }
     }
 
@@ -14761,7 +15031,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         triggerEvent.call(this, 'error', [evt.data]);
     }
 
-    return WebSocketProtocol;
+    function setOnMessage(callback) {
+        this._webSocket.onmessage = callback;
+    }
+
+    function sendMessage(message) {
+        if (this._webSocket) {
+            this._webSocket.send(message);
+        }
+    }
+
+    return MQWebSocket;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -14792,8 +15072,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         "package": "mq",
         "messages": [
             {
-                "name": "Request",
+                "name": "Message",
                 "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "MessageType",
+                        "name": "messageType",
+                        "id": 7,
+                        "options": {"default": "Request"}
+                    },
                     {
                         "rule": "optional",
                         "type": "string",
@@ -14802,41 +15089,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     },
                     {
                         "rule": "optional",
-                        "type": "string",
-                        "name": "requestId",
-                        "id": 2
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "type",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "encoding",
-                        "id": 4
-                    },
-                    {
-                        "rule": "required",
-                        "type": "bytes",
-                        "name": "payload",
-                        "id": 5
-                    }
-                ]
-            },
-            {
-                "name": "Response",
-                "fields": [
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
                         "type": "string",
                         "name": "requestId",
                         "id": 2
@@ -14864,6 +15116,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "double",
                         "name": "wallTime",
                         "id": 6
+                    }
+                ],
+                "enums": [
+                    {
+                        "name": "MessageType",
+                        "values": [
+                            {
+                                "name": "Request",
+                                "id": 0
+                            },
+                            {
+                                "name": "Response",
+                                "id": 1
+                            },
+                            {
+                                "name": "Event",
+                                "id": 2
+                            }
+                        ]
                     }
                 ]
             },
@@ -14993,6 +15264,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._reconnectBackoffInterval = reconnectBackoffInterval || defaultReconnectBackoffInterval;
         this._hasAttemptedReconnect = false;
         this._stopped = false;
+        this._queuedMessages = [];
 
         this._logger.info('Connecting to [%s]', uri);
 
@@ -15017,6 +15289,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     ReconnectingWebSocket.prototype.onerror = null;
 
     ReconnectingWebSocket.prototype.send = function (message) {
+        // TODO (DCY) Figure out how to resolve network switches
+        if (!networkConnectionMonitor.isOnline() && false) { // eslint-disable-line no-constant-condition
+            this._logger.info('Network offline. Waiting for reconnect to send message.');
+
+            return this._queuedMessages.push(message);
+        }
+
         return this._webSocket.send(message);
     };
 
@@ -15147,6 +15426,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function onOpen(evt) {
         this._logger.info('Connected');
 
+        sendAllQueuedMessages.call(this);
+
         if (this.onconnected) {
             this.onconnected(evt);
         }
@@ -15217,12 +15498,58 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         onDisconnect.call(this, closeReasons.networkDisconnect);
     }
 
+    function sendAllQueuedMessages() {
+        var numberOfMessagesToSend = this._queuedMessages.length;
+
+        if (numberOfMessagesToSend === 0) {
+            return;
+        }
+
+        this._logger.info('Sending [%s] queued messages', numberOfMessagesToSend);
+
+        while (numberOfMessagesToSend > 0) {
+            numberOfMessagesToSend--;
+
+            var message = this._queuedMessages.shift();
+
+            this.send(message);
+        }
+    }
+
     return ReconnectingWebSocket;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
 /* 53 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(52)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (ReconnectingWebSocket) {
+    'use strict';
+
+    return ReconnectingWebSocket;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 54 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -15412,7 +15739,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -15439,7 +15766,7 @@ process.umask = function() { return 0; };
 (function(global, factory) {
 
     /* AMD */ if (true)
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(7)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15771,7 +16098,7 @@ process.umask = function() { return 0; };
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(76);
+                var fs = __webpack_require__(77);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -20616,10 +20943,10 @@ process.umask = function() { return 0; };
     return ProtoBuf;
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(53)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(54)))
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20747,7 +21074,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20880,7 +21207,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20902,12 +21229,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(22),
     __webpack_require__(10),
     __webpack_require__(4),
-    __webpack_require__(69),
-    __webpack_require__(68)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, ReconnectingWebSocket, proto, phenixRTC, pcastProto, chatProto) {
+    __webpack_require__(70),
+    __webpack_require__(69)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -20919,24 +21245,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._deviceId = deviceId;
         this._version = version;
         this._logger = logger;
-        this._proto = new proto.WebSocketProto(uri, this._logger, [pcastProto, chatProto]);
+        this._mqWebSocket = new proto.MQWebSocket(uri, this._logger, [pcastProto, chatProto]);
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
-
-        var that = this;
-
-        this._proto.on('pcast.AuthenticateResponse', function(message) {
-            that._observableSessionId.setValue(message.sessionId);
-        });
     }
 
-    PCastProtocol.prototype.on = function (eventName, handler) {
-        return this._proto.on(eventName, handler);
+    PCastProtocol.prototype.onEvent = function (eventName, handler) {
+        return this._mqWebSocket.onEvent(eventName, handler);
     };
 
     PCastProtocol.prototype.disconnect = function () {
         this._observableSessionId.setValue(null);
 
-        return this._proto.disconnect();
+        return this._mqWebSocket.disconnect();
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -20944,7 +21264,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assert.isFunction(callback, 'callback');
 
         var authenticate = {
-            apiVersion: this._proto.getApiVersion(),
+            apiVersion: this._mqWebSocket.getApiVersion(),
             clientVersion: this._version,
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
@@ -20956,7 +21276,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             authenticate.sessionId = this.getSessionId();
         }
 
-        return this._proto.sendRequest('pcast.Authenticate', authenticate, callback);
+        var that = this;
+
+        return this._mqWebSocket.sendRequest('pcast.Authenticate', authenticate, function(error, response) {
+            if (response) {
+                that._observableSessionId.setValue(response.sessionId);
+            }
+
+            return callback(error, response);
+        });
     };
 
     PCastProtocol.prototype.getSessionId = function () {
@@ -20976,7 +21304,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             reason: reason
         };
 
-        return this._proto.sendRequest('pcast.Bye', bye, callback);
+        return this._mqWebSocket.sendRequest('pcast.Bye', bye, callback);
     };
 
     PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
@@ -21002,7 +21330,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
                 options: [streamType, browser, browserWithVersion],
-                apiVersion: this._proto.getApiVersion()
+                apiVersion: this._mqWebSocket.getApiVersion()
             };
         }
 
@@ -21014,7 +21342,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             setupStream.createStream.options.push('no-video');
         }
 
-        return this._proto.sendRequest('pcast.SetupStream', setupStream, callback);
+        return this._mqWebSocket.sendRequest('pcast.SetupStream', setupStream, callback);
     };
 
     PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
@@ -21028,10 +21356,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 type: 'Answer',
                 sdp: sdp
             },
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
+        return this._mqWebSocket.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
     PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
@@ -21056,10 +21384,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             streamId: streamId,
             candidates: sanitizedCandidates,
             options: options,
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
+        return this._mqWebSocket.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
     };
 
     PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
@@ -21074,10 +21402,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             signalingState: signalingState,
             iceGatheringState: iceGatheringState,
             iceConnectionState: iceConnectionState,
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
+        return this._mqWebSocket.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
     };
 
     PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
@@ -21090,7 +21418,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             reason: reason
         };
 
-        return this._proto.sendRequest('pcast.DestroyStream', destroyStream, callback);
+        return this._mqWebSocket.sendRequest('pcast.DestroyStream', destroyStream, callback);
     };
 
     PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
@@ -21108,7 +21436,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             sessionId: this.getSessionId()
         };
 
-        return this._proto.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
+        return this._mqWebSocket.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
     PCastProtocol.prototype.createRoom = function (room, callback) {
@@ -21123,7 +21451,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             room: room
         };
 
-        return this._proto.sendRequest('chat.CreateRoom', createRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
     PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -21145,7 +21473,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.JoinRoom', joinRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.JoinRoom', joinRoom, callback);
     };
 
     PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -21159,7 +21487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.LeaveRoom', leaveRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
     PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
@@ -21175,7 +21503,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.UpdateMember', updateMember, callback);
+        return this._mqWebSocket.sendRequest('chat.UpdateMember', updateMember, callback);
     };
 
     PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -21189,7 +21517,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.UpdateRoom', updateRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.UpdateRoom', updateRoom, callback);
     };
 
     PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
@@ -21201,7 +21529,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             chatMessage: chatMessage
         };
 
-        return this._proto.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
+        return this._mqWebSocket.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
     };
 
     PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
@@ -21216,7 +21544,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             options: ['Subscribe']
         };
 
-        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
@@ -21246,11 +21574,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             fetchRoomConversation.afterMessageId = afterMessageId;
         }
 
-        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.toString = function () {
-        return 'PCastProtocol[' + this._webSocket.toString() + ']';
+        return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
 
     return PCastProtocol;
@@ -21258,7 +21586,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21771,7 +22099,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21818,7 +22146,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21938,7 +22266,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22080,7 +22408,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22101,7 +22429,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(61)
+    __webpack_require__(62)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -22142,7 +22470,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22240,7 +22568,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22295,7 +22623,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._enabled.setValue(true);
         setupSubscriptions.call(this);
 
-        var disposeOfConversationHandler = this._protocol.on('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
+        var disposeOfConversationHandler = this._protocol.onEvent('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
 
         this._disposables.add(disposeOfConversationHandler);
     };
@@ -22574,7 +22902,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22597,7 +22925,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(2),
     __webpack_require__(3),
-    __webpack_require__(64)
+    __webpack_require__(65)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, disposable, ChatService) {
     'use strict';
 
@@ -22735,7 +23063,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22757,7 +23085,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(6),
+    __webpack_require__(7),
     __webpack_require__(10),
     __webpack_require__(26)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, rtc, logging, proto, telemetryProto) {
@@ -22852,7 +23180,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22874,7 +23202,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(25),
-    __webpack_require__(66)
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
@@ -22915,7 +23243,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23799,7 +24127,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25503,7 +25831,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25624,7 +25952,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25731,7 +26059,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25835,7 +26163,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25862,7 +26190,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-15T22:57:49Z' || '?';
+    var sdkVersion = '2017-09-18T19:36:06Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -25993,7 +26321,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26021,7 +26349,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-15T22:57:49Z' || '?';
+    var sdkVersion = '2017-09-18T19:36:06Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -26262,7 +26590,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26284,7 +26612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(25),
-    __webpack_require__(72)
+    __webpack_require__(73)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -26325,13 +26653,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26354,7 +26682,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(4),
-    __webpack_require__(6),
+    __webpack_require__(7),
     __webpack_require__(15),
     __webpack_require__(17),
     __webpack_require__(32),

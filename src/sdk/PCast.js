@@ -787,12 +787,12 @@ define([
     function instantiateProtocol(uri) {
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
 
-        this._protocol.on('connected', _.bind(connected, this));
-        this._protocol.on('reconnecting', _.bind(reconnecting, this));
-        this._protocol.on('reconnected', _.bind(reconnected, this));
-        this._protocol.on('disconnected', _.bind(disconnected, this));
-        this._protocol.on('pcast.StreamEnded', _.bind(streamEnded, this));
-        this._protocol.on('pcast.StreamDataQuality', _.bind(dataQuality, this));
+        this._protocol.onEvent('connected', _.bind(connected, this));
+        this._protocol.onEvent('reconnecting', _.bind(reconnecting, this));
+        this._protocol.onEvent('reconnected', _.bind(reconnected, this));
+        this._protocol.onEvent('disconnected', _.bind(disconnected, this));
+        this._protocol.onEvent('pcast.StreamEnded', _.bind(streamEnded, this));
+        this._protocol.onEvent('pcast.StreamDataQuality', _.bind(dataQuality, this));
 
         if (this._logger.setObservableSessionId) {
             this._logger.setObservableSessionId(this._protocol.getObservableSessionId());

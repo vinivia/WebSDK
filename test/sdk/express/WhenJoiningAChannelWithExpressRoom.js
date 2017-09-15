@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
-    '../../../test/mock/mockPCast',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (RoomExpress, HttpStubber, WebSocketStubber, Member, MockPCast, room, member, stream, track) {
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, Member, room, member, stream, track) {
     describe('When Joining a Channel with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
@@ -63,10 +63,9 @@ define([
         var httpStubber;
         var websocketStubber;
         var roomExpress;
-        var protocol;
         var response;
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -79,20 +78,17 @@ define([
                 authenticationData: mockAuthData
             });
 
-            MockPCast.buildUpMockPCast(roomExpress.getPCastExpress().getPCast());
-
-            protocol = roomExpress.getPCastExpress().getPCast().getProtocol();
-
             response = {
                 status: 'ok',
                 room: mockRoom,
                 members: []
             };
 
-            protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest, timestamp, callback) {
-                callback(null, response);
-            });
+            websocketStubber.stubResponse('chat.JoinRoom', response);
+
+            roomExpress.getPCastExpress().waitForOnline(done);
+
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
         });
 
         afterEach(function() {
@@ -106,10 +102,9 @@ define([
         });
 
         it('Expect joinChannel protocol to be called with just alias and participant member role', function () {
-            protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest) {
-                expect(alias).to.be.equal(mockRoom.alias);
-                expect(selfForRequest.role).to.be.equal(member.roles.participant.name);
+            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+                expect(message.alias).to.be.equal(mockRoom.alias);
+                expect(message.member.role).to.be.equal(member.roles.participant.name);
             });
 
             roomExpress.joinChannel({
@@ -119,10 +114,9 @@ define([
         });
 
         it('Expect joinChannel protocol to be called with just alias and default audience role', function () {
-            protocol.enterRoom.restore();
-            protocol.enterRoom = sinon.stub(protocol, 'enterRoom').callsFake(function (roomId, alias, selfForRequest) {
-                expect(alias).to.be.equal(mockRoom.alias);
-                expect(selfForRequest.role).to.be.equal(member.roles.audience.name);
+            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+                expect(message.alias).to.be.equal(mockRoom.alias);
+                expect(message.member.role).to.be.equal(member.roles.audience.name);
             });
 
             roomExpress.joinChannel({alias: mockRoom.alias}, function() {}, function(){});

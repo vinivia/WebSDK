@@ -14,16 +14,47 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-lodash-light',
+    'sdk/PCast',
     'sdk/authentication/AuthenticationService',
-    '../../../test/mock/mockPCast'
-], function (AuthenticationService, MockPCast) {
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
+    '../../../test/mock/ChromeRuntimeStubber'
+], function (_, PCast, AuthenticationService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     describe('When instantiating an Authentication Service', function () {
         var pcast;
         var authenticationService;
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
 
-        beforeEach(function () {
-            pcast = new MockPCast();
-            authenticationService = new AuthenticationService(pcast);
+        before(function() {
+            chromeRuntimeStubber.stub();
+        });
+
+        beforeEach(function (done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stub();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+            pcast = new PCast();
+
+            pcast.start('AuthToken', function () {}, function onlineCallback () {
+                authenticationService = new AuthenticationService(pcast);
+                done();
+            }, function offlineCallback () {});
+
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
         });
 
         describe('When asserting authorized', function () {

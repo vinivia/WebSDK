@@ -33,6 +33,4 @@ define([
 
     window.expect = chai.expect;
     window.sinon = sinon;
-
-    window.__karma__.start();
 });

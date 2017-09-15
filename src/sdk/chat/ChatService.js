@@ -50,7 +50,7 @@ define([
         this._enabled.setValue(true);
         setupSubscriptions.call(this);
 
-        var disposeOfConversationHandler = this._protocol.on('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
+        var disposeOfConversationHandler = this._protocol.onEvent('chat.RoomConversationEvent', _.bind(onRoomConversationEvent, this));
 
         this._disposables.add(disposeOfConversationHandler);
     };

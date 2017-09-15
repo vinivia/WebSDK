@@ -14,23 +14,87 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-lodash-light',
+    'sdk/PCast',
+    'sdk/room/RoomService',
     'sdk/bandwidth/PublisherBandwidthAdjuster',
-    '../../../test/mock/mockRoomService'
-], function (PublisherBandwidthAdjuster, MockRoomService) {
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
+    '../../../test/mock/ChromeRuntimeStubber',
+    'sdk/room/room.json',
+    'sdk/room/member.json'
+], function (_, PCast, RoomService, PublisherBandwidthAdjuster, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, roomEnum, memberEnum) {
     describe('When Adjusting Publisher Bandwidth', function () {
         var publisher = {};
         var publisherBandwidthAdjuster;
         var roomService;
+        var membersObservable;
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var mockRoom = {
+            roomId: 'TestRoom123',
+            alias: '',
+            name: 'Test123',
+            description: 'Test 123',
+            bridgeId: '',
+            pin: '',
+            type: roomEnum.types.multiPartyChat.name
+        };
 
-        beforeEach(function () {
-            publisherBandwidthAdjuster = new PublisherBandwidthAdjuster(publisher);
-
-            roomService = new MockRoomService();
+        before(function() {
+            chromeRuntimeStubber.stub();
         });
 
-        afterEach(function () {
+        beforeEach(function (done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stub();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
+            var pcast = new PCast();
+
+            pcast.start('AuthToken', function () {}, function onlineCallback () {
+                roomService = new RoomService(pcast);
+                publisherBandwidthAdjuster = new PublisherBandwidthAdjuster(publisher);
+
+                var response = {
+                    status: 'ok',
+                    room: mockRoom,
+                    members: []
+                };
+
+                websocketStubber.stubResponse('chat.JoinRoom', response);
+
+                roomService.start(memberEnum.roles.participant.name, 'Name');
+                roomService.enterRoom('id', '', function() {
+                    var room = roomService.getObservableActiveRoom().getValue();
+
+                    membersObservable = room.getObservableMembers();
+
+                    done();
+                });
+            }, function offlineCallback () {});
+
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
+
+            if (roomService) {
+                roomService.stop();
+            }
+
             publisherBandwidthAdjuster.close();
-            roomService.stop();
+
+            self.sessionId = 'MockSessionId';
         });
 
         it('Has property connect that is a function', function () {
@@ -42,7 +106,7 @@ define([
         });
 
         it('Room service with no room causes default bandwidth limit', function () {
-            MockRoomService.buildUpMockRoom(roomService, null);
+            membersObservable.setValue(null);
 
             publisher.limitBandwidth = function (bandwidth) {
                 expect(bandwidth).to.be.equal(5000000);
@@ -52,7 +116,7 @@ define([
         });
 
         it('Room service with no room causes passed bandwidth limit', function () {
-            MockRoomService.buildUpMockRoom(roomService, null);
+            membersObservable.setValue(null);
 
             publisher.limitBandwidth = function (bandwidth) {
                 expect(bandwidth).to.be.equal(100000);
@@ -62,7 +126,7 @@ define([
         });
 
         it('Room service with a room with 2 members causes default bandwidth limit', function () {
-            MockRoomService.buildUpMockRoomWithMembers(roomService, [{}, {}]);
+            membersObservable.setValue([{}, {}]);
 
             publisher.limitBandwidth = function (bandwidth) {
                 expect(bandwidth).to.be.equal(5000000);
@@ -72,7 +136,7 @@ define([
         });
 
         it('Room service with a room with 3 members causes passed bandwidth/2 bandwidth limit', function () {
-            MockRoomService.buildUpMockRoomWithMembers(roomService, [{}, {}, {}]);
+            membersObservable.setValue([{}, {}, {}]);
 
             publisher.limitBandwidth = function (bandwidth) {
                 expect(bandwidth).to.be.equal(100000/2);

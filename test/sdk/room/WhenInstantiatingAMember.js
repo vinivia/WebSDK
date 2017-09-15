@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 define([
+    'sdk/room/RoomService',
     'long',
     'sdk/room/Member',
     'sdk/room/member.json',
     'sdk/room/stream.json',
-    'sdk/room/track.json',
-    '../../../test/mock/mockRoomService'
-], function (Long, Member, member, stream, track, MockRoomService) {
+    'sdk/room/track.json'
+], function (RoomService, Long, Member, member, stream, track) {
     describe('When instantiating a Member', function () {
         var testMember;
         var stubRoomService;
@@ -37,7 +37,7 @@ define([
         };
 
         beforeEach(function () {
-            stubRoomService = new MockRoomService();
+            stubRoomService = sinon.createStubInstance(RoomService);
 
             testMember = new Member(stubRoomService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], 123);
         });
@@ -127,6 +127,7 @@ define([
 
         describe('When committing changes on member', function () {
             it('CommitChanges calls roomService updateMember', function () {
+                stubRoomService.updateMember.restore();
                 stubRoomService.updateMember = sinon.stub(stubRoomService, 'updateMember').callsFake(function (member) {
                     expect(member).to.be.equal(testMember);
                 });
@@ -134,12 +135,12 @@ define([
                 testMember.commitChanges(function () {});
 
                 sinon.assert.calledOnce(stubRoomService.updateMember);
-                stubRoomService.updateMember.restore();
             });
         });
 
         describe('When reverting changes on member', function () {
             it('Reload calls roomService updateMember', function () {
+                stubRoomService.revertMemberChanges.restore();
                 stubRoomService.revertMemberChanges = sinon.stub(stubRoomService, 'revertMemberChanges').callsFake(function (member) {
                     expect(member).to.be.equal(testMember);
                 });
@@ -147,7 +148,6 @@ define([
                 testMember.reload(function () {});
 
                 sinon.assert.calledOnce(stubRoomService.revertMemberChanges);
-                stubRoomService.revertMemberChanges.restore();
             });
         });
 

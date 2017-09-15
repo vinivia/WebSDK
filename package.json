@@ -30,16 +30,17 @@
   },
   "dependencies": {
     "phenix-rtc": "2017.3.0",
-    "phenix-web-assert": "2017.3.3",
-    "phenix-web-batch-http": "2017.3.4",
-    "phenix-web-disposable": "2017.3.3",
-    "phenix-web-http": "2017.3.3",
-    "phenix-web-lodash-light": "2017.3.3",
-    "phenix-web-logging": "2017.3.3",
-    "phenix-web-network-connection-monitor": "2017.3.4",
-    "phenix-web-observable": "2017.3.3",
-    "phenix-web-proto": "2017.3.4",
-    "phenix-web-reconnecting-websocket": "2017.3.4"
+    "phenix-web-assert": "2017.3.6",
+    "phenix-web-batch-http": "2017.3.6",
+    "phenix-web-disposable": "2017.3.6",
+    "phenix-web-event": "^2017.3.6",
+    "phenix-web-http": "2017.3.6",
+    "phenix-web-lodash-light": "2017.3.6",
+    "phenix-web-logging": "2017.3.6",
+    "phenix-web-network-connection-monitor": "2017.3.6",
+    "phenix-web-observable": "2017.3.6",
+    "phenix-web-proto": "2017.3.6",
+    "phenix-web-reconnecting-websocket": "2017.3.6"
   },
   "engines": {
     "node": "8.4.0"
@@ -87,7 +88,6 @@
     "mocha": "2.5.3",
     "moment": "2.17.1",
     "phantomjs-prebuilt": "2.1.14",
-    "phenix-web-event": "^2017.3.3",
     "requirejs": "2.3.4",
     "shaka-player": "2.1.5",
     "sinon": "2.4.1",

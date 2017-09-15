@@ -82,7 +82,7 @@ define([
                         done();
                     }, 500);
 
-                    return websocketStubber.stubMessage('pcast.StreamEnded', {
+                    return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
                         reason: 'censored',
                         sessionId: 'mockSessionId'
@@ -104,7 +104,7 @@ define([
                 subscribeCount++;
 
                 if (subscribeCount === 1) {
-                    return websocketStubber.stubMessage('pcast.StreamEnded', {
+                    return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
                         reason: 'error',
                         sessionId: 'mockSessionId'
@@ -132,7 +132,7 @@ define([
                 if (subscribeCount === 1) {
                     start = _.now();
 
-                    return websocketStubber.stubMessage('pcast.StreamEnded', {
+                    return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
                         reason: 'capacity',
                         sessionId: 'mockSessionId'

@@ -17,12 +17,11 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
-    'phenix-web-reconnecting-websocket',
     'phenix-web-proto',
     'phenix-rtc',
     './protocol/pcastProto.json',
     './protocol/chatProto.json'
-], function (_, assert, observable, ReconnectingWebSocket, proto, phenixRTC, pcastProto, chatProto) {
+], function (_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -34,24 +33,18 @@ define([
         this._deviceId = deviceId;
         this._version = version;
         this._logger = logger;
-        this._proto = new proto.WebSocketProto(uri, this._logger, [pcastProto, chatProto]);
+        this._mqWebSocket = new proto.MQWebSocket(uri, this._logger, [pcastProto, chatProto]);
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
-
-        var that = this;
-
-        this._proto.on('pcast.AuthenticateResponse', function(message) {
-            that._observableSessionId.setValue(message.sessionId);
-        });
     }
 
-    PCastProtocol.prototype.on = function (eventName, handler) {
-        return this._proto.on(eventName, handler);
+    PCastProtocol.prototype.onEvent = function (eventName, handler) {
+        return this._mqWebSocket.onEvent(eventName, handler);
     };
 
     PCastProtocol.prototype.disconnect = function () {
         this._observableSessionId.setValue(null);
 
-        return this._proto.disconnect();
+        return this._mqWebSocket.disconnect();
     };
 
     PCastProtocol.prototype.authenticate = function (authToken, callback) {
@@ -59,7 +52,7 @@ define([
         assert.isFunction(callback, 'callback');
 
         var authenticate = {
-            apiVersion: this._proto.getApiVersion(),
+            apiVersion: this._mqWebSocket.getApiVersion(),
             clientVersion: this._version,
             deviceId: this._deviceId,
             platform: phenixRTC.browser,
@@ -71,7 +64,15 @@ define([
             authenticate.sessionId = this.getSessionId();
         }
 
-        return this._proto.sendRequest('pcast.Authenticate', authenticate, callback);
+        var that = this;
+
+        return this._mqWebSocket.sendRequest('pcast.Authenticate', authenticate, function(error, response) {
+            if (response) {
+                that._observableSessionId.setValue(response.sessionId);
+            }
+
+            return callback(error, response);
+        });
     };
 
     PCastProtocol.prototype.getSessionId = function () {
@@ -91,7 +92,7 @@ define([
             reason: reason
         };
 
-        return this._proto.sendRequest('pcast.Bye', bye, callback);
+        return this._mqWebSocket.sendRequest('pcast.Bye', bye, callback);
     };
 
     PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
@@ -117,7 +118,7 @@ define([
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
                 options: [streamType, browser, browserWithVersion],
-                apiVersion: this._proto.getApiVersion()
+                apiVersion: this._mqWebSocket.getApiVersion()
             };
         }
 
@@ -129,7 +130,7 @@ define([
             setupStream.createStream.options.push('no-video');
         }
 
-        return this._proto.sendRequest('pcast.SetupStream', setupStream, callback);
+        return this._mqWebSocket.sendRequest('pcast.SetupStream', setupStream, callback);
     };
 
     PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
@@ -143,10 +144,10 @@ define([
                 type: 'Answer',
                 sdp: sdp
             },
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
+        return this._mqWebSocket.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
     PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
@@ -171,10 +172,10 @@ define([
             streamId: streamId,
             candidates: sanitizedCandidates,
             options: options,
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
+        return this._mqWebSocket.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
     };
 
     PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
@@ -189,10 +190,10 @@ define([
             signalingState: signalingState,
             iceGatheringState: iceGatheringState,
             iceConnectionState: iceConnectionState,
-            apiVersion: this._proto.getApiVersion()
+            apiVersion: this._mqWebSocket.getApiVersion()
         };
 
-        return this._proto.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
+        return this._mqWebSocket.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
     };
 
     PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
@@ -205,7 +206,7 @@ define([
             reason: reason
         };
 
-        return this._proto.sendRequest('pcast.DestroyStream', destroyStream, callback);
+        return this._mqWebSocket.sendRequest('pcast.DestroyStream', destroyStream, callback);
     };
 
     PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
@@ -223,7 +224,7 @@ define([
             sessionId: this.getSessionId()
         };
 
-        return this._proto.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
+        return this._mqWebSocket.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
     PCastProtocol.prototype.createRoom = function (room, callback) {
@@ -238,7 +239,7 @@ define([
             room: room
         };
 
-        return this._proto.sendRequest('chat.CreateRoom', createRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
     PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
@@ -260,7 +261,7 @@ define([
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.JoinRoom', joinRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.JoinRoom', joinRoom, callback);
     };
 
     PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
@@ -274,7 +275,7 @@ define([
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.LeaveRoom', leaveRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
     PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
@@ -290,7 +291,7 @@ define([
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.UpdateMember', updateMember, callback);
+        return this._mqWebSocket.sendRequest('chat.UpdateMember', updateMember, callback);
     };
 
     PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
@@ -304,7 +305,7 @@ define([
             timestamp: timestamp
         };
 
-        return this._proto.sendRequest('chat.UpdateRoom', updateRoom, callback);
+        return this._mqWebSocket.sendRequest('chat.UpdateRoom', updateRoom, callback);
     };
 
     PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
@@ -316,7 +317,7 @@ define([
             chatMessage: chatMessage
         };
 
-        return this._proto.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
+        return this._mqWebSocket.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
     };
 
     PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
@@ -331,7 +332,7 @@ define([
             options: ['Subscribe']
         };
 
-        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
@@ -361,11 +362,11 @@ define([
             fetchRoomConversation.afterMessageId = afterMessageId;
         }
 
-        return this._proto.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
+        return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
     PCastProtocol.prototype.toString = function () {
-        return 'PCastProtocol[' + this._webSocket.toString() + ']';
+        return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
 
     return PCastProtocol;

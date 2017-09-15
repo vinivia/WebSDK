@@ -70,7 +70,7 @@ define([
         this._self = new observable.Observable(self);
         this._disposables = new disposable.DisposableList();
 
-        var disposeOfRoomEventHandler = this._protocol.on('chat.RoomEvent', _.bind(onRoomEvent, this));
+        var disposeOfRoomEventHandler = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
 
         this._disposables.add(disposeOfRoomEventHandler);
 

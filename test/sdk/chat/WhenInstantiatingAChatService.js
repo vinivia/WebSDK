@@ -14,43 +14,59 @@
  * limitations under the License.
  */
 define([
-    'long',
+    'phenix-web-lodash-light',
     'phenix-web-observable',
-    'sdk/authentication/AuthenticationService',
+    'long',
+    'sdk/PCast',
     'sdk/chat/ChatService',
-    '../../../test/mock/mockPCast'
-], function (Long, observable, AuthenticationService, ChatService, MockPCast) {
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
+    '../../../test/mock/ChromeRuntimeStubber'
+], function (_, observable, Long, PCast, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     var pcast;
-    var mockProtocol;
     var chatService;
     var response;
+    var httpStubber;
+    var websocketStubber;
+    var chromeRuntimeStubber = new ChromeRuntimeStubber();
 
     describe('When Instantiating a ChatService', function () {
-        beforeEach(function () {
-            pcast = new MockPCast();
+        before(function() {
+            chromeRuntimeStubber.stub();
+        });
 
-            mockProtocol = pcast.getProtocol();
+        beforeEach(function (done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stub();
 
-            mockProtocol.getSessionId = function () {
-                return 'mockSessionId';
-            };
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
 
-            chatService = new ChatService(pcast);
+            pcast = new PCast();
+
+            pcast.start('AuthToken', function () {}, function onlineCallback () {
+                chatService = new ChatService(pcast);
+                done();
+            }, function offlineCallback () {});
 
             response = {
                 status: 'ok',
                 chatMessages: []
             };
 
-            mockProtocol.subscribeToRoomConversation.restore();
-            mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                callback(null, response);
-            });
+            websocketStubber.stubResponse('chat.FetchRoomConversation', response);
+            websocketStubber.stubResponse('chat.SendMessageToRoom', response);
 
-            mockProtocol.sendMessageToRoom.restore();
-            mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom').callsFake(function (roomId, chatMessage, callback) {
-                callback(null, response);
-            });
+            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
         });
 
         it('Has property start that is a function', function () {
@@ -69,14 +85,6 @@ define([
             expect(chatService.subscribeAndLoadMessages).to.be.a('function');
         });
 
-        it('Chat is successfully initialized on start', function () {
-            chatService.start();
-
-            sinon.assert.calledOnce(mockProtocol.on);
-
-            chatService.stop();
-        });
-
         describe('When chat service is started', function () {
             beforeEach(function () {
                 chatService.start();
@@ -89,10 +97,7 @@ define([
             it('loadMessages returns list of existing messages for roomId', function () {
                 response.chatMessages = [{id: '1'}];
 
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(null, response);
-                });
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
                 chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
                     expect(response.chatMessages[0].id).to.be.equal('1');
@@ -105,10 +110,7 @@ define([
                     timestamp: Long.fromNumber(1488469432437)
                 }];
 
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(null, response);
-                });
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
                 chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
                     expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
@@ -118,10 +120,7 @@ define([
             it('loadMessages status other than ok with no chatMessages when status other than ok returned from protocol', function () {
                 response.status = 'no-room';
 
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(null, response);
-                });
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
                 chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
                     expect(response.status).to.not.be.equal('ok');
@@ -130,10 +129,7 @@ define([
             });
 
             it('Expect subscribeAndLoadMessages to return an error when error returned from protocol', function () {
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(new Error('Error'), null);
-                });
+                websocketStubber.stubResponseError('chat.FetchRoomConversation', new Error('Error'));
 
                 chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
                     expect(response).to.be.not.ok;
@@ -142,16 +138,17 @@ define([
             });
 
             it('sendMessage results in request to send chat message', function () {
+                var sendMessageSpy = sinon.spy();
+
+                websocketStubber.stubResponse('chat.SendMessageToRoom', response, sendMessageSpy);
+
                 chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function() {});
 
-                sinon.assert.calledOnce(mockProtocol.sendMessageToRoom);
+                sinon.assert.calledOnce(sendMessageSpy);
             });
 
             it('Expect sendMessageToRoom to return an error when error returned from protocol', function () {
-                mockProtocol.sendMessageToRoom.restore();
-                mockProtocol.sendMessageToRoom = sinon.stub(mockProtocol, 'sendMessageToRoom').callsFake(function (roomId, chatService, callback) {
-                    callback(new Error('Error'), null);
-                });
+                websocketStubber.stubResponseError('chat.SendMessageToRoom', new Error('Error'));
 
                 chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function (error, response) {
                     expect(response).to.be.not.ok;
@@ -161,29 +158,16 @@ define([
         });
 
         describe('When listening for messages', function () {
-            var onChatEvent;
-
             beforeEach(function () {
-                mockProtocol.on.restore();
-                mockProtocol.on = sinon.stub(mockProtocol, 'on').callsFake(function (eventName, chatEventHandler) {
-                    onChatEvent = chatEventHandler;
-
-                    return {dispose: function() {}};
-                });
-
                 chatService.start();
             });
 
             afterEach(function () {
-                onChatEvent = null;
                 chatService.stop();
             });
 
             it('Message event returns list of messages to handler', function () {
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(null, response);
-                });
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
                 chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
                     if (response.chatMessages.length > 0) {
@@ -191,12 +175,11 @@ define([
                     }
                 });
 
-                var event = {
+                websocketStubber.stubEvent('chat.RoomConversationEvent', {
                     roomId: 'roomId',
                     eventType: 'Message',
                     chatMessages: [{id: '1'}]
-                };
-                onChatEvent(event);
+                });
             });
 
             it('Chat Message timestamp Long values successfully converted', function () {
@@ -206,15 +189,14 @@ define([
                     }
                 });
 
-                var event = {
+                websocketStubber.stubEvent('chat.RoomConversationEvent', {
                     roomId: 'roomId',
                     eventType: 'Message',
                     chatMessages: [{
                         id: '1',
                         timestamp: Long.fromNumber(1488469432437)
                     }]
-                };
-                onChatEvent(event);
+                });
             });
 
             it('Chat Message From lastUpdate Long values successfully converted', function () {
@@ -224,109 +206,95 @@ define([
                     }
                 });
 
-                var event = {
+                websocketStubber.stubEvent('chat.RoomConversationEvent', {
                     roomId: 'roomId',
                     eventType: 'Message',
                     chatMessages: [{
                         id: '1',
                         from: {lastUpdate: Long.fromNumber(1488469432437)}
                     }]
-                };
-                onChatEvent(event);
+                });
             });
         });
 
         describe('When getting messages', function () {
-            var messagesCallback;
-
             beforeEach(function () {
-                mockProtocol.getMessages.restore();
-                mockProtocol.getMessages = sinon.stub(mockProtocol, 'getMessages').callsFake(function (sessionId, roomId, batchSize, beforeMessageId, afterMessageId, callback) {
-                    messagesCallback = callback;
-                });
-
                 chatService.start();
             });
 
             afterEach(function () {
-                messagesCallback = null;
                 chatService.stop();
             });
 
             it('batchSize and toMessageId yields messages', function () {
+                websocketStubber.stubResponse('chat.FetchRoomConversation', {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                });
+
                 chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
-
-                var response = {
-                    status: 'ok',
-                    chatMessages: [{id: '1'}]
-                };
-                messagesCallback(null, response);
             });
 
             it('batchSize and fromMessageId yields messages', function () {
+                websocketStubber.stubResponse('chat.FetchRoomConversation', {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                });
+
                 chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
-
-                var response = {
-                    status: 'ok',
-                    chatMessages: [{id: '1'}]
-                };
-                messagesCallback(null, response);
             });
 
             it('toMessageId and fromMessageId yields messages', function () {
+                websocketStubber.stubResponse('chat.FetchRoomConversation', {
+                    status: 'ok',
+                    chatMessages: [{id: '1'}]
+                });
+
                 chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
-
-                var response = {
-                    status: 'ok',
-                    chatMessages: [{id: '1'}]
-                };
-                messagesCallback(null, response);
             });
 
             it('Message lastUpdates are successfully converted from Long', function () {
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
-                    if (response.chatMessages.length) {
-                        expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
-                    }
-                });
-
-                var response = {
+                websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{
                         id: '1',
                         from: {lastUpdate: Long.fromNumber(1488469432437)}
                     }]
-                };
-                messagesCallback(null, response);
+                });
+
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
+                    }
+                });
             });
 
             it('Message timestamps are successfully converted from Long', function () {
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
-                    if (response.chatMessages.length) {
-                        expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
-                    }
-                });
-
-                var response = {
+                websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{
                         id: '1',
                         timestamp: Long.fromNumber(1488469432437)
                     }]
-                };
-                messagesCallback(null, response);
+                });
+
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                    if (response.chatMessages.length) {
+                        expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
+                    }
+                });
             });
         });
 
@@ -334,32 +302,26 @@ define([
             var sessionIdObservable;
 
             beforeEach(function () {
-                sessionIdObservable = new observable.Observable('mockPCastSessionId');
-
-                AuthenticationService.prototype.getObservableSessionId = sinon.stub(AuthenticationService.prototype, 'getObservableSessionId').callsFake(function () {
-                    return sessionIdObservable;
-                });
+                sessionIdObservable = pcast.getProtocol().getObservableSessionId();
 
                 chatService.start();
             });
 
             afterEach(function () {
-                AuthenticationService.prototype.getObservableSessionId.restore();
                 chatService.stop();
             });
 
             it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function (done) {
-                mockProtocol.subscribeToRoomConversation.restore();
-                mockProtocol.subscribeToRoomConversation = sinon.stub(mockProtocol, 'subscribeToRoomConversation').callsFake(function (sessionId, roomId, batchSize, callback) {
-                    callback(null, response);
-                });
+                var subscribeToConversationSpy = sinon.spy();
+
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response, subscribeToConversationSpy);
 
                 chatService.subscribeAndLoadMessages('roomId', 10, function(){});
 
                 sessionIdObservable.setValue('mockNewSessionId');
 
                 setTimeout(function () {
-                    sinon.assert.calledTwice(mockProtocol.subscribeToRoomConversation);
+                    sinon.assert.calledTwice(subscribeToConversationSpy);
                     done();
                 }, 500);
             });
@@ -369,28 +331,20 @@ define([
             var statusObservable;
 
             beforeEach(function () {
-                statusObservable = new observable.Observable('online');
-
-                if (AuthenticationService.prototype.getObservableStatus.restore) {
-                    AuthenticationService.prototype.getObservableStatus.restore();
-                }
-
-                AuthenticationService.prototype.getObservableStatus = sinon.stub(AuthenticationService.prototype, 'getObservableStatus').callsFake(function () {
-                    return statusObservable;
-                });
+                statusObservable = pcast.getObservableStatus();
 
                 chatService.start();
             });
 
             afterEach(function () {
-                if (AuthenticationService.prototype.getObservableStatus.restore) {
-                    AuthenticationService.prototype.getObservableStatus.restore();
-                }
-
                 chatService.stop();
             });
 
             it('Status changed to online causes fetchRoomMessages for no listeners', function (done) {
+                var subscribeToConversationSpy = sinon.spy();
+
+                websocketStubber.stubResponse('chat.FetchRoomConversation', response, subscribeToConversationSpy);
+
                 chatService._roomMessagesListeners = {
                     'id1': function () {},
                     'id2': function () {},
@@ -403,7 +357,7 @@ define([
                     statusObservable.setValue('Online');
 
                     setTimeout(function () {
-                        sinon.assert.notCalled(mockProtocol.subscribeToRoomConversation);
+                        sinon.assert.notCalled(subscribeToConversationSpy);
                         done();
                     }, 200);
                 }, 200);

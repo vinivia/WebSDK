@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 define([
+    'sdk/room/RoomService',
     'sdk/room/ImmutableRoom',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
-    'sdk/room/track.json',
-    '../../../test/mock/mockRoomService'
-], function (ImmutableRoom, room, member, stream, track, MockRoomService) {
+    'sdk/room/track.json'
+], function (RoomService, ImmutableRoom, room, member, stream, track) {
     describe('When Creating An Immutable Room', function () {
         var testRoom;
         var member1;
-        var stubRoomService;
+        var roomService;
 
         var mockTrack = {enabled: track.states.trackEnabled.name};
         var stream1 = {
@@ -38,8 +38,6 @@ define([
         };
 
         beforeEach(function () {
-            stubRoomService = new MockRoomService();
-
             member1 = {
                 state: member.states.passive.name,
                 sessionId: 'member1',
@@ -48,7 +46,9 @@ define([
                 lastUpdate: 123,
                 screenName: 'first'
             };
-            testRoom = new ImmutableRoom(stubRoomService, 'asd', 'User', 'MyRoom', 'Immutable Room', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
+
+            roomService = sinon.createStubInstance(RoomService);
+            testRoom = new ImmutableRoom(roomService, 'asd', 'User', 'MyRoom', 'Immutable Room', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
         it('Has property toJson that is a function', function () {

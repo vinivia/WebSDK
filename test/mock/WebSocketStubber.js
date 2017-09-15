@@ -18,10 +18,10 @@ define([
     'phenix-web-proto',
     'phenix-web-event'
 ], function (_, proto, event) {
-    var webSocketProtoClone = proto.WebSocketProto;
+    var mqWebSocketClone = proto.MQWebSocket;
 
     function WebSocketStubber() {
-        this._mockWebProtoSocket = null;
+        this._mockMQWebSocket = null;
         this._handlers = {};
         this._defaultResponse = {
             message: {status: 'ok'},
@@ -38,20 +38,10 @@ define([
     WebSocketStubber.prototype.stubAuthRequest = function(callback) {
         setupStubIfNoneExist.call(this);
 
-        var that = this;
-
         this.stubResponse('pcast.Authenticate', {
             status: 'ok',
             sessionId: 'MockSessionId'
-        }, function() {
-            if (that._namedEvents) {
-                that._namedEvents.fire('pcast.AuthenticateResponse', [{sessionId: 'MockSessionId'}]);
-            }
-
-            if (callback) {
-                callback.apply(callback, arguments);
-            }
-        });
+        }, callback);
     };
 
     WebSocketStubber.prototype.stubSetupStream = function(callback) {
@@ -83,7 +73,17 @@ define([
         };
     };
 
-    WebSocketStubber.prototype.stubMessage = function(type, message) {
+    WebSocketStubber.prototype.stubResponseError = function(type, message, callback) {
+        setupStubIfNoneExist.call(this);
+
+        this._handlers[type] = {
+            message: message,
+            callback: callback,
+            isError: true
+        };
+    };
+
+    WebSocketStubber.prototype.stubEvent = function(type, message) {
         setupStubIfNoneExist.call(this);
 
         if (this._namedEvents) {
@@ -98,24 +98,24 @@ define([
     };
 
     WebSocketStubber.prototype.restore = function() {
-        if (this._mockWebProtoSocket) {
-            this._mockWebProtoSocket.disconnect();
-            this._mockWebProtoSocket = null;
+        if (this._mockMQWebSocket) {
+            this._mockMQWebSocket.disconnect();
+            this._mockMQWebSocket = null;
         }
 
-        proto.WebSocketProto = webSocketProtoClone; // eslint-disable-line no-global-assign
+        proto.MQWebSocket = mqWebSocketClone; // eslint-disable-line no-global-assign
     };
 
     function setupStubIfNoneExist() {
         var that = this;
 
-        if (that._mockWebProtoSocket) {
+        if (that._mockMQWebSocket) {
             return;
         }
 
         that._namedEvents = new event.NamedEvents();
 
-        that._mockWebProtoSocket = {
+        that._mockMQWebSocket = {
             disconnect: function() {
                 that._namedEvents.dispose();
             },
@@ -126,9 +126,13 @@ define([
                     handler.callback(type, message, callback);
                 }
 
+                if (handler.isError) {
+                    return callback(handler.message);
+                }
+
                 callback(null, handler.message);
             },
-            on: function(eventName, callback) {
+            onEvent: function(eventName, callback) {
                 return that._namedEvents.listen(eventName, callback);
             },
             getApiVersion: function() {
@@ -136,8 +140,8 @@ define([
             }
         };
 
-        proto.WebSocketProto = function() { // eslint-disable-line no-global-assign
-            return that._mockWebProtoSocket;
+        proto.MQWebSocket = function() { // eslint-disable-line no-global-assign
+            return that._mockMQWebSocket;
         };
     }
 

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 define([
+    'sdk/room/RoomService',
     'sdk/room/Room',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
-    'sdk/room/track.json',
-    '../../../test/mock/mockRoomService'
-], function (Room, room, member, stream, track, MockRoomService) {
+    'sdk/room/track.json'
+], function (RoomService, Room, room, member, stream, track) {
     describe('When instantiating a Room', function () {
         var testRoom;
         var member1;
@@ -38,7 +38,7 @@ define([
         };
 
         beforeEach(function () {
-            stubRoomService = new MockRoomService();
+            stubRoomService = new sinon.createStubInstance(RoomService);
 
             member1 = {
                 state: member.states.passive.name,
@@ -142,6 +142,7 @@ define([
 
         describe('When committing changes on member', function () {
             it('CommitChanges calls roomService updateMember', function () {
+                stubRoomService.updateRoom.restore();
                 stubRoomService.updateRoom = sinon.stub(stubRoomService, 'updateRoom').callsFake(function (room) {
                     expect(room).to.be.equal(testRoom);
                 });
@@ -149,12 +150,12 @@ define([
                 testRoom.commitChanges(function () {});
 
                 sinon.assert.calledOnce(stubRoomService.updateRoom);
-                stubRoomService.updateRoom.restore();
             });
         });
 
         describe('When reverting changes on room', function () {
             it('Reload calls roomService updateRoom', function () {
+                stubRoomService.revertRoomChanges.restore();
                 stubRoomService.revertRoomChanges = sinon.stub(stubRoomService, 'revertRoomChanges').callsFake(function (room) {
                     expect(room).to.be.equal(testRoom);
                 });
@@ -162,7 +163,6 @@ define([
                 testRoom.reload(function () {});
 
                 sinon.assert.calledOnce(stubRoomService.revertRoomChanges);
-                stubRoomService.revertRoomChanges.restore();
             });
         });
 
