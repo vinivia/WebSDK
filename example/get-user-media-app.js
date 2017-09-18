@@ -68,6 +68,10 @@ requirejs([
         var pcast;
 
         var createPCast = function createPCast() {
+            window.onerror = function(e) {
+                pcast.getLogger().error('Window Error', e);
+            };
+
             if (pcast) {
                 pcast.stop();
             }
@@ -81,6 +85,22 @@ requirejs([
                     uri: uri,
                     deviceId: fingerprint,
                     shaka: shaka
+                });
+
+                pcast.getLogger().addAppender({
+                    log: function() {
+                        if (sdk.RTC.browser !== 'Safari') {
+                            return;
+                        }
+
+                        $.ajax({
+                            url: '/log',
+                            accepts: 'application/json',
+                            contentType: 'application/json',
+                            method: 'POST',
+                            data: JSON.stringify({messages: arguments})
+                        });
+                    }
                 });
 
                 app.setLoggerUserId(pcast);

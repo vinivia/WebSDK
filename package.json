@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2017.3.5",
+  "version": "2017.3.6",
   "license": "Apache-2.0",
   "private": false,
   "main": "phenix-web-sdk.min.js",
@@ -29,11 +29,11 @@
     "lint-fix": "eslint ./ --fix"
   },
   "dependencies": {
-    "phenix-rtc": "2017.3.0",
+    "phenix-rtc": "2017.3.2",
     "phenix-web-assert": "2017.3.6",
     "phenix-web-batch-http": "2017.3.6",
     "phenix-web-disposable": "2017.3.6",
-    "phenix-web-event": "^2017.3.6",
+    "phenix-web-event": "2017.3.6",
     "phenix-web-http": "2017.3.6",
     "phenix-web-lodash-light": "2017.3.6",
     "phenix-web-logging": "2017.3.6",

@@ -560,6 +560,7 @@ define([
 
     function createViewerStreamTokenAndJoinRoom(options, publisher, room, callback) {
         var that = this;
+        var realtimeCapabilities = [];
 
         if (!options.enableWildcardCapability) {
             var joinRoomOptions = _.assign({}, options, {
@@ -571,7 +572,11 @@ define([
             return joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
         }
 
-        this._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', [], publisher.getStreamId(), function(error, createStreamTokenResponse) {
+        if (_.includes(options.capabilities, 'prefer-h264')) {
+            realtimeCapabilities.push('prefer-h264');
+        }
+
+        this._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', realtimeCapabilities, publisher.getStreamId(), function(error, createStreamTokenResponse) {
             if (error) {
                 return callback(error);
             }
