@@ -16,8 +16,9 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-web-disposable'
-], function (_, assert, disposable) {
+    'phenix-web-disposable',
+    './applicationActivityDetector'
+], function (_, assert, disposable, applicationActivityDetector) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
@@ -37,6 +38,9 @@ define([
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
         this._records = [];
+
+        this._disposables.add(applicationActivityDetector.onBackground(_.bind(recordForegroundChange, this, false)));
+        this._disposables.add(applicationActivityDetector.onForeground(_.bind(recordForegroundChange, this, true)));
     }
 
     SessionTelemetry.prototype.setSessionId = function(sessionId) {
@@ -54,8 +58,8 @@ define([
                 metric: 'Initialized',
                 elapsed: this.elapsed()
             }, since());
-
             recordAllMetrics.call(this);
+            recordForegroundState.call(this);
         }
     };
 
@@ -90,8 +94,26 @@ define([
 
         this.recordMetric('Stopped');
 
-        logMetric.call(this, 'Stream stopped');
+        logMetric.call(this, 'Session telemetry stopped');
     };
+
+    function recordForegroundState() {
+        var isForeground = applicationActivityDetector.isForeground();
+        var timeSinceLastChange = applicationActivityDetector.getTimeSinceLastChange();
+        var metric = isForeground ? 'ApplicationForeground' : 'ApplicationBackground';
+
+        this.recordMetric(metric, {uint64: timeSinceLastChange});
+
+        logMetric.call(this, 'Session has started in the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
+
+    function recordForegroundChange(isForeground, timeSinceLastChange) {
+        var metric = isForeground ? 'ApplicationForeground' : 'ApplicationBackground';
+
+        this.recordMetric(metric, {uint64: timeSinceLastChange});
+
+        logMetric.call(this, 'Application has gone into the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
 
     function logMetric() {
         var args = Array.prototype.slice.call(arguments);
@@ -103,7 +125,7 @@ define([
         var sessionTelemetryPrepend = '[%s] [SessionTelemetry] [%s] ';
         var message = sessionTelemetryPrepend + args[0];
         var loggingArguments = args.slice(1);
-        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+        var telemetryArguments = [message, this._sessionId, _.now() - this._start].concat(loggingArguments);
 
         this._logger.debug.apply(this._logger, telemetryArguments);
     }

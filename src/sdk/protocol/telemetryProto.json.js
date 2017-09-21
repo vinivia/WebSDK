@@ -360,6 +360,10 @@ define([
                         "id": 8
                     },
                     {
+                        "name": "Seeking",
+                        "id": 22
+                    },
+                    {
                         "name": "Stopped",
                         "id": 9
                     },
@@ -370,6 +374,10 @@ define([
                     {
                         "name": "ResolutionChanged",
                         "id": 11
+                    },
+                    {
+                        "name": "DisplayResolutionChanged",
+                        "id": 23
                     },
                     {
                         "name": "FrameRateChanged",
@@ -396,8 +404,28 @@ define([
                         "id": 17
                     },
                     {
+                        "name": "PlayerEvent",
+                        "id": 21
+                    },
+                    {
                         "name": "MetricDropped",
                         "id": 18
+                    },
+                    {
+                        "name": "NetworkOffline",
+                        "id": 19
+                    },
+                    {
+                        "name": "NetworkOnline",
+                        "id": 20
+                    },
+                    {
+                        "name": "ApplicationForeground",
+                        "id": 24
+                    },
+                    {
+                        "name": "ApplicationBackground",
+                        "id": 25
                     }
                 ]
             }

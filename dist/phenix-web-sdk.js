@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 78);
+/******/ 	return __webpack_require__(__webpack_require__.s = 79);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -237,11 +237,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(42)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (http) {
-    'use strict';
-
-    return http;
+    __webpack_require__(18),
+    __webpack_require__(41)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
+    return {
+        Event: Event,
+        NamedEvents: NamedEvents
+    };
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -265,13 +267,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(18),
-    __webpack_require__(41)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
-    return {
-        Event: Event,
-        NamedEvents: NamedEvents
-    };
+    __webpack_require__(42)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (http) {
+    'use strict';
+
+    return http;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -4158,7 +4158,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(56)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, http, ClosestEndPointResolver) {
     'use strict';
@@ -4474,12 +4474,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(2),
     __webpack_require__(12),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(58),
     __webpack_require__(11),
     __webpack_require__(59),
     __webpack_require__(57),
-    __webpack_require__(76),
+    __webpack_require__(77),
     __webpack_require__(75),
     __webpack_require__(74),
     __webpack_require__(4)
@@ -4492,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-21T13:29:53Z';
+    var sdkVersion = '2017-09-22T15:03:47Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -9297,7 +9297,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(6),
+    __webpack_require__(5),
     __webpack_require__(3),
     __webpack_require__(21),
     __webpack_require__(8)
@@ -9626,7 +9626,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(5)
+    __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, http) {
     'use strict';
 
@@ -10189,6 +10189,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "id": 8
                     },
                     {
+                        "name": "Seeking",
+                        "id": 22
+                    },
+                    {
                         "name": "Stopped",
                         "id": 9
                     },
@@ -10199,6 +10203,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     {
                         "name": "ResolutionChanged",
                         "id": 11
+                    },
+                    {
+                        "name": "DisplayResolutionChanged",
+                        "id": 23
                     },
                     {
                         "name": "FrameRateChanged",
@@ -10225,8 +10233,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "id": 17
                     },
                     {
+                        "name": "PlayerEvent",
+                        "id": 21
+                    },
+                    {
                         "name": "MetricDropped",
                         "id": 18
+                    },
+                    {
+                        "name": "NetworkOffline",
+                        "id": 19
+                    },
+                    {
+                        "name": "NetworkOnline",
+                        "id": 20
+                    },
+                    {
+                        "name": "ApplicationForeground",
+                        "id": 24
+                    },
+                    {
+                        "name": "ApplicationBackground",
+                        "id": 25
                     }
                 ]
             }
@@ -13157,9 +13185,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(6),
-    __webpack_require__(19),
     __webpack_require__(5),
+    __webpack_require__(19),
+    __webpack_require__(6),
     __webpack_require__(2),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, networkConnectionMonitor, http, observable, disposable) {
@@ -14429,8 +14457,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
-    var releaseVersion = '2017.3.7';
+    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
+    var releaseVersion = '2017.3.8';
 
     function Logger() {
         this._appenders = [];
@@ -14637,7 +14665,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(6),
+    __webpack_require__(5),
     __webpack_require__(2),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, event, observable, disposable) {
@@ -14947,7 +14975,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(6),
+    __webpack_require__(5),
     __webpack_require__(53),
     __webpack_require__(22)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, ReconnectingWebSocket, MQService) {
@@ -16103,7 +16131,7 @@ process.umask = function() { return 0; };
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(77);
+                var fs = __webpack_require__(78);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -20971,7 +20999,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(5)
+    __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, http) {
     'use strict';
 
@@ -26148,13 +26176,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable) {
+    __webpack_require__(3),
+    __webpack_require__(76)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, applicationActivityDetector) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
+    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26169,6 +26198,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
         this._records = [];
+
+        this._disposables.add(applicationActivityDetector.onBackground(_.bind(recordForegroundChange, this, false)));
+        this._disposables.add(applicationActivityDetector.onForeground(_.bind(recordForegroundChange, this, true)));
     }
 
     SessionTelemetry.prototype.setSessionId = function(sessionId) {
@@ -26186,8 +26218,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 metric: 'Initialized',
                 elapsed: this.elapsed()
             }, since());
-
             recordAllMetrics.call(this);
+            recordForegroundState.call(this);
         }
     };
 
@@ -26222,8 +26254,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this.recordMetric('Stopped');
 
-        logMetric.call(this, 'Stream stopped');
+        logMetric.call(this, 'Session telemetry stopped');
     };
+
+    function recordForegroundState() {
+        var isForeground = applicationActivityDetector.isForeground();
+        var timeSinceLastChange = applicationActivityDetector.getTimeSinceLastChange();
+        var metric = isForeground ? 'ApplicationForeground' : 'ApplicationBackground';
+
+        this.recordMetric(metric, {uint64: timeSinceLastChange});
+
+        logMetric.call(this, 'Session has started in the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
+
+    function recordForegroundChange(isForeground, timeSinceLastChange) {
+        var metric = isForeground ? 'ApplicationForeground' : 'ApplicationBackground';
+
+        this.recordMetric(metric, {uint64: timeSinceLastChange});
+
+        logMetric.call(this, 'Application has gone into the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
 
     function logMetric() {
         var args = Array.prototype.slice.call(arguments);
@@ -26235,7 +26285,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var sessionTelemetryPrepend = '[%s] [SessionTelemetry] [%s] ';
         var message = sessionTelemetryPrepend + args[0];
         var loggingArguments = args.slice(1);
-        var telemetryArguments = [message, this._streamId, _.now() - this._start].concat(loggingArguments);
+        var telemetryArguments = [message, this._sessionId, _.now() - this._start].concat(loggingArguments);
 
         this._logger.debug.apply(this._logger, telemetryArguments);
     }
@@ -26313,7 +26363,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
+    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -26575,6 +26625,182 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
+    __webpack_require__(5),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, disposable) {
+    var defaultDocumentFocusIntervalTimeout = 3000;
+
+    function ApplicationActivityDetector() {
+        this._namedEvents = new event.NamedEvents();
+        this._timeOfLastTabFocusChange = _.now();
+        this._disposables = new disposable.DisposableList();
+        this._isForeground = true;
+
+        this._disposables.add(this._namedEvents);
+
+        detectTabFocusChange.call(this);
+    }
+
+    ApplicationActivityDetector.prototype.isForeground = function() {
+        return this._isForeground;
+    };
+
+    ApplicationActivityDetector.prototype.getTimeSinceLastChange = function() {
+        return _.now() - this._timeOfLastTabFocusChange;
+    };
+
+    ApplicationActivityDetector.prototype.onForeground = function isEnabled(callback) {
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen('foreground', callback);
+    };
+
+    ApplicationActivityDetector.prototype.onBackground = function setEnabled(callback) {
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen('background', callback);
+    };
+
+    function detectTabFocusChange() {
+        if (canDetectDirectly()) {
+            return detectTabFocusChangeDirectly.call(this);
+        }
+
+        detectTabFocusChangeIndirectly.call(this);
+    }
+
+    function canDetectDirectly() {
+        return typeof chrome !== 'undefined' && chrome.extension && chrome.extension.onRequest; // eslint-disable-line no-undef
+    }
+
+    function detectTabFocusChangeDirectly() {
+        if (!canDetectDirectly()) {
+            return;
+        }
+
+        var that = this;
+
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) { // eslint-disable-line no-undef
+            if(request === "is_selected") {
+                chrome.tabs.getSelected(null, function(tab){ // eslint-disable-line no-undef
+                    var isForeground = tab.id === sender.tab.id;
+
+                    setFocusState.call(that, isForeground);
+
+                    if(isForeground) {
+                        sendResponse(true);
+                    } else {
+                        sendResponse(false);
+                    }
+                });
+            }
+        });
+    }
+
+    function detectTabFocusChangeIndirectly() {
+        var hidden;
+        var visibilityChange;
+        var that = this;
+
+        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        function handleVisibilityChange() {
+            var isForeground = !document[hidden];
+
+            setFocusState.call(that, isForeground);
+        }
+
+        if (typeof document.addEventListener !== "undefined" && typeof document[hidden] !== "undefined") {
+            _.addEventListener(document, visibilityChange, handleVisibilityChange, false);
+
+            that._disposables.add(new disposable.Disposable(function() {
+                _.removeEventListener(document, visibilityChange, handleVisibilityChange, false);
+            }));
+        } else {
+            listenForDocumentFocus.call(that);
+        }
+    }
+
+    function listenForDocumentFocus() {
+        var that = this;
+
+        that._documentFocusInterval = setInterval(function() {
+            var isForeground = document.hasFocus();
+
+            setFocusState(isForeground);
+        }, defaultDocumentFocusIntervalTimeout);
+
+        that._disposables.add(new disposable.Disposable(function() {
+            if (_.isNumber(that._documentFocusInterval)) {
+                clearInterval(that._documentFocusInterval);
+            }
+
+            that._documentFocusInterval = null;
+        }));
+    }
+
+    function setFocusState(isForeground) {
+        assert.isBoolean(isForeground, 'isForeground');
+
+        if (this._isForeground === isForeground) {
+            return;
+        }
+
+        if (isForeground) {
+            this._isForeground = true;
+
+            return triggerFocusChange.call(this, 'foreground');
+        }
+
+        this._isForeground = false;
+
+        return triggerFocusChange.call(this, 'background');
+    }
+
+    function triggerFocusChange(state) {
+        var currentTime = _.now();
+        var timeElapsedOfLastState = currentTime - this._timeOfLastTabFocusChange;
+
+        this._timeOfLastTabFocusChange = currentTime;
+
+        this._namedEvents.fire(state, [timeElapsedOfLastState]);
+    }
+
+    return new ApplicationActivityDetector();
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
     __webpack_require__(25),
     __webpack_require__(73)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
@@ -26617,13 +26843,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
