@@ -22,11 +22,11 @@ define([
     }
 
     AudioContext.prototype.init = function init() {
-        if (!window.AudioContext) {
+        if (!window.AudioContext && !window.webkitAudioContext) {
             throw new Error('Browser does not support AudioContext');
         }
 
-        this._audioContext = new window.AudioContext();
+        this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
     };
 
     AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {

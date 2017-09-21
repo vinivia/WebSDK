@@ -25,7 +25,7 @@ define([
                 return this.skip();
             }
 
-            if (!window.AudioContext) {
+            if (!window.AudioContext && !window.webkitAudioContext) {
                 console.log('SKIPPING Environment without global AudioContext');
 
                 return this.skip();
@@ -51,7 +51,11 @@ define([
         it('Should have native AudioContext', function () {
             audioContext.init();
 
-            expect(audioContext.getNativeAudioContext()).to.be.a('AudioContext');
+            if (window.AudioContext) {
+                expect(audioContext.getNativeAudioContext()).to.be.a('AudioContext');
+            } else if (window.webkitAudioContext) {
+                expect(audioContext.getNativeAudioContext()).to.be.a('webkitAudioContext');
+            }
 
             audioContext.getNativeAudioContext().close();
         });

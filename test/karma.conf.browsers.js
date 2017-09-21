@@ -24,7 +24,7 @@ var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
 if (isWin) {
     browsers.push('IE');
-    // Browsers.push('Safari');
+    browsers.push('Edge');
 }
 
 if (isOSX) {
@@ -35,8 +35,9 @@ if (isWin || isOSX) {
     // Browsers.push('ChromeCanary');
 }
 
-if (isLinux) {
+if (isLinux || isOSX || isWin) {
     browsers.push('Chrome');
+    browsers.push('Firefox');
 }
 
 module.exports = function (config) {

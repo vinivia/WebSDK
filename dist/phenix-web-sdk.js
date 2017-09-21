@@ -4492,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-20T20:36:02Z';
+    var sdkVersion = '2017-09-21T13:29:53Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14429,7 +14429,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-20T20:36:02Z' || '?';
+    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
     var releaseVersion = '2017.3.7';
 
     function Logger() {
@@ -22090,11 +22090,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     AudioContext.prototype.init = function init() {
-        if (!window.AudioContext) {
+        if (!window.AudioContext && !window.webkitAudioContext) {
             throw new Error('Browser does not support AudioContext');
         }
 
-        this._audioContext = new window.AudioContext();
+        this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
     };
 
     AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {
@@ -26154,7 +26154,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-20T20:36:02Z' || '?';
+    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26313,7 +26313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-20T20:36:02Z' || '?';
+    var sdkVersion = '2017-09-21T13:29:53Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

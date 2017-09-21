@@ -15,11 +15,12 @@
  */
 define([
     'phenix-web-logging',
+    'sdk/audio/AudioContext',
     'sdk/audio/AudioSpeakerDetectionAlgorithm',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc',
     '../../../test/mock/HttpStubber'
-], function (logging, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
+], function (logging, AudioContext, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
     describe('When Using Active Speaker Detection Algorithm on WebRTC Supported Browser', function () {
         var audioSpeakerDetectionAlgorithm;
         var httpStubber;
@@ -53,7 +54,7 @@ define([
             var audioContext;
 
             beforeEach(function () {
-                audioContext = new window.AudioContext();
+                audioContext = (new AudioContext()).getNativeAudioContext();
                 audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(logging.Logger));
 
                 audioVolumeMeter.init(audioContext, 123);
