@@ -109,12 +109,12 @@ define([
     function setupMessageSubscription() {
         disposeOfMessageSubscription.call(this);
 
-        this._roomChatSubscriptionDispose = subscribeAndLoadMessages.call(this, this._batchSize);
+        this._roomChatSubscription = subscribeAndLoadMessages.call(this, this._batchSize);
     }
 
     function disposeOfMessageSubscription() {
-        if (this._roomChatSubscriptionDispose) {
-            this._roomChatSubscriptionDispose();
+        if (this._roomChatSubscription && this._roomChatSubscription.dispose) {
+            this._roomChatSubscription.dispose();
         }
     }
 

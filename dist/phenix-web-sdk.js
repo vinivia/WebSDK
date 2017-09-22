@@ -4492,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-22T15:03:47Z';
+    var sdkVersion = '2017-09-22T15:19:51Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -14457,7 +14457,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
+    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
     var releaseVersion = '2017.3.8';
 
     function Logger() {
@@ -23008,12 +23008,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function setupMessageSubscription() {
         disposeOfMessageSubscription.call(this);
 
-        this._roomChatSubscriptionDispose = subscribeAndLoadMessages.call(this, this._batchSize);
+        this._roomChatSubscription = subscribeAndLoadMessages.call(this, this._batchSize);
     }
 
     function disposeOfMessageSubscription() {
-        if (this._roomChatSubscriptionDispose) {
-            this._roomChatSubscriptionDispose();
+        if (this._roomChatSubscription && this._roomChatSubscription.dispose) {
+            this._roomChatSubscription.dispose();
         }
     }
 
@@ -26183,7 +26183,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
+    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26363,7 +26363,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:03:47Z' || '?';
+    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

@@ -15,15 +15,16 @@
  */
 define([
     'phenix-web-lodash-light',
+    'phenix-web-observable',
+    'phenix-web-disposable',
     'sdk/PCast',
     'sdk/room/RoomService',
-    'phenix-web-observable',
     'sdk/chat/RoomChatService',
     'sdk/chat/ChatService',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, PCast, RoomService, observable, RoomChatService, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+], function (_, observable, disposable, PCast, RoomService, RoomChatService, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     describe('When Instantiating a RoomChatService', function () {
         var httpStubber;
         var websocketStubber;
@@ -145,14 +146,18 @@ define([
 
         describe('When Room Changes', function () {
             var newMessagesCallback;
+            var disposableSpy;
 
             beforeEach(function () {
                 if (stubChatService.subscribeAndLoadMessages.restore) {
                     stubChatService.subscribeAndLoadMessages.restore();
                 }
 
+                disposableSpy = sinon.spy();
                 stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages').callsFake(function (roomId, batchSize, callback) {
                     newMessagesCallback = callback;
+
+                    return new disposable.Disposable(disposableSpy);
                 });
 
                 roomChatService.start();
@@ -167,12 +172,10 @@ define([
             });
 
             it('No room causes dispose of current room chat listeners', function (done) {
-                roomChatService._roomChatSubscriptionDispose = sinon.stub();
-
                 roomObservable.setValue(null);
 
                 setTimeout(function () {
-                    sinon.assert.calledOnce(roomChatService._roomChatSubscriptionDispose);
+                    sinon.assert.calledOnce(disposableSpy);
                     done();
                 }, 101);
             });
