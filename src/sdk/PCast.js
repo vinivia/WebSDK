@@ -439,7 +439,10 @@ define([
     };
 
     PCast.prototype.toString = function () {
-        return 'PCast[' + this.getProtocol().getSessionId() + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+        var protocol = this.getProtocol();
+        var sessionId = protocol ? protocol.getSessionId() : '';
+
+        return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
     };
 
     function checkForScreenSharingCapability(callback) {

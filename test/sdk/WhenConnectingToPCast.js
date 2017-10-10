@@ -65,9 +65,15 @@ define([
                 done();
             }, 0);
         });
+
+        it('returns descriptor from toString before being started', function() {
+            expect(pcast.toString()).to.be.a('string');
+        });
+
         it('acquires an authentication token', function () {
             expect(authToken).to.be.a('string');
         });
+
         describe('When starting PCast', function () {
             var theSessionId;
             var onlineCallbackInvocationCount = 0;
@@ -96,15 +102,23 @@ define([
                     offlineCallbackInvocationCount++;
                 });
             });
+
+            it('returns descriptor from toString after being started', function() {
+                expect(pcast.toString()).to.be.a('string');
+            });
+
             it('receives a session ID', function () {
                 expect(theSessionId).to.be.a('string');
             });
+
             it('became "online" once', function () {
                 expect(onlineCallbackInvocationCount).to.be.equal(1);
             });
+
             it('did not become "offline"', function () {
                 expect(offlineCallbackInvocationCount).to.be.equal(0);
             });
+
             describe('When stopping PCast', function () {
                 before(function (done) {
                     pcast.stop();
@@ -120,13 +134,16 @@ define([
                         }
                     }, 200);
                 });
+
                 it('became "online" once', function () {
                     expect(onlineCallbackInvocationCount).to.be.equal(1);
                 });
+
                 it('became "offline" once', function () {
                     expect(offlineCallbackInvocationCount).to.be.equal(1);
                 });
             });
+
             after(function () {
                 pcast.stop();
                 pcastLoggerStub.restore();

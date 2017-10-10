@@ -4492,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-09-22T15:19:51Z';
+    var sdkVersion = '2017-10-10T14:11:15Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -4895,7 +4895,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PCast.prototype.toString = function () {
-        return 'PCast[' + this.getProtocol().getSessionId() + ',' + (this._protocol ? this._protocol.toString() : 'uninitialized') + ']';
+        var protocol = this.getProtocol();
+        var sessionId = protocol ? protocol.getSessionId() : '';
+
+        return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
     };
 
     function checkForScreenSharingCapability(callback) {
@@ -9180,7 +9183,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function MQProtocol(protocols, apiVersion) {
         var builder = ProtoBuf.loadJson(mqProto);
 
-        _.forEach(protocols, function(protocol) {
+        _.forEach(protocols, function (protocol) {
             builder = ProtoBuf.loadJson(protocol, builder);
         });
 
@@ -9239,33 +9242,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function convertTypes(message) {
         if (message && message.$type && message.$type.children) {
-            for (var key in message.$type.children) {
-                var child = message.$type.children[key];
+            _.forOwn(message.$type.children, function (child) {
                 var value = message[child.name];
                 var type = child && child.element ? child.element.resolvedType : null;
 
-                if (type && type.className === 'Message' && type.children) {
+                if (_.isArray(value)) {
+                    message[child.name] = [];
+
+                    _.forEach(value, function (item) {
+                        message[child.name].push(convertTypes(item));
+                    });
+                } else if (type && type.className === 'Message' && type.children) {
                     message[child.name] = convertTypes(value);
                 } else if (type && type.className === 'Enum' && type.children) {
-                    // Stringify Enums
-                    var metaValue = null;
+                    var enumStringValue = _.getEnumName(type.children, value);
 
-                    for (var i = 0; i < type.children.length; i++) {
-                        if (type.children[i].id === value) {
-                            metaValue = type.children[i];
-
-                            break;
-                        }
+                    if (enumStringValue) {
+                        message[child.name] = enumStringValue;
                     }
-
-                    if (metaValue && metaValue.name) {
-                        message[child.name] = metaValue.name;
-                    }
-                } else if (value && typeof value.toNumber === 'function') {
+                } else if (value && _.isFunction(value.toNumber)) {
                     // Convert long to numbers
                     message[child.name] = value.toNumber();
                 }
-            }
+            });
+        } else if (message && _.isFunction(message.toNumber)) {
+            return message.toNumber();
         }
 
         return message;
@@ -9308,7 +9309,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var continuationStatus = 'continuation';
     var continuationPollInterval = 2000;
     var continuationTimeout = 300000;
-    var requestTimeout = 18000;
+    var defaultRequestTimeout = 18000;
 
     function MQService(logger, sendCallback, receiveCallback, protocols, apiVersion) {
         assert.isObject(logger, 'logger');
@@ -9324,6 +9325,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._responses = {};
         this._requestListeners = {};
         this._requestTimeouts = {};
+        this._requestTimestamps = {};
         this._continuationTimeouts = {};
 
         this._receiveCallback = receiveCallback;
@@ -9334,7 +9336,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     MQService.prototype.onEvent = function (eventName, handler) {
         if (this._disposed) {
-            return this._warn('Proto already disposed of. Unable to listen for event');
+            return this._logger.warn('Proto already disposed of. Unable to listen for event');
         }
 
         assert.isStringNotEmpty(eventName, 'eventName');
@@ -9345,7 +9347,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     MQService.prototype.onRequest = function (requestName, handler) {
         if (this._disposed) {
-            return this._warn('Proto already disposed of. Unable to listen for request');
+            return this._logger.warn('Proto already disposed of. Unable to listen for request');
         }
 
         assert.isStringNotEmpty(requestName, 'requestName');
@@ -9364,18 +9366,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     };
 
-    MQService.prototype.sendRequest = function sendRequest(type, message, callback) {
+    MQService.prototype.sendRequest = function sendRequest(type, message, callback, settings) {
         if (this._disposed) {
-            this._warn('Proto already disposed of. Unable to send request');
+            this._logger.warn('Proto already disposed of. Unable to send request');
 
             return callback(null, {status: 'proto-disposed'});
         }
 
+        settings = settings || {};
+
         assert.isStringNotEmpty(type, 'type');
         assert.isObject(message, 'message');
+        assert.isObject(settings, 'settings');
 
         if (callback) {
             assert.isFunction(callback, 'callback');
+        }
+
+        if (settings.timeout) {
+            assert.isNumber(settings.timeout, 'settings.timeout');
         }
 
         var requestId = clientRequestIdPrefix + (this._nextRequestId++).toString();
@@ -9386,14 +9395,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             messageType: 'Request'
         };
 
-        this._requests[requestId] = _.bind(handleResponseAndContinuations, this, requestId, type, message, callback);
+        this._requests[requestId] = _.bind(handleResponseAndContinuations, this, requestId, type, message, settings.timeout, callback);
 
-        return sendRequestWithTimeout.call(this, requestId, request, callback);
+        return sendRequestWithTimeout.call(this, requestId, request, message, settings.timeout, callback);
     };
 
     MQService.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
         if (this._disposed) {
-            this._warn('Proto already disposed of. Unable to send response');
+            this._logger.warn('Proto already disposed of. Unable to send response');
 
             return callback(null, {status: 'proto-disposed'});
         }
@@ -9415,10 +9424,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             type: type,
             payload: this._mqProtocol.encode(type, message),
             messageType: 'Response',
-            wallTime: _.now() - start
+            wallTime: [_.now() - start]
         };
 
-        encodeAndSendMessage.call(this, response);
+        encodeAndSendMessage.call(this, response, message);
 
         delete this._responses[requestId];
 
@@ -9442,6 +9451,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._responses = {};
         this._requestListeners = {};
         this._requestTimeouts = {};
+        this._requestTimestamps = {};
         this._continuationTimeouts = {};
 
         this._namedEvents.dispose();
@@ -9461,7 +9471,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function onMessage(evt) {
         if (this._disposed) {
-            return this._warn('Proto already disposed of. Unable process message');
+            return this._logger.warn('Proto already disposed of. Unable process message');
         }
 
         var message;
@@ -9484,6 +9494,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             throw e;
         }
+
+        triggerReceivedEvent.call(this, message, messageBody, evt.data.length);
 
         switch (message.messageType) {
         case 'Response':
@@ -9526,13 +9538,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
-    function handleResponseAndContinuations(requestId, type, message, callback, error, response) {
+    function handleResponseAndContinuations(requestId, type, message, timeout, callback, error, response) {
         if (response && response.status === continuationStatus) {
             if (!this._continuationTimeouts[requestId] && this._requests[requestId]) {
                 this._continuationTimeouts[requestId] = listenForContinuationTimeout.call(this, requestId, callback);
             }
 
-            return sendRequestWithContinuation.call(this, requestId, type, message, response, callback);
+            return sendRequestWithContinuation.call(this, requestId, type, message, response, timeout, callback);
         }
 
         clearTimeout(this._continuationTimeouts[requestId]);
@@ -9542,7 +9554,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return callback(error, response);
     }
 
-    function sendRequestWithContinuation(requestId, type, message, response, callback) {
+    function sendRequestWithContinuation(requestId, type, message, response, timeout, callback) {
         if (!response || (!response.continuationId && !response.routeKey)) {
             this._logger.warn('Received request for continuation without a continuationId or routeKey');
 
@@ -9566,22 +9578,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
-            return sendRequestWithTimeout.call(that, requestId, request, callback);
+            return sendRequestWithTimeout.call(that, requestId, request, messageWithContinuation, timeout, callback);
         }, continuationPollInterval);
     }
 
-    function sendRequestWithTimeout(requestId, request, callback) {
+    function sendRequestWithTimeout(requestId, request, payload, timeout, callback) {
         if (this._requestTimeouts[requestId]) {
             clearTimeout(this._requestTimeouts[requestId]);
         }
 
+        var requestTimeout = timeout || defaultRequestTimeout;
+
         this._requestTimeouts[requestId] = setTimeout(_.bind(handleRequestTimeout, this, requestId, requestTimeout, callback), requestTimeout);
 
-        return encodeAndSendMessage.call(this, request);
+        return encodeAndSendMessage.call(this, request, payload);
     }
 
-    function encodeAndSendMessage(message) {
-        return this._sendCallback(this._mqProtocol.encode('mq.Message', message).toString('base64'));
+    function encodeAndSendMessage(message, payload) {
+        var encodedMessage = this._mqProtocol.encode('mq.Message', message).toString('base64');
+
+        triggerSentEvent.call(this, message, payload, encodedMessage.length);
+
+        return this._sendCallback(encodedMessage);
     }
 
     function listenForContinuationTimeout(requestId, callback) {
@@ -9593,11 +9611,60 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         }
 
+        triggerTimeoutEvent.call(this, requestId, timeout);
+
         this._logger.warn('Request [%s] has not completed in [%s] ms. Dropping request.', requestId, timeout);
 
         delete this._requests[requestId];
 
         return callback(null, {status: 'timeout'});
+    }
+
+    function triggerReceivedEvent(message, payload, bytes) {
+        var now = _.now();
+        var sentTimestamp = this._requestTimestamps[message.requestId];
+
+        if (_.isNumber(sentTimestamp)) {
+            var totalRequestTime = now - sentTimestamp;
+
+            message.wallTime = [totalRequestTime].concat(message.wallTime);
+        }
+
+        this._namedEvents.fireAsync('received', [{
+            key: message.requestId,
+            messageType: message.messageType,
+            type: message.type,
+            wallTime: message.wallTime,
+            received: now,
+            bytes: bytes,
+            payload: payload
+        }]);
+
+        delete this._requestTimestamps[message.requestId];
+    }
+
+    function triggerSentEvent(message, payload, bytes) {
+        var now = _.now();
+
+        this._requestTimestamps[message.requestId] = now;
+
+        this._namedEvents.fireAsync('sent', [{
+            key: message.requestId,
+            messageType: message.messageType,
+            type: message.type,
+            received: now,
+            bytes: bytes,
+            payload: payload
+        }]);
+    }
+
+    function triggerTimeoutEvent(requestId, timeout) {
+        this._namedEvents.fireAsync('timeout', [{
+            key: requestId,
+            timeout: timeout
+        }]);
+
+        delete this._requestTimestamps[requestId];
     }
 
     return MQService;
@@ -13597,6 +13664,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             xhr.overrideMimeType(settings.mimeType);
         }
 
+        if (settings.responseType) {
+            xhr.responseType = settings.responseType;
+        }
+
         appendDataTypeHeaders(xhr, settings);
 
         xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, callback));
@@ -13616,6 +13687,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (!xhr) {
             return callback(getUnsupportedError());
+        }
+
+        if (settings.responseType) {
+            xhr.responseType = settings.responseType;
         }
 
         appendDataTypeHeaders(xhr, settings);
@@ -13662,12 +13737,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.stringNotEmpty(settings.mimeType, 'settings.mimeType');
         }
 
-        if (settings.responseType) {
-            assert.stringNotEmpty(settings.responseType, 'settings.responseType');
+        if (settings.accept) {
+            assert.stringNotEmpty(settings.accept, 'settings.accept');
         }
 
         if (settings.contentType) {
             assert.stringNotEmpty(settings.contentType, 'settings.contentType');
+        }
+
+        if (settings.responseType) {
+            assert.stringNotEmpty(settings.responseType, 'settings.responseType');
         }
 
         if (!_.isNullOrUndefined(settings.timeout)) {
@@ -13712,8 +13791,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function appendDataTypeHeaders(xhr, settings) {
-        var contentType = !settings.contentType ? 'application/json' : settings.contentType;
-        var responseType = !settings.responseType ? settings.contentType || 'application/json' : settings.responseType;
+        var contentType = settings.contentType || 'application/json';
+        var accept = settings.accept || contentType;
 
         switch (contentType.toLowerCase()) {
         case 'application/protobuf':
@@ -13730,7 +13809,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             break;
         }
 
-        switch (responseType.toLowerCase()) {
+        switch (accept.toLowerCase()) {
         case 'application/protobuf':
             xhr.setRequestHeader('Accept', 'application/protobuf');
 
@@ -13740,7 +13819,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             break;
         default:
-            xhr.setRequestHeader('Accept', responseType);
+            xhr.setRequestHeader('Accept', accept);
 
             break;
         }
@@ -13749,7 +13828,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function handleReadyStateChange(xhr, callback) {
         if (xhr.readyState === 4 /* DONE */) {
             if (xhr.status === 200) {
-                callback(null, xhr.responseText);
+                callback(null, xhr.response || xhr.responseText);
             } else {
                 var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
                 err.code = xhr.status;
@@ -13804,6 +13883,55 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var _ = function() {
 
+    };
+
+    _.get = function get(objectToTraverse, path, defaultValue) {
+        if (_.isNullOrUndefined(objectToTraverse)) {
+            return defaultValue;
+        }
+
+        assertIsObject(objectToTraverse, 'objectToTraverse');
+
+        var properties = path;
+
+        if (_.isString(properties)) {
+            properties = buildPathFromString(path);
+        } else if (!_.isArray(properties)) {
+            throw new Error('Unsupported path type ' + typeof path);
+        }
+
+        return _.reduce(properties, function(valueAtPath, prop) {
+            if (_.isUndefined(valueAtPath)) {
+                return valueAtPath;
+            }
+
+            return valueAtPath[prop];
+        }, objectToTraverse) || defaultValue;
+    };
+
+    _.set = function get(objectToTraverse, path, value) {
+        if (!_.isObject(objectToTraverse)) {
+            return objectToTraverse;
+        }
+
+        assertIsObject(objectToTraverse, 'objectToTraverse');
+
+        var currentLocation = objectToTraverse;
+        var properties = path;
+
+        if (_.isString(properties)) {
+            properties = buildPathFromString(path);
+        } else if (!_.isArray(properties)) {
+            throw new Error('Unsupported path type ' + typeof path);
+        }
+
+        _.forEach(properties, function(prop, index) {
+            setNextValue(currentLocation, prop, getNextValue(properties, index, currentLocation, value));
+
+            currentLocation = currentLocation[prop];
+        });
+
+        return objectToTraverse;
     };
 
     _.bind = function bind(callback, that) {
@@ -13903,7 +14031,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsArray(collection, 'collection');
 
         for (var i = 0; i < collection.length; i++) {
-            callback(collection[i], i);
+            var callbackResponse = callback(collection[i], i);
+
+            if(callbackResponse === false) {
+                return;
+            }
         }
     };
 
@@ -13993,8 +14125,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var result = initialValue === _.noop() ? null : initialValue;
 
         if (collection.constructor === Array) {
-            _.forEach(collection, function (item) {
-                result = callback(result, item);
+            _.forEach(collection, function (item, index) {
+                result = callback(result, item, index);
             });
         } else {
             _.forOwn(collection, function (value, key) {
@@ -14358,6 +14490,84 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     };
 
+    function buildPathFromString(stringPath) {
+        var properties = stringPath.split('.');
+        var path = [];
+
+        _.forEach(properties, function(prop) {
+            path = path.concat(buildSubPathFromString(prop));
+        });
+
+        return path;
+    }
+
+    function buildSubPathFromString(stringPath) {
+        var possibleSubPath = '';
+        var path = [];
+        var countOfOpeningBrackets = 0;
+
+        for (var i = 0; i < stringPath.length; i++) {
+            if (stringPath[i] === '[') {
+                countOfOpeningBrackets++;
+
+                if (!_.isString(possibleSubPath) || countOfOpeningBrackets > 1) {
+                    return [stringPath];
+                }
+
+                if (possibleSubPath) {
+                    path.push(possibleSubPath);
+                    possibleSubPath = '';
+                }
+            } else if (stringPath[i] === ']') {
+                countOfOpeningBrackets--;
+
+                if (countOfOpeningBrackets !== 0) {
+                    return [stringPath];
+                }
+
+                path.push(possibleSubPath);
+                possibleSubPath = '';
+            } else if (i === stringPath.length - 1) {
+                return [stringPath];
+            } else {
+                possibleSubPath += stringPath[i];
+            }
+        }
+
+        return path;
+    }
+
+    function getNextValue(path, index, currentLocation, value) {
+        if (path.length - 1 === index) {
+            return value;
+        }
+
+        var currentPropOrIndex = path[index];
+        var nextPropOrIndex = path[index + 1];
+
+        if (_.isArray(currentLocation[currentPropOrIndex]) || _.isObject(currentLocation[currentPropOrIndex])) {
+            return currentLocation[currentPropOrIndex];
+        }
+
+        if (!_.isArray(currentLocation[currentPropOrIndex]) && _.isNumber(parseInt(nextPropOrIndex))) {
+            return [];
+        } else if (!_.isObject(currentLocation[currentPropOrIndex]) && _.isString(nextPropOrIndex)) {
+            return {};
+        }
+
+        throw new Error('Unsupported type ' + typeof currentPropOrIndex + ' when setting property or index');
+    }
+
+    function setNextValue(objectToTraverse, propertyOrIndex, value) {
+        if (_.isNumber(parseInt(propertyOrIndex)) && _.isArray(objectToTraverse)) {
+            return objectToTraverse[propertyOrIndex] = value;
+        } else if (_.isString(propertyOrIndex) && _.isObject(objectToTraverse)) {
+            return objectToTraverse[propertyOrIndex] = value;
+        }
+
+        throw new Error('Unsupported type ' + typeof propertyOrIndex + ' when setting property or index');
+    }
+
     return _;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -14457,8 +14667,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
-    var releaseVersion = '2017.3.8';
+    var sdkVersion = '2017-10-10T14:11:15Z' || '?';
+    var releaseVersion = '2017.4.0';
 
     function Logger() {
         this._appenders = [];
@@ -15013,8 +15223,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._mqService.onRequest(requestName, handler);
     };
 
-    MQWebSocket.prototype.sendRequest = function sendRequest(type, message, callback) {
-        return this._mqService.sendRequest(type, message, callback);
+    MQWebSocket.prototype.sendRequest = function sendRequest(type, message, callback, settings) {
+        return this._mqService.sendRequest(type, message, callback, settings);
     };
 
     MQWebSocket.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
@@ -26183,7 +26393,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
+    var sdkVersion = '2017-10-10T14:11:15Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26363,7 +26573,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-09-22T15:19:51Z' || '?';
+    var sdkVersion = '2017-10-10T14:11:15Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
