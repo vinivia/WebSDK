@@ -127,7 +127,7 @@ define([
         that._documentFocusInterval = setInterval(function() {
             var isForeground = document.hasFocus();
 
-            setFocusState(isForeground);
+            setFocusState.call(that, isForeground);
         }, defaultDocumentFocusIntervalTimeout);
 
         that._disposables.add(new disposable.Disposable(function() {
@@ -162,7 +162,6 @@ define([
         var timeElapsedOfLastState = currentTime - this._timeOfLastTabFocusChange;
 
         this._timeOfLastTabFocusChange = currentTime;
-
         this._namedEvents.fire(state, [timeElapsedOfLastState]);
     }
 

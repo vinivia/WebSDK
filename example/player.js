@@ -17,8 +17,9 @@
 define('video-player', [
     'jquery',
     'phenix-web-lodash-light',
-    'phenix-web-sdk'
-], function ($, _, sdk) {
+    'phenix-web-sdk',
+    'phenix-rtc'
+], function ($, _, sdk, rtc) {
     var userAgent = window.navigator.userAgent;
     var isIOS= /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
@@ -45,12 +46,15 @@ define('video-player', [
         this.video.parentNode.insertBefore(this.videoControls, this.video.nextElementSibling);
 
         // Disable audio for autoplay
-        if ((isIOS || isMobile) && !this.stream) {
+        if ((isIOS || isMobile || (rtc.browser === 'Safari' && rtc.browserVersion >= 11)) && !this.stream) {
             this.video.muted = true;
             this.video.autoplay = true;
             this.video.attributes.playsinline = "";
             this.video.attributes['webkit-playsinline'] = "";
-            this.video.play();
+
+            if (!(rtc.browser === 'Safari' && rtc.browserVersion >= 11)) {
+                this.video.play();
+            }
         }
 
         setupVideoEvents.call(this);
@@ -60,7 +64,7 @@ define('video-player', [
             renderer = stream.createRenderer();
 
             renderer.start(this.video);
-        } else if (sdk.RTC.attachMediaStream) {
+        } else if (!renderer && sdk.RTC.attachMediaStream) {
             sdk.RTC.attachMediaStream(this.video, this.stream);
         }
 

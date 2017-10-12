@@ -536,7 +536,10 @@ requirejs([
                     });
                 }
 
-                primaryPlayer = new Player('remoteVideo');
+                primaryPlayer = new Player('remoteVideo', {
+                    minWidth: 320,
+                    minHeight: 240
+                });
 
                 primaryPlayer.start(primaryMediaStream);
 
@@ -545,7 +548,10 @@ requirejs([
                         return track.kind === 'video' && index === 2;
                     });
 
-                    secondaryPlayer = new Player('remoteVideoSecondary');
+                    secondaryPlayer = new Player('remoteVideoSecondary', {
+                        minWidth: 320,
+                        minHeight: 240
+                    });
 
                     secondaryPlayer.start(secondaryMediaStream);
                 }

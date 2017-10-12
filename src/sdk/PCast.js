@@ -47,6 +47,7 @@ define([
     var firefoxInstallationCheckInterval = 100;
     var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
+    var numberOfTimesToRetryHlsStalledHlsStream = 5;
 
     function PCast(options) {
         options = options || {};
@@ -2044,6 +2045,8 @@ define([
                                 _.addEventListener(player, 'error', onPlayerError);
 
                                 _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'pause', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'suspend', stalled, false);
                                 _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
                                 _.addEventListener(elementToAttachTo, 'ended', ended, false);
 
@@ -2077,6 +2080,8 @@ define([
 
                                     if (element) {
                                         _.removeEventListener(element, 'stalled', stalled, false);
+                                        _.removeEventListener(element, 'pause', stalled, false);
+                                        _.removeEventListener(element, 'suspend', stalled, false);
                                         _.removeEventListener(element, 'progress', onProgress, false);
                                         _.removeEventListener(element, 'ended', ended, false);
 
@@ -2427,7 +2432,8 @@ define([
                         time: 0,
                         buffered: null,
                         averageLength: 0,
-                        count: 0
+                        count: 0,
+                        setupRetry: 0
                     };
 
                     function onProgress() {
@@ -2453,16 +2459,23 @@ define([
                         }
 
                         lastProgress.buffered = bufferedEnd;
+                        lastProgress.setupRetry = 0;
                     }
 
                     function stalled() {
                         that._logger.info('[%s] Loading Hls stream stalled.', streamId);
 
+                        if (lastProgress.setupRetry > numberOfTimesToRetryHlsStalledHlsStream) {
+                            return that._logger.warn('[%s] Unable to recover from stalled Hls Stream.', streamId);
+                        }
+
                         if (lastProgress.count === 0) {
+                            lastProgress.setupRetry++;
                             reload();
                         } else {
                             setTimeout(function () {
                                 if (lastProgress.count === 0) {
+                                    lastProgress.setupRetry++;
                                     reload();
                                 }
                             }, getTimeoutOrMinimum());
@@ -2492,8 +2505,10 @@ define([
 
                         element.pause();
                         element.src = '';
+                        element.currentTime = 0;
 
                         element.src = manifestUri;
+                        element.load();
                         element.play();
                     }
 
@@ -2510,7 +2525,7 @@ define([
                     return {
                         start: function start(elementToAttachTo) {
                             try {
-                                elementToAttachTo.src = manifestUri;
+                                phenixRTC.attachUriStream(elementToAttachTo, manifestUri);
 
                                 if (options.receiveAudio === false) {
                                     elementToAttachTo.muted = true;
@@ -2524,11 +2539,11 @@ define([
 
                                 _.addEventListener(elementToAttachTo, 'error', onPlayerError, true);
                                 _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'pause', stalled, false);
+                                _.addEventListener(elementToAttachTo, 'suspend', stalled, false);
                                 _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
                                 _.addEventListener(elementToAttachTo, 'ended', ended, false);
                                 _.addEventListener(elementToAttachTo, 'waiting', waiting, false);
-
-                                elementToAttachTo.play();
 
                                 element = elementToAttachTo;
 
@@ -2552,11 +2567,17 @@ define([
                                     if (element) {
                                         _.removeEventListener(element, 'error', onPlayerError, true);
                                         _.removeEventListener(element, 'stalled', stalled, false);
+                                        _.removeEventListener(element, 'pause', stalled, false);
+                                        _.removeEventListener(element, 'suspend', stalled, false);
                                         _.removeEventListener(element, 'progress', onProgress, false);
                                         _.removeEventListener(element, 'ended', ended, false);
                                         _.removeEventListener(element, 'waiting', waiting, false);
 
-                                        element.src = '';
+                                        if (phenixRTC.browser === 'Safari' && phenixRTC.browserVersion >= 11) {
+                                            element.setAttribute('src', '');
+                                        } else {
+                                            element.src = '';
+                                        }
 
                                         element = null;
                                     }

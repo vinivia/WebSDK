@@ -109,7 +109,7 @@ define('app-setup', [
 
         var adminBaseUri = 'https://' + parser.hostname;
 
-        if (parser.port) {
+        if (parseInt(parser.port, 10)) {
             adminBaseUri += ':' + parser.port;
         }
 
