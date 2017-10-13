@@ -416,7 +416,7 @@ define([
     }
 
     function findDifferencesInMember(member, memberToCompare) {
-        if (memberToCompare === null) {
+        if (!memberToCompare) {
             return member.toJson();
         }
 

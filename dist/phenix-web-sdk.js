@@ -4492,7 +4492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-10-13T16:00:59Z';
+    var sdkVersion = '2017-10-13T23:16:35Z';
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
     var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
         url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
@@ -7610,7 +7610,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this.waitForOnline(function() {
             if (options.userMediaStream) {
-                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, callback);
+                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
 
             that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
@@ -7622,7 +7622,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(null, {status: status});
                 }
 
-                getStreamingTokenAndPublish.call(that, userMedia, options, callback);
+                getStreamingTokenAndPublish.call(that, userMedia, options, true, callback);
             });
         });
     };
@@ -7706,8 +7706,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
-            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
+            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
         });
+    };
+
+    PCastExpress.prototype.publishScreen = function publish(options, callback) {
+        var publishScreenOptions = _.assign({mediaConstraints: {screen: true}}, options);
+
+        _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
+            monitorFrameRate: false,
+            videoBitRateThreshold: 1000,
+            conditionCountForNotificationThreshold: 8
+        }, _.get(publishScreenOptions, ['monitor', 'options'], {})));
+
+        return this.publish(publishScreenOptions, callback);
     };
 
     PCastExpress.prototype.subscribe = function subscribe(options, callback) {
@@ -7751,6 +7763,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 subscribeToStream.call(that, response.streamToken, options, callback);
             }, 1);
         });
+    };
+
+    PCastExpress.prototype.subscribeToScreen = function publish(options, callback) {
+        var subscribeToScreenOptions = _.assign({}, options);
+
+        _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {
+            monitorFrameRate: false,
+            videoBitRateThreshold: 1000,
+            conditionCountForNotificationThreshold: 8
+        }, _.get(subscribeToScreenOptions, ['monitor', 'options'], {})));
+
+        return this.subscribe(subscribeToScreenOptions, callback);
     };
 
     PCastExpress.prototype.waitForOnline = function waitForOnline(callback) {
@@ -7856,13 +7880,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._onError(e);
     }
 
-    function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
+    function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
 
         assert.isArray(options.capabilities, 'options.capabilities');
 
         if (options.streamToken) {
-            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, callback);
+            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
         }
 
         that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
@@ -7874,12 +7898,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(null, response);
             }
 
-            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, callback);
+            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
         }, 1);
     }
 
-    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, callback) {
+    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
+        var hasAlreadyAttachedMedia = false;
 
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
@@ -7894,11 +7919,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var placeholder = _.uniqueId();
 
                 that._publishers[placeholder] = true;
-                publisher.stop(reason);
+                publisher.stop(reason, true);
 
-                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, function(error, response) {
                     if (response && response.status === unauthorizedStatus) {
-                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
                     }
 
                     callback(error, response);
@@ -7913,8 +7938,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             that._publishers[publisher.getStreamId()] = publisher;
 
-            if (options.videoElement) {
+            if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
+
+                hasAlreadyAttachedMedia = true;
             }
 
             var isPublisher = true;
@@ -7931,7 +7958,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             publisher.setPublisherEndedCallback(publisherEndedCallback);
 
-            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
+            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement, cleanUpUserMediaOnStop);
 
             callback(null, {
                 status: 'ok',
@@ -8013,15 +8040,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     }
 
-    function createExpressPublisher(publisher, videoElement) {
+    function createExpressPublisher(publisher, videoElement, cleanUpUserMediaOnStop) {
         var publisherStop = publisher.stop;
 
-        publisher.stop = function(reason) {
+        publisher.stop = function(reason, isInternal) {
             publisherStop(reason);
 
             if (videoElement) {
                 videoElement.src = '';
                 videoElement.srcObject = null;
+            }
+
+            if (cleanUpUserMediaOnStop && publisher.getStream() && !isInternal) {
+                var nativeMediaStream = publisher.getStream();
+
+                if (nativeMediaStream) {
+                    nativeMediaStream.getTracks().forEach(function(track) {
+                        track.stop();
+                    });
+                }
             }
         };
 
@@ -8595,7 +8632,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function findDifferencesInMember(member, memberToCompare) {
-        if (memberToCompare === null) {
+        if (!memberToCompare) {
             return member.toJson();
         }
 
@@ -11125,6 +11162,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._pcastExpress = options.pcastExpress || new PCastExpress(options);
         this._shouldDisposeOfPCastExpress = !options.pcastExpress;
         this._roomServices = {};
+        this._roomServicePublishers = {};
         this._activeRoomServices = [];
         this._membersSubscriptions = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
@@ -11210,8 +11248,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(joinRoomCallback, 'joinRoomCallback');
-        assert.isFunction(membersChangedCallback, 'membersChangedCallback');
         assert.isStringNotEmpty(options.role, 'options.role');
+
+        if (membersChangedCallback) {
+            assert.isFunction(membersChangedCallback, 'membersChangedCallback');
+        }
 
         if (options.screenName) {
             assert.isStringNotEmpty(options.screenName, 'options.screenName');
@@ -11250,10 +11291,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (options.streams) {
-                updateSelf.call(that, options, roomService, joinRoomCallback);
+                updateSelf.call(that, options, roomService, function (error) {
+                    if (error) {
+                        return joinRoomCallback(error);
+                    }
+                });
             }
 
-            if (activeRoom) {
+            if (activeRoom && membersChangedCallback) {
                 if (that._membersSubscriptions[activeRoom.getRoomId()]) {
                     return;
                 }
@@ -11454,10 +11499,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             options.enableWildcardCapability = defaultWildcardEnabled;
         }
 
+        assert.isValidType(options.streamType, streamEnums.types, 'options.streamType');
+        assert.isValidType(options.memberRole, memberEnums.roles, 'options.memberRole');
         assert.isBoolean(options.enableWildcardCapability, 'options.enableWildcardCapability');
 
         var that = this;
-        var role = memberEnums.roles.audience.name;
         var screenName = options.screenName || _.uniqueId();
 
         this.createRoom(options, function(error, createRoomResponse) {
@@ -11471,8 +11517,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             var roomService = createRoomResponse.roomService;
             var room = createRoomResponse.room;
+            var activeRoom = roomService.getObservableActiveRoom().getValue();
 
-            roomService.start(role, screenName);
+            if (!activeRoom) {
+                roomService.start(options.memberRole, screenName);
+            }
 
             var publishOptions = _.assign({
                 monitor: {
@@ -11490,8 +11539,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 if (!hasRoomConnectOptions) {
                     remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
                         'room-id=' + room.getRoomId(),
-                        'member-role=Presenter',
-                        'member-stream-type=Presentation',
+                        'member-role=' + options.memberRole,
+                        'member-stream-type=' + options.streamType,
                         'screen-name=' + screenName
                     ]);
                 }
@@ -11510,11 +11559,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     };
 
+    RoomExpress.prototype.publishScreenToRoom = function publishScreenToRoom(options, callback) {
+        var publishScreenOptions = _.assign({}, options, {mediaConstraints: {screen: true}});
+
+        this.publishToRoom(publishScreenOptions, callback);
+    };
+
     RoomExpress.prototype.publishToChannel = function publishToChannel(options, callback) {
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
-        var channelOptions = _.assign({}, options);
+        var channelOptions = _.assign({
+            memberRole: memberEnums.roles.presenter.name,
+            streamType: streamEnums.types.presentation.name
+        }, options);
 
         options.room.type = roomEnums.types.channel.name;
 
@@ -11609,7 +11667,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var publisher;
         var refreshTokenTimeout;
 
-        this._pcastExpress.publish(options, function(error, response) {
+        var handlePublish = function(error, response) {
             if (refreshTokenTimeout && publisher) {
                 clearInterval(refreshTokenTimeout);
             }
@@ -11621,6 +11679,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (response.status !== 'ok') {
                 return callback(null, response);
             }
+
+            addPublisher.call(that, response.publisher, room);
+            removePublisher.call(that, publisher, room);
 
             publisher = response.publisher;
 
@@ -11638,21 +11699,48 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             createViewerStreamTokenAndJoinRoom.call(that, options, response.publisher, room, callback);
+        };
+
+        if (_.get(options, ['mediaConstraints', 'screen'], false)) {
+            return this._pcastExpress.publishScreen(options, handlePublish);
+        }
+
+        this._pcastExpress.publish(options, handlePublish);
+    }
+
+    function addPublisher(publisher, room) {
+        if (!this._roomServicePublishers[room.getRoomId()]) {
+            this._roomServicePublishers[room.getRoomId()] = [];
+        }
+
+        this._roomServicePublishers[room.getRoomId()].push(publisher);
+    }
+
+    function removePublisher(publisher, room) {
+        if (!this._roomServicePublishers[room.getRoomId()] || !publisher) {
+            return;
+        }
+
+        this._roomServicePublishers[room.getRoomId()] = _.filter(this._roomServicePublishers[room.getRoomId()], function(roomPublisher) {
+            return roomPublisher.getStreamId() !== publisher.getStreamId();
         });
     }
 
     function createViewerStreamTokenAndJoinRoom(options, publisher, room, callback) {
         var that = this;
         var realtimeCapabilities = [];
+        var streamType = options.streamType;
+        var memberRole = options.memberRole;
 
         if (!options.enableWildcardCapability) {
+            var publisherStream = mapStreamToMemberStream(publisher, streamType);
             var joinRoomOptions = _.assign({}, options, {
                 roomId: room.getRoomId(),
-                streams: [mapStreamToMemberStream(publisher, streamEnums.types.presentation.name)],
-                role: memberEnums.roles.presenter.name
+                streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
+                role: memberRole
             });
 
-            return joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
+            return joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher, room);
         }
 
         if (_.includes(options.capabilities, 'prefer-h264')) {
@@ -11678,49 +11766,109 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         return callback(null, createStreamTokenResponse);
                     }
 
+                    var publisherStream = mapStreamToMemberStream(publisher, streamType, createStreamTokenResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken);
                     var joinRoomOptions = _.assign({}, options, {
                         roomId: room.getRoomId(),
-                        streams: [mapStreamToMemberStream(publisher, streamEnums.types.presentation.name, createStreamTokenResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken)],
-                        role: memberEnums.roles.presenter.name
+                        streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
+                        role: memberRole
                     });
 
-                    joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
+                    joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher, room);
                 });
             }
 
+            var publisherStream = mapStreamToMemberStream(publisher, streamType, createStreamTokenResponse.streamToken);
             var joinRoomOptions = _.assign({}, options, {
                 roomId: room.getRoomId(),
-                streams: [mapStreamToMemberStream(publisher, streamEnums.types.presentation.name, createStreamTokenResponse.streamToken)],
-                role: memberEnums.roles.presenter.name
+                streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
+                role: memberRole
             });
 
-            joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher);
+            joinRoomAndIgnoreMemberChanges.call(that, joinRoomOptions, callback, publisher, room);
         });
     }
 
-    function joinRoomAndIgnoreMemberChanges(joinRoomOptions, callback, publisher) {
+    function joinRoomAndIgnoreMemberChanges(joinRoomOptions, callback, publisher, room) {
         var responseObject = {publisher: publisher};
         var publisherStop;
-
-        this.joinRoom(joinRoomOptions, function(error, response) {
+        var that = this;
+        var activeRoomService = findActiveRoom.call(this, room.getRoomId());
+        var handleUpdate = function(error, response) {
             if (error) {
                 return callback(error);
             }
 
-            if (response.roomService && !publisherStop) {
+            if (response.status === 'ok' && !publisherStop) {
                 publisherStop = _.bind(publisher.stop, publisher);
 
                 publisher.stop = function() {
-                    response.roomService.leaveRoom(function() {});
+                    removePublisher.call(that, publisher, room);
+
+                    var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
+                    var joinRoomOptionsAfterStop = _.assign({}, joinRoomOptions, {streams: streamsAfterStop});
+                    var roomService = findActiveRoom.call(that, room.getRoomId());
 
                     publisherStop();
+
+                    if (!roomService) {
+                        return;
+                    }
+
+                    if (streamsAfterStop.length === 0) {
+                        return roomService.leaveRoom(function() {});
+                    }
+
+                    updateSelf.call(that, joinRoomOptionsAfterStop, roomService, function(error) {
+                        if (error) {
+                            return callback(error);
+                        }
+                    });
                 };
             }
 
-            if (response) {
-                return callback(null, _.assign({}, responseObject, response));
-            }
-        }, function() {});
+            return callback(null, _.assign({}, responseObject, response));
+        };
+
+        if (!activeRoomService) {
+            return this.joinRoom(joinRoomOptions, handleUpdate, function() {});
+        }
+
+        updateSelf.call(that, joinRoomOptions, activeRoomService, handleUpdate);
+    }
+
+    function mapNewPublisherStreamToMemberStreams(publisherStream, room) {
+        var activeRoomService = findActiveRoom.call(this, room.getRoomId());
+        var defaultStreams = publisherStream ? [publisherStream] : [];
+
+        if (!activeRoomService) {
+            return defaultStreams;
+        }
+
+        var self = activeRoomService.getSelf();
+
+        if (!self) {
+            return defaultStreams;
+        }
+
+        var selfStreams = _.map(self.getObservableStreams().getValue(), function(selfStream) {
+            return selfStream.toJson();
+        });
+        var publishers = this._roomServicePublishers[room.getRoomId()] || [];
+        var publisherIds = _.map(publishers, function(publisher) {
+            return publisher.getStreamId();
+        });
+
+        if (!selfStreams || selfStreams.length === 0) {
+            return defaultStreams;
+        }
+
+        if (publisherStream) {
+            selfStreams.push(publisherStream);
+        }
+
+        return _.filter(selfStreams, function(stream) {
+            return _.includes(publisherIds, parseStreamIdFromStreamUri(stream.uri));
+        });
     }
 
     function updateSelf(options, roomService, callback) {
@@ -11750,6 +11898,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 if (response && response.status === 'ok') {
                     updateSelfErrors = 0;
+
+                    return callback(null, response);
                 }
 
                 if (updateSelfErrors > 3) {
@@ -11845,22 +11995,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
 
         return streamToken;
-    }
-
-    function addOrUpdatePublishedStreams(self, publisher, type, viewerStreamToken) { // eslint-disable-line no-unused-vars
-        var streams = self.getStreams();
-        var publishedStream = _.find(streams, function(stream) {
-            return parseStreamIdFromStreamUri(stream.uri) === publisher.getStreamId();
-        });
-        var shouldAppendStream = !publishedStream;
-
-        publishedStream = _.assign(publishedStream || {}, mapStreamToMemberStream(publisher, type, viewerStreamToken));
-
-        if (shouldAppendStream) {
-            streams.push(publishedStream);
-        }
-
-        self.setStreams(streams);
     }
 
     function mapStreamToMemberStream(publisher, type, viewerStreamToken, viewerStreamTokenStreaming) {
@@ -14688,7 +14822,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-13T16:00:59Z' || '?';
+    var sdkVersion = '2017-10-13T23:16:35Z' || '?';
     var releaseVersion = '2017.4.1';
 
     function Logger() {
@@ -26414,7 +26548,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-13T16:00:59Z' || '?';
+    var sdkVersion = '2017-10-13T23:16:35Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26594,7 +26728,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-13T16:00:59Z' || '?';
+    var sdkVersion = '2017-10-13T23:16:35Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

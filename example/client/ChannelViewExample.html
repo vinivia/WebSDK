@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .main {
+            text-align: center;
+        }
+
+        .channel-view {
+            background-color: black;
+        }
+
+        video {
+            width: 50%;
+            height: 50%;
+            object-fit: cover;
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+    <script>
+        var __phenixPageLoadTime = new Date().getTime();
+    </script>
+    <script type="text/javascript">
+
+        // To be shared with customers. Remove the uncommented dependencies and uncomment the commented ones
+        requirejs.config({
+            paths: {
+//                'phenix-web-sdk': '3p/phenix-web-sdk/dist/phenix-web-sdk.min'
+                'phenix-web-sdk': '/phenix-web-sdk'
+            }
+        });
+
+        requirejs([
+            'phenix-web-sdk',
+        ], function (sdk) {
+            var expressRoom = new sdk.express.RoomExpress({
+                backendUri: 'https://phenixp2p.com/demo',
+                authenticationData: {}
+            });
+            var videoElement = document.getElementById('myVideoId');
+            var isMobileAppleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            var isOtherMobile = /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(navigator.userAgent);
+            var channelAlias = 'MyChannelAlias';
+
+            // Mobile devices only support autoplay with WebRTC. In order to autoplay with 'streaming' (not real-time) you need to mute the video element
+            if ((isMobileAppleDevice || isOtherMobile) && !sdk.RTC.webrtcSupported) {
+                videoElement.muted = true;
+                videoElement.playsInline = true;
+
+                // show button to unmute
+            }
+
+            expressRoom.joinChannel({
+                alias: channelAlias,
+                videoElement: videoElement,
+                capabilities: [sdk.RTC.webrtcSupported ? 'real-time' : 'streaming'] // If WebRTC is not supported then fall back to streaming (~10 second latency)
+            }, function joinChannelCallback(error, response) {
+                if (error) {
+                    // Handle error
+                    console.error('Unable to join channel', error);
+                }
+
+                if (response.status === 'room-not-found') {
+                    // Handle room not found - Create a Channel Or Publish to a Channel
+                    setUserMessage('Room Does Not Exist - Please publish first or manually create the channel');
+                } else if (response.status !== 'ok') {
+                    // Handle error
+                    console.warn('Unable to join room, status: ' + response.status);
+                }
+
+                // Successfully joined channel
+                if (response.status === 'ok' && response.roomService) {
+                    // Do something with roomService
+                    setUserMessage('Joined Channel');
+                }
+            }, function subscriberCallback(error, response) {
+                if (error) {
+                    // Handle error
+                    console.error('Unable to join channel', error);
+                }
+
+                if (response.status === 'no-stream-playing') {
+                    // Handle no stream playing in channel - Wait for one to start
+                    setUserMessage('No Stream Playing In Channel - Waiting for one to start');
+                } else if (response.status !== 'ok') {
+                    // Handle error
+                    console.warn('New Status: ' + response.status);
+                }
+
+                // Successfully subscribed to most recent channel presenter
+                if (response.status === 'ok' && response.mediaStream) {
+                    // Do something with mediaStream
+                    setUserMessage('Viewing stream: ' + response.mediaStream.getStreamId());
+                }
+            });
+
+            function setUserMessage(message) {
+                var userMessageElement = document.getElementById('userMessage');
+
+                userMessageElement.innerText = message;
+            }
+        })
+    </script>
+</head>
+<body>
+<div class="main">
+    <video id="myVideoId" width="640" height="480" class="channel-view" playsinline autoplay></video>
+    <h2 id="userMessage"></h2>
+</div>
+</body>
+</html>

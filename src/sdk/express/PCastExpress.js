@@ -128,7 +128,7 @@ define([
 
         this.waitForOnline(function() {
             if (options.userMediaStream) {
-                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, callback);
+                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
 
             that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
@@ -140,7 +140,7 @@ define([
                     return callback(null, {status: status});
                 }
 
-                getStreamingTokenAndPublish.call(that, userMedia, options, callback);
+                getStreamingTokenAndPublish.call(that, userMedia, options, true, callback);
             });
         });
     };
@@ -224,8 +224,20 @@ define([
 
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
-            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, callback);
+            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
         });
+    };
+
+    PCastExpress.prototype.publishScreen = function publish(options, callback) {
+        var publishScreenOptions = _.assign({mediaConstraints: {screen: true}}, options);
+
+        _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
+            monitorFrameRate: false,
+            videoBitRateThreshold: 1000,
+            conditionCountForNotificationThreshold: 8
+        }, _.get(publishScreenOptions, ['monitor', 'options'], {})));
+
+        return this.publish(publishScreenOptions, callback);
     };
 
     PCastExpress.prototype.subscribe = function subscribe(options, callback) {
@@ -269,6 +281,18 @@ define([
                 subscribeToStream.call(that, response.streamToken, options, callback);
             }, 1);
         });
+    };
+
+    PCastExpress.prototype.subscribeToScreen = function publish(options, callback) {
+        var subscribeToScreenOptions = _.assign({}, options);
+
+        _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {
+            monitorFrameRate: false,
+            videoBitRateThreshold: 1000,
+            conditionCountForNotificationThreshold: 8
+        }, _.get(subscribeToScreenOptions, ['monitor', 'options'], {})));
+
+        return this.subscribe(subscribeToScreenOptions, callback);
     };
 
     PCastExpress.prototype.waitForOnline = function waitForOnline(callback) {
@@ -374,13 +398,13 @@ define([
         this._onError(e);
     }
 
-    function getStreamingTokenAndPublish(userMediaOrUri, options, callback) {
+    function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
 
         assert.isArray(options.capabilities, 'options.capabilities');
 
         if (options.streamToken) {
-            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, callback);
+            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
         }
 
         that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
@@ -392,12 +416,13 @@ define([
                 return callback(null, response);
             }
 
-            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, callback);
+            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
         }, 1);
     }
 
-    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, callback) {
+    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
+        var hasAlreadyAttachedMedia = false;
 
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
@@ -412,11 +437,11 @@ define([
                 var placeholder = _.uniqueId();
 
                 that._publishers[placeholder] = true;
-                publisher.stop(reason);
+                publisher.stop(reason, true);
 
-                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, function(error, response) {
+                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, function(error, response) {
                     if (response && response.status === unauthorizedStatus) {
-                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, callback);
+                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
                     }
 
                     callback(error, response);
@@ -431,8 +456,10 @@ define([
 
             that._publishers[publisher.getStreamId()] = publisher;
 
-            if (options.videoElement) {
+            if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
+
+                hasAlreadyAttachedMedia = true;
             }
 
             var isPublisher = true;
@@ -449,7 +476,7 @@ define([
 
             publisher.setPublisherEndedCallback(publisherEndedCallback);
 
-            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement);
+            var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement, cleanUpUserMediaOnStop);
 
             callback(null, {
                 status: 'ok',
@@ -531,15 +558,25 @@ define([
         });
     }
 
-    function createExpressPublisher(publisher, videoElement) {
+    function createExpressPublisher(publisher, videoElement, cleanUpUserMediaOnStop) {
         var publisherStop = publisher.stop;
 
-        publisher.stop = function(reason) {
+        publisher.stop = function(reason, isInternal) {
             publisherStop(reason);
 
             if (videoElement) {
                 videoElement.src = '';
                 videoElement.srcObject = null;
+            }
+
+            if (cleanUpUserMediaOnStop && publisher.getStream() && !isInternal) {
+                var nativeMediaStream = publisher.getStream();
+
+                if (nativeMediaStream) {
+                    nativeMediaStream.getTracks().forEach(function(track) {
+                        track.stop();
+                    });
+                }
             }
         };
 
