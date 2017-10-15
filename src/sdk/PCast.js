@@ -21,13 +21,14 @@ define([
     'phenix-web-http',
     './PCastProtocol',
     './PCastEndPoint',
+    './ScreenShareExtensionManager',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     './telemetry/metricsTransmitterFactory',
     './telemetry/StreamTelemetry',
     './telemetry/SessionTelemetry',
     'phenix-rtc'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -37,15 +38,7 @@ define([
         'NETWORK_NO_SOURCE': 3
     });
     var sdkVersion = '%SDKVERSION%';
-    var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
-    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
-        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
-        iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
-        hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
-    });
     var widevineServiceCertificate = null;
-    var firefoxInstallationCheckInterval = 100;
-    var firefoxMaxInstallationChecks = 450;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
 
@@ -59,16 +52,10 @@ define([
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
-        this._screenSharingExtensionId = options.screenSharingExtensionId || defaultChromePCastScreenSharingExtensionId;
-        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
-        this._screenSharingEnabled = false;
+        this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shaka = options.shaka || window.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
-
-        if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
-            addLinkHeaderElement.call(this);
-        }
 
         var that = this;
 
@@ -136,43 +123,39 @@ define([
 
         var that = this;
 
-        checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
-            that._screenSharingEnabled = screenSharingEnabled;
+        that._endPoint.resolveUri(function (err, endPoint) {
+            if (err) {
+                that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
-            that._endPoint.resolveUri(function (err, endPoint) {
-                if (err) {
-                    that._logger.error('Failed to connect to [%s]', that._baseUri, err);
+                transitionToStatus.call(that, 'offline');
 
-                    transitionToStatus.call(that, 'offline');
+                switch (err.code) {
+                case 0:
+                    that._authenticationCallback.call(that, that, 'network-unavailable', '');
 
-                    switch (err.code) {
-                    case 0:
-                        that._authenticationCallback.call(that, that, 'network-unavailable', '');
+                    break;
+                case 503:
+                    that._authenticationCallback.call(that, that, 'capacity', '');
 
-                        break;
-                    case 503:
-                        that._authenticationCallback.call(that, that, 'capacity', '');
+                    break;
+                default:
+                    that._authenticationCallback.call(that, that, 'failed', '');
 
-                        break;
-                    default:
-                        that._authenticationCallback.call(that, that, 'failed', '');
-
-                        break;
-                    }
-
-                    that._stopped = true;
-                    that._started = false;
-
-                    return;
+                    break;
                 }
 
-                that._logger.info('Discovered end point [%s] with RTT [%s]', endPoint.uri, endPoint.roundTripTime);
+                that._stopped = true;
+                that._started = false;
 
-                that._networkOneWayLatency = endPoint.roundTripTime / 2;
-                that._resolvedEndPoint = endPoint.uri;
+                return;
+            }
 
-                instantiateProtocol.call(that, endPoint.uri);
-            });
+            that._logger.info('Discovered end point [%s] with RTT [%s]', endPoint.uri, endPoint.roundTripTime);
+
+            that._networkOneWayLatency = endPoint.roundTripTime / 2;
+            that._resolvedEndPoint = endPoint.uri;
+
+            instantiateProtocol.call(that, endPoint.uri);
         });
     };
 
@@ -446,256 +429,34 @@ define([
         return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
     };
 
-    function checkForScreenSharingCapability(callback) {
-        var that = this;
-
-        if (phenixRTC.browser === 'Chrome' && that._screenSharingExtensionId) {
-            if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) { // eslint-disable-line no-undef
-                that._logger.info('Screen sharing NOT available');
-
-                return callback(false);
-            }
-
-            try {
-                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) { // eslint-disable-line no-undef
-                    if (response && response.status === 'ok') {
-                        that._logger.info('Screen sharing enabled using version [%s]', response.version);
-                        callback(true);
-                    } else {
-                        that._logger.info('Screen sharing NOT available');
-                        callback(false);
-                    }
-                });
-            } catch (e) {
-                if (e.message) {
-                    that._logger.warn(e.message, e);
-                }
-
-                callback(false);
-            }
-        } else if (phenixRTC.browser === 'Firefox' && typeof window.PCastScreenSharing === 'object') {
-            callback(true);
-        } else {
-            callback(false);
-        }
-    }
-
-    function getChromeWebStoreLink() {
-        return 'https://chrome.google.com/webstore/detail/' + this._screenSharingExtensionId;
-    }
-
-    function addLinkHeaderElement() {
-        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
-
-        var links = document.getElementsByTagName('link');
-
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].href === chromeWebStoreUrl) {
-                // Link already present
-                return;
-            }
-        }
-
-        this._logger.debug('Adding Chrome Web Store link [%s]', chromeWebStoreUrl);
-
-        var link = document.createElement('link');
-
-        link.rel = 'chrome-webstore-item';
-        link.href = chromeWebStoreUrl;
-
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-
-    function tryInstallChromeScreenSharingExtension(callback) {
-        var that = this;
-        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
-
-        try {
-            chrome.webstore.install(chromeWebStoreUrl, function successCallback() { // eslint-disable-line no-undef
-                return callback('ok');
-            }, function failureCallback(reason) {
-                if (reason) {
-                    if (reason.match(/cancelled/ig)) {
-                        that._logger.info('User cancelled screen sharing');
-
-                        return callback('cancelled', new Error(reason));
-                    }
-
-                    that._logger.warn(reason);
-                }
-
-                return callback('failed', new Error(reason || 'failed'));
-            });
-        } catch (e) {
-            if (e.message) {
-                that._logger.warn(e.message);
-            }
-
-            callback('failed', e);
-        }
-    }
-
-    function tryInstallFirefoxScreenSharingExtension(callback) {
-        try {
-            var params = {
-                "PCast Screen Sharing": {
-                    URL: this._screenSharingAddOn.url,
-                    IconURL: this._screenSharingAddOn.iconUrl,
-                    Hash: this._screenSharingAddOn.hash,
-                    toString: function () {
-                        return this.URL;
-                    }
-                }
-            };
-            var attemptsLeft = firefoxMaxInstallationChecks;
-            var intervalId;
-            var success = function success() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-
-                callback('ok');
-            };
-
-            var failure = function failure() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-
-                callback('failed', new Error('failed'));
-            };
-
-            intervalId = setInterval(function () {
-                if (typeof window.PCastScreenSharing === 'object') {
-                    return success();
-                }
-
-                if (attemptsLeft-- < 0) {
-                    return failure();
-                }
-            }, firefoxInstallationCheckInterval);
-
-            InstallTrigger.install(params, function xpiInstallCallback(url, status) { // eslint-disable-line no-undef
-                // Callback only works for verified sites
-                if (status === 0) {
-                    success();
-                } else {
-                    failure();
-                }
-            });
-        } catch (e) {
-            if (e.message) {
-                this._logger.warn(e.message);
-            }
-
-            callback('failed', e);
-        }
-    }
-
-    function getScreenSharingConstraints(options, callback) {
-        var that = this;
-
-        switch (phenixRTC.browser) {
-        case 'Chrome':
-            try {
-                chrome.runtime.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) { // eslint-disable-line no-undef
-                    if (response.status !== 'ok') {
-                        return callback(response.status, undefined, new Error(response.status));
-                    }
-
-                    var constraints = {video: {}};
-
-                    if (typeof options === 'object' && typeof options.screen === 'object') {
-                        constraints.video = options.screen;
-                    }
-
-                    if (typeof constraints.video.mandatory !== 'object') {
-                        constraints.video.mandatory = {};
-                    }
-
-                    constraints.video.mandatory.chromeMediaSource = 'desktop';
-                    constraints.video.mandatory.chromeMediaSourceId = response.streamId;
-
-                    callback('ok', constraints, undefined);
-                });
-            } catch (e) {
-                if (e.message) {
-                    that._logger.warn(e.message);
-                }
-
-                callback('failed', undefined, e);
-            }
-
-            break;
-        case 'Firefox':
-            var constraints = {video: {}};
-
-            if (typeof options === 'object' && typeof options.screen === 'object') {
-                constraints.video = options.screen;
-            }
-
-            constraints.video.mediaSource = 'window';
-
-            callback('ok', constraints, undefined);
-
-            break;
-        default:
-            callback('not-supported', undefined, new Error('not-supported'));
-
-            break;
-        }
-    }
-
     function getUserMediaConstraints(options, callback) {
         var that = this;
 
         if (options.screen) {
-            if (!that._screenSharingEnabled) {
-                var installCallback = function installCallback(status) {
-                    if (status === 'cancelled') {
-                        return callback(status, 'cancelled');
-                    }
-
-                    if (status !== 'ok') {
-                        return callback(status, undefined, new Error('screen-sharing-installation-failed'));
-                    }
-
-                    checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
-                        that._screenSharingEnabled = screenSharingEnabled;
-
-                        if (!that._screenSharingEnabled) {
-                            return callback(status, undefined, new Error('screen-sharing-installation-failed'));
-                        }
-
-                        getScreenSharingConstraints.call(that, options, callback);
-                    });
-                };
-
-                switch (phenixRTC.browser) {
-                case 'Chrome':
-                    tryInstallChromeScreenSharingExtension.call(that, installCallback);
-
-                    break;
-                case 'Firefox':
-                    tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
-
-                    break;
-                default:
-                    callback('not-supported', undefined, new Error('not-supported'));
-
-                    break;
+            return that._screenShareExtensionManager.isScreenSharingEnabled(function (isEnabled) {
+                if (isEnabled) {
+                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
                 }
-            } else {
-                getScreenSharingConstraints.call(that, options, callback);
-            }
-        } else {
-            var constraints = {
-                audio: options.audio || false,
-                video: options.video || false
-            };
 
-            callback('ok', constraints, undefined);
+                return that._screenShareExtensionManager.installExtension(function(error, response) {
+                    if (error || (response && response.status !== 'ok')) {
+                        return callback(error, response);
+                    }
+
+                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
+                });
+            });
         }
+
+        var constraints = {
+            audio: options.audio || false,
+            video: options.video || false
+        };
+
+        callback(null, {
+            status: 'ok',
+            constraints: constraints
+        });
     }
 
     function getUserMedia(options, callback) {
@@ -749,17 +510,17 @@ define([
             successCallback('ok', stream);
         };
 
-        return getUserMediaConstraints.call(this, options, function (status, constraints, error) {
-            if (status === 'cancelled') {
+        return getUserMediaConstraints.call(this, options, function (error, response) {
+            if (response.status === 'cancelled') {
                 return onUserMediaCancelled();
             }
 
-            if (status !== 'ok') {
+            if (response.status !== 'ok') {
                 return onUserMediaFailure(error);
             }
 
             try {
-                phenixRTC.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
+                phenixRTC.getUserMedia(response.constraints, onUserMediaSuccess, onUserMediaFailure);
             } catch (e) {
                 onUserMediaFailure(e);
             }

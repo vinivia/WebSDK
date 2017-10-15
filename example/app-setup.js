@@ -28,7 +28,7 @@ define('app-setup', [
 
     var init = function init() {
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
-        $('#browser').text(sdk.RTC.browser);
+        $('#browserName').text(sdk.RTC.browser);
         $('#browserVersion').text(sdk.RTC.browserVersion);
 
         if (sdk.RTC.webrtcSupported) {
