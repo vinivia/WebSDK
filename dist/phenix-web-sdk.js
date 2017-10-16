@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 80);
+/******/ 	return __webpack_require__(__webpack_require__.s = 81);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4273,7 +4273,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(7),
-    __webpack_require__(69)
+    __webpack_require__(70)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -4480,9 +4480,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(60),
     __webpack_require__(59),
     __webpack_require__(57),
-    __webpack_require__(78),
+    __webpack_require__(79),
+    __webpack_require__(77),
     __webpack_require__(76),
-    __webpack_require__(75),
     __webpack_require__(4)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
@@ -4493,7 +4493,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-10-15T22:07:21Z';
+    var sdkVersion = '2017-10-19T17:22:52Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -4760,7 +4760,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 streamTelemetry.setStreamId(streamId);
                 streamTelemetry.setStartOffset(response.createStreamResponse.offset);
                 streamTelemetry.recordMetric('Provisioned');
-                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
                     resource: that._resolvedEndPoint,
                     kind: 'https'
                 });
@@ -4850,7 +4850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 streamTelemetry.setStreamId(streamId);
                 streamTelemetry.setStartOffset(response.createStreamResponse.offset);
                 streamTelemetry.recordMetric('Provisioned');
-                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
                     resource: that.getBaseUri(),
                     kind: 'https'
                 });
@@ -5670,7 +5670,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
                 var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
 
-                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection) + 'a=end-of-candidates\n');
             }
 
             offerSdp += 'a=end-of-candidates';
@@ -5985,7 +5985,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
                 var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
 
-                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection) + 'a=end-of-candidates\n');
             }
 
             offerSdp += 'a=end-of-candidates';
@@ -7930,8 +7930,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         switch (reason) {
-        case 'ended':
-            // Normal operation
+        case 'ended': // Normal operation
+        case 'censored': // Forced to stop
             var endedResponse = {
                 status: reason,
                 reason: reason,
@@ -7957,7 +7957,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         case 'maintenance':
             // Don't inform the client, attempt to re-publish automatically
             return retry(reason);
-        case 'censored':
         case 'app-background':
         default:
             // Give client option to re-publish
@@ -7997,7 +7996,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(24),
     __webpack_require__(28),
-    __webpack_require__(72),
+    __webpack_require__(73),
     __webpack_require__(27),
     __webpack_require__(67),
     __webpack_require__(14),
@@ -10174,7 +10173,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(73),
+    __webpack_require__(74),
     __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, Stream, member) {
     'use strict';
@@ -10900,11 +10899,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(23),
     __webpack_require__(16),
     __webpack_require__(17),
+    __webpack_require__(68),
     __webpack_require__(14),
     __webpack_require__(13),
     __webpack_require__(29),
     __webpack_require__(30)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCastExpress, RoomService, roomEnums, memberEnums, streamEnums, trackEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, AdminAPI, PCastExpress, RoomService, MemberSelector, roomEnums, memberEnums, streamEnums, trackEnums) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -10930,13 +10930,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     RoomExpress.prototype.dispose = function dispose() {
-        if (_.values(this._roomServices).length) {
-            _.forOwn(this._roomServices, function (roomService) {
-                roomService.stop();
-            });
+        _.forOwn(this._membersSubscriptions, function (membersSubscription) {
+            membersSubscription.dispose();
+        });
+        _.forOwn(this._roomServicePublishers, function (publisher) {
+            publisher.stop();
+        });
+        _.forOwn(this._roomServices, function (roomService) {
+            roomService.stop();
+        });
 
-            this._roomServices = {};
-        }
+        this._membersSubscriptions = {};
+        this._roomServicePublishers = {};
+        this._roomServices = {};
+        this._activeRoomServices = [];
 
         if (this._shouldDisposeOfPCastExpress) {
             this._pcastExpress.dispose();
@@ -11123,6 +11130,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     };
 
+    // TODO (dcy) Refactor channel related methods into separate class
     RoomExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(joinChannelCallback, 'joinChannelCallback');
@@ -11132,12 +11140,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isObject(options.videoElement, 'options.videoElement');
         }
 
+        if (options.streamSelectionStrategy) {
+            assert.isStringNotEmpty(options.streamSelectionStrategy, 'options.streamSelectionStrategy');
+        }
+
         var channelOptions = _.assign({
             type: roomEnums.types.channel.name,
             role: memberEnums.roles.audience.name
         }, options);
+        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger);
         var lastMediaStream;
         var lastStreamId;
+        var channelRoomService;
+        var channelId = '';
         var that = this;
 
         var joinRoomCallback = function(error, response) {
@@ -11145,6 +11160,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             if (response && response.roomService) {
                 var leaveRoom = response.roomService.leaveRoom;
+                var room = response.roomService.getObservableActiveRoom().getValue();
+
+                channelRoomService = response.roomService;
+                channelId = room ? room.getRoomId() : '';
+
+                that._logger.info('Joined channel [%s] with [%s] selection strategy', channelId, memberSelector.getStrategy());
 
                 channelResponse.roomService.leaveRoom = function(callback) {
                     if (lastMediaStream) {
@@ -11158,25 +11179,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             joinChannelCallback(error, channelResponse);
         };
 
-        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members) {
+        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members, streamErrorStatus) {
             var presenters = _.filter(members, function(member) {
                 return member.getObservableRole().getValue() === memberEnums.roles.presenter.name;
             });
-            var mostRecentPresenter = _.reduce(presenters, function(presenterA, presenterB) {
-                if (!presenterA) {
-                    return presenterB;
+            var forceNewMemberSelection = !!streamErrorStatus || !lastMediaStream || !lastStreamId;
+            var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
+            var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
+            var streamUri = presenterStream ? presenterStream.getUri() : '';
+            var streamId = parseStreamIdFromStreamUri(streamUri);
+            var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
+
+            if (!selectedPresenter || !presenterStream) {
+                if (presenters.length === 0) {
+                    return subscriberCallback(null, {status: 'no-stream-playing'});
                 }
 
-                return presenterA.getLastUpdate() > presenterB.getLastUpdate() ? presenterA : presenterB;
-            });
+                if (streamErrorStatus) {
+                    that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
+                        lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
 
-            if (!mostRecentPresenter) {
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
+                    return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
+                }
 
-            var presenterStream = mostRecentPresenter.getObservableStreams().getValue()[0];
-
-            if (!presenterStream) {
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
@@ -11184,17 +11209,57 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return subscriberCallback(null, {status: 'streaming-not-available'});
             }
 
-            var streamId = parseStreamIdFromStreamUri(presenterStream.getUri());
-            var streamToken = parseStreamTokenFromStreamUri(presenterStream.getUri(), options.capabilities);
-
             if (!streamId) {
+                that._logger.info('Channel [%s] presenter has no stream', channelId);
+
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
             if (streamId === lastStreamId) {
+                if (streamErrorStatus) {
+                    that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
+                        lastStreamId, channelId, streamErrorStatus);
+
+                    return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
+                }
+
                 return;
             } else if (lastStreamId) {
                 lastMediaStream.stop();
+            }
+
+            var tryNextMember = function(streamStatus) {
+                var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
+                var members = room ? room.getObservableMembers().getValue() : [];
+
+                if (!room) {
+                    return; // No longer in room.
+                }
+
+                return membersChangedCallback(members, streamStatus);
+            };
+
+            function monitorChannelSubsciber(mediaStreamId, error, response) {
+                if (lastStreamId !== mediaStreamId) {
+                    return; // Ignore old streams
+                }
+
+                if (error) {
+                    return tryNextMember('unable-to-subscribe');
+                }
+
+                // Don't continue - Tell client
+                if (response.reason === 'app-background') {
+                    return subscriberCallback(error, response);
+                }
+
+                if (response.retry && memberSelector.getStrategy() !== 'high-availability') {
+                    return response.retry();
+                }
+
+                if (response.status !== 'ok') {
+                    return tryNextMember(response.status);
+                }
             }
 
             var subscribeOptions = {
@@ -11202,17 +11267,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 videoElement: options.videoElement,
                 streamId: streamId,
                 monitor: {
-                    callback: _.bind(monitorSubsciberOrPublisher, that, subscriberCallback),
+                    callback: _.bind(monitorChannelSubsciber, this, streamId),
                     options: {conditionCountForNotificationThreshold: 8}
                 },
                 streamToken: streamToken
             };
-
-            var successReason = lastStreamId ? 'stream-override' : 'stream-started';
+            var hadPreviousStreamReason = streamErrorStatus ? 'recovered-from-failure' : 'stream-override';
+            var successReason = lastStreamId ? hadPreviousStreamReason : 'stream-started';
 
             lastStreamId = streamId;
 
-            var mediaStreamCallback = function mediaStreamCallback(error, response) {
+            var mediaStreamCallback = function mediaStreamCallback(mediaStreamId, error, response) {
+                if (lastStreamId !== mediaStreamId) {
+                    return; // Ignore old streams
+                }
+
+                if (error || (response && response.status !== 'ok')) {
+                    that._logger.info('[%s] Issue with stream. Trying next member', mediaStreamId, response ? response.status : '', error);
+
+                    return tryNextMember(response ? response.status : '');
+                }
+
                 if (response && response.mediaStream) {
                     lastMediaStream = response.mediaStream;
                 } else {
@@ -11223,7 +11298,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 subscriberCallback(error, response);
             };
 
-            subscribeToMemberStream.call(that, subscribeOptions, mediaStreamCallback, successReason);
+            subscribeToMemberStream.call(that, subscribeOptions, _.bind(mediaStreamCallback, this, streamId), successReason);
         });
     };
 
@@ -14583,8 +14658,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-15T22:07:21Z' || '?';
-    var releaseVersion = '2017.4.1';
+    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
+    var releaseVersion = '2017.4.2';
 
     function Logger() {
         this._appenders = [];
@@ -16257,7 +16332,7 @@ process.umask = function() { return 0; };
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(79);
+                var fs = __webpack_require__(80);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -21390,8 +21465,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(2),
     __webpack_require__(10),
     __webpack_require__(4),
-    __webpack_require__(71),
-    __webpack_require__(70)
+    __webpack_require__(72),
+    __webpack_require__(71)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -21776,6 +21851,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultAudioBitRateThreshold = 5000;
     var defaultVideoBitRateThreshold = 6000;
     var defaultConditionCountForNotificationThreshold = 3;
+    var defaultTimeoutForNoData = 5000;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {
         assert.isString(name, 'name');
@@ -21823,8 +21899,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
         var monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         var monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        var checkForNoDataTimeout = null;
 
-        function nextCheck() {
+        function nextCheck(checkForNoData) {
             var selector = null;
 
             getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
@@ -22042,8 +22119,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     conditionCount = 0;
                 }
 
-                if (conditionCount >= conditionCountForNotificationThreshold) {
+                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate);
+
+                if (isNoData && !checkForNoDataTimeout) {
+                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
+                } else if (!isNoData) {
+                    clearTimeout(checkForNoDataTimeout);
+
+                    checkForNoDataTimeout = null;
+                }
+
+                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+
+                if (conditionCount >= conditionCountForNotificationThreshold || isStreamDead) {
                     if (!monitorCallback('condition', frameRate, videoBitRate, audioBitRate)) {
+                        if (isStreamDead) {
+                            return that._logger.error('[%s] Failure detected with 0 bps audio and video for [%s] seconds', name, defaultTimeoutForNoData / 1000);
+                        }
+
                         that._logger.error('[%s] Failure detected with frame rate [%s] FPS and bit rate [%s/%s] bps: [%s]', name, frameRate, audioBitRate, videoBitRate, report);
                     } else {
                         // Failure is acknowledged and muted
@@ -22811,7 +22904,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
     'use strict';
 
-    var defaultAlpha = 1/16;
+    var defaultAlpha = 1 / 16;
 
     function AudioVolumeMeter(logger) {
         assert.isObject(logger, 'logger');
@@ -23602,6 +23695,206 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert) {
+    'use strict';
+
+    var mostRecentStrategy = 'most-recent';
+    var highAvailabilityStrategy = 'high-availability';
+    var blacklistedTimeoutInterval = 3 * 60 * 1000;
+
+    function MemberSelector(selectionStrategy, logger) {
+        if (selectionStrategy) {
+            assert.isStringNotEmpty(selectionStrategy, 'selectionStrategy');
+        }
+
+        assert.isObject(logger, 'logger');
+
+        this._selectionStrategy = selectionStrategy || mostRecentStrategy;
+        this._logger = logger;
+        this._lastSelectedMember = null;
+        this._blackListedMembers = [];
+    }
+
+    MemberSelector.prototype.getNext = function getNext(members, forceNewSelection) {
+        var newSelectedMember = getNextMember.call(this, members, forceNewSelection);
+
+        if (this.getNumberOfBlackListedMembers() > 0 && hasExceededBlacklistedTimeoutInterval.call(this) && !newSelectedMember) {
+            this._logger.info('Unable to select new member. Clearing [%s] black-listed members and trying again', this.getNumberOfBlackListedMembers());
+
+            this.clearBlackListedMembers();
+
+            return this.getNext(members, forceNewSelection);
+        }
+
+        if (this._lastSelectedMember !== newSelectedMember) {
+            if (!newSelectedMember) {
+                this._logger.info('Unable to select new member');
+            } else {
+                this._logger.info('Selecting new Member [%s]/[%s]', newSelectedMember.getSessionId(), newSelectedMember.getObservableScreenName().getValue());
+            }
+
+            if (this._lastSelectedMember && !isBlackListed.call(this, this._lastSelectedMember)) {
+                addBlacklistedMember.call(this, this._lastSelectedMember);
+            }
+        }
+
+        this._lastSelectedMember = newSelectedMember;
+
+        return newSelectedMember;
+    };
+
+    MemberSelector.prototype.getStrategy = function() {
+        return this._selectionStrategy;
+    };
+
+    MemberSelector.prototype.clearBlackListedMembers = function() {
+        this._blackListedMembers = [];
+    };
+
+    MemberSelector.prototype.getNumberOfBlackListedMembers = function() {
+        return this._blackListedMembers.length;
+    };
+
+    MemberSelector.prototype.dispose = function dispose() {
+        this._lastSelectedMember = null;
+        this._blackListedMembers = [];
+    };
+
+    function isBlackListed(member) {
+        return !!_.find(this._blackListedMembers, function(blackListedMember) {
+            return blackListedMember.key === getMemberKey(member);
+        });
+    }
+
+    function addBlacklistedMember(member) {
+        if (!member) {
+            return;
+        }
+
+        this._blackListedMembers.push({
+            key: getMemberKey(member),
+            timestamp: _.now()
+        });
+    }
+
+    function hasExceededBlacklistedTimeoutInterval() {
+        var totalTime = _.reduce(this._blackListedMembers, function(total, blackListedMember) {
+            return total + _.now() - blackListedMember.timestamp;
+        }, 0);
+
+        return totalTime > blacklistedTimeoutInterval;
+    }
+
+    function getMemberKey(member) {
+        if (!member) {
+            return '';
+        }
+
+        return member.getSessionId() + member.getObservableScreenName().getValue();
+    }
+
+    function getNextMember(members, forceNewSelection) {
+        var that = this;
+
+        switch (this._selectionStrategy) {
+        case mostRecentStrategy:
+            return getMostRecentMember(members);
+        case highAvailabilityStrategy:
+            var memberStillInList = that._lastSelectedMember && !!_.find(members, function(member) {
+                return member.getObservableScreenName().getValue() === that._lastSelectedMember.getObservableScreenName().getValue();
+            });
+
+            if (this._lastSelectedMember && !forceNewSelection && memberStillInList) {
+                return this._lastSelectedMember;
+            }
+
+            var allowedMembers = getAllowedMembers.call(this, members);
+
+            if (forceNewSelection) {
+                allowedMembers = removeMember(allowedMembers, this._lastSelectedMember);
+            }
+
+            var candidates = _.filter(allowedMembers, isPrimary);
+
+            if (candidates.length === 0) {
+                candidates = _.filter(allowedMembers, isAlternate);
+            }
+
+            if (candidates.length === 0) {
+                candidates = allowedMembers;
+            }
+
+            return _.sample(candidates);
+        default:
+            throw new Error('Invalid Selection Strategy');
+        }
+    }
+
+    function getMostRecentMember(members) {
+        return _.reduce(members, function (memberA, memberB) {
+            if (!memberA) {
+                return memberB;
+            }
+
+            return memberA.getLastUpdate() > memberB.getLastUpdate() ? memberA : memberB;
+        });
+    }
+
+    function isPrimary(member) {
+        var screenName = member.getObservableScreenName().getValue();
+        var primary = /primary/i;
+
+        return primary.test(screenName);
+    }
+
+    function isAlternate(member) {
+        var screenName = member.getObservableScreenName().getValue();
+        var primary = /alternate/i;
+
+        return primary.test(screenName);
+    }
+
+    function getAllowedMembers(members) {
+        var that = this;
+
+        return _.filter(members, function (member) {
+            return !isBlackListed.call(that, member);
+        });
+    }
+
+    function removeMember(members, memberToRemove) {
+        return _.filter(members, function (member) {
+            return getMemberKey(member) !== getMemberKey(memberToRemove);
+        });
+    }
+
+    return MemberSelector;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
@@ -23701,7 +23994,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23723,7 +24016,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(25),
-    __webpack_require__(68)
+    __webpack_require__(69)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
@@ -23764,7 +24057,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24648,7 +24941,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26352,7 +26645,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26473,7 +26766,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26580,7 +26873,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26684,7 +26977,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26706,13 +26999,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(77)
+    __webpack_require__(78)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, applicationActivityDetector) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-15T22:07:21Z' || '?';
+    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -26849,7 +27142,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var numberOfRecordsToPush = this._records.length;
 
         while (numberOfRecordsToPush > 0) {
-            var records = this._records.splice(numberOfRecordsToPush-1, 1);
+            var records = this._records.splice(numberOfRecordsToPush - 1, 1);
 
             if (records.length === 1) {
                 recordMetricRecord.call(that, records[0].record, records[0].since);
@@ -26864,7 +27157,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26892,7 +27185,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-15T22:07:21Z' || '?';
+    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -27133,7 +27426,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27308,7 +27601,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27330,7 +27623,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(25),
-    __webpack_require__(74)
+    __webpack_require__(75)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -27371,13 +27664,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

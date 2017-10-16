@@ -119,7 +119,7 @@ define([
             websocketStubber.stubResponse('chat.UpdateMember', response);
             websocketStubber.stubResponse('chat.UpdateRoom', response);
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         after(function() {

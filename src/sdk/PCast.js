@@ -304,7 +304,7 @@ define([
                 streamTelemetry.setStreamId(streamId);
                 streamTelemetry.setStartOffset(response.createStreamResponse.offset);
                 streamTelemetry.recordMetric('Provisioned');
-                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
                     resource: that._resolvedEndPoint,
                     kind: 'https'
                 });
@@ -394,7 +394,7 @@ define([
                 streamTelemetry.setStreamId(streamId);
                 streamTelemetry.setStartOffset(response.createStreamResponse.offset);
                 streamTelemetry.recordMetric('Provisioned');
-                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency*2}, null, {
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
                     resource: that.getBaseUri(),
                     kind: 'https'
                 });
@@ -1214,7 +1214,7 @@ define([
             if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
                 var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
 
-                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection) + 'a=end-of-candidates\n');
             }
 
             offerSdp += 'a=end-of-candidates';
@@ -1529,7 +1529,7 @@ define([
             if (offerSdp.match(/(\nm=video)/g) && offerSdp.match(/(\nm=audio)/g)) {
                 var firstSection = /(a=candidate)((.|\n)*)(?=m=)/g;
 
-                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection)+'a=end-of-candidates\n');
+                offerSdp = offerSdp.replace(firstSection, offerSdp.match(firstSection) + 'a=end-of-candidates\n');
             }
 
             offerSdp += 'a=end-of-candidates';

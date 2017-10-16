@@ -16,15 +16,16 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
-    '../../../test/mock/HttpStubber',
-    '../../../test/mock/WebSocketStubber',
-    '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber',
+    '../../../../test/mock/HttpStubber',
+    '../../../../test/mock/WebSocketStubber',
+    '../../../../test/mock/ChromeRuntimeStubber',
+    '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
-    'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member, stream, track) {
+    'sdk/room/track.json',
+    'sdk/PeerConnectionMonitor'
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member, stream, track, PeerConnectionMonitor) {
     describe('When Joining a Channel With Express Room That Has A Presenter', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -93,29 +94,33 @@ define([
             roomExpress.dispose();
         });
 
-        it('Expect stream ended reason of censored to trigger a callback and re-subscribe', function (done) {
+        it('Expect monitor event to trigger a callback and re-subscribe', function (done) {
             var subscribeCount = 0;
+            var startClone = PeerConnectionMonitor.prototype.start;
+
+            PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
+                setTimeout(function() {
+                    monitorCallback('client-side-failure');
+                }, 3);
+            };
 
             roomExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias'
             }, function() {}, function(error, response) {
-                subscribeCount++;
-
-                if (subscribeCount === 1) {
-                    return websocketStubber.stubEvent('pcast.StreamEnded', {
-                        streamId: 'mockStreamId',
-                        reason: 'censored',
-                        sessionId: 'mockSessionId'
-                    });
+                if (response.status === 'ok') {
+                    subscribeCount++;
                 }
 
-                expect(response.status).to.be.equal('ok');
-                expect(subscribeCount).to.be.equal(2);
-                done();
+                if (subscribeCount === 2) {
+                    PeerConnectionMonitor.prototype.start = startClone;
+                    expect(response.status).to.be.equal('ok');
+                    expect(subscribeCount).to.be.equal(2);
+                    done();
+                }
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect stream ended reason of ended to trigger callback with reason ended', function (done) {
@@ -125,9 +130,9 @@ define([
                 capabilities: [],
                 alias: 'ChannelAlias'
             }, function() {}, function(error, response) {
-                subscribeCount++;
+                if (response.status === 'ok') {
+                    subscribeCount++;
 
-                if (subscribeCount === 1) {
                     return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
                         reason: 'ended',
@@ -135,8 +140,8 @@ define([
                     });
                 }
 
+                expect(subscribeCount).to.be.equal(1);
                 expect(response.status).to.be.equal('ended');
-                expect(response.reason).to.be.equal('ended');
                 done();
             });
 

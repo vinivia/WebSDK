@@ -77,7 +77,7 @@ define([
                 });
             }, function offlineCallback () {});
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         after(function() {
@@ -139,7 +139,7 @@ define([
             membersObservable.setValue([{}, {}, {}]);
 
             publisher.limitBandwidth = function (bandwidth) {
-                expect(bandwidth).to.be.equal(100000/2);
+                expect(bandwidth).to.be.equal(100000 / 2);
             };
 
             publisherBandwidthAdjuster.connect(roomService, {roomBandwidthLimit: 100000});

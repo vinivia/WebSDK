@@ -16,10 +16,10 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
-    '../../../test/mock/HttpStubber',
-    '../../../test/mock/WebSocketStubber',
-    '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber',
+    '../../../../test/mock/HttpStubber',
+    '../../../../test/mock/WebSocketStubber',
+    '../../../../test/mock/ChromeRuntimeStubber',
+    '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json'
 ], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
     describe('When Publishing to a Channel With Express Room', function () {
@@ -78,8 +78,8 @@ define([
             roomExpress.dispose();
         });
 
-        it('Expect stream ended reason of censored to trigger a callback and re-publish', function (done) {
-            var subscribeCount = 0;
+        it('Expect stream ended reason of censored to trigger a callback and not re-publish', function (done) {
+            var publishCount = 0;
 
             roomExpress.publishToChannel({
                 capabilities: [],
@@ -89,18 +89,20 @@ define([
                 },
                 streamUri: 'StreamUri'
             }, function(error, response) {
-                subscribeCount++;
+                if (response.status === 'ok') {
+                    publishCount++;
 
-                if (subscribeCount === 1) {
-                    return websocketStubber.stubEvent('pcast.StreamEnded', {
-                        streamId: 'mockStreamId',
-                        reason: 'censored',
-                        sessionId: 'mockSessionId'
-                    });
+                    if (publishCount === 1) {
+                        return websocketStubber.stubEvent('pcast.StreamEnded', {
+                            streamId: 'mockStreamId',
+                            reason: 'censored',
+                            sessionId: 'mockSessionId'
+                        });
+                    }
                 }
 
-                expect(subscribeCount).to.be.equal(2);
-                expect(response.status).to.be.equal('ok');
+                expect(publishCount).to.be.equal(1);
+                expect(response.status).to.be.equal('censored');
                 done();
             });
 
@@ -108,7 +110,7 @@ define([
         });
 
         it('Expect stream ended reason of ended to trigger callback with reason ended', function (done) {
-            var subscribeCount = 0;
+            var publishCount = 0;
 
             roomExpress.publishToChannel({
                 capabilities: [],
@@ -118,14 +120,16 @@ define([
                 },
                 streamUri: 'StreamUri'
             }, function(error, response) {
-                subscribeCount++;
+                if (response.status === 'ok') {
+                    publishCount++;
 
-                if (subscribeCount === 1) {
-                    return websocketStubber.stubEvent('pcast.StreamEnded', {
-                        streamId: 'mockStreamId',
-                        reason: 'ended',
-                        sessionId: 'mockSessionId'
-                    });
+                    if (publishCount === 1) {
+                        return websocketStubber.stubEvent('pcast.StreamEnded', {
+                            streamId: 'mockStreamId',
+                            reason: 'ended',
+                            sessionId: 'mockSessionId'
+                        });
+                    }
                 }
 
                 expect(response.status).to.be.equal('ended');

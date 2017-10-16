@@ -26,6 +26,7 @@ define([
     var defaultAudioBitRateThreshold = 5000;
     var defaultVideoBitRateThreshold = 6000;
     var defaultConditionCountForNotificationThreshold = 3;
+    var defaultTimeoutForNoData = 5000;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {
         assert.isString(name, 'name');
@@ -73,8 +74,9 @@ define([
         var monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
         var monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         var monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        var checkForNoDataTimeout = null;
 
-        function nextCheck() {
+        function nextCheck(checkForNoData) {
             var selector = null;
 
             getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
@@ -292,8 +294,24 @@ define([
                     conditionCount = 0;
                 }
 
-                if (conditionCount >= conditionCountForNotificationThreshold) {
+                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate);
+
+                if (isNoData && !checkForNoDataTimeout) {
+                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
+                } else if (!isNoData) {
+                    clearTimeout(checkForNoDataTimeout);
+
+                    checkForNoDataTimeout = null;
+                }
+
+                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+
+                if (conditionCount >= conditionCountForNotificationThreshold || isStreamDead) {
                     if (!monitorCallback('condition', frameRate, videoBitRate, audioBitRate)) {
+                        if (isStreamDead) {
+                            return that._logger.error('[%s] Failure detected with 0 bps audio and video for [%s] seconds', name, defaultTimeoutForNoData / 1000);
+                        }
+
                         that._logger.error('[%s] Failure detected with frame rate [%s] FPS and bit rate [%s/%s] bps: [%s]', name, frameRate, audioBitRate, videoBitRate, report);
                     } else {
                         // Failure is acknowledged and muted

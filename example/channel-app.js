@@ -76,6 +76,7 @@ requirejs([
             var channelAlias = $('#channelAlias').val();
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
+            var streamSelectionStrategy = app.getUrlParameter('strategy') || '';
 
             if (!channelAlias) {
                 return;
@@ -86,7 +87,8 @@ requirejs([
             roomExpress.joinChannel({
                 alias: channelAlias,
                 capabilities: capabilities,
-                videoElement: channelVideoEl
+                videoElement: channelVideoEl,
+                streamSelectionStrategy: streamSelectionStrategy
             }, function joinChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

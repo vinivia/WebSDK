@@ -57,7 +57,7 @@ define([
             websocketStubber.stubResponse('chat.FetchRoomConversation', response);
             websocketStubber.stubResponse('chat.SendMessageToRoom', response);
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         after(function() {
@@ -300,14 +300,20 @@ define([
 
         describe('When PCast SessionId Changes', function () {
             var sessionIdObservable;
+            var setTimeoutClone = setTimeout;
 
             beforeEach(function () {
+                window.setTimeout = function(callback, timeout) {
+                    return setTimeoutClone(callback, timeout / 100);
+                };
+
                 sessionIdObservable = pcast.getProtocol().getObservableSessionId();
 
                 chatService.start();
             });
 
             afterEach(function () {
+                window.setTimeout = setTimeoutClone;
                 chatService.stop();
             });
 
@@ -329,14 +335,20 @@ define([
 
         describe('When PCast Status Changes', function () {
             var statusObservable;
+            var setTimeoutClone = setTimeout;
 
             beforeEach(function () {
+                window.setTimeout = function(callback, timeout) {
+                    return setTimeoutClone(callback, timeout / 100);
+                };
+
                 statusObservable = pcast.getObservableStatus();
 
                 chatService.start();
             });
 
             afterEach(function () {
+                window.setTimeout = setTimeoutClone;
                 chatService.stop();
             });
 

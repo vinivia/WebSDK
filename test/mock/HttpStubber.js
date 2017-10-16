@@ -94,7 +94,7 @@ define(['phenix-web-lodash-light'], function (_) {
                     req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
 
                     if (handler.callback) {
-                        handler.callback(req);
+                        handler.callback(req, JSON.parse(req.requestBody));
                     }
                 }
 

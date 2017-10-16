@@ -21,7 +21,7 @@ define('video-player', [
     'phenix-rtc'
 ], function ($, _, sdk, rtc) {
     var userAgent = window.navigator.userAgent;
-    var isIOS= /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
 
     var Player = function(elementId, options) {

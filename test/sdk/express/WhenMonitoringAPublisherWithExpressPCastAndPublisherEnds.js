@@ -67,26 +67,26 @@ define([
             pcastExpress.dispose();
         });
 
-        it('Expect reason of censored to return retry function', function (done) {
+        it('Expect reason of app-background to return retry function', function (done) {
             pcastExpress.publish({
                 capabilities: [],
                 userMediaStream: {},
                 monitor: {
                     callback: function(error, response) {
                         expect(response.retry).to.be.a('function');
-                        expect(response.reason).to.be.equal('censored');
+                        expect(response.reason).to.be.equal('app-background');
                         done();
                     }
                 }
             }, function() {
                 websocketStubber.stubEvent('pcast.StreamEnded', {
                     streamId: 'mockStreamId',
-                    reason: 'censored',
+                    reason: 'app-background',
                     sessionId: 'mockSessionId'
                 });
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect retry to cause publisher callback to be called twice', function (done) {
@@ -108,7 +108,7 @@ define([
                 if (subscribeCount === 1) {
                     return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
-                        reason: 'censored',
+                        reason: 'app-background',
                         sessionId: 'mockSessionId'
                     });
                 }
@@ -117,7 +117,7 @@ define([
                 done();
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of error to automatically retry publisher without triggering callback', function (done) {
@@ -144,7 +144,7 @@ define([
                 done();
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of custom to automatically return no retry function', function (done) {
@@ -165,13 +165,18 @@ define([
                 });
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of capacity to automatically retry after a timeout', function (done) {
             var start = null;
             var subscribeCount = 0;
             var monitorCallback = sinon.spy();
+            var setTimeoutClone = setTimeout;
+
+            window.setTimeout = function(callback, timeout) {
+                return setTimeoutClone(callback, timeout / 100);
+            };
 
             pcastExpress.publish({
                 capabilities: [],
@@ -192,11 +197,12 @@ define([
 
                 var timeoutLength = _.now() - start;
 
-                expect(timeoutLength).to.be.greaterThan(500);
+                window.setTimeout = setTimeoutClone;
+                expect(timeoutLength).to.be.greaterThan(5);
                 done();
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
     });
 });

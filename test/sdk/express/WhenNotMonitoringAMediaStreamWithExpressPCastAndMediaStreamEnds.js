@@ -90,7 +90,7 @@ define([
                 }
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of error to automatically retry publisher without triggering callback', function (done) {
@@ -114,12 +114,17 @@ define([
                 done();
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of capacity to automatically retry after a timeout', function (done) {
             var start = null;
             var subscribeCount = 0;
+            var setTimeoutClone = setTimeout;
+
+            window.setTimeout = function(callback, timeout) {
+                return setTimeoutClone(callback, timeout / 100);
+            };
 
             pcastExpress.subscribe({
                 capabilities: [],
@@ -139,11 +144,12 @@ define([
 
                 var timeoutLength = _.now() - start;
 
-                expect(timeoutLength).to.be.greaterThan(500);
+                window.setTimeout = setTimeoutClone;
+                expect(timeoutLength).to.be.greaterThan(5);
                 done();
             });
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
     });
 });

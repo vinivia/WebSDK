@@ -45,7 +45,7 @@ define([
                 done();
             }, function offlineCallback () {});
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         after(function() {

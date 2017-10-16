@@ -19,7 +19,7 @@ define([
 ], function (_, assert) {
     'use strict';
 
-    var defaultAlpha = 1/16;
+    var defaultAlpha = 1 / 16;
 
     function AudioVolumeMeter(logger) {
         assert.isObject(logger, 'logger');

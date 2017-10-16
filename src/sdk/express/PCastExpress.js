@@ -687,8 +687,8 @@ define([
         };
 
         switch (reason) {
-        case 'ended':
-            // Normal operation
+        case 'ended': // Normal operation
+        case 'censored': // Forced to stop
             var endedResponse = {
                 status: reason,
                 reason: reason,
@@ -714,7 +714,6 @@ define([
         case 'maintenance':
             // Don't inform the client, attempt to re-publish automatically
             return retry(reason);
-        case 'censored':
         case 'app-background':
         default:
             // Give client option to re-publish

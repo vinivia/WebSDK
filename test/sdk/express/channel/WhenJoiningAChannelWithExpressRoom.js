@@ -16,8 +16,8 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/RoomExpress',
-    '../../../test/mock/HttpStubber',
-    '../../../test/mock/WebSocketStubber',
+    '../../../../test/mock/HttpStubber',
+    '../../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
     'sdk/room/room.json',
     'sdk/room/member.json',
@@ -88,7 +88,7 @@ define([
 
             roomExpress.getPCastExpress().waitForOnline(done);
 
-            setTimeout(_.bind(websocketStubber.triggerConnected, websocketStubber), 0);
+            websocketStubber.triggerConnected();
         });
 
         afterEach(function() {

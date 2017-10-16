@@ -75,6 +75,7 @@
             { "blankLine": "any", "prev": "expression", "next": "expression" }
         ],
         "semi": [2, "always"],
+        "space-infix-ops": ["error", {"int32Hint": false}],
         "spaced-comment": [2, "always"],
 
         // Rules specific to this module

@@ -160,7 +160,7 @@ define([
         var numberOfRecordsToPush = this._records.length;
 
         while (numberOfRecordsToPush > 0) {
-            var records = this._records.splice(numberOfRecordsToPush-1, 1);
+            var records = this._records.splice(numberOfRecordsToPush - 1, 1);
 
             if (records.length === 1) {
                 recordMetricRecord.call(that, records[0].record, records[0].since);
