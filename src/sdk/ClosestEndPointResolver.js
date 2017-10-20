@@ -77,7 +77,7 @@ define([
             http.getWithRetry(endPoint, {
                 timeout: 15000,
                 queryParameters: {
-                    version: '%VERSION%',
+                    version: '%SDKVERSION%',
                     _: _.now()
                 }
             }, function (err, responseText) {

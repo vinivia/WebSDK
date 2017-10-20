@@ -97,6 +97,14 @@ define([
         }
     };
 
+    WebSocketStubber.prototype.getNumberOfListeners = function(eventName) {
+        if (this._namedEvents) {
+            return this._namedEvents.size(eventName);
+        }
+
+        return 0;
+    };
+
     WebSocketStubber.prototype.restore = function() {
         if (this._mockMQWebSocket) {
             this._mockMQWebSocket.disconnect();

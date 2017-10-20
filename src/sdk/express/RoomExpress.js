@@ -74,6 +74,7 @@ define([
         return this._pcastExpress;
     };
 
+    // Responsible for creating room. Returns immutable room
     RoomExpress.prototype.createRoom = function createRoom(options, callback) {
         assert.isFunction(callback, 'callback');
         assert.isObject(options.room, 'options.room');
@@ -84,7 +85,6 @@ define([
             assert.isStringNotEmpty(options.room.description, 'options.room.description');
         }
 
-        var that = this;
         var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
 
         createRoomService.call(this, null, null, function(error, roomServiceResponse) {
@@ -105,17 +105,11 @@ define([
 
             roomService.createRoom(roomToCreate, function (error, roomResponse) {
                 if (error) {
-                    roomService.stop();
-
                     return callback(error);
                 }
 
-                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
-                    roomService.stop();
-                }
-
-                // Use cached roomService or returned roomService
-                roomResponse.roomService = findActiveRoom.call(that, roomResponse.room.getRoomId(), null) || roomService;
+                // Don't return room service. Not in room. Room returned is immutable
+                roomService.stop();
 
                 return callback(null, roomResponse);
             });
@@ -187,6 +181,11 @@ define([
             }
 
             if (activeRoom && membersChangedCallback) {
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
                 if (that._membersSubscriptions[activeRoom.getRoomId()]) {
                     return;
                 }
@@ -214,31 +213,8 @@ define([
                 }
 
                 var room = roomResponse.room;
-                var roomServiceLeaveRoom = roomService.leaveRoom;
 
                 that._activeRoomServices.push(roomService);
-
-                roomService.leaveRoom = function leaveRoom(callback) {
-                    roomServiceLeaveRoom.call(roomService, function(error, response) {
-                        if (error) {
-                            roomService.stop();
-
-                            return callback(error);
-                        }
-
-                        if (response.status !== 'ok') {
-                            return callback(null, response);
-                        }
-
-                        if (that._membersSubscriptions[room.getRoomId()]) {
-                            that._membersSubscriptions[room.getRoomId()].dispose();
-
-                            delete that._membersSubscriptions[room.getRoomId()];
-                        }
-
-                        roomService.stop();
-                    });
-                };
 
                 joinRoomCallback(null, {
                     status: 'ok',
@@ -471,14 +447,7 @@ define([
                 return callback(null, createRoomResponse);
             }
 
-            var roomService = createRoomResponse.roomService;
             var room = createRoomResponse.room;
-            var activeRoom = roomService.getObservableActiveRoom().getValue();
-
-            if (!activeRoom) {
-                roomService.start(options.memberRole, screenName);
-            }
-
             var publishOptions = _.assign({
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
@@ -539,16 +508,16 @@ define([
         var that = this;
         var uniqueId = _.uniqueId();
 
-        var activeRoomService = findActiveRoom.call(this, roomId, alias);
-
-        if (activeRoomService) {
-            return callback(null, {
-                status: 'ok',
-                roomService: activeRoomService
-            });
-        }
-
         this._pcastExpress.waitForOnline(function() {
+            var activeRoomService = findActiveRoom.call(that, roomId, alias);
+
+            if (activeRoomService) {
+                return callback(null, {
+                    status: 'ok',
+                    roomService: activeRoomService
+                });
+            }
+
             that._roomServices[uniqueId] = new RoomService(that._pcastExpress.getPCast());
 
             var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
@@ -571,11 +540,37 @@ define([
     function createExpressRoomService(roomService, uniqueId) {
         var that = this;
         var roomServiceStop = roomService.stop;
+        var roomServiceLeaveRoom = roomService.leaveRoom;
 
         roomService.stop = function() {
             roomServiceStop.call(roomService);
-
             delete that._roomServices[uniqueId];
+        };
+
+        roomService.leaveRoom = function leaveRoom(callback) {
+            var room = roomService.getObservableActiveRoom().getValue();
+
+            roomServiceLeaveRoom.call(roomService, function(error, response) {
+                if (error) {
+                    roomService.stop();
+
+                    return callback(error);
+                }
+
+                if (response.status !== 'ok' && response.status !== 'not-in-room') {
+                    return callback(null, response);
+                }
+
+                if (room && that._membersSubscriptions[room.getRoomId()]) {
+                    that._membersSubscriptions[room.getRoomId()].dispose();
+
+                    delete that._membersSubscriptions[room.getRoomId()];
+                }
+
+                that._logger.info('Successfully disposed of Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
+
+                roomService.stop();
+            });
         };
 
         return roomService;

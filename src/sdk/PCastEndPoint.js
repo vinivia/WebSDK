@@ -85,7 +85,7 @@ define([
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '%VERSION%',
+                version: '%SDKVERSION%',
                 _: _.now()
             }
         }, function (err, responseText) {

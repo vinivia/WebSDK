@@ -4228,7 +4228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '%VERSION%',
+                version: '2017-10-20T18:33:30Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4493,7 +4493,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-10-19T17:22:52Z';
+    var sdkVersion = '2017-10-20T18:33:30Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -8027,7 +8027,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     RoomService.prototype.start = function start(role, screenName) {
-        if (this._self.getValue()) {
+        if (this._started) {
             return this._logger.warn('RoomService already started.');
         }
 
@@ -8165,21 +8165,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
 
         if (activeRoom) {
-            this.leaveRoom(function(error, response) {
+            return this.leaveRoom(function(error, response) {
                 if (error) {
-                    that._logger.warn('Unable to leave room', error);
+                    that._logger.warn('Failure to stop room service. Unable to leave room', error);
                 }
 
                 if (response && response.status !== 'ok') {
-                    that._logger.warn('Unable to leave room. Status: [%s]', response.status);
+                    that._logger.warn('Failure to stop room service. Unable to leave room. Status: [%s]', response.status);
+                }
+
+                if (response && response.status === 'ok') {
+                    resetRoomModels.call(that);
+
+                    that._started = false;
                 }
             });
         }
 
+        resetRoomModels.call(this);
+
+        that._started = false;
+    };
+
+    function resetRoomModels() {
+        this._self.setValue(null);
+        this._activeRoom.setValue(null);
+        this._cachedRoom.setValue(null);
+        this._roomChatService = null;
+
         if (this._disposables) {
             this._disposables.dispose();
         }
-    };
+
+        this._disposables = null;
+    }
 
     function resetSelf(sessionId) {
         var self = this._self.getValue().toJson();
@@ -10954,6 +10973,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._pcastExpress;
     };
 
+    // Responsible for creating room. Returns immutable room
     RoomExpress.prototype.createRoom = function createRoom(options, callback) {
         assert.isFunction(callback, 'callback');
         assert.isObject(options.room, 'options.room');
@@ -10964,7 +10984,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isStringNotEmpty(options.room.description, 'options.room.description');
         }
 
-        var that = this;
         var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
 
         createRoomService.call(this, null, null, function(error, roomServiceResponse) {
@@ -10985,17 +11004,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             roomService.createRoom(roomToCreate, function (error, roomResponse) {
                 if (error) {
-                    roomService.stop();
-
                     return callback(error);
                 }
 
-                if (roomResponse.status !== 'already-exists' && roomResponse.status !== 'ok') {
-                    roomService.stop();
-                }
-
-                // Use cached roomService or returned roomService
-                roomResponse.roomService = findActiveRoom.call(that, roomResponse.room.getRoomId(), null) || roomService;
+                // Don't return room service. Not in room. Room returned is immutable
+                roomService.stop();
 
                 return callback(null, roomResponse);
             });
@@ -11067,6 +11080,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (activeRoom && membersChangedCallback) {
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
                 if (that._membersSubscriptions[activeRoom.getRoomId()]) {
                     return;
                 }
@@ -11094,31 +11112,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 var room = roomResponse.room;
-                var roomServiceLeaveRoom = roomService.leaveRoom;
 
                 that._activeRoomServices.push(roomService);
-
-                roomService.leaveRoom = function leaveRoom(callback) {
-                    roomServiceLeaveRoom.call(roomService, function(error, response) {
-                        if (error) {
-                            roomService.stop();
-
-                            return callback(error);
-                        }
-
-                        if (response.status !== 'ok') {
-                            return callback(null, response);
-                        }
-
-                        if (that._membersSubscriptions[room.getRoomId()]) {
-                            that._membersSubscriptions[room.getRoomId()].dispose();
-
-                            delete that._membersSubscriptions[room.getRoomId()];
-                        }
-
-                        roomService.stop();
-                    });
-                };
 
                 joinRoomCallback(null, {
                     status: 'ok',
@@ -11351,14 +11346,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(null, createRoomResponse);
             }
 
-            var roomService = createRoomResponse.roomService;
             var room = createRoomResponse.room;
-            var activeRoom = roomService.getObservableActiveRoom().getValue();
-
-            if (!activeRoom) {
-                roomService.start(options.memberRole, screenName);
-            }
-
             var publishOptions = _.assign({
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
@@ -11419,16 +11407,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
         var uniqueId = _.uniqueId();
 
-        var activeRoomService = findActiveRoom.call(this, roomId, alias);
-
-        if (activeRoomService) {
-            return callback(null, {
-                status: 'ok',
-                roomService: activeRoomService
-            });
-        }
-
         this._pcastExpress.waitForOnline(function() {
+            var activeRoomService = findActiveRoom.call(that, roomId, alias);
+
+            if (activeRoomService) {
+                return callback(null, {
+                    status: 'ok',
+                    roomService: activeRoomService
+                });
+            }
+
             that._roomServices[uniqueId] = new RoomService(that._pcastExpress.getPCast());
 
             var expressRoomService = createExpressRoomService.call(that, that._roomServices[uniqueId], uniqueId);
@@ -11451,11 +11439,37 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function createExpressRoomService(roomService, uniqueId) {
         var that = this;
         var roomServiceStop = roomService.stop;
+        var roomServiceLeaveRoom = roomService.leaveRoom;
 
         roomService.stop = function() {
             roomServiceStop.call(roomService);
-
             delete that._roomServices[uniqueId];
+        };
+
+        roomService.leaveRoom = function leaveRoom(callback) {
+            var room = roomService.getObservableActiveRoom().getValue();
+
+            roomServiceLeaveRoom.call(roomService, function(error, response) {
+                if (error) {
+                    roomService.stop();
+
+                    return callback(error);
+                }
+
+                if (response.status !== 'ok' && response.status !== 'not-in-room') {
+                    return callback(null, response);
+                }
+
+                if (room && that._membersSubscriptions[room.getRoomId()]) {
+                    that._membersSubscriptions[room.getRoomId()].dispose();
+
+                    delete that._membersSubscriptions[room.getRoomId()];
+                }
+
+                that._logger.info('Successfully disposed of Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
+
+                roomService.stop();
+            });
         };
 
         return roomService;
@@ -14658,8 +14672,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
-    var releaseVersion = '2017.4.2';
+    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
+    var releaseVersion = '2017.4.3';
 
     function Logger() {
         this._appenders = [];
@@ -21262,7 +21276,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             http.getWithRetry(endPoint, {
                 timeout: 15000,
                 queryParameters: {
-                    version: '%VERSION%',
+                    version: '2017-10-20T18:33:30Z',
                     _: _.now()
                 }
             }, function (err, responseText) {
@@ -27005,7 +27019,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
+    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -27185,7 +27199,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-19T17:22:52Z' || '?';
+    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

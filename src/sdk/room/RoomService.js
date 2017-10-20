@@ -51,7 +51,7 @@ define([
     }
 
     RoomService.prototype.start = function start(role, screenName) {
-        if (this._self.getValue()) {
+        if (this._started) {
             return this._logger.warn('RoomService already started.');
         }
 
@@ -189,21 +189,40 @@ define([
         var that = this;
 
         if (activeRoom) {
-            this.leaveRoom(function(error, response) {
+            return this.leaveRoom(function(error, response) {
                 if (error) {
-                    that._logger.warn('Unable to leave room', error);
+                    that._logger.warn('Failure to stop room service. Unable to leave room', error);
                 }
 
                 if (response && response.status !== 'ok') {
-                    that._logger.warn('Unable to leave room. Status: [%s]', response.status);
+                    that._logger.warn('Failure to stop room service. Unable to leave room. Status: [%s]', response.status);
+                }
+
+                if (response && response.status === 'ok') {
+                    resetRoomModels.call(that);
+
+                    that._started = false;
                 }
             });
         }
 
+        resetRoomModels.call(this);
+
+        that._started = false;
+    };
+
+    function resetRoomModels() {
+        this._self.setValue(null);
+        this._activeRoom.setValue(null);
+        this._cachedRoom.setValue(null);
+        this._roomChatService = null;
+
         if (this._disposables) {
             this._disposables.dispose();
         }
-    };
+
+        this._disposables = null;
+    }
 
     function resetSelf(sessionId) {
         var self = this._self.getValue().toJson();

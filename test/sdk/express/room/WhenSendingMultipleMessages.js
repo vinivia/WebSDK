@@ -1,0 +1,133 @@
+/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+define([
+    'phenix-web-lodash-light',
+    'sdk/express/RoomExpress',
+    '../../../../test/mock/HttpStubber',
+    '../../../../test/mock/WebSocketStubber',
+    'sdk/room/room.json',
+    'sdk/room/member.json'
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, room, member) {
+    describe('When Sending Multiple Messages', function () {
+        var mockBackendUri = 'https://mockUri';
+        var mockAuthData = {
+            name: 'mockUser',
+            password: 'somePassword'
+        };
+        var mockRoom = {
+            roomId: 'TestRoom123',
+            alias: 'TestRoom123Alias',
+            name: 'Test123',
+            description: 'My Test Room',
+            bridgeId: '',
+            pin: '',
+            type: room.types.multiPartyChat.name,
+            members: []
+        };
+
+        var httpStubber;
+        var websocketStubber;
+        var roomExpress;
+        var response;
+
+        beforeEach(function(done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stubAuthRequest();
+            httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
+            roomExpress = new RoomExpress({
+                backendUri: mockBackendUri,
+                authenticationData: mockAuthData
+            });
+
+            response = {
+                status: 'ok',
+                room: mockRoom,
+                members: []
+            };
+
+            websocketStubber.stubResponse('chat.JoinRoom', response);
+
+            roomExpress.getPCastExpress().waitForOnline(done);
+
+            websocketStubber.triggerConnected();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
+            roomExpress.dispose();
+        });
+
+        it('only has one listener for room events when creating and then joining a room', function (done) {
+            websocketStubber.stubResponse('chat.CreateRoom', response);
+            websocketStubber.stubResponse('chat.JoinRoom', response);
+
+            roomExpress.createRoom({room: mockRoom}, function(error, createRoomResponse) {
+                roomExpress.joinRoom({
+                    roomId: mockRoom.roomId,
+                    role: member.roles.participant.name
+                }, function(error, response) {
+                    expect(createRoomResponse.roomService).to.not.exist;
+                    expect(response.roomService).to.exist;
+                    expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(1);
+                    done();
+                }, function(){});
+            });
+        });
+
+        it('has two listeners for room events when joining two different rooms', function (done) {
+            websocketStubber.stubResponse('chat.JoinRoom', response);
+
+            roomExpress.joinRoom({
+                roomId: mockRoom.roomId,
+                role: member.roles.participant.name
+            }, function() {
+                response.room.roomId = 'DifferentRoomId';
+
+                websocketStubber.stubResponse('chat.JoinRoom', response);
+
+                roomExpress.joinRoom({
+                    roomId: response.room.roomId,
+                    role: member.roles.participant.name
+                }, function() {
+                    expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(2);
+                    done();
+                }, function(){});
+            }, function(){});
+        });
+
+        it('has one listeners for room events when joining the same room twice', function (done) {
+            websocketStubber.stubResponse('chat.JoinRoom', response);
+
+            roomExpress.joinRoom({
+                roomId: mockRoom.roomId,
+                role: member.roles.participant.name
+            }, function() {
+                roomExpress.joinRoom({
+                    roomId: mockRoom.roomId,
+                    role: member.roles.participant.name
+                }, function() {
+                    expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(1);
+                    done();
+                }, function(){});
+            }, function(){});
+        });
+    });
+});
