@@ -17,8 +17,10 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-disposable',
-    './applicationActivityDetector'
-], function (_, assert, disposable, applicationActivityDetector) {
+    './applicationActivityDetector',
+    './NetworkMonitor',
+    'phenix-rtc'
+], function (_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
@@ -35,12 +37,24 @@ define([
         };
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
+        this._networkMonitor = new NetworkMonitor(this._logger);
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
         this._records = [];
 
         this._disposables.add(applicationActivityDetector.onBackground(_.bind(recordForegroundChange, this, false)));
         this._disposables.add(applicationActivityDetector.onForeground(_.bind(recordForegroundChange, this, true)));
+
+        if (!this._networkMonitor.isSupported()) {
+            return;
+        }
+
+        this._disposables.add(this._networkMonitor.onNetworkChange(_.bind(logNetworkStatsChange, this)));
+        this._disposables.add(this._networkMonitor);
+
+        recordNetworkTypeState.call(this);
+        recordNetworkDownlinkThroughputCapacity.call(this);
+        recordNetworkRTT.call(this);
     }
 
     SessionTelemetry.prototype.setSessionId = function(sessionId) {
@@ -60,6 +74,12 @@ define([
             }, since());
             recordAllMetrics.call(this);
             recordForegroundState.call(this);
+
+            if (this._networkMonitor.isSupported()) {
+                recordNetworkTypeState.call(this);
+                recordNetworkDownlinkThroughputCapacity.call(this);
+                recordNetworkRTT.call(this);
+            }
         }
     };
 
@@ -113,6 +133,63 @@ define([
         this.recordMetric(metric, {uint64: timeSinceLastChange});
 
         logMetric.call(this, 'Application has gone into the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
+
+    function recordNetworkTypeState() {
+        var type = this._networkMonitor.getEffectiveType();
+
+        this.recordMetric('NetworkType', {string: type}, null, {resource: phenixRTC.browser});
+
+        logMetric.call(this, '[%s] has started with Network effective type of [%s]', this._sessionId ? 'Session' : 'Application', type);
+    }
+
+    function recordNetworkTypeChange(newType, previousType) {
+        var newNetworkType = newType || this._networkMonitor.getEffectiveType();
+        var previousNetworkType = previousType;
+
+        this.recordMetric('NetworkType', {string: newNetworkType}, {string: previousNetworkType}, {resource: phenixRTC.browser});
+
+        logMetric.call(this, 'Network effective type has changed to [%s] from [%s]', newNetworkType, previousNetworkType || 'New');
+    }
+
+    function recordNetworkRTT(newValue, oldValue) {
+        var newRTT = newValue || this._networkMonitor.getRoundTripTime();
+        var oldRTT = oldValue || -1;
+
+        this.recordMetric('RoundTripTime', {uint32: newRTT}, {uint32: oldRTT}, {resource: phenixRTC.browser});
+
+        if (_.isNullOrUndefined(oldValue)) {
+            return logMetric.call(this, 'Network RTT [%s]', newRTT);
+        }
+
+        logMetric.call(this, 'Network RTT changed to [%s] from [%s]', newRTT, oldRTT);
+    }
+
+    function recordNetworkDownlinkThroughputCapacity(newValue, oldValue) {
+        var newCapacity = newValue || this._networkMonitor.getDownlinkThroughputCapacity();
+        var oldCapacity = oldValue || -1;
+
+        this.recordMetric('DownlinkThroughputCapacity', {uint64: newCapacity}, {uint64: oldCapacity}, {resource: phenixRTC.browser});
+
+        if (_.isNullOrUndefined(oldValue)) {
+            return logMetric.call(this, 'Network downlink throughput capacity [%s]', newCapacity);
+        }
+
+        logMetric.call(this, 'Network downlink throughput capacity changed to [%s] from [%s]', newCapacity, oldCapacity);
+    }
+
+    function logNetworkStatsChange(newStats, oldStats) {
+        if (oldStats.downlinkThroughputCapacity !== newStats.downlinkThroughputCapacity) {
+            recordNetworkDownlinkThroughputCapacity.call(this, newStats.downlinkThroughputCapacity, oldStats.downlinkThroughputCapacity);
+        }
+
+        if (oldStats.rtt !== newStats.rtt) {
+            recordNetworkRTT.call(this, newStats.rtt, oldStats.rtt);
+        }
+
+        if (oldStats.effectiveType !== newStats.effectiveType) {
+            recordNetworkTypeChange.call(this, newStats.effectiveType, oldStats.effectiveType);
+        }
     }
 
     function logMetric() {

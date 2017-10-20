@@ -328,6 +328,10 @@ define([
                         "id": 0
                     },
                     {
+                        "name": "DownlinkThroughputCapacity",
+                        "id": 26
+                    },
+                    {
                         "name": "Initialized",
                         "id": 1
                     },
@@ -418,6 +422,10 @@ define([
                     {
                         "name": "NetworkOnline",
                         "id": 20
+                    },
+                    {
+                        "name": "NetworkType",
+                        "id": 27
                     },
                     {
                         "name": "ApplicationForeground",

@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 81);
+/******/ 	return __webpack_require__(__webpack_require__.s = 82);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4228,7 +4228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-10-20T18:33:30Z',
+                version: '2017-10-20T20:41:47Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4480,9 +4480,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(60),
     __webpack_require__(59),
     __webpack_require__(57),
-    __webpack_require__(79),
+    __webpack_require__(80),
+    __webpack_require__(78),
     __webpack_require__(77),
-    __webpack_require__(76),
     __webpack_require__(4)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
     'use strict';
@@ -4493,7 +4493,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-10-20T18:33:30Z';
+    var sdkVersion = '2017-10-20T20:41:47Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -10061,6 +10061,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "id": 0
                     },
                     {
+                        "name": "DownlinkThroughputCapacity",
+                        "id": 26
+                    },
+                    {
                         "name": "Initialized",
                         "id": 1
                     },
@@ -10151,6 +10155,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     {
                         "name": "NetworkOnline",
                         "id": 20
+                    },
+                    {
+                        "name": "NetworkType",
+                        "id": 27
                     },
                     {
                         "name": "ApplicationForeground",
@@ -14672,7 +14680,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
+    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
     var releaseVersion = '2017.4.3';
 
     function Logger() {
@@ -16346,7 +16354,7 @@ process.umask = function() { return 0; };
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(80);
+                var fs = __webpack_require__(81);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -21276,7 +21284,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             http.getWithRetry(endPoint, {
                 timeout: 15000,
                 queryParameters: {
-                    version: '2017-10-20T18:33:30Z',
+                    version: '2017-10-20T20:41:47Z',
                     _: _.now()
                 }
             }, function (err, responseText) {
@@ -27012,14 +27020,123 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
+    __webpack_require__(5),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, disposable) {
+    function NetworkMonitor(logger) {
+        assert.isObject(logger, 'logger');
+
+        this._logger = logger;
+        this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
+
+        this._disposables.add(this._namedEvents);
+
+        if (!this.isSupported()) {
+            return this._logger.info('Network monitor is not supported.');
+        }
+
+        this._lastNetworkStats = getStats.call(this);
+
+        detectNetworkTypeChange.call(this);
+    }
+
+    NetworkMonitor.prototype.isSupported = function() {
+        return window.navigator && window.navigator.connection;
+    };
+
+    NetworkMonitor.prototype.getDownlinkThroughputCapacity = function() {
+        if (!this.isSupported()) {
+            return -1;
+        }
+
+        return window.navigator.connection.downlink || window.navigator.connection.downlinkMax;
+    };
+
+    NetworkMonitor.prototype.getEffectiveType = function() {
+        if (!this.isSupported()) {
+            return 'Unknown';
+        }
+
+        return window.navigator.connection.effectiveType || window.navigator.connection.type;
+    };
+
+    NetworkMonitor.prototype.getRoundTripTime = function() {
+        if (!this.isSupported()) {
+            return -1;
+        }
+
+        return window.navigator.connection.rtt || window.navigator.connection.type;
+    };
+
+    NetworkMonitor.prototype.onNetworkChange = function(callback) {
+        if (!this.isSupported()) {
+            return;
+        }
+
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen('NetworkChange', callback);
+    };
+
+    NetworkMonitor.prototype.dispose = function() {
+        this._disposables.dispose();
+    };
+
+    function getStats() {
+        return {
+            downlinkThroughputCapacity: this.getDownlinkThroughputCapacity(),
+            effectiveType: this.getEffectiveType(),
+            rtt: this.getRoundTripTime()
+        };
+    }
+
+    function detectNetworkTypeChange() {
+        var that = this;
+
+        navigator.connection.addEventListener('change', function() {
+            that._namedEvents.fireAsync('NetworkChange', [getStats.call(that), that._lastNetworkStats]);
+
+            that._lastNetworkStats = getStats.call(that);
+        });
+    }
+
+    return NetworkMonitor;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(78)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, applicationActivityDetector) {
+    __webpack_require__(79),
+    __webpack_require__(76),
+    __webpack_require__(4)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
+    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -27031,12 +27148,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
+        this._networkMonitor = new NetworkMonitor(this._logger);
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
         this._records = [];
 
         this._disposables.add(applicationActivityDetector.onBackground(_.bind(recordForegroundChange, this, false)));
         this._disposables.add(applicationActivityDetector.onForeground(_.bind(recordForegroundChange, this, true)));
+
+        if (!this._networkMonitor.isSupported()) {
+            return;
+        }
+
+        this._disposables.add(this._networkMonitor.onNetworkChange(_.bind(logNetworkStatsChange, this)));
+        this._disposables.add(this._networkMonitor);
+
+        recordNetworkTypeState.call(this);
+        recordNetworkDownlinkThroughputCapacity.call(this);
+        recordNetworkRTT.call(this);
     }
 
     SessionTelemetry.prototype.setSessionId = function(sessionId) {
@@ -27056,6 +27185,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }, since());
             recordAllMetrics.call(this);
             recordForegroundState.call(this);
+
+            if (this._networkMonitor.isSupported()) {
+                recordNetworkTypeState.call(this);
+                recordNetworkDownlinkThroughputCapacity.call(this);
+                recordNetworkRTT.call(this);
+            }
         }
     };
 
@@ -27109,6 +27244,63 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this.recordMetric(metric, {uint64: timeSinceLastChange});
 
         logMetric.call(this, 'Application has gone into the [%s] after [%s] ms', isForeground ? 'foreground' : 'background', timeSinceLastChange);
+    }
+
+    function recordNetworkTypeState() {
+        var type = this._networkMonitor.getEffectiveType();
+
+        this.recordMetric('NetworkType', {string: type}, null, {resource: phenixRTC.browser});
+
+        logMetric.call(this, '[%s] has started with Network effective type of [%s]', this._sessionId ? 'Session' : 'Application', type);
+    }
+
+    function recordNetworkTypeChange(newType, previousType) {
+        var newNetworkType = newType || this._networkMonitor.getEffectiveType();
+        var previousNetworkType = previousType;
+
+        this.recordMetric('NetworkType', {string: newNetworkType}, {string: previousNetworkType}, {resource: phenixRTC.browser});
+
+        logMetric.call(this, 'Network effective type has changed to [%s] from [%s]', newNetworkType, previousNetworkType || 'New');
+    }
+
+    function recordNetworkRTT(newValue, oldValue) {
+        var newRTT = newValue || this._networkMonitor.getRoundTripTime();
+        var oldRTT = oldValue || -1;
+
+        this.recordMetric('RoundTripTime', {uint32: newRTT}, {uint32: oldRTT}, {resource: phenixRTC.browser});
+
+        if (_.isNullOrUndefined(oldValue)) {
+            return logMetric.call(this, 'Network RTT [%s]', newRTT);
+        }
+
+        logMetric.call(this, 'Network RTT changed to [%s] from [%s]', newRTT, oldRTT);
+    }
+
+    function recordNetworkDownlinkThroughputCapacity(newValue, oldValue) {
+        var newCapacity = newValue || this._networkMonitor.getDownlinkThroughputCapacity();
+        var oldCapacity = oldValue || -1;
+
+        this.recordMetric('DownlinkThroughputCapacity', {uint64: newCapacity}, {uint64: oldCapacity}, {resource: phenixRTC.browser});
+
+        if (_.isNullOrUndefined(oldValue)) {
+            return logMetric.call(this, 'Network downlink throughput capacity [%s]', newCapacity);
+        }
+
+        logMetric.call(this, 'Network downlink throughput capacity changed to [%s] from [%s]', newCapacity, oldCapacity);
+    }
+
+    function logNetworkStatsChange(newStats, oldStats) {
+        if (oldStats.downlinkThroughputCapacity !== newStats.downlinkThroughputCapacity) {
+            recordNetworkDownlinkThroughputCapacity.call(this, newStats.downlinkThroughputCapacity, oldStats.downlinkThroughputCapacity);
+        }
+
+        if (oldStats.rtt !== newStats.rtt) {
+            recordNetworkRTT.call(this, newStats.rtt, oldStats.rtt);
+        }
+
+        if (oldStats.effectiveType !== newStats.effectiveType) {
+            recordNetworkTypeChange.call(this, newStats.effectiveType, oldStats.effectiveType);
+        }
     }
 
     function logMetric() {
@@ -27171,7 +27363,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27199,7 +27391,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T18:33:30Z' || '?';
+    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -27440,7 +27632,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27615,7 +27807,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27678,13 +27870,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
