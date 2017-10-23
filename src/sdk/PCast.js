@@ -2142,7 +2142,11 @@ define([
 
             widevineServiceCertificate = serverCertificate; // Cache so that we can reuse
 
-            playerConfig.drm.advanced['com.widevine.alpha'] = {serverCertificate: convertBinaryStringToUint8Array(serverCertificate)};
+            playerConfig.drm.advanced['com.widevine.alpha'] = {
+                'serverCertificate': convertBinaryStringToUint8Array(serverCertificate),
+                'persistentStateRequired': true,
+                'distinctiveIdentifierRequired': false
+            };
 
             callback(null, playerConfig);
         }
