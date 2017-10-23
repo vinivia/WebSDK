@@ -4228,7 +4228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-10-20T20:41:47Z',
+                version: '2017-10-23T14:54:21Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4493,7 +4493,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-10-20T20:41:47Z';
+    var sdkVersion = '2017-10-23T14:54:21Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -6341,13 +6341,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                                 };
                             }
 
-                            var stat = player.getStats();
-                            var currentTime = element.currentTime;
+                            var stat = _.assign(player.getStats(), {
+                                currentTime: 0,
+                                lag: 0
+                            });
+                            var currentTime = _.get(element, ['currentTime'], 0);
                             var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
                             var lag = Math.max(0.0, trueCurrentTime - currentTime);
 
-                            stat.currentTime = currentTime;
-                            stat.lag = lag;
+                            if (element) {
+                                stat.currentTime = currentTime;
+                                stat.lag = lag;
+                            }
 
                             if (stat.estimatedBandwidth > 0) {
                                 stat.networkState = NetworkStates.NETWORK_LOADING;
@@ -14680,7 +14685,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
+    var sdkVersion = '2017-10-23T14:54:21Z' || '?';
     var releaseVersion = '2017.4.3';
 
     function Logger() {
@@ -21284,7 +21289,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             http.getWithRetry(endPoint, {
                 timeout: 15000,
                 queryParameters: {
-                    version: '2017-10-20T20:41:47Z',
+                    version: '2017-10-23T14:54:21Z',
                     _: _.now()
                 }
             }, function (err, responseText) {
@@ -27136,7 +27141,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
+    var sdkVersion = '2017-10-23T14:54:21Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -27391,7 +27396,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-10-20T20:41:47Z' || '?';
+    var sdkVersion = '2017-10-23T14:54:21Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

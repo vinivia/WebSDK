@@ -1885,13 +1885,18 @@ define([
                                 };
                             }
 
-                            var stat = player.getStats();
-                            var currentTime = element.currentTime;
+                            var stat = _.assign(player.getStats(), {
+                                currentTime: 0,
+                                lag: 0
+                            });
+                            var currentTime = _.get(element, ['currentTime'], 0);
                             var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
                             var lag = Math.max(0.0, trueCurrentTime - currentTime);
 
-                            stat.currentTime = currentTime;
-                            stat.lag = lag;
+                            if (element) {
+                                stat.currentTime = currentTime;
+                                stat.lag = lag;
+                            }
 
                             if (stat.estimatedBandwidth > 0) {
                                 stat.networkState = NetworkStates.NETWORK_LOADING;
