@@ -38,7 +38,8 @@ requirejs.config({
         'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
         'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
         'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
-        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min'
+        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
+        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min'
     }
 });
 
@@ -80,9 +81,20 @@ requirejs([
 
         var adminBaseUri;
         var pcast;
+        var shakaErrorCategories = {
+            1: 'Network',
+            2: 'Text',
+            3: 'Media',
+            4: 'Manifest',
+            5: 'Streaming',
+            6: 'DRM',
+            7: 'Player',
+            8: 'Cast',
+            9: 'Storage'
+        };
 
         var createPCast = function createPCast() {
-            window.onerror = function(e) {
+            window.onerror = function (e) {
                 pcast.getLogger().error('Window Error', e);
             };
 
@@ -102,7 +114,7 @@ requirejs([
                 });
 
                 pcast.getLogger().addAppender({
-                    log: function() {
+                    log: function () {
                         if (sdk.RTC.browser !== 'Safari') {
                             return;
                         }
@@ -508,6 +520,27 @@ requirejs([
 
                 mediaStream.monitor({}, monitorStream);
 
+                mediaStream.setStreamErrorCallback(function (mediaStream, errSource, err) {
+                    var errTitle = 'Stream Error';
+                    var errMessage = err;
+
+                    if (errSource === 'shaka') {
+                        if (err && err.category) {
+                            errTitle = 'Shaka ' + (shakaErrorCategories[err.category] ? shakaErrorCategories[err.category] : '') + ' Error';
+                        }
+
+                        if (err && err.data) {
+                            errMessage = err.data;
+                        }
+                    }
+
+                    app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-facetime-video',
+                        title: '<strong>' + errTitle + '</strong>',
+                        message: errMessage
+                    });
+                });
+
                 var primaryMediaStream = mediaStream;
 
                 if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
@@ -581,7 +614,7 @@ requirejs([
                     message: 'Stream Healthy'
                 });
 
-                    // No failure has occurred, handle monitor event
+                // No failure has occurred, handle monitor event
                 break;
             }
         };
@@ -625,7 +658,7 @@ requirejs([
 
         // Plugin might load with delay
         if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+            sdk.RTC.onload = function () {
                 app.init();
                 init();
             };

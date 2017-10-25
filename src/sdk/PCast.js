@@ -66,7 +66,7 @@ define([
         });
 
         if (!options.disableBeforeUnload) {
-            _.addEventListener(window, 'beforeunload', function() {
+            _.addEventListener(window, 'beforeunload', function () {
                 that._logger.info('Window Before Unload Event Triggered');
 
                 return that.stop();
@@ -173,23 +173,23 @@ define([
             var reason = '';
             var that = this;
 
-            _.forOwn(this._mediaStreams, function(mediaStream, streamId) {
+            _.forOwn(this._mediaStreams, function (mediaStream, streamId) {
                 endStream.call(that, streamId, reason);
             });
-            _.forOwn(this._publishers, function(publisher, publisherStreamId) {
+            _.forOwn(this._publishers, function (publisher, publisherStreamId) {
                 endStream.call(that, publisherStreamId, reason);
 
                 if (!_.includes(publisher.getOptions(), 'detached')) {
                     publisher.stop(reason);
                 }
             });
-            _.forOwn(this._peerConnections, function(mediaStream, peerConnectionStreamId) {
+            _.forOwn(this._peerConnections, function (mediaStream, peerConnectionStreamId) {
                 endStream.call(that, peerConnectionStreamId, reason);
             });
-            _.forEach(this._gumStreams, function(gumStream) {
+            _.forEach(this._gumStreams, function (gumStream) {
                 var tracks = gumStream.getTracks();
 
-                _.forEach(tracks, function(track) {
+                _.forEach(tracks, function (track) {
                     track.stop();
                 });
             });
@@ -438,7 +438,7 @@ define([
                     return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
                 }
 
-                return that._screenShareExtensionManager.installExtension(function(error, response) {
+                return that._screenShareExtensionManager.installExtension(function (error, response) {
                     if (error || (response && response.status !== 'ok')) {
                         return callback(error, response);
                     }
@@ -756,7 +756,7 @@ define([
 
                                     streamTelemetry.recordTimeToFirstFrame(element);
                                     streamTelemetry.recordRebuffering(element);
-                                    streamTelemetry.recordVideoResolutionChanges(element);
+                                    streamTelemetry.recordVideoResolutionChanges(this, element);
 
                                     if (options.receiveAudio === false) {
                                         element.muted = true;
@@ -830,8 +830,8 @@ define([
                                     this.dataQualityChangedCallback = callback;
                                 },
 
-                                setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
-                                    dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
+                                addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
+                                    dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
                                 }
                             };
                         },
@@ -947,16 +947,16 @@ define([
                         }
                     },
 
-                    streamErrorCallback: function (status, reason) {
+                    streamErrorCallback: function (errorSource, error) {
                         // Recursively calls all children error callbacks
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
-                            internalMediaStream.children[i].streamErrorCallback(status, reason);
+                            internalMediaStream.children[i].streamErrorCallback(errorSource, error);
                         }
 
                         var mediaStream = internalMediaStream.mediaStream;
 
                         if (typeof mediaStream.streamErrorCallback === 'function') {
-                            mediaStream.streamErrorCallback(mediaStream, status, reason);
+                            mediaStream.streamErrorCallback(mediaStream, errorSource, error);
                         }
                     },
 
@@ -1682,15 +1682,7 @@ define([
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
         var onPlayerError = function onPlayerError(event) {
-            var mediaStream = internalMediaStream;
-
-            if (!mediaStream.streamErrorCallback) {
-                that._logger.error('[%s] DASH live stream error event [%s]', streamId, event.detail);
-            } else {
-                that._logger.debug('[%s] DASH live stream error event [%s]', streamId, event.detail);
-
-                mediaStream.streamErrorCallback(mediaStream, 'shaka', event.detail);
-            }
+            internalMediaStream.streamErrorCallback('shaka', event.detail);
         };
 
         streamTelemetry.setProperty('kind', 'dash');
@@ -1767,7 +1759,7 @@ define([
 
                             streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
                             streamTelemetry.recordRebuffering(elementToAttachTo);
-                            streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
+                            streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
 
                             var playerConfig = {
                                 abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
@@ -1923,8 +1915,8 @@ define([
                             return player;
                         },
 
-                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
-                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
+                        addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
+                            dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
                         }
                     };
                 },
@@ -1944,7 +1936,7 @@ define([
                 },
 
                 setStreamErrorCallback: function setStreamErrorCallback(callback) {
-                    if (typeof callback !== 'function') {
+                    if (!_.isFunction(callback)) {
                         throw new Error('"callback" must be a function');
                     }
 
@@ -2006,11 +1998,14 @@ define([
                 }
             },
 
-            streamErrorCallback: function (status, reason) {
+            streamErrorCallback: function (errorSource, error) {
                 var mediaStream = internalMediaStream.mediaStream;
 
-                if (typeof mediaStream.streamErrorCallback === 'function') {
-                    mediaStream.streamErrorCallback(mediaStream, status, reason);
+                if (!_.isFunction(mediaStream.streamErrorCallback)) {
+                    that._logger.error('[%s] DASH live stream error event [%s]', streamId, error);
+                } else {
+                    that._logger.debug('[%s] DASH live stream error event [%s]', streamId, error);
+                    mediaStream.streamErrorCallback(mediaStream, errorSource, error);
                 }
             },
 
@@ -2174,15 +2169,8 @@ define([
 
         var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
 
-        var onPlayerError = function onPlayerError(event, e) { // eslint-disable-line no-unused-vars
-            var mediaStream = internalMediaStream.mediaStream;
-
-            if (!mediaStream.streamErrorCallback) {
-                that._logger.error('[%s] HLS live stream error event [%s]', streamId, event.detail);
-            } else {
-                that._logger.debug('[%s] HLS live stream error event [%s]', streamId, event.detail);
-                mediaStream.streamErrorCallback(mediaStream, 'hls', event.detail);
-            }
+        var onPlayerError = function onPlayerError(event) {
+            internalMediaStream.streamErrorCallback('hls', event.detail);
         };
 
         streamTelemetry.setProperty('kind', 'hls');
@@ -2303,7 +2291,7 @@ define([
 
                                 streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
                                 streamTelemetry.recordRebuffering(elementToAttachTo);
-                                streamTelemetry.recordVideoResolutionChanges(elementToAttachTo);
+                                streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
 
                                 internalMediaStream.renderer = this;
 
@@ -2425,8 +2413,8 @@ define([
                             this.dataQualityChangedCallback = callback;
                         },
 
-                        setVideoDisplayDimensionsChangedCallback: function setVideoDisplayDimensionsChangedCallback(callback, options) {
-                            dimensionsChangedMonitor.setVideoDisplayDimensionsChangedCallback(callback, options);
+                        addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
+                            dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
                         }
                     };
                 },
@@ -2508,11 +2496,14 @@ define([
                 }
             },
 
-            streamErrorCallback: function (status, reason) {
+            streamErrorCallback: function (errorSource, error) {
                 var mediaStream = internalMediaStream.mediaStream;
 
-                if (typeof mediaStream.streamErrorCallback === 'function') {
-                    mediaStream.streamErrorCallback(mediaStream, status, reason);
+                if (!_.isFunction(mediaStream.streamErrorCallback)) {
+                    that._logger.error('[%s] HLS live stream error event [%s]', streamId, error);
+                } else {
+                    that._logger.debug('[%s] HLS live stream error event [%s]', streamId, error);
+                    mediaStream.streamErrorCallback(mediaStream, errorSource, error);
                 }
             },
 
@@ -2777,8 +2768,8 @@ define([
             return config;
         }
 
-        _.forEach(config.iceServers, function(server) {
-            server.urls = _.filter(server.urls, function(url) {
+        _.forEach(config.iceServers, function (server) {
+            server.urls = _.filter(server.urls, function (url) {
                 return !_.startsWith(url, 'turns');
             });
         });

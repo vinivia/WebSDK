@@ -40,14 +40,14 @@ define([
         logMetric.call(this, 'Stream initializing');
     }
 
-    StreamTelemetry.prototype.setProperty = function(name, value) {
+    StreamTelemetry.prototype.setProperty = function (name, value) {
         assert.isStringNotEmpty(name, 'name');
         assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
-    StreamTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
+    StreamTelemetry.prototype.recordMetric = function (metric, value, previousValue, additionalProperties) {
         assert.isStringNotEmpty(metric, 'metric');
 
         var record = _.assign({}, {
@@ -60,7 +60,7 @@ define([
         recordMetricRecord.call(this, record, since());
     };
 
-    StreamTelemetry.prototype.setStreamId = function(streamId) {
+    StreamTelemetry.prototype.setStreamId = function (streamId) {
         assert.isStringNotEmpty(streamId, 'streamId');
 
         if (this._streamId) {
@@ -77,7 +77,7 @@ define([
         }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
     };
 
-    StreamTelemetry.prototype.setStartOffset = function(startOffset) {
+    StreamTelemetry.prototype.setStartOffset = function (startOffset) {
         assert.isNumber(startOffset, 'startOffset');
 
         if (this._startOffset) {
@@ -99,7 +99,7 @@ define([
         return now - this._start;
     };
 
-    StreamTelemetry.prototype.stop = function() {
+    StreamTelemetry.prototype.stop = function () {
         this._disposables.dispose();
 
         this.recordMetric('Stopped');
@@ -107,12 +107,12 @@ define([
         logMetric.call(this, 'Stream stopped');
     };
 
-    StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
+    StreamTelemetry.prototype.recordTimeToFirstFrame = function (video) {
         var that = this;
         var startRecordingFirstFrame = _.now();
         var timeOfFirstFrame;
 
-        var listenForFirstFrame = function() {
+        var listenForFirstFrame = function () {
             if (timeOfFirstFrame) {
                 return;
             }
@@ -127,7 +127,7 @@ define([
 
         _.addEventListener(video, 'loadeddata', listenForFirstFrame);
 
-        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
+        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function () {
             _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
         });
 
@@ -137,46 +137,35 @@ define([
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
 
-    StreamTelemetry.prototype.recordVideoResolutionChanges = function(video) {
+    StreamTelemetry.prototype.recordVideoResolutionChanges = function (renderer, video) {
         var that = this;
         var lastResolution = {
             width: video.videoWidth,
             height: video.videoHeight
         };
 
-        var listenForResolutionChangeOnProgress = function() {
-            if (lastResolution.width === video.videoWidth && lastResolution.height === video.videoHeight) {
+        renderer.addVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
+            if (lastResolution.width === dimensions.width && lastResolution.height === dimensions.height) {
                 return;
             }
 
-            that.recordMetric('ResolutionChanged', {string: video.videoWidth + 'x' + video.videoHeight}, {string: lastResolution.width + 'x' + lastResolution.height});
+            that.recordMetric('ResolutionChanged', {string: dimensions.width + 'x' + dimensions.height}, {string: lastResolution.width + 'x' + lastResolution.height});
 
             lastResolution = {
-                width: video.videoWidth,
-                height: video.videoHeight
+                width: dimensions.width,
+                height: dimensions.height
             };
 
-            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', video.videoWidth, video.videoHeight);
-        };
-
-        // TODO(sbi) We should use our stream polling for this as it's way more efficien than processing on each progress
-
-        // Events loadedmetadata and loadeddata do not fire as expected. So Progress is used.
-        _.addEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-        _.addEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
-
-        this._disposables.add(new disposable.Disposable(function() {
-            _.removeEventListener(video, 'progress', listenForResolutionChangeOnProgress);
-            _.removeEventListener(video, 'timeupdate', listenForResolutionChangeOnProgress);
-        }));
+            logMetric.call(that, 'Resolution changed: width [%s] height [%s]', dimensions.width, dimensions.height);
+        });
     };
 
-    StreamTelemetry.prototype.recordRebuffering = function(video) {
+    StreamTelemetry.prototype.recordRebuffering = function (video) {
         var that = this;
         var videoStalled;
         var lastProgress;
 
-        var listenForStall = function() {
+        var listenForStall = function () {
             if (videoStalled) {
                 return;
             }
@@ -188,10 +177,12 @@ define([
             logMetric.call(that, '[buffering] Stream has stalled');
         };
 
-        var listenForContinuation = function(event) {
+        var listenForContinuation = function (event) {
             var bufferLength = video.buffered.length;
-            var hasNotProgressedSinceLastProgressEvent = event.type === 'playing' ||
-                bufferLength > 0 ? (event.type === 'progress' || event.type === 'timeupdate') && video.buffered.end(bufferLength - 1) === lastProgress : true;
+            var hasNotProgressedSinceLastProgressEvent = event.type === 'playing'
+                                                        || bufferLength > 0 ? (event.type === 'progress'
+                                                        || event.type === 'timeupdate')
+                                                        && video.buffered.end(bufferLength - 1) === lastProgress : true;
 
             if (!videoStalled || (!bufferLength && phenixRTC.browser !== 'Edge') || hasNotProgressedSinceLastProgressEvent) {
                 return;
@@ -219,7 +210,7 @@ define([
         _.addEventListener(video, 'progress', listenForContinuation);
         _.addEventListener(video, 'timeupdate', listenForContinuation);
 
-        this._disposables.add(new disposable.Disposable(function() {
+        this._disposables.add(new disposable.Disposable(function () {
             _.removeEventListener(video, 'stalled', listenForStall);
             _.removeEventListener(video, 'pause', listenForStall);
             _.removeEventListener(video, 'suspend', listenForStall);

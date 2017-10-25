@@ -24,7 +24,7 @@ define('video-player', [
     var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
 
-    var Player = function(elementId, options) {
+    var Player = function (elementId, options) {
         this.videoId = elementId;
         this.video = document.getElementById(elementId);
         this.videoControls = null;
@@ -36,10 +36,10 @@ define('video-player', [
         }
 
         this.shouldVideoBeHidden = this.video.className.indexOf('hidden') > -1;
-        this.onLoadedMetaData = onLoadedMetaData.bind(this, this.video);
     };
 
     Player.prototype.start = function start(stream, renderer) {
+        var that = this;
         this.stream = stream.getStream ? stream.getStream() : stream;
         this.videoControls = createVideoControls.call(this);
 
@@ -62,6 +62,10 @@ define('video-player', [
 
         if (!renderer && stream.createRenderer) {
             renderer = stream.createRenderer();
+
+            renderer.addVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
+                changePlayerVideoDimensions.call(that, dimensions);
+            });
 
             renderer.start(this.video);
         } else if (!renderer && sdk.RTC.attachMediaStream) {
@@ -87,8 +91,6 @@ define('video-player', [
             onStreamEnd.call(this);
         }
 
-        _.removeEventListener(this.video, 'loadedmetadata', this.onLoadedMetaData);
-
         this.onEnd = null;
 
         if (this.renderer) {
@@ -100,10 +102,8 @@ define('video-player', [
     };
 
     function setupVideoEvents() {
-        var newVideo = this.video;
         var that = this;
-
-        _.addEventListener(newVideo, 'loadedmetadata', this.onLoadedMetaData);
+        var newVideo = this.video;
 
         if (!this.stream) {
             return newVideo;
@@ -111,8 +111,6 @@ define('video-player', [
 
         if (this.stream.setStreamEndedCallback) {
             this.onEnd = _.bind(this.stream.setStreamEndedCallback, this.stream);
-
-            newVideo.onloadedmetadata = this.onLoadedMetaData;
         } else if (this.stream.setPublisherEndedCallback) {
             this.onEnd = _.bind(this.stream.setPublisherEndedCallback, this.stream);
         } else if (this.stream.getTracks) {
@@ -134,7 +132,7 @@ define('video-player', [
         element.appendChild(createMuteVideoControl.call(this));
         element.appendChild(createFullscreenControl.call(this));
 
-        _.forEach(createTimingControls.call(this), function(timingControl) {
+        _.forEach(createTimingControls.call(this), function (timingControl) {
             element.appendChild(timingControl);
         });
 
@@ -206,7 +204,7 @@ define('video-player', [
             title: 'Buffered Size'
         }];
 
-        return _.map(timingElements, function(timingElement) {
+        return _.map(timingElements, function (timingElement) {
             var element = document.createElement('span');
 
             element.className = 'video-control ' + timingElement.className;
@@ -218,24 +216,24 @@ define('video-player', [
         });
     }
 
-    var setVideoWidthAndHeight = function setVideoWithAndHeight(video, options){
+    var setVideoWidthAndHeight = function setVideoWithAndHeight(dimensions, options) {
         var videoOptions = options || {};
         var minWidth = videoOptions.minWidth || 160;
         var minHeight = videoOptions.minHeight || 120;
         var maxWidth = videoOptions.maxWidth || 640;
         var maxHeight = videoOptions.maxHeight || 480;
 
-        video.width = video.videoWidth <= minWidth ? minWidth : video.videoWidth > maxWidth ? maxWidth : video.videoWidth;
-        video.height = video.videoHeight <= minHeight ? minHeight : video.videoHeight > maxHeight ? maxHeight : video.videoHeight;
+        this.video.width = dimensions.width <= minWidth ? minWidth : dimensions.width > maxWidth ? maxWidth : dimensions.width;
+        this.video.height = dimensions.height <= minHeight ? minHeight : dimensions.height > maxHeight ? maxHeight : dimensions.height;
     };
 
-    var onLoadedMetaData = function onLoadedMetaData(video) {
-        console.log('Meta data, width=' + video.videoWidth + ', height=' + video.videoHeight);
+    function changePlayerVideoDimensions(dimensions) {
+        console.log('Meta data, width=' + dimensions.width + ', height=' + dimensions.height);
 
         $.notify({
             icon: 'glyphicon glyphicon-film',
             title: '<strong>Video</strong>',
-            message: 'The video dimensions are ' + video.videoWidth + ' x ' + video.videoHeight
+            message: 'The video dimensions are ' + dimensions.width + ' x ' + dimensions.height
         }, {
             type: 'info',
             allow_dismiss: false, // eslint-disable-line camelcase
@@ -250,8 +248,8 @@ define('video-player', [
             }
         });
 
-        setVideoWidthAndHeight(video, this.options);
-    };
+        setVideoWidthAndHeight.call(this, dimensions, this.options);
+    }
 
     var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(stream, videoElement, onEnd) {
         var video = $(videoElement);
@@ -452,7 +450,7 @@ define('video-player', [
         }
     };
 
-    var isMediaStreamTrackEnabled = function(tracks) {
+    var isMediaStreamTrackEnabled = function (tracks) {
         if (!tracks || !tracks.length) {
             return false;
         }

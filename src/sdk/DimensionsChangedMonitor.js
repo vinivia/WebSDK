@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 define([
-], function () {
+    'phenix-web-lodash-light',
+    'phenix-web-assert',
+    'phenix-web-event'
+], function (_, assert, event) {
     'use strict';
 
     var defaultPollFrequency = 500;
     var minimumPollFrequency = 15;
 
-    function DimensionsChangedMonitor(logger) {
+    function DimensionsChangedMonitor(logger, options) {
         if (!logger) {
             throw new Error("'logger' must be specified.");
         }
 
         this._logger = logger;
+        this._dimensionsChangedEvent = new event.Event();
         this._dimensionsChangedIntervalId = null;
-        this._videoDisplayDimensionsChangedCallback = null;
         this._toBeStarted = false;
         this._videoElement = null;
         this._dimensionsChangedData = {
@@ -35,6 +38,11 @@ define([
             previousWidth: 0,
             previousHeight: 0
         };
+
+        if (options && options.pollFrequency) {
+            this._dimensionsChangedData.pollFrequency = options.pollFrequency >= minimumPollFrequency ? options.pollFrequency : minimumPollFrequency;
+        }
+
         this._renderer = null;
     }
 
@@ -46,8 +54,11 @@ define([
         stopMonitor.call(this);
     };
 
-    DimensionsChangedMonitor.prototype.setVideoDisplayDimensionsChangedCallback = function setVideoDisplayDimensionsChangedCallback(callback, options) {
-        updateVideoDisplayDimensionsChangedCallback.call(this, callback, options);
+    DimensionsChangedMonitor.prototype.addVideoDisplayDimensionsChangedCallback = function addVideoDisplayDimensionsChangedCallback(callback) {
+        assert.isFunction(callback, 'addVideoDisplayDimensionsChangedCallback');
+        startInterval.call(this);
+
+        return this._dimensionsChangedEvent.listen(callback);
     };
 
     DimensionsChangedMonitor.prototype.toString = function () {
@@ -58,7 +69,7 @@ define([
     };
 
     function startMonitor(renderer, element) {
-        if (!element || element.videoWidth === undefined) {
+        if (!element || _.isUndefined(element.videoWidth)) {
             this._logger.warn("Attempting to start dimensions changed monitor without providing proper 'video' element.");
         }
 
@@ -75,27 +86,8 @@ define([
             clearInterval(this._dimensionsChangedIntervalId);
             this._dimensionsChangedIntervalId = null;
         }
-    }
 
-    function updateVideoDisplayDimensionsChangedCallback(callback, options) {
-        if (callback === null) {
-            this._videoDisplayDimensionsChangedCallback = null;
-            stopMonitor.call(this);
-
-            return;
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
-        this._videoDisplayDimensionsChangedCallback = callback;
-
-        if (options && options.pollFrequency) {
-            this._dimensionsChangedData.pollFrequency = options.pollFrequency >= minimumPollFrequency ? options.pollFrequency : minimumPollFrequency;
-        }
-
-        startInterval.call(this);
+        this._dimensionsChangedEvent.dispose();
     }
 
     function startInterval() {
@@ -103,7 +95,7 @@ define([
         // - start hasn't been called yet
         // - the interval is already running
         // - there is no callback yet
-        if (!this._toBeStarted || this._dimensionsChangedIntervalId || !this._videoDisplayDimensionsChangedCallback) {
+        if (!this._toBeStarted || this._dimensionsChangedIntervalId || this._dimensionsChangedEvent.size() === 0) {
             return;
         }
 
@@ -115,10 +107,11 @@ define([
             if (that._videoElement.videoWidth !== that._dimensionsChangedData.previousWidth || that._videoElement.videoHeight !== that._dimensionsChangedData.previousHeight) {
                 that._dimensionsChangedData.previousWidth = that._videoElement.videoWidth;
                 that._dimensionsChangedData.previousHeight = that._videoElement.videoHeight;
-                that._videoDisplayDimensionsChangedCallback(that._renderer, {
+
+                that._dimensionsChangedEvent.fireAsync([that._renderer, {
                     width: that._videoElement.videoWidth,
                     height: that._videoElement.videoHeight
-                });
+                }]);
             }
         }, that._dimensionsChangedData.pollFrequency);
     }

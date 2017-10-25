@@ -16,7 +16,7 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-http',
-    './ClosestEndPointResolver'
+    'phenix-web-closest-endpoint-resolver'
 ], function (_, http, ClosestEndPointResolver) {
     'use strict';
 
@@ -71,7 +71,18 @@ define([
                     return callback(err);
                 }
 
-                var closestEndPointResolver = new ClosestEndPointResolver(callback, that._version, that._baseUri, that._logger, that._sessionTelemetry);
+                var closestEndPointResolver = new ClosestEndPointResolver(that._logger, that._version, callback, function(err, response){
+                    if(err){
+                        that._logger.warn('An error occured in resolving an endpoint', err);
+
+                        return;
+                    }
+
+                    that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: response.time}, null, {
+                        resource: response.endPoint,
+                        kind: 'https'
+                    });
+                });
 
                 closestEndPointResolver.resolveAll(endPoints);
             });
