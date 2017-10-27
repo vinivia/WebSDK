@@ -79,7 +79,14 @@ requirejs([
                 mediaConstraints: getConstraints(),
                 capabilities: capabilities,
                 videoElement: localVideoEl,
-                monitor: {callback: onMonitorEvent}
+                monitor: {callback: onMonitorEvent},
+                onResolveMedia: function(options) {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Got User Media</strong>',
+                        message: 'With options (' + options.frameRate + '|' + options.aspectRatio + '|' + options.resolution + ')'
+                    });
+                }
             }, function publishCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

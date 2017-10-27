@@ -17,9 +17,10 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     '../AdminAPI',
+    '../UserMediaResolver',
     '../PCast',
     'phenix-rtc'
-], function (_, assert, AdminAPI, PCast, rtc) {
+], function (_, assert, AdminAPI, UserMediaResolver, PCast, rtc) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -72,20 +73,35 @@ define([
 
         assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
 
+        if (options.resolution) {
+            assert.isNumber(options.resolution, 'options.resolution');
+        }
+
+        if (options.frameRate) {
+            assert.isNumber(options.frameRate, 'options.frameRate');
+        }
+
+        if (options.aspectRatio) {
+            assert.isNumber(options.aspectRatio, 'options.aspectRatio');
+        }
+
+        if (options.onResolveMedia) {
+            assert.isFunction(options.onResolveMedia, 'options.onResolveMedia');
+        }
+
         this.waitForOnline(function() {
-            that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
-                if (e) {
-                    return callback(e);
+            var userMediaResolver = new UserMediaResolver(that._pcast, options.aspectRatio, options.resolution, options.frameRate);
+
+            userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
+                if (error) {
+                    return callback(error);
                 }
 
-                if (status !== 'ok') {
-                    return callback(null, {status: status});
+                if (options.onResolveMedia) {
+                    options.onResolveMedia(response.options);
                 }
 
-                callback(null, {
-                    status: 'ok',
-                    userMedia: userMedia
-                });
+                callback(null, _.assign({status: 'ok'}, response));
             });
         });
     };
@@ -131,16 +147,16 @@ define([
                 return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
 
-            that._pcast.getUserMedia(options.mediaConstraints, function(pcast, status, userMedia, e) {
-                if (e) {
-                    return callback(e);
+            that.getUserMedia(options, function(error, response) {
+                if (error) {
+                    return callback(error);
                 }
 
-                if (status !== 'ok') {
-                    return callback(null, {status: status});
+                if (response.status !== 'ok') {
+                    return callback(null, response);
                 }
 
-                getStreamingTokenAndPublish.call(that, userMedia, options, true, callback);
+                getStreamingTokenAndPublish.call(that, response.userMedia, options, true, callback);
             });
         });
     };

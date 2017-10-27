@@ -221,6 +221,13 @@ define('app-setup', [
         }
     };
 
+    var isMobile = function() {
+        var userAgent = window.navigator.userAgent;
+        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        return isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+    };
+
     return {
         init: init,
         getUri: getUri,
@@ -236,6 +243,7 @@ define('app-setup', [
         setLoggerUserId: setLoggerUserId,
         setLoggerEnvironment: setLoggerEnvironment,
         setLoggerVersion: setLoggerVersion,
-        getModeFromAbbreviation: getModeFromAbbreviation
+        getModeFromAbbreviation: getModeFromAbbreviation,
+        isMobile: isMobile
     };
 });

@@ -65,6 +65,19 @@ requirejs([
             $('#originStreamId').val(app.getUrlParameter('streamId'));
         }
 
+        if (app.isMobile()) {
+            var frontOption = document.createElement('option');
+            var backOption = document.createElement('option');
+
+            frontOption.value = 'user';
+            frontOption.innerHTML = 'Front Facing Camera';
+            backOption.value = 'environment';
+            backOption.innerHTML = 'Back Camera';
+
+            $('#gum-source')[0].append(frontOption);
+            $('#gum-source')[0].append(backOption);
+        }
+
         var adminBaseUri;
         var pcast;
 
@@ -164,113 +177,80 @@ requirejs([
         };
 
         var getUserMedia = function getUserMedia() {
-            var userMediaCallback = function userMediaCallback(pcast, status, stream, e) {
-                if (status !== 'ok') {
+            var userMediaCallback = function userMediaCallback(error, response) {
+                if (error) {
                     app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-facetime-video',
                         title: '<strong>User Media</strong>',
-                        message: 'Failed to get user media (' + e + ')'
+                        message: 'Failed to get user media (' + error + ')'
                     });
-                    $('#userMediaInfo').text('Failed: ' + e.message);
-                } else {
-                    console.log('Got user media stream');
-                    app.createNotification('info', {
-                        icon: 'glyphicon glyphicon-facetime-video',
-                        title: '<strong>User Media</strong>',
-                        message: 'Acquired user media stream'
-                    });
+                    $('#userMediaInfo').text('Failed: ' + error.message);
 
-                    // **********
-                    // IMPORTANT: update reference to element as some RTC implementation will replace the element in the DOM
-                    // **********
+                    return;
+                }
 
-                    userMediaStream = stream;
-                    $('#stopUserMedia').removeClass('disabled');
+                console.log('Got user media stream');
+                app.createNotification('info', {
+                    icon: 'glyphicon glyphicon-facetime-video',
+                    title: '<strong>User Media</strong>',
+                    message: 'Acquired user media stream with options (' + response.options.frameRate + '|' + response.options.aspectRatio + '|' + response.options.resolution + ')'
+                });
 
-                    $('#userMediaInfo').html('User Media Stream is running with ' + stream.getTracks().length + ' tracks');
-                    app.activateStep('step-5-2');
+                userMediaStream = response.userMedia;
+                $('#stopUserMedia').removeClass('disabled');
 
-                    var primaryStream = new MediaStream();
-                    var secondaryStream = new MediaStream();
+                $('#userMediaInfo').html('User Media Stream is running with ' + response.userMedia.getTracks().length + ' tracks');
+                app.activateStep('step-5-2');
 
-                    _.forEach(userMediaStream.getTracks(), function (track) {
-                        var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
-                            return primaryStreamTrack.kind === track.kind;
-                        }).length;
+                var primaryStream = new MediaStream();
+                var secondaryStream = new MediaStream();
 
-                        if (trackCount === 1) {
-                            return secondaryStream.addTrack(track);
-                        }
+                _.forEach(userMediaStream.getTracks(), function (track) {
+                    var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
+                        return primaryStreamTrack.kind === track.kind;
+                    }).length;
 
-                        return primaryStream.addTrack(track);
-                    });
+                    if (trackCount === 1) {
+                        return secondaryStream.addTrack(track);
+                    }
 
-                    localPrimaryPlayer = new Player('localVideo', {
+                    return primaryStream.addTrack(track);
+                });
+
+                localPrimaryPlayer = new Player('localVideo', {
+                    maxWidth: 160,
+                    maxHeight: 120
+                });
+
+                localPrimaryPlayer.start(primaryStream);
+
+                if (secondaryStream.getTracks().length > 0) {
+                    localSecondaryPlayer = new Player('localVideoSecondary', {
                         maxWidth: 160,
                         maxHeight: 120
                     });
 
-                    localPrimaryPlayer.start(primaryStream);
-
-                    if (secondaryStream.getTracks().length > 0) {
-                        localSecondaryPlayer = new Player('localVideoSecondary', {
-                            maxWidth: 160,
-                            maxHeight: 120
-                        });
-
-                        localSecondaryPlayer.start(secondaryStream);
-                    }
+                    localSecondaryPlayer.start(secondaryStream);
                 }
             };
 
             if (!userMediaStream || userMediaStream.ended) {
                 var source = $('#gum-source option:selected').val();
                 var quality = $('#gum-quality option:selected').val();
-                var userMediaOptions = {};
+                var framerate = $('#gum-framerate option:selected').val();
+                var aspectRatio = $('#gum-aspect-ratio option:selected').val();
+                var userMediaResolver = new sdk.UserMediaResolver(pcast, aspectRatio, parseInt(quality), parseInt(framerate));
+                var deviceOptions = {
+                    screen: _.includes(source.toLowerCase(), 'screen'),
+                    audio: _.includes(source.toLowerCase(), 'microphone'),
+                    video: _.includes(source.toLowerCase(), 'camera')
+                };
 
-                switch (source) {
-                case 'screen':
-                    userMediaOptions.screen = true;
-
-                    break;
-                case 'microphone':
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = false;
-
-                    break;
-                case 'camera':
-                    userMediaOptions.audio = false;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: quality}
-                        ]
-                    };
-
-                    break;
-                case 'cameraAndMicrophone':
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: quality}
-                        ]
-                    };
-
-                    break;
-                case 'cameraMicrophoneAndScreen':
-                    userMediaOptions.screen = true;
-                    userMediaOptions.audio = true;
-                    userMediaOptions.video = {
-                        optional: [
-                            {minHeight: quality}
-                        ]
-                    };
-
-                    break;
-                default:
-                    throw new Error('Unsupported User Media Options');
+                if (source === 'user' || source === 'environment') {
+                    deviceOptions = {video: {facingMode: source}};
                 }
 
-                pcast.getUserMedia(userMediaOptions, userMediaCallback);
+                userMediaResolver.getUserMedia(deviceOptions, userMediaCallback);
             }
         };
 
