@@ -19,8 +19,9 @@ define([
     '../AdminAPI',
     '../UserMediaResolver',
     '../PCast',
-    'phenix-rtc'
-], function (_, assert, AdminAPI, UserMediaResolver, PCast, rtc) {
+    'phenix-rtc',
+    '../streaming/shaka.json'
+], function (_, assert, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -72,6 +73,7 @@ define([
         var that = this;
 
         assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
+        assert.isFunction(callback, 'callback');
 
         if (options.resolution) {
             assert.isNumber(options.resolution, 'options.resolution');
@@ -82,7 +84,7 @@ define([
         }
 
         if (options.aspectRatio) {
-            assert.isNumber(options.aspectRatio, 'options.aspectRatio');
+            assert.isStringNotEmpty(options.aspectRatio, 'options.aspectRatio');
         }
 
         if (options.onResolveMedia) {
@@ -108,6 +110,7 @@ define([
 
     PCastExpress.prototype.publish = function publish(options, callback) {
         assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
 
         if (options.capabilities) {
             assert.isArray(options.capabilities, 'options.capabilities');
@@ -165,6 +168,7 @@ define([
 
     PCastExpress.prototype.publishRemote = function publish(options, callback) {
         assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
 
         if (options.capabilities) {
@@ -258,6 +262,7 @@ define([
 
     PCastExpress.prototype.subscribe = function subscribe(options, callback) {
         assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamId, 'options.streamId');
         assert.isObject(options.capabilities, 'options.capabilities');
 
@@ -312,6 +317,8 @@ define([
     };
 
     PCastExpress.prototype.waitForOnline = function waitForOnline(callback) {
+        assert.isFunction(callback, 'callback');
+
         if (this._pcast.getStatus() === 'online') {
             return callback();
         }
@@ -565,6 +572,18 @@ define([
                 status: 'ok',
                 mediaStream: expressSubscriber
             };
+
+            subscriber.setStreamErrorCallback(function(playerRenderer, errorType, error) {
+                if (errorType === 'shaka' && error.severity !== shakaEnums.errorSeverity.critical.id) {
+                    return; // Ignore error
+                }
+
+                that._logger.warn('[%s] Error while playing stream with Express API. Stopping stream.', expressSubscriber.getStreamId(), error);
+
+                expressSubscriber.stop();
+
+                return callback(error);
+            });
 
             if (renderer) {
                 subscribeResponse.renderer = renderer;
