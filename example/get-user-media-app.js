@@ -208,26 +208,30 @@ requirejs([
                     message: 'Acquired user media stream with options (' + response.options.frameRate + '|' + response.options.aspectRatio + '|' + response.options.resolution + ')'
                 });
 
+                stopUserMedia();
+
                 userMediaStream = response.userMedia;
                 $('#stopUserMedia').removeClass('disabled');
 
                 $('#userMediaInfo').html('User Media Stream is running with ' + response.userMedia.getTracks().length + ' tracks');
                 app.activateStep('step-5-2');
 
-                var primaryStream = new MediaStream();
-                var secondaryStream = new MediaStream();
+                var primaryStream = window.MediaStream ? new window.MediaStream() : userMediaStream;
+                var secondaryStream = window.MediaStream ? new window.MediaStream() : null;
 
-                _.forEach(userMediaStream.getTracks(), function (track) {
-                    var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
-                        return primaryStreamTrack.kind === track.kind;
-                    }).length;
+                if (window.MediaStream) {
+                    _.forEach(userMediaStream.getTracks(), function (track) {
+                        var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
+                            return primaryStreamTrack.kind === track.kind;
+                        }).length;
 
-                    if (trackCount === 1) {
-                        return secondaryStream.addTrack(track);
-                    }
+                        if (trackCount === 1) {
+                            return secondaryStream.addTrack(track);
+                        }
 
-                    return primaryStream.addTrack(track);
-                });
+                        return primaryStream.addTrack(track);
+                    });
+                }
 
                 localPrimaryPlayer = new Player('localVideo', {
                     maxWidth: 160,
@@ -325,6 +329,8 @@ requirejs([
 
                     return;
                 }
+
+                stopPublisher();
 
                 publisher = phenixPublisher;
                 $('#stopPublisher').removeClass('disabled');
@@ -517,6 +523,8 @@ requirejs([
 
                     return;
                 }
+
+                stopSubscriber();
 
                 mediaStream.monitor({}, monitorStream);
 

@@ -113,6 +113,10 @@ requirejs([
                     });
                 }
 
+                if (publisherPlayer) {
+                    publisherPlayer.stop();
+                }
+
                 publisher = response.publisher;
                 publisherPlayer = new Player('localVideo');
 
@@ -183,6 +187,10 @@ requirejs([
                         title: '<strong>Subscribe</strong>',
                         message: 'Failed to subscribe to stream (' + response.status + ')'
                     });
+                }
+
+                if (subscriberPlayer) {
+                    subscriberPlayer.stop();
                 }
 
                 app.createNotification('success', {

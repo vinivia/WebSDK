@@ -190,6 +190,8 @@ requirejs([
                     return;
                 }
 
+                stopPublisher();
+
                 publisher = phenixPublisher;
                 $('#stopPublisher').removeClass('disabled');
 
@@ -393,6 +395,8 @@ requirejs([
                         }
                     });
                 });
+
+                stopSubscriber();
 
                 mediaStream.monitor({}, monitorStream);
 

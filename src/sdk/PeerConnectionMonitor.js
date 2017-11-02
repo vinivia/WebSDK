@@ -39,16 +39,6 @@ define([
     }
 
     PeerConnectionMonitor.prototype.start = function (options, activeCallback, monitorCallback) {
-        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
-    };
-
-    PeerConnectionMonitor.prototype.toString = function () {
-        return 'PeerConnectionMonitor[]';
-    };
-
-    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
-        assert.isString(name, 'name');
-        assert.isObject(peerConnection, 'peerConnection');
         assert.isObject(options, 'options');
         assert.isFunction(activeCallback, 'activeCallback');
         assert.isFunction(monitorCallback, 'monitorCallback');
@@ -57,6 +47,55 @@ define([
             throw new Error('Invalid monitoring direction');
         }
 
+        this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
+        this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
+        this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
+        this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
+        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
+        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
+        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
+        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
+        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        this._pausedTracks = [];
+
+        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
+    };
+
+    PeerConnectionMonitor.prototype.setMonitorTrackState = function (track, state) {
+        assert.isObject(track, 'track');
+        assert.isBoolean(state, 'state');
+
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
+            return pcTrack.id === track.id;
+        });
+
+        if (!foundTrack) {
+            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+        }
+
+        if (!state) {
+            this._logger.info('[%s] Pausing monitoring of track [%s] [%s]', this._name, track.kind, track.id);
+
+            return this._pausedTracks.push(track);
+        }
+
+        var pausedTrackLength = this._pausedTracks.length;
+
+        this._pausedTracks = _.filter(this._pausedTracks, function(pausedTrack) {
+            return pausedTrack.id !== track.id;
+        });
+
+        if (pausedTrackLength !== this._pausedTracks.length) {
+            this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
+        }
+    };
+
+    PeerConnectionMonitor.prototype.toString = function () {
+        return 'PeerConnectionMonitor[' + this._name + ']';
+    };
+
+    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
         var that = this;
         var conditionCount = 0;
         var frameRate = undefined;
@@ -65,15 +104,6 @@ define([
         var lastAudioBytes = {};
         var lastVideoBytes = {};
         var lastFramesEncoded = {};
-        var frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
-        var videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
-        var audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
-        var conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
-        var monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
-        var conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
-        var monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
-        var monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
-        var monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
         var checkForNoDataTimeout = null;
 
         function nextCheck(checkForNoData) {
@@ -97,7 +127,7 @@ define([
                     if (stats.framesEncoded) {
                         var framesEncoded = new Stats(stats.framesEncoded);
 
-                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], frameRateFailureThreshold * 2);
+                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
                         lastFramesEncoded[trackId] = framesEncoded;
                     }
 
@@ -122,7 +152,7 @@ define([
                                 hasFrameRate = true;
                                 frameRate = stats.framerateMean || 0;
                                 hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], videoBitRateFailureThreshold * 2);
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
                                 lastVideoBytes[trackId] = currentBytes;
 
                                 break;
@@ -130,7 +160,7 @@ define([
                                 that._logger.debug('[%s] Outbound [%s] [%s]',
                                     name, stats.mediaType, stats.ssrc);
                                 hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], audioBitRateFailureThreshold * 2);
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
 
                                 break;
@@ -151,7 +181,7 @@ define([
                                 // hasFrameRate = true;
                                 // frameRate = stats.framerateMean || 0;
                                 hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], videoBitRateFailureThreshold * 2);
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
                                 lastVideoBytes[trackId] = currentBytes;
 
                                 break;
@@ -159,7 +189,7 @@ define([
                                 that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
                                     name, stats.mediaType, stats.ssrc, stats.jitter);
                                 hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], audioBitRateFailureThreshold * 2);
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
 
                                 break;
@@ -193,7 +223,7 @@ define([
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateSent || 0;
                                 hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], videoBitRateFailureThreshold * 2);
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
                                 lastVideoBytes[trackId] = currentBytes;
 
                                 break;
@@ -201,7 +231,7 @@ define([
                                 that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
                                     name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
                                 hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], audioBitRateFailureThreshold * 2);
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
 
                                 break;
@@ -218,7 +248,7 @@ define([
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateReceived || 0;
                                 hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], videoBitRateFailureThreshold * 2);
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
                                 lastVideoBytes[trackId] = currentBytes;
 
                                 break;
@@ -226,7 +256,7 @@ define([
                                 that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
                                     name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
                                 hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], audioBitRateFailureThreshold * 2);
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
 
                                 break;
@@ -268,7 +298,7 @@ define([
                         name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
                 }
 
-                if (monitorState
+                if (that._monitorState
                     && (peerConnection.connectionState === 'closed'
                     || peerConnection.connectionState === 'failed'
                     || peerConnection.iceConnectionState === 'failed')) {
@@ -282,11 +312,11 @@ define([
                     }
 
                     conditionCount++;
-                } else if (monitorFrameRate && hasFrameRate && frameRate <= frameRateFailureThreshold) {
+                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
-                } else if (monitorBitRate && hasAudioBitRate && audioBitRate <= audioBitRateFailureThreshold) {
+                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     conditionCount++;
-                } else if (monitorBitRate && hasVideoBitRate && videoBitRate <= videoBitRateFailureThreshold) {
+                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
                 } else if (!readable || !writable) {
                     conditionCount++;
@@ -294,7 +324,7 @@ define([
                     conditionCount = 0;
                 }
 
-                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate);
+                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
 
                 if (isNoData && !checkForNoDataTimeout) {
                     checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
@@ -306,7 +336,7 @@ define([
 
                 var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
 
-                if (conditionCount >= conditionCountForNotificationThreshold || isStreamDead) {
+                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
                     if (!monitorCallback('condition', frameRate, videoBitRate, audioBitRate)) {
                         if (isStreamDead) {
                             return that._logger.error('[%s] Failure detected with 0 bps audio and video for [%s] seconds', name, defaultTimeoutForNoData / 1000);
@@ -316,17 +346,17 @@ define([
                     } else {
                         // Failure is acknowledged and muted
                         conditionCount = Number.MIN_VALUE;
-                        setTimeout(nextCheck, monitoringInterval);
+                        setTimeout(nextCheck, that._monitoringInterval);
                     }
                 } else {
-                    setTimeout(nextCheck, conditionCount > 0 ? conditionMonitoringInterval : monitoringInterval);
+                    setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
                 }
             }, function errorCallback(error) {
                 monitorCallback('error', error);
             });
         }
 
-        setTimeout(nextCheck, monitoringInterval);
+        setTimeout(nextCheck, that._monitoringInterval);
     }
 
     function Stats(value) {
@@ -478,6 +508,44 @@ define([
 
         return (8 * (currentBytes.value - lastBytes.value))
             / ((currentBytes.time - lastBytes.time) / 1000.0);
+    }
+
+    function areAllTracksPaused() {
+        var that = this;
+
+        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
+    }
+
+    function areAllTracksOfTypePaused(kind) {
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
+            return track.kind === kind;
+        });
+        var pausedTracksOfType = _.filter(this._pausedTracks, function(track) {
+            return track.kind === kind;
+        });
+
+        return _.reduce(pcTracksOfType, function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(pausedTracksOfType, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
     }
 
     return PeerConnectionMonitor;

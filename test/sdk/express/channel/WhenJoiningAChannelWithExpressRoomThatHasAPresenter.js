@@ -20,12 +20,13 @@ define([
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
+    'sdk/room/Stream',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/PeerConnectionMonitor'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member, stream, track, PeerConnectionMonitor) {
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When Joining a Channel With Express Room That Has A Presenter', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -67,7 +68,7 @@ define([
                     role: member.roles.presenter.name,
                     state: member.states.active.name,
                     streams: [{
-                        uri: 'pcast://phenixp2p.com/streamId',
+                        uri: Stream.getPCastPrefix() + 'streamId',
                         type: stream.types.presentation.name,
                         audioState: track.states.trackEnabled.name,
                         videoState: track.states.trackEnabled.name

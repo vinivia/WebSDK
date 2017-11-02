@@ -161,8 +161,13 @@ define([
         var newObservableStreams = [];
 
         _.forEach(streams, function (stream) {
+            var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
             var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
-                return observableStream.getUri() === stream.uri && observableStream.getType() === stream.type;
+                var hasSameUri = observableStream.getUri() === stream.uri;
+                var hasSamePCastStreamId = observableStream.isPCastStream() && observableStream.getPCastStreamId() === pcastStreamId;
+                var hasSameIdentifier = hasSameUri || hasSamePCastStreamId;
+
+                return observableStream.getType() === stream.type && hasSameIdentifier;
             });
 
             if (streamToUpdate) {

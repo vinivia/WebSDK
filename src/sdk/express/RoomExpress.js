@@ -16,15 +16,17 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
+    'phenix-web-disposable',
     '../AdminAPI',
     './PCastExpress',
     '../room/RoomService',
     './MemberSelector',
+    '../room/Stream',
     '../room/room.json',
     '../room/member.json',
     '../room/stream.json',
     '../room/track.json'
-], function (_, assert, AdminAPI, PCastExpress, RoomService, MemberSelector, roomEnums, memberEnums, streamEnums, trackEnums) {
+], function (_, assert, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -173,7 +175,7 @@ define([
             }
 
             if (options.streams) {
-                updateSelf.call(that, options, roomService, function (error) {
+                updateSelfStreams.call(that, options.streams, roomService, function (error) {
                     if (error) {
                         return joinRoomCallback(error);
                     }
@@ -282,9 +284,7 @@ define([
             var forceNewMemberSelection = !!streamErrorStatus || !lastMediaStream || !lastStreamId;
             var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
             var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
-            var streamUri = presenterStream ? presenterStream.getUri() : '';
-            var streamId = parseStreamIdFromStreamUri(streamUri);
-            var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
+            var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
 
             if (!selectedPresenter || !presenterStream) {
                 if (presenters.length === 0) {
@@ -358,16 +358,12 @@ define([
                 }
             }
 
-            var subscribeOptions = {
-                capabilities: options.capabilities,
-                videoElement: options.videoElement,
-                streamId: streamId,
+            var subscribeOptions = _.assign({}, {
                 monitor: {
                     callback: _.bind(monitorChannelSubsciber, this, streamId),
                     options: {conditionCountForNotificationThreshold: 8}
-                },
-                streamToken: streamToken
-            };
+                }
+            }, options);
             var hadPreviousStreamReason = streamErrorStatus ? 'recovered-from-failure' : 'stream-override';
             var successReason = lastStreamId ? hadPreviousStreamReason : 'stream-started';
 
@@ -376,6 +372,10 @@ define([
             var mediaStreamCallback = function mediaStreamCallback(mediaStreamId, error, response) {
                 if (lastStreamId !== mediaStreamId) {
                     return; // Ignore old streams
+                }
+
+                if (response && response.status === 'ok') {
+                    response.reason = successReason;
                 }
 
                 if (error || (response && response.status !== 'ok')) {
@@ -394,7 +394,7 @@ define([
                 subscriberCallback(error, response);
             };
 
-            subscribeToMemberStream.call(that, subscribeOptions, _.bind(mediaStreamCallback, this, streamId), successReason);
+            that.subscribeToMemberStream(presenterStream, subscribeOptions, _.bind(mediaStreamCallback, this, streamId));
         });
     };
 
@@ -504,6 +504,53 @@ define([
         this.publishToRoom(channelOptions, callback);
     };
 
+    RoomExpress.prototype.subscribeToMemberStream = function (memberStream, options, callback) {
+        assert.isObject(memberStream, 'memberStream');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+
+        var streamUri = memberStream.getUri();
+        var streamId = memberStream.getPCastStreamId();
+        var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
+
+        if (!streamId) {
+            this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
+
+            throw new Error('Invalid Member Stream. Unable to parse streamId from uri');
+        }
+
+        var subscribeOptions = _.assign({}, {
+            streamId: streamId,
+            streamToken: streamToken
+        }, options);
+        var disposables = new disposable.DisposableList();
+
+        subscribeToMemberStream.call(this, subscribeOptions, function(error, response) {
+            disposables.dispose();
+
+            if (response && response.status === 'ok' && response.mediaStream && response.mediaStream.getStream()) {
+                disposables.add(memberStream.getObservableAudioState().subscribe(function(state) {
+                    var monitor = response.mediaStream.getMonitor();
+                    var tracks = response.mediaStream.getStream().getAudioTracks();
+
+                    if (monitor && tracks.length === 1) {
+                        monitor.setMonitorTrackState(tracks[0], state === trackEnums.states.trackEnabled.name);
+                    }
+                }, {initial: 'notify'}));
+                disposables.add(memberStream.getObservableVideoState().subscribe(function(state) {
+                    var monitor = response.mediaStream.getMonitor();
+                    var tracks = response.mediaStream.getStream().getVideoTracks();
+
+                    if (monitor && tracks.length === 1) {
+                        monitor.setMonitorTrackState(tracks[0], state === trackEnums.states.trackEnabled.name);
+                    }
+                }, {initial: 'notify'}));
+            }
+
+            callback(error, response);
+        });
+    };
+
     function createRoomService(roomId, alias, callback) {
         var that = this;
         var uniqueId = _.uniqueId();
@@ -576,7 +623,7 @@ define([
         return roomService;
     }
 
-    function subscribeToMemberStream(subscribeOptions, callback, successReason) {
+    function subscribeToMemberStream(subscribeOptions, callback) {
         var that = this;
 
         var count = 0;
@@ -598,10 +645,7 @@ define([
                 return callback(null, {status: response.status});
             }
 
-            var subscribeResponse = _.assign({}, response, {
-                status: 'ok',
-                reason: successReason
-            });
+            var subscribeResponse = _.assign({}, response, {status: 'ok'});
 
             if (count > 1) {
                 subscribeResponse.reason = 'stream-failure-recovered';
@@ -645,7 +689,11 @@ define([
 
             if (options.enableWildcardCapability) {
                 refreshTokenTimeout = setInterval(function() {
-                    createViewerStreamTokenAndJoinRoom.call(that, options, publisher, room, callback);
+                    createViewerStreamTokenAndJoinRoom.call(that, options, publisher, room, function ignoreSuccess(error, response) {
+                        if (error || response.status !== 'ok') {
+                            callback(error, response);
+                        }
+                    });
                 }, defaultStreamWildcardTokenRefreshInterval);
             }
 
@@ -749,6 +797,17 @@ define([
                 return callback(error);
             }
 
+            if (response.status === 'ok') {
+                activeRoomService = findActiveRoom.call(that, room.getRoomId());
+
+                var selfStreams = activeRoomService.getSelf().getObservableStreams().getValue();
+                var publishedSelfStream = _.find(selfStreams, function(selfStream) {
+                    return selfStream.getPCastStreamId() === publisher.getStreamId();
+                });
+
+                listenForTrackStateChange.call(that, publisher.getStream(), publishedSelfStream);
+            }
+
             if (response.status === 'ok' && !publisherStop) {
                 publisherStop = _.bind(publisher.stop, publisher);
 
@@ -756,7 +815,6 @@ define([
                     removePublisher.call(that, publisher, room);
 
                     var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
-                    var joinRoomOptionsAfterStop = _.assign({}, joinRoomOptions, {streams: streamsAfterStop});
                     var roomService = findActiveRoom.call(that, room.getRoomId());
 
                     publisherStop();
@@ -769,7 +827,7 @@ define([
                         return roomService.leaveRoom(function() {});
                     }
 
-                    updateSelf.call(that, joinRoomOptionsAfterStop, roomService, function(error) {
+                    updateSelfStreams.call(that, streamsAfterStop, roomService, function(error) {
                         if (error) {
                             return callback(error);
                         }
@@ -784,7 +842,7 @@ define([
             return this.joinRoom(joinRoomOptions, handleUpdate, function() {});
         }
 
-        updateSelf.call(that, joinRoomOptions, activeRoomService, handleUpdate);
+        updateSelfStreams.call(that, joinRoomOptions.streams, activeRoomService, handleUpdate);
     }
 
     function mapNewPublisherStreamToMemberStreams(publisherStream, room) {
@@ -813,59 +871,74 @@ define([
             return defaultStreams;
         }
 
+        selfStreams = _.filter(selfStreams, function(stream) {
+            var hasSameUri = stream.uri === publisherStream.uri;
+            var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
+            var isPCastStream = !!pcastStreamId;
+            var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
+            var hasSameType = stream.type === publisherStream.type;
+
+            return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
+        });
+
         if (publisherStream) {
             selfStreams.push(publisherStream);
         }
 
         return _.filter(selfStreams, function(stream) {
-            return _.includes(publisherIds, parseStreamIdFromStreamUri(stream.uri));
+            return _.includes(publisherIds, Stream.parsePCastStreamIdFromStreamUri(stream.uri) || stream.uri);
         });
     }
 
-    function updateSelf(options, roomService, callback) {
+    function updateSelfStreams(streams, roomService, callback) {
         var activeRoom = roomService.getObservableActiveRoom().getValue();
+
+        if (streams) {
+            var self = roomService.getSelf();
+
+            self.setStreams(streams);
+        }
+
+        if (activeRoom && roomService.getSelf()) {
+            updateSelfWithRetry.call(this, roomService.getSelf(), callback);
+        }
+    }
+
+    function updateSelfWithRetry(self, callback) {
         var updateSelfErrors = 0;
         var that = this;
 
-        if (options.streams) {
-            var self = roomService.getSelf();
+        self.commitChanges(function handleUpdateSelf(error, response) {
+            if (error) {
+                updateSelfErrors++;
+            }
 
-            self.setStreams(options.streams);
-        }
+            if (response && response.status === 'conflict') {
+                return self.commitChanges(handleUpdateSelf);
+            }
 
-        if (activeRoom) {
-            roomService.updateSelf(function handleUpdateSelf(error, response) {
-                if (error) {
-                    updateSelfErrors++;
-                }
+            if (response && response.status !== 'ok') {
+                updateSelfErrors++;
+            }
 
-                if (response && response.status === 'conflict') {
-                    return roomService.updateSelf(handleUpdateSelf);
-                }
+            if (response && response.status === 'ok') {
+                updateSelfErrors = 0;
 
-                if (response && response.status !== 'ok') {
-                    updateSelfErrors++;
-                }
+                return !callback || callback(null, response);
+            }
 
-                if (response && response.status === 'ok') {
-                    updateSelfErrors = 0;
+            if (updateSelfErrors > 3) {
+                that._logger.warn('Unable to update self after 3 attempts.');
 
-                    return callback(null, response);
-                }
+                return callback(new Error('Unable to update self'));
+            }
 
-                if (updateSelfErrors > 3) {
-                    that._logger.warn('Unable to update self after 3 attempts.');
+            if (updateSelfErrors > 0 && updateSelfErrors < 3) {
+                that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
 
-                    return callback(new Error('Unable to update self'));
-                }
-
-                if (updateSelfErrors > 0 && updateSelfErrors < 3) {
-                    that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
-
-                    return roomService.updateSelf(handleUpdateSelf);
-                }
-            });
-        }
+                return self.commitChanges(handleUpdateSelf);
+            }
+        });
     }
 
     function monitorSubsciberOrPublisher(callback, error, response) {
@@ -897,55 +970,25 @@ define([
         }
     }
 
-    var pcastStreamPrefix = 'pcast://phenixp2p.com/';
-
-    function parseStreamIdFromStreamUri(uri) {
-        var hasPrefix = _.includes(uri, pcastStreamPrefix);
-
-        if (!hasPrefix) {
-            return null;
-        }
-
-        return uri.replace(pcastStreamPrefix, '').split('?')[0];
-    }
-
     function checkifStreamingIsAvailable(uri) {
-        var queryParamString = uri.split('?');
         var deferToCreateToken = true;
+        var streamInfo = Stream.parsePCastStreamInfoFromStreamUri(uri);
 
-        if (queryParamString.length !== 2) {
+        if (_.values(streamInfo).length === 0) {
             return deferToCreateToken;
         }
 
-        var queryParamsString = queryParamString[1];
-
-        return _.includes(queryParamsString, 'streamTokenStreaming');
+        return !!streamInfo.streamTokenStreaming;
     }
 
     function parseStreamTokenFromStreamUri(uri, capabilities) {
-        var queryParamString = uri.split('?');
-        var streamToken = '';
+        var streamInfo = Stream.parsePCastStreamInfoFromStreamUri(uri);
 
-        if (queryParamString.length !== 2) {
-            return streamToken;
+        if (streamInfo.streamTokenStreaming && _.includes(capabilities, 'streaming')) {
+            return streamInfo.streamTokenStreaming;
         }
 
-        var queryParamsString = queryParamString[1];
-        var queryParams = queryParamsString.split('&');
-
-        _.forEach(queryParams, function(param) {
-            var key = param.split('=')[0];
-
-            if (key === 'streamToken' && !_.includes(capabilities, 'streaming')) {
-                streamToken = param.split('=')[1];
-            }
-
-            if (key === 'streamTokenStreaming' && _.includes(capabilities, 'streaming')) {
-                streamToken = param.split('=')[1];
-            }
-        });
-
-        return streamToken;
+        return streamInfo.streamToken;
     }
 
     function mapStreamToMemberStream(publisher, type, viewerStreamToken, viewerStreamTokenStreaming) {
@@ -956,7 +999,7 @@ define([
         var videoTrackEnabled = videoTracks.length > 0 && videoTracks[0].enabled;
 
         var publishedStream = {
-            uri: 'pcast://phenixp2p.com/' + publisher.getStreamId(),
+            uri: Stream.getPCastPrefix() + publisher.getStreamId(),
             type: type,
             audioState: audioTrackEnabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name,
             videoState: videoTrackEnabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name
@@ -971,6 +1014,43 @@ define([
         }
 
         return publishedStream;
+    }
+
+    function listenForTrackStateChange(stream, memberStream) {
+        var tracks = stream.getTracks();
+        var that = this;
+
+        _.forEach(tracks, function(track) {
+            _.addEventListener(track, 'StateChange', function() {
+                var state = track.enabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name;
+                var self = getSelfAssociatedWithStream.call(that, memberStream);
+
+                that._logger.info('[%s] [%s] Track state changed to [%s], updating room member stream state [%s]', stream.id, track.id, track.enabled, state);
+
+                if (track.kind === 'video') {
+                    memberStream.getObservableVideoState().setValue(state);
+                } else {
+                    memberStream.getObservableAudioState().setValue(state);
+                }
+
+                if (self) {
+                    updateSelfWithRetry.call(that, self);
+                }
+            });
+        });
+    }
+
+    function getSelfAssociatedWithStream(memberStream) {
+        var roomService = _.find(this._activeRoomServices, function(roomService) {
+            var self = roomService.getSelf();
+            var selfStreams = self ? self.getObservableStreams().getValue() : [];
+
+            return _.find(selfStreams, function(selfStream) {
+                return memberStream === selfStream;
+            });
+        });
+
+        return roomService ? roomService.getSelf() : null;
     }
 
     return RoomExpress;

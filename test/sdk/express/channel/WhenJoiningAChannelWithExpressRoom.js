@@ -19,11 +19,12 @@ define([
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
+    'sdk/room/Stream',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, Member, room, member, stream, track) {
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
     describe('When Joining a Channel with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
@@ -44,7 +45,7 @@ define([
         var mockTrack = {enabled: 'true'};
         var mockStream = {
             type: stream.types.user.name,
-            uri: 'pcast://phenixp2p.com/' + mockStreamId,
+            uri: Stream.getPCastPrefix() + mockStreamId,
             audioState: track.states.trackEnabled.name,
             videoState: track.states.trackEnabled.name,
             getTracks: function () {
@@ -56,7 +57,8 @@ define([
         };
         var mockMediaStream = {
             setStreamEndedCallback: function() {},
-            stop: function() {}
+            stop: function() {},
+            getStream: function() {}
         };
         var noStreamsPlayingStatus = 'no-stream-playing';
 

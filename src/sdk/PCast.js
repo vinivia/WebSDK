@@ -42,6 +42,7 @@ define([
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
+    var listenForMediaStreamTrackChangesTimeout = 2000;
 
     function PCast(options) {
         options = options || {};
@@ -514,6 +515,8 @@ define([
     }
 
     function getUserMediaStream(options, successCallback, failureCallback) {
+        var that = this;
+
         var onUserMediaCancelled = function onUserMediaCancelled() {
             failureCallback('cancelled', null);
         };
@@ -523,6 +526,8 @@ define([
         };
 
         var onUserMediaSuccess = function onUserMediaSuccess(stream) {
+            wrapNativeMediaStream.call(that, stream);
+
             successCallback('ok', stream);
         };
 
@@ -564,6 +569,29 @@ define([
 
         return status;
     };
+
+    function wrapNativeMediaStream(stream) {
+        var lastTrackStates = {};
+        var that = this;
+
+        setTimeout(function listenForTrackChanges() {
+            if (isStreamStopped(stream)) {
+                return;
+            }
+
+            _.forEach(stream.getTracks(), function(track) {
+                if (_.hasIndexOrKey(lastTrackStates, track.id) && lastTrackStates[track.id] !== track.enabled) {
+                    track.dispatchEvent(new window.Event('StateChange'));
+
+                    that._logger.info('[%s] Detected track [%s] enabled change of [%s]', stream.id, track.id, track.enabled);
+                }
+
+                lastTrackStates[track.id] = track.enabled;
+            });
+
+            setTimeout(listenForTrackChanges, listenForMediaStreamTrackChangesTimeout);
+        }, listenForMediaStreamTrackChangesTimeout);
+    }
 
     function instantiateProtocol(uri) {
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
@@ -757,6 +785,7 @@ define([
             var createMediaStream = function createMediaStream(stream) {
                 var internalMediaStream = {
                     children: [],
+                    monitor: null,
                     renderer: null,
                     isStopped: false,
                     isStreamEnded: false,
@@ -902,6 +931,14 @@ define([
 
                                 return callback(internalMediaStream.mediaStream, 'client-side-failure', reason);
                             });
+
+                            internalMediaStream.monitor = monitor;
+
+                            return monitor;
+                        },
+
+                        getMonitor: function getMonitor() {
+                            return internalMediaStream.monitor;
                         },
 
                         getStats: function getStats(callback) {
@@ -1022,17 +1059,7 @@ define([
             };
 
             function noTracksAreActiveInMaster() {
-                var tracks = masterStream.getTracks();
-
-                for (var i = 0; i < tracks.length; i++) {
-                    var track = tracks[i];
-
-                    if (!isTrackStopped(track)) {
-                        return false;
-                    }
-                }
-
-                return true;
+                return isStreamStopped(masterStream);
             }
 
             function destroyMasterMediaStream(reason) {
@@ -1198,6 +1225,10 @@ define([
                 if (typeof callback !== 'function') {
                     throw new Error('"callback" must be a function');
                 }
+            },
+
+            getMonitor: function getMonitor() {
+                return null;
             }
         };
 
@@ -1249,6 +1280,7 @@ define([
         });
         var remoteMediaStream = null;
         var onIceCandidateCallback = null;
+        var publisherMonitor = null;
 
         that._peerConnections[streamId] = peerConnection;
 
@@ -1435,6 +1467,14 @@ define([
 
                                     return callback(publisher, 'client-side-failure', reason);
                                 });
+
+                                publisherMonitor = monitor;
+
+                                return monitor;
+                            },
+
+                            getMonitor: function getMonitor() {
+                                return publisherMonitor;
                             },
 
                             setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {
@@ -2021,6 +2061,10 @@ define([
                     }
                 },
 
+                getMonitor: function getMonitor() {
+                    return null;
+                },
+
                 getStream: function getStream() {
                     that._logger.debug('[%s] stream not available for shaka live streams', streamId);
 
@@ -2519,6 +2563,10 @@ define([
                     }
                 },
 
+                getMonitor: function getMonitor() {
+                    return null;
+                },
+
                 isActive: function isActive() {
                     return !internalMediaStream.isStopped;
                 },
@@ -2656,6 +2704,12 @@ define([
                 track.stop();
             }
         }
+    }
+
+    function isStreamStopped(stream) {
+        return _.reduce(stream.getTracks(), function(isStopped, track) {
+            return isStopped && isTrackStopped(track);
+        }, true);
     }
 
     function isTrackStopped(track) {

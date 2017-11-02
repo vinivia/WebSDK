@@ -20,19 +20,19 @@ define([
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
+    'sdk/room/Stream',
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member, stream, track) {
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
     describe('When Joining a Channel With Most Recent Stream Selection Strategy', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
             password: 'somePassword'
         };
-        var pcastPrefix = 'pcast://phenixp2p.com/';
-
+        var pcastPrefix = Stream.getPCastPrefix();
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();

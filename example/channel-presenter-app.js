@@ -110,6 +110,10 @@ requirejs([
                     });
                 }
 
+                if (publisherPlayer) {
+                    publisherPlayer.stop();
+                }
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Viewing Channel</strong>',

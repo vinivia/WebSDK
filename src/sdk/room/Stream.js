@@ -24,6 +24,8 @@ define([
 
     var streamTypes = stream.types;
     var trackStates = track.states;
+    var oldPcastStreamPrefix = 'pcast://phenixp2p.com/';
+    var pcastStreamPrefix = 'pcast://phenixrts.com/';
 
     function Stream(uri, type, audioState, videoState) {
         this.init(uri, type, audioState, videoState);
@@ -36,6 +38,7 @@ define([
         this._type = new observable.Observable(type, assertIsValidStreamType);
         this._audioState = new observable.Observable(audioState || trackStates.trackEnabled.name, assertIsValidTrackState);
         this._videoState = new observable.Observable(videoState || trackStates.trackEnabled.name, assertIsValidTrackState);
+        this._streamId = Stream.parsePCastStreamIdFromStreamUri(uri);
     };
 
     Stream.prototype.getUri = function getUri() {
@@ -68,6 +71,14 @@ define([
             return;
         }
 
+        if (stream.hasOwnProperty('uri')) {
+            if (stream.uri !== this._uri.getValue() && matchPCastStreams(stream.uri, this._uri.getValue())) {
+                this._uri.setValue(stream.uri);
+
+                this._streamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
+            }
+        }
+
         if (stream.hasOwnProperty('audioState')) {
             this._audioState.setValue(stream.audioState);
         }
@@ -76,6 +87,69 @@ define([
             this._videoState.setValue(stream.videoState);
         }
     };
+
+    Stream.prototype.isPCastStream = function() {
+        return !!this._streamId;
+    };
+
+    Stream.prototype.getPCastStreamId = function() {
+        return this._streamId;
+    };
+
+    Stream.prototype.getPCastStreamInfo = function() {
+        return parseStreamInfoFromStreamUri(this._uri.getValue());
+    };
+
+    Stream.getPCastPrefix = function() {
+        return oldPcastStreamPrefix;
+    };
+
+    Stream.parsePCastStreamIdFromStreamUri = function(uri) {
+        var hasPrefix = _.includes(uri, getPrefixToUse(uri));
+
+        if (!hasPrefix) {
+            return null;
+        }
+
+        return uri.replace(getPrefixToUse(uri), '').split('?')[0];
+    };
+
+    Stream.parsePCastStreamInfoFromStreamUri = function(uri) {
+        return parseStreamInfoFromStreamUri(uri);
+    };
+
+    function getPrefixToUse(uri) {
+        if (_.includes(uri, oldPcastStreamPrefix)) {
+            return oldPcastStreamPrefix;
+        }
+
+        return pcastStreamPrefix;
+    }
+
+    function matchPCastStreams(uriA, uriB) {
+        return Stream.parsePCastStreamIdFromStreamUri(uriA) === Stream.parsePCastStreamIdFromStreamUri(uriB);
+    }
+
+    function parseStreamInfoFromStreamUri(uri) {
+        var parsedUriInfo = {};
+        var queryParamString = uri.split('?');
+
+        if (queryParamString.length !== 2) {
+            return parsedUriInfo;
+        }
+
+        var queryParamsString = queryParamString[1];
+        var queryParams = queryParamsString.split('&');
+
+        _.forEach(queryParams, function(param) {
+            var parsedParams = param.split('=');
+            var key = parsedParams[0];
+
+            parsedUriInfo[key] = parsedParams[1];
+        });
+
+        return parsedUriInfo;
+    }
 
     function assertIsValidStreamType(type) {
         type = _.getEnumName(streamTypes, type);

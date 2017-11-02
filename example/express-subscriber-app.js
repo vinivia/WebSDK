@@ -131,6 +131,10 @@ requirejs([
                     });
                 }
 
+                if (subscriberPlayer) {
+                    subscriberPlayer.stop();
+                }
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
