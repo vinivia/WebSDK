@@ -27,8 +27,9 @@ define([
     './telemetry/metricsTransmitterFactory',
     './telemetry/StreamTelemetry',
     './telemetry/SessionTelemetry',
-    'phenix-rtc'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC) {
+    'phenix-rtc',
+    './sdpUtil'
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC, sdpUtil) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -71,6 +72,10 @@ define([
 
                 return that.stop();
             });
+        }
+
+        if (phenixRTC.webrtcSupported) {
+            setLocalH264Profile.call(this);
         }
     }
 
@@ -400,6 +405,17 @@ define([
                 });
 
                 options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+
+                if (phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && that._h264ProfileId && isMobile()) {
+                    var profileLevelIdToReplace = sdpUtil.getH264ProfileId(offerSdp);
+
+                    if (profileLevelIdToReplace !== that._h264ProfileId) {
+                        that._logger.info('[%s] Replacing h264 profile level id [%s] with new value [%s] in offer sdp',
+                            streamId, profileLevelIdToReplace, that._h264ProfileId);
+
+                        offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, that._h264ProfileId);
+                    }
+                }
 
                 return create.call(that, streamId, offerSdp, streamTelemetry, function (phenixMediaStream, error) {
                     streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
@@ -1188,6 +1204,34 @@ define([
         that._publishers[streamId] = publisher;
 
         callback(publisher);
+    }
+
+    function setLocalH264Profile() {
+        var that = this;
+        var peerConnection = new phenixRTC.RTCPeerConnection();
+
+        // TODO(DY) remove when updating to webrtc-adapter version 5.0.5 or greater
+        if (phenixRTC.browser === 'Safari' && phenixRTC.browserVersion > 10) {
+            peerConnection.addTransceiver('audio');
+            peerConnection.addTransceiver('video');
+        }
+
+        peerConnection.createOffer(function(offer) {
+            var h264ProfileId = sdpUtil.getH264ProfileId(offer.sdp);
+
+            if (!h264ProfileId) {
+                return that._logger.info('Unable to find local h264 profile level id');
+            }
+
+            that._logger.info('Found local h264 profile level id [%s]', h264ProfileId);
+
+            that._h264ProfileId = h264ProfileId;
+        }, function(e) {
+            that._logger.error('Unable to create offer to get local h264 profile level id', e);
+        }, {
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true
+        });
     }
 
     function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamTelemetry, callback, createOptions, streamOptions) {
@@ -2776,6 +2820,13 @@ define([
 
         return config;
     }
+
+    var isMobile = function() {
+        var userAgent = window.navigator.userAgent;
+        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+        return isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+    };
 
     return PCast;
 });
