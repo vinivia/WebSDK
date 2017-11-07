@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ const whiteListedDomains = ['phenixp2p.com', '*.phenixp2p.com'];
 function addWhiteListedDomainsToPreferences() {
     const domains = preferencesService.get(allowedDomainsPreferenceKey).replace(/\s/g, '').split(',');
 
-    whiteListedDomains.forEach(function (whiteListedDomain) {
+    whiteListedDomains.forEach(function(whiteListedDomain) {
         if (domains.indexOf(whiteListedDomain) !== -1) {
             return;
         }
@@ -37,8 +37,8 @@ function addWhiteListedDomainsToPreferences() {
 function removeWhiteListedDomainsFromPreferences() {
     var domains = preferencesService.get(allowedDomainsPreferenceKey).replace(/\s/g, '').split(',');
 
-    whiteListedDomains.forEach(function (whiteListedDomain) {
-        domains = domains.filter(function (domain) {
+    whiteListedDomains.forEach(function(whiteListedDomain) {
+        domains = domains.filter(function(domain) {
             return domain !== whiteListedDomain;
         });
     });
@@ -46,7 +46,7 @@ function removeWhiteListedDomainsFromPreferences() {
     preferencesService.set(allowedDomainsPreferenceKey, domains.join(','));
 }
 
-exports.main = function (options) {
+exports.main = function(options) {
     switch (options.loadReason) {
     case 'install':
     case 'upgrade':
@@ -62,7 +62,7 @@ exports.main = function (options) {
     }
 };
 
-exports.onUnload = function (reason) {
+exports.onUnload = function(reason) {
     switch (reason) {
     case 'uninstall':
     case 'upgrade':

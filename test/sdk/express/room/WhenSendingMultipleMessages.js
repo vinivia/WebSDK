@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, room, member) {
-    describe('When Sending Multiple Messages', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, room, member) {
+    describe('When Sending Multiple Messages', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -75,7 +75,7 @@ define([
             roomExpress.dispose();
         });
 
-        it('only has one listener for room events when creating and then joining a room', function (done) {
+        it('only has one listener for room events when creating and then joining a room', function(done) {
             websocketStubber.stubResponse('chat.CreateRoom', response);
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
@@ -92,7 +92,7 @@ define([
             });
         });
 
-        it('has two listeners for room events when joining two different rooms', function (done) {
+        it('has two listeners for room events when joining two different rooms', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
             roomExpress.joinRoom({
@@ -113,7 +113,7 @@ define([
             }, function(){});
         });
 
-        it('has one listeners for room events when joining the same room twice', function (done) {
+        it('has one listeners for room events when joining the same room twice', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
             roomExpress.joinRoom({

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ define([
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
-    describe('When Publishing to a Channel With Express Room', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
+    describe('When Publishing to a Channel With Express Room', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -40,7 +40,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -78,7 +78,7 @@ define([
             roomExpress.dispose();
         });
 
-        it('Expect stream ended reason of censored to trigger a callback and not re-publish', function (done) {
+        it('Expect stream ended reason of censored to trigger a callback and not re-publish', function(done) {
             var publishCount = 0;
 
             roomExpress.publishToChannel({
@@ -109,7 +109,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect stream ended reason of ended to trigger callback with reason ended', function (done) {
+        it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
             var publishCount = 0;
 
             roomExpress.publishToChannel({

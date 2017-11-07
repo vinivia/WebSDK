@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-observable',
     './Stream',
     './member.json'
-], function (_, assert, observable, Stream, member) {
+], function(_, assert, observable, Stream, member) {
     'use strict';
     var memberRoles = member.roles;
     var memberStates = member.states;
@@ -160,7 +160,7 @@ define([
         var oldObservableStreams = this._streams.getValue();
         var newObservableStreams = [];
 
-        _.forEach(streams, function (stream) {
+        _.forEach(streams, function(stream) {
             var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
             var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
                 var hasSameUri = observableStream.getUri() === stream.uri;

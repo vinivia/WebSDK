@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
-    describe('When Joining a Channel With Most Recent Stream Selection Strategy', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
+    describe('When Joining a Channel With Most Recent Stream Selection Strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -69,7 +69,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
 
@@ -110,7 +110,7 @@ define([
             return uri.substring(pcastPrefix.length, uri.length);
         }
 
-        it('upon failure iterates stops when the newest member is the member that failed', function (done) {
+        it('upon failure iterates stops when the newest member is the member that failed', function(done) {
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1', _.now());
             var alternateMember = createMember('alternate', '1', _.now() + 2);

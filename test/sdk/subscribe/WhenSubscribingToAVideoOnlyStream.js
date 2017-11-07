@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
-    describe('When Subscribing to a Video Only Stream', function () { // eslint-disable-line mocha/no-exclusive-tests
+], function(_, PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+    describe('When Subscribing to a Video Only Stream', function() { // eslint-disable-line mocha/no-exclusive-tests
         var httpStubber = new HttpStubber();
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -31,7 +31,7 @@ define([
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             pcast = new PCast({uri: 'wss://mockURI'});
 
             websocketStubber = new WebSocketStubber();
@@ -52,7 +52,7 @@ define([
             chromeRuntimeStubber.restore();
         });
 
-        it('Expect subscribe with receiveAudio of false to have options no-audio', function (done) {
+        it('Expect subscribe with receiveAudio of false to have options no-audio', function(done) {
             websocketStubber.stubResponse('pcast.SetupStream', {status: 'dont-continue-code-execution'}, function(response, message) {
                 expect(_.includes(message.createStream.options, 'no-audio')).to.be.true;
 

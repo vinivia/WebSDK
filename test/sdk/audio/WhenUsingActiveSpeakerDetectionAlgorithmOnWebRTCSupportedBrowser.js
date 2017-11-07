@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,12 @@ define([
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc',
     '../../../test/mock/HttpStubber'
-], function (logging, AudioContext, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
-    describe('When Using Active Speaker Detection Algorithm on WebRTC Supported Browser', function () {
+], function(logging, AudioContext, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
+    describe('When Using Active Speaker Detection Algorithm on WebRTC Supported Browser', function() {
         var audioSpeakerDetectionAlgorithm;
         var httpStubber;
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stub();
             audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(sinon.createStubInstance(logging.Logger));
@@ -35,16 +35,16 @@ define([
             httpStubber.restore();
         });
 
-        it('Has property onValue that is a function', function () {
+        it('Has property onValue that is a function', function() {
             expect(audioSpeakerDetectionAlgorithm.onValue).to.be.a('function');
         });
 
-        it('Has property startDetection that is a function', function () {
+        it('Has property startDetection that is a function', function() {
             expect(audioSpeakerDetectionAlgorithm.startDetection).to.be.a('function');
         });
 
-        describe('When using WebRTC supported browsers', function () {
-            before(function () {
+        describe('When using WebRTC supported browsers', function() {
+            before(function() {
                 if (!rtc.webrtcSupported) {
                     this.skip();
                 }
@@ -53,7 +53,7 @@ define([
             var audioVolumeMeter;
             var audioContext;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 audioContext = (new AudioContext()).getNativeAudioContext();
                 audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(logging.Logger));
 
@@ -65,13 +65,13 @@ define([
                 });
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 audioContext.close();
             });
 
-            it('Speaking buffer yields speaking state', function () {
+            it('Speaking buffer yields speaking state', function() {
                 // ToDo (dcy) create speaking input buffer
-                audioSpeakerDetectionAlgorithm.onValue = function (state) {
+                audioSpeakerDetectionAlgorithm.onValue = function(state) {
                     expect(state).to.be.equal('speaking');
                 };
 
@@ -81,13 +81,13 @@ define([
                 audioVolumeMeter._scriptProcessor.dispatchEvent(event);
             });
 
-            it('Non-Speaking buffer yields silence state', function () {
+            it('Non-Speaking buffer yields silence state', function() {
                 var speakingEvent = new Event('audioprocess');
                 speakingEvent.inputBuffer = createBrowserAudioBuffer(audioContext, true);
 
                 audioVolumeMeter._scriptProcessor.dispatchEvent(speakingEvent);
 
-                audioSpeakerDetectionAlgorithm.onValue = function (state) {
+                audioSpeakerDetectionAlgorithm.onValue = function(state) {
                     expect(state).to.be.equal('silence');
                 };
 
@@ -100,7 +100,7 @@ define([
     });
 });
 
-function createBrowserAudioBuffer (audioContext, speaking) {
+function createBrowserAudioBuffer(audioContext, speaking) {
     var channels = 2;
 
     // Create an empty two second stereo buffer at the

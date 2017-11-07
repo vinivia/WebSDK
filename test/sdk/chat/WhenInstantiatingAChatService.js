@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, observable, Long, PCast, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+], function(_, observable, Long, PCast, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     var pcast;
     var chatService;
     var response;
@@ -30,12 +30,12 @@ define([
     var websocketStubber;
     var chromeRuntimeStubber = new ChromeRuntimeStubber();
 
-    describe('When Instantiating a ChatService', function () {
+    describe('When Instantiating a ChatService', function() {
         before(function() {
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stub();
 
@@ -44,10 +44,10 @@ define([
 
             pcast = new PCast();
 
-            pcast.start('AuthToken', function () {}, function onlineCallback () {
+            pcast.start('AuthToken', function() {}, function onlineCallback() {
                 chatService = new ChatService(pcast);
                 done();
-            }, function offlineCallback () {});
+            }, function offlineCallback() {});
 
             response = {
                 status: 'ok',
@@ -69,42 +69,42 @@ define([
             websocketStubber.restore();
         });
 
-        it('Has property start that is a function', function () {
+        it('Has property start that is a function', function() {
             expect(chatService.start).to.be.a('function');
         });
 
-        it('Has property stop that is a function', function () {
+        it('Has property stop that is a function', function() {
             expect(chatService.stop).to.be.a('function');
         });
 
-        it('Has property sendMessage that is a function', function () {
+        it('Has property sendMessage that is a function', function() {
             expect(chatService.sendMessageToRoom).to.be.a('function');
         });
 
-        it('Has property loadMessages that is a function', function () {
+        it('Has property loadMessages that is a function', function() {
             expect(chatService.subscribeAndLoadMessages).to.be.a('function');
         });
 
-        describe('When chat service is started', function () {
-            beforeEach(function () {
+        describe('When chat service is started', function() {
+            beforeEach(function() {
                 chatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 chatService.stop();
             });
 
-            it('loadMessages returns list of existing messages for roomId', function () {
+            it('loadMessages returns list of existing messages for roomId', function() {
                 response.chatMessages = [{id: '1'}];
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     expect(response.chatMessages[0].id).to.be.equal('1');
                 });
             });
 
-            it('loadMessages successfully converts Long Timestamp', function () {
+            it('loadMessages successfully converts Long Timestamp', function() {
                 response.chatMessages = [{
                     id: '1',
                     timestamp: Long.fromNumber(1488469432437)
@@ -112,32 +112,32 @@ define([
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                 });
             });
 
-            it('loadMessages status other than ok with no chatMessages when status other than ok returned from protocol', function () {
+            it('loadMessages status other than ok with no chatMessages when status other than ok returned from protocol', function() {
                 response.status = 'no-room';
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     expect(response.status).to.not.be.equal('ok');
                     expect(response.chatMessages).to.not.be.ok;
                 });
             });
 
-            it('Expect subscribeAndLoadMessages to return an error when error returned from protocol', function () {
+            it('Expect subscribeAndLoadMessages to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.FetchRoomConversation', new Error('Error'));
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
             });
 
-            it('sendMessage results in request to send chat message', function () {
+            it('sendMessage results in request to send chat message', function() {
                 var sendMessageSpy = sinon.spy();
 
                 websocketStubber.stubResponse('chat.SendMessageToRoom', response, sendMessageSpy);
@@ -147,29 +147,29 @@ define([
                 sinon.assert.calledOnce(sendMessageSpy);
             });
 
-            it('Expect sendMessageToRoom to return an error when error returned from protocol', function () {
+            it('Expect sendMessageToRoom to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.SendMessageToRoom', new Error('Error'));
 
-                chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function (error, response) {
+                chatService.sendMessageToRoom('roomId', 'screenName', 'role', 123, 'Hi', function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
             });
         });
 
-        describe('When listening for messages', function () {
-            beforeEach(function () {
+        describe('When listening for messages', function() {
+            beforeEach(function() {
                 chatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 chatService.stop();
             });
 
-            it('Message event returns list of messages to handler', function () {
+            it('Message event returns list of messages to handler', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response);
 
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
@@ -182,8 +182,8 @@ define([
                 });
             });
 
-            it('Chat Message timestamp Long values successfully converted', function () {
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+            it('Chat Message timestamp Long values successfully converted', function() {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     if (response.chatMessages.length) {
                         expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                     }
@@ -199,8 +199,8 @@ define([
                 });
             });
 
-            it('Chat Message From lastUpdate Long values successfully converted', function () {
-                chatService.subscribeAndLoadMessages('roomId', 1, function (error, response) {
+            it('Chat Message From lastUpdate Long values successfully converted', function() {
+                chatService.subscribeAndLoadMessages('roomId', 1, function(error, response) {
                     if (response.chatMessages.length) {
                         expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
                     }
@@ -217,55 +217,55 @@ define([
             });
         });
 
-        describe('When getting messages', function () {
-            beforeEach(function () {
+        describe('When getting messages', function() {
+            beforeEach(function() {
                 chatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 chatService.stop();
             });
 
-            it('batchSize and toMessageId yields messages', function () {
+            it('batchSize and toMessageId yields messages', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{id: '1'}]
                 });
 
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function(error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
             });
 
-            it('batchSize and fromMessageId yields messages', function () {
+            it('batchSize and fromMessageId yields messages', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{id: '1'}]
                 });
 
-                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
+                chatService.getMessages('roomId', 1, null, 'fromMessageId', function(error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
             });
 
-            it('toMessageId and fromMessageId yields messages', function () {
+            it('toMessageId and fromMessageId yields messages', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{id: '1'}]
                 });
 
-                chatService.getMessages('roomId', 1, null, 'fromMessageId', function (error, response) {
+                chatService.getMessages('roomId', 1, null, 'fromMessageId', function(error, response) {
                     if (response.chatMessages.length > 0) {
                         expect(response.chatMessages[0].id).to.be.equal('1');
                     }
                 });
             });
 
-            it('Message lastUpdates are successfully converted from Long', function () {
+            it('Message lastUpdates are successfully converted from Long', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{
@@ -274,14 +274,14 @@ define([
                     }]
                 });
 
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function(error, response) {
                     if (response.chatMessages.length) {
                         expect(response.chatMessages[0].from.lastUpdate).to.be.equal(1488469432437);
                     }
                 });
             });
 
-            it('Message timestamps are successfully converted from Long', function () {
+            it('Message timestamps are successfully converted from Long', function() {
                 websocketStubber.stubResponse('chat.FetchRoomConversation', {
                     status: 'ok',
                     chatMessages: [{
@@ -290,7 +290,7 @@ define([
                     }]
                 });
 
-                chatService.getMessages('roomId', 1, 'toMessageId', null, function (error, response) {
+                chatService.getMessages('roomId', 1, 'toMessageId', null, function(error, response) {
                     if (response.chatMessages.length) {
                         expect(response.chatMessages[0].timestamp).to.be.equal(1488469432437);
                     }
@@ -298,11 +298,11 @@ define([
             });
         });
 
-        describe('When PCast SessionId Changes', function () {
+        describe('When PCast SessionId Changes', function() {
             var sessionIdObservable;
             var setTimeoutClone = setTimeout;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 window.setTimeout = function(callback, timeout) {
                     return setTimeoutClone(callback, timeout / 100);
                 };
@@ -312,12 +312,12 @@ define([
                 chatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 window.setTimeout = setTimeoutClone;
                 chatService.stop();
             });
 
-            it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function (done) {
+            it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function(done) {
                 var subscribeToConversationSpy = sinon.spy();
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response, subscribeToConversationSpy);
@@ -326,18 +326,18 @@ define([
 
                 sessionIdObservable.setValue('mockNewSessionId');
 
-                setTimeout(function () {
+                setTimeout(function() {
                     sinon.assert.calledTwice(subscribeToConversationSpy);
                     done();
                 }, 500);
             });
         });
 
-        describe('When PCast Status Changes', function () {
+        describe('When PCast Status Changes', function() {
             var statusObservable;
             var setTimeoutClone = setTimeout;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 window.setTimeout = function(callback, timeout) {
                     return setTimeoutClone(callback, timeout / 100);
                 };
@@ -347,28 +347,28 @@ define([
                 chatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 window.setTimeout = setTimeoutClone;
                 chatService.stop();
             });
 
-            it('Status changed to online causes fetchRoomMessages for no listeners', function (done) {
+            it('Status changed to online causes fetchRoomMessages for no listeners', function(done) {
                 var subscribeToConversationSpy = sinon.spy();
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response, subscribeToConversationSpy);
 
                 chatService._roomMessagesListeners = {
-                    'id1': function () {},
-                    'id2': function () {},
-                    'id3': function () {}
+                    'id1': function() {},
+                    'id2': function() {},
+                    'id3': function() {}
                 };
 
                 statusObservable.setValue('Offline');
 
-                setTimeout(function () {
+                setTimeout(function() {
                     statusObservable.setValue('Online');
 
-                    setTimeout(function () {
+                    setTimeout(function() {
                         sinon.assert.notCalled(subscribeToConversationSpy);
                         done();
                     }, 200);

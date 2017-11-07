@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-observable',
     'phenix-web-disposable',
     '../authentication/AuthenticationService'
-], function (_, assert, observable, disposable, AuthenticationService) {
+], function(_, assert, observable, disposable, AuthenticationService) {
     'use strict';
 
     function ChatService(pcast) {
@@ -186,7 +186,7 @@ define([
         var that = this;
 
         this._protocol.getMessages(sessionId, roomId, batchSize, afterMessageId, beforeMessageId,
-            function (error, response) {
+            function(error, response) {
                 if (error) {
                     that._logger.error('Get messages from room conversation failed with error [%s]', error);
 
@@ -225,7 +225,7 @@ define([
 
         var that = this;
 
-        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function (error, response) {
+        this._protocol.subscribeToRoomConversation(sessionId, roomId, batchSize, function(error, response) {
             var onReceiveMessages = that._roomMessagesListeners[roomId];
 
             if (!onReceiveMessages) {
@@ -285,7 +285,7 @@ define([
 
         var that = this;
 
-        return this._protocol.sendMessageToRoom(roomId, chatMessage, function (error, response) {
+        return this._protocol.sendMessageToRoom(roomId, chatMessage, function(error, response) {
             if (error) {
                 that._logger.error('Send message to room failed with error [%s]', error);
 

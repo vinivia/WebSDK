@@ -32,6 +32,7 @@
         "no-alert": 2,
         "no-else-return": 2,
         "no-multi-spaces": 2,
+        "no-unused-vars": ["error", { "varsIgnorePattern": "[iI]gnored" }],
         "yoda": 2,
 
         // Stylistic Issues - http://eslint.org/docs/rules/#stylistic-issues
@@ -75,6 +76,7 @@
             { "blankLine": "any", "prev": "expression", "next": "expression" }
         ],
         "semi": [2, "always"],
+        "space-before-function-paren": ["error", "never"],
         "space-infix-ops": ["error", {"int32Hint": false}],
         "spaced-comment": [2, "always"],
 

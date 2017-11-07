@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber'
-], function (_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
-    describe('When Not Monitoring a Publisher with Express PCast And Publisher Ends', function () {
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    describe('When Not Monitoring a Publisher with Express PCast And Publisher Ends', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -39,7 +39,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -67,7 +67,7 @@ define([
             pcastExpress.dispose();
         });
 
-        it('Expect reason of censored to not cause retry or trigger callback', function (done) {
+        it('Expect reason of censored to not cause retry or trigger callback', function(done) {
             var subscribeCount = 0;
 
             pcastExpress.publish({
@@ -93,7 +93,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('expects reason of error to automatically retry publisher without triggering callback', function (done) {
+        it('expects reason of error to automatically retry publisher without triggering callback', function(done) {
             var subscribeCount = 0;
             var monitorCallback = sinon.spy();
 
@@ -119,7 +119,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect reason of capacity to automatically retry after a timeout', function (done) {
+        it('Expect reason of capacity to automatically retry after a timeout', function(done) {
             var start = null;
             var subscribeCount = 0;
             var setTimeoutClone = setTimeout;

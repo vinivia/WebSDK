@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ define([
     'phenix-web-assert',
     'phenix-web-disposable',
     'phenix-rtc'
-], function (_, assert, disposable, phenixRTC) {
+], function(_, assert, disposable, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
@@ -40,14 +40,14 @@ define([
         logMetric.call(this, 'Stream initializing');
     }
 
-    StreamTelemetry.prototype.setProperty = function (name, value) {
+    StreamTelemetry.prototype.setProperty = function(name, value) {
         assert.isStringNotEmpty(name, 'name');
         assert.isStringNotEmpty(value, 'value');
 
         this._properties[name] = value;
     };
 
-    StreamTelemetry.prototype.recordMetric = function (metric, value, previousValue, additionalProperties) {
+    StreamTelemetry.prototype.recordMetric = function(metric, value, previousValue, additionalProperties) {
         assert.isStringNotEmpty(metric, 'metric');
 
         var record = _.assign({}, {
@@ -60,7 +60,7 @@ define([
         recordMetricRecord.call(this, record, since());
     };
 
-    StreamTelemetry.prototype.setStreamId = function (streamId) {
+    StreamTelemetry.prototype.setStreamId = function(streamId) {
         assert.isStringNotEmpty(streamId, 'streamId');
 
         if (this._streamId) {
@@ -77,7 +77,7 @@ define([
         }, since() - (now - this._start) / 1000); // Adjust for delay to get the stream ID);
     };
 
-    StreamTelemetry.prototype.setStartOffset = function (startOffset) {
+    StreamTelemetry.prototype.setStartOffset = function(startOffset) {
         assert.isNumber(startOffset, 'startOffset');
 
         if (this._startOffset) {
@@ -89,17 +89,17 @@ define([
         this.recordMetric('Offset', {uint64: startOffset});
     };
 
-    StreamTelemetry.prototype.getStartOffset = function () {
+    StreamTelemetry.prototype.getStartOffset = function() {
         return this._startOffset;
     };
 
-    StreamTelemetry.prototype.elapsed = function () {
+    StreamTelemetry.prototype.elapsed = function() {
         var now = _.now();
 
         return now - this._start;
     };
 
-    StreamTelemetry.prototype.stop = function () {
+    StreamTelemetry.prototype.stop = function() {
         this._disposables.dispose();
 
         this.recordMetric('Stopped');
@@ -107,12 +107,12 @@ define([
         logMetric.call(this, 'Stream stopped');
     };
 
-    StreamTelemetry.prototype.recordTimeToFirstFrame = function (video) {
+    StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
         var startRecordingFirstFrame = _.now();
         var timeOfFirstFrame;
 
-        var listenForFirstFrame = function () {
+        var listenForFirstFrame = function() {
             if (timeOfFirstFrame) {
                 return;
             }
@@ -127,7 +127,7 @@ define([
 
         _.addEventListener(video, 'loadeddata', listenForFirstFrame);
 
-        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function () {
+        var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
         });
 
@@ -137,14 +137,14 @@ define([
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
 
-    StreamTelemetry.prototype.recordVideoResolutionChanges = function (renderer, video) {
+    StreamTelemetry.prototype.recordVideoResolutionChanges = function(renderer, video) {
         var that = this;
         var lastResolution = {
             width: video.videoWidth,
             height: video.videoHeight
         };
 
-        renderer.addVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
+        renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
             if (lastResolution.width === dimensions.width && lastResolution.height === dimensions.height) {
                 return;
             }
@@ -160,12 +160,12 @@ define([
         });
     };
 
-    StreamTelemetry.prototype.recordRebuffering = function (video) {
+    StreamTelemetry.prototype.recordRebuffering = function(video) {
         var that = this;
         var videoStalled;
         var lastProgress;
 
-        var listenForStall = function () {
+        var listenForStall = function() {
             if (videoStalled) {
                 return;
             }
@@ -177,7 +177,7 @@ define([
             logMetric.call(that, '[buffering] Stream has stalled');
         };
 
-        var listenForContinuation = function (event) {
+        var listenForContinuation = function(event) {
             var bufferLength = video.buffered.length;
             var hasNotProgressedSinceLastProgressEvent = event.type === 'playing'
                                                         || bufferLength > 0 ? (event.type === 'progress'
@@ -210,7 +210,7 @@ define([
         _.addEventListener(video, 'progress', listenForContinuation);
         _.addEventListener(video, 'timeupdate', listenForContinuation);
 
-        this._disposables.add(new disposable.Disposable(function () {
+        this._disposables.add(new disposable.Disposable(function() {
             _.removeEventListener(video, 'stalled', listenForStall);
             _.removeEventListener(video, 'pause', listenForStall);
             _.removeEventListener(video, 'suspend', listenForStall);

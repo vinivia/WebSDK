@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
-    describe('When Joining a Channel with ExpressRoom', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
+    describe('When Joining a Channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
         var mockAuthData = {
@@ -48,10 +48,10 @@ define([
             uri: Stream.getPCastPrefix() + mockStreamId,
             audioState: track.states.trackEnabled.name,
             videoState: track.states.trackEnabled.name,
-            getTracks: function () {
+            getTracks: function() {
                 return [mockTrack];
             },
-            getUri: function () {
+            getUri: function() {
                 return mockStream.uri;
             }
         };
@@ -99,12 +99,12 @@ define([
             roomExpress.dispose();
         });
 
-        it('Has method joinRoom', function () {
+        it('Has method joinRoom', function() {
             expect(roomExpress.joinChannel).to.be.a('function');
         });
 
-        it('Expect joinChannel protocol to be called with just alias and participant member role', function () {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+        it('Expect joinChannel protocol to be called with just alias and participant member role', function() {
+            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
                 expect(message.member.role).to.be.equal(member.roles.participant.name);
             });
@@ -115,8 +115,8 @@ define([
             }, function() {}, function(){});
         });
 
-        it('Expect joinChannel protocol to be called with just alias and default audience role', function () {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+        it('Expect joinChannel protocol to be called with just alias and default audience role', function() {
+            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
                 expect(message.member.role).to.be.equal(member.roles.audience.name);
             });
@@ -125,7 +125,7 @@ define([
         });
 
         // Write member joined logic -
-        it('Expect joinChannel members subscription event with presenter with no streams playing to return no-streams-playing', function (done) {
+        it('Expect joinChannel members subscription event with presenter with no streams playing to return no-streams-playing', function(done) {
             roomExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
@@ -141,7 +141,7 @@ define([
             });
         });
 
-        it('Expect joinChannel members subscription event with participant with streams to return no streams playing status', function (done) {
+        it('Expect joinChannel members subscription event with participant with streams to return no streams playing status', function(done) {
             roomExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
@@ -157,7 +157,7 @@ define([
             });
         });
 
-        it('Expect joinChannel members subscription event with presenter with streams playing to parse pcast uri from streamId', function (done) {
+        it('Expect joinChannel members subscription event with presenter with streams playing to parse pcast uri from streamId', function(done) {
             roomExpress.getPCastExpress().subscribe = sinon.stub(roomExpress.getPCastExpress(), 'subscribe').callsFake(function(options) {
                 expect(options.streamId).to.be.equal(mockStreamId);
 
@@ -174,7 +174,7 @@ define([
             }, function(){ });
         });
 
-        it('Expect joinChannel members subscription event with presenter with streams playing to trigger subscribe event', function (done) {
+        it('Expect joinChannel members subscription event with presenter with streams playing to trigger subscribe event', function(done) {
             roomExpress.getPCastExpress().subscribe = sinon.stub(roomExpress.getPCastExpress(), 'subscribe').callsFake(function(options, callback) {
                 callback(null, {
                     status: 'ok',

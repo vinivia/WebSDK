@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-http',
     'phenix-web-closest-endpoint-resolver'
-], function (_, http, ClosestEndPointResolver) {
+], function(_, http, ClosestEndPointResolver) {
     'use strict';
 
     var maxAttempts = 4;
@@ -43,15 +43,15 @@ define([
 
     PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
 
-    PCastEndPoint.prototype.getBaseUri = function () {
+    PCastEndPoint.prototype.getBaseUri = function() {
         return this._baseUri;
     };
 
-    PCastEndPoint.prototype.resolveUri = function (callback /* (error, {uri, roundTripTime}) */) {
+    PCastEndPoint.prototype.resolveUri = function(callback /* (error, {uri, roundTripTime}) */) {
         return resolveUri.call(this, this._baseUri, callback);
     };
 
-    PCastEndPoint.prototype.toString = function () {
+    PCastEndPoint.prototype.toString = function() {
         return 'PCastEndPoint[' + this._baseUri + ']';
     };
 
@@ -99,7 +99,7 @@ define([
                 version: '%SDKVERSION%',
                 _: _.now()
             }
-        }, function (err, responseText) {
+        }, function(err, responseText) {
             if (err) {
                 return callback(new Error('Failed to resolve an end point', err));
             }

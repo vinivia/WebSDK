@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
-    describe('When Joining a Room with ExpressRoom', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
+    describe('When Joining a Room with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -77,12 +77,12 @@ define([
             roomExpress.dispose();
         });
 
-        it('has method joinRoom', function () {
+        it('has method joinRoom', function() {
             expect(roomExpress.joinRoom).to.be.a('function');
         });
 
-        it('successfully calls joinRoom protocol with just room id and no alias', function () {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+        it('successfully calls joinRoom protocol with just room id and no alias', function() {
+            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 expect(message.roomId).to.be.equal(mockRoom.roomId);
             });
 
@@ -92,8 +92,8 @@ define([
             }, function() {}, function(){});
         });
 
-        it('successfully calls joinRoom protocol with just alias and no room id', function () {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+        it('successfully calls joinRoom protocol with just alias and no room id', function() {
+            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
             });
 
@@ -103,17 +103,17 @@ define([
             }, function() {}, function(){});
         });
 
-        it('throws an error when joinRoom called without alias or roomId arguments', function () {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+        it('throws an error when joinRoom called without alias or roomId arguments', function() {
+            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
             });
 
-            expect(function () {
+            expect(function() {
                 roomExpress.joinRoom({role: member.roles.participant.name}, function() {}, function(){});
             }).to.throw(Error);
         });
 
-        it('returns response object with a roomService and active room from joinRoom callback', function () {
+        it('returns response object with a roomService and active room from joinRoom callback', function() {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
                 alias: 'roomAlias'
@@ -123,7 +123,7 @@ define([
             }, function(){});
         });
 
-        it('triggers member subscription callback when members changed after successfully joining a room', function (done) {
+        it('triggers member subscription callback when members changed after successfully joining a room', function(done) {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
                 alias: 'roomAlias'

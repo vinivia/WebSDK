@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-observable',
     './Member',
     './room.json'
-], function (_, assert, observable, Member, room) {
+], function(_, assert, observable, Member, room) {
     'use strict';
     var roomTypes = room.types;
 
@@ -176,7 +176,7 @@ define([
 
         var newMembers = mapMembers(members);
 
-        _.forEach(newMembers, function (member) {
+        _.forEach(newMembers, function(member) {
             that._members.push(member);
         });
     };
@@ -193,7 +193,7 @@ define([
     };
 
     Room.prototype._updateMembers = function updateMembers(members) {
-        _.forEach(this._members.getValue(), function (observableMember) {
+        _.forEach(this._members.getValue(), function(observableMember) {
             var memberToUpdate = _.find(members, function(member) {
                 return observableMember.getSessionId() === member.sessionId && member.lastUpdate > observableMember.getObservableLastUpdate().getValue();
             });

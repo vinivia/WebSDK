@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define(['phenix-web-lodash-light'], function (_) {
+define(['phenix-web-lodash-light'], function(_) {
     function HttpStubber() {
         this._requests = [];
         this._handlers = {};
@@ -81,7 +81,7 @@ define(['phenix-web-lodash-light'], function (_) {
 
         var that = this;
 
-        this.xhr.onCreate = function (req) {
+        this.xhr.onCreate = function(req) {
             that._requests.push(req);
 
             req.onSend = function(sentRequest) {

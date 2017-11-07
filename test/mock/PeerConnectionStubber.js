@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-rtc',
     './UserMediaStubber'
-], function (_, phenixRTC, UserMediaStubber) {
+], function(_, phenixRTC, UserMediaStubber) {
     function PeerConnectionStubber() {
         this._mockPeerConnection = null;
         this._defaultResponse = {
@@ -77,13 +77,13 @@ define([
 
         phenixRTC.RTCPeerConnection = phenixRTC.RTCPeerConnection || _.noop;
 
-        sinon.stub(phenixRTC, 'RTCPeerConnection').callsFake(function () {
+        sinon.stub(phenixRTC, 'RTCPeerConnection').callsFake(function() {
             return that._mockPeerConnection;
         });
 
         phenixRTC.RTCSessionDescription = phenixRTC.RTCSessionDescription || _.noop;
 
-        sinon.stub(phenixRTC, 'RTCSessionDescription').callsFake(function (sessionDescription) {
+        sinon.stub(phenixRTC, 'RTCSessionDescription').callsFake(function(sessionDescription) {
             return sessionDescription;
         });
     }

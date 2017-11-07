@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (_, RoomExpress, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
-    describe('When publishing to a channel with high availability', function () {
+], function(_, RoomExpress, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
+    describe('When publishing to a channel with high availability', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -61,7 +61,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
 
@@ -96,11 +96,11 @@ define([
             roomExpress.dispose();
         });
 
-        it('has method publishToChannel', function () {
+        it('has method publishToChannel', function() {
             expect(roomExpress.publishToChannel).to.be.a('function');
         });
 
-        it('creates a viewer token with no alternateOriginStreamIds when no other members are present', function (done) {
+        it('creates a viewer token with no alternateOriginStreamIds when no other members are present', function(done) {
             httpStubber.stubStreamRequest(function(request, streamInfo) {
                 if (streamInfo.originStreamId) {
                     expect(streamInfo.alternateOriginStreamIds).to.be.undefined;
@@ -125,7 +125,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('creates a viewer token with one alternateOriginStreamIds when one other similar members are present', function (done) {
+        it('creates a viewer token with one alternateOriginStreamIds when one other similar members are present', function(done) {
             var stream1 = {
                 type: stream.types.user.name,
                 uri: Stream.getPCastPrefix() + 'Stream1',
@@ -170,7 +170,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('creates a viewer token with one alternateOriginStreamIds when a similar member joins', function (done) {
+        it('creates a viewer token with one alternateOriginStreamIds when a similar member joins', function(done) {
             var createViewerTokenCount = 0;
 
             httpStubber.stubStreamRequest(function(request, streamInfo) {

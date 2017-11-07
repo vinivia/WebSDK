@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ define([
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber'
-], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
-    describe('When Subscribing to a Stream', function () {
+], function(PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    describe('When Subscribing to a Stream', function() {
         var httpStubber = new HttpStubber();
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -33,7 +33,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             websocketStubber = new WebSocketStubber();
 
             pcast = new PCast({uri: 'wss://mockURI'});
@@ -49,12 +49,12 @@ define([
             websocketStubber.restore();
         });
 
-        it('Has method subscribe', function () {
+        it('Has method subscribe', function() {
             expect(pcast.subscribe).to.be.a('function');
         });
 
-        it('Expect an error to be thrown if pcast has not been started when subscribing', function () {
-            expect(function () {
+        it('Expect an error to be thrown if pcast has not been started when subscribing', function() {
+            expect(function() {
                 pcast.subscribe('mockStreamToken', function() {}, {});
             }).to.throw(Error);
         });
@@ -75,15 +75,15 @@ define([
                 websocketStubber.restore();
             });
 
-            it('Expect an error to not be thrown when subscribing', function () {
+            it('Expect an error to not be thrown when subscribing', function() {
                 websocketStubber.stubSetupStream();
 
-                expect(function () {
+                expect(function() {
                     pcast.subscribe('mockStreamToken', function() {}, {});
                 }).to.not.throw();
             });
 
-            it('Expect connect options to be passed through to websocket send', function (done) {
+            it('Expect connect options to be passed through to websocket send', function(done) {
                 websocketStubber.stubResponse('pcast.SetupStream', {status: 'dont-continue-code-execution'}, function(response, message) {
                     expect(message.createStream.connectOptions[0]).to.be.equal('mock-option');
 
@@ -93,7 +93,7 @@ define([
                 pcast.subscribe('mockStreamToken', function() {}, {connectOptions: ['mock-option']});
             });
 
-            it('Expect mediaStream to be returned in subscribe callback', function (done) {
+            it('Expect mediaStream to be returned in subscribe callback', function(done) {
                 websocketStubber.stubSetupStream();
 
                 pcast.subscribe('mockStreamToken', function(internalPcast, status, mediaStream) {

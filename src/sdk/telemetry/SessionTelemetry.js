@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ define([
     './applicationActivityDetector',
     './NetworkMonitor',
     'phenix-rtc'
-], function (_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
+], function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
@@ -103,7 +103,7 @@ define([
         recordMetricRecord.call(this, record, since());
     };
 
-    SessionTelemetry.prototype.elapsed = function () {
+    SessionTelemetry.prototype.elapsed = function() {
         var now = _.now();
 
         return now - this._start;

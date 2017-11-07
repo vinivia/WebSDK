@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,18 @@ define([
     'sdk/audio/AudioSpeakerDetector',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
-], function (logging, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
-    describe('When Detecting Active Speaker on WebRTC Supported Browser', function () {
+], function(logging, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
+    describe('When Detecting Active Speaker on WebRTC Supported Browser', function() {
         var audioSpeakerDetector;
         var streams = [];
 
-        before(function () {
+        before(function() {
             if (!rtc.webrtcSupported) {
                 this.skip();
             }
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             streams = [new MediaStream()];
 
             audioSpeakerDetector = new AudioSpeakerDetector(streams, {logger: sinon.createStubInstance(logging.Logger)});
@@ -39,33 +39,33 @@ define([
             audioSpeakerDetector.dispose();
         });
 
-        it('Has property onValue that is a function', function () {
+        it('Has property onValue that is a function', function() {
             expect(audioSpeakerDetector.start).to.be.a('function');
         });
 
-        it('Has property startDetection that is a function', function () {
+        it('Has property startDetection that is a function', function() {
             expect(audioSpeakerDetector.stop).to.be.a('function');
         });
 
-        it('Expect start to not throw an error', function () {
-            expect(function () {
+        it('Expect start to not throw an error', function() {
+            expect(function() {
                 audioSpeakerDetector.start({}, function() {});
             }).to.not.throw();
         });
 
-        it('Expect stop to not throw an error', function () {
-            expect(function () {
+        it('Expect stop to not throw an error', function() {
+            expect(function() {
                 audioSpeakerDetector.stop();
             }).to.not.throw();
         });
 
-        it('Expect to have a audioVolumeMeter matching the stream id', function () {
+        it('Expect to have a audioVolumeMeter matching the stream id', function() {
             var meter = audioSpeakerDetector.getAudioVolumeMeter(streams[0]);
 
             expect(meter).to.be.an.instanceof(AudioVolumeMeter);
         });
 
-        it('Expect to have a audioVolumeMeter matching the stream id after speaker detection has started', function () {
+        it('Expect to have a audioVolumeMeter matching the stream id after speaker detection has started', function() {
             audioSpeakerDetector.start({}, function() {});
 
             var meter = audioSpeakerDetector.getAudioVolumeMeter(streams[0]);
@@ -73,7 +73,7 @@ define([
             expect(meter).to.be.an.instanceof(AudioVolumeMeter);
         });
 
-        it('Expect to have a list containing a single audioVolumeMeter', function () {
+        it('Expect to have a list containing a single audioVolumeMeter', function() {
             var meters = audioSpeakerDetector.getAudioVolumeMeters();
 
             expect(meters.length).to.be.equal(1);

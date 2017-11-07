@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ function getDesktopMedia(sources, sender, callback) {
 
     tab.url = sender.url;
 
-    desktopMediaRequestId = chrome.desktopCapture.chooseDesktopMedia(sources, tab, function (streamId, options) {
+    desktopMediaRequestId = chrome.desktopCapture.chooseDesktopMedia(sources, tab, function(streamId, options) {
         if (!streamId) {
             return callback({status: 'permission-denied'});
         }
@@ -45,10 +45,10 @@ function cancelDesktopMedia() {
     }
 }
 
-chrome.runtime.onMessageExternal.addListener(function (message, sender, sendResponse) {
+chrome.runtime.onMessageExternal.addListener(function(message, sender, sendResponse) {
     switch (message.type) {
     case 'get-desktop-media':
-        getDesktopMedia(message.sources || defaultSources, sender, function (response) {
+        getDesktopMedia(message.sources || defaultSources, sender, function(response) {
             sendResponse(response);
         });
 

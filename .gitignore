@@ -1,5 +1,6 @@
 .idea/workspace.xml
 .idea/preferred-vcs.xml
+.idea/codeStyles/
 node_modules/
 coverage/
 npm-debug.log

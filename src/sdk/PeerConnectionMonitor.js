@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc'
-], function (_, assert, phenixRTC) {
+], function(_, assert, phenixRTC) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -38,7 +38,7 @@ define([
         this._logger = logger;
     }
 
-    PeerConnectionMonitor.prototype.start = function (options, activeCallback, monitorCallback) {
+    PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(activeCallback, 'activeCallback');
         assert.isFunction(monitorCallback, 'monitorCallback');
@@ -61,7 +61,7 @@ define([
         return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
     };
 
-    PeerConnectionMonitor.prototype.setMonitorTrackState = function (track, state) {
+    PeerConnectionMonitor.prototype.setMonitorTrackState = function(track, state) {
         assert.isObject(track, 'track');
         assert.isBoolean(state, 'state');
 
@@ -91,7 +91,7 @@ define([
         }
     };
 
-    PeerConnectionMonitor.prototype.toString = function () {
+    PeerConnectionMonitor.prototype.toString = function() {
         return 'PeerConnectionMonitor[' + this._name + ']';
     };
 
@@ -382,20 +382,20 @@ define([
             return normalizedReport;
         case 'Safari':
         case 'Edge':
-            response.forEach(function (report) {
+            response.forEach(function(report) {
                 normalizedReport[report.id] = report;
             });
 
             return normalizedReport;
         case 'Chrome':
         default:
-            response.result().forEach(function (report) {
+            response.result().forEach(function(report) {
                 var normalizedStatistics = {
                     id: report.id,
                     type: report.type
                 };
 
-                report.names().forEach(function (name) {
+                report.names().forEach(function(name) {
                     normalizedStatistics[name] = report.stat(name);
                 });
 
@@ -411,11 +411,11 @@ define([
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
 
-        phenixRTC.getStats(peerConnection, null, function (response) {
+        phenixRTC.getStats(peerConnection, null, function(response) {
             var report = normalizeStatsReport(response);
 
             successCallback(report);
-        }, function (e) {
+        }, function(e) {
             monitorCallback('error', e);
         });
     }

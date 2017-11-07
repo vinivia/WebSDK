@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, observable, disposable, PCast, RoomService, RoomChatService, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
-    describe('When Instantiating a RoomChatService', function () {
+], function(_, observable, disposable, PCast, RoomService, RoomChatService, ChatService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+    describe('When Instantiating a RoomChatService', function() {
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -34,7 +34,7 @@ define([
         var roomChatService;
         var roomObservable;
         var room = {
-            getRoomId: function () {
+            getRoomId: function() {
                 return '';
             }
         };
@@ -43,7 +43,7 @@ define([
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stub();
 
@@ -52,7 +52,7 @@ define([
 
             var pcast = new PCast();
 
-            pcast.start('AuthToken', function () {}, function onlineCallback () {
+            pcast.start('AuthToken', function() {}, function onlineCallback() {
                 roomService = new RoomService(pcast);
                 stubChatService = sinon.createStubInstance(ChatService);
                 roomChatService = new RoomChatService(roomService);
@@ -60,14 +60,14 @@ define([
 
                 roomObservable = new observable.Observable(room);
 
-                roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom').callsFake(function () {
+                roomService.getObservableActiveRoom = sinon.stub(roomService, 'getObservableActiveRoom').callsFake(function() {
                     return roomObservable;
                 });
 
                 roomService.start('Participant', 'Name');
 
                 done();
-            }, function offlineCallback () {});
+            }, function offlineCallback() {});
 
             websocketStubber.triggerConnected();
         });
@@ -81,23 +81,23 @@ define([
             websocketStubber.restore();
         });
 
-        it('Has property start that is a function', function () {
+        it('Has property start that is a function', function() {
             expect(roomChatService.start).to.be.a('function');
         });
 
-        it('Has property stop that is a function', function () {
+        it('Has property stop that is a function', function() {
             expect(roomChatService.stop).to.be.a('function');
         });
 
-        it('Has property sendMessage that is a function', function () {
+        it('Has property sendMessage that is a function', function() {
             expect(roomChatService.sendMessageToRoom).to.be.a('function');
         });
 
-        it('Has property loadMessages that is a function', function () {
+        it('Has property loadMessages that is a function', function() {
             expect(roomChatService.getMessages).to.be.a('function');
         });
 
-        it('Chat is successfully initialized on start', function () {
+        it('Chat is successfully initialized on start', function() {
             roomChatService.start();
 
             sinon.assert.calledOnce(stubChatService.start);
@@ -105,56 +105,56 @@ define([
             roomChatService.stop();
         });
 
-        it('Chat is successfully stopped on stop', function () {
+        it('Chat is successfully stopped on stop', function() {
             roomChatService.start();
             roomChatService.stop();
 
             sinon.assert.calledOnce(stubChatService.stop);
         });
 
-        describe('When room chat service is started', function () {
-            beforeEach(function () {
+        describe('When room chat service is started', function() {
+            beforeEach(function() {
                 roomChatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 roomChatService.stop();
             });
 
-            it('getObservableChatMessages returns observable', function () {
+            it('getObservableChatMessages returns observable', function() {
                 var chatMessagesObservable = roomChatService.getObservableChatMessages();
 
                 expect(chatMessagesObservable.subscribe).to.be.a('function');
             });
 
-            it('start calls chatService subscribeAndLoadMessages', function () {
+            it('start calls chatService subscribeAndLoadMessages', function() {
                 sinon.assert.calledOnce(stubChatService.subscribeAndLoadMessages);
             });
 
-            it('sendMessage calls chatService sendMessage', function () {
+            it('sendMessage calls chatService sendMessage', function() {
                 roomChatService.sendMessageToRoom('message');
 
                 sinon.assert.calledOnce(stubChatService.sendMessageToRoom);
             });
 
-            it('getMessages calls chatService getMessages', function () {
-                roomChatService.getMessages(10, 'fromMessageId', 'toMessageId', function () {});
+            it('getMessages calls chatService getMessages', function() {
+                roomChatService.getMessages(10, 'fromMessageId', 'toMessageId', function() {});
 
                 sinon.assert.calledOnce(stubChatService.getMessages);
             });
         });
 
-        describe('When Room Changes', function () {
+        describe('When Room Changes', function() {
             var newMessagesCallback;
             var disposableSpy;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 if (stubChatService.subscribeAndLoadMessages.restore) {
                     stubChatService.subscribeAndLoadMessages.restore();
                 }
 
                 disposableSpy = sinon.spy();
-                stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages').callsFake(function (roomId, batchSize, callback) {
+                stubChatService.subscribeAndLoadMessages = sinon.stub(stubChatService, 'subscribeAndLoadMessages').callsFake(function(roomId, batchSize, callback) {
                     newMessagesCallback = callback;
 
                     return new disposable.Disposable(disposableSpy);
@@ -163,7 +163,7 @@ define([
                 roomChatService.start();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 if (stubChatService.subscribeAndLoadMessages.restore) {
                     stubChatService.subscribeAndLoadMessages.restore();
                 }
@@ -171,19 +171,19 @@ define([
                 roomChatService.stop();
             });
 
-            it('No room causes dispose of current room chat listeners', function (done) {
+            it('No room causes dispose of current room chat listeners', function(done) {
                 roomObservable.setValue(null);
 
-                setTimeout(function () {
+                setTimeout(function() {
                     sinon.assert.calledOnce(disposableSpy);
                     done();
                 }, 101);
             });
 
-            it('New room causes new subscription', function (done) {
+            it('New room causes new subscription', function(done) {
                 roomObservable.setValue(null);
 
-                setTimeout(function () {
+                setTimeout(function() {
                     roomObservable.setValue(room);
 
                     sinon.assert.calledOnce(stubChatService.subscribeAndLoadMessages);
@@ -191,8 +191,8 @@ define([
                 }, 101);
             });
 
-            describe('When internal queue is at max size (100)', function () {
-                beforeEach(function () {
+            describe('When internal queue is at max size (100)', function() {
+                beforeEach(function() {
                     var messages = [];
 
                     messages.length = 100;
@@ -206,8 +206,8 @@ define([
                     });
                 });
 
-                it('new message yields array of size 100', function () {
-                    roomChatService.getObservableChatMessages().subscribe(function (messages) {
+                it('new message yields array of size 100', function() {
+                    roomChatService.getObservableChatMessages().subscribe(function(messages) {
                         expect(messages.length).to.be.equal(100);
                     });
 
@@ -217,8 +217,8 @@ define([
                     });
                 });
 
-                it('new message removes first element in array', function () {
-                    roomChatService.getObservableChatMessages().subscribe(function (messages) {
+                it('new message removes first element in array', function() {
+                    roomChatService.getObservableChatMessages().subscribe(function(messages) {
                         expect(messages[0]).to.be.equal(1);
                     });
 
@@ -228,8 +228,8 @@ define([
                     });
                 });
 
-                it('new message is added at the end of array', function () {
-                    roomChatService.getObservableChatMessages().subscribe(function (messages) {
+                it('new message is added at the end of array', function() {
+                    roomChatService.getObservableChatMessages().subscribe(function(messages) {
                         expect(messages[99]).to.be.equal(100);
                     });
 
@@ -239,8 +239,8 @@ define([
                     });
                 });
 
-                it('multiple new messages returns fixed sized array of size 100 with new values at end', function () {
-                    roomChatService.getObservableChatMessages().subscribe(function (messages) {
+                it('multiple new messages returns fixed sized array of size 100 with new values at end', function() {
+                    roomChatService.getObservableChatMessages().subscribe(function(messages) {
                         expect(messages.length).to.be.equal(100);
                         expect(messages[98]).to.be.equal(100);
                         expect(messages[99]).to.be.equal(101);

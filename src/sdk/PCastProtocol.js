@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ define([
     'phenix-rtc',
     './protocol/pcastProto.json',
     './protocol/chatProto.json'
-], function (_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
+], function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
     function PCastProtocol(uri, deviceId, version, logger) {
@@ -37,17 +37,17 @@ define([
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
     }
 
-    PCastProtocol.prototype.onEvent = function (eventName, handler) {
+    PCastProtocol.prototype.onEvent = function(eventName, handler) {
         return this._mqWebSocket.onEvent(eventName, handler);
     };
 
-    PCastProtocol.prototype.disconnect = function () {
+    PCastProtocol.prototype.disconnect = function() {
         this._observableSessionId.setValue(null);
 
         return this._mqWebSocket.disconnect();
     };
 
-    PCastProtocol.prototype.authenticate = function (authToken, callback) {
+    PCastProtocol.prototype.authenticate = function(authToken, callback) {
         assert.isStringNotEmpty(authToken, 'authToken');
         assert.isFunction(callback, 'callback');
 
@@ -75,15 +75,15 @@ define([
         });
     };
 
-    PCastProtocol.prototype.getSessionId = function () {
+    PCastProtocol.prototype.getSessionId = function() {
         return this._observableSessionId.getValue();
     };
 
-    PCastProtocol.prototype.getObservableSessionId = function () {
+    PCastProtocol.prototype.getObservableSessionId = function() {
         return this._observableSessionId;
     };
 
-    PCastProtocol.prototype.bye = function (reason, callback) {
+    PCastProtocol.prototype.bye = function(reason, callback) {
         assert.isStringNotEmpty(reason, 'reason');
         assert.isFunction(callback, 'callback');
 
@@ -95,7 +95,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.Bye', bye, callback);
     };
 
-    PCastProtocol.prototype.setupStream = function (streamType, streamToken, options, callback) {
+    PCastProtocol.prototype.setupStream = function(streamType, streamToken, options, callback) {
         assert.isStringNotEmpty(streamType, 'streamType');
         assert.isStringNotEmpty(streamToken, 'streamToken');
         assert.isObject(options, 'options');
@@ -133,7 +133,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.SetupStream', setupStream, callback);
     };
 
-    PCastProtocol.prototype.setAnswerDescription = function (streamId, sdp, callback) {
+    PCastProtocol.prototype.setAnswerDescription = function(streamId, sdp, callback) {
         assert.isStringNotEmpty(streamId, 'streamId');
         assert.isStringNotEmpty(sdp, 'sdp');
         assert.isFunction(callback, 'callback');
@@ -150,7 +150,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.SetRemoteDescription', setRemoteDescription, callback);
     };
 
-    PCastProtocol.prototype.addIceCandidates = function (streamId, candidates, options, callback) {
+    PCastProtocol.prototype.addIceCandidates = function(streamId, candidates, options, callback) {
         assert.isStringNotEmpty(streamId, 'streamId');
         assert.isArray(candidates, 'candidates');
         assert.isObject(options, 'options');
@@ -178,7 +178,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.AddIceCandidates', addIceCandidates, callback);
     };
 
-    PCastProtocol.prototype.updateStreamState = function (streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
+    PCastProtocol.prototype.updateStreamState = function(streamId, signalingState, iceGatheringState, iceConnectionState, callback) {
         assert.isStringNotEmpty(streamId, 'streamId');
         assert.isStringNotEmpty(signalingState, 'signalingState');
         assert.isStringNotEmpty(iceGatheringState, 'iceGatheringState');
@@ -196,7 +196,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.UpdateStreamState', updateStreamState, callback);
     };
 
-    PCastProtocol.prototype.destroyStream = function (streamId, reason, callback) {
+    PCastProtocol.prototype.destroyStream = function(streamId, reason, callback) {
         assert.isStringNotEmpty(streamId, 'streamId');
         assert.isString(reason, 'reason');
         assert.isFunction(callback, 'callback');
@@ -209,7 +209,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.DestroyStream', destroyStream, callback);
     };
 
-    PCastProtocol.prototype.getRoomInfo = function (roomId, alias, callback) {
+    PCastProtocol.prototype.getRoomInfo = function(roomId, alias, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');
         } else {
@@ -227,7 +227,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
-    PCastProtocol.prototype.createRoom = function (room, callback) {
+    PCastProtocol.prototype.createRoom = function(room, callback) {
         assert.isObject(room, 'room');
         assert.isStringNotEmpty(room.name, 'room.name');
         assert.isStringNotEmpty(room.type, 'room.type');
@@ -242,7 +242,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
-    PCastProtocol.prototype.enterRoom = function (roomId, alias, member, timestamp, callback) {
+    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, timestamp, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');
         } else {
@@ -264,7 +264,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.JoinRoom', joinRoom, callback);
     };
 
-    PCastProtocol.prototype.leaveRoom = function (roomId, timestamp, callback) {
+    PCastProtocol.prototype.leaveRoom = function(roomId, timestamp, callback) {
         assert.isString(roomId, 'roomId');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -278,7 +278,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
-    PCastProtocol.prototype.updateMember = function (member, timestamp, callback) {
+    PCastProtocol.prototype.updateMember = function(member, timestamp, callback) {
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -294,7 +294,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.UpdateMember', updateMember, callback);
     };
 
-    PCastProtocol.prototype.updateRoom = function (room, timestamp, callback) {
+    PCastProtocol.prototype.updateRoom = function(room, timestamp, callback) {
         assert.isObject(room, 'room');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -308,7 +308,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.UpdateRoom', updateRoom, callback);
     };
 
-    PCastProtocol.prototype.sendMessageToRoom = function (roomId, chatMessage, callback) {
+    PCastProtocol.prototype.sendMessageToRoom = function(roomId, chatMessage, callback) {
         assert.isStringNotEmpty(roomId, 'roomId');
         assert.isObject(chatMessage, 'chatMessage');
 
@@ -320,7 +320,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.SendMessageToRoom', sendMessage, callback);
     };
 
-    PCastProtocol.prototype.subscribeToRoomConversation = function (sessionId, roomId, batchSize, callback) {
+    PCastProtocol.prototype.subscribeToRoomConversation = function(sessionId, roomId, batchSize, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isStringNotEmpty(roomId, 'roomId');
         assert.isNumber(batchSize, 'batchSize');
@@ -335,7 +335,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
-    PCastProtocol.prototype.getMessages = function (sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
+    PCastProtocol.prototype.getMessages = function(sessionId, roomId, batchSize, afterMessageId, beforeMessageId, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isStringNotEmpty(roomId, 'roomId');
 
@@ -365,7 +365,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.FetchRoomConversation', fetchRoomConversation, callback);
     };
 
-    PCastProtocol.prototype.toString = function () {
+    PCastProtocol.prototype.toString = function() {
         return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-observable',
     'phenix-web-disposable',
     './ChatService'
-], function (_, assert, observable, disposable, ChatService) {
+], function(_, assert, observable, disposable, ChatService) {
     'use strict';
 
     var defaultBatchSize = 0;

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (RoomService, ImmutableRoom, room, member, stream, track) {
-    describe('When Creating An Immutable Room', function () {
+], function(RoomService, ImmutableRoom, room, member, stream, track) {
+    describe('When Creating An Immutable Room', function() {
         var testRoom;
         var member1;
         var roomService;
@@ -32,12 +32,12 @@ define([
             uri: '',
             audioState: track.states.trackEnabled.name,
             videoState: track.states.trackEnabled.name,
-            getTracks: function () {
+            getTracks: function() {
                 return [mockTrack];
             }
         };
 
-        beforeEach(function () {
+        beforeEach(function() {
             member1 = {
                 state: member.states.passive.name,
                 sessionId: 'member1',
@@ -51,143 +51,143 @@ define([
             testRoom = new ImmutableRoom(roomService, 'asd', 'User', 'MyRoom', 'Immutable Room', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
-        it('Has property toJson that is a function', function () {
+        it('Has property toJson that is a function', function() {
             expect(testRoom.toJson).to.be.a('function');
         });
 
-        it('Expect roomId on to be passed roomId value', function () {
+        it('Expect roomId on to be passed roomId value', function() {
             expect(testRoom.getRoomId()).to.be.equal('asd');
         });
 
-        it('Expect setValue on getObservableType to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableType to throw error', function() {
+            expect(function() {
                 testRoom.getObservableType().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect subscribe on getObservableType to throw error', function () {
-            expect(function () {
+        it('Expect subscribe on getObservableType to throw error', function() {
+            expect(function() {
                 testRoom.getObservableType().subscribe();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservableAlias to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableAlias to throw error', function() {
+            expect(function() {
                 testRoom.getObservableAlias().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservableName to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableName to throw error', function() {
+            expect(function() {
                 testRoom.getObservableName().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservableDescription to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableDescription to throw error', function() {
+            expect(function() {
                 testRoom.getObservableDescription().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservableMembers to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableMembers to throw error', function() {
+            expect(function() {
                 testRoom.getObservableMembers().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservableBridgeId to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservableBridgeId to throw error', function() {
+            expect(function() {
                 testRoom.getObservableBridgeId().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on getObservablePin to throw error', function () {
-            expect(function () {
+        it('Expect setValue on getObservablePin to throw error', function() {
+            expect(function() {
                 testRoom.getObservablePin().setValue();
             }).to.throw(Error);
         });
 
-        it('Expect setValue on commitChanges to throw error', function () {
-            expect(function () {
+        it('Expect setValue on commitChanges to throw error', function() {
+            expect(function() {
                 testRoom.commitChanges();
             }).to.throw(Error);
         });
 
-        it('Expect reload to throw error', function () {
-            expect(function () {
+        it('Expect reload to throw error', function() {
+            expect(function() {
                 testRoom.reload();
             }).to.throw(Error);
         });
 
-        it('Expect _update to throw error', function () {
-            expect(function () {
+        it('Expect _update to throw error', function() {
+            expect(function() {
                 testRoom._update();
             }).to.throw(Error);
         });
 
-        it('Expect _addMembers to throw error', function () {
-            expect(function () {
+        it('Expect _addMembers to throw error', function() {
+            expect(function() {
                 testRoom._addMembers();
             }).to.throw(Error);
         });
 
-        it('Expect _removeMembers to throw error', function () {
-            expect(function () {
+        it('Expect _removeMembers to throw error', function() {
+            expect(function() {
                 testRoom._removeMembers();
             }).to.throw(Error);
         });
 
-        it('Expect _updateMembers to throw error', function () {
-            expect(function () {
+        it('Expect _updateMembers to throw error', function() {
+            expect(function() {
                 testRoom._updateMembers();
             }).to.throw(Error);
         });
-        describe('When attempting to update member', function () {
+        describe('When attempting to update member', function() {
             var member;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 member = testRoom.getObservableMembers().getValue()[0];
             });
 
-            it('Expect setValue on getObservableScreenName to throw error', function () {
-                expect(function () {
+            it('Expect setValue on getObservableScreenName to throw error', function() {
+                expect(function() {
                     member.getObservableScreenName().setValue();
                 }).to.throw(Error);
             });
 
-            it('Expect setValue on getObservableRole to throw error', function () {
-                expect(function () {
+            it('Expect setValue on getObservableRole to throw error', function() {
+                expect(function() {
                     member.getObservableRole().setValue();
                 }).to.throw(Error);
             });
 
-            it('Expect subscribe on getObservableRole to throw error', function () {
-                expect(function () {
+            it('Expect subscribe on getObservableRole to throw error', function() {
+                expect(function() {
                     member.getObservableRole().subscribe();
                 }).to.throw(Error);
             });
 
-            describe('When attempting to update stream', function () {
+            describe('When attempting to update stream', function() {
                 var stream;
 
-                beforeEach(function () {
+                beforeEach(function() {
                     stream = member.getObservableStreams().getValue()[0];
                 });
 
-                it('Expect setValue on getObservableAudioState to throw error', function () {
-                    expect(function () {
+                it('Expect setValue on getObservableAudioState to throw error', function() {
+                    expect(function() {
                         stream.getObservableAudioState().setValue();
                     }).to.throw(Error);
                 });
 
-                it('Expect setValue on getObservableVideoState to throw error', function () {
-                    expect(function () {
+                it('Expect setValue on getObservableVideoState to throw error', function() {
+                    expect(function() {
                         stream.getObservableVideoState().setValue();
                     }).to.throw(Error);
                 });
 
-                it('Expect subscribe on getObservableVideoState to throw error', function () {
-                    expect(function () {
+                it('Expect subscribe on getObservableVideoState to throw error', function() {
+                    expect(function() {
                         stream.getObservableVideoState().subscribe();
                     }).to.throw(Error);
                 });

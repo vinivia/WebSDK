@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@
 define([
     'sdk/audio/AudioContext',
     'phenix-rtc'
-], function (AudioContext, rtc) {
-    describe('When Instantiating An Audio Context on WebRTC supported browsers', function () {
-        before(function () {
+], function(AudioContext, rtc) {
+    describe('When Instantiating An Audio Context on WebRTC supported browsers', function() {
+        before(function() {
             if (!rtc.webrtcSupported) {
                 console.log('SKIPPING Webrtc Unsupported environment');
 
@@ -34,21 +34,21 @@ define([
 
         var audioContext;
 
-        beforeEach(function () {
+        beforeEach(function() {
             audioContext = new AudioContext();
         });
 
-        it('Has property getNativeAudioContext that is a function', function () {
+        it('Has property getNativeAudioContext that is a function', function() {
             expect(audioContext.getNativeAudioContext).to.be.a('function');
         });
 
-        it('Should not throw error on instantiation', function () {
-            expect(function () {
+        it('Should not throw error on instantiation', function() {
+            expect(function() {
                 audioContext.init();
             }).to.not.throw();
         });
 
-        it('Should have native AudioContext', function () {
+        it('Should have native AudioContext', function() {
             audioContext.init();
 
             if (window.AudioContext) {
@@ -60,24 +60,24 @@ define([
             audioContext.getNativeAudioContext().close();
         });
 
-        describe('When using native AudioContext (discovery test)', function () {
+        describe('When using native AudioContext (discovery test)', function() {
             var nativeAudioContext;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 audioContext.init();
 
                 nativeAudioContext = audioContext.getNativeAudioContext();
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 nativeAudioContext.close();
             });
 
-            it('Should handle audioprocess ScriptProcessor event', function () {
+            it('Should handle audioprocess ScriptProcessor event', function() {
                 var event = new Event('audioprocess');
                 var scriptProcessor = nativeAudioContext.createScriptProcessor();
 
-                scriptProcessor.addEventListener('audioprocess', function (event) {
+                scriptProcessor.addEventListener('audioprocess', function(event) {
                     event.should.exist;
                 });
 

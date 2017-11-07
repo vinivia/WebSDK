@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,21 +28,16 @@ define([
     './telemetry/metricsTransmitterFactory',
     './telemetry/StreamTelemetry',
     './telemetry/SessionTelemetry',
+    './streaming/StreamWrapper',
+    './streaming/PhenixLiveStream',
+    './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC, sdpUtil) {
+], function(_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var NetworkStates = _.freeze({
-        'NETWORK_EMPTY': 0,
-        'NETWORK_IDLE': 1,
-        'NETWORK_LOADING': 2,
-        'NETWORK_NO_SOURCE': 3
-    });
     var sdkVersion = '%SDKVERSION%';
-    var widevineServiceCertificate = null;
-    var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
-    var numberOfTimesToRetryHlsStalledHlsStream = 5;
+    var defaultToHlsNative = true;
 
     function PCast(options) {
         options = options || {};
@@ -67,21 +62,21 @@ define([
         this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
         this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
-        this._shaka = options.shaka || window.shaka;
+        this._shaka = options.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
         this._streamingSourceMapping = options.streamingSourceMapping;
 
         var that = this;
 
-        _.addEventListener(window, 'unload', function () {
+        _.addEventListener(window, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
 
             return that.stop();
         });
 
         if (!options.disableBeforeUnload) {
-            _.addEventListener(window, 'beforeunload', function () {
+            _.addEventListener(window, 'beforeunload', function() {
                 that._logger.info('Window Before Unload Event Triggered');
 
                 return that.stop();
@@ -93,19 +88,19 @@ define([
         }
     }
 
-    PCast.prototype.getBaseUri = function () {
+    PCast.prototype.getBaseUri = function() {
         return this._endPoint.getBaseUri();
     };
 
-    PCast.prototype.getStatus = function () {
+    PCast.prototype.getStatus = function() {
         return this._observableStatus.getValue();
     };
 
-    PCast.prototype.getObservableStatus = function () {
+    PCast.prototype.getObservableStatus = function() {
         return this._observableStatus;
     };
 
-    PCast.prototype.start = function (authToken, authenticationCallback, onlineCallback, offlineCallback) {
+    PCast.prototype.start = function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
         }
@@ -142,7 +137,7 @@ define([
 
         var that = this;
 
-        that._endPoint.resolveUri(function (err, endPoint) {
+        that._endPoint.resolveUri(function(err, endPoint) {
             if (err) {
                 that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
@@ -178,7 +173,7 @@ define([
         });
     };
 
-    PCast.prototype.stop = function () {
+    PCast.prototype.stop = function() {
         if (!this._started) {
             return;
         }
@@ -192,23 +187,23 @@ define([
             var reason = '';
             var that = this;
 
-            _.forOwn(this._mediaStreams, function (mediaStream, streamId) {
+            _.forOwn(this._mediaStreams, function(mediaStream, streamId) {
                 endStream.call(that, streamId, reason);
             });
-            _.forOwn(this._publishers, function (publisher, publisherStreamId) {
+            _.forOwn(this._publishers, function(publisher, publisherStreamId) {
                 endStream.call(that, publisherStreamId, reason);
 
                 if (!_.includes(publisher.getOptions(), 'detached')) {
                     publisher.stop(reason);
                 }
             });
-            _.forOwn(this._peerConnections, function (mediaStream, peerConnectionStreamId) {
+            _.forOwn(this._peerConnections, function(mediaStream, peerConnectionStreamId) {
                 endStream.call(that, peerConnectionStreamId, reason);
             });
-            _.forEach(this._gumStreams, function (gumStream) {
+            _.forEach(this._gumStreams, function(gumStream) {
                 var tracks = gumStream.getTracks();
 
-                _.forEach(tracks, function (track) {
+                _.forEach(tracks, function(track) {
                     track.stop();
                 });
             });
@@ -230,7 +225,7 @@ define([
         }
     };
 
-    PCast.prototype.getUserMedia = function (options, callback, onScreenShare) {
+    PCast.prototype.getUserMedia = function(options, callback, onScreenShare) {
         if (phenixRTC.browser === 'IE') {
             throw new Error('Publishing not supported on IE');
         }
@@ -247,7 +242,7 @@ define([
         return userMediaProvider.getUserMedia(options, callback);
     };
 
-    PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
+    PCast.prototype.publish = function(streamToken, streamToPublish, callback, tags, options) {
         if (phenixRTC.browser === 'Edge') {
             throw new Error('Publishing not supported on Edge');
         }
@@ -303,7 +298,7 @@ define([
 
         streamTelemetry.setProperty('resource', streamType);
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
 
@@ -333,7 +328,7 @@ define([
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
-                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamTelemetry, function (phenixPublisher, error) {
+                    return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamTelemetry, function(phenixPublisher, error) {
                         streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                         if (error) {
@@ -344,7 +339,7 @@ define([
                     }, options, response.createStreamResponse.options);
                 }
 
-                return createPublisher.call(that, streamId, function (phenixPublisher, error) {
+                return createPublisher.call(that, streamId, function(phenixPublisher, error) {
                     streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
@@ -357,7 +352,7 @@ define([
         });
     };
 
-    PCast.prototype.subscribe = function (streamToken, callback, options) {
+    PCast.prototype.subscribe = function(streamToken, callback, options) {
         if (!this._started) {
             throw new Error('PCast not started. Unable to subscribe. Please start pcast first.');
         }
@@ -380,10 +375,11 @@ define([
         var streamType = 'download';
         var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
         var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
+        var createStreamOptions = _.assign({}, {useNativeHlsPlayer: defaultToHlsNative}, options);
 
         streamTelemetry.setProperty('resource', streamType);
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function (error, response) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create downloader [%s]', error);
 
@@ -419,7 +415,7 @@ define([
                     kind: 'https'
                 });
 
-                options.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+                createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
                 if (phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && that._h264ProfileId && isMobile()) {
                     var profileLevelIdToReplace = sdpUtil.getH264ProfileId(offerSdp);
@@ -432,7 +428,7 @@ define([
                     }
                 }
 
-                return create.call(that, streamId, offerSdp, streamTelemetry, function (phenixMediaStream, error) {
+                return create.call(that, streamId, offerSdp, streamTelemetry, function(phenixMediaStream, error) {
                     streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
                     if (error) {
@@ -440,20 +436,20 @@ define([
                     } else {
                         callback.call(that, that, 'ok', phenixMediaStream);
                     }
-                }, options);
+                }, createStreamOptions);
             }
         });
     };
 
-    PCast.prototype.getProtocol = function () {
+    PCast.prototype.getProtocol = function() {
         return this._protocol;
     };
 
-    PCast.prototype.getLogger = function () {
+    PCast.prototype.getLogger = function() {
         return this._logger;
     };
 
-    PCast.prototype.toString = function () {
+    PCast.prototype.toString = function() {
         var protocol = this.getProtocol();
         var sessionId = protocol ? protocol.getSessionId() : '';
 
@@ -488,7 +484,7 @@ define([
         this._connected = true;
 
         if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function (error, response) {
+            that._protocol.authenticate(that._authToken, function(error, response) {
                 if (that._authenticationCallback) {
                     if (error) {
                         that._logger.error('Failed to authenticate [%s]', error);
@@ -522,7 +518,7 @@ define([
         var that = this;
 
         if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function (error, response) {
+            that._protocol.authenticate(that._authToken, function(error, response) {
                 var suppressCallback = that._connected === true;
 
                 if (error) {
@@ -718,7 +714,7 @@ define([
                                             height: 0,
                                             currentTime: 0.0,
                                             lag: 0.0,
-                                            networkState: NetworkStates.NETWORK_NO_SOURCE
+                                            networkState: streamEnums.networkStates.networkNoSource.id
                                         };
                                     }
 
@@ -817,7 +813,7 @@ define([
 
                             var that = this;
 
-                            return phenixRTC.getStats(peerConnection, null, function (stats) {
+                            return phenixRTC.getStats(peerConnection, null, function(stats) {
                                 callback(convertPeerConnectionStats(stats, that._lastStats));
                             });
                         },
@@ -867,7 +863,7 @@ define([
                         }
                     },
 
-                    streamErrorCallback: function (errorSource, error) {
+                    streamErrorCallback: function(errorSource, error) {
                         // Recursively calls all children error callbacks
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
                             internalMediaStream.children[i].streamErrorCallback(errorSource, error);
@@ -880,7 +876,7 @@ define([
                         }
                     },
 
-                    streamEndedCallback: function (status, reason) {
+                    streamEndedCallback: function(status, reason) {
                         // Recursively calls all children ended callbacks
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
                             internalMediaStream.children[i].streamEndedCallback(status, reason);
@@ -905,7 +901,7 @@ define([
                         }
                     },
 
-                    dataQualityChangedCallback: function (status, reason) {
+                    dataQualityChangedCallback: function(status, reason) {
                         for (var i = 0; i < internalMediaStream.children.length; i++) {
                             internalMediaStream.children[i].dataQualityChangedCallback(status, reason);
                         }
@@ -938,7 +934,7 @@ define([
 
                 closePeerConnection.call(that, streamId, peerConnection, 'stop');
 
-                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
+                that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                     if (error) {
                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
 
@@ -1047,7 +1043,7 @@ define([
                     return;
                 }
 
-                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
+                that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                     if (error) {
                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
 
@@ -1186,7 +1182,7 @@ define([
             function onCreateAnswerSuccess(answerSdp) {
                 that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
+                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function(error, response) {
                     if (error) {
                         that._logger.error('Failed to set answer description [%s]', error);
 
@@ -1246,7 +1242,7 @@ define([
 
                                 closePeerConnection.call(that, streamId, peerConnection, 'closed');
 
-                                that._protocol.destroyStream(streamId, reason || '', function (error, response) {
+                                that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                                     if (error) {
                                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
 
@@ -1296,7 +1292,7 @@ define([
                                 var updatedSdp = remoteDescription.sdp.replace(bandwidthAttribute, '');
 
                                 // Add new limit in kbps
-                                updatedSdp = updatedSdp.replace(video, function (match, videoLine, lineEnding, offset, sdp) { // eslint-disable-line no-unused-vars
+                                updatedSdp = updatedSdp.replace(video, function(match, videoLine, lineEnding, offset, sdp) { // eslint-disable-line no-unused-vars
                                     return [videoLine, lineEnding, 'b=AS:', Math.ceil(newLimit / 1000), lineEnding].join('');
                                 });
 
@@ -1308,7 +1304,7 @@ define([
                                 peerConnection.setRemoteDescription(updatedRemoteDescription);
 
                                 return {
-                                    dispose: function () {
+                                    dispose: function() {
                                         peerConnection.setRemoteDescription(remoteDescription);
                                     }
                                 };
@@ -1369,7 +1365,7 @@ define([
 
                                 var that = this;
 
-                                return phenixRTC.getStats(peerConnection, null, function (stats) {
+                                return phenixRTC.getStats(peerConnection, null, function(stats) {
                                     callback(convertPeerConnectionStats(stats, that._lastStats));
                                 });
                             }
@@ -1381,7 +1377,7 @@ define([
                     }
 
                     if (_.includes(response.options, 'ice-candidates')) {
-                        onIceCandidateCallback = function (candidate) {
+                        onIceCandidateCallback = function(candidate) {
                             var candidates = [];
                             var options = [];
 
@@ -1391,7 +1387,7 @@ define([
                                 options.push('completed');
                             }
 
-                            that._protocol.addIceCandidates(streamId, candidates, options, function (error, response) {
+                            that._protocol.addIceCandidates(streamId, candidates, options, function(error, response) {
                                 if (error) {
                                     that._logger.error('Failed to add ICE candidate [%s]', error);
 
@@ -1431,7 +1427,7 @@ define([
             peerConnection.createAnswer(onCreateAnswerSuccess, onFailure, mediaConstraints);
         }
 
-        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, function (mediaStream) {
+        setupStreamAddedListener.call(that, streamId, state, peerConnection, streamTelemetry, function(mediaStream) {
             var publisher = that._publishers[streamId];
 
             remoteMediaStream = mediaStream;
@@ -1509,7 +1505,7 @@ define([
             function onCreateAnswerSuccess(answerSdp) {
                 that._logger.info('Created answer [%s]', answerSdp.sdp);
 
-                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function (error, response) {
+                that._protocol.setAnswerDescription(streamId, answerSdp.sdp, function(error, response) {
                     if (error) {
                         that._logger.error('Failed to set answer description [%s]', error);
 
@@ -1525,7 +1521,7 @@ define([
                     }
 
                     if (_.includes(response.options, 'ice-candidates')) {
-                        onIceCandidateCallback = function (candidate) {
+                        onIceCandidateCallback = function(candidate) {
                             var candidates = [];
                             var iceCandidatesOptions = [];
 
@@ -1535,7 +1531,7 @@ define([
                                 iceCandidatesOptions.push('completed');
                             }
 
-                            that._protocol.addIceCandidates(streamId, candidate, iceCandidatesOptions, function (error, response) {
+                            that._protocol.addIceCandidates(streamId, candidate, iceCandidatesOptions, function(error, response) {
                                 if (error) {
                                     that._logger.error('Failed to add ICE candidate [%s]', error);
 
@@ -1604,16 +1600,24 @@ define([
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
+        var shouldPlayHls = isIOS() || phenixRTC.browser === 'Safari';
+
+        if (dashMatch && dashMatch.length === 2 && !shouldPlayHls) {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
 
             if (options.isDrmProtectedContent) {
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, manifestUrl, streamTelemetry, callback, options);
+            if (this._shaka && !this._shaka.Player.isBrowserSupported()) {
+                this._logger.warn('[%s] Shaka does not support this browser', streamId);
+
+                return callback.call(this, undefined, 'browser-unsupported');
+            }
+
+            return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, playlistUrl, streamTelemetry, callback, options);
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -1621,907 +1625,40 @@ define([
         return callback.call(that, undefined, 'failed');
     }
 
-    function createShakaLiveViewer(streamId, uri, streamTelemetry, callback, options) {
+    function createLiveViewerOfKind(streamId, uri, kind, streamTelemetry, callback, options) {
         var that = this;
+        var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, this._shaka, this._logger);
+        var liveStreamDecorator = new StreamWrapper(kind, liveStream, this._logger);
+        var playerKind = this._shaka && kind === streamEnums.types.dash.name ? 'shaka' : kind;
 
-        if (!that._shaka) {
-            that._logger.warn('[%s] Shaka player not available', streamId);
+        var onPlayerError = function onPlayerError(source, event) {
+            that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
 
-            return callback.call(that, undefined, 'live-player-missing');
-        }
-
-        if (!that._shaka.Player.isBrowserSupported()) {
-            that._logger.warn('[%s] Shaka does not support this browser', streamId);
-
-            return callback.call(that, undefined, 'browser-unsupported');
-        }
-
-        var shaka = that._shaka;
-        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
-
-        var onPlayerError = function onPlayerError(event) {
-            internalMediaStream.streamErrorCallback('shaka', event.detail);
+            liveStreamDecorator.streamErrorCallback(playerKind, event.detail);
         };
 
-        streamTelemetry.setProperty('kind', 'dash');
+        var onStop = function onStop(reason) {
+            that._protocol.destroyStream(streamId, reason || '', function(error, response) {
+                if (error) {
+                    that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+
+                    return;
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
 
-        var internalMediaStream = {
-            renderer: null,
-            isStreamEnded: false,
-            isStopped: false,
-            waitingForLastChunk: false,
-
-            mediaStream: {
-                createRenderer: function createRenderer() {
-                    var player = null;
-                    var element = null;
-                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-                    var lastProgress = {
-                        time: 0,
-                        buffered: null,
-                        averageLength: 0,
-                        count: 0
-                    };
-
-                    function onProgress() {
-                        lastProgress.time = _.now();
-
-                        if (element.buffered.length === 0) {
-                            return that._logger.debug('[%s] Dash stream progress event fired without any buffered content', streamId);
-                        }
-
-                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
-
-                        if (lastProgress.buffered === bufferedEnd) {
-                            return;
-                        }
-
-                        // Start and end times are unreliable for overall length of stream.
-                        if (lastProgress.buffered !== null) {
-                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
-
-                            lastProgress.count += 1;
-                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
-                        }
-
-                        lastProgress.buffered = bufferedEnd;
-                    }
-
-                    function stalled() {
-                        that._logger.info('[%s] Loading Dash stream stalled.', streamId);
-
-                        if (lastProgress.time === 0) {
-                            return;
-                        }
-
-                        setTimeout(function () {
-                            if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk) {
-                                internalMediaStream.renderer.stop('ended');
-                            }
-                        }, getTimeoutOrMinimum());
-                    }
-
-                    function getTimeoutOrMinimum() {
-                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
-                    }
-
-                    function ended() {
-                        that._logger.info('[%s] Dash stream ended.', streamId);
-                    }
-
-                    return {
-                        start: function start(elementToAttachTo) {
-                            player = new shaka.Player(elementToAttachTo);
-                            internalMediaStream.renderer = this;
-
-                            streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-                            streamTelemetry.recordRebuffering(elementToAttachTo);
-                            streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
-                            var playerConfig = {
-                                abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
-                                manifest: {retryParameters: {timeout: 10000}},
-                                streaming: {
-                                    rebufferingGoal: 2,
-                                    bufferingGoal: 10,
-                                    bufferBehind: 30,
-                                    retryParameters: {
-                                        timeout: 10000,
-                                        maxAttempts: 10,
-                                        backoffFactor: 1.1
-                                    }
-                                }
-                            };
-
-                            if (options.isDrmProtectedContent) {
-                                checkBrowserSupportForWidevineDRM.call(that);
-                                unwrapLicenseResponse.call(that, player);
-                                addDrmSpecificsToPlayerConfig.call(that, playerConfig, options, function (err, updatedPlayerConfig) {
-                                    if (!err) {
-                                        loadPlayer(updatedPlayerConfig);
-                                    } else {
-                                        that._logger.error('Failed to add DRM configuration to shaka player', err);
-
-                                        throw err;
-                                    }
-                                });
-                            } else {
-                                loadPlayer(playerConfig);
-                            }
-
-                            function loadPlayer(config) {
-                                player.configure(config);
-
-                                if (options.receiveAudio === false) {
-                                    elementToAttachTo.muted = true;
-                                }
-
-                                _.addEventListener(player, 'error', onPlayerError);
-
-                                _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'pause', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'suspend', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
-                                _.addEventListener(elementToAttachTo, 'ended', ended, false);
-
-                                player.load(manifestUri).then(function () {
-                                    that._logger.info('[%s] DASH live stream has been loaded', streamId);
-
-                                    if (_.isFunction(elementToAttachTo.play)) {
-                                        elementToAttachTo.play();
-                                    }
-                                }).catch(function (e) {
-                                    that._logger.error('[%s] Error while loading DASH live stream [%s]', streamId, e.code, e);
-
-                                    internalMediaStream.streamErrorCallback('shaka', e);
-                                });
-
-                                dimensionsChangedMonitor.start(this, elementToAttachTo);
-                                element = elementToAttachTo;
-                            }
-
-                            return elementToAttachTo;
-                        },
-
-                        stop: function stop() {
-                            dimensionsChangedMonitor.stop();
-
-                            streamTelemetry.stop();
-
-                            if (player) {
-                                var finalizeStreamEnded = function finalizeStreamEnded() {
-                                    var reason = '';
-
-                                    if (element) {
-                                        _.removeEventListener(element, 'stalled', stalled, false);
-                                        _.removeEventListener(element, 'pause', stalled, false);
-                                        _.removeEventListener(element, 'suspend', stalled, false);
-                                        _.removeEventListener(element, 'progress', onProgress, false);
-                                        _.removeEventListener(element, 'ended', ended, false);
-
-                                        if (phenixRTC.browser === 'Edge') {
-                                            element.src = '';
-                                        }
-                                    }
-
-                                    internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
-
-                                    player = null;
-                                    element = null;
-                                };
-
-                                var destroy = player.destroy() // eslint-disable-line no-unused-vars
-                                    .then(function () {
-                                        that._logger.info('[%s] DASH live stream has been destroyed', streamId);
-                                    }).then(function () {
-                                        finalizeStreamEnded();
-                                    }).catch(function (e) {
-                                        that._logger.error('[%s] Error while destroying DASH live stream [%s]', streamId, e.code, e);
-
-                                        finalizeStreamEnded();
-
-                                        internalMediaStream.streamErrorCallback('shaka', e);
-                                    });
-                            }
-
-                            internalMediaStream.renderer = null;
-                        },
-
-                        getStats: function getStats() {
-                            if (!player) {
-                                return {
-                                    width: 0,
-                                    height: 0,
-                                    currentTime: 0.0,
-                                    lag: 0.0,
-                                    networkState: NetworkStates.NETWORK_NO_SOURCE
-                                };
-                            }
-
-                            var stat = _.assign(player.getStats(), {
-                                currentTime: 0,
-                                lag: 0
-                            });
-                            var currentTime = _.get(element, ['currentTime'], 0);
-                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
-                            var lag = Math.max(0.0, trueCurrentTime - currentTime);
-
-                            if (element) {
-                                stat.currentTime = currentTime;
-                                stat.lag = lag;
-                            }
-
-                            if (stat.estimatedBandwidth > 0) {
-                                stat.networkState = NetworkStates.NETWORK_LOADING;
-                            } else if (stat.playTime > 0) {
-                                stat.networkState = NetworkStates.NETWORK_IDLE;
-                            } else if (stat.video) {
-                                stat.networkState = NetworkStates.NETWORK_EMPTY;
-                            } else {
-                                stat.networkState = NetworkStates.NETWORK_NO_SOURCE;
-                            }
-
-                            return stat;
-                        },
-
-                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            this.dataQualityChangedCallback = callback;
-                        },
-
-                        getPlayer: function getPlayer() {
-                            return player;
-                        },
-
-                        addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
-                            dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
-                        }
-                    };
-                },
-
-                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
-                    that._logger.warn('[%s] selection of tracks not supported for shaka live streams', streamId);
-
-                    return this;
-                },
-
-                setStreamEndedCallback: function setStreamEndedCallback(callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamEndedCallback = callback;
-                },
-
-                setStreamErrorCallback: function setStreamErrorCallback(callback) {
-                    if (!_.isFunction(callback)) {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamErrorCallback = callback;
-                },
-
-                stop: function stop(reason) {
-                    if (internalMediaStream.isStopped) {
-                        return;
-                    }
-
-                    that._logger.info('[%s] stop media stream', streamId);
-
-                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
-                        if (error) {
-                            that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
-
-                            return;
-                        } else if (response.status !== 'ok') {
-                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
-
-                            return;
-                        }
-
-                        that._logger.info('[%s] destroyed stream', streamId);
-                    });
-
-                    internalMediaStream.isStopped = true;
-                },
-
-                monitor: function monitor(options, callback) {
-                    if (typeof options !== 'object') {
-                        throw new Error('"options" must be an object');
-                    }
-
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-                },
-
-                getMonitor: function getMonitor() {
-                    return null;
-                },
-
-                getStream: function getStream() {
-                    that._logger.debug('[%s] stream not available for shaka live streams', streamId);
-
-                    return null;
-                },
-
-                isActive: function isActive() {
-                    return !internalMediaStream.isStopped;
-                },
-
-                getStreamId: function getStreamId() {
-                    return streamId;
-                },
-
-                getStats: function getStats() {
-                    that._logger.debug('[%s] stats not available for shaka live streams', streamId);
-
-                    return null;
-                }
-            },
-
-            streamErrorCallback: function (errorSource, error) {
-                var mediaStream = internalMediaStream.mediaStream;
-
-                if (!_.isFunction(mediaStream.streamErrorCallback)) {
-                    that._logger.error('[%s] DASH live stream error event [%s]', streamId, error);
-                } else {
-                    that._logger.debug('[%s] DASH live stream error event [%s]', streamId, error);
-                    mediaStream.streamErrorCallback(mediaStream, errorSource, error);
-                }
-            },
-
-            streamEndedCallback: function (status, reason, waitForLastChunk) {
-                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
-                    internalMediaStream.waitingForLastChunk = true;
-
-                    return that._logger.info('[%s] Shaka stream ended. Waiting for end of content.');
-                }
-
-                if (internalMediaStream.isStreamEnded) {
                     return;
                 }
-
-                var mediaStream = internalMediaStream.mediaStream;
-
-                internalMediaStream.isStreamEnded = true;
-
-                if (typeof mediaStream.streamEndedCallback === 'function') {
-                    mediaStream.streamEndedCallback(mediaStream, status, reason);
-                }
-
-                mediaStream.stop();
-
-                if (internalMediaStream.renderer) {
-                    internalMediaStream.renderer.stop();
-                }
-            },
-
-            dataQualityChangedCallback: function (status, reason) {
-                var renderer = internalMediaStream.renderer;
-
-                if (!renderer) {
-                    return;
-                }
-
-                if (typeof renderer.dataQualityChangedCallback === 'function') {
-                    renderer.dataQualityChangedCallback(renderer, status, reason);
-                }
-            }
+            });
         };
 
-        that._mediaStreams[streamId] = internalMediaStream;
+        streamTelemetry.setProperty('kind', kind);
 
-        callback.call(that, internalMediaStream.mediaStream);
-    }
+        liveStreamDecorator.on(streamEnums.streamEvents.playerError.name, onPlayerError);
+        liveStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
 
-    function checkBrowserSupportForWidevineDRM() {
-        var error;
+        this._mediaStreams[streamId] = liveStreamDecorator;
 
-        if (!_.isFunction(Uint8Array)) {
-            error = 'Uint8Array support required for DRM';
-            this._logger.error(error);
-
-            throw new Error(error);
-        }
-
-        if (!_.isFunction(window.atob)) {
-            error = 'window.atob support required for DRM';
-            this._logger.error(error);
-
-            throw new Error(error);
-        }
-    }
-
-    function unwrapLicenseResponse(player) {
-        var that = this;
-
-        player.getNetworkingEngine().registerResponseFilter(function (type, response) {
-            // Only manipulate license responses:
-            if (type.toString() === that._shaka.net.NetworkingEngine.RequestType.LICENSE.toString()) {
-                var binaryResponseAsTypedArray = new Uint8Array(response.data);
-                var responseAsString = String.fromCharCode.apply(null, binaryResponseAsTypedArray);
-                var parsedResponse = JSON.parse(responseAsString);
-                var base64License = parsedResponse.license;
-                var decodedLicense = window.atob(base64License);
-
-                response.data = new Uint8Array(decodedLicense.length);
-
-                for (var i = 0; i < decodedLicense.length; ++i) {
-                    response.data[i] = decodedLicense.charCodeAt(i);
-                }
-
-                if (parsedResponse.trackRestrictions) {
-                    player.configure({restrictions: parsedResponse.trackRestrictions});
-                }
-            }
-        });
-    }
-
-    function addDrmSpecificsToPlayerConfig(playerConfig, options, callback) {
-        if (!playerConfig.drm) {
-            playerConfig.drm = {};
-        }
-
-        if (!playerConfig.drm.advanced) {
-            playerConfig.drm.advanced = {};
-        }
-
-        if (!playerConfig.manifest) {
-            playerConfig.manifest = {};
-        }
-
-        if (!playerConfig.manifest.dash) {
-            playerConfig.manifest.dash = {};
-        }
-
-        // Add browser specific DRM calls here
-        // Currently we support Widevine only
-        addWidevineConfigToPlayerConfig.call(this, playerConfig, options, callback);
-    }
-
-    function addWidevineConfigToPlayerConfig(playerConfig, options, callback) {
-        playerConfig['manifest']['dash']['customScheme'] = function (element) {
-            var schemeUri = element.getAttribute('schemeIdUri');
-
-            // TODO: (AM) Remove com.phenixp2p.widevine reference when platform deprecates it
-            if (schemeUri === 'com.phenixp2p.widevine' || schemeUri === 'com.phenixrts.widevine') {
-                return [{
-                    keySystem: 'com.widevine.alpha',
-                    licenseServerUri: decodeURIComponent(element.getAttribute('widevineLicenseServerUrl'))
-                }];
-            }
-        };
-
-        function addToPlayerconfig(error, serverCertificate) {
-            if (error) {
-                callback(error);
-
-                return;
-            }
-
-            widevineServiceCertificate = serverCertificate; // Cache so that we can reuse
-
-            playerConfig.drm.advanced['com.widevine.alpha'] = {
-                'serverCertificate': convertBinaryStringToUint8Array(serverCertificate),
-                'persistentStateRequired': true,
-                'distinctiveIdentifierRequired': false
-            };
-
-            callback(null, playerConfig);
-        }
-
-        if (widevineServiceCertificate) {
-            addToPlayerconfig(null, widevineServiceCertificate);
-        } else {
-            http.get(options.widevineServiceCertificateUrl, {mimeType: 'text/plain; charset=x-user-defined'}, addToPlayerconfig);
-        }
-    }
-
-    function convertBinaryStringToUint8Array(bStr) {
-        var len = bStr.length;
-        var u8Array = new Uint8Array(len); // eslint-disable-line no-undef
-
-        for (var i = 0; i < len; i++) {
-            u8Array[i] = bStr.charCodeAt(i);
-        }
-
-        return u8Array;
-    }
-
-    function createHlsLiveViewer(streamId, uri, streamTelemetry, callback, options) {
-        var that = this;
-
-        var manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
-
-        var onPlayerError = function onPlayerError(event) {
-            internalMediaStream.streamErrorCallback('hls', event.detail);
-        };
-
-        streamTelemetry.setProperty('kind', 'hls');
-
-        var internalMediaStream = {
-            renderer: null,
-            isStreamEnded: false,
-            isStopped: false,
-            waitingForLastChunk: false,
-
-            mediaStream: {
-                createRenderer: function createRenderer() {
-                    var element = null;
-                    var bufferSizeHistory = [];
-                    var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
-                    var lastProgress = {
-                        time: 0,
-                        buffered: null,
-                        averageLength: 0,
-                        count: 0,
-                        setupRetry: 0
-                    };
-
-                    function onProgress() {
-                        lastProgress.time = _.now();
-
-                        if (element.buffered.length === 0) {
-                            return that._logger.debug('[%s] Hls stream progress event fired without any buffered content', streamId);
-                        }
-
-                        var bufferedEnd = element.buffered.end(element.buffered.length - 1);
-
-                        if (lastProgress.buffered === bufferedEnd) {
-                            return;
-                        }
-
-                        // Start and end times are unreliable for overall length of stream.
-                        if (lastProgress.buffered !== null) {
-                            var oldTimeElapsed = lastProgress.averageLength * lastProgress.count;
-                            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - lastProgress.buffered);
-
-                            lastProgress.count += 1;
-                            lastProgress.averageLength = newTimeElapsed / lastProgress.count;
-                        }
-
-                        lastProgress.buffered = bufferedEnd;
-                        lastProgress.setupRetry = 0;
-                    }
-
-                    function stalled() {
-                        that._logger.info('[%s] Loading Hls stream stalled.', streamId);
-
-                        if (lastProgress.setupRetry > numberOfTimesToRetryHlsStalledHlsStream) {
-                            return that._logger.warn('[%s] Unable to recover from stalled Hls Stream.', streamId);
-                        }
-
-                        if (lastProgress.count === 0) {
-                            lastProgress.setupRetry++;
-                            reload();
-                        } else {
-                            setTimeout(function () {
-                                if (lastProgress.count === 0) {
-                                    lastProgress.setupRetry++;
-                                    reload();
-                                }
-                            }, getTimeoutOrMinimum());
-
-                            var streamEndedBeforeSetupTimeout = 5000;
-
-                            setTimeout(endIfReady, streamEndedBeforeSetupTimeout);
-                        }
-                    }
-
-                    function ended() {
-                        that._logger.info('[%s] Hls stream ended', streamId);
-
-                        if (internalMediaStream.renderer) {
-                            internalMediaStream.renderer.stop('ended');
-                        }
-                    }
-
-                    function waiting() {
-                        that._logger.info('Time elapsed since last progress [%s]', _.now() - lastProgress.time);
-
-                        setTimeout(endIfReady, getTimeoutOrMinimum());
-                    }
-
-                    function reload() {
-                        that._logger.info('[%s] Attempting to reload Hls stream.', streamId);
-
-                        element.pause();
-                        element.src = '';
-                        element.currentTime = 0;
-
-                        element.src = manifestUri;
-                        element.load();
-                        element.play();
-                    }
-
-                    function getTimeoutOrMinimum() {
-                        return lastProgress.averageLength * 1.5 < 2000 ? 2000 : lastProgress.averageLength * 1.5;
-                    }
-
-                    function endIfReady() {
-                        if (_.now() - lastProgress.time > getTimeoutOrMinimum() && internalMediaStream.waitingForLastChunk && internalMediaStream.renderer) {
-                            internalMediaStream.renderer.stop('ended');
-                        }
-                    }
-
-                    return {
-                        start: function start(elementToAttachTo) {
-                            try {
-                                phenixRTC.attachUriStream(elementToAttachTo, manifestUri);
-
-                                if (options.receiveAudio === false) {
-                                    elementToAttachTo.muted = true;
-                                }
-
-                                streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-                                streamTelemetry.recordRebuffering(elementToAttachTo);
-                                streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
-                                internalMediaStream.renderer = this;
-
-                                _.addEventListener(elementToAttachTo, 'error', onPlayerError, true);
-                                _.addEventListener(elementToAttachTo, 'stalled', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'pause', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'suspend', stalled, false);
-                                _.addEventListener(elementToAttachTo, 'progress', onProgress, false);
-                                _.addEventListener(elementToAttachTo, 'ended', ended, false);
-                                _.addEventListener(elementToAttachTo, 'waiting', waiting, false);
-
-                                element = elementToAttachTo;
-
-                                dimensionsChangedMonitor.start(this, element);
-
-                                return elementToAttachTo;
-                            } catch (e) {
-                                that._logger.error('[%s] Error while loading HLS live stream [%s]', streamId, e.code, e);
-
-                                internalMediaStream.streamErrorCallback('hls', e);
-                            }
-                        },
-
-                        stop: function stop() {
-                            dimensionsChangedMonitor.stop();
-
-                            streamTelemetry.stop();
-
-                            if (element) {
-                                var finalizeStreamEnded = function finalizeStreamEnded() {
-                                    if (element) {
-                                        _.removeEventListener(element, 'error', onPlayerError, true);
-                                        _.removeEventListener(element, 'stalled', stalled, false);
-                                        _.removeEventListener(element, 'pause', stalled, false);
-                                        _.removeEventListener(element, 'suspend', stalled, false);
-                                        _.removeEventListener(element, 'progress', onProgress, false);
-                                        _.removeEventListener(element, 'ended', ended, false);
-                                        _.removeEventListener(element, 'waiting', waiting, false);
-
-                                        if (phenixRTC.browser === 'Safari' && phenixRTC.browserVersion >= 11) {
-                                            element.setAttribute('src', '');
-                                        } else {
-                                            element.src = '';
-                                        }
-
-                                        element = null;
-                                    }
-
-                                    var reason = '';
-
-                                    internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason);
-                                };
-
-                                try {
-                                    element.pause();
-
-                                    that._logger.info('[%s] HLS live stream has been destroyed', streamId);
-
-                                    finalizeStreamEnded();
-                                } catch (e) {
-                                    that._logger.error('[%s] Error while destroying HLS live stream [%s]', streamId, e.code, e);
-
-                                    finalizeStreamEnded();
-
-                                    internalMediaStream.streamErrorCallback('hls', e);
-                                }
-                            }
-
-                            internalMediaStream.renderer = null;
-                        },
-
-                        getStats: function getStats() {
-                            if (!element) {
-                                return {
-                                    width: 0,
-                                    height: 0,
-                                    currentTime: 0.0,
-                                    lag: 0.0,
-                                    networkState: NetworkStates.NETWORK_NO_SOURCE
-                                };
-                            }
-
-                            var currentTime = element ? element.currentTime || 0.0 : 0.0;
-                            var buffered = (element && element.buffered && element.buffered.length > 0) ? element.buffered.end(element.buffered.length - 1) : 0;
-                            var currentBufferSize = Math.max(0, buffered - currentTime);
-
-                            bufferSizeHistory.push(currentBufferSize);
-
-                            if (bufferSizeHistory.length > 15) {
-                                bufferSizeHistory.shift();
-                            }
-
-                            var estimatedBufferSize = 0.0;
-
-                            for (var i = 0, len = bufferSizeHistory.length; i < len; i++) {
-                                estimatedBufferSize = Math.max(estimatedBufferSize, bufferSizeHistory[i]);
-                            }
-
-                            var chunkDuration = 2.0; // TODO (sbi) Parse chunk duration from manifest
-                            var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
-                            var lag = 2.0 * chunkDuration + estimatedBufferSize;
-                            var estimatedCurrentTime = trueCurrentTime - lag;
-
-                            return {
-                                width: element.videoWidth || element.width,
-                                height: element.videoHeight || element.height,
-                                currentTime: estimatedCurrentTime,
-                                originTime: trueCurrentTime,
-                                lag: lag,
-                                networkState: element.networkState
-                            };
-                        },
-
-                        setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            this.dataQualityChangedCallback = callback;
-                        },
-
-                        addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
-                            dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
-                        }
-                    };
-                },
-
-                select: function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
-                    that._logger.warn('[%s] selection of tracks not supported for HLS live streams', streamId);
-
-                    return this;
-                },
-
-                setStreamEndedCallback: function setStreamEndedCallback(callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamEndedCallback = callback;
-                },
-
-                setStreamErrorCallback: function setStreamErrorCallback(callback) {
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-
-                    this.streamErrorCallback = callback;
-                },
-
-                stop: function stop(reason) {
-                    if (internalMediaStream.isStopped) {
-                        return;
-                    }
-
-                    that._logger.info('[%s] stop media stream', streamId);
-
-                    that._protocol.destroyStream(streamId, reason || '', function (error, response) {
-                        if (error) {
-                            that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
-
-                            return;
-                        } else if (response.status !== 'ok') {
-                            that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
-
-                            return;
-                        }
-
-                        that._logger.info('[%s] destroyed stream', streamId);
-                    });
-
-                    internalMediaStream.isStopped = true;
-                },
-
-                monitor: function monitor(options, callback) {
-                    if (typeof options !== 'object') {
-                        throw new Error('"options" must be an object');
-                    }
-
-                    if (typeof callback !== 'function') {
-                        throw new Error('"callback" must be a function');
-                    }
-                },
-
-                getMonitor: function getMonitor() {
-                    return null;
-                },
-
-                isActive: function isActive() {
-                    return !internalMediaStream.isStopped;
-                },
-
-                getStreamId: function getStreamId() {
-                    return streamId;
-                },
-
-                getStream: function getStream() {
-                    that._logger.debug('[%s] stream not available for HLS live streams', streamId);
-
-                    return null;
-                },
-
-                getStats: function getStats() {
-                    that._logger.debug('[%s] stats not available for HLS live streams', streamId);
-
-                    return null;
-                }
-            },
-
-            streamErrorCallback: function (errorSource, error) {
-                var mediaStream = internalMediaStream.mediaStream;
-
-                if (!_.isFunction(mediaStream.streamErrorCallback)) {
-                    that._logger.error('[%s] HLS live stream error event [%s]', streamId, error);
-                } else {
-                    that._logger.debug('[%s] HLS live stream error event [%s]', streamId, error);
-                    mediaStream.streamErrorCallback(mediaStream, errorSource, error);
-                }
-            },
-
-            streamEndedCallback: function (status, reason, waitForLastChunk) {
-                if (waitForLastChunk && !internalMediaStream.waitingForLastChunk && !internalMediaStream.isStopped) {
-                    internalMediaStream.waitingForLastChunk = true;
-
-                    return that._logger.info('[%s] Hls stream ended. Waiting for end of content.');
-                }
-
-                if (internalMediaStream.isStreamEnded) {
-                    return;
-                }
-
-                var mediaStream = internalMediaStream.mediaStream;
-
-                internalMediaStream.isStreamEnded = true;
-
-                if (typeof mediaStream.streamEndedCallback === 'function') {
-                    mediaStream.streamEndedCallback(mediaStream, status, reason);
-                }
-
-                mediaStream.stop();
-
-                if (internalMediaStream.renderer) {
-                    internalMediaStream.renderer.stop();
-                }
-            },
-
-            dataQualityChangedCallback: function (status, reason) {
-                var renderer = internalMediaStream.renderer;
-
-                if (!renderer) {
-                    return;
-                }
-
-                if (typeof renderer.dataQualityChangedCallback === 'function') {
-                    renderer.dataQualityChangedCallback(renderer, status, reason);
-                }
-            }
-        };
-
-        that._mediaStreams[streamId] = internalMediaStream;
-
-        callback.call(that, internalMediaStream.mediaStream);
+        callback.call(this, liveStreamDecorator.getPhenixMediaStream());
     }
 
     function transitionToStatus(newStatus, suppressCallback) {
@@ -2622,7 +1759,7 @@ define([
         };
 
         if (_.isFunction(stats.result)) {
-            _.forEach(stats.result(), function (statsReport) {
+            _.forEach(stats.result(), function(statsReport) {
                 if (statsReport.type === 'ssrc') {
                     var ssrc = statsReport.stat('ssrc');
                     var bytesSent = statsReport.stat('bytesSent');
@@ -2634,7 +1771,7 @@ define([
                 }
             });
         } else if (_.isFunction(stats.values)) {
-            _.forEach(Array.from(stats.values()), function (statsReport) {
+            _.forEach(Array.from(stats.values()), function(statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
                     if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
                         return;
@@ -2644,7 +1781,7 @@ define([
                 }
             });
         } else {
-            _.forEach(stats, function (statsReport) {
+            _.forEach(stats, function(statsReport) {
                 if (_.hasIndexOrKey(statsReport, 'ssrc')) {
                     if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
                         return;
@@ -2729,8 +1866,8 @@ define([
             return config;
         }
 
-        _.forEach(config.iceServers, function (server) {
-            server.urls = _.filter(server.urls, function (url) {
+        _.forEach(config.iceServers, function(server) {
+            server.urls = _.filter(server.urls, function(url) {
                 return !_.startsWith(url, 'turns');
             });
         });
@@ -2740,9 +1877,14 @@ define([
 
     var isMobile = function() {
         var userAgent = window.navigator.userAgent;
-        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-        return isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+        return isIOS() || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+    };
+
+    var isIOS = function() {
+        var userAgent = window.navigator.userAgent;
+
+        return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     };
 
     return PCast;

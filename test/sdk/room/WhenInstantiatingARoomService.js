@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, PCast, RoomService, Room, ImmutableRoom, Member, room, member, stream, track, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+], function(_, PCast, RoomService, Room, ImmutableRoom, Member, room, member, stream, track, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
     var pcast;
     var roomService;
     var response;
@@ -46,7 +46,7 @@ define([
         uri: 'Stream1',
         audioState: track.states.trackEnabled.name,
         videoState: track.states.trackEnabled.name,
-        getTracks: function () {
+        getTracks: function() {
             return [mockTrack];
         }
     };
@@ -66,7 +66,7 @@ define([
         bridgeId: '',
         pin: '',
         type: room.types.multiPartyChat.name,
-        getRoomId: function () {
+        getRoomId: function() {
             return room.roomId;
         },
         members: [member1]
@@ -77,12 +77,12 @@ define([
     var alias = 'RoomAlias';
     var role = member.roles.presenter.name;
 
-    describe('When instantiating a RoomService', function () {
+    describe('When instantiating a RoomService', function() {
         before(function() {
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stub();
 
@@ -100,12 +100,12 @@ define([
 
             pcast = new PCast();
 
-            pcast.start('AuthToken', function (pcast, status, authSessionId) {
+            pcast.start('AuthToken', function(pcast, status, authSessionId) {
                 sessionId = authSessionId;
-            }, function onlineCallback () {
+            }, function onlineCallback() {
                 roomService = new RoomService(pcast);
                 done();
-            }, function offlineCallback () {});
+            }, function offlineCallback() {});
 
             response = {
                 status: 'ok',
@@ -137,61 +137,61 @@ define([
             self.sessionId = 'MockSessionId';
         });
 
-        it('Has property createRoom that is a function', function () {
+        it('Has property createRoom that is a function', function() {
             expect(roomService.createRoom).to.be.a('function');
         });
 
-        it('Has property enterRoom that is a function', function () {
+        it('Has property enterRoom that is a function', function() {
             expect(roomService.enterRoom).to.be.a('function');
         });
 
-        it('Has property leaveRoom that is a function', function () {
+        it('Has property leaveRoom that is a function', function() {
             expect(roomService.leaveRoom).to.be.a('function');
         });
 
-        it('Room is successfully initialized on init', function () {
+        it('Room is successfully initialized on init', function() {
             roomService.start(role, screenName);
 
             expect(roomService._self).to.be.a('object');
         });
 
-        describe('When Room does not exist', function () {
-            it('Returns no roomChatService', function () {
+        describe('When Room does not exist', function() {
+            it('Returns no roomChatService', function() {
                 var roomChatService = roomService.getRoomChatService();
 
                 expect(roomChatService).to.be.equal(null);
             });
 
-            it('Expect getRoomInfo to return a status other than "ok" and no room object', function () {
+            it('Expect getRoomInfo to return a status other than "ok" and no room object', function() {
                 response.status = 'no-room';
 
                 websocketStubber.stubResponse('chat.GetRoomInfo', response);
 
-                roomService.getRoomInfo('', 'alias', function (error, response) {
+                roomService.getRoomInfo('', 'alias', function(error, response) {
                     expect(response.room).to.be.not.ok;
                     expect(response.status).to.not.be.equal('ok');
                 });
             });
 
-            it('Expect getRoomInfo to return an error when error returned from protocol', function () {
+            it('Expect getRoomInfo to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.GetRoomInfo', new Error('Error'));
 
-                roomService.getRoomInfo('', 'alias', function (error, response) {
+                roomService.getRoomInfo('', 'alias', function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
             });
 
-            it('Expect created room to be an immutable room', function () {
+            it('Expect created room to be an immutable room', function() {
                 roomService.start(role, screenName);
 
-                roomService.createRoom(mockRoom, function (error, response) {
+                roomService.createRoom(mockRoom, function(error, response) {
                     expect(response.room).to.be.an.instanceof(ImmutableRoom);
                     expect(response.status).to.be.equal('ok');
                 }, screenName);
             });
 
-            it('Expect room to be undefined when protocol returns error status', function () {
+            it('Expect room to be undefined when protocol returns error status', function() {
                 response.status = 'error';
                 response.reason = 'Error creating room';
 
@@ -199,64 +199,64 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.createRoom(mockRoom, function (error, response) {
+                roomService.createRoom(mockRoom, function(error, response) {
                     expect(response.status).to.not.be.equal('ok');
                     expect(response.room).to.be.not.ok;
                 }, screenName);
             });
 
-            it('Expect createRoom to return an error when error returned from protocol', function () {
+            it('Expect createRoom to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.CreateRoom', new Error('Error'));
 
-                roomService.createRoom(mockRoom, function (error, response) {
+                roomService.createRoom(mockRoom, function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
             });
 
-            it('Expect enter room callback to return null for room and status', function () {
+            it('Expect enter room callback to return null for room and status', function() {
                 response.status = 'Error: room does not exist';
                 websocketStubber.stubResponse('chat.JoinRoom', response);
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (error, response) {
+                roomService.enterRoom(roomId, alias, function(error, response) {
                     expect(response.status).to.not.be.equal('ok');
                     expect(response.room).to.be.not.ok;
                 });
             });
 
-            it('Expect enterRoom to return an error when error returned from protocol', function () {
+            it('Expect enterRoom to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.JoinRoom', new Error('Error'));
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (error, response) {
+                roomService.enterRoom(roomId, alias, function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
             });
 
-            it('Expect status to not be equal to ok', function () {
+            it('Expect status to not be equal to ok', function() {
                 response.status = 'Error: room does not exist';
                 websocketStubber.stubResponse('chat.LeaveRoom', response);
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom('', alias, function () {
-                    roomService.leaveRoom(function (error, response) {
+                roomService.enterRoom('', alias, function() {
+                    roomService.leaveRoom(function(error, response) {
                         expect(response.status).to.not.be.equal('ok');
                     });
                 });
             });
 
-            it('Expect leaveRoom to return an error when error returned from protocol', function () {
+            it('Expect leaveRoom to return an error when error returned from protocol', function() {
                 websocketStubber.stubResponseError('chat.LeaveRoom', new Error('Error'));
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom('', alias, function () {
-                    roomService.leaveRoom(function (error, response) {
+                roomService.enterRoom('', alias, function() {
+                    roomService.leaveRoom(function(error, response) {
                         expect(response).to.be.not.ok;
                         expect(error).to.be.ok;
                     });
@@ -264,29 +264,29 @@ define([
             });
         });
 
-        describe('When Room does exist', function () {
-            it('Returns immutable room on getRoomInfo', function () {
+        describe('When Room does exist', function() {
+            it('Returns immutable room on getRoomInfo', function() {
                 response.status = 'ok';
                 websocketStubber.stubResponse('chat.GetRoomInfo', response);
 
-                roomService.getRoomInfo('', alias, function (error, response) {
+                roomService.getRoomInfo('', alias, function(error, response) {
                     expect(response.room).to.be.an.instanceof(ImmutableRoom);
                     expect(response.status).to.be.equal('ok');
                 });
             });
 
-            it('Expect createRoom to return status other than "ok"', function () {
+            it('Expect createRoom to return status other than "ok"', function() {
                 response.status = 'already-exists';
                 websocketStubber.stubResponse('chat.CreateRoom', response);
 
                 roomService.start(role, screenName);
 
-                roomService.createRoom(mockRoom, function (error, response) {
+                roomService.createRoom(mockRoom, function(error, response) {
                     expect(response.status).to.not.be.equal('ok');
                 });
             });
 
-            it('Expect createRoom to have all valid values (no members, and no roomId) passed to protocol', function () {
+            it('Expect createRoom to have all valid values (no members, and no roomId) passed to protocol', function() {
                 var roomToCreate = _.assign({}, mockRoom, {invalidProp: 'myInvalidValue'});
 
                 websocketStubber.stubResponse('chat.CreateRoom', response, function(type, message) {
@@ -305,20 +305,20 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.createRoom(roomToCreate, function () {});
+                roomService.createRoom(roomToCreate, function() {});
             });
 
-            it('Return new Room model with response.room values', function () {
+            it('Return new Room model with response.room values', function() {
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (error, response) {
+                roomService.enterRoom(roomId, alias, function(error, response) {
                     expect(response.room.getRoomId()).to.be.equal(mockRoom.roomId);
                     expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
                 });
             });
 
-            it('Self in enterRoomRequest should have all values', function () {
-                websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
+            it('Self in enterRoomRequest should have all values', function() {
+                websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                     var selfForRequest = message.member;
 
                     expect(selfForRequest.sessionId).to.be.a('string');
@@ -331,13 +331,13 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (error, response) {
+                roomService.enterRoom(roomId, alias, function(error, response) {
                     expect(response.room.getRoomId()).to.be.equal(mockRoom.roomId);
                     expect(roomService._cachedRoom.getValue()).to.not.be.equal(null);
                 });
             });
 
-            it('Self not returned from Enter Room does not throw error.', function () {
+            it('Self not returned from Enter Room does not throw error.', function() {
                 websocketStubber.stubResponse('chat.JoinRoom', {
                     status: 'ok',
                     room: mockRoom,
@@ -346,13 +346,13 @@ define([
 
                 roomService.start(role, screenName);
 
-                roomService.enterRoom(roomId, alias, function (error, response) {
+                roomService.enterRoom(roomId, alias, function(error, response) {
                     expect(error).to.not.exist;
                     expect(response.status).to.be.equal('ok');
                 });
             });
 
-            describe('When already in room', function () {
+            describe('When already in room', function() {
                 var member2 = {
                     state: member.states.passive.name,
                     sessionId: 'member2',
@@ -362,24 +362,24 @@ define([
                     screenName: 'second'
                 };
 
-                beforeEach(function (done) {
+                beforeEach(function(done) {
                     response.members = [member1, member2, self];
                     response.room.members = [member1, member2, self];
 
                     roomService.start(role, screenName);
 
-                    roomService.enterRoom(roomId, alias, function () {
+                    roomService.enterRoom(roomId, alias, function() {
                         done();
                     });
                 });
 
-                it('Success on leaveRoom', function () {
-                    roomService.leaveRoom(function (error, response) {
+                it('Success on leaveRoom', function() {
+                    roomService.leaveRoom(function(error, response) {
                         expect(response.status).to.be.equal('ok');
                     });
                 });
 
-                it('Self is the same in members list', function () {
+                it('Self is the same in members list', function() {
                     var roomSelf = roomService.getSelf();
                     var room = roomService.getObservableActiveRoom().getValue();
                     var memberListSelf = room.getObservableMembers().getValue()[2];
@@ -387,8 +387,8 @@ define([
                     expect(roomSelf).to.be.equal(memberListSelf);
                 });
 
-                describe('When onRoomEvent occurs', function () {
-                    it('MemberJoined event adds member to room', function () {
+                describe('When onRoomEvent occurs', function() {
+                    it('MemberJoined event adds member to room', function() {
                         var member3 = {
                             state: member.states.passive.name,
                             sessionId: 'member3',
@@ -409,7 +409,7 @@ define([
                         expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(4);
                     });
 
-                    it('Self joined has self instance in room with updated values', function () {
+                    it('Self joined has self instance in room with updated values', function() {
                         var member3 = {
                             state: member.states.passive.name,
                             sessionId: self.sessionId,
@@ -435,7 +435,7 @@ define([
                         expect(roomService.getSelf().getObservableScreenName().getValue()).to.be.equal('third');
                     });
 
-                    it('MemberLeft event handled removes member from room', function () {
+                    it('MemberLeft event handled removes member from room', function() {
                         websocketStubber.stubEvent('chat.RoomEvent', {
                             eventType: room.events.memberLeft.name,
                             roomId: 'TestRoom123',
@@ -447,7 +447,7 @@ define([
                         expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
                     });
 
-                    it('MemberLeft event for self removes member from room', function () {
+                    it('MemberLeft event for self removes member from room', function() {
                         websocketStubber.stubEvent('chat.RoomEvent', {
                             eventType: room.events.memberLeft.name,
                             roomId: 'TestRoom123',
@@ -459,7 +459,7 @@ define([
                         expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
                     });
 
-                    it('MemberUpdated event updates room member screenName', function () {
+                    it('MemberUpdated event updates room member screenName', function() {
                         var updatedMember2 = {
                             state: member.states.passive.name,
                             sessionId: 'member2',
@@ -476,14 +476,14 @@ define([
                         });
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
-                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function (member) {
+                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function(member) {
                             return member.getSessionId() === 'member2';
                         });
 
                         expect(updatedMemberModel._screenName.getValue()).to.be.equal('James');
                     });
 
-                    it('MemberUpdated event with new screen name does not override other local changes to member', function () {
+                    it('MemberUpdated event with new screen name does not override other local changes to member', function() {
                         var updatedMember2 = {
                             state: member.states.passive.name,
                             sessionId: 'member2',
@@ -494,7 +494,7 @@ define([
                         };
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
-                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function (member) {
+                        var updatedMemberModel = _.find(currentRoom.getObservableMembers().getValue(), function(member) {
                             return member.getSessionId() === 'member2';
                         });
                         var observableState = updatedMemberModel.getObservableState();
@@ -511,7 +511,7 @@ define([
                         expect(updatedMemberModel.getObservableState().getValue()).to.be.equal(member.states.active.name);
                     });
 
-                    it('MemberUpdated event updates self screenName', function () {
+                    it('MemberUpdated event updates self screenName', function() {
                         var newSelf = {
                             state: member.states.passive.name,
                             sessionId: sessionId,
@@ -532,7 +532,7 @@ define([
                         expect(self._screenName.getValue()).to.be.equal('NewScreenName');
                     });
 
-                    it('Updated (room) event updates room name', function () {
+                    it('Updated (room) event updates room name', function() {
                         var updatedRoom = {
                             roomId: 'TestRoom123',
                             alias: '',
@@ -555,7 +555,7 @@ define([
                         expect(currentRoom._name.getValue()).to.be.equal('TestRoom');
                     });
 
-                    it('DISABLED: Ended (room) event handled successfully', function () {
+                    it('DISABLED: Ended (room) event handled successfully', function() {
                         this.skip();
 
                         websocketStubber.stubEvent('chat.RoomEvent', {
@@ -571,7 +571,7 @@ define([
                     });
                 });
 
-                describe('When Member Updated (memberUpdate) triggered', function () {
+                describe('When Member Updated (memberUpdate) triggered', function() {
                     var publishedStream1 = {
                         type: 'User',
                         uri: 'Stream1',
@@ -586,13 +586,13 @@ define([
                     };
                     var self;
 
-                    beforeEach(function () {
+                    beforeEach(function() {
                         self = roomService.getSelf();
 
                         self.setStreams([publishedStream1]);
                     });
 
-                    it('Published Streams updated with 2 streams results in request with 2 streams', function (done) {
+                    it('Published Streams updated with 2 streams results in request with 2 streams', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -605,10 +605,10 @@ define([
                         publishedStreams.push(publishedStream2);
                         self.setStreams(publishedStreams);
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
 
-                    it('Published Streams updated with no streams results in request with no streams', function (done) {
+                    it('Published Streams updated with no streams results in request with no streams', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -618,10 +618,10 @@ define([
 
                         self.setStreams([]);
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
 
-                    it('Screen Name Updated results in request with updated screen name', function (done) {
+                    it('Screen Name Updated results in request with updated screen name', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -633,10 +633,10 @@ define([
 
                         screenNameObs.setValue('MyNewScreenName');
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
 
-                    it('Screen Name Updated does not include state property when state has not changed', function (done) {
+                    it('Screen Name Updated does not include state property when state has not changed', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -648,10 +648,10 @@ define([
 
                         screenNameObs.setValue('MyNewScreenName');
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
 
-                    it('Role Updated results in request with updated role when valid role passed in', function (done) {
+                    it('Role Updated results in request with updated role when valid role passed in', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -663,22 +663,22 @@ define([
 
                         roleObs.setValue(member.roles.presenter.name);
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
 
-                    it('Role Updated results in exception when invalid role passed in', function () {
+                    it('Role Updated results in exception when invalid role passed in', function() {
                         var stateObs = self.getObservableRole();
 
-                        expect(function () {
+                        expect(function() {
                             stateObs.setValue('MasterOfNone');
 
-                            roomService.updateSelf(function () {});
+                            roomService.updateSelf(function() {});
                         }).to.throw(Error);
                     });
                 });
 
-                describe('When reverting changes on member', function () {
-                    it('Changes to member screenName are reverted successfully to cached value', function () {
+                describe('When reverting changes on member', function() {
+                    it('Changes to member screenName are reverted successfully to cached value', function() {
                         var room = roomService.getObservableActiveRoom().getValue();
                         var cachedRoom = roomService._cachedRoom.getValue();
 
@@ -693,14 +693,14 @@ define([
                     });
                 });
 
-                describe('When Updating Room', function () {
+                describe('When Updating Room', function() {
                     var room;
 
-                    beforeEach(function () {
+                    beforeEach(function() {
                         room = roomService.getObservableActiveRoom().getValue();
                     });
 
-                    it('Update description yields change in description value on cached room', function (done) {
+                    it('Update description yields change in description value on cached room', function(done) {
                         websocketStubber.stubResponse('chat.UpdateRoom', response, function(type, message) {
                             var roomToUpdate = message.room;
 
@@ -713,18 +713,18 @@ define([
                         descriptionObs.setValue('newDescription');
                         response.room.description = 'newDescription';
 
-                        roomService.updateRoom(function () {});
+                        roomService.updateRoom(function() {});
                     });
                 });
 
-                describe('When reverting Room Changes', function () {
+                describe('When reverting Room Changes', function() {
                     var room;
 
-                    beforeEach(function () {
+                    beforeEach(function() {
                         room = roomService.getObservableActiveRoom().getValue();
                     });
 
-                    it('Changes to description are reverted to cached value', function () {
+                    it('Changes to description are reverted to cached value', function() {
                         var descriptionObs = room.getObservableDescription();
 
                         descriptionObs.setValue('newDescription');
@@ -735,8 +735,8 @@ define([
                     });
                 });
 
-                describe('When Streams updated', function () {
-                    it('Role Updated results in request with updated role when valid role passed in', function (done) {
+                describe('When Streams updated', function() {
+                    it('Role Updated results in request with updated role when valid role passed in', function(done) {
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
@@ -748,12 +748,12 @@ define([
 
                         roleObs.setValue(member.roles.presenter.name);
 
-                        roomService.updateSelf(function () {});
+                        roomService.updateSelf(function() {});
                     });
                 });
 
-                describe('When Session Id updated', function () {
-                    it('Session Id update causes member to leave and then enter room', function (done) {
+                describe('When Session Id updated', function() {
+                    it('Session Id update causes member to leave and then enter room', function(done) {
                         var leaveRoomSpy = sinon.spy();
                         websocketStubber.stubResponse('chat.LeaveRoom', {status: 'ok'}, leaveRoomSpy);
                         websocketStubber.stubResponse('chat.JoinRoom', response, function() {

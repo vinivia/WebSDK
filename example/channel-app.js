@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ requirejs.config({
         'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
         'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
         'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
-        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min'
+        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
+        'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min'
     }
 });
 
@@ -50,7 +51,7 @@ requirejs([
     'shaka-player',
     'video-player',
     'app-setup'
-], function ($, _, sdk, shaka, Player, app) {
+], function($, _, sdk, shaka, Player, app) {
     var init = function init() {
         var roomExpress;
 
@@ -65,7 +66,7 @@ requirejs([
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
-                shaka: shaka
+                shaka: app.getUrlParameter('shaka') ? shaka : null
             });
         };
 
@@ -186,7 +187,7 @@ requirejs([
             }
         };
 
-        app.setOnReset(function () {
+        app.setOnReset(function() {
             createRoomExpress();
         });
 
@@ -197,7 +198,7 @@ requirejs([
         joinChannel();
     };
 
-    $(function () {
+    $(function() {
         app.init();
         init();
 

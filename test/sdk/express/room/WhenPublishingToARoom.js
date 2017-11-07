@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
-    describe('When publishing to a room', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
+    describe('When publishing to a room', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -58,7 +58,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -94,11 +94,11 @@ define([
             roomExpress.dispose();
         });
 
-        it('has method publishToRoom', function () {
+        it('has method publishToRoom', function() {
             expect(roomExpress.publishToRoom).to.be.a('function');
         });
 
-        it('returns publisher from publishToRoom callback', function (done) {
+        it('returns publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
@@ -117,7 +117,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('results in new member with the same stream info as passed argument', function (done) {
+        it('results in new member with the same stream info as passed argument', function(done) {
             var infoKey1 = 'infoKey1';
             var infoValue1 = 'infoValue1';
             var infoKey2 = 'infoKey2';
@@ -162,7 +162,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('results in new member with real-time streamToken if no capability passed in', function (done) {
+        it('results in new member with real-time streamToken if no capability passed in', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 mockRoom.members = [message.member];
                 response.members = [message.member];
@@ -196,7 +196,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('results in new member with streaming and real-time streamToken if streaming capability passed in', function (done) {
+        it('results in new member with streaming and real-time streamToken if streaming capability passed in', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 mockRoom.members = [message.member];
                 response.members = [message.member];
@@ -231,7 +231,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('results in new member with no stream tokens if not using wildcard tokens', function (done) {
+        it('results in new member with no stream tokens if not using wildcard tokens', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
                 mockRoom.members = [message.member];
                 response.members = [message.member];

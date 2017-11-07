@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,12 @@ define('video-player', [
     'phenix-web-lodash-light',
     'phenix-web-sdk',
     'phenix-rtc'
-], function ($, _, sdk, rtc) {
+], function($, _, sdk, rtc) {
     var userAgent = window.navigator.userAgent;
     var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
 
-    var Player = function (elementId, options) {
+    var Player = function(elementId, options) {
         this.videoId = elementId;
         this.video = document.getElementById(elementId);
         this.videoControls = null;
@@ -63,7 +63,7 @@ define('video-player', [
         if (!renderer && stream.createRenderer) {
             renderer = stream.createRenderer();
 
-            renderer.addVideoDisplayDimensionsChangedCallback(function (renderer, dimensions) {
+            renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
                 changePlayerVideoDimensions.call(that, dimensions);
             });
 
@@ -132,7 +132,7 @@ define('video-player', [
         element.appendChild(createMuteVideoControl.call(this));
         element.appendChild(createFullscreenControl.call(this));
 
-        _.forEach(createTimingControls.call(this), function (timingControl) {
+        _.forEach(createTimingControls.call(this), function(timingControl) {
             element.appendChild(timingControl);
         });
 
@@ -204,7 +204,7 @@ define('video-player', [
             title: 'Buffered Size'
         }];
 
-        return _.map(timingElements, function (timingElement) {
+        return _.map(timingElements, function(timingElement) {
             var element = document.createElement('span');
 
             element.className = 'video-control ' + timingElement.className;
@@ -450,7 +450,7 @@ define('video-player', [
         }
     };
 
-    var isMediaStreamTrackEnabled = function (tracks) {
+    var isMediaStreamTrackEnabled = function(tracks) {
         if (!tracks || !tracks.length) {
             return false;
         }
@@ -463,7 +463,7 @@ define('video-player', [
             return false;
         }
 
-        _.forEach(tracks, function (track) {
+        _.forEach(tracks, function(track) {
             track.enabled = !enabled;
         });
 

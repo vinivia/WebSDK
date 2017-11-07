@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,28 +18,28 @@ define([
     'sdk/audio/AudioContext',
     'sdk/audio/AudioVolumeMeter',
     'phenix-rtc'
-], function (logging, AudioContext, AudioVolumeMeter, rtc) {
-    describe('When Measuring the Audio Volume Using WebRTC supported Browsers', function () {
+], function(logging, AudioContext, AudioVolumeMeter, rtc) {
+    describe('When Measuring the Audio Volume Using WebRTC supported Browsers', function() {
         var audioVolumeMeter;
 
-        beforeEach(function () {
+        beforeEach(function() {
             audioVolumeMeter = new AudioVolumeMeter(sinon.createStubInstance(logging.Logger));
         });
 
-        it('Has property onValue that is a function', function () {
+        it('Has property onValue that is a function', function() {
             expect(audioVolumeMeter.onValue).to.be.a('function');
         });
 
-        it('Has property connect that is a function', function () {
+        it('Has property connect that is a function', function() {
             expect(audioVolumeMeter.connect).to.be.a('function');
         });
 
-        it('Has property stop that is a function', function () {
+        it('Has property stop that is a function', function() {
             expect(audioVolumeMeter.stop).to.be.a('function');
         });
 
-        describe('When using WebRTC supported browsers', function () {
-            before(function () {
+        describe('When using WebRTC supported browsers', function() {
+            before(function() {
                 if (!rtc.webrtcSupported) {
                     this.skip();
                 }
@@ -47,24 +47,24 @@ define([
 
             var audioContext;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 audioContext = (new AudioContext()).getNativeAudioContext();
 
                 audioVolumeMeter.init(audioContext, 123);
             });
 
-            afterEach(function () {
+            afterEach(function() {
                 audioContext.close();
             });
 
-            it('Successfully connects mediaStream object with audio tracks', function () {
+            it('Successfully connects mediaStream object with audio tracks', function() {
                 var stream = new MediaStream();
-                stream.getAudioTracks = function () {
+                stream.getAudioTracks = function() {
                     return [{}];
                 };
 
-                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function () {
-                    return {connect: function () {}};
+                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function() {
+                    return {connect: function() {}};
                 });
 
                 audioVolumeMeter.connect(stream);
@@ -73,14 +73,14 @@ define([
                 audioContext.createMediaStreamSource.restore();
             });
 
-            it('Does not connect mediaStream object with no audio tracks', function () {
+            it('Does not connect mediaStream object with no audio tracks', function() {
                 var stream = new MediaStream();
-                stream.getAudioTracks = function () {
+                stream.getAudioTracks = function() {
                     return [];
                 };
 
-                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function () {
-                    return {connect: function () {}};
+                sinon.stub(audioContext, "createMediaStreamSource").callsFake(function() {
+                    return {connect: function() {}};
                 });
 
                 audioVolumeMeter.connect(stream);
@@ -89,7 +89,7 @@ define([
                 audioContext.createMediaStreamSource.restore();
             });
 
-            it('Stop results in scriptProcessor disconnect', function () {
+            it('Stop results in scriptProcessor disconnect', function() {
                 sinon.spy(audioVolumeMeter._scriptProcessor, "disconnect");
 
                 audioVolumeMeter.stop();
@@ -98,11 +98,11 @@ define([
                 audioVolumeMeter._scriptProcessor.disconnect.restore();
             });
 
-            it('Properly handles Audio Process event', function () {
+            it('Properly handles Audio Process event', function() {
                 var event = new Event('audioprocess');
                 event.inputBuffer = createBrowserAudioBuffer(audioContext);
 
-                audioVolumeMeter.onValue(function (event) {
+                audioVolumeMeter.onValue(function(event) {
                     expect(event.date).to.be.a('number');
                     expect(event.value).to.be.a('number');
                     expect(event.smoothedValue).to.be.a('number');
@@ -116,7 +116,7 @@ define([
     });
 });
 
-function createBrowserAudioBuffer (audioContext) {
+function createBrowserAudioBuffer(audioContext) {
     var channels = 2;
 
     // Create an empty two second stereo buffer at the

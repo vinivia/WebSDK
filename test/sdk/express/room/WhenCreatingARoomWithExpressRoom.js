@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ define([
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, room) {
-    describe('When Creating a Room with ExpressRoom', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, room) {
+    describe('When Creating a Room with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -74,12 +74,12 @@ define([
             roomExpress.dispose();
         });
 
-        it('Has method createRoom', function () {
+        it('Has method createRoom', function() {
             expect(roomExpress.createRoom).to.be.a('function');
         });
 
-        it('Expect createRoom protocol to be called with required values', function (done) {
-            websocketStubber.stubResponse('chat.CreateRoom', response, function (type, message) {
+        it('Expect createRoom protocol to be called with required values', function(done) {
+            websocketStubber.stubResponse('chat.CreateRoom', response, function(type, message) {
                 expect(message.room.name).to.be.equal(mockRoom.name);
                 expect(message.room.type).to.be.equal(mockRoom.type);
                 expect(message.room.description).to.not.be.empty;
@@ -89,10 +89,10 @@ define([
             roomExpress.createRoom({room: mockRoom}, function() {});
         });
 
-        it('Expect createRoom protocol to be called with default description value', function (done) {
+        it('Expect createRoom protocol to be called with default description value', function(done) {
             var roomToCreate = _.assign({}, mockRoom, {description: ''});
 
-            websocketStubber.stubResponse('chat.CreateRoom', roomToCreate, function (type, message) {
+            websocketStubber.stubResponse('chat.CreateRoom', roomToCreate, function(type, message) {
                 expect(message.room.description).to.be.equal('Multi Party Chat');
                 done();
             });
@@ -100,7 +100,7 @@ define([
             roomExpress.createRoom({room: roomToCreate}, function() {});
         });
 
-        it('Expect room to be returned from createRoom', function (done) {
+        it('Expect room to be returned from createRoom', function(done) {
             websocketStubber.stubResponse('chat.CreateRoom', {
                 status: 'ok',
                 room: mockRoom

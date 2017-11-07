@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert'
-], function (_, assert) {
+], function(_, assert) {
     'use strict';
 
     var mostRecentStrategy = 'most-recent';
@@ -165,7 +165,7 @@ define([
     }
 
     function getMostRecentMember(members) {
-        return _.reduce(members, function (memberA, memberB) {
+        return _.reduce(members, function(memberA, memberB) {
             if (!memberA) {
                 return memberB;
             }
@@ -201,13 +201,13 @@ define([
     function getAllowedMembers(members) {
         var that = this;
 
-        return _.filter(members, function (member) {
+        return _.filter(members, function(member) {
             return !isBlackListed.call(that, member);
         });
     }
 
     function removeMember(members, memberToRemove) {
-        return _.filter(members, function (member) {
+        return _.filter(members, function(member) {
             return getMemberKey(member) !== getMemberKey(memberToRemove);
         });
     }

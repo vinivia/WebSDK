@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 /* global requirejs */
-
 if (window.BUILD_ENV === 'webpack') {
     require("bootstrap/dist/css/bootstrap.css");
     require("animate.css/animate.css");
@@ -42,12 +41,13 @@ if (window.BUILD_ENV === 'webpack') {
             'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
             'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
             'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
-            'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min'
+            'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
+            'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min'
         }
     });
 }
 
-define([
+requirejs([
     'jquery',
     'lodash',
     'bootstrap-notify',
@@ -56,7 +56,7 @@ define([
     'shaka-player',
     'video-player',
     'app-setup'
-], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
+], function($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localPrimaryPlayer = null;
@@ -98,7 +98,7 @@ define([
         };
 
         var createPCast = function createPCast() {
-            window.onerror = function (e) {
+            window.onerror = function(e) {
                 pcast.getLogger().error('Window Error', e);
             };
 
@@ -109,7 +109,7 @@ define([
             var uri = app.getUri();
             var pcastOptions = {
                 uri: uri,
-                shaka: shaka
+                shaka: app.getUrlParameter('shaka') ? shaka : null
             };
 
             adminBaseUri = app.getBaseUri();
@@ -121,12 +121,12 @@ define([
                 };
             }
 
-            fingerprint.get(function (fingerprint) {
+            fingerprint.get(function(fingerprint) {
                 pcastOptions.deviceId = fingerprint;
                 pcast = new sdk.PCast(pcastOptions);
 
                 pcast.getLogger().addAppender({
-                    log: function () {
+                    log: function() {
                         if (sdk.RTC.browser !== 'Safari') {
                             return;
                         }
@@ -156,13 +156,13 @@ define([
                 contentType: 'application/json',
                 method: 'POST',
                 data: JSON.stringify(data)
-            }).done(function (result) {
+            }).done(function(result) {
                 $('.authToken').val(result.authenticationToken);
                 app.activateStep('step-2');
-                setTimeout(function () {
+                setTimeout(function() {
                     app.activateStep('step-3');
                 }, 1500);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Auth</strong>',
@@ -182,7 +182,7 @@ define([
                     message: 'Connected to PCast&trade;'
                 });
                 app.activateStep('step-4');
-                setTimeout(function () {
+                setTimeout(function() {
                     app.activateStep('step-5');
                 }, 1500);
             }, function offlineCallback() {
@@ -232,8 +232,8 @@ define([
                 var secondaryStream = window.MediaStream ? new window.MediaStream() : null;
 
                 if (window.MediaStream) {
-                    _.forEach(userMediaStream.getTracks(), function (track) {
-                        var trackCount = _.filter(primaryStream.getTracks(), function (primaryStreamTrack) {
+                    _.forEach(userMediaStream.getTracks(), function(track) {
+                        var trackCount = _.filter(primaryStream.getTracks(), function(primaryStreamTrack) {
                             return primaryStreamTrack.kind === track.kind;
                         }).length;
 
@@ -291,7 +291,7 @@ define([
             }
         };
 
-        var stopUserMedia = function () {
+        var stopUserMedia = function() {
             if (userMediaStream) {
                 var tracks = userMediaStream.getTracks();
 
@@ -356,7 +356,7 @@ define([
                 publisher = phenixPublisher;
                 $('#stopPublisher').removeClass('disabled');
 
-                publisher.setDataQualityChangedCallback(function (publisher, status, reason) {
+                publisher.setDataQualityChangedCallback(function(publisher, status, reason) {
                     app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
@@ -364,7 +364,7 @@ define([
                     });
                 });
 
-                publisher.setPublisherEndedCallback(function (publisher, reason) {
+                publisher.setPublisherEndedCallback(function(publisher, reason) {
                     app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Publish</strong>',
@@ -374,7 +374,7 @@ define([
 
                 var limit = publisher.limitBandwidth(400000);
 
-                setTimeout(function () {
+                setTimeout(function() {
                     limit.dispose();
                 }, 10000);
 
@@ -387,7 +387,7 @@ define([
                 $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
                 app.activateStep('step-5-5');
-                setTimeout(function () {
+                setTimeout(function() {
                     app.activateStep('step-6');
                 }, 1500);
             };
@@ -395,7 +395,7 @@ define([
             pcast.publish(streamToken, userMediaStream, publishCallback, tags);
         };
 
-        var stopPublisher = function () {
+        var stopPublisher = function() {
             if (publisher) {
                 publisher.stop();
                 publisher = null;
@@ -434,19 +434,19 @@ define([
                 contentType: 'application/json',
                 method: 'PUT',
                 data: JSON.stringify(data)
-            }).done(function (result) {
+            }).done(function(result) {
                 $('#stream').find('option').remove().end();
 
                 if (result.streams.length > 0) {
                     $('#stream').append($('<option></option>').attr('value', '').text('Please select a stream'));
 
-                    _.forEach(result.streams, function (stream) {
+                    _.forEach(result.streams, function(stream) {
                         $('#stream').append($('<option></option>').attr('value', stream.streamId).text(stream.streamId));
                     });
                 } else {
                     $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
                 }
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Streams</strong>',
@@ -470,7 +470,7 @@ define([
                 contentType: 'application/json',
                 method: 'POST',
                 data: JSON.stringify(data)
-            }).done(function (result) {
+            }).done(function(result) {
                 $(targetElementSelector).val(result.streamToken);
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
@@ -478,7 +478,7 @@ define([
                     message: 'Created token for stream "' + originStreamId + '"'
                 });
                 callback(result.streamToken);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Stream</strong>',
@@ -494,15 +494,15 @@ define([
             var originStreamId = '';
             var capabilities = [];
 
-            $('#publish-capabilities option:selected').each(function () {
+            $('#publish-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());
             });
 
             capabilities.push($('#publish-quality option:selected').val());
 
-            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
+            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
                 app.activateStep('step-5-3');
-                setTimeout(function () {
+                setTimeout(function() {
                     app.activateStep('step-5-4');
                 }, 1500);
             });
@@ -517,13 +517,13 @@ define([
 
             capabilities.push($('#subscriber-mode option:selected').val());
 
-            $('#subscriber-drm-capabilities option:selected').each(function () {
+            $('#subscriber-drm-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());
             });
 
-            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function () {
+            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
                 app.activateStep('step-7');
-                setTimeout(function () {
+                setTimeout(function() {
                     app.activateStep('step-8');
                 }, 1500);
             });
@@ -549,7 +549,7 @@ define([
 
                 mediaStream.monitor({}, monitorStream);
 
-                mediaStream.setStreamErrorCallback(function (mediaStream, errSource, err) {
+                mediaStream.setStreamErrorCallback(function(mediaStream, errSource, err) {
                     var errTitle = 'Stream Error';
                     var errMessage = err;
 
@@ -573,7 +573,7 @@ define([
                 var primaryMediaStream = mediaStream;
 
                 if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
-                    primaryMediaStream = mediaStream.select(function (track, index) {
+                    primaryMediaStream = mediaStream.select(function(track, index) {
                         return (track.kind === 'video' || track.kind === 'audio') && index < 2;
                     });
                 }
@@ -586,7 +586,7 @@ define([
                 primaryPlayer.start(primaryMediaStream);
 
                 if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
-                    var secondaryMediaStream = mediaStream.select(function (track, index) {
+                    var secondaryMediaStream = mediaStream.select(function(track, index) {
                         return track.kind === 'video' && index === 2;
                     });
 
@@ -609,7 +609,7 @@ define([
             });
         };
 
-        var stopSubscriber = function (reason) {
+        var stopSubscriber = function(reason) {
             if (subscriberMediaStream) {
                 subscriberMediaStream.stop(reason);
                 subscriberMediaStream = null;
@@ -648,13 +648,13 @@ define([
             }
         };
 
-        app.setOnReset(function () {
+        app.setOnReset(function() {
             createPCast();
             app.setLoggerEnvironment(pcast);
             listStreams();
         });
 
-        $('#applicationId').change(function () {
+        $('#applicationId').change(function() {
             listStreams();
             app.setLoggerUserId(pcast);
         });
@@ -681,13 +681,13 @@ define([
         createPCast();
     };
 
-    $(function () {
+    $(function() {
         app.init();
         init();
 
         // Plugin might load with delay
         if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function () {
+            sdk.RTC.onload = function() {
                 app.init();
                 init();
             };

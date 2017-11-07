@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc'
-], function (_, assert, RTC) {
+], function(_, assert, RTC) {
     'use strict';
 
     var listenForMediaStreamTrackChangesTimeout = 2000;
@@ -35,7 +35,7 @@ define([
         this._onScreenShare = onScreenShare;
     }
 
-    UserMediaProvider.prototype.getUserMedia = function (options, callback) {
+    UserMediaProvider.prototype.getUserMedia = function(options, callback) {
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
@@ -101,7 +101,7 @@ define([
             successCallback('ok', stream);
         };
 
-        return getUserMediaConstraints.call(this, options, function (error, response) {
+        return getUserMediaConstraints.call(this, options, function(error, response) {
             if (response.status === 'cancelled') {
                 return onUserMediaCancelled();
             }
@@ -132,12 +132,12 @@ define([
         var that = this;
 
         if (options.screen) {
-            return that._screenShareExtensionManager.isScreenSharingEnabled(function (isEnabled) {
+            return that._screenShareExtensionManager.isScreenSharingEnabled(function(isEnabled) {
                 if (isEnabled) {
                     return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
                 }
 
-                return that._screenShareExtensionManager.installExtension(function (error, response) {
+                return that._screenShareExtensionManager.installExtension(function(error, response) {
                     if (error || (response && response.status !== 'ok')) {
                         return callback(error, response);
                     }
@@ -208,7 +208,7 @@ define([
             return;
         }
 
-        _.forEach(tracks, function (track) {
+        _.forEach(tracks, function(track) {
             stream.addTrack(track);
         });
     }

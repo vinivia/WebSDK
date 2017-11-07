@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-event'
-], function (_, assert, event) {
+], function(_, assert, event) {
     'use strict';
 
     var defaultPollFrequency = 500;
@@ -61,7 +61,7 @@ define([
         return this._dimensionsChangedEvent.listen(callback);
     };
 
-    DimensionsChangedMonitor.prototype.toString = function () {
+    DimensionsChangedMonitor.prototype.toString = function() {
         return 'DimensionsChangedMonitor[pollFrequency=' + this._dimensionsChangedData.pollFrequency +
             ', previousHeight=' + this._dimensionsChangedData.previousHeight +
             ', previousWidth=' + this._dimensionsChangedData.previousHeight +

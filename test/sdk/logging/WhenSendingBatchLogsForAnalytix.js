@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 define([
     'sdk/logging/TelemetryAppender',
     'phenix-web-logging'
-], function (TelemetryAppender, logging) {
-    describe('When Sending Batch Logs For Telemetry', function () {
+], function(TelemetryAppender, logging) {
+    describe('When Sending Batch Logs For Telemetry', function() {
         var requests;
         var telemetryAppender;
 
@@ -28,7 +28,7 @@ define([
 
             requests = [];
 
-            this.xhr.onCreate = function (req) {
+            this.xhr.onCreate = function(req) {
                 requests.push(req);
             };
 
@@ -41,38 +41,38 @@ define([
             telemetryAppender.setEnabled(false);
         });
 
-        it('has property log that is a function', function () {
+        it('has property log that is a function', function() {
             expect(telemetryAppender.log).to.be.a('function');
         });
 
-        it('has property setThreshold that is a function', function () {
+        it('has property setThreshold that is a function', function() {
             expect(telemetryAppender.setThreshold).to.be.a('function');
         });
 
-        it('has property getThreshold that is a function', function () {
+        it('has property getThreshold that is a function', function() {
             expect(telemetryAppender.getThreshold).to.be.a('function');
         });
 
-        it('expects logging without enabled does not trigger http request', function () {
+        it('expects logging without enabled does not trigger http request', function() {
             telemetryAppender.setEnabled(false);
             telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             expect(requests[0]).to.not.be.ok;
         });
 
-        it('expects logging does trigger http request', function () {
+        it('expects logging does trigger http request', function() {
             telemetryAppender.log(0, 'Trace', '', ['Message'], sessionId, '', '', '', {level: logging.level.TRACE});
 
             expect(requests[0]).to.be.ok;
         });
 
-        it('expects threshold to be set when setThreshold is passed a log level', function () {
+        it('expects threshold to be set when setThreshold is passed a log level', function() {
             telemetryAppender.setThreshold(logging.level.WARN);
 
             expect(telemetryAppender.getThreshold()).to.be.equal(logging.level.WARN);
         });
 
-        it('expects log of warn to be logged when threshold is warn', function () {
+        it('expects log of warn to be logged when threshold is warn', function() {
             telemetryAppender.setThreshold(logging.level.WARN);
             telemetryAppender._records = [];
 
@@ -85,7 +85,7 @@ define([
             expect(requests.length).to.be.equal(1);
         });
 
-        it('expects log of error to be logged when threshold is warn', function () {
+        it('expects log of error to be logged when threshold is warn', function() {
             telemetryAppender.setThreshold(logging.level.WARN);
             telemetryAppender._records = [];
 
@@ -98,7 +98,7 @@ define([
             expect(requests.length).to.be.equal(1);
         });
 
-        it('expects log of fatal to be logged when threshold is warn', function () {
+        it('expects log of fatal to be logged when threshold is warn', function() {
             telemetryAppender.setThreshold(logging.level.WARN);
             telemetryAppender._records = [];
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ requirejs([
     'shaka-player',
     'video-player',
     'app-setup'
-], function ($, _, sdk, shaka, Player, app) {
+], function($, _, sdk, shaka, Player, app) {
     var init = function init() {
         var roomExpress;
 
@@ -80,11 +80,11 @@ requirejs([
         var videoSources = [];
         var audioSources = [];
 
-        sdk.RTC.getSources(function (sources) {
-            videoSources = sources.filter(function (source) {
+        sdk.RTC.getSources(function(sources) {
+            videoSources = sources.filter(function(source) {
                 return source.kind === 'video';
             });
-            audioSources = sources.filter(function (source) {
+            audioSources = sources.filter(function(source) {
                 return source.kind === 'audio';
             });
         });
@@ -180,7 +180,7 @@ requirejs([
 
             videoElement.setAttribute('muted', true); // Don't want to hear yourself
 
-            return publishAndHandleErrors(highQualityOptions, function (response) {
+            return publishAndHandleErrors(highQualityOptions, function(response) {
                 publisher = {
                     publisher: response.publisher,
                     videoElement: videoElement
@@ -195,7 +195,7 @@ requirejs([
                 }
 
                 if (app.getUrlParameter('mq') || app.getUrlParameter('multipleQualities')) {
-                    publishAndHandleErrors(lowQualityOptions, function (response) {
+                    publishAndHandleErrors(lowQualityOptions, function(response) {
                         lowQualityPublisher = {publisher: response.publisher};
                     });
                 }
@@ -203,7 +203,7 @@ requirejs([
         }
 
         function publishAndHandleErrors(options, callback) {
-            return roomExpress.publishToRoom(options, function (error, response) {
+            return roomExpress.publishToRoom(options, function(error, response) {
                 if (error) {
                     setUserMessage('Unable to publish to Room: ' + error.message);
                     leaveRoomAndStopPublisher();
@@ -255,15 +255,15 @@ requirejs([
         }
 
         function removeOldMembers(members) {
-            var membersThatLeft = membersStore.filter(function (member) {
+            var membersThatLeft = membersStore.filter(function(member) {
                 return !members.includes(member);
             });
 
-            membersThatLeft.forEach(function (memberThatLeft) {
+            membersThatLeft.forEach(function(memberThatLeft) {
                 var memberSubscription = memberSubscriptions[memberThatLeft.getSessionId()];
 
                 if (memberSubscription) {
-                    memberSubscription.forEach(function (subscription) {
+                    memberSubscription.forEach(function(subscription) {
                         removeMemberStream(subscription.memberStream, memberThatLeft.getSessionId());
                     });
                 }
@@ -271,17 +271,17 @@ requirejs([
                 delete memberSubscriptions[memberThatLeft.getSessionId()];
             });
 
-            membersStore = membersStore.filter(function (member) {
+            membersStore = membersStore.filter(function(member) {
                 return !membersThatLeft.includes(member);
             });
         }
 
         function removeMemberStream(memberStream, memberSessionId) {
-            var memberSubscriptionToRemove = memberSubscriptions[memberSessionId].find(function (memberSubscription) {
+            var memberSubscriptionToRemove = memberSubscriptions[memberSessionId].find(function(memberSubscription) {
                 return memberStream.getPCastStreamId() === memberSubscription.memberStream.getPCastStreamId();
             });
 
-            memberSubscriptions[memberSessionId] = memberSubscriptions[memberSessionId].filter(function (memberSubscription) {
+            memberSubscriptions[memberSessionId] = memberSubscriptions[memberSessionId].filter(function(memberSubscription) {
                 return memberStream.getPCastStreamId() !== memberSubscription.memberStream.getPCastStreamId();
             });
 
@@ -292,24 +292,24 @@ requirejs([
         }
 
         function addNewMembers(members) {
-            var membersThatJoined = members.filter(function (member) {
+            var membersThatJoined = members.filter(function(member) {
                 return !membersStore.includes(member);
             });
 
-            membersThatJoined.forEach(function (newMember) {
+            membersThatJoined.forEach(function(newMember) {
                 var memberSessionId = newMember.getSessionId();
 
                 memberSubscriptions[memberSessionId] = [];
 
                 // Listen for changes to member streams. This will happen when the publisher fails and it recovers, or when adding or removing a screen share
-                var memberStreamSubscription = newMember.getObservableStreams().subscribe(function (memberStreams) {
+                var memberStreamSubscription = newMember.getObservableStreams().subscribe(function(memberStreams) {
                     if (!memberSubscriptions[memberSessionId]) {
                         return memberStreamSubscription.dispose();
                     }
 
                     // Remove old streams
-                    memberSubscriptions[memberSessionId].forEach(function (memberSubscription) {
-                        var shouldRemoveMember = !memberStreams.find(function (stream) {
+                    memberSubscriptions[memberSessionId].forEach(function(memberSubscription) {
+                        var shouldRemoveMember = !memberStreams.find(function(stream) {
                             return stream.getPCastStreamId() === memberSubscription.memberStream.getPCastStreamId();
                         });
 
@@ -319,16 +319,16 @@ requirejs([
                     });
 
                     // Subscribe to new streams
-                    memberStreams.filter(function (memberStream) {
-                        return !memberSubscriptions[memberSessionId].find(function (memberSubscription) {
+                    memberStreams.filter(function(memberStream) {
+                        return !memberSubscriptions[memberSessionId].find(function(memberSubscription) {
                             return memberStream.getPCastStreamId() === memberSubscription.memberStream.getPCastStreamId();
                         });
-                    }).forEach(function (memberStream) {
+                    }).forEach(function(memberStream) {
                         subscribeToMemberStream(memberStream, memberSessionId);
                     });
                 });
 
-                newMember.getObservableStreams().getValue().forEach(function (memberStream) {
+                newMember.getObservableStreams().getValue().forEach(function(memberStream) {
                     subscribeToMemberStream(memberStream, memberSessionId);
                 });
             });
@@ -354,7 +354,7 @@ requirejs([
                 capabilities: [],
                 monitor: {callback: onMonitorEvent}
             };
-            var handleSubscribe = function (error, response) {
+            var handleSubscribe = function(error, response) {
                 if (!response.mediaStream) {
                     return;
                 }
@@ -403,8 +403,8 @@ requirejs([
             videoElement.setAttribute('autoplay', ''); // For Safari and IOS + Mobile
 
             // To resolve unintended pauses
-            videoElement.onpause = function () {
-                setTimeout(function () {
+            videoElement.onpause = function() {
+                setTimeout(function() {
                     videoElement.play();
                 }, 10);
             };
@@ -434,7 +434,7 @@ requirejs([
 
             videoElement.setAttribute('muted', true); // Don't want to hear yourself
 
-            return roomExpress.publishScreenToRoom(publishOptions, function (error, response) {
+            return roomExpress.publishScreenToRoom(publishOptions, function(error, response) {
                 if (error) {
                     setUserMessage('Unable to publish to Room: ' + error.message);
 
@@ -475,14 +475,14 @@ requirejs([
         publishScreenShareButton.onclick = publishScreen;
         stopScreenShareButton.onclick = stopPublishScreen;
 
-        app.setOnReset(function () {
+        app.setOnReset(function() {
             createRoomExpress();
         });
 
         createRoomExpress();
     };
 
-    $(function () {
+    $(function() {
         app.init();
         init();
 

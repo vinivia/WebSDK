@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,17 +20,17 @@ define([
     'sdk/PCast',
     'sdk/logging/pcastLoggerFactory',
     'phenix-web-logging'
-], function (http, _, PCast, pcastLoggerFactory, logging) {
+], function(http, _, PCast, pcastLoggerFactory, logging) {
     'use strict';
 
-    describe('When connecting to PCast', function () {
+    describe('When connecting to PCast', function() {
         var pcastLoggerStub;
         var pcast;
         var authToken;
 
         this.timeout(30000);
 
-        before('Get Auth Token', function (done) {
+        before('Get Auth Token', function(done) {
             if (pcastLoggerFactory.createPCastLogger.restore) {
                 pcastLoggerFactory.createPCastLogger.restore();
             }
@@ -54,7 +54,7 @@ define([
             expect(applicationId).to.be.a('string');
             expect(secret).to.be.a('string');
 
-            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), null, function (error, data) {
+            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), null, function(error, data) {
                 if (error) {
                     done(error);
                 }
@@ -70,24 +70,24 @@ define([
             expect(pcast.toString()).to.be.a('string');
         });
 
-        it('acquires an authentication token', function () {
+        it('acquires an authentication token', function() {
             expect(authToken).to.be.a('string');
         });
 
-        describe('When starting PCast', function () {
+        describe('When starting PCast', function() {
             var theSessionId;
             var onlineCallbackInvocationCount = 0;
             var offlineCallbackInvocationCount = 0;
             var startCount = 0;
 
-            before(function (done) {
+            before(function(done) {
                 if (startCount > 0) {
                     return;
                 }
 
                 startCount++;
 
-                pcast.start(authToken, function authenticateCallback (pcast, status, sessionId) {
+                pcast.start(authToken, function authenticateCallback(pcast, status, sessionId) {
                     theSessionId = sessionId;
 
                     if (status !== 'ok') {
@@ -96,9 +96,9 @@ define([
                         expect(sessionId).to.be.a('string');
                         done();
                     }
-                }, function onlineCallback () {
+                }, function onlineCallback() {
                     onlineCallbackInvocationCount++;
-                }, function offlineCallback () {
+                }, function offlineCallback() {
                     offlineCallbackInvocationCount++;
                 });
             });
@@ -107,23 +107,23 @@ define([
                 expect(pcast.toString()).to.be.a('string');
             });
 
-            it('receives a session ID', function () {
+            it('receives a session ID', function() {
                 expect(theSessionId).to.be.a('string');
             });
 
-            it('became "online" once', function () {
+            it('became "online" once', function() {
                 expect(onlineCallbackInvocationCount).to.be.equal(1);
             });
 
-            it('did not become "offline"', function () {
+            it('did not become "offline"', function() {
                 expect(offlineCallbackInvocationCount).to.be.equal(0);
             });
 
-            describe('When stopping PCast', function () {
-                before(function (done) {
+            describe('When stopping PCast', function() {
+                before(function(done) {
                     pcast.stop();
 
-                    var intervalId = setInterval(function () {
+                    var intervalId = setInterval(function() {
                         if (offlineCallbackInvocationCount > 0) {
                             clearInterval(intervalId);
 
@@ -135,16 +135,16 @@ define([
                     }, 200);
                 });
 
-                it('became "online" once', function () {
+                it('became "online" once', function() {
                     expect(onlineCallbackInvocationCount).to.be.equal(1);
                 });
 
-                it('became "offline" once', function () {
+                it('became "offline" once', function() {
                     expect(offlineCallbackInvocationCount).to.be.equal(1);
                 });
             });
 
-            after(function () {
+            after(function() {
                 pcast.stop();
                 pcastLoggerStub.restore();
             });

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
     'sdk/PeerConnectionMonitor'
-], function (PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, PeerConnectionMonitor) {
-    describe('When Publishing with Express PCast', function () {
+], function(PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, PeerConnectionMonitor) {
+    describe('When Publishing with Express PCast', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -41,7 +41,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -69,11 +69,11 @@ define([
             pcastExpress.dispose();
         });
 
-        it('Has method publish', function () {
+        it('Has method publish', function() {
             expect(pcastExpress.publish).to.be.a('function');
         });
 
-        it('Expect publisher to be returned in subscribe callback', function (done) {
+        it('Expect publisher to be returned in subscribe callback', function(done) {
             pcastExpress.publish({
                 capabilities: [],
                 userMediaStream: {}
@@ -85,7 +85,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect monitor to return a response with retry', function (done) {
+        it('Expect monitor to return a response with retry', function(done) {
             var startClone = PeerConnectionMonitor.prototype.start;
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
@@ -113,7 +113,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect monitor retry to setup a new publisher', function (done) {
+        it('Expect monitor retry to setup a new publisher', function(done) {
             var startClone = PeerConnectionMonitor.prototype.start;
             var subscribeCount = 0;
 
@@ -152,7 +152,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function (done) {
+        it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function(done) {
             var startClone = PeerConnectionMonitor.prototype.start;
             var subscribeCount = 0;
 

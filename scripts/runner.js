@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ console.log('Using npm: ' + npm);
 function run(command, next) {
     var p = spawn(command[0], command.slice(1), {stdio: 'inherit'});
 
-    p.on('error', function (err) {
+    p.on('error', function(err) {
         console.error('Error received: ', err);
         process.exit(77);
     });
 
-    p.on('close', function (code) {
+    p.on('close', function(code) {
         if (code !== 0) {
             console.error(command[0] + ' failed with code ' + code);
             process.exit(code);
@@ -64,7 +64,7 @@ exports.runCommands = function runCommands(commands, done) {
         }
     }
 
-    run(command, function () {
+    run(command, function() {
         if (commands.length > 1) {
             runCommands(commands.slice(1), done);
         } else {

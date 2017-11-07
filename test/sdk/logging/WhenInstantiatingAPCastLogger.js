@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,25 +18,25 @@ define([
     'phenix-web-logging',
     'sdk/logging/pcastLoggerFactory',
     'sdk/logging/TelemetryAppender'
-], function (_, logging, pcastLoggerFactory, TelemetryAppender) {
-    describe('When Instantiating A PCast Logger', function () {
+], function(_, logging, pcastLoggerFactory, TelemetryAppender) {
+    describe('When Instantiating A PCast Logger', function() {
         var logger;
 
         beforeEach(function() {
             logger = pcastLoggerFactory.createPCastLogger('stg');
         });
 
-        it('Has property isPCastLogger that is equal to true', function () {
+        it('Has property isPCastLogger that is equal to true', function() {
             expect(logger.isPCastLogger).to.be.equal(true);
         });
 
-        it('Expect telemetry appender to have threshold of Info', function () {
+        it('Expect telemetry appender to have threshold of Info', function() {
             var telemetryAppender = getTelemetryAppender(logger);
 
             expect(telemetryAppender.getThreshold()).to.be.equal(logging.level.INFO);
         });
 
-        it('Expect console appender to have threshold of Trace', function () {
+        it('Expect console appender to have threshold of Trace', function() {
             var consoleAppender = getConsoleAppender(logger);
 
             expect(consoleAppender.getThreshold()).to.be.equal(logging.level.TRACE);

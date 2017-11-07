@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/PeerConnectionMonitor'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
-    describe('When Joining a Channel With High Availability Stream Selection Strategy', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+    describe('When Joining a Channel With High Availability Stream Selection Strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -70,7 +70,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
 
@@ -110,7 +110,7 @@ define([
             return uri.substring(pcastPrefix.length, uri.length);
         }
 
-        it('upon failure iterates through each member in order from primary to alternate to anything else', function (done) {
+        it('upon failure iterates through each member in order from primary to alternate to anything else', function(done) {
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1');
             var alternateMember = createMember('alternate', '1');
@@ -154,7 +154,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('upon failure iterates through each primary member before iterating through alternates', function (done) {
+        it('upon failure iterates through each primary member before iterating through alternates', function(done) {
             var subscribeCount = 0;
             var primaryMember1 = createMember('primary', '1');
             var primaryMember2 = createMember('primary', '2');
@@ -198,7 +198,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('upon failure iterates through each primary member even with the same screen name and different sessionIds and streamIds', function (done) {
+        it('upon failure iterates through each primary member even with the same screen name and different sessionIds and streamIds', function(done) {
             var subscribeCount = 0;
             var primaryMember1 = createMember('primary', '1');
             var primaryMember2 = createMember('primary', '2');
@@ -242,7 +242,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('does not iterate through members when primary stream ends with reason of app-background', function (done) {
+        it('does not iterate through members when primary stream ends with reason of app-background', function(done) {
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1');
             var alternateMember = createMember('alternate', '1');
@@ -282,7 +282,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('fails if all members trigger client side failure before timeout', function (done) {
+        it('fails if all members trigger client side failure before timeout', function(done) {
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1');
             var alternateMember = createMember('alternate', '1');

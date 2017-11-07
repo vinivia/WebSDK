@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/PeerConnectionMonitor'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
-    describe('When Joining a Channel With Express Room That Has A Presenter', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+    describe('When Joining a Channel With Express Room That Has A Presenter', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -45,7 +45,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -95,7 +95,7 @@ define([
             roomExpress.dispose();
         });
 
-        it('Expect monitor event to trigger a callback and re-subscribe', function (done) {
+        it('Expect monitor event to trigger a callback and re-subscribe', function(done) {
             var subscribeCount = 0;
             var startClone = PeerConnectionMonitor.prototype.start;
 
@@ -124,7 +124,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('Expect stream ended reason of ended to trigger callback with reason ended', function (done) {
+        it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
             var subscribeCount = 0;
 
             roomExpress.joinChannel({

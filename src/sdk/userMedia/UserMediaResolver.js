@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc'
-], function (_, assert, RTC) {
+], function(_, assert, RTC) {
     'use strict';
 
     // ToDo: Add supported frame rates [30, 15]
@@ -452,7 +452,7 @@ define([
         var hasVideo = !!constraints.video;
         var that = this;
 
-        this._pcast.getUserMedia(constraints, function (pcast, status, userMedia, error) {
+        this._pcast.getUserMedia(constraints, function(pcast, status, userMedia, error) {
             if (status === 'ok') {
                 return callback(null, {
                     userMedia: userMedia,
@@ -637,7 +637,7 @@ define([
     }
 
     function getObjectValueInArray(value, collection) {
-        var valueObject = _.find(collection, function (item) {
+        var valueObject = _.find(collection, function(item) {
             return item.hasOwnProperty(value);
         });
 
@@ -645,7 +645,7 @@ define([
     }
 
     function getIndexInArray(value, collection) {
-        return _.findIndex(collection, function (item) {
+        return _.findIndex(collection, function(item) {
             return item.hasOwnProperty(value);
         });
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ define([
     '../../../test/mock/ChromeRuntimeStubber',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function (_, PCast, RoomService, PublisherBandwidthAdjuster, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, roomEnum, memberEnum) {
-    describe('When Adjusting Publisher Bandwidth', function () {
+], function(_, PCast, RoomService, PublisherBandwidthAdjuster, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, roomEnum, memberEnum) {
+    describe('When Adjusting Publisher Bandwidth', function() {
         var publisher = {};
         var publisherBandwidthAdjuster;
         var roomService;
@@ -46,7 +46,7 @@ define([
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stub();
 
@@ -55,7 +55,7 @@ define([
 
             var pcast = new PCast();
 
-            pcast.start('AuthToken', function () {}, function onlineCallback () {
+            pcast.start('AuthToken', function() {}, function onlineCallback() {
                 roomService = new RoomService(pcast);
                 publisherBandwidthAdjuster = new PublisherBandwidthAdjuster(publisher);
 
@@ -75,7 +75,7 @@ define([
 
                     done();
                 });
-            }, function offlineCallback () {});
+            }, function offlineCallback() {});
 
             websocketStubber.triggerConnected();
         });
@@ -97,48 +97,48 @@ define([
             self.sessionId = 'MockSessionId';
         });
 
-        it('Has property connect that is a function', function () {
+        it('Has property connect that is a function', function() {
             expect(publisherBandwidthAdjuster.connect).to.be.a('function');
         });
 
-        it('Has property close that is a function', function () {
+        it('Has property close that is a function', function() {
             expect(publisherBandwidthAdjuster.close).to.be.a('function');
         });
 
-        it('Room service with no room causes default bandwidth limit', function () {
+        it('Room service with no room causes default bandwidth limit', function() {
             membersObservable.setValue(null);
 
-            publisher.limitBandwidth = function (bandwidth) {
+            publisher.limitBandwidth = function(bandwidth) {
                 expect(bandwidth).to.be.equal(5000000);
             };
 
             publisherBandwidthAdjuster.connect(roomService);
         });
 
-        it('Room service with no room causes passed bandwidth limit', function () {
+        it('Room service with no room causes passed bandwidth limit', function() {
             membersObservable.setValue(null);
 
-            publisher.limitBandwidth = function (bandwidth) {
+            publisher.limitBandwidth = function(bandwidth) {
                 expect(bandwidth).to.be.equal(100000);
             };
 
             publisherBandwidthAdjuster.connect(roomService, {roomBandwidthLimit: 100000});
         });
 
-        it('Room service with a room with 2 members causes default bandwidth limit', function () {
+        it('Room service with a room with 2 members causes default bandwidth limit', function() {
             membersObservable.setValue([{}, {}]);
 
-            publisher.limitBandwidth = function (bandwidth) {
+            publisher.limitBandwidth = function(bandwidth) {
                 expect(bandwidth).to.be.equal(5000000);
             };
 
             publisherBandwidthAdjuster.connect(roomService);
         });
 
-        it('Room service with a room with 3 members causes passed bandwidth/2 bandwidth limit', function () {
+        it('Room service with a room with 3 members causes passed bandwidth/2 bandwidth limit', function() {
             membersObservable.setValue([{}, {}, {}]);
 
-            publisher.limitBandwidth = function (bandwidth) {
+            publisher.limitBandwidth = function(bandwidth) {
                 expect(bandwidth).to.be.equal(100000 / 2);
             };
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ define([
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
+], function(_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
@@ -414,7 +414,7 @@ define([
     function getDifferencesBetweenCachedRoomMembersAndUpdatedMembers(members) {
         var that = this;
 
-        return _.map(members, function (member) {
+        return _.map(members, function(member) {
             var cachedMember = findMemberInObservableRoom(member.sessionId, that._cachedRoom);
             var placeholderMember = new Member(null, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
             var memberWithOnlyDifferentProperties = buildMemberForRequest(placeholderMember, cachedMember);

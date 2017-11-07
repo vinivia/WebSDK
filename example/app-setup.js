@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ define('app-setup', [
     'fingerprintjs2',
     'phenix-web-sdk',
     'shaka-player'
-], function ($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+], function($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var enabledSteps = ['step-1'];
     var onStepsReset;
 
@@ -81,7 +81,7 @@ define('app-setup', [
         }
 
         var updateOptions = function updateOptions() {
-            $('input[name="option"]').each(function () {
+            $('input[name="option"]').each(function() {
                 var option = $(this).val();
 
                 $('.' + option).addClass('option-disabled');
@@ -92,13 +92,13 @@ define('app-setup', [
             $('.' + option).removeClass('option-disabled');
         };
 
-        $('#environment').change(function () {
+        $('#environment').change(function() {
             if (onStepsReset) {
                 onStepsReset();
             }
         });
 
-        $('input[type="radio"]').on('change', function () {
+        $('input[type="radio"]').on('change', function() {
             updateOptions();
         });
 
@@ -179,7 +179,7 @@ define('app-setup', [
         $('.step .server').removeClass('step-active');
         $('.step .client').removeClass('step-active');
 
-        enabledSteps.forEach(function (step) {
+        enabledSteps.forEach(function(step) {
             $('.' + step).removeClass('step-disabled');
         });
 
@@ -238,14 +238,14 @@ define('app-setup', [
 
     var getDefaultReplaceUrl = function() {
         if (getBaseUri().indexOf('stg') > -1) {
-            return 'https://stg.phenixrts.com/';
+            return 'https://stg.phenixrts.com/video';
         }
 
         if (getBaseUri().indexOf('local') > -1) {
-            return 'https://local.phenixrts.com:8443/';
+            return 'https://local.phenixrts.com:8443/video';
         }
 
-        return 'https://phenixrts.com/';
+        return 'https://phenixrts.com/video';
     };
 
     return {

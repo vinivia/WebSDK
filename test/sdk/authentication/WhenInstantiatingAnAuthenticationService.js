@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, PCast, AuthenticationService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
-    describe('When instantiating an Authentication Service', function () {
+], function(_, PCast, AuthenticationService, HttpStubber, WebSocketStubber, ChromeRuntimeStubber) {
+    describe('When instantiating an Authentication Service', function() {
         var pcast;
         var authenticationService;
         var httpStubber;
@@ -32,7 +32,7 @@ define([
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function (done) {
+        beforeEach(function(done) {
             httpStubber = new HttpStubber();
             httpStubber.stub();
 
@@ -40,10 +40,10 @@ define([
             websocketStubber.stubAuthRequest();
             pcast = new PCast();
 
-            pcast.start('AuthToken', function () {}, function onlineCallback () {
+            pcast.start('AuthToken', function() {}, function onlineCallback() {
                 authenticationService = new AuthenticationService(pcast);
                 done();
-            }, function offlineCallback () {});
+            }, function offlineCallback() {});
 
             websocketStubber.triggerConnected();
         });
@@ -57,34 +57,34 @@ define([
             websocketStubber.restore();
         });
 
-        describe('When asserting authorized', function () {
-            it('Error thrown when status and sessionId invalid', function () {
+        describe('When asserting authorized', function() {
+            it('Error thrown when status and sessionId invalid', function() {
                 pcast.getObservableStatus().setValue('online');
                 pcast.getProtocol().getObservableSessionId().setValue('');
 
-                expect(function () {
+                expect(function() {
                     authenticationService.assertAuthorized();
                 }).to.throw(Error);
             });
 
-            it('Error thrown when status invalid', function () {
+            it('Error thrown when status invalid', function() {
                 pcast.getObservableStatus().setValue('offline');
 
-                expect(function () {
+                expect(function() {
                     authenticationService.assertAuthorized();
                 }).to.throw(Error);
             });
 
-            it('Error thrown when sessionId invalid', function () {
+            it('Error thrown when sessionId invalid', function() {
                 pcast.getProtocol().getObservableSessionId().setValue('');
 
-                expect(function () {
+                expect(function() {
                     authenticationService.assertAuthorized();
                 }).to.throw(Error);
             });
 
-            it('No Error thrown when status and sessionId valid', function () {
-                expect(function () {
+            it('No Error thrown when status and sessionId valid', function() {
+                expect(function() {
                     authenticationService.assertAuthorized();
                 }).to.not.throw();
             });

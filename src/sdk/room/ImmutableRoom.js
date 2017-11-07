@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ define([
     'phenix-web-assert',
     'phenix-web-observable',
     './Room'
-], function (_, assert, observable, Room) {
+], function(_, assert, observable, Room) {
     'use strict';
 
     function ImmutableRoom(roomService, id, alias, name, description, type, members, bridgeId, pin) {
@@ -89,11 +89,11 @@ define([
 
     function makeArrayOrObjectObservablesImmutable(collection) {
         if (_.isArray(collection)) {
-            _.forEach(collection, function (value) {
+            _.forEach(collection, function(value) {
                 wrapObservableAndAnyObservableProperties(value);
             });
         } else if (_.isObject(collection)) {
-            _.forOwn(collection, function (value) {
+            _.forOwn(collection, function(value) {
                 wrapObservableAndAnyObservableProperties(value);
             });
         }

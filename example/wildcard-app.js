@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ requirejs.config({
         'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
         'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
         'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
-        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min'
+        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
+        'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min'
     }
 });
 
@@ -51,7 +52,7 @@ requirejs([
     'shaka-player',
     'video-player',
     'app-setup'
-], function ($, _, observable, sdk, shaka, Player, app) {
+], function($, _, observable, sdk, shaka, Player, app) {
     var init = function init() {
         var authWildcardToken = new observable.Observable();
         var publisherWildcardToken = new observable.Observable();
@@ -70,9 +71,9 @@ requirejs([
                 contentType: 'application/json',
                 method: 'POST',
                 data: JSON.stringify(data)
-            }).done(function (result) {
+            }).done(function(result) {
                 authWildcardToken.setValue(result.authenticationToken);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 throw errorThrown;
             });
         };
@@ -91,9 +92,9 @@ requirejs([
                 contentType: 'application/json',
                 method: 'POST',
                 data: JSON.stringify(data)
-            }).done(function (result) {
+            }).done(function(result) {
                 publisherWildcardToken.setValue(result.streamToken);
-            }).fail(function (jqXHR, textStatus, errorThrown) {
+            }).fail(function(jqXHR, textStatus, errorThrown) {
                 throw errorThrown;
             });
         };
@@ -103,7 +104,7 @@ requirejs([
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
-                shaka: shaka,
+                shaka: app.getUrlParameter('shaka') ? shaka : null,
                 authToken: authToken
             });
         };
@@ -126,7 +127,7 @@ requirejs([
         var getPublisherCapabilities = function() {
             var capabilities = [];
 
-            $('#publish-capabilities option:selected').each(function () {
+            $('#publish-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());
             });
 
@@ -193,7 +194,7 @@ requirejs([
             });
         };
 
-        var stopPublisher = function () {
+        var stopPublisher = function() {
             if (publisher) {
                 publisher.stop();
                 publisher = null;
@@ -264,7 +265,7 @@ requirejs([
             });
         };
 
-        var stopSubscriber = function (reason) {
+        var stopSubscriber = function(reason) {
             if (subscriberMediaStream) {
                 subscriberMediaStream.stop(reason);
                 subscriberMediaStream = null;
@@ -347,7 +348,7 @@ requirejs([
             return userMediaOptions;
         }
 
-        app.setOnReset(function () {
+        app.setOnReset(function() {
             createPCastExpress();
         });
 
@@ -370,7 +371,7 @@ requirejs([
         });
     };
 
-    $(function () {
+    $(function() {
         app.init();
         init();
 

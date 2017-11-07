@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function (RoomService, Room, room, member, stream, track) {
-    describe('When instantiating a Room', function () {
+], function(RoomService, Room, room, member, stream, track) {
+    describe('When instantiating a Room', function() {
         var testRoom;
         var member1;
         var stubRoomService;
@@ -32,12 +32,12 @@ define([
             uri: '',
             audioState: track.states.trackEnabled.name,
             videoState: track.states.trackEnabled.name,
-            getTracks: function () {
+            getTracks: function() {
                 return [mockTrack];
             }
         };
 
-        beforeEach(function () {
+        beforeEach(function() {
             stubRoomService = new sinon.createStubInstance(RoomService);
 
             member1 = {
@@ -51,88 +51,88 @@ define([
             testRoom = new Room(stubRoomService, 'asd', 'User', 'MyRoom', 'My Mutli Party Chat', room.types.multiPartyChat.name, [member1], 'bridgeId', 'pin');
         });
 
-        it('Has property toJson that is a function', function () {
+        it('Has property toJson that is a function', function() {
             expect(testRoom.toJson).to.be.a('function');
         });
 
-        it('InValid type results in error', function () {
-            expect(function () {
+        it('InValid type results in error', function() {
+            expect(function() {
                 testRoom.getObservableType().setValue('off');
             }).to.throw(Error);
         });
 
-        it('Valid type results in change of state', function () {
-            testRoom.getObservableType().subscribe(function (state) {
+        it('Valid type results in change of state', function() {
+            testRoom.getObservableType().subscribe(function(state) {
                 expect(state).to.be.equal(room.types.moderatedChat.name);
             });
 
             testRoom.getObservableType().setValue(room.types.moderatedChat.name);
         });
 
-        it('Valid type enum results in change of state', function () {
-            testRoom.getObservableType().subscribe(function (state) {
+        it('Valid type enum results in change of state', function() {
+            testRoom.getObservableType().subscribe(function(state) {
                 expect(state).to.be.equal(room.types.moderatedChat.name);
             });
 
             testRoom.getObservableType().setValue(room.types.moderatedChat.id);
         });
 
-        it('InValid type enum results in error', function () {
-            expect(function () {
+        it('InValid type enum results in error', function() {
+            expect(function() {
                 testRoom.getObservableType().setValue(8);
             }).to.throw(Error);
         });
 
-        describe('When updating room', function () {
+        describe('When updating room', function() {
             var roomResponse;
 
-            beforeEach(function () {
+            beforeEach(function() {
                 roomResponse = {};
             });
 
-            it('New roomId value updated', function () {
+            it('New roomId value updated', function() {
                 roomResponse.roomId = 'NewId';
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getRoomId()).to.be.equal('NewId');
             });
 
-            it('New alias value updated', function () {
+            it('New alias value updated', function() {
                 roomResponse.alias = 'NewAlias';
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getObservableAlias().getValue()).to.be.equal('NewAlias');
             });
 
-            it('New name value updated', function () {
+            it('New name value updated', function() {
                 roomResponse.name = 'NewName';
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getObservableName().getValue()).to.be.equal('NewName');
             });
 
-            it('New description value updated', function () {
+            it('New description value updated', function() {
                 roomResponse.description = 'NewDescription';
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getObservableDescription().getValue()).to.be.equal('NewDescription');
             });
 
-            it('New type value updated', function () {
+            it('New type value updated', function() {
                 roomResponse.type = room.types.moderatedChat.name;
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getObservableType().getValue()).to.be.equal(room.types.moderatedChat.name);
             });
 
-            it('New bridgeId value updated', function () {
+            it('New bridgeId value updated', function() {
                 roomResponse.bridgeId = 'NewBridgeId';
                 testRoom._update(roomResponse);
 
                 expect(testRoom.getObservableBridgeId().getValue()).to.be.equal('NewBridgeId');
             });
 
-            it('New pin value updated', function () {
+            it('New pin value updated', function() {
                 roomResponse.pin = 'NewPin';
                 testRoom._update(roomResponse);
 
@@ -140,61 +140,61 @@ define([
             });
         });
 
-        describe('When committing changes on member', function () {
-            it('CommitChanges calls roomService updateMember', function () {
+        describe('When committing changes on member', function() {
+            it('CommitChanges calls roomService updateMember', function() {
                 stubRoomService.updateRoom.restore();
-                stubRoomService.updateRoom = sinon.stub(stubRoomService, 'updateRoom').callsFake(function (room) {
+                stubRoomService.updateRoom = sinon.stub(stubRoomService, 'updateRoom').callsFake(function(room) {
                     expect(room).to.be.equal(testRoom);
                 });
 
-                testRoom.commitChanges(function () {});
+                testRoom.commitChanges(function() {});
 
                 sinon.assert.calledOnce(stubRoomService.updateRoom);
             });
         });
 
-        describe('When reverting changes on room', function () {
-            it('Reload calls roomService updateRoom', function () {
+        describe('When reverting changes on room', function() {
+            it('Reload calls roomService updateRoom', function() {
                 stubRoomService.revertRoomChanges.restore();
-                stubRoomService.revertRoomChanges = sinon.stub(stubRoomService, 'revertRoomChanges').callsFake(function (room) {
+                stubRoomService.revertRoomChanges = sinon.stub(stubRoomService, 'revertRoomChanges').callsFake(function(room) {
                     expect(room).to.be.equal(testRoom);
                 });
 
-                testRoom.reload(function () {});
+                testRoom.reload(function() {});
 
                 sinon.assert.calledOnce(stubRoomService.revertRoomChanges);
             });
         });
 
-        describe('When modifying room members', function () {
-            it('Remove successfully removes member when latestUpdate is the same as cached members latestUpdate', function () {
+        describe('When modifying room members', function() {
+            it('Remove successfully removes member when latestUpdate is the same as cached members latestUpdate', function() {
                 testRoom._removeMembers([member1]);
 
                 expect(testRoom.getObservableMembers().getValue().length).to.be.equal(0);
             });
 
-            it('Remove does not remove member when latestUpdate is less than cached members latestUpdate', function () {
+            it('Remove does not remove member when latestUpdate is less than cached members latestUpdate', function() {
                 member1.lastUpdate = 120;
                 testRoom._removeMembers([member1]);
 
                 expect(testRoom.getObservableMembers().getValue().length).to.be.equal(1);
             });
 
-            it('Remove does not remove member when sessionId does not match cached members sessionId', function () {
+            it('Remove does not remove member when sessionId does not match cached members sessionId', function() {
                 member1.sessionId = 'member2';
                 testRoom._removeMembers([member1]);
 
                 expect(testRoom.getObservableMembers().getValue().length).to.be.equal(1);
             });
 
-            it('Add Members successfully adds a member to the room', function () {
+            it('Add Members successfully adds a member to the room', function() {
                 member1.sessionId = 'member2';
                 testRoom._addMembers([member1]);
 
                 expect(testRoom.getObservableMembers().getValue().length).to.be.equal(2);
             });
 
-            it('Update Members successfully updates cached members in the room', function () {
+            it('Update Members successfully updates cached members in the room', function() {
                 member1.lastUpdate = 125;
                 testRoom._updateMembers([member1]);
 

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     'sdk/PCast',
     '../../../test/mock/UserMediaStubber',
     '../../../test/mock/ChromeRuntimeStubber'
-], function (_, rtc, UserMediaResolver, PCast, UserMediaStubber, ChromeRuntimeStubber) {
-    describe('When getting user media with a resolver', function () { // eslint-disable-line mocha/no-exclusive-tests
+], function(_, rtc, UserMediaResolver, PCast, UserMediaStubber, ChromeRuntimeStubber) {
+    describe('When getting user media with a resolver', function() { // eslint-disable-line mocha/no-exclusive-tests
         var userMediaStubber = new UserMediaStubber();
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var pcast;
@@ -48,7 +48,7 @@ define([
             rtc.browserVersion = rtcBrowserVersionClone;
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             pcast = new PCast({uri: 'wss://mockURI'});
             userMediaResolver = new UserMediaResolver(pcast);
         });
@@ -57,7 +57,7 @@ define([
             userMediaStubber.restore();
         });
 
-        it('returns the user media on a successful callback', function (done) {
+        it('returns the user media on a successful callback', function(done) {
             var callbackStub = sinon.stub();
 
             userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
@@ -76,7 +76,7 @@ define([
             });
         });
 
-        it('returns an error when it fails to resolve media', function (done) {
+        it('returns an error when it fails to resolve media', function(done) {
             var callbackStub = sinon.stub();
 
             userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
@@ -94,7 +94,7 @@ define([
             });
         });
 
-        it('successfully gets media upon successful recovery of failure to get media', function (done) {
+        it('successfully gets media upon successful recovery of failure to get media', function(done) {
             var failureStub = sinon.stub();
             var callbackStub = sinon.stub();
 
@@ -118,7 +118,7 @@ define([
             });
         });
 
-        it('successfully resolves screen to video', function (done) {
+        it('successfully resolves screen to video', function(done) {
             var callbackStub = sinon.stub();
 
             userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
@@ -137,7 +137,7 @@ define([
             });
         });
 
-        it('returns an error after exhausting all resolution options', function (done) {
+        it('returns an error after exhausting all resolution options', function(done) {
             var callbackStub = sinon.stub();
 
             userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);

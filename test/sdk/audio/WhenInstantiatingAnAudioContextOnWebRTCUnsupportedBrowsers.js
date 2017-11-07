@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 define([
     'sdk/audio/AudioContext',
     'phenix-rtc'
-], function (AudioContext, rtc) {
-    describe('When instantiating an Audio Context on WebRTC unsupported browsers', function () {
-        before(function () {
+], function(AudioContext, rtc) {
+    describe('When instantiating an Audio Context on WebRTC unsupported browsers', function() {
+        before(function() {
             if (rtc.webrtcSupported) {
                 this.skip();
             }
         });
 
-        it('Should throw error on instantiation', function () {
-            expect(function () {
+        it('Should throw error on instantiation', function() {
+            expect(function() {
                 new AudioContext();
             }).to.throw(Error);
         });

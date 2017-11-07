@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ define([
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, room) {
-    describe('When Creating a Channel with ExpressRoom', function () {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, room) {
+    describe('When Creating a Channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -74,19 +74,19 @@ define([
             roomExpress.dispose();
         });
 
-        it('Has method createChannel', function () {
+        it('Has method createChannel', function() {
             expect(roomExpress.createChannel).to.be.a('function');
         });
 
-        it('Expect createRoom protocol to be called with channel type', function () {
-            websocketStubber.stubResponse('chat.CreateRoom', response, function (type, message) {
+        it('Expect createRoom protocol to be called with channel type', function() {
+            websocketStubber.stubResponse('chat.CreateRoom', response, function(type, message) {
                 expect(message.room.type).to.be.equal(room.types.channel.name);
             });
 
             roomExpress.createChannel({room: mockRoom}, function() {});
         });
 
-        it('Expect room to be returned from createChannel', function () {
+        it('Expect room to be returned from createChannel', function() {
             websocketStubber.stubResponse('chat.CreateRoom', {
                 status: 'ok',
                 room: mockRoom

@@ -31,7 +31,7 @@
         }
 
         video {
-            z-index: -2;
+            z-index: 20;
         }
 
         input {
@@ -197,6 +197,7 @@
                         <option value="streaming">Streaming</option>
                         <option value="on-demand">On Demand</option>
                         <option value="low-latency">Low Latency (Streaming)</option>
+                        <option value="satellite-tv-latency">Satellite Tv Latency (Streaming)</option>
                         <option value="prefer-h264">H264 (Real-time)</option>
                         <option value="drm">DRM</option>
                         <option value="high-fidelity">High Fidelity (Audio)</option>
@@ -242,6 +243,10 @@
                 <option value="archive">Archive</option>
                 <option value="prefer-h264">Prefer h264</option>
             </select>
+            <select class="form-control" id="subscriber-drm-capabilities" size="2" multiple>
+                <option value="drm-open-access" title="By default access is restricted to a single device">DRM - Open Access</option>
+                <option value="drm-hollywood">DRM - Hollywood</option>
+            </select>
             <input id="subscribe" type="button" value="Subscribe To Stream"/>
             <input id="stopSubscriber" class="disabled" type="button" value="Stop Subscriber"/>
         </div>
@@ -252,7 +257,7 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2 text-center">
                 <div id="videoListRemote" class="row text-center">
-                    <video id="remoteVideo" class="remote" width="640" height="480" playsinline autoplay></video>
+                    <video id="remoteVideo" class="remote" width="640" height="480" playsinline autoplay controls></video>
                     <video id="remoteVideoSecondary" class="remote hidden" width="640" height="480" playsinline autoplay></video>
                 </div>
             </div>

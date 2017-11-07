@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-observable',
     './stream.json',
     './track.json'
-], function (_, assert, observable, stream, track) {
+], function(_, assert, observable, stream, track) {
     'use strict';
 
     var streamTypes = stream.types;
@@ -31,7 +31,7 @@ define([
         this.init(uri, type, audioState, videoState);
     }
 
-    Stream.prototype.init = function (uri, type, audioState, videoState) {
+    Stream.prototype.init = function(uri, type, audioState, videoState) {
         assert.isString(uri, 'uri');
 
         this._uri = new observable.Observable(uri);

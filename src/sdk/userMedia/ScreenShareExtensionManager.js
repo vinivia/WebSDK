@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ define([
     'phenix-web-assert',
     'phenix-web-observable',
     'phenix-rtc'
-], function (_, assert, observable, phenixRTC) {
+], function(_, assert, observable, phenixRTC) {
     'use strict';
 
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
@@ -51,7 +51,7 @@ define([
         checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
     }
 
-    ScreenShareExtensionManager.prototype.isScreenSharingEnabled = function (callback) {
+    ScreenShareExtensionManager.prototype.isScreenSharingEnabled = function(callback) {
         var that = this;
 
         return waitForInitialized.call(this, function() {
@@ -59,15 +59,15 @@ define([
         });
     };
 
-    ScreenShareExtensionManager.prototype.installExtension = function (callback) {
+    ScreenShareExtensionManager.prototype.installExtension = function(callback) {
         return waitForInitialized.call(this, _.bind(installScreenShareExtension, this, callback));
     };
 
-    ScreenShareExtensionManager.prototype.getScreenSharingConstraints = function (options, callback) {
+    ScreenShareExtensionManager.prototype.getScreenSharingConstraints = function(options, callback) {
         return waitForInitialized.call(this, _.bind(getScreenSharingConstraints, this, options, callback));
     };
 
-    ScreenShareExtensionManager.prototype.toString = function () {
+    ScreenShareExtensionManager.prototype.toString = function() {
         return 'ScreenShareExtensionManager[' + phenixRTC.browser + ']';
     };
 
@@ -88,7 +88,7 @@ define([
             }
 
             try {
-                runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function (response) {
+                runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function(response) {
                     if (response && response.status === 'ok') {
                         that._logger.info('Screen sharing enabled using version [%s]', response.version);
                         callback(true);
@@ -201,7 +201,7 @@ define([
             runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {
                 type: 'get-desktop-media',
                 sources: ['screen', 'window', 'tab', 'audio']
-            }, function (response) {
+            }, function(response) {
                 if (response.status !== 'ok') {
                     return callback(new Error(response.status), response);
                 }
@@ -277,7 +277,7 @@ define([
                 return callback(new Error('screen-sharing-installation-failed'), {status: status});
             }
 
-            checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
+            checkForScreenSharingCapability.call(that, function(screenSharingEnabled) {
                 that._screenSharingEnabled = screenSharingEnabled;
 
                 if (!that._screenSharingEnabled) {
@@ -340,7 +340,7 @@ define([
                     URL: this._screenSharingAddOn.url,
                     IconURL: this._screenSharingAddOn.iconUrl,
                     Hash: this._screenSharingAddOn.hash,
-                    toString: function () {
+                    toString: function() {
                         return this.URL;
                     }
                 }
@@ -363,7 +363,7 @@ define([
                 callback(new Error('failed'), 'failed');
             };
 
-            intervalId = setInterval(function () {
+            intervalId = setInterval(function() {
                 if (typeof window.PCastScreenSharing === 'object') {
                     return success();
                 }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ define([
     '../room/member.json',
     '../room/stream.json',
     '../room/track.json'
-], function (_, assert, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
+], function(_, assert, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -52,15 +52,15 @@ define([
     }
 
     RoomExpress.prototype.dispose = function dispose() {
-        _.forOwn(this._membersSubscriptions, function (membersSubscription) {
+        _.forOwn(this._membersSubscriptions, function(membersSubscription) {
             membersSubscription.dispose();
         });
-        _.forOwn(this._roomServicePublishers, function (publishers) {
+        _.forOwn(this._roomServicePublishers, function(publishers) {
             _.forEach(publishers, function(publisher) {
                 publisher.stop();
             });
         });
-        _.forOwn(this._roomServices, function (roomService) {
+        _.forOwn(this._roomServices, function(roomService) {
             roomService.stop();
         });
 
@@ -107,7 +107,7 @@ define([
                 roomToCreate.description = roomDescription;
             }
 
-            roomService.createRoom(roomToCreate, function (error, roomResponse) {
+            roomService.createRoom(roomToCreate, function(error, roomResponse) {
                 if (error) {
                     return callback(error);
                 }
@@ -177,7 +177,7 @@ define([
             }
 
             if (options.streams) {
-                updateSelfStreamsAndRole.call(that, options.streams, options.role, roomService, function (error) {
+                updateSelfStreamsAndRole.call(that, options.streams, options.role, roomService, function(error) {
                     if (error) {
                         return joinRoomCallback(error);
                     }
@@ -530,7 +530,7 @@ define([
         this.publishToRoom(channelOptions, callback);
     };
 
-    RoomExpress.prototype.subscribeToMemberStream = function (memberStream, options, callback) {
+    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
         assert.isObject(memberStream, 'memberStream');
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
@@ -788,7 +788,7 @@ define([
 
             additionalStreamIds = getValidStreamIds(membersWithSameContent);
 
-            handleJoinRoomCallback = function (error, response) {
+            handleJoinRoomCallback = function(error, response) {
                 callback(error, response);
 
                 var roomService = _.get(response, 'roomService', findActiveRoom.call(that, room.getRoomId()));
@@ -799,10 +799,10 @@ define([
 
                 var activeRoom = roomService.getObservableActiveRoom().getValue();
 
-                disposable = activeRoom.getObservableMembers().subscribe(function (members) {
+                disposable = activeRoom.getObservableMembers().subscribe(function(members) {
                     var newMembersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, members);
                     var newAdditionalStreamIds = getValidStreamIds(newMembersWithSameContent);
-                    var areTheSame = newAdditionalStreamIds.length === additionalStreamIds.length && _.reduce(newAdditionalStreamIds, function (areAllPreviousTheSame, streamId) {
+                    var areTheSame = newAdditionalStreamIds.length === additionalStreamIds.length && _.reduce(newAdditionalStreamIds, function(areAllPreviousTheSame, streamId) {
                         return areAllPreviousTheSame ? _.includes(additionalStreamIds, streamId) : areAllPreviousTheSame;
                     }, true);
 

@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2017.4.22",
+  "version": "2018.1.0",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -28,7 +28,7 @@
     "jpm-xpi": "jpm xpi --addon-dir src/firefox",
     "lint": "eslint ./ —-cache",
     "lint-fix": "eslint ./ --fix",
-    "prepack": "npm run webpack-workflow-example",
+    "prepack": "npm run webpack-workflow-example && npm run add-copyright",
     "add-copyright": "./../phenix/scripts/add-copyright.sh ./"
   },
   "engines": {
@@ -96,6 +96,7 @@
     "phenix-web-logging": "2017.4.0",
     "phenix-web-network-connection-monitor": "2017.4.0",
     "phenix-web-observable": "2017.4.0",
+    "phenix-web-player": "2018.1.0",
     "phenix-web-proto": "2017.4.0",
     "phenix-web-reconnecting-websocket": "2017.4.0",
     "requirejs": "2.3.4",

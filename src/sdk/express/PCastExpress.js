@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ define([
     '../PCast',
     'phenix-rtc',
     '../streaming/shaka.json'
-], function (_, assert, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
+], function(_, assert, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -301,6 +301,10 @@ define([
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
         }
 
+        if (options.subscriberOptions) {
+            assert.isObject(options.subscriberOptions, 'options.subscriberOptions');
+        }
+
         var that = this;
 
         this.waitForOnline(function() {
@@ -417,7 +421,7 @@ define([
                 return instantiatePCast.call(that);
             case 'capacity':
             case 'network-unavailable':
-                return setTimeout(function () {
+                return setTimeout(function() {
                     instantiatePCast.call(that);
                 }, capacityBackoffTimeout * that._reauthCount * that._reauthCount);
             case 'failed':
@@ -622,11 +626,11 @@ define([
             }
 
             callback(null, subscribeResponse);
-        });
+        }, options.subscriberOptions);
     }
 
     function createExpressPublisher(publisher, videoElement, cleanUpUserMediaOnStop) {
-        var publisherStop = publisher.stop;
+        var publisherStop = _.bind(publisher.stop, publisher);
 
         publisher.stop = function(reason, isInternal) {
             publisherStop(reason);
@@ -670,7 +674,7 @@ define([
     }
 
     function createExpressSubscriber(subscriber, renderer) {
-        var subscriberStop = subscriber.stop;
+        var subscriberStop = _.bind(subscriber.stop, subscriber);
 
         subscriber.stop = function(reason) {
             if (renderer) {

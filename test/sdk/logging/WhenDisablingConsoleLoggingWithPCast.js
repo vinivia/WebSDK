@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ define([
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber'
-], function (PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
-    describe('When Disabling Console Logging with PCast', function () {
+], function(PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    describe('When Disabling Console Logging with PCast', function() {
         var httpStubber = new HttpStubber();
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -34,7 +34,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function () {
+        beforeEach(function() {
             websocketStubber = new WebSocketStubber();
 
             pcast = new PCast({
@@ -61,18 +61,18 @@ define([
             websocketStubber.restore();
         });
 
-        it('Expect an error to not be thrown when subscribing', function () {
+        it('Expect an error to not be thrown when subscribing', function() {
             websocketStubber.restore();
 
-            expect(function () {
+            expect(function() {
                 pcast.subscribe('mockStreamToken', function() {}, {});
             }).to.not.throw();
         });
 
-        it('Expect an error to not be thrown when publishing', function () {
+        it('Expect an error to not be thrown when publishing', function() {
             websocketStubber.restore();
 
-            expect(function () {
+            expect(function() {
                 pcast.publish('mockStreamToken', {}, function() {});
             }).to.not.throw();
         });
