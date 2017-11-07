@@ -259,8 +259,17 @@ requirejs([
                 var deviceOptions = {
                     screen: _.includes(source.toLowerCase(), 'screen'),
                     audio: _.includes(source.toLowerCase(), 'microphone'),
-                    video: _.includes(source.toLowerCase(), 'camera')
+                    video: _.includes(source.toLowerCase(), 'camera'),
+                    screenAudio: _.includes(source.toLowerCase(), 'screenaudio')
                 };
+
+                if (_.includes(source.toLowerCase(), 'application')) {
+                    deviceOptions.screen = {mediaSource: 'application'};
+                }
+
+                if (_.includes(source.toLowerCase(), 'desktop')) {
+                    deviceOptions.screen = {mediaSource: 'screen'};
+                }
 
                 if (source === 'user' || source === 'environment') {
                     deviceOptions = {video: {facingMode: source}};

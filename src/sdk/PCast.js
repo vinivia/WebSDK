@@ -488,10 +488,14 @@ define([
         };
 
         var onUserMediaFailure = function onUserMediaFailure(status, stream, error) {
+            if (options.screenAudio) {
+                that._logger.warn('Screen capture with audio is only supported on Windows or Chrome OS.');
+            }
+
             callback(that, status, stream, error);
         };
 
-        var hasScreen = options.screen;
+        var hasScreen = options.screen || options.screenAudio;
         var hasVideoOrAudio = options.video || options.audio;
 
         if (!(hasScreen && hasVideoOrAudio)) {

@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-02T23:33:33Z',
+                version: '2017-11-07T17:51:34Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4505,7 +4505,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-02T23:33:33Z';
+    var sdkVersion = '2017-11-07T17:51:34Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -4955,10 +4955,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         var onUserMediaFailure = function onUserMediaFailure(status, stream, error) {
+            if (options.screenAudio) {
+                that._logger.warn('Screen capture with audio is only supported on Windows or Chrome OS.');
+            }
+
             callback(that, status, stream, error);
         };
 
-        var hasScreen = options.screen;
+        var hasScreen = options.screen || options.screenAudio;
         var hasVideoOrAudio = options.video || options.audio;
 
         if (!(hasScreen && hasVideoOrAudio)) {
@@ -7435,12 +7439,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     UserMediaResolver.prototype.getVendorSpecificConstraints = function getVendorSpecificConstraints(deviceOptions, resolution, frameRate) {
         resolution = resolution || {};
 
-        if (!deviceOptions || (!deviceOptions.audio && ! deviceOptions.video && !deviceOptions.screen)) {
+        if (!deviceOptions || (!deviceOptions.audio && ! deviceOptions.video && !deviceOptions.screen && !deviceOptions.screenAudio)) {
             throw new Error('Invalid device options. Must pass in at least one device option.');
         }
 
         if ((RTC.browser === 'Firefox' && RTC.browserVersion > 38)
-            || (RTC.browser === 'Chrome' && RTC.browserVersion > 52)
+            || (RTC.browser === 'Chrome' && RTC.browserVersion > 52 && !deviceOptions.screen && !deviceOptions.screenAudio)
             || (RTC.browser === 'Safari' && RTC.browserVersion > 10)
             || (RTC.browser === 'Opera' && RTC.browserVersion > 40)) {
             return setUserMediaOptionsForNewerBrowser(deviceOptions, resolution, frameRate);
@@ -7529,6 +7533,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var video = deviceOptions.video;
         var audio = deviceOptions.audio;
         var screen = deviceOptions.screen;
+        var screenAudio = deviceOptions.screenAudio;
         var width = resolution.width;
         var height = resolution.height;
         var constraints = {};
@@ -7577,14 +7582,85 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (audio) {
-            constraints.audio = true;
+            constraints.audio = {};
 
             if (audio.deviceId) {
-                constraints.audio = {deviceId: {exact: audio.deviceId}};
+                constraints.audio.deviceId = {exact: audio.deviceId};
+            }
+
+            if (audio.mediaSource) {
+                constraints.audio.mediaSource = audio.mediaSource;
+            }
+
+            if (audio.mediaSourceId) {
+                constraints.audio.mediaSourceId = audio.mediaSourceId;
+            }
+
+            if (!audio.deviceId && !audio.mediaSource && !audio.mediaSourceId) {
+                constraints.audio = true;
+            }
+        }
+
+        if (screenAudio) {
+            constraints.screenAudio = {};
+
+            if (screenAudio.deviceId) {
+                constraints.screenAudio.deviceId = {exact: screenAudio.deviceId};
+            }
+
+            if (screenAudio.mediaSource) {
+                constraints.screenAudio.mediaSource = screenAudio.mediaSource;
+            }
+
+            if (screenAudio.mediaSourceId) {
+                constraints.screenAudio.mediaSourceId = screenAudio.mediaSourceId;
+            }
+
+            if (!screenAudio.deviceId && !screenAudio.mediaSource && !screenAudio.mediaSourceId) {
+                constraints.screenAudio = true;
             }
         }
 
         if (screen) {
+            constraints.screen = {
+                height: {
+                    min: height,
+                    ideal: height,
+                    max: height
+                },
+                width: {
+                    min: width,
+                    ideal: width,
+                    max: width
+                },
+                frameRate: {
+                    ideal: frameRate,
+                    max: frameRate
+                }
+            };
+
+            if (!width) {
+                delete constraints.screen.width;
+            }
+
+            if (!height) {
+                delete constraints.screen.height;
+            }
+
+            if (!frameRate) {
+                delete constraints.screen.frameRate;
+            }
+
+            if (screen.mediaSource) {
+                constraints.screen.mediaSource = screen.mediaSource;
+            }
+
+            if (!width && !height && !frameRate && !screen.mediaSource) {
+                constraints.screen = true;
+            }
+        }
+
+        if (screen && video) {
             constraints.screen = true;
         }
 
@@ -7594,6 +7670,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function setUserMediaOptionsForOtherBrowsers(deviceOptions, resolution, frameRate) {
         var video = deviceOptions.video;
         var audio = deviceOptions.audio;
+        var screen = deviceOptions.screen;
+        var screenAudio = deviceOptions.screenAudio;
         var width = resolution.width;
         var height = resolution.height;
         var constraints = {};
@@ -7637,9 +7715,81 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (audio) {
+            constraints.audio = {mandatory: {}};
+
             if (audio.deviceId) {
-                constraints.audio = {mandatory: {sourceId: audio.deviceId}};
+                constraints.audio.mandatory.sourceId = audio.deviceId;
             }
+
+            if (audio.mediaSource) {
+                constraints.audio.mandatory.mediaSource = audio.mediaSource;
+            }
+
+            if (audio.mediaSourceId) {
+                constraints.audio.mandatory.mediaSourceId = audio.mediaSourceId;
+            }
+
+            if (!audio.deviceId && !audio.mediaSource && !audio.mediaSourceId) {
+                constraints.audio = true;
+            }
+        }
+
+        if (screenAudio) {
+            constraints.screenAudio = {mandatory: {}};
+
+            if (screenAudio.deviceId) {
+                constraints.screenAudio.mandatory.sourceId = screenAudio.deviceId;
+            }
+
+            if (screenAudio.mediaSource) {
+                constraints.screenAudio.mandatory.mediaSource = screenAudio.mediaSource;
+            }
+
+            if (screenAudio.mediaSourceId) {
+                constraints.screenAudio.mandatory.mediaSourceId = screenAudio.mediaSourceId;
+            }
+
+            if (!screenAudio.deviceId && !screenAudio.mediaSource && !screenAudio.mediaSourceId) {
+                constraints.screenAudio = true;
+            }
+        }
+
+        if (screen) {
+            constraints.screen = {
+                mandatory: {
+                    minHeight: height,
+                    maxHeight: height,
+                    minWidth: width,
+                    maxWidth: width,
+                    maxFrameRate: frameRate
+                }
+            };
+
+            if (!width) {
+                delete constraints.screen.mandatory.minWidth;
+                delete constraints.screen.mandatory.maxWidth;
+            }
+
+            if (!height) {
+                delete constraints.screen.mandatory.minHeight;
+                delete constraints.screen.mandatory.maxHeight;
+            }
+
+            if (!frameRate) {
+                delete constraints.screen.mandatory.maxFrameRate;
+            }
+
+            if (screen.mediaSource) {
+                constraints.screen.mandatory.mediaSource = screen.mediaSource;
+            }
+
+            if (!width && !height && !frameRate && !screen.mediaSource) {
+                constraints.screen = true;
+            }
+        }
+
+        if (screen && video) {
+            constraints.screen = true;
         }
 
         return constraints;
@@ -15705,8 +15855,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-02T23:33:33Z' || '?';
-    var releaseVersion = '2017.4.8';
+    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
+    var releaseVersion = '2017.4.9';
 
     function Logger() {
         this._appenders = [];
@@ -23462,7 +23612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         case 'Firefox':
             callback(null, {
                 status: 'ok',
-                constraints: mapFirefoxConstraints(options)
+                constraints: mapNewerConstraints(options)
             });
 
             break;
@@ -23482,7 +23632,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         try {
-            runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) {
+            runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {
+                type: 'get-desktop-media',
+                sources: ['screen', 'window', 'tab', 'audio']
+            }, function (response) {
                 if (response.status !== 'ok') {
                     return callback(new Error(response.status), response);
                 }
@@ -23499,23 +23652,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function mapChromeConstraints(options, id) {
-        var constraints = {video: {}};
+        var constraints = {};
 
-        if (typeof options === 'object' && typeof options.screen === 'object') {
+        if (_.isObject(options) && _.isObject(options.screen)) {
             constraints.video = options.screen;
         }
 
-        if (typeof constraints.video.mandatory !== 'object') {
-            constraints.video.mandatory = {};
+        if (_.isObject(options) && _.isObject(options.screenAudio)) {
+            constraints.audio = options.screenAudio;
         }
 
-        constraints.video.mandatory.chromeMediaSource = 'desktop';
-        constraints.video.mandatory.chromeMediaSourceId = id;
+        if (options.screen) {
+            _.set(constraints, ['video', 'mandatory'], {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: id
+            });
+        }
+
+        if (options.screenAudio) {
+            _.set(constraints, ['audio', 'mandatory'], {
+                chromeMediaSource: 'system',
+                chromeMediaSourceId: id
+            });
+        }
 
         return constraints;
     }
 
-    function mapFirefoxConstraints(options, id) {
+    function mapNewerConstraints(options, id) {
         var constraints = {video: {}};
 
         if (typeof options === 'object' && typeof options.screen === 'object') {
@@ -23526,7 +23690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             constraints.video.mediaSourceId = id;
         }
 
-        constraints.video.mediaSource = 'window';
+        constraints.video.mediaSource = constraints.video.mediaSource || 'window';
 
         return constraints;
     }
@@ -28084,7 +28248,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-02T23:33:33Z' || '?';
+    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28339,7 +28503,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-02T23:33:33Z' || '?';
+    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

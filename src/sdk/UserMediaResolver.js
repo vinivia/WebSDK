@@ -76,12 +76,12 @@ define([
     UserMediaResolver.prototype.getVendorSpecificConstraints = function getVendorSpecificConstraints(deviceOptions, resolution, frameRate) {
         resolution = resolution || {};
 
-        if (!deviceOptions || (!deviceOptions.audio && ! deviceOptions.video && !deviceOptions.screen)) {
+        if (!deviceOptions || (!deviceOptions.audio && ! deviceOptions.video && !deviceOptions.screen && !deviceOptions.screenAudio)) {
             throw new Error('Invalid device options. Must pass in at least one device option.');
         }
 
         if ((RTC.browser === 'Firefox' && RTC.browserVersion > 38)
-            || (RTC.browser === 'Chrome' && RTC.browserVersion > 52)
+            || (RTC.browser === 'Chrome' && RTC.browserVersion > 52 && !deviceOptions.screen && !deviceOptions.screenAudio)
             || (RTC.browser === 'Safari' && RTC.browserVersion > 10)
             || (RTC.browser === 'Opera' && RTC.browserVersion > 40)) {
             return setUserMediaOptionsForNewerBrowser(deviceOptions, resolution, frameRate);
@@ -170,6 +170,7 @@ define([
         var video = deviceOptions.video;
         var audio = deviceOptions.audio;
         var screen = deviceOptions.screen;
+        var screenAudio = deviceOptions.screenAudio;
         var width = resolution.width;
         var height = resolution.height;
         var constraints = {};
@@ -218,14 +219,85 @@ define([
         }
 
         if (audio) {
-            constraints.audio = true;
+            constraints.audio = {};
 
             if (audio.deviceId) {
-                constraints.audio = {deviceId: {exact: audio.deviceId}};
+                constraints.audio.deviceId = {exact: audio.deviceId};
+            }
+
+            if (audio.mediaSource) {
+                constraints.audio.mediaSource = audio.mediaSource;
+            }
+
+            if (audio.mediaSourceId) {
+                constraints.audio.mediaSourceId = audio.mediaSourceId;
+            }
+
+            if (!audio.deviceId && !audio.mediaSource && !audio.mediaSourceId) {
+                constraints.audio = true;
+            }
+        }
+
+        if (screenAudio) {
+            constraints.screenAudio = {};
+
+            if (screenAudio.deviceId) {
+                constraints.screenAudio.deviceId = {exact: screenAudio.deviceId};
+            }
+
+            if (screenAudio.mediaSource) {
+                constraints.screenAudio.mediaSource = screenAudio.mediaSource;
+            }
+
+            if (screenAudio.mediaSourceId) {
+                constraints.screenAudio.mediaSourceId = screenAudio.mediaSourceId;
+            }
+
+            if (!screenAudio.deviceId && !screenAudio.mediaSource && !screenAudio.mediaSourceId) {
+                constraints.screenAudio = true;
             }
         }
 
         if (screen) {
+            constraints.screen = {
+                height: {
+                    min: height,
+                    ideal: height,
+                    max: height
+                },
+                width: {
+                    min: width,
+                    ideal: width,
+                    max: width
+                },
+                frameRate: {
+                    ideal: frameRate,
+                    max: frameRate
+                }
+            };
+
+            if (!width) {
+                delete constraints.screen.width;
+            }
+
+            if (!height) {
+                delete constraints.screen.height;
+            }
+
+            if (!frameRate) {
+                delete constraints.screen.frameRate;
+            }
+
+            if (screen.mediaSource) {
+                constraints.screen.mediaSource = screen.mediaSource;
+            }
+
+            if (!width && !height && !frameRate && !screen.mediaSource) {
+                constraints.screen = true;
+            }
+        }
+
+        if (screen && video) {
             constraints.screen = true;
         }
 
@@ -235,6 +307,8 @@ define([
     function setUserMediaOptionsForOtherBrowsers(deviceOptions, resolution, frameRate) {
         var video = deviceOptions.video;
         var audio = deviceOptions.audio;
+        var screen = deviceOptions.screen;
+        var screenAudio = deviceOptions.screenAudio;
         var width = resolution.width;
         var height = resolution.height;
         var constraints = {};
@@ -278,9 +352,81 @@ define([
         }
 
         if (audio) {
+            constraints.audio = {mandatory: {}};
+
             if (audio.deviceId) {
-                constraints.audio = {mandatory: {sourceId: audio.deviceId}};
+                constraints.audio.mandatory.sourceId = audio.deviceId;
             }
+
+            if (audio.mediaSource) {
+                constraints.audio.mandatory.mediaSource = audio.mediaSource;
+            }
+
+            if (audio.mediaSourceId) {
+                constraints.audio.mandatory.mediaSourceId = audio.mediaSourceId;
+            }
+
+            if (!audio.deviceId && !audio.mediaSource && !audio.mediaSourceId) {
+                constraints.audio = true;
+            }
+        }
+
+        if (screenAudio) {
+            constraints.screenAudio = {mandatory: {}};
+
+            if (screenAudio.deviceId) {
+                constraints.screenAudio.mandatory.sourceId = screenAudio.deviceId;
+            }
+
+            if (screenAudio.mediaSource) {
+                constraints.screenAudio.mandatory.mediaSource = screenAudio.mediaSource;
+            }
+
+            if (screenAudio.mediaSourceId) {
+                constraints.screenAudio.mandatory.mediaSourceId = screenAudio.mediaSourceId;
+            }
+
+            if (!screenAudio.deviceId && !screenAudio.mediaSource && !screenAudio.mediaSourceId) {
+                constraints.screenAudio = true;
+            }
+        }
+
+        if (screen) {
+            constraints.screen = {
+                mandatory: {
+                    minHeight: height,
+                    maxHeight: height,
+                    minWidth: width,
+                    maxWidth: width,
+                    maxFrameRate: frameRate
+                }
+            };
+
+            if (!width) {
+                delete constraints.screen.mandatory.minWidth;
+                delete constraints.screen.mandatory.maxWidth;
+            }
+
+            if (!height) {
+                delete constraints.screen.mandatory.minHeight;
+                delete constraints.screen.mandatory.maxHeight;
+            }
+
+            if (!frameRate) {
+                delete constraints.screen.mandatory.maxFrameRate;
+            }
+
+            if (screen.mediaSource) {
+                constraints.screen.mandatory.mediaSource = screen.mediaSource;
+            }
+
+            if (!width && !height && !frameRate && !screen.mediaSource) {
+                constraints.screen = true;
+            }
+        }
+
+        if (screen && video) {
+            constraints.screen = true;
         }
 
         return constraints;

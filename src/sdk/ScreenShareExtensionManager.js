@@ -167,7 +167,7 @@ define([
         case 'Firefox':
             callback(null, {
                 status: 'ok',
-                constraints: mapFirefoxConstraints(options)
+                constraints: mapNewerConstraints(options)
             });
 
             break;
@@ -187,7 +187,10 @@ define([
         }
 
         try {
-            runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {type: 'get-desktop-media'}, function (response) {
+            runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {
+                type: 'get-desktop-media',
+                sources: ['screen', 'window', 'tab', 'audio']
+            }, function (response) {
                 if (response.status !== 'ok') {
                     return callback(new Error(response.status), response);
                 }
@@ -204,23 +207,34 @@ define([
     }
 
     function mapChromeConstraints(options, id) {
-        var constraints = {video: {}};
+        var constraints = {};
 
-        if (typeof options === 'object' && typeof options.screen === 'object') {
+        if (_.isObject(options) && _.isObject(options.screen)) {
             constraints.video = options.screen;
         }
 
-        if (typeof constraints.video.mandatory !== 'object') {
-            constraints.video.mandatory = {};
+        if (_.isObject(options) && _.isObject(options.screenAudio)) {
+            constraints.audio = options.screenAudio;
         }
 
-        constraints.video.mandatory.chromeMediaSource = 'desktop';
-        constraints.video.mandatory.chromeMediaSourceId = id;
+        if (options.screen) {
+            _.set(constraints, ['video', 'mandatory'], {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: id
+            });
+        }
+
+        if (options.screenAudio) {
+            _.set(constraints, ['audio', 'mandatory'], {
+                chromeMediaSource: 'system',
+                chromeMediaSourceId: id
+            });
+        }
 
         return constraints;
     }
 
-    function mapFirefoxConstraints(options, id) {
+    function mapNewerConstraints(options, id) {
         var constraints = {video: {}};
 
         if (typeof options === 'object' && typeof options.screen === 'object') {
@@ -231,7 +245,7 @@ define([
             constraints.video.mediaSourceId = id;
         }
 
-        constraints.video.mediaSource = 'window';
+        constraints.video.mediaSource = constraints.video.mediaSource || 'window';
 
         return constraints;
     }
