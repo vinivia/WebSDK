@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-07T17:51:34Z',
+                version: '2017-11-08T00:09:39Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4505,7 +4505,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-07T17:51:34Z';
+    var sdkVersion = '2017-11-08T00:09:39Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -8283,7 +8283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (this._authToken) {
             return this._pcast.start(this._authToken,
-                function authenticationToken(pcast, status, sessionId) {
+                function authenticationCallback(pcast, status, sessionId) {
                     handlePCastInstantiated.call(that, null, {
                         status: status,
                         sessionId: sessionId
@@ -8332,9 +8332,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             switch (response.status) {
             case 'unauthorized':
+                delete this._authToken;
+
                 if (that._reauthCount > 1) {
                     return handleError.call(this, new Error(response.status));
                 }
+
+                that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
 
                 return instantiatePCast.call(that);
             case 'capacity':
@@ -8406,16 +8410,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 that._publishers[placeholder] = true;
                 publisher.stop(reason, true);
 
-                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, function(error, response) {
-                    if (response && response.status === unauthorizedStatus) {
-                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
-                    }
-
-                    callback(error, response);
-                });
+                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
 
                 delete that._publishers[placeholder];
             };
+
+            if (status === unauthorizedStatus && options.streamToken) {
+                that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
+
+                var reAuthOptions = _.assign({}, options);
+
+                delete reAuthOptions.streamToken;
+
+                return getStreamingTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
+            }
 
             if (status !== 'ok') {
                 return callback(null, {status: status});
@@ -8465,16 +8473,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 subscriber.stop(reason);
 
-                subscribeToStream.call(that, streamToken, options, function(error, response) {
-                    if (response && response.status === unauthorizedStatus) {
-                        return that.subscribe(options, callback);
-                    }
-
-                    callback(error, response);
-                });
+                subscribeToStream.call(that, streamToken, options, callback);
 
                 delete that._subscribers[placeholder];
             };
+
+            if (status === unauthorizedStatus && options.streamToken) {
+                that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
+
+                var reAuthOptions = _.assign({}, options);
+
+                delete reAuthOptions.streamToken;
+
+                return that.subscribe(reAuthOptions, callback);
+            }
 
             if (status === 'streaming-not-ready') {
                 return callback(null, {
@@ -15855,8 +15867,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
-    var releaseVersion = '2017.4.9';
+    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
+    var releaseVersion = '2017.4.10';
 
     function Logger() {
         this._appenders = [];
@@ -28248,7 +28260,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
+    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28503,7 +28515,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-07T17:51:34Z' || '?';
+    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

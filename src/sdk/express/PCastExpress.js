@@ -339,7 +339,7 @@ define([
 
         if (this._authToken) {
             return this._pcast.start(this._authToken,
-                function authenticationToken(pcast, status, sessionId) {
+                function authenticationCallback(pcast, status, sessionId) {
                     handlePCastInstantiated.call(that, null, {
                         status: status,
                         sessionId: sessionId
@@ -388,9 +388,13 @@ define([
 
             switch (response.status) {
             case 'unauthorized':
+                delete this._authToken;
+
                 if (that._reauthCount > 1) {
                     return handleError.call(this, new Error(response.status));
                 }
+
+                that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
 
                 return instantiatePCast.call(that);
             case 'capacity':
@@ -462,16 +466,20 @@ define([
                 that._publishers[placeholder] = true;
                 publisher.stop(reason, true);
 
-                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, function(error, response) {
-                    if (response && response.status === unauthorizedStatus) {
-                        return getStreamingTokenAndPublish.call(that, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
-                    }
-
-                    callback(error, response);
-                });
+                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
 
                 delete that._publishers[placeholder];
             };
+
+            if (status === unauthorizedStatus && options.streamToken) {
+                that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
+
+                var reAuthOptions = _.assign({}, options);
+
+                delete reAuthOptions.streamToken;
+
+                return getStreamingTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
+            }
 
             if (status !== 'ok') {
                 return callback(null, {status: status});
@@ -521,16 +529,20 @@ define([
 
                 subscriber.stop(reason);
 
-                subscribeToStream.call(that, streamToken, options, function(error, response) {
-                    if (response && response.status === unauthorizedStatus) {
-                        return that.subscribe(options, callback);
-                    }
-
-                    callback(error, response);
-                });
+                subscribeToStream.call(that, streamToken, options, callback);
 
                 delete that._subscribers[placeholder];
             };
+
+            if (status === unauthorizedStatus && options.streamToken) {
+                that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
+
+                var reAuthOptions = _.assign({}, options);
+
+                delete reAuthOptions.streamToken;
+
+                return that.subscribe(reAuthOptions, callback);
+            }
 
             if (status === 'streaming-not-ready') {
                 return callback(null, {

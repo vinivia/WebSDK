@@ -59,7 +59,8 @@ requirejs([
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
-                shaka: shaka
+                shaka: shaka,
+                authToken: 'dud'
             });
         };
 
@@ -81,6 +82,7 @@ requirejs([
                 capabilities: capabilities,
                 videoElement: localVideoEl,
                 monitor: {callback: onMonitorEvent},
+                streamToken: 'dud',
                 onResolveMedia: function(options) {
                     return app.createNotification('success', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -163,7 +165,8 @@ requirejs([
                 streamId: streamId,
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
-                monitor: {callback: onMonitorEvent}
+                monitor: {callback: onMonitorEvent},
+                streamToken: 'dud'
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
