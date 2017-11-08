@@ -159,9 +159,20 @@ define([
                     return callback(error, response);
                 }
 
+                // Default to allow the user to request audio if using an older extension or not providing the options
+                // If it fails to request the audio the user will receive an error
+                if (!response.data && !response.options) {
+                    response.options = {canRequestAudioTrack: true};
+                }
+
+                // TODO(DY) Remove once customers have updated their extensions
+                if (response.data && _.hasIndexOrKey(response.data, 'hasAudio') && !response.options) {
+                    response.options = {canRequestAudioTrack: response.data.hasAudio};
+                }
+
                 callback(null, {
                     status: 'ok',
-                    constraints: mapChromeConstraints(options, response.streamId)
+                    constraints: mapChromeConstraints(options, response.streamId, response.options)
                 });
             });
         case 'Firefox':
@@ -206,14 +217,14 @@ define([
         }
     }
 
-    function mapChromeConstraints(options, id) {
+    function mapChromeConstraints(options, id, captureOptions) {
         var constraints = {};
 
         if (_.isObject(options) && _.isObject(options.screen)) {
             constraints.video = options.screen;
         }
 
-        if (_.isObject(options) && _.isObject(options.screenAudio)) {
+        if (_.isObject(options) && _.isObject(options.screenAudio) && captureOptions.canRequestAudioTrack) {
             constraints.audio = options.screenAudio;
         }
 
@@ -224,7 +235,7 @@ define([
             });
         }
 
-        if (options.screenAudio) {
+        if (options.screenAudio && captureOptions.canRequestAudioTrack) {
             _.set(constraints, ['audio', 'mandatory'], {
                 chromeMediaSource: 'system',
                 chromeMediaSourceId: id

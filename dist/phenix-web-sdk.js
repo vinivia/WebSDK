@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-08T00:09:39Z',
+                version: '2017-11-08T19:49:43Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4505,7 +4505,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-08T00:09:39Z';
+    var sdkVersion = '2017-11-08T19:49:43Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -15867,8 +15867,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
-    var releaseVersion = '2017.4.10';
+    var sdkVersion = '2017-11-08T19:49:43Z' || '?';
+    var releaseVersion = '2017.4.11';
 
     function Logger() {
         this._appenders = [];
@@ -23616,9 +23616,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(error, response);
                 }
 
+                // Default to allow the user to request audio if using an older extension or not providing the options
+                // If it fails to request the audio the user will receive an error
+                if (!response.data && !response.options) {
+                    response.options = {canRequestAudioTrack: true};
+                }
+
+                // TODO(DY) Remove once customers have updated their extensions
+                if (response.data && _.hasIndexOrKey(response.data, 'hasAudio') && !response.options) {
+                    response.options = {canRequestAudioTrack: response.data.hasAudio};
+                }
+
                 callback(null, {
                     status: 'ok',
-                    constraints: mapChromeConstraints(options, response.streamId)
+                    constraints: mapChromeConstraints(options, response.streamId, response.options)
                 });
             });
         case 'Firefox':
@@ -23663,14 +23674,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
-    function mapChromeConstraints(options, id) {
+    function mapChromeConstraints(options, id, captureOptions) {
         var constraints = {};
 
         if (_.isObject(options) && _.isObject(options.screen)) {
             constraints.video = options.screen;
         }
 
-        if (_.isObject(options) && _.isObject(options.screenAudio)) {
+        if (_.isObject(options) && _.isObject(options.screenAudio) && captureOptions.canRequestAudioTrack) {
             constraints.audio = options.screenAudio;
         }
 
@@ -23681,7 +23692,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             });
         }
 
-        if (options.screenAudio) {
+        if (options.screenAudio && captureOptions.canRequestAudioTrack) {
             _.set(constraints, ['audio', 'mandatory'], {
                 chromeMediaSource: 'system',
                 chromeMediaSourceId: id
@@ -28260,7 +28271,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
+    var sdkVersion = '2017-11-08T19:49:43Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28515,7 +28526,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-08T00:09:39Z' || '?';
+    var sdkVersion = '2017-11-08T19:49:43Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

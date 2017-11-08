@@ -25,14 +25,15 @@ function getDesktopMedia(sources, sender, callback) {
 
     tab.url = sender.url;
 
-    desktopMediaRequestId = chrome.desktopCapture.chooseDesktopMedia(sources, tab, function (streamId) {
+    desktopMediaRequestId = chrome.desktopCapture.chooseDesktopMedia(sources, tab, function (streamId, options) {
         if (!streamId) {
             return callback({status: 'permission-denied'});
         }
 
         return callback({
             status: 'ok',
-            streamId: streamId
+            streamId: streamId,
+            options: options
         });
     });
 }
