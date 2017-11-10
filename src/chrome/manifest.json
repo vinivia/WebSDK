@@ -1,7 +1,7 @@
 {
     "manifest_version" : 2,
     "name" : "__MSG_extName__",
-    "version" : "2017.4.0",
+    "version" : "2017.4.1",
 
     "default_locale": "en",
     "description" : "__MSG_extDescription__",
@@ -12,7 +12,7 @@
         "128": "pcast128.png"
     },
 
-    "author": "PhenixP2P Inc",
+    "author": "Phenix Inc",
     "background": {
         "scripts": ["screenSharing.js"],
         "persistent": false
@@ -20,10 +20,12 @@
     "externally_connectable": {
         "matches": [
             "*://phenixp2p.com/*",
-            "*://*.phenixp2p.com/*"
+            "*://*.phenixp2p.com/*",
+            "*://phenixrts.com/*",
+            "*://*.phenixrts.com/*"
         ]
     },
-    "homepage_url": "https://phenixp2p.com/",
+    "homepage_url": "https://phenixrts.com/",
     "minimum_chrome_version": "34",
     "permissions": [
         "desktopCapture"
