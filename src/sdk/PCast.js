@@ -21,7 +21,8 @@ define([
     'phenix-web-http',
     './PCastProtocol',
     './PCastEndPoint',
-    './ScreenShareExtensionManager',
+    './userMedia/ScreenShareExtensionManager',
+    './userMedia/UserMediaProvider',
     './PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     './telemetry/metricsTransmitterFactory',
@@ -29,7 +30,7 @@ define([
     './telemetry/SessionTelemetry',
     'phenix-rtc',
     './sdpUtil'
-], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC, sdpUtil) {
+], function (_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, phenixRTC, sdpUtil) {
     'use strict';
 
     var NetworkStates = _.freeze({
@@ -42,7 +43,6 @@ define([
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
-    var listenForMediaStreamTrackChangesTimeout = 2000;
 
     function PCast(options) {
         options = options || {};
@@ -217,20 +217,21 @@ define([
         }
     };
 
-    PCast.prototype.getUserMedia = function (options, callback) {
+    PCast.prototype.getUserMedia = function (options, callback, onScreenShare) {
         if (phenixRTC.browser === 'IE') {
             throw new Error('Publishing not supported on IE');
         }
 
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+
+        if (onScreenShare) {
+            assert.isFunction(onScreenShare, 'onScreenShare');
         }
 
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        var userMediaProvider = new UserMediaProvider(this._logger, this._screenShareExtensionManager, onScreenShare);
 
-        return getUserMedia.call(this, options, callback);
+        return userMediaProvider.getUserMedia(options, callback);
     };
 
     PCast.prototype.publish = function (streamToken, streamToPublish, callback, tags, options) {
@@ -445,157 +446,6 @@ define([
 
         return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
     };
-
-    function getUserMediaConstraints(options, callback) {
-        var that = this;
-
-        if (options.screen) {
-            return that._screenShareExtensionManager.isScreenSharingEnabled(function (isEnabled) {
-                if (isEnabled) {
-                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
-                }
-
-                return that._screenShareExtensionManager.installExtension(function (error, response) {
-                    if (error || (response && response.status !== 'ok')) {
-                        return callback(error, response);
-                    }
-
-                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
-                });
-            });
-        }
-
-        var constraints = {
-            audio: options.audio || false,
-            video: options.video || false
-        };
-
-        callback(null, {
-            status: 'ok',
-            constraints: constraints
-        });
-    }
-
-    function getUserMedia(options, callback) {
-        var that = this;
-
-        var onUserMediaSuccess = function onUserMediaSuccess(status, stream) {
-            if (that._gumStreams) {
-                that._gumStreams.push(stream);
-            }
-
-            callback(that, status, stream);
-        };
-
-        var onUserMediaFailure = function onUserMediaFailure(status, stream, error) {
-            if (options.screenAudio) {
-                that._logger.warn('Screen capture with audio is only supported on Windows or Chrome OS.');
-            }
-
-            callback(that, status, stream, error);
-        };
-
-        var hasScreen = options.screen || options.screenAudio;
-        var hasVideoOrAudio = options.video || options.audio;
-
-        if (!(hasScreen && hasVideoOrAudio)) {
-            return getUserMediaStream.call(that, options, onUserMediaSuccess, onUserMediaFailure);
-        }
-
-        return getUserMediaStream.call(that, {screen: options.screen}, function success(status, screenStream) {
-            return getUserMediaStream.call(that, {
-                audio: options.audio,
-                video: options.video
-            }, function screenSuccess(status, stream) {
-                addTracksToWebRTCStream(stream, screenStream.getTracks());
-
-                onUserMediaSuccess(status, stream);
-            }, function failure(status, stream, error) {
-                stopWebRTCStream(screenStream);
-
-                onUserMediaFailure(status, stream, error);
-            });
-        }, onUserMediaFailure);
-    }
-
-    function getUserMediaStream(options, successCallback, failureCallback) {
-        var that = this;
-
-        var onUserMediaCancelled = function onUserMediaCancelled() {
-            failureCallback('cancelled', null);
-        };
-
-        var onUserMediaFailure = function onUserMediaFailure(e) {
-            failureCallback(getUserMediaErrorStatus(e), undefined, e);
-        };
-
-        var onUserMediaSuccess = function onUserMediaSuccess(stream) {
-            wrapNativeMediaStream.call(that, stream);
-
-            successCallback('ok', stream);
-        };
-
-        return getUserMediaConstraints.call(this, options, function (error, response) {
-            if (response.status === 'cancelled') {
-                return onUserMediaCancelled();
-            }
-
-            if (response.status !== 'ok') {
-                return onUserMediaFailure(error);
-            }
-
-            try {
-                phenixRTC.getUserMedia(response.constraints, onUserMediaSuccess, onUserMediaFailure);
-            } catch (e) {
-                onUserMediaFailure(e);
-            }
-        });
-    }
-
-    var getUserMediaErrorStatus = function getUserMediaErrorStatus(e) {
-        var status;
-
-        if (e.code === 'unavailable') {
-            status = 'conflict';
-        } else if (e.message === 'permission-denied') {
-            status = 'permission-denied';
-        } else if (e.name === 'PermissionDeniedError') { // Chrome
-            status = 'permission-denied';
-        } else if (e.name === 'InternalError' && e.message === 'Starting video failed') { // FF (old getUserMedia API)
-            status = 'conflict';
-        } else if (e.name === 'SourceUnavailableError') { // FF
-            status = 'conflict';
-        } else if (e.name === 'SecurityError' && e.message === 'The operation is insecure.') { // FF
-            status = 'permission-denied';
-        } else {
-            status = 'failed';
-        }
-
-        return status;
-    };
-
-    function wrapNativeMediaStream(stream) {
-        var lastTrackStates = {};
-        var that = this;
-
-        setTimeout(function listenForTrackChanges() {
-            if (isStreamStopped(stream)) {
-                return;
-            }
-
-            _.forEach(stream.getTracks(), function(track) {
-                if (_.hasIndexOrKey(lastTrackStates, track.id) && lastTrackStates[track.id] !== track.enabled) {
-                    track.dispatchEvent(new window.Event('StateChange'));
-
-                    that._logger.info('[%s] Detected track [%s] enabled change of [%s]', stream.id, track.id, track.enabled);
-                }
-
-                lastTrackStates[track.id] = track.enabled;
-            });
-
-            setTimeout(listenForTrackChanges, listenForMediaStreamTrackChangesTimeout);
-        }, listenForMediaStreamTrackChangesTimeout);
-    }
 
     function instantiateProtocol(uri) {
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);
@@ -2673,24 +2523,6 @@ define([
             default:
                 break;
             }
-        }
-    }
-
-    function addTracksToWebRTCStream(stream, tracks) {
-        if (typeof stream !== 'object') {
-            return;
-        }
-
-        if (typeof tracks !== 'object') {
-            return;
-        }
-
-        if (tracks.constructor !== Array) {
-            return;
-        }
-
-        for (var i = 0; i < tracks.length; i++) {
-            stream.addTrack(tracks[i]);
         }
     }
 

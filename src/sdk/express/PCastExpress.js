@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     '../AdminAPI',
-    '../UserMediaResolver',
+    '../userMedia/UserMediaResolver',
     '../PCast',
     'phenix-rtc',
     '../streaming/shaka.json'
@@ -91,20 +91,38 @@ define([
             assert.isFunction(options.onResolveMedia, 'options.onResolveMedia');
         }
 
-        this.waitForOnline(function() {
-            var userMediaResolver = new UserMediaResolver(that._pcast, options.aspectRatio, options.resolution, options.frameRate);
+        if (options.onScreenShare) {
+            assert.isFunction(options.onScreenShare, 'options.onScreenShare');
+        }
 
-            userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
-                if (error) {
-                    return callback(error);
-                }
+        var userMediaResolver = new UserMediaResolver(that._pcast, options.aspectRatio, options.resolution, options.frameRate, function(screenOptions) {
+            screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
 
-                if (options.onResolveMedia) {
-                    options.onResolveMedia(response.options);
-                }
+            if (screenOptions.resolution) {
+                assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+            }
 
-                callback(null, _.assign({status: 'ok'}, response));
-            });
+            if (screenOptions.frameRate) {
+                assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
+            }
+
+            if (screenOptions.aspectRatio) {
+                assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
+            }
+
+            return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
+        });
+
+        userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (options.onResolveMedia) {
+                options.onResolveMedia(response.options);
+            }
+
+            callback(null, _.assign({status: 'ok'}, response));
         });
     };
 

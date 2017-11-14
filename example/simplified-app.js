@@ -79,6 +79,19 @@ requirejs([
 
             pcastExpress.publish({
                 mediaConstraints: getConstraints(),
+                onScreenShare: function(options) {
+                    app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Got Screen Share Constraints</strong>',
+                        message: 'With options (' + _.get(options, ['screen', 'mediaSource']) + '|' + _.get(options, ['screenAudio', 'mediaSource']) + ')'
+                    });
+
+                    return {
+                        frameRate: 30,
+                        resolution: 2160,
+                        aspectRatio: '16x9'
+                    };
+                },
                 capabilities: capabilities,
                 videoElement: localVideoEl,
                 monitor: {callback: onMonitorEvent},
@@ -247,51 +260,26 @@ requirejs([
 
         function getConstraints() {
             var source = $('#gum-source option:selected').val();
-            var userMediaOptions = {};
+            var deviceOptions = {
+                screen: _.includes(source.toLowerCase(), 'screen'),
+                audio: _.includes(source.toLowerCase(), 'microphone'),
+                video: _.includes(source.toLowerCase(), 'camera'),
+                screenAudio: _.includes(source.toLowerCase(), 'screenaudio')
+            };
 
-            switch (source) {
-            case 'screen':
-                userMediaOptions.screen = true;
-
-                break;
-            case 'microphone':
-                userMediaOptions.audio = true;
-                userMediaOptions.video = false;
-
-                break;
-            case 'camera':
-                userMediaOptions.audio = false;
-                userMediaOptions.video = {
-                    optional: [
-                        {minHeight: 720}
-                    ]
-                };
-
-                break;
-            case 'cameraAndMicrophone':
-                userMediaOptions.audio = true;
-                userMediaOptions.video = {
-                    optional: [
-                        {minHeight: 720}
-                    ]
-                };
-
-                break;
-            case 'cameraMicrophoneAndScreen':
-                userMediaOptions.screen = true;
-                userMediaOptions.audio = true;
-                userMediaOptions.video = {
-                    optional: [
-                        {minHeight: 720}
-                    ]
-                };
-
-                break;
-            default:
-                throw new Error('Unsupported User Media Options');
+            if (_.includes(source.toLowerCase(), 'application')) {
+                deviceOptions.screen = {mediaSource: 'application'};
             }
 
-            return userMediaOptions;
+            if (_.includes(source.toLowerCase(), 'desktop')) {
+                deviceOptions.screen = {mediaSource: 'screen'};
+            }
+
+            if (source === 'user' || source === 'environment') {
+                deviceOptions = {video: {facingMode: source}};
+            }
+
+            return deviceOptions;
         }
 
         app.setOnReset(function () {

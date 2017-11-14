@@ -22,7 +22,7 @@ define('phenix-web-sdk', [
     './sdk/room/RoomService',
     './sdk/audio/AudioSpeakerDetector',
     './sdk/bandwidth/BandwidthMonitor',
-    './sdk/UserMediaResolver',
+    './sdk/userMedia/UserMediaResolver',
     './sdk/express/PCastExpress',
     './sdk/express/RoomExpress'
 ], function (rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress) {

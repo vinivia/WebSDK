@@ -49,7 +49,7 @@ define([
         }
     ];
 
-    function UserMediaResolver(pcast, defaultAspectRatio, defaultResolutionHeight, defaultFrameRate) {
+    function UserMediaResolver(pcast, defaultAspectRatio, defaultResolutionHeight, defaultFrameRate, onScreenShare) {
         assert.isObject(pcast, 'pcast');
 
         this._pcast = pcast;
@@ -57,6 +57,7 @@ define([
         this._defaultAspectRatio = defaultAspectRatio || '16x9';
         this._defaultResolutionHeight = defaultResolutionHeight || 720;
         this._defaultFrameRate = defaultFrameRate || 15;
+        this._onScreenShare = onScreenShare;
     }
 
     UserMediaResolver.prototype.getUserMedia = function getUserMedia(deviceOptions, callback) {
@@ -332,6 +333,14 @@ define([
                 constraints.video.facingMode = video.facingMode;
             }
 
+            if (video.mediaSource) {
+                constraints.video.mandatory.mediaSource = video.mediaSource;
+            }
+
+            if (video.mediaSourceId) {
+                constraints.video.mandatory.mediaSourceId = video.mediaSourceId;
+            }
+
             if (!width) {
                 delete constraints.video.mandatory.minWidth;
                 delete constraints.video.mandatory.maxWidth;
@@ -346,7 +355,7 @@ define([
                 delete constraints.video.mandatory.maxFrameRate;
             }
 
-            if (!width && !height && !frameRate && !video.deviceId && !video.facingMode) {
+            if (!width && !height && !frameRate && !video.deviceId && !video.facingMode && !video.mediaSource && !video.mediaSourceId) {
                 constraints.video = true;
             }
         }
@@ -420,6 +429,10 @@ define([
                 constraints.screen.mandatory.mediaSource = screen.mediaSource;
             }
 
+            if (screen.mediaSourceId) {
+                constraints.screen.mandatory.mediaSourceId = screen.mediaSourceId;
+            }
+
             if (!width && !height && !frameRate && !screen.mediaSource) {
                 constraints.screen = true;
             }
@@ -484,7 +497,83 @@ define([
             that._logger.error('Unable to get user media with status [%s]', status, error);
 
             return callback(error);
+        }, function(constraints) {
+            var clientConstraints = constraints;
+
+            if (that._onScreenShare && RTC.browser === 'Chrome') {
+                var normalizedConstraints = normalizeChromeScreenShareConstraints(constraints);
+
+                clientConstraints = that._onScreenShare(normalizedConstraints);
+
+                var resolution;
+
+                if (clientConstraints.resolutionHeight && clientConstraints.aspectRatio) {
+                    resolution = {
+                        width: calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
+                        height: clientConstraints.resolutionHeight
+                    };
+                }
+
+                clientConstraints = getChromeScreenShareConstraints.call(that, normalizedConstraints, resolution, clientConstraints.frameRate);
+            }
+
+            return clientConstraints;
         });
+    }
+
+    function normalizeChromeScreenShareConstraints(constraints) {
+        var chromeVideoSource = _.get(constraints, ['video', 'mandatory', 'chromeMediaSource']);
+        var chromeAudioSource = _.get(constraints, ['audio', 'mandatory', 'chromeMediaSource']);
+        var chromeVideoSourceId = _.get(constraints, ['video', 'mandatory', 'chromeMediaSourceId']);
+        var chromeAudioSourceId = _.get(constraints, ['audio', 'mandatory', 'chromeMediaSourceId']);
+        var normalizedConstraints = {};
+
+        if (chromeVideoSource || chromeAudioSourceId) {
+            _.set(normalizedConstraints, ['screen', 'mediaSource'], chromeVideoSource);
+            _.set(normalizedConstraints, ['screen', 'mediaSourceId'], chromeVideoSourceId);
+        }
+
+        if (chromeAudioSource || chromeAudioSourceId) {
+            _.set(normalizedConstraints, ['screenAudio', 'mediaSource'], chromeAudioSource);
+            _.set(normalizedConstraints, ['screenAudio', 'mediaSourceId'], chromeAudioSourceId);
+        }
+
+        return normalizedConstraints;
+    }
+
+    function getChromeScreenShareConstraints(constraints, resolution, frameRate) {
+        var screenShareConstraints = this.getVendorSpecificConstraints(constraints, resolution, frameRate);
+
+        if (screenShareConstraints.screen) {
+            screenShareConstraints.video = screenShareConstraints.screen;
+            delete screenShareConstraints.screen;
+        }
+
+        if (screenShareConstraints.screenAudio) {
+            screenShareConstraints.audio = screenShareConstraints.screenAudio;
+            delete screenShareConstraints.screenAudio;
+        }
+
+        var chromeVideoSource = _.get(screenShareConstraints, ['video', 'mandatory', 'mediaSource']);
+        var chromeAudioSource = _.get(screenShareConstraints, ['audio', 'mandatory', 'mediaSource']);
+        var chromeVideoSourceId = _.get(screenShareConstraints, ['video', 'mandatory', 'mediaSourceId']);
+        var chromeAudioSourceId = _.get(screenShareConstraints, ['audio', 'mandatory', 'mediaSourceId']);
+
+        if (chromeVideoSource || chromeVideoSourceId) {
+            _.set(screenShareConstraints, ['video', 'mandatory', 'chromeMediaSource'], chromeVideoSource);
+            _.set(screenShareConstraints, ['video', 'mandatory', 'chromeMediaSourceId'], chromeVideoSourceId);
+            delete screenShareConstraints.video.mandatory.mediaSource;
+            delete screenShareConstraints.video.mandatory.mediaSourceId;
+        }
+
+        if (chromeAudioSource || chromeAudioSourceId) {
+            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSource'], chromeAudioSource);
+            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSourceId'], chromeAudioSourceId);
+            delete screenShareConstraints.audio.mandatory.mediaSource;
+            delete screenShareConstraints.audio.mandatory.mediaSourceId;
+        }
+
+        return screenShareConstraints;
     }
 
     function getConstraintNameFromError(error) {
