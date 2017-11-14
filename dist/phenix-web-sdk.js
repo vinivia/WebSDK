@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-10T19:40:08Z',
+                version: '2017-11-14T15:37:08Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4505,7 +4505,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-10T19:40:08Z';
+    var sdkVersion = '2017-11-14T15:37:08Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -7826,7 +7826,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution(resolution.height, resolution.aspectRatio);
+                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
 
                     return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
                 case 'framerate':
@@ -7867,26 +7867,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
         var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
 
+        var newAspectRatio;
+        var newAspectRatioHeights;
+        var newHeight;
+        var newWidth;
+
         if (!_.isNumber(heightIndex)) {
             heightIndex = getClosestKeyIndex(height, aspectRatioHeights);
         } else {
             if (heightIndex === aspectRatioHeights.length - 1) {
-                heightIndex = 0;
-
-                if (heightIndex === aspectRatioHeights.length - 1) {
+                if (aspectRatioHeights.length - 1 === 0) {
                     return null;
                 }
 
                 aspectRatioIndex++;
-            } else {
-                heightIndex++;
+
+                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+                newHeight = this._defaultResolutionHeight;
+                newWidth = calculateWidthByAspectRatio(newHeight, newAspectRatio);
+
+                return {
+                    aspectRatio: newAspectRatio,
+                    height: parseInt(newHeight),
+                    width: parseInt(newWidth)
+                };
             }
+
+            heightIndex++;
         }
 
-        var newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-        var newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        var newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        var newWidth = newAspectRatioHeights[heightIndex][newHeight];
+        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
             aspectRatio: newAspectRatio,
@@ -7922,7 +7935,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function getClosestKeyIndex(value, collection) {
-        _.reduce(collection, function(closestIndex, nextItem, index) {
+        return _.reduce(collection, function(closestIndex, nextItem, index) {
             if (!closestIndex) {
                 return index;
             }
@@ -15867,8 +15880,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-10T19:40:08Z' || '?';
-    var releaseVersion = '2017.4.11';
+    var sdkVersion = '2017-11-14T15:37:08Z' || '?';
+    var releaseVersion = '2017.4.12';
 
     function Logger() {
         this._appenders = [];
@@ -28271,7 +28284,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-10T19:40:08Z' || '?';
+    var sdkVersion = '2017-11-14T15:37:08Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28526,7 +28539,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-10T19:40:08Z' || '?';
+    var sdkVersion = '2017-11-14T15:37:08Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

@@ -463,7 +463,7 @@ define([
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution(resolution.height, resolution.aspectRatio);
+                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
 
                     return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
                 case 'framerate':
@@ -504,26 +504,39 @@ define([
         var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
         var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
 
+        var newAspectRatio;
+        var newAspectRatioHeights;
+        var newHeight;
+        var newWidth;
+
         if (!_.isNumber(heightIndex)) {
             heightIndex = getClosestKeyIndex(height, aspectRatioHeights);
         } else {
             if (heightIndex === aspectRatioHeights.length - 1) {
-                heightIndex = 0;
-
-                if (heightIndex === aspectRatioHeights.length - 1) {
+                if (aspectRatioHeights.length - 1 === 0) {
                     return null;
                 }
 
                 aspectRatioIndex++;
-            } else {
-                heightIndex++;
+
+                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+                newHeight = this._defaultResolutionHeight;
+                newWidth = calculateWidthByAspectRatio(newHeight, newAspectRatio);
+
+                return {
+                    aspectRatio: newAspectRatio,
+                    height: parseInt(newHeight),
+                    width: parseInt(newWidth)
+                };
             }
+
+            heightIndex++;
         }
 
-        var newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-        var newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        var newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        var newWidth = newAspectRatioHeights[heightIndex][newHeight];
+        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
             aspectRatio: newAspectRatio,
@@ -559,7 +572,7 @@ define([
     }
 
     function getClosestKeyIndex(value, collection) {
-        _.reduce(collection, function(closestIndex, nextItem, index) {
+        return _.reduce(collection, function(closestIndex, nextItem, index) {
             if (!closestIndex) {
                 return index;
             }
