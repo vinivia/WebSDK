@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-14T19:18:44Z',
+                version: '2017-11-16T00:09:06Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-14T19:18:44Z';
+    var sdkVersion = '2017-11-16T00:09:06Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -12664,17 +12664,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return defaultStreams;
         }
 
-        selfStreams = _.filter(selfStreams, function(stream) {
-            var hasSameUri = stream.uri === publisherStream.uri;
-            var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
-            var isPCastStream = !!pcastStreamId;
-            var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
-            var hasSameType = stream.type === publisherStream.type;
-
-            return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
-        });
-
         if (publisherStream) {
+            selfStreams = _.filter(selfStreams, function(stream) {
+                var hasSameUri = stream.uri === publisherStream.uri;
+                var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
+                var isPCastStream = !!pcastStreamId;
+                var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
+                var hasSameType = stream.type === publisherStream.type;
+
+                return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
+            });
+
             selfStreams.push(publisherStream);
         }
 
@@ -15819,8 +15819,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-14T19:18:44Z' || '?';
-    var releaseVersion = '2017.4.12';
+    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
+    var releaseVersion = '2017.4.13';
 
     function Logger() {
         this._appenders = [];
@@ -27795,7 +27795,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-14T19:18:44Z' || '?';
+    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28050,7 +28050,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-14T19:18:44Z' || '?';
+    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

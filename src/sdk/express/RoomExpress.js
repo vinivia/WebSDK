@@ -871,17 +871,17 @@ define([
             return defaultStreams;
         }
 
-        selfStreams = _.filter(selfStreams, function(stream) {
-            var hasSameUri = stream.uri === publisherStream.uri;
-            var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
-            var isPCastStream = !!pcastStreamId;
-            var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
-            var hasSameType = stream.type === publisherStream.type;
-
-            return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
-        });
-
         if (publisherStream) {
+            selfStreams = _.filter(selfStreams, function(stream) {
+                var hasSameUri = stream.uri === publisherStream.uri;
+                var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
+                var isPCastStream = !!pcastStreamId;
+                var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
+                var hasSameType = stream.type === publisherStream.type;
+
+                return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
+            });
+
             selfStreams.push(publisherStream);
         }
 
