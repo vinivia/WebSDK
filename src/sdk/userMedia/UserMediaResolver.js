@@ -567,8 +567,8 @@ define([
         }
 
         if (chromeAudioSource || chromeAudioSourceId) {
-            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSource'], chromeAudioSource);
-            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSourceId'], chromeAudioSourceId);
+            _.set(screenShareConstraints, ['audio', 'mandatory', 'chromeMediaSource'], chromeAudioSource);
+            _.set(screenShareConstraints, ['audio', 'mandatory', 'chromeMediaSourceId'], chromeAudioSourceId);
             delete screenShareConstraints.audio.mandatory.mediaSource;
             delete screenShareConstraints.audio.mandatory.mediaSourceId;
         }

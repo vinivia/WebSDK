@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-16T00:09:06Z',
+                version: '2017-11-16T23:59:37Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-16T00:09:06Z';
+    var sdkVersion = '2017-11-16T23:59:37Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -9282,8 +9282,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (chromeAudioSource || chromeAudioSourceId) {
-            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSource'], chromeAudioSource);
-            _.set(screenShareConstraints, ['screenAudio', 'mandatory', 'chromeMediaSourceId'], chromeAudioSourceId);
+            _.set(screenShareConstraints, ['audio', 'mandatory', 'chromeMediaSource'], chromeAudioSource);
+            _.set(screenShareConstraints, ['audio', 'mandatory', 'chromeMediaSourceId'], chromeAudioSourceId);
             delete screenShareConstraints.audio.mandatory.mediaSource;
             delete screenShareConstraints.audio.mandatory.mediaSourceId;
         }
@@ -15819,8 +15819,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
-    var releaseVersion = '2017.4.13';
+    var sdkVersion = '2017-11-16T23:59:37Z' || '?';
+    var releaseVersion = '2017.4.14';
 
     function Logger() {
         this._appenders = [];
@@ -27795,7 +27795,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
+    var sdkVersion = '2017-11-16T23:59:37Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28050,7 +28050,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-16T00:09:06Z' || '?';
+    var sdkVersion = '2017-11-16T23:59:37Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

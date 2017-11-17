@@ -70,6 +70,8 @@ requirejs([
         var publish = function publish() {
             var localVideoEl = $('#localVideo')[0];
             var capabilities = [];
+            var constraints = getConstraints();
+            var publishMethod = _.bind(pcastExpress.publish, pcastExpress);
 
             $('#publish-capabilities option:selected').each(function () {
                 capabilities.push($(this).val());
@@ -77,8 +79,12 @@ requirejs([
 
             capabilities.push($('#publish-quality option:selected').val());
 
-            pcastExpress.publish({
-                mediaConstraints: getConstraints(),
+            if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
+                publishMethod = _.bind(pcastExpress.publishScreen, pcastExpress);
+            }
+
+            publishMethod({
+                mediaConstraints: constraints,
                 onScreenShare: function(options) {
                     app.createNotification('success', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -171,10 +177,18 @@ requirejs([
             var streamId = $('.streamIdForPublishing').val();
             var remoteVideoEl = $('#remoteVideo')[0];
             var capabilities = [];
+            var subscriberMediaStream = null;
+            var subscriberPlayer = null;
+            var constraints = getConstraints();
+            var subscribeMethod = _.bind(pcastExpress.subscribe, pcastExpress);
+
+            if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
+                subscribeMethod = _.bind(pcastExpress.subscribeToScreen, pcastExpress);
+            }
 
             capabilities.push($('#subscriber-mode option:selected').val());
 
-            pcastExpress.subscribe({
+            subscribeMethod({
                 streamId: streamId,
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
