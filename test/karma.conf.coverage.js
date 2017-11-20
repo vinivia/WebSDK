@@ -49,7 +49,16 @@ module.exports = function (config) {
                 new webpack.DefinePlugin({'process.env.PHENIX_APPLICATION_ID': JSON.stringify(process.env.PHENIX_APPLICATION_ID)}),
                 new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)}),
                 new CaseSensitivePathsPlugin()
-            ]
+            ],
+            module: {
+                rules: [
+                    {
+                        test: /\.js$/,
+                        use: {loader: 'istanbul-instrumenter-loader'},
+                        include: path.resolve('src/sdk/')
+                    }
+                ]
+            }
         },
 
         webpackMiddleware: {stats: 'errors-only'},
@@ -57,26 +66,12 @@ module.exports = function (config) {
         // Test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage'],
+        reporters: ['progress', 'coverage-istanbul'],
 
-        coverageReporter: {
+        coverageIstanbulReporter: {
             dir: path.resolve(__dirname, '../coverage'),
-            reporters: [
-                {
-                    type: 'json',
-                    subdir: '.'
-                },
-                {
-                    type: 'html',
-                    subdir: '.'
-                },
-                {
-                    type: 'lcov',
-                    subdir: '.'
-                },
-                {type: 'teamcity'},
-                {type: 'text-summary'}
-            ]
+            reports: ['json', 'html', 'lcov', 'teamcity', 'text-summary'],
+            fixWebpackSourcePaths: true
         },
 
         // Web server port

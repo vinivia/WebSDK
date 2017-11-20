@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-define([], function () {
+define(['phenix-web-lodash-light'], function (_) {
     function ChromeRuntimeStubber() {
 
     }
 
     ChromeRuntimeStubber.prototype.stub = function(callback) {
-        if (window.chrome && window.chrome.runtime) {
-            this._chromeRuntimeSendMessage = window.chrome.runtime.sendMessage;
+        this._chromeRuntimeSendMessage = _.get(window, ['chrome', 'runtime', 'sendMessage']);
 
-            window.chrome.runtime.sendMessage = function(screenSharingExtensionId, options, sendMessageCallback) {
-                sendMessageCallback({status: 'ok'});
+        _.set(window, ['chrome', 'runtime', 'sendMessage'], function(screenSharingExtensionId, options, sendMessageCallback) {
+            sendMessageCallback({
+                status: 'ok',
+                streamId: 'MockScreenStreamId',
+                version: 'TEST'
+            });
 
-                if (callback) {
-                    callback(screenSharingExtensionId, options, sendMessageCallback);
-                }
-            };
-        }
+            if (callback) {
+                callback(screenSharingExtensionId, options, sendMessageCallback);
+            }
+        });
     };
 
     ChromeRuntimeStubber.prototype.restore = function() {
-        if (window.chrome && window.chrome.runtime) {
+        if (this._chromeRuntimeSendMessage) {
             window.chrome.runtime.sendMessage = this._chromeRuntimeSendMessage;
         }
     };
