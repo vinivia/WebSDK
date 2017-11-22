@@ -19,8 +19,10 @@ define([
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json',
-    'sdk/room/member.json'
-], function (_, RoomExpress, HttpStubber, WebSocketStubber, room, member) {
+    'sdk/room/member.json',
+    'sdk/room/stream.json',
+    'sdk/room/track.json'
+], function (_, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
     describe('When Joining a Room with ExpressRoom', function () {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -75,11 +77,11 @@ define([
             roomExpress.dispose();
         });
 
-        it('Has method joinRoom', function () {
+        it('has method joinRoom', function () {
             expect(roomExpress.joinRoom).to.be.a('function');
         });
 
-        it('Expect joinRoom protocol to be called with just roomId', function () {
+        it('successfully calls joinRoom protocol with just room id and no alias', function () {
             websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
                 expect(message.roomId).to.be.equal(mockRoom.roomId);
             });
@@ -90,7 +92,7 @@ define([
             }, function() {}, function(){});
         });
 
-        it('Expect joinRoom protocol to be called with just alias', function () {
+        it('successfully calls joinRoom protocol with just alias and no room id', function () {
             websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
             });
@@ -101,7 +103,7 @@ define([
             }, function() {}, function(){});
         });
 
-        it('Expect joinRoom protocol without alias or roomId to throw an error', function () {
+        it('throws an error when joinRoom called without alias or roomId arguments', function () {
             websocketStubber.stubResponse('chat.JoinRoom', response, function (type, message) {
                 expect(message.alias).to.be.equal(mockRoom.alias);
             });
@@ -111,7 +113,7 @@ define([
             }).to.throw(Error);
         });
 
-        it('Expect joinRoom callback to return response object with a roomService and active room', function () {
+        it('returns response object with a roomService and active room from joinRoom callback', function () {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
                 alias: 'roomAlias'
@@ -121,7 +123,7 @@ define([
             }, function(){});
         });
 
-        it('Expect member subscription callback to trigger when members changed after successfully joining a room', function (done) {
+        it('triggers member subscription callback when members changed after successfully joining a room', function (done) {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
                 alias: 'roomAlias'
@@ -130,6 +132,44 @@ define([
             }, function(members){
                 expect(members.length).to.be.equal(1);
 
+                done();
+            });
+        });
+
+        it('has a member stream that has all the URI params to the stream available as info', function(done) {
+            var infoKey1 = 'infoKey1';
+            var infoValue1 = 'infoValue1';
+            var infoKey2 = 'infoKey2';
+            var infoValue2 = 'infoValue2';
+            var stream1 = {
+                type: stream.types.user.name,
+                uri: 'Stream1?' + infoKey1 + '=' + infoValue1 + '&' + infoKey2 + '=' + infoValue2,
+                audioState: track.states.trackEnabled.name,
+                videoState: track.states.trackEnabled.name
+            };
+            var member1 = {
+                state: member.states.passive.name,
+                sessionId: 'member1',
+                role: member.roles.participant.name,
+                streams: [stream1],
+                lastUpdate: 123,
+                screenName: 'first'
+            };
+
+            mockRoom.members = [member1];
+            response.members = [member1];
+
+            roomExpress.joinRoom({
+                role: member.roles.participant.name,
+                alias: 'roomAlias'
+            }, function() {}, function(members){
+                expect(members.length).to.be.equal(1);
+
+                var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
+
+                expect(memberStreamInfo).to.be.a('object');
+                expect(memberStreamInfo[infoKey1]).to.be.equal(infoValue1);
+                expect(memberStreamInfo[infoKey2]).to.be.equal(infoValue2);
                 done();
             });
         });

@@ -24,7 +24,7 @@ define([
     UserMediaStubber.prototype.stub = function(callback) {
         sinon.stub(phenixRTC, 'getUserMedia').callsFake(function(constraints, success) {
             callback(constraints);
-            success(window.MediaStream ? new window.MediaStream() : {});
+            success(UserMediaStubber.getMockMediaStream());
         });
     };
 
@@ -68,6 +68,21 @@ define([
 
     UserMediaStubber.prototype.restore = function() {
         phenixRTC.getUserMedia.restore();
+    };
+
+    UserMediaStubber.getMockMediaStream = function() {
+        return window.MediaStream ? new window.MediaStream() : {
+            id: 'MockStreamId',
+            getTracks: function() {
+                return [];
+            },
+            getAudioTracks: function() {
+                return [];
+            },
+            getVideoTracks: function() {
+                return [];
+            }
+        };
     };
 
     return UserMediaStubber;

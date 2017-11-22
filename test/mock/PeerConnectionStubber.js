@@ -15,11 +15,9 @@
  */
 define([
     'phenix-web-lodash-light',
-    'phenix-rtc'
-], function (_, phenixRTC) {
-    var peerConnectionClone = phenixRTC.RTCPeerConnection;
-    var sessionDescriptionClone = phenixRTC.RTCSessionDescription;
-
+    'phenix-rtc',
+    './UserMediaStubber'
+], function (_, phenixRTC, UserMediaStubber) {
     function PeerConnectionStubber() {
         this._mockPeerConnection = null;
         this._defaultResponse = {
@@ -39,8 +37,8 @@ define([
             this._mockPeerConnection = null;
         }
 
-        phenixRTC.RTCPeerConnection = peerConnectionClone;
-        phenixRTC.RTCSessionDescription = sessionDescriptionClone;
+        phenixRTC.RTCPeerConnection.restore();
+        phenixRTC.RTCSessionDescription.restore();
     };
 
     function setupStubIfNoneExist() {
@@ -73,33 +71,21 @@ define([
                     return;
                 }
 
-                if (window.MediaStream) {
-                    return listener({stream: new window.MediaStream()});
-                }
-
-                return listener({
-                    stream: {
-                        id: 'MockStreamId',
-                        getTracks: function() {
-                            return [];
-                        },
-                        getAudioTracks: function() {
-                            return [];
-                        },
-                        getVideoTracks: function() {
-                            return [];
-                        }
-                    }
-                });
+                return listener({stream: UserMediaStubber.getMockMediaStream()});
             }
         };
 
-        phenixRTC.RTCPeerConnection = function() {
+        phenixRTC.RTCPeerConnection = phenixRTC.RTCPeerConnection || _.noop;
+
+        sinon.stub(phenixRTC, 'RTCPeerConnection').callsFake(function () {
             return that._mockPeerConnection;
-        };
-        phenixRTC.RTCSessionDescription = function(sessionDescription) {
+        });
+
+        phenixRTC.RTCSessionDescription = phenixRTC.RTCSessionDescription || _.noop;
+
+        sinon.stub(phenixRTC, 'RTCSessionDescription').callsFake(function (sessionDescription) {
             return sessionDescription;
-        };
+        });
     }
 
     return PeerConnectionStubber;

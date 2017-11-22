@@ -96,7 +96,7 @@ define([
         return this._streamId;
     };
 
-    Stream.prototype.getPCastStreamInfo = function() {
+    Stream.prototype.getInfo = function() {
         return parseStreamInfoFromStreamUri(this._uri.getValue());
     };
 
@@ -114,7 +114,7 @@ define([
         return uri.replace(getPrefixToUse(uri), '').split('?')[0];
     };
 
-    Stream.parsePCastStreamInfoFromStreamUri = function(uri) {
+    Stream.getInfoFromStreamUri = function(uri) {
         return parseStreamInfoFromStreamUri(uri);
     };
 

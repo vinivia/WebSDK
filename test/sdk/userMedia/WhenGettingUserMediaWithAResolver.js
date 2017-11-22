@@ -68,7 +68,6 @@ define([
                 video: true,
                 audio: true
             }, function(error, response) {
-                console.log(error, response);
                 expect(error).to.not.exist;
                 expect(response).to.be.a('object');
                 expect(response.userMedia).to.exist;

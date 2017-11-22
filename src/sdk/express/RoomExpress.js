@@ -55,8 +55,10 @@ define([
         _.forOwn(this._membersSubscriptions, function (membersSubscription) {
             membersSubscription.dispose();
         });
-        _.forOwn(this._roomServicePublishers, function (publisher) {
-            publisher.stop();
+        _.forOwn(this._roomServicePublishers, function (publishers) {
+            _.forEach(publishers, function(publisher) {
+                publisher.stop();
+            });
         });
         _.forOwn(this._roomServices, function (roomService) {
             roomService.stop();
@@ -427,6 +429,10 @@ define([
             assert.isArray(options.tags, 'options.tags');
         }
 
+        if (options.streamInfo) {
+            assert.isObject(options.streamInfo, 'options.streamInfo');
+        }
+
         if (_.isUndefined(options.enableWildcardCapability)) {
             options.enableWildcardCapability = defaultWildcardEnabled;
         }
@@ -452,7 +458,8 @@ define([
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
                     options: {conditionCountForNotificationThreshold: 8}
-                }
+                },
+                streamInfo: {}
             }, options);
 
             if (options.streamUri) {
@@ -730,9 +737,10 @@ define([
         var realtimeCapabilities = [];
         var streamType = options.streamType;
         var memberRole = options.memberRole;
+        var streamInfo = options.streamInfo;
 
         if (!options.enableWildcardCapability) {
-            var publisherStream = mapStreamToMemberStream(publisher, streamType);
+            var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
             var joinRoomOptions = _.assign({}, options, {
                 roomId: room.getRoomId(),
                 streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
@@ -765,7 +773,7 @@ define([
                         return callback(null, createStreamTokenResponse);
                     }
 
-                    var publisherStream = mapStreamToMemberStream(publisher, streamType, createStreamTokenResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken);
+                    var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken);
                     var joinRoomOptions = _.assign({}, options, {
                         roomId: room.getRoomId(),
                         streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
@@ -776,7 +784,7 @@ define([
                 });
             }
 
-            var publisherStream = mapStreamToMemberStream(publisher, streamType, createStreamTokenResponse.streamToken);
+            var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken);
             var joinRoomOptions = _.assign({}, options, {
                 roomId: room.getRoomId(),
                 streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room),
@@ -972,26 +980,28 @@ define([
 
     function checkifStreamingIsAvailable(uri) {
         var deferToCreateToken = true;
-        var streamInfo = Stream.parsePCastStreamInfoFromStreamUri(uri);
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
 
         if (_.values(streamInfo).length === 0) {
             return deferToCreateToken;
         }
 
-        return !!streamInfo.streamTokenStreaming;
+        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
+        return !!streamInfo.streamTokenForLiveStream || !!streamInfo.streamTokenStreaming;
     }
 
     function parseStreamTokenFromStreamUri(uri, capabilities) {
-        var streamInfo = Stream.parsePCastStreamInfoFromStreamUri(uri);
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
 
-        if (streamInfo.streamTokenStreaming && _.includes(capabilities, 'streaming')) {
-            return streamInfo.streamTokenStreaming;
+        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
+        if ((streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming) && _.includes(capabilities, 'streaming')) {
+            return streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming;
         }
 
         return streamInfo.streamToken;
     }
 
-    function mapStreamToMemberStream(publisher, type, viewerStreamToken, viewerStreamTokenStreaming) {
+    function mapStreamToMemberStream(publisher, type, streamInfo, viewerStreamToken, viewerStreamTokenForLiveStream) {
         var mediaStream = publisher.getStream();
         var audioTracks = mediaStream ? mediaStream.getAudioTracks() : null;
         var videoTracks = mediaStream ? mediaStream.getVideoTracks() : null;
@@ -1005,12 +1015,27 @@ define([
             videoState: videoTrackEnabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name
         };
 
-        if (viewerStreamToken) {
-            publishedStream.uri = publishedStream.uri + '?streamToken=' + viewerStreamToken;
+        var infoToAppend = _.assign({}, streamInfo, {
+            streamToken: viewerStreamToken,
+            streamTokenForLiveStream: viewerStreamTokenForLiveStream
+        });
+
+        if (!viewerStreamToken) {
+            delete infoToAppend.streamToken;
         }
 
-        if (viewerStreamTokenStreaming) {
-            publishedStream.uri = publishedStream.uri + '&streamTokenStreaming=' + viewerStreamTokenStreaming;
+        if (!viewerStreamTokenForLiveStream) {
+            delete infoToAppend.streamTokenForLiveStream;
+        }
+
+        var queryParamString = _.reduce(infoToAppend, function(queryParamString, currentValue, currentKey) {
+            var currentPrefix = queryParamString ? '&' : '?';
+
+            return queryParamString + currentPrefix + currentKey + '=' + currentValue;
+        }, '');
+
+        if (queryParamString.length > 0) {
+            publishedStream.uri = publishedStream.uri + queryParamString;
         }
 
         return publishedStream;

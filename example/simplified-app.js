@@ -177,8 +177,6 @@ requirejs([
             var streamId = $('.streamIdForPublishing').val();
             var remoteVideoEl = $('#remoteVideo')[0];
             var capabilities = [];
-            var subscriberMediaStream = null;
-            var subscriberPlayer = null;
             var constraints = getConstraints();
             var subscribeMethod = _.bind(pcastExpress.subscribe, pcastExpress);
 
