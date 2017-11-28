@@ -117,7 +117,7 @@ define([
             websocketStubber.triggerConnected();
         });
 
-        it('results in new member with the same stream info when publishing to a room with streamInfo', function (done) {
+        it('results in new member with the same stream info as passed argument', function (done) {
             var infoKey1 = 'infoKey1';
             var infoValue1 = 'infoValue1';
             var infoKey2 = 'infoKey2';
@@ -128,10 +128,8 @@ define([
             streamInfo[infoKey2] = infoValue2;
 
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                if (message.member.streams.length > 0) {
-                    mockRoom.members = [message.member];
-                    response.members = [message.member];
-                }
+                mockRoom.members = [message.member];
+                response.members = [message.member];
             });
 
             roomExpress.publishToRoom({
@@ -149,7 +147,7 @@ define([
 
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias',
+                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 expect(members.length).to.be.equal(1);
@@ -166,10 +164,8 @@ define([
 
         it('results in new member with real-time streamToken if no capability passed in', function (done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                if (message.member.streams.length > 0) {
-                    mockRoom.members = [message.member];
-                    response.members = [message.member];
-                }
+                mockRoom.members = [message.member];
+                response.members = [message.member];
             });
 
             roomExpress.publishToRoom({
@@ -186,7 +182,7 @@ define([
 
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias',
+                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 expect(members.length).to.be.equal(1);
@@ -202,10 +198,8 @@ define([
 
         it('results in new member with streaming and real-time streamToken if streaming capability passed in', function (done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                if (message.member.streams.length > 0) {
-                    mockRoom.members = [message.member];
-                    response.members = [message.member];
-                }
+                mockRoom.members = [message.member];
+                response.members = [message.member];
             });
 
             roomExpress.publishToRoom({
@@ -222,7 +216,7 @@ define([
 
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias',
+                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 expect(members.length).to.be.equal(1);
@@ -239,10 +233,8 @@ define([
 
         it('results in new member with no stream tokens if not using wildcard tokens', function (done) {
             websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                if (message.member.streams.length > 0) {
-                    mockRoom.members = [message.member];
-                    response.members = [message.member];
-                }
+                mockRoom.members = [message.member];
+                response.members = [message.member];
             });
 
             roomExpress.publishToRoom({
@@ -260,7 +252,7 @@ define([
 
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias',
+                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 expect(members.length).to.be.equal(1);

@@ -77,7 +77,7 @@ requirejs([
             var channelAlias = $('#channelAlias').val();
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
-            var streamSelectionStrategy = app.getUrlParameter('strategy') || '';
+            var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
 
             if (!channelAlias) {
                 return;

@@ -308,7 +308,7 @@ define([
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
-            that._adminAPI.createStreamTokenForSubscribing(that._pcast.getProtocol().getSessionId(), options.capabilities, options.streamId, function(error, response) {
+            that._adminAPI.createStreamTokenForSubscribing(that._pcast.getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
                     return callback(error);
                 }

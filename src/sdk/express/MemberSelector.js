@@ -82,6 +82,24 @@ define([
         this._blackListedMembers = [];
     };
 
+    MemberSelector.getSimilarMembers = function(screenName, members) {
+        var otherMembers = _.filter(members, function(member) {
+            return member.getObservableScreenName().getValue() !== screenName;
+        });
+        var primaryMembers = _.filter(otherMembers, isPrimary);
+        var alternateMembers = _.filter(otherMembers, isAlternate);
+
+        if (isPrimaryName(screenName)) {
+            return primaryMembers || alternateMembers || otherMembers;
+        }
+
+        if (isAlternateName(screenName)) {
+            return alternateMembers || primaryMembers || otherMembers;
+        }
+
+        return otherMembers || primaryMembers || alternateMembers;
+    };
+
     function isBlackListed(member) {
         return !!_.find(this._blackListedMembers, function(blackListedMember) {
             return blackListedMember.key === getMemberKey(member);
@@ -164,16 +182,26 @@ define([
 
     function isPrimary(member) {
         var screenName = member.getObservableScreenName().getValue();
-        var primary = /primary/i;
 
-        return primary.test(screenName);
+        return isPrimaryName(screenName);
     }
 
     function isAlternate(member) {
         var screenName = member.getObservableScreenName().getValue();
-        var primary = /alternate/i;
 
-        return primary.test(screenName);
+        return isAlternateName(screenName);
+    }
+
+    function isPrimaryName(name) {
+        var primary = /primary/i;
+
+        return primary.test(name);
+    }
+
+    function isAlternateName(name) {
+        var alternate = /alternate/i;
+
+        return alternate.test(name);
     }
 
     function getAllowedMembers(members) {

@@ -83,6 +83,10 @@ define([
         throw new Error('ImmutableRoom is Immutable');
     }
 
+    function throwImmutableSubscribeError() {
+        throw new Error('Unable to subscribe to Immutable [ImmutableRoom]');
+    }
+
     function makeArrayOrObjectObservablesImmutable(collection) {
         if (_.isArray(collection)) {
             _.forEach(collection, function (value) {
@@ -103,7 +107,7 @@ define([
     function wrapObservable(value) {
         if (value instanceof observable.Observable || value instanceof observable.ObservableArray) {
             value.setValue = throwImmutableError;
-            value.subscribe = throwImmutableError;
+            value.subscribe = throwImmutableSubscribeError;
 
             var observableValue = value.getValue();
 

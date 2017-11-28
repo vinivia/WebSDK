@@ -25,7 +25,7 @@ define([
     '../chat/RoomChatService',
     './room.json',
     './member.json'
-], function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, room, member) {
+], function (_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
@@ -58,7 +58,7 @@ define([
         assert.isStringNotEmpty(role, 'role');
         assert.isStringNotEmpty(screenName, 'screenName');
 
-        var myState = member.states.passive.name;
+        var myState = memberEnums.states.passive.name;
         var mySessionId = this._authService.getPCastSessionId();
         var myScreenName = screenName;
         var myStreams = [];
@@ -265,23 +265,23 @@ define([
         var that = this;
 
         switch (event.eventType) {
-        case room.events.memberJoined.name:
+        case roomEnums.events.memberJoined.name:
             that._logger.debug('[%s] Member joined [%s]', event.roomId, event.members);
 
             return onMembersJoinsRoom.call(that, event.roomId, event.members);
-        case room.events.memberLeft.name:
+        case roomEnums.events.memberLeft.name:
             that._logger.debug('[%s] Member left [%s]', event.roomId, event.members);
 
             return onMembersLeavesRoom.call(that, event.roomId, event.members);
-        case room.events.memberUpdated.name:
+        case roomEnums.events.memberUpdated.name:
             that._logger.debug('[%s] Member updated [%s]', event.roomId, event.members);
 
             return onMembersUpdated.call(that, event.roomId, event.members);
-        case room.events.roomUpdated.name:
+        case roomEnums.events.roomUpdated.name:
             that._logger.debug('[%s] Room updated [%s]', event.roomId, event.room);
 
             return onRoomUpdated.call(that, event.roomId, event.room);
-        case room.events.roomEnded.name:
+        case roomEnums.events.roomEnded.name:
             that._logger.info('[%s] Room ended', event.roomId);
 
             break;
@@ -545,6 +545,10 @@ define([
 
                 result.room = initializeRoomAndBuildCache.call(that, response);
 
+                if (response.status === 'ok' && response.self) {
+                    that.getSelf()._update(response.self);
+                }
+
                 callback(null, result);
             }
         );
@@ -552,7 +556,7 @@ define([
 
     function leaveRoomRequest(callback) {
         if (!this._activeRoom.getValue()) {
-            this._logger.warn('Unable to leave room. Not currently in a room.');
+            this._logger.info('Unable to leave room. Not currently in a room.');
 
             return callback(null, notInRoomResponse);
         }
@@ -605,9 +609,16 @@ define([
 
         this._authService.assertAuthorized();
 
+        var memberIsSelf = member.getSessionId() === this.getSelf().getSessionId();
         var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
         var memberForRequest = buildMemberForRequest.call(this, member, cachedMember);
         var timestamp = _.now();
+        var wasSelfAudienceMember = memberIsSelf && !cachedMember;
+        var isSelfBecomingAudience = memberIsSelf && memberForRequest.role === memberEnums.roles.audience.name;
+
+        if (wasSelfAudienceMember) {
+            memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
+        }
 
         this._logger.info('Updating member info for active room');
 
@@ -625,6 +636,10 @@ define([
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Update of member failed with status [%s]', response.status);
+                }
+
+                if (response.status === 'ok' && isSelfBecomingAudience) {
+                    that.getSelf().getObservableLastUpdate().setValue(response.lastUpdate);
                 }
 
                 callback(null, result);

@@ -84,7 +84,9 @@ requirejs([
                     name: channelAlias
                 },
                 capabilities: capabilities,
-                videoElement: channelVideoEl
+                videoElement: channelVideoEl,
+                viewerStreamSelectionStrategy: 'high-availability',
+                screenName: 'primary' + _.random(1000000)
             }, function publishToChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

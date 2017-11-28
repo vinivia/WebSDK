@@ -46,15 +46,27 @@ define([
         http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
     };
 
-    AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, callback) {
+    AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
+
+        if (!_.isNullOrUndefined(alternateStreamIds)) {
+            assert.isArray(alternateStreamIds, 'additionalStreamIds');
+
+            _.forEach(alternateStreamIds, function (alternateOriginStreamId) {
+                assert.isStringNotEmpty(alternateOriginStreamId, 'alternateOriginStreamId');
+            });
+        }
 
         var data = appendAuthDataTo.call(this, {
             sessionId: sessionId,
             capabilities: capabilities,
             originStreamId: streamId
         });
+
+        if (alternateStreamIds && alternateStreamIds.length > 0) {
+            data.alternateOriginStreamIds = alternateStreamIds;
+        }
 
         http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
     };

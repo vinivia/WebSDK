@@ -19,6 +19,7 @@ define([
 
     var chatProto = {
         "package": "chat",
+        "options": {"optimize_for": "LITE_RUNTIME"},
         "messages": [
             {
                 "name": "Room",
@@ -344,6 +345,12 @@ define([
                         "type": "Member",
                         "name": "members",
                         "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "Member",
+                        "name": "self",
+                        "id": 5
                     },
                     {
                         "rule": "repeated",
@@ -718,6 +725,23 @@ define([
                         "type": "ChatMessage",
                         "name": "chatMessages",
                         "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "RoomBridgeIdle",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "roomId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "bridgeId",
+                        "id": 2
                     }
                 ]
             }
