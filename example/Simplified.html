@@ -193,10 +193,14 @@
                     </select>
                     <select class="form-control" id="publish-capabilities" multiple>
                         <option value="archive">Archive</option>
+                        <option value="archive-audio-only">Archive Audio-Only</option>
                         <option value="streaming">Streaming</option>
                         <option value="on-demand">On Demand</option>
                         <option value="low-latency">Low Latency (Streaming)</option>
                         <option value="prefer-h264">H264 (Real-time)</option>
+                        <option value="drm">DRM</option>
+                        <option value="high-fidelity">High Fidelity (Audio)</option>
+                        <option value="multi-bitrate">Multi Bitrate</option>
                     </select>
                     <select class="form-control" id="publish-quality">
                         <option value="ld">LD</option>
@@ -235,7 +239,8 @@
                 <option value="broadcast">Broadcast</option>
                 <option value="streaming">Live</option>
                 <option value="on-demand">On Demand</option>
-                <option value="prefer-h264">h264</option>
+                <option value="archive">Archive</option>
+                <option value="prefer-h264">Prefer h264</option>
             </select>
             <input id="subscribe" type="button" value="Subscribe To Stream"/>
             <input id="stopSubscriber" class="disabled" type="button" value="Stop Subscriber"/>
