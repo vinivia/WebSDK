@@ -2062,7 +2062,10 @@ define([
 
     function addWidevineConfigToPlayerConfig(playerConfig, options, callback) {
         playerConfig['manifest']['dash']['customScheme'] = function (element) {
-            if (element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
+            var schemeUri = element.getAttribute('schemeIdUri');
+
+            // TODO: (AM) Remove com.phenixp2p.widevine reference when platform deprecates it
+            if (schemeUri === 'com.phenixp2p.widevine' || schemeUri === 'com.phenixrts.widevine') {
                 return [{
                     keySystem: 'com.widevine.alpha',
                     licenseServerUri: decodeURIComponent(element.getAttribute('widevineLicenseServerUrl'))
