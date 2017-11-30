@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-11-30T20:15:13Z',
+                version: '2017-11-30T23:56:06Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-11-30T20:15:13Z';
+    var sdkVersion = '2017-11-30T23:56:06Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -15984,8 +15984,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-30T20:15:13Z' || '?';
-    var releaseVersion = '2017.4.16';
+    var sdkVersion = '2017-11-30T23:56:06Z' || '?';
+    var releaseVersion = '2017.4.17';
 
     function Logger() {
         this._appenders = [];
@@ -24672,17 +24672,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function getNextMember(members, forceNewSelection) {
-        var that = this;
-
         switch (this._selectionStrategy) {
         case mostRecentStrategy:
             return getMostRecentMember(members);
         case highAvailabilityStrategy:
-            var memberStillInList = that._lastSelectedMember && !!_.find(members, function(member) {
-                return member.getObservableScreenName().getValue() === that._lastSelectedMember.getObservableScreenName().getValue();
-            });
-
-            if (this._lastSelectedMember && !forceNewSelection && memberStillInList) {
+            if (this._lastSelectedMember && !forceNewSelection) {
                 return this._lastSelectedMember;
             }
 
@@ -28016,7 +28010,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-30T20:15:13Z' || '?';
+    var sdkVersion = '2017-11-30T23:56:06Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28271,7 +28265,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-11-30T20:15:13Z' || '?';
+    var sdkVersion = '2017-11-30T23:56:06Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

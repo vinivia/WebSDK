@@ -134,17 +134,11 @@ define([
     }
 
     function getNextMember(members, forceNewSelection) {
-        var that = this;
-
         switch (this._selectionStrategy) {
         case mostRecentStrategy:
             return getMostRecentMember(members);
         case highAvailabilityStrategy:
-            var memberStillInList = that._lastSelectedMember && !!_.find(members, function(member) {
-                return member.getObservableScreenName().getValue() === that._lastSelectedMember.getObservableScreenName().getValue();
-            });
-
-            if (this._lastSelectedMember && !forceNewSelection && memberStillInList) {
+            if (this._lastSelectedMember && !forceNewSelection) {
                 return this._lastSelectedMember;
             }
 
