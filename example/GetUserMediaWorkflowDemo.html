@@ -6,14 +6,9 @@
 <head>
     <title>Phenix WebSDK Publish/Subscribe Example</title>
 
-    <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="animate.css/animate.min.css">
-    <link rel="stylesheet" href="./get-user-media.css">
-
     <script>
         var __phenixPageLoadTime = new Date().getTime();
     </script>
-    <script data-main="get-user-media-app" src="requirejs/require.js"></script>
 </head>
 <body>
 
@@ -27,13 +22,7 @@
                     </h1>
                 </td>
                 <td id="webrtc">
-                    <h1>WebRTC</h1>
-                </td>
-                <td id="phenix">
-                    <h1>
-                        PhenixRTC
-                        <small id="phenixRTCVersion"></small>
-                    </h1>
+                    <h1>WebRTC <span class="support glyphicon"></span></h1>
                 </td>
             </tr>
         </table>
@@ -41,27 +30,10 @@
     <div class="row text-center">
         <div class="col-md-2 col-md-offset-5 text-center">
             <div class="form-group">
-                <label for="environment">PCast&trade;</label>
-                <select class="form-control" id="environment">
-                    <option value="https://pcast.phenixp2p.com">Anycast (Closest Data Center)</option>
-                    <option value="wss://pcast-asia-southeast.phenixp2p.com">APAC South East</option>
-                    <option value="wss://pcast-asia-east.phenixp2p.com">APAC East</option>
-                    <option value="wss://pcast-asia-northeast.phenixp2p.com">APAC North East</option>
-                    <option value="wss://pcast-asia-south.phenixp2p.com">APAC South</option>
-                    <option value="wss://pcast-australia-southeast.phenixp2p.com">Australia South East</option>
-                    <option value="wss://pcast-us-west.phenixp2p.com">US West</option>
-                    <option value="wss://pcast-us-central.phenixp2p.com">US Central</option>
-                    <option value="wss://pcast-us-east.phenixp2p.com">US East</option>
-                    <option value="wss://pcast-us-northeast.phenixp2p.com">US North East</option>
-                    <option value="wss://pcast-uk-southeast.phenixp2p.com">UK South East</option>
-                    <option value="wss://pcast-europe-west.phenixp2p.com">EU West</option>
-                    <option value="wss://pcast-europe-central.phenixp2p.com">EU Central</option>
-                    <option value="wss://pcast-southamerica-east.phenixp2p.com">South America East</option>
-                    <option value="https://pcast-stg.phenixp2p.com">Anycast - Staging</option>
-                    <option value="wss://pcast-stg-us-central.phenixp2p.com">US Central - Staging</option>
-                    <option value="wss://pcast-stg-europe-west.phenixp2p.com">EU West - Staging</option>
-                    <option value="https://local.phenixp2p.com:8443">Anycast - Local</option>
-                    <option value="wss://local.phenixp2p.com:8443">Local</option>
+                <!--<label for="environment">Try PCast&trade;</label>-->
+                <img src="https://phenixp2p.com/public/images/phenix-logo-229x120.png">
+                <select class="form-control hidden" id="environment">
+                    <option value="https://pcast.phenixp2p.com" selected="true">Anycast (Closest Data Center)</option>
                 </select>
             </div>
         </div>
@@ -213,15 +185,10 @@
         <div class="col-md-4 text-center server">
             <p>Create a publish <strong>streamToken</strong> using the <strong>sessionId</strong>.</p>
             <select class="form-control" id="publish-capabilities" multiple>
-                <option value="archive">Archive</option>
-                <option value="archive-audio-only">Archive Audio-Only</option>
                 <option value="streaming">Streaming</option>
                 <option value="on-demand">On Demand</option>
-                <option value="low-latency">Low Latency (Streaming)</option>
-                <option value="prefer-h264">H264 (Real-time)</option>
+                <option value="prefer-h264">H264</option>
                 <option value="drm">DRM</option>
-                <option value="high-fidelity">High Fidelity (Audio)</option>
-                <option value="multi-bitrate">Multi Bitrate</option>
             </select>
             <select class="form-control" id="publish-quality">
                 <option value="uld">ULD</option>
@@ -300,8 +267,7 @@
                 <option value="broadcast">Broadcast</option>
                 <option value="streaming">Live</option>
                 <option value="on-demand">On Demand</option>
-                <option value="archive">Archive</option>
-                <option value="prefer-h264">Prefer h264</option>
+                <option value="prefer-h264">H264</option>
             </select>
             <br/>
             <p>Choose <strong>DRM modifiers</strong></p>

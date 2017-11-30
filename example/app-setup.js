@@ -33,8 +33,12 @@ define('app-setup', [
 
         if (sdk.RTC.webrtcSupported) {
             $('#webrtc').addClass('success');
+            $('#webrtc .support').removeClass('glyphicon-remove');
+            $('#webrtc .support').addClass('glyphicon-ok');
         } else {
             $('#webrtc').addClass('danger');
+            $('#webrtc .support').removeClass('glyphicon-ok');
+            $('#webrtc .support').addClass('glyphicon-remove');
         }
 
         if (sdk.RTC.isPhenixEnabled()) {

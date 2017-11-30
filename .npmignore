@@ -1,5 +1,2 @@
-src/
-test/
-coverage/
-scripts/
-Gruntfile.js
+/*
+!dist/
