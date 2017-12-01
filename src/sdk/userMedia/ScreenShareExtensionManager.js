@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ * Copyright 2017 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -270,21 +270,21 @@ define([
 
         var installCallback = function installCallback(error, status) {
             if (status === 'cancelled') {
-                return callback(null, 'cancelled');
+                return callback(null, {status: 'cancelled'});
             }
 
             if (status !== 'ok') {
-                return callback(new Error('screen-sharing-installation-failed'), status);
+                return callback(new Error('screen-sharing-installation-failed'), {status: status});
             }
 
             checkForScreenSharingCapability.call(that, function (screenSharingEnabled) {
                 that._screenSharingEnabled = screenSharingEnabled;
 
                 if (!that._screenSharingEnabled) {
-                    return callback(new Error('screen-sharing-installation-failed'), status);
+                    return callback(new Error('screen-sharing-installation-failed'), {status: status});
                 }
 
-                callback(null, 'ok');
+                callback(null, {status: 'ok'});
             });
         };
 
@@ -298,7 +298,7 @@ define([
 
             break;
         default:
-            callback(new Error('not-supported'), 'not-supported');
+            callback(new Error('not-supported'), {status: 'not-supported'});
 
             break;
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 PhenixP2P Inc. All Rights Reserved.
+ * Copyright 2017 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -204,7 +204,7 @@ define([
     }
 
     function addTracksToWebRTCStream(stream, tracks) {
-        if (!_.isObject(stream) || !_.isArray(stream)) {
+        if (!stream || !_.isFunction(stream.addTrack)) {
             return;
         }
 
@@ -220,17 +220,17 @@ define([
     }
 
     function isTrackStopped(track) {
-        assert.isObject(track, 'track');
+        assert.isNotUndefined(track, 'track');
 
         return track.readyState === 'ended';
     }
 
     function stopWebRTCStream(stream) {
-        if (stream && _.isFunction(stream.stop, 'stream.stop')) {
+        if (stream && _.isFunction(stream.stop)) {
             stream.stop();
         }
 
-        if (stream && _.isFunction(stream.getTracks, 'stream.getTracks')) {
+        if (stream && _.isFunction(stream.getTracks)) {
             var tracks = stream.getTracks();
 
             for (var i = 0; i < tracks.length; i++) {
