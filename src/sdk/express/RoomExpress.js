@@ -324,7 +324,7 @@ define([
                 }
 
                 return;
-            } else if (lastStreamId) {
+            } else if (lastStreamId && lastMediaStream) {
                 lastMediaStream.stop();
             }
 
