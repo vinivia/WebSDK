@@ -547,6 +547,8 @@ define([
 
                 subscriber.stop(reason);
 
+                that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
+
                 subscribeToStream.call(that, streamToken, options, callback);
 
                 delete that._subscribers[placeholder];

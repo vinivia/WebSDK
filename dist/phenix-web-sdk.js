@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-12-04T22:46:22Z',
+                version: '2017-12-11T20:54:04Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-12-04T22:46:22Z';
+    var sdkVersion = '2017-12-11T20:54:04Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -6173,7 +6173,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                                     rebufferingGoal: 2,
                                     bufferingGoal: 10,
                                     bufferBehind: 30,
-                                    retryParameters: {timeout: 10000}
+                                    retryParameters: {
+                                        timeout: 10000,
+                                        maxAttempts: 10,
+                                        backoffFactor: 1.1
+                                    }
                                 }
                             };
 
@@ -7744,6 +7748,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 that._subscribers[placeholder] = true;
 
                 subscriber.stop(reason);
+
+                that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
 
                 subscribeToStream.call(that, streamToken, options, callback);
 
@@ -15984,8 +15990,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-04T22:46:22Z' || '?';
-    var releaseVersion = '2017.4.19';
+    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
+    var releaseVersion = '2017.4.20';
 
     function Logger() {
         this._appenders = [];
@@ -28010,7 +28016,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-04T22:46:22Z' || '?';
+    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28265,7 +28271,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-04T22:46:22Z' || '?';
+    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

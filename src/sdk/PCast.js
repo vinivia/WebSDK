@@ -1706,7 +1706,11 @@ define([
                                     rebufferingGoal: 2,
                                     bufferingGoal: 10,
                                     bufferBehind: 30,
-                                    retryParameters: {timeout: 10000}
+                                    retryParameters: {
+                                        timeout: 10000,
+                                        maxAttempts: 10,
+                                        backoffFactor: 1.1
+                                    }
                                 }
                             };
 
