@@ -190,11 +190,7 @@ define([
                     roomService: roomService
                 });
 
-                if (that._membersSubscriptions[activeRoom.getRoomId()]) {
-                    return;
-                }
-
-                return that._membersSubscriptions[activeRoom.getRoomId()] = activeRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                return activeRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
             }
 
             roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
@@ -210,7 +206,7 @@ define([
                     return joinRoomCallback(null, {status: 'room-not-found'});
                 }
 
-                if (roomResponse.status !== 'ok') {
+                if (roomResponse.status !== 'ok' && roomResponse.status !== 'already-in-room') {
                     roomService.stop();
 
                     return joinRoomCallback(null, roomResponse);
@@ -226,7 +222,7 @@ define([
                 });
 
                 if (membersChangedCallback) {
-                    that._membersSubscriptions[room.getRoomId()] = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                    return room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
                 }
             });
         });
@@ -503,7 +499,7 @@ define([
                     return callback(error);
                 }
 
-                if (response.status !== 'ok') {
+                if (response.status !== 'ok' && response.status !== 'already-in-room') {
                     return callback(null, createRoomResponse);
                 }
 

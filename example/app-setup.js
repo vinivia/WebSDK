@@ -76,6 +76,10 @@ define('app-setup', [
             $('#channelAlias').val(getUrlParameter('channelAlias'));
         }
 
+        if (getUrlParameter('alias')) {
+            $('#alias').val(getUrlParameter('alias'));
+        }
+
         var updateOptions = function updateOptions() {
             $('input[name="option"]').each(function () {
                 var option = $(this).val();

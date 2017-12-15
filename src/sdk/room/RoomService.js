@@ -29,6 +29,8 @@ define([
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
+    var alreadyInRoomResponse = _.freeze({status: 'already-in-room'});
+    var inAnotherRoomResponse = _.freeze({status: 'in-another-room'});
 
     function RoomService(pcast) {
         assert.isObject(pcast, 'pcast');
@@ -514,6 +516,16 @@ define([
     }
 
     function enterRoomRequest(roomId, alias, callback) {
+        var activeRoom = this._activeRoom.getValue();
+
+        if (activeRoom) {
+            var isSameRoom = roomId === activeRoom.getRoomId() || alias === activeRoom.getObservableAlias().getValue();
+
+            this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
+
+            return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+        }
+
         this._authService.assertAuthorized();
 
         var self = this._self.getValue();
@@ -561,6 +573,10 @@ define([
             return callback(null, notInRoomResponse);
         }
 
+        if (this._isLeavingRoom) {
+            return;
+        }
+
         this._authService.assertAuthorized();
 
         var roomId = this._activeRoom.getValue().getRoomId();
@@ -570,8 +586,12 @@ define([
 
         var that = this;
 
+        this._isLeavingRoom = true;
+
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
+                that._isLeavingRoom = false;
+
                 if (error) {
                     that._logger.error('Leaving room failed with error [%s]', error);
 

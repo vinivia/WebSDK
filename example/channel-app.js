@@ -74,7 +74,7 @@ requirejs([
         var leaveChannelCallback;
 
         var joinChannel = function joinChannel() {
-            var channelAlias = $('#channelAlias').val();
+            var channelAlias = $('#alias').val();
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
             var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';

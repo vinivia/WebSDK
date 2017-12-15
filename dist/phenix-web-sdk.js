@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-12-11T20:54:04Z',
+                version: '2017-12-15T21:03:02Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-12-11T20:54:04Z';
+    var sdkVersion = '2017-12-15T21:03:02Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -8031,6 +8031,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     var notInRoomResponse = _.freeze({status: 'not-in-room'});
+    var alreadyInRoomResponse = _.freeze({status: 'already-in-room'});
+    var inAnotherRoomResponse = _.freeze({status: 'in-another-room'});
 
     function RoomService(pcast) {
         assert.isObject(pcast, 'pcast');
@@ -8516,6 +8518,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function enterRoomRequest(roomId, alias, callback) {
+        var activeRoom = this._activeRoom.getValue();
+
+        if (activeRoom) {
+            var isSameRoom = roomId === activeRoom.getRoomId() || alias === activeRoom.getObservableAlias().getValue();
+
+            this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
+
+            return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+        }
+
         this._authService.assertAuthorized();
 
         var self = this._self.getValue();
@@ -8563,6 +8575,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return callback(null, notInRoomResponse);
         }
 
+        if (this._isLeavingRoom) {
+            return;
+        }
+
         this._authService.assertAuthorized();
 
         var roomId = this._activeRoom.getValue().getRoomId();
@@ -8572,8 +8588,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var that = this;
 
+        this._isLeavingRoom = true;
+
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
+                that._isLeavingRoom = false;
+
                 if (error) {
                     that._logger.error('Leaving room failed with error [%s]', error);
 
@@ -12021,11 +12041,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     roomService: roomService
                 });
 
-                if (that._membersSubscriptions[activeRoom.getRoomId()]) {
-                    return;
-                }
-
-                return that._membersSubscriptions[activeRoom.getRoomId()] = activeRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                return activeRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
             }
 
             roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
@@ -12041,7 +12057,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return joinRoomCallback(null, {status: 'room-not-found'});
                 }
 
-                if (roomResponse.status !== 'ok') {
+                if (roomResponse.status !== 'ok' && roomResponse.status !== 'already-in-room') {
                     roomService.stop();
 
                     return joinRoomCallback(null, roomResponse);
@@ -12057,7 +12073,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 });
 
                 if (membersChangedCallback) {
-                    that._membersSubscriptions[room.getRoomId()] = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                    return room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
                 }
             });
         });
@@ -12334,7 +12350,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(error);
                 }
 
-                if (response.status !== 'ok') {
+                if (response.status !== 'ok' && response.status !== 'already-in-room') {
                     return callback(null, createRoomResponse);
                 }
 
@@ -15990,7 +16006,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
+    var sdkVersion = '2017-12-15T21:03:02Z' || '?';
     var releaseVersion = '2017.4.20';
 
     function Logger() {
@@ -28016,7 +28032,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
+    var sdkVersion = '2017-12-15T21:03:02Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28271,7 +28287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-11T20:54:04Z' || '?';
+    var sdkVersion = '2017-12-15T21:03:02Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

@@ -67,9 +67,10 @@ requirejs([
         var publisherPlayer;
 
         var publishLocalMediaToChannel = function publishToChannel() {
-            var channelAlias = $('#channelAlias').val();
+            var channelAlias = $('#alias').val();
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
+            var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
 
             $('#publish-capabilities option:selected').each(function () {
                 capabilities.push($(this).val());
@@ -85,7 +86,7 @@ requirejs([
                 },
                 capabilities: capabilities,
                 videoElement: channelVideoEl,
-                viewerStreamSelectionStrategy: 'high-availability',
+                viewerStreamSelectionStrategy: streamSelectionStrategy,
                 screenName: 'primary' + _.random(1000000)
             }, function publishToChannelCallback(error, response) {
                 if (error) {
