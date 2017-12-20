@@ -316,10 +316,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2017 Phenix Inc. Confidential and Proprietary. All Rights Reserved.
- */
-/*
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
  Copyright 2013-2014 Daniel Wirtz <dcode@dcode.io>
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -4242,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-12-16T00:35:45Z',
+                version: '2017-12-20T21:09:27Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4509,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-12-16T00:35:45Z';
+    var sdkVersion = '2017-12-20T21:09:27Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -7476,7 +7473,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
             monitorFrameRate: false,
-            videoBitRateThreshold: 1000,
+            videoBitRateThreshold: 100,
             conditionCountForNotificationThreshold: 8
         }, _.get(publishScreenOptions, ['monitor', 'options'], {})));
 
@@ -7532,7 +7529,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {
             monitorFrameRate: false,
-            videoBitRateThreshold: 1000,
+            videoBitRateThreshold: 100,
             conditionCountForNotificationThreshold: 8
         }, _.get(subscribeToScreenOptions, ['monitor', 'options'], {})));
 
@@ -12392,6 +12389,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
         var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
+        var isScreen = _.get(memberStream.getInfo(), ['isScreen'], false);
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -12405,7 +12403,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }, options);
         var disposables = new disposable.DisposableList();
 
-        subscribeToMemberStream.call(this, subscribeOptions, function(error, response) {
+        subscribeToMemberStream.call(this, subscribeOptions, isScreen, function(error, response) {
             disposables.dispose();
 
             if (response && response.status === 'ok' && response.mediaStream && response.mediaStream.getStream()) {
@@ -12503,12 +12501,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return roomService;
     }
 
-    function subscribeToMemberStream(subscribeOptions, callback) {
+    function subscribeToMemberStream(subscribeOptions, isScreen, callback) {
         var that = this;
 
         var count = 0;
-
-        that._pcastExpress.subscribe(subscribeOptions, function(error, response) {
+        var handleSubscribe = function(error, response) {
             if (error) {
                 return callback(error);
             }
@@ -12534,7 +12531,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             callback(null, subscribeResponse);
-        });
+        };
+
+        if (isScreen) {
+            return that._pcastExpress.subscribeToScreen(subscribeOptions, handleSubscribe);
+        }
+
+        return that._pcastExpress.subscribe(subscribeOptions, handleSubscribe);
     }
 
     function publishAndUpdateSelf(options, room, callback) {
@@ -12587,6 +12590,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         if (_.get(options, ['mediaConstraints', 'screen'], false)) {
+            _.set(options, ['streamInfo', 'isScreen'], true);
+
             return this._pcastExpress.publishScreen(options, handlePublish);
         }
 
@@ -16009,7 +16014,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-16T00:35:45Z' || '?';
+    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
     var releaseVersion = '2017.4.21';
 
     function Logger() {
@@ -28035,7 +28040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-16T00:35:45Z' || '?';
+    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28290,7 +28295,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-16T00:35:45Z' || '?';
+    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

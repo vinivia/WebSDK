@@ -271,7 +271,7 @@ define([
 
         _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
             monitorFrameRate: false,
-            videoBitRateThreshold: 1000,
+            videoBitRateThreshold: 100,
             conditionCountForNotificationThreshold: 8
         }, _.get(publishScreenOptions, ['monitor', 'options'], {})));
 
@@ -327,7 +327,7 @@ define([
 
         _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {
             monitorFrameRate: false,
-            videoBitRateThreshold: 1000,
+            videoBitRateThreshold: 100,
             conditionCountForNotificationThreshold: 8
         }, _.get(subscribeToScreenOptions, ['monitor', 'options'], {})));
 

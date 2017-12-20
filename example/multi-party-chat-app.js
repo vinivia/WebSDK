@@ -65,9 +65,12 @@ requirejs([
 
         var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
         var stopButton = document.getElementById('stopButton');
+        var publishScreenShareButton = document.getElementById('publishScreenButton');
+        var stopScreenShareButton = document.getElementById('stopPublishScreenButton');
         var videoList = document.getElementById('videoList');
         var selfVideoList = document.getElementById('selfVideoList');
         var publisher = null;
+        var screenPublisher = null;
         var lowQualityPublisher = null;
         var roomService = null;
         var screenName = 'ScreenName' + Math.floor(Math.random() * 10000) + 1; // Helpful if unique but we don't enforce this. You might set this to be an email or a nickname, or both. Then parse it when joining the room.
@@ -108,6 +111,13 @@ requirejs([
                 lowQualityPublisher.publisher.stop();
 
                 lowQualityPublisher = null;
+            }
+
+            if (screenPublisher) {
+                screenPublisher.publisher.stop();
+                screenPublisher.videoElement.remove();
+
+                screenPublisher = null;
             }
 
             if (roomService) {
@@ -176,9 +186,11 @@ requirejs([
                     joinRoom();
                 }
 
-                publishAndHandleErrors(lowQualityOptions, function (response) {
-                    lowQualityPublisher = {publisher: response.publisher};
-                });
+                if (app.getUrlParameter('mq') || app.getUrlParameter('multipleQualities')) {
+                    publishAndHandleErrors(lowQualityOptions, function (response) {
+                        lowQualityPublisher = {publisher: response.publisher};
+                    });
+                }
             });
         }
 
@@ -223,6 +235,8 @@ requirejs([
 
                     throw new Error(response.status);
                 }
+
+                displayElement(publishScreenShareButton);
             }, function membersChangedCallback(members) { // This is triggered every time a member joins or leaves
                 if (roomService) { // Else left room
                     console.log('addNewMembers');
@@ -319,7 +333,9 @@ requirejs([
             var isSelf = sessionId === roomService.getSelf().getSessionId(); // Check if is yourself!
             var streamInfo = memberStream.getInfo(); // Access the custom stream info params that you passed when publishing
 
-            videoElement.classList.add(streamInfo.quality);
+            if (app.getUrlParameter('mq') || app.getUrlParameter('multipleQualities')) {
+                videoElement.classList.add(streamInfo.quality);
+            }
 
             if (isSelf) {
                 return; // Ignore self
@@ -388,8 +404,68 @@ requirejs([
             return videoElement;
         }
 
+        function publishScreen() {
+            hideElement(publishScreenShareButton);
+            displayElement(stopScreenShareButton);
+
+            var roomAlias = $('#alias').val();
+            var videoElement = createVideo();
+            var publishOptions = {
+                capabilities: ['fhd', 'prefer-h264'], // Add other capabilities if you like. Prefer-h264 allows publishing/viewing on Safari/IOS 11
+                room: {
+                    alias: roomAlias,
+                    name: roomAlias,
+                    type: 'MultiPartyChat'
+                }, // Set alias so that you can always uniquely identify room without accessing the return value
+                screenName: screenName,
+                streamType: 'Presentation', // Distinguish from normal publisher
+                memberRole: memberRole,
+                videoElement: videoElement,
+                monitor: {callback: onMonitorEvent}
+            };
+
+            videoElement.setAttribute('muted', true); // Don't want to hear yourself
+
+            return roomExpress.publishScreenToRoom(publishOptions, function (error, response) {
+                if (error) {
+                    setUserMessage('Unable to publish to Room: ' + error.message);
+
+                    throw error;
+                }
+
+                if (response.status !== 'ok' && response.status !== 'ended') {
+                    setUserMessage('New Status: ' + response.status);
+
+                    throw new Error(response.status);
+                }
+
+                if (response.status === 'ok') {
+                    screenPublisher = {
+                        publisher: response.publisher,
+                        videoElement: videoElement
+                    };
+
+                    selfVideoList.append(videoElement);
+                }
+            });
+        }
+
+        function stopPublishScreen() {
+            displayElement(publishScreenShareButton);
+            hideElement(stopScreenShareButton);
+
+            if (screenPublisher) {
+                screenPublisher.publisher.stop();
+                screenPublisher.videoElement.remove();
+
+                screenPublisher = null;
+            }
+        }
+
         publishAndJoinRoomButton.onclick = publishVideoAndCameraAtTwoQualitiesAndJoinRoom;
         stopButton.onclick = leaveRoomAndStopPublisher;
+        publishScreenShareButton.onclick = publishScreen;
+        stopScreenShareButton.onclick = stopPublishScreen;
 
         app.setOnReset(function () {
             createRoomExpress();

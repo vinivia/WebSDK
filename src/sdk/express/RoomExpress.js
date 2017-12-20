@@ -538,6 +538,7 @@ define([
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
         var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
+        var isScreen = _.get(memberStream.getInfo(), ['isScreen'], false);
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -551,7 +552,7 @@ define([
         }, options);
         var disposables = new disposable.DisposableList();
 
-        subscribeToMemberStream.call(this, subscribeOptions, function(error, response) {
+        subscribeToMemberStream.call(this, subscribeOptions, isScreen, function(error, response) {
             disposables.dispose();
 
             if (response && response.status === 'ok' && response.mediaStream && response.mediaStream.getStream()) {
@@ -649,12 +650,11 @@ define([
         return roomService;
     }
 
-    function subscribeToMemberStream(subscribeOptions, callback) {
+    function subscribeToMemberStream(subscribeOptions, isScreen, callback) {
         var that = this;
 
         var count = 0;
-
-        that._pcastExpress.subscribe(subscribeOptions, function(error, response) {
+        var handleSubscribe = function(error, response) {
             if (error) {
                 return callback(error);
             }
@@ -680,7 +680,13 @@ define([
             }
 
             callback(null, subscribeResponse);
-        });
+        };
+
+        if (isScreen) {
+            return that._pcastExpress.subscribeToScreen(subscribeOptions, handleSubscribe);
+        }
+
+        return that._pcastExpress.subscribe(subscribeOptions, handleSubscribe);
     }
 
     function publishAndUpdateSelf(options, room, callback) {
@@ -733,6 +739,8 @@ define([
         };
 
         if (_.get(options, ['mediaConstraints', 'screen'], false)) {
+            _.set(options, ['streamInfo', 'isScreen'], true);
+
             return this._pcastExpress.publishScreen(options, handlePublish);
         }
 
