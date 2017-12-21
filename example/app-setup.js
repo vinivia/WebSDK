@@ -236,6 +236,18 @@ define('app-setup', [
         return isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
     };
 
+    var getDefaultReplaceUrl = function() {
+        if (getBaseUri().indexOf('stg') > -1) {
+            return 'https://stg.phenixrts.com/';
+        }
+
+        if (getBaseUri().indexOf('local') > -1) {
+            return 'https://local.phenixrts.com:8443/';
+        }
+
+        return 'https://phenixrts.com/';
+    };
+
     return {
         init: init,
         getUri: getUri,
@@ -252,6 +264,7 @@ define('app-setup', [
         setLoggerEnvironment: setLoggerEnvironment,
         setLoggerVersion: setLoggerVersion,
         getModeFromAbbreviation: getModeFromAbbreviation,
-        isMobile: isMobile
+        isMobile: isMobile,
+        getDefaultReplaceUrl: getDefaultReplaceUrl
     };
 });

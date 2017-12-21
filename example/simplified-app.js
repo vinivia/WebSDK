@@ -55,13 +55,22 @@ requirejs([
         var pcastExpress;
 
         var createPCastExpress = function createPCastExpress() {
-            pcastExpress = new sdk.express.PCastExpress({
+            var pcastOptions = {
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
                 shaka: shaka,
                 authToken: 'dud'
-            });
+            };
+
+            if (app.getUrlParameter('ssmr')) {
+                pcastOptions.streamingSourceMapping = {
+                    patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),
+                    replacement: app.getUrlParameter('ssmr')
+                };
+            }
+
+            pcastExpress = new sdk.express.PCastExpress(pcastOptions);
         };
 
         var publisher;

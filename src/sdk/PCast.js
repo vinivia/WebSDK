@@ -46,6 +46,18 @@ define([
 
     function PCast(options) {
         options = options || {};
+
+        assert.isObject(options, 'options');
+
+        if (options.streamingSourceMapping) {
+            assert.isObject(options.streamingSourceMapping, 'options.streamingSourceMapping');
+            assert.isStringNotEmpty(options.streamingSourceMapping.replacement, 'options.streamingSourceMapping.replacement');
+
+            if (!(options.streamingSourceMapping.patternToReplace instanceof RegExp)) {
+                assert.isStringNotEmpty(options.streamingSourceMapping.patternToReplace, 'options.streamingSourceMapping.patternToReplace');
+            }
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -58,6 +70,7 @@ define([
         this._shaka = options.shaka || window.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
+        this._streamingSourceMapping = options.streamingSourceMapping;
 
         var that = this;
 
@@ -1583,6 +1596,13 @@ define([
 
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
         var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8\??[^\s]*)/m);
+        var manifestUrl = _.get(dashMatch, [1], '');
+        var playlistUrl = _.get(hlsMatch, [1], '');
+
+        if (this._streamingSourceMapping) {
+            manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
+            playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
+        }
 
         if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
@@ -1591,9 +1611,9 @@ define([
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamTelemetry, callback, options);
+            return createShakaLiveViewer.call(that, streamId, manifestUrl, streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamTelemetry, callback, options);
+            return createHlsLiveViewer.call(that, streamId, playlistUrl, streamTelemetry, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);

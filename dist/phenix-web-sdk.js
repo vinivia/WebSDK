@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-12-21T16:09:14Z',
+                version: '2017-12-21T19:58:37Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,13 +4506,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-12-21T16:09:14Z';
+    var sdkVersion = '2017-12-21T19:58:37Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
 
     function PCast(options) {
         options = options || {};
+
+        assert.isObject(options, 'options');
+
+        if (options.streamingSourceMapping) {
+            assert.isObject(options.streamingSourceMapping, 'options.streamingSourceMapping');
+            assert.isStringNotEmpty(options.streamingSourceMapping.replacement, 'options.streamingSourceMapping.replacement');
+
+            if (!(options.streamingSourceMapping.patternToReplace instanceof RegExp)) {
+                assert.isStringNotEmpty(options.streamingSourceMapping.patternToReplace, 'options.streamingSourceMapping.patternToReplace');
+            }
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -4525,6 +4537,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._shaka = options.shaka || window.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
+        this._streamingSourceMapping = options.streamingSourceMapping;
 
         var that = this;
 
@@ -6050,6 +6063,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
         var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8\??[^\s]*)/m);
+        var manifestUrl = _.get(dashMatch, [1], '');
+        var playlistUrl = _.get(hlsMatch, [1], '');
+
+        if (this._streamingSourceMapping) {
+            manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
+            playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
+        }
 
         if (dashMatch && dashMatch.length === 2 && that._shaka && that._shaka.Player.isBrowserSupported()) {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
@@ -6058,9 +6078,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
             }
 
-            return createShakaLiveViewer.call(that, streamId, dashMatch[1], streamTelemetry, callback, options);
+            return createShakaLiveViewer.call(that, streamId, manifestUrl, streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            return createHlsLiveViewer.call(that, streamId, hlsMatch[1], streamTelemetry, callback, options);
+            return createHlsLiveViewer.call(that, streamId, playlistUrl, streamTelemetry, callback, options);
         }
 
         that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
@@ -16012,7 +16032,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
+    var sdkVersion = '2017-12-21T19:58:37Z' || '?';
     var releaseVersion = '2017.4.22';
 
     function Logger() {
@@ -28038,7 +28058,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
+    var sdkVersion = '2017-12-21T19:58:37Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28293,7 +28313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
+    var sdkVersion = '2017-12-21T19:58:37Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

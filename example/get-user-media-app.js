@@ -107,15 +107,23 @@ define([
             }
 
             var uri = app.getUri();
+            var pcastOptions = {
+                uri: uri,
+                shaka: shaka
+            };
 
             adminBaseUri = app.getBaseUri();
 
+            if (app.getUrlParameter('ssmr')) {
+                pcastOptions.streamingSourceMapping = {
+                    patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),
+                    replacement: app.getUrlParameter('ssmr')
+                };
+            }
+
             fingerprint.get(function (fingerprint) {
-                pcast = new sdk.PCast({
-                    uri: uri,
-                    deviceId: fingerprint,
-                    shaka: shaka
-                });
+                pcastOptions.deviceId = fingerprint;
+                pcast = new sdk.PCast(pcastOptions);
 
                 pcast.getLogger().addAppender({
                     log: function () {
