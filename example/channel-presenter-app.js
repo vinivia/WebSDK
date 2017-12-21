@@ -65,6 +65,7 @@ requirejs([
 
         var channelPublisher;
         var publisherPlayer;
+        var roomService;
 
         var publishLocalMediaToChannel = function publishToChannel() {
             var channelAlias = $('#alias').val();
@@ -105,11 +106,19 @@ requirejs([
                     });
                 }
 
+                if (response.status === 'ended') {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publishing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Publish</strong>',
-                        message: 'Failed to join channel (' + response.status + ')'
+                        message: 'Failed to publish to channel (' + response.status + ')'
                     });
                 }
 
@@ -119,10 +128,11 @@ requirejs([
 
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Viewing Channel</strong>',
-                    message: 'Successfully joined Channel "' + channelAlias + '"'
+                    title: '<strong>Publishing to Channel</strong>',
+                    message: 'Successfully published to Channel "' + channelAlias + '"'
                 });
 
+                roomService = response.roomService;
                 channelPublisher = response.publisher;
                 publisherPlayer = new Player('channelVideo');
 
@@ -141,6 +151,20 @@ requirejs([
             if (publisherPlayer) {
                 publisherPlayer.stop();
                 publisherPlayer = null;
+            }
+
+            if (roomService) {
+                roomService.leaveRoom(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    roomService = null;
+                });
             }
 
             $('#stopPublisher').addClass('disabled');

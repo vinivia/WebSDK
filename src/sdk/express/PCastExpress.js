@@ -184,7 +184,7 @@ define([
 
     var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
 
-    PCastExpress.prototype.publishRemote = function publish(options, callback) {
+    PCastExpress.prototype.publishRemote = function publishRemote(options, callback) {
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
@@ -266,7 +266,7 @@ define([
         });
     };
 
-    PCastExpress.prototype.publishScreen = function publish(options, callback) {
+    PCastExpress.prototype.publishScreen = function publishScreen(options, callback) {
         var publishScreenOptions = _.assign({mediaConstraints: {screen: true}}, options);
 
         _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
@@ -322,7 +322,7 @@ define([
         });
     };
 
-    PCastExpress.prototype.subscribeToScreen = function publish(options, callback) {
+    PCastExpress.prototype.subscribeToScreen = function subscribeToScreen(options, callback) {
         var subscribeToScreenOptions = _.assign({}, options);
 
         _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {

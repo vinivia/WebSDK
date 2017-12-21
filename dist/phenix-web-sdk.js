@@ -4239,7 +4239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2017-12-20T21:09:27Z',
+                version: '2017-12-21T16:09:14Z',
                 _: _.now()
             }
         }, function (err, responseText) {
@@ -4506,7 +4506,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         'NETWORK_LOADING': 2,
         'NETWORK_NO_SOURCE': 3
     });
-    var sdkVersion = '2017-12-20T21:09:27Z';
+    var sdkVersion = '2017-12-21T16:09:14Z';
     var widevineServiceCertificate = null;
     var defaultBandwidthEstimateForPlayback = 2000000; // 2Mbps will select 720p by default
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
@@ -7386,7 +7386,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
 
-    PCastExpress.prototype.publishRemote = function publish(options, callback) {
+    PCastExpress.prototype.publishRemote = function publishRemote(options, callback) {
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
@@ -7468,7 +7468,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     };
 
-    PCastExpress.prototype.publishScreen = function publish(options, callback) {
+    PCastExpress.prototype.publishScreen = function publishScreen(options, callback) {
         var publishScreenOptions = _.assign({mediaConstraints: {screen: true}}, options);
 
         _.set(publishScreenOptions, ['monitor', 'options'], _.assign({}, {
@@ -7524,7 +7524,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     };
 
-    PCastExpress.prototype.subscribeToScreen = function publish(options, callback) {
+    PCastExpress.prototype.subscribeToScreen = function subscribeToScreen(options, callback) {
         var subscribeToScreenOptions = _.assign({}, options);
 
         _.set(subscribeToScreenOptions, ['monitor', 'options'], _.assign({}, {
@@ -12495,6 +12495,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 that._logger.info('Successfully disposed of Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
                 roomService.stop();
+
+                return callback(null, response);
             });
         };
 
@@ -12786,10 +12788,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     if (!roomService) {
                         return;
-                    }
-
-                    if (streamsAfterStop.length === 0) {
-                        return roomService.leaveRoom(function() {});
                     }
 
                     updateSelfStreamsAndRole.call(that, streamsAfterStop, options.memberRole, roomService, function(error) {
@@ -16014,8 +16012,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
-    var releaseVersion = '2017.4.21';
+    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
+    var releaseVersion = '2017.4.22';
 
     function Logger() {
         this._appenders = [];
@@ -28040,7 +28038,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
+    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28295,7 +28293,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2017-12-20T21:09:27Z' || '?';
+    var sdkVersion = '2017-12-21T16:09:14Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

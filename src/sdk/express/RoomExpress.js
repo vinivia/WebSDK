@@ -644,6 +644,8 @@ define([
                 that._logger.info('Successfully disposed of Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
                 roomService.stop();
+
+                return callback(null, response);
             });
         };
 
@@ -935,10 +937,6 @@ define([
 
                     if (!roomService) {
                         return;
-                    }
-
-                    if (streamsAfterStop.length === 0) {
-                        return roomService.leaveRoom(function() {});
                     }
 
                     updateSelfStreamsAndRole.call(that, streamsAfterStop, options.memberRole, roomService, function(error) {

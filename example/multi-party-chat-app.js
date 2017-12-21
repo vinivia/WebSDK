@@ -121,9 +121,17 @@ requirejs([
             }
 
             if (roomService) {
-                roomService.leaveRoom();
+                roomService.leaveRoom(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
 
-                roomService = null;
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    roomService = null;
+                });
             }
 
             removeOldMembers([]);
