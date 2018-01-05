@@ -4451,7 +4451,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-01-04T19:29:31Z',
+                version: '2018-01-05T16:09:27Z',
                 _: _.now()
             }
         }, function(err, responseText) {
@@ -4715,7 +4715,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-01-04T19:29:31Z';
+    var sdkVersion = '2018-01-05T16:09:27Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -6296,6 +6296,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(hlsMatch[1]);
+
             return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, options);
         }
 
@@ -13661,7 +13663,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_) {
-    var Assert = function() {
+    var Assert = function () {
 
     };
 
@@ -13776,9 +13778,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return type;
     };
 
+    Assert.prototype.isArrayOfString = function (value, name) {
+        Assert.prototype.isString(name, 'name');
+        Assert.prototype.isArray(value, name);
+
+        _.forEach(value, function (val, key) {
+            Assert.prototype.isString(val, name + '[' + key + ']');
+        });
+    };
+
     return new Assert();
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }),
 /* 41 */
@@ -14517,35 +14529,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var contentType = settings.contentType || 'application/json';
         var accept = settings.accept || contentType;
 
-        switch (contentType.toLowerCase()) {
-        case 'application/protobuf':
-            xhr.setRequestHeader('Content-type', 'application/protobuf');
-
-            break;
-        case 'application/json':
-            xhr.setRequestHeader('Content-type', 'application/json');
-
-            break;
-        default:
-            xhr.setRequestHeader('Content-type', contentType);
-
-            break;
-        }
-
-        switch (accept.toLowerCase()) {
-        case 'application/protobuf':
-            xhr.setRequestHeader('Accept', 'application/protobuf');
-
-            break;
-        case 'application/json':
-            xhr.setRequestHeader('Accept', 'application/json');
-
-            break;
-        default:
-            xhr.setRequestHeader('Accept', accept);
-
-            break;
-        }
+        xhr.setRequestHeader('Content-type', contentType);
+        xhr.setRequestHeader('Accept', accept);
     }
 
     function handleReadyStateChange(xhr, callback) {
@@ -14604,7 +14589,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
     'use strict';
 
-    var _ = function() {
+    var _ = function () {
 
     };
 
@@ -14623,13 +14608,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             throw new Error('Unsupported path type ' + typeof path);
         }
 
-        return _.reduce(properties, function(valueAtPath, prop) {
-            if (_.isUndefined(valueAtPath)) {
-                return valueAtPath;
+        var valueAtPath = _.reduce(properties, function (valueAtPath, prop) {
+            if (_.isObject(valueAtPath) || _.isArray(valueAtPath)) {
+                return valueAtPath[prop];
             }
 
-            return valueAtPath[prop];
-        }, objectToTraverse) || defaultValue;
+            return;
+        }, objectToTraverse);
+
+        return _.isUndefined(valueAtPath) ? defaultValue : valueAtPath;
     };
 
     _.set = function get(objectToTraverse, path, value) {
@@ -14648,7 +14635,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             throw new Error('Unsupported path type ' + typeof path);
         }
 
-        _.forEach(properties, function(prop, index) {
+        _.forEach(properties, function (prop, index) {
             setNextValue(currentLocation, prop, getNextValue(properties, index, currentLocation, value));
 
             currentLocation = currentLocation[prop];
@@ -14756,7 +14743,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         for (var i = 0; i < collection.length; i++) {
             var callbackResponse = callback(collection[i], i);
 
-            if(callbackResponse === false) {
+            if (callbackResponse === false) {
                 return;
             }
         }
@@ -14780,7 +14767,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     };
 
-    _.argumentsToArray = function(args) {
+    _.argumentsToArray = function (args) {
         if (!_.isObject(args) || !args.length) {
             throw new Error('Collection must be arguments');
         }
@@ -14801,10 +14788,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         sources.shift();
 
-        _.forEach(sources, function(source, index) {
+        _.forEach(sources, function (source, index) {
             assertIsObject(source, 'source ' + index);
 
-            _.forOwn(source, function(value, key) {
+            _.forOwn(source, function (value, key) {
                 target[key] = value;
             });
         });
@@ -15166,7 +15153,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (target.phenixRemoveEventListener) {
             target.phenixRemoveEventListener.call(target, eventName, listener, !!useCapture);
-        } else if(target.removeEventListener) {
+        } else if (target.removeEventListener) {
             target.removeEventListener(eventName, listener, !!useCapture);
         } else if (target.detachEvent) {
             target.detachEvent("on" + eventName, listener);
@@ -15175,7 +15162,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var assertIsArray = function assertIsArray(collection) {
         if (!_.isArray(collection)) {
-            throw new Error('Array must be an array.');
+            throw new Error('Input must be an array.');
         }
     };
 
@@ -15191,7 +15178,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsString(name, 'name');
 
         if (!_.isObject(collection)) {
-            throw new Error('collection type not supported - ' + name +' must be an array or object.');
+            throw new Error('collection type not supported - ' + name + ' must be an array or object.');
         }
     };
 
@@ -15203,8 +15190,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     };
 
-    var assertIsString = function assertIsFunction(value, name) {
-        if (!_.isString(value)) {
+    var assertIsString = function assertIsString(value, name) {
+        if (!_.isString(name)) {
             throw new Error('Name must be a string.');
         }
 
@@ -15217,7 +15204,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var properties = stringPath.split('.');
         var path = [];
 
-        _.forEach(properties, function(prop) {
+        _.forEach(properties, function (prop) {
             path = path.concat(buildSubPathFromString(prop));
         });
 
@@ -15294,6 +15281,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     return _;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }),
 /* 50 */
@@ -15390,8 +15378,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-04T19:29:31Z' || '?';
-    var releaseVersion = '2018.1.0';
+    var sdkVersion = '2018-01-05T16:09:27Z' || '?';
+    var releaseVersion = '2018.1.1';
 
     function Logger() {
         this._appenders = [];
@@ -27046,6 +27034,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var streamEndedBeforeSetupTimeout = 5000;
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
+    var originStreamReadyDuration = 6000;
+    var defaultUnreadableContentErrorTimeout = 250;
 
     function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -27078,29 +27068,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     HlsRenderer.prototype.start = function(elementToAttachTo) {
         try {
-            rtc.attachUriStream(elementToAttachTo, this._playlistUri);
+            var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
-            if (this._options.receiveAudio === false) {
-                elementToAttachTo.muted = true;
+            if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
+                setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
+            } else {
+                setupPlayer.call(this, elementToAttachTo);
             }
-
-            this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-            this._streamTelemetry.recordRebuffering(elementToAttachTo);
-            this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
-            _.addEventListener(elementToAttachTo, 'error', this._onError, true);
-            _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'suspend', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'progress', this._onProgress, false);
-            _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
-            _.addEventListener(elementToAttachTo, 'waiting', this._onWaiting, false);
-
-            this._element = elementToAttachTo;
-
-            this._dimensionsChangedMonitor.start(this, this._element);
-
-            return elementToAttachTo;
         } catch (e) {
             this._logger.error('[%s] Error while loading HLS live stream [%s]', this._streamId, e.code, e);
 
@@ -27224,7 +27198,43 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
+    function setupPlayer(elementToAttachTo) {
+        rtc.attachUriStream(elementToAttachTo, this._playlistUri);
+
+        if (this._options.receiveAudio === false) {
+            elementToAttachTo.muted = true;
+        }
+
+        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+        this._streamTelemetry.recordRebuffering(elementToAttachTo);
+        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+
+        _.addEventListener(elementToAttachTo, 'error', this._onError, true);
+        _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'suspend', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'progress', this._onProgress, false);
+        _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
+        _.addEventListener(elementToAttachTo, 'waiting', this._onWaiting, false);
+
+        this._element = elementToAttachTo;
+
+        this._dimensionsChangedMonitor.start(this, this._element);
+    }
+
     function onError(e) {
+        var that = this;
+        var timeout = defaultUnreadableContentErrorTimeout * that._lastProgress.setupRetry * that._lastProgress.setupRetry;
+        var hasNotStartedYet = that._lastProgress.count === 0;
+        var hasNotExceededMaxRetries = that._lastProgress.setupRetry <= numberOfTimesToRetryHlsStalledHlsStream;
+
+        if (_.get(this._element, ['error', 'code']) === 4 && hasNotStartedYet && hasNotExceededMaxRetries) {
+            return setTimeout(function() {
+                that._lastProgress.setupRetry++;
+                reload.call(that);
+            }, Math.max(timeout, defaultUnreadableContentErrorTimeout));
+        }
+
         this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['player', e]);
     }
 
@@ -27265,16 +27275,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (this._lastProgress.count === 0) {
             this._lastProgress.setupRetry++;
-            reload.call(this);
+            reload.call(that);
         } else {
             setTimeout(function() {
                 if (that._lastProgress.count === 0) {
                     that._lastProgress.setupRetry++;
-                    reload.call(this);
+                    reload.call(that);
                 }
-            }, getTimeoutOrMinimum.call(this));
+            }, getTimeoutOrMinimum.call(that));
 
-            setTimeout(_.bind(endIfReady, this), streamEndedBeforeSetupTimeout);
+            setTimeout(_.bind(endIfReady, that), streamEndedBeforeSetupTimeout);
         }
     }
 
@@ -28608,7 +28618,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-04T19:29:31Z' || '?';
+    var sdkVersion = '2018-01-05T16:09:27Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -28863,7 +28873,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-04T19:29:31Z' || '?';
+    var sdkVersion = '2018-01-05T16:09:27Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

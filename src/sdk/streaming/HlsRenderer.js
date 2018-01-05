@@ -26,6 +26,8 @@ define([
 
     var streamEndedBeforeSetupTimeout = 5000;
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
+    var originStreamReadyDuration = 6000;
+    var defaultUnreadableContentErrorTimeout = 250;
 
     function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -58,29 +60,13 @@ define([
 
     HlsRenderer.prototype.start = function(elementToAttachTo) {
         try {
-            rtc.attachUriStream(elementToAttachTo, this._playlistUri);
+            var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
-            if (this._options.receiveAudio === false) {
-                elementToAttachTo.muted = true;
+            if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
+                setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
+            } else {
+                setupPlayer.call(this, elementToAttachTo);
             }
-
-            this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-            this._streamTelemetry.recordRebuffering(elementToAttachTo);
-            this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
-            _.addEventListener(elementToAttachTo, 'error', this._onError, true);
-            _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'suspend', this._onStalled, false);
-            _.addEventListener(elementToAttachTo, 'progress', this._onProgress, false);
-            _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
-            _.addEventListener(elementToAttachTo, 'waiting', this._onWaiting, false);
-
-            this._element = elementToAttachTo;
-
-            this._dimensionsChangedMonitor.start(this, this._element);
-
-            return elementToAttachTo;
         } catch (e) {
             this._logger.error('[%s] Error while loading HLS live stream [%s]', this._streamId, e.code, e);
 
@@ -204,7 +190,43 @@ define([
         this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
+    function setupPlayer(elementToAttachTo) {
+        rtc.attachUriStream(elementToAttachTo, this._playlistUri);
+
+        if (this._options.receiveAudio === false) {
+            elementToAttachTo.muted = true;
+        }
+
+        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+        this._streamTelemetry.recordRebuffering(elementToAttachTo);
+        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+
+        _.addEventListener(elementToAttachTo, 'error', this._onError, true);
+        _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'suspend', this._onStalled, false);
+        _.addEventListener(elementToAttachTo, 'progress', this._onProgress, false);
+        _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
+        _.addEventListener(elementToAttachTo, 'waiting', this._onWaiting, false);
+
+        this._element = elementToAttachTo;
+
+        this._dimensionsChangedMonitor.start(this, this._element);
+    }
+
     function onError(e) {
+        var that = this;
+        var timeout = defaultUnreadableContentErrorTimeout * that._lastProgress.setupRetry * that._lastProgress.setupRetry;
+        var hasNotStartedYet = that._lastProgress.count === 0;
+        var hasNotExceededMaxRetries = that._lastProgress.setupRetry <= numberOfTimesToRetryHlsStalledHlsStream;
+
+        if (_.get(this._element, ['error', 'code']) === 4 && hasNotStartedYet && hasNotExceededMaxRetries) {
+            return setTimeout(function() {
+                that._lastProgress.setupRetry++;
+                reload.call(that);
+            }, Math.max(timeout, defaultUnreadableContentErrorTimeout));
+        }
+
         this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['player', e]);
     }
 
@@ -245,16 +267,16 @@ define([
 
         if (this._lastProgress.count === 0) {
             this._lastProgress.setupRetry++;
-            reload.call(this);
+            reload.call(that);
         } else {
             setTimeout(function() {
                 if (that._lastProgress.count === 0) {
                     that._lastProgress.setupRetry++;
-                    reload.call(this);
+                    reload.call(that);
                 }
-            }, getTimeoutOrMinimum.call(this));
+            }, getTimeoutOrMinimum.call(that));
 
-            setTimeout(_.bind(endIfReady, this), streamEndedBeforeSetupTimeout);
+            setTimeout(_.bind(endIfReady, that), streamEndedBeforeSetupTimeout);
         }
     }
 
