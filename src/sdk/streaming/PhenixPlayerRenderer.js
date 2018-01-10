@@ -27,6 +27,8 @@ define([
     'use strict';
 
     var bandwidthAt720 = 3000000;
+    var timeoutForStallWithoutProgressToRestart = 6000;
+    var minTimeBeforeNextReload = 15000;
 
     function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -63,50 +65,16 @@ define([
         var loggerAtWarningThreshold = createWarningThresholdLogger(this._logger);
         var playlist = new phenixWebPlayer.Playlist(loggerAtWarningThreshold, this._manifestUri);
 
+        this._throttledLogger = loggerAtWarningThreshold;
+        this._playlist = playlist;
+        this._element = elementToAttachTo;
+
         playlist.fetch(function(err) {
             if (err) {
                 throw new Error(err);
             }
 
-            var statsProvider = new phenixWebPlayer.StatsProvider(loggerAtWarningThreshold, {ewmaPeriods: 30});
-            var playerOptions = {bandwidthToStartAt: that._options.bandwidthToStartAt || bandwidthAt720};
-            var chunksFeeder;
-
-            if (playlist.getDeliveryType() === 'Dash') {
-                chunksFeeder = new phenixWebPlayer.MpdPlaylistChunkFeeder(loggerAtWarningThreshold, playlist, statsProvider, {});
-
-                if (that._options.isDrmProtectedContent) {
-                    playerOptions.drm = {
-                        'com.widevine.alpha': {
-                            serverCertificateUrl: that._options.widevineServiceCertificateUrl,
-                            mediaKeySystemConfiguration: {persistentState: 'required'}
-                        },
-                        'com.microsoft.playready': {licenseServerUrl: that._options.playreadyLicenseUrl}
-                    };
-                }
-            } else if (playlist.getDeliveryType() === 'Hls') {
-                chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(loggerAtWarningThreshold, playlist, statsProvider, {});
-            }
-
-            if (rtc.browser === 'Chrome') {
-                playerOptions.targetBufferSize = 4;
-            }
-
-            if (rtc.browser === 'IE' || rtc.browser === 'Edge') {
-                playerOptions.maximumFastForwardFrequency = 180;
-            }
-
-            var webPlayer = new phenixWebPlayer.WebPlayer(loggerAtWarningThreshold, playlist, elementToAttachTo, chunksFeeder, playerOptions);
-            var adaptiveStreamingManagerIgnored = new phenixWebPlayer.AdaptiveStreamingManager(loggerAtWarningThreshold, playlist, webPlayer, statsProvider);
-
-            webPlayer.start();
-
-            that._player = webPlayer;
-            that._statsProvider = statsProvider;
-
-            _.addEventListener(that._player, 'error', function(e) {
-                that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix', e]);
-            });
+            setupPlayer.call(that);
         });
 
         if (that._options.receiveAudio === false) {
@@ -120,7 +88,6 @@ define([
         _.addEventListener(elementToAttachTo, 'ended', that._onEnded, false);
 
         that._dimensionsChangedMonitor.start(this, elementToAttachTo);
-        that._element = elementToAttachTo;
 
         return elementToAttachTo;
     };
@@ -231,6 +198,87 @@ define([
         this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
+    function setupPlayer() {
+        var that = this;
+        var statsProvider = new phenixWebPlayer.StatsProvider(this._throttledLogger, {ewmaPeriods: 30});
+        var playerOptions = {bandwidthToStartAt: that._options.bandwidthToStartAt || bandwidthAt720};
+        var chunksFeeder;
+
+        if (this._playlist.getDeliveryType() === 'Dash') {
+            chunksFeeder = new phenixWebPlayer.MpdPlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, {});
+
+            if (that._options.isDrmProtectedContent) {
+                playerOptions.drm = {
+                    'com.widevine.alpha': {
+                        serverCertificateUrl: that._options.widevineServiceCertificateUrl,
+                        mediaKeySystemConfiguration: {persistentState: 'required'}
+                    },
+                    'com.microsoft.playready': {licenseServerUrl: that._options.playreadyLicenseUrl}
+                };
+            }
+        } else if (this._playlist.getDeliveryType() === 'Hls') {
+            chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, {});
+        }
+
+        if (rtc.browser === 'Chrome') {
+            playerOptions.targetBufferSize = 4;
+        }
+
+        if (rtc.browser === 'IE' || rtc.browser === 'Edge') {
+            playerOptions.maximumFastForwardFrequency = 180;
+        }
+
+        var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._playlist, this._element, chunksFeeder, playerOptions);
+        var adaptiveStreamingManagerIgnored = new phenixWebPlayer.AdaptiveStreamingManager(this._throttledLogger, this._playlist, webPlayer, statsProvider);
+
+        webPlayer.start();
+
+        window.webPlayer = webPlayer;
+
+        that._player = webPlayer;
+        that._statsProvider = statsProvider;
+
+        _.addEventListener(that._player, 'error', _.bind(handleError, that));
+    }
+
+    function handleError(e) {
+        if (e && e.code === 3 && canReload.call(this)) {
+            return reloadIfAble.call(this);
+        }
+
+        this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix', e]);
+    }
+
+    function reload() {
+        this._player.dispose();
+        this._playlist.dispose();
+        this._statsProvider.dispose();
+
+        this._player = null;
+        this._playlist = null;
+        this._statsProvider = null;
+
+        this.start(this._element);
+    }
+
+    function reloadIfAble() {
+        if (!canReload.call(this)) {
+            return;
+        }
+
+        this._logger.warn('Reloading unhealthy stream that was active for at least [%s] seconds', minTimeBeforeNextReload / 1000);
+
+        this._lastReloadTime = _.now();
+
+        reload.call(this);
+    }
+
+    function canReload() {
+        var hasElapsedMinTimeSinceLastReload = !this._lastReloadTime || _.now() - this._lastReloadTime > minTimeBeforeNextReload;
+
+        return this._element && !this._waitForLastChunk && this._player && this._element.buffered.length !== 0 && hasElapsedMinTimeSinceLastReload;
+    }
+
     function onProgress() {
         this._lastProgress.time = _.now();
 
@@ -265,11 +313,21 @@ define([
             return;
         }
 
+        var currentVideoTime = that._element.currentTime;
+
         setTimeout(function() {
             if (_.now() - that._lastProgress.time > getTimeoutOrMinimum.call(that) && that._waitForLastChunk) {
                 that.stop('ended');
             }
         }, getTimeoutOrMinimum.call(that));
+
+        setTimeout(function() {
+            if (that._element && that._element.currentTime === currentVideoTime && !that._element.paused && canReload.call(that)) {
+                that._logger.warn('Reloading stream after being stalled for [%s] seconds', timeoutForStallWithoutProgressToRestart / 1000);
+
+                reloadIfAble.call(that);
+            }
+        }, timeoutForStallWithoutProgressToRestart);
     }
 
     function getTimeoutOrMinimum() {

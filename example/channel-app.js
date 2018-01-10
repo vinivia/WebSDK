@@ -86,6 +86,10 @@ requirejs([
 
             capabilities.push($('#subscriber-mode option:selected').val());
 
+            $('#subscriber-drm-capabilities option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
+
             roomExpress.joinChannel({
                 alias: channelAlias,
                 capabilities: capabilities,

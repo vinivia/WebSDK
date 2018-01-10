@@ -352,7 +352,7 @@ define([
     // ToDo pull into singleton so widevineServiceCertificate stays per browser session
     function addWidevineConfigToPlayerConfig(playerConfig, options, callback) {
         playerConfig['manifest']['dash']['customScheme'] = function(element) {
-            if (element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
+            if (element.getAttribute('schemeIdUri') === 'com.phenixrts.widevine' || element.getAttribute('schemeIdUri') === 'com.phenixp2p.widevine') {
                 return [{
                     keySystem: 'com.widevine.alpha',
                     licenseServerUri: decodeURIComponent(element.getAttribute('widevineLicenseServerUrl'))

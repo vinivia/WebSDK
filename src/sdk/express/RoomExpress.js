@@ -870,6 +870,40 @@ define([
                             return callback(null, createStreamTokenWithStreamingResponse);
                         }
 
+                        if (_.includes(options.capabilities, 'drm')) {
+                            if (additionalStreamIds && additionalStreamIds.length > 0) {
+                                that._logger.debug('Creating [drm-open-access] and [drm-hollywood] viewer wildcard stream token for published stream [%s] with [%s] additional streams', publisher.getStreamId(), additionalStreamIds.length);
+                            } else {
+                                that._logger.debug('Creating [drm-open-access] and [drm-hollywood] viewer wildcard stream token for published stream [%s]', publisher.getStreamId());
+                            }
+
+                            return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming', 'drm-open-access'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenWithStreamingDrmOpenAccessResponse) {
+                                if (error) {
+                                    return callback(error);
+                                }
+
+                                if (createStreamTokenWithStreamingDrmOpenAccessResponse.status !== 'ok') {
+                                    return callback(null, createStreamTokenWithStreamingDrmOpenAccessResponse);
+                                }
+
+                                return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming', 'drm-hollywood'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenWithStreamingDrmHollywoodResponse) {
+                                    if (error) {
+                                        return callback(error);
+                                    }
+
+                                    if (createStreamTokenWithStreamingDrmHollywoodResponse.status !== 'ok') {
+                                        return callback(null, createStreamTokenWithStreamingDrmHollywoodResponse);
+                                    }
+
+                                    var drmTokens = [createStreamTokenWithStreamingDrmOpenAccessResponse.streamToken, createStreamTokenWithStreamingDrmHollywoodResponse.streamToken];
+                                    var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenBroadcastResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken, drmTokens);
+                                    var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
+
+                                    updateSelfAndListenForChanges.call(that, updateSelfOptions, handleJoinRoomCallback, publisher, room);
+                                });
+                            });
+                        }
+
                         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenBroadcastResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken);
                         var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
 
@@ -1093,9 +1127,23 @@ define([
 
     function parseStreamTokenFromStreamUri(uri, capabilities) {
         var streamInfo = Stream.getInfoFromStreamUri(uri);
-
         // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        if ((streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming) && _.includes(capabilities, 'streaming')) {
+        var isStreaming = (streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming) && _.includes(capabilities, 'streaming');
+
+        // Token for both not generated.
+        if (_.includes(capabilities, 'drm-open-access') && _.includes(capabilities, 'drm-hollywood')) {
+            return;
+        }
+
+        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmOpenAccess && (_.includes(capabilities, 'drm-open-access') || isAndroid())) {
+            return streamInfo.streamTokenForLiveStreamWithDrmOpenAccess;
+        }
+
+        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmHollywood && _.includes(capabilities, 'drm-hollywood')) {
+            return streamInfo.streamTokenForLiveStreamWithDrmHollywood;
+        }
+
+        if (isStreaming && !_.includes(capabilities, 'drm-open-access') && !_.includes(capabilities, 'drm-hollywood')) {
             return streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming;
         }
 
@@ -1103,10 +1151,12 @@ define([
             return streamInfo.streamTokenForBroadcastStream;
         }
 
-        return streamInfo.streamToken;
+        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast')) {
+            return streamInfo.streamToken;
+        }
     }
 
-    function mapStreamToMemberStream(publisher, type, streamInfo, viewerStreamToken, viewerStreamTokenForBroadcastStream, viewerStreamTokenForLiveStream) {
+    function mapStreamToMemberStream(publisher, type, streamInfo, viewerStreamToken, viewerStreamTokenForBroadcastStream, viewerStreamTokenForLiveStream, drmStreamTokens) {
         var mediaStream = publisher.getStream();
         var audioTracks = mediaStream ? mediaStream.getAudioTracks() : null;
         var videoTracks = mediaStream ? mediaStream.getVideoTracks() : null;
@@ -1136,6 +1186,13 @@ define([
 
         if (!viewerStreamTokenForLiveStream) {
             delete infoToAppend.streamTokenForLiveStream;
+        }
+
+        if (drmStreamTokens) {
+            assert.isArray(drmStreamTokens, 'drmStreamTokens');
+
+            infoToAppend.streamTokenForLiveStreamWithDrmOpenAccess = drmStreamTokens[0];
+            infoToAppend.streamTokenForLiveStreamWithDrmHollywood = drmStreamTokens[1];
         }
 
         var queryParamString = _.reduce(infoToAppend, function(queryParamString, currentValue, currentKey) {
@@ -1186,6 +1243,10 @@ define([
         });
 
         return roomService ? roomService.getSelf() : null;
+    }
+
+    function isAndroid() {
+        return /(android)/i.test(navigator.userAgent);
     }
 
     return RoomExpress;
