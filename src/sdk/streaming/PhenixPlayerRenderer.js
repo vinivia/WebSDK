@@ -87,6 +87,14 @@ define([
                 chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(loggerAtWarningThreshold, playlist, statsProvider, {});
             }
 
+            if (rtc.browser === 'Chrome') {
+                playerOptions.targetBufferSize = 4;
+            }
+
+            if (rtc.browser === 'IE' || rtc.browser === 'Edge') {
+                playerOptions.maximumFastForwardFrequency = 180;
+            }
+
             var webPlayer = new phenixWebPlayer.WebPlayer(loggerAtWarningThreshold, playlist, elementToAttachTo, chunksFeeder, playerOptions);
             var adaptiveStreamingManagerIgnored = new phenixWebPlayer.AdaptiveStreamingManager(loggerAtWarningThreshold, playlist, webPlayer, statsProvider);
 
