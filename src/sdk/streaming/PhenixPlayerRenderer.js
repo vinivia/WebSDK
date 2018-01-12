@@ -80,7 +80,8 @@ define([
                         'com.widevine.alpha': {
                             serverCertificateUrl: that._options.widevineServiceCertificateUrl,
                             mediaKeySystemConfiguration: {persistentState: 'required'}
-                        }
+                        },
+                        'com.microsoft.playready': {licenseServerUrl: that._options.playreadyLicenseUrl}
                     };
                 }
             } else if (playlist.getDeliveryType() === 'Hls') {

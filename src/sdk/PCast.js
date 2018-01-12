@@ -1607,6 +1607,7 @@ define([
 
             if (options.isDrmProtectedContent) {
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
+                options.playreadyLicenseUrl = offerSdp.match(/a=x-playready-license-url:([^\n][^\s]*)/m)[1];
             }
 
             if (this._shaka && !this._shaka.Player.isBrowserSupported()) {
