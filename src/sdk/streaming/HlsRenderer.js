@@ -28,6 +28,8 @@ define([
     var numberOfTimesToRetryHlsStalledHlsStream = 5;
     var originStreamReadyDuration = 6000;
     var defaultUnreadableContentErrorTimeout = 250;
+    var timeoutForStallWithoutProgressToRestart = 6000;
+    var minTimeBeforeNextReload = 15000;
 
     function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -43,7 +45,9 @@ define([
             buffered: null,
             averageLength: 0,
             count: 0,
-            setupRetry: 0
+            setupRetry: 0,
+            lastCurrentTime: 0,
+            lastCurrentTimeOccurenceTimestamp: 0
         };
         this._namedEvents = new event.NamedEvents();
 
@@ -250,10 +254,23 @@ define([
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
+
+            if (this._lastProgress.lastCurrentTime !== this._element.currentTime) {
+                this._lastProgress.lastCurrentTimeOccurenceTimestamp = _.now();
+            }
+
+            var hasExceededStallTimeout = this._lastProgress.lastCurrentTimeOccurenceTimestamp && _.now() - this._lastProgress.lastCurrentTimeOccurenceTimestamp > timeoutForStallWithoutProgressToRestart;
+
+            if (hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
+                this._logger.warn('Reloading stream after current time has not changed for [%s] seconds due to unregistered stall.', timeoutForStallWithoutProgressToRestart / 1000);
+
+                reloadIfAble.call(this);
+            }
         }
 
         this._lastProgress.buffered = bufferedEnd;
         this._lastProgress.setupRetry = 0;
+        this._lastProgress.lastCurrentTime = this._element.currentTime;
     }
 
     function stalled() {
@@ -289,6 +306,24 @@ define([
         this._logger.info('Time elapsed since last progress [%s]', _.now() - this._lastProgress.time);
 
         setTimeout(_.bind(endIfReady, this), getTimeoutOrMinimum.call(this));
+    }
+
+    function canReload() {
+        var hasElapsedMinTimeSinceLastReload = !this._lastReloadTime || _.now() - this._lastReloadTime > minTimeBeforeNextReload;
+
+        return this._element && !this._waitForLastChunk && this._element.buffered.length !== 0 && hasElapsedMinTimeSinceLastReload;
+    }
+
+    function reloadIfAble() {
+        if (!canReload.call(this)) {
+            return;
+        }
+
+        this._logger.warn('Reloading unhealthy stream that was active for at least [%s] seconds', minTimeBeforeNextReload / 1000);
+
+        this._lastReloadTime = _.now();
+
+        reload.call(this);
     }
 
     function reload() {

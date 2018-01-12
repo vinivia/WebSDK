@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2018.1.4",
+  "version": "2018.1.5",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -96,7 +96,7 @@
     "phenix-web-logging": "2017.4.3",
     "phenix-web-network-connection-monitor": "2017.4.3",
     "phenix-web-observable": "2017.4.3",
-    "phenix-web-player": "2018.1.3",
+    "phenix-web-player": "2018.1.5",
     "phenix-web-proto": "2018.0.0",
     "phenix-web-reconnecting-websocket": "2017.4.3",
     "requirejs": "2.3.4",

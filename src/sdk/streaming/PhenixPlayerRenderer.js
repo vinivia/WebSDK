@@ -43,7 +43,9 @@ define([
             time: 0,
             buffered: null,
             averageLength: 0,
-            count: 0
+            count: 0,
+            lastCurrentTime: 0,
+            lastCurrentTimeOccurenceTimestamp: 0
         };
         this._namedEvents = new event.NamedEvents();
 
@@ -133,6 +135,9 @@ define([
 
             try {
                 that._player.dispose();
+                that._playlist.dispose();
+                that._statsProvider.dispose();
+                that._adaptiveStreamingManager.dispose();
 
                 that._logger.info('[%s] Phenix live stream has been destroyed', that._streamId);
 
@@ -233,10 +238,9 @@ define([
 
         webPlayer.start();
 
-        window.webPlayer = webPlayer;
-
         that._player = webPlayer;
         that._statsProvider = statsProvider;
+        that._adaptiveStreamingManager = adaptiveStreamingManagerIgnored;
 
         _.addEventListener(that._player, 'error', _.bind(handleError, that));
     }
@@ -253,10 +257,12 @@ define([
         this._player.dispose();
         this._playlist.dispose();
         this._statsProvider.dispose();
+        this._adaptiveStreamingManager.dispose();
 
         this._player = null;
         this._playlist = null;
         this._statsProvider = null;
+        this._adaptiveStreamingManager = null;
 
         this.start(this._element);
     }
@@ -299,9 +305,22 @@ define([
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
+
+            if (this._lastProgress.lastCurrentTime !== this._element.currentTime) {
+                this._lastProgress.lastCurrentTimeOccurenceTimestamp = _.now();
+            }
+
+            var hasExceededStallTimeout = this._lastProgress.lastCurrentTimeOccurenceTimestamp && _.now() - this._lastProgress.lastCurrentTimeOccurenceTimestamp > timeoutForStallWithoutProgressToRestart;
+
+            if (hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
+                this._logger.warn('Reloading stream after current time has not changed for [%s] seconds due to unregistered stall.', timeoutForStallWithoutProgressToRestart / 1000);
+
+                reloadIfAble.call(this);
+            }
         }
 
         this._lastProgress.buffered = bufferedEnd;
+        this._lastProgress.lastCurrentTime = this._element.currentTime;
     }
 
     function stalled(event) {
