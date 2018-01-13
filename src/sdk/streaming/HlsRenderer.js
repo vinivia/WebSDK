@@ -18,10 +18,12 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-rtc',
+    '../telemetry/applicationActivityDetector',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var streamEndedBeforeSetupTimeout = 5000;
@@ -30,6 +32,7 @@ define([
     var defaultUnreadableContentErrorTimeout = 250;
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
+    var defaultTimeoutForBackgroundTabBeforeDispose = 3000;
 
     function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -66,6 +69,11 @@ define([
         try {
             var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
+            this._disposables = new disposable.DisposableList();
+
+            this._disposables.add(applicationActivityDetector.onBackground(_.bind(handleForegroundChange, this, false)));
+            this._disposables.add(applicationActivityDetector.onForeground(_.bind(handleForegroundChange, this, true)));
+
             if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
                 setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
             } else {
@@ -94,6 +102,8 @@ define([
         this._dimensionsChangedMonitor.stop();
 
         this._streamTelemetry.stop();
+
+        this._disposables.dispose();
 
         if (this._element) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -346,6 +356,40 @@ define([
         if (_.now() - this._lastProgress.time > getTimeoutOrMinimum.call(this) && this._waitForLastChunk) {
             this.stop('ended');
         }
+    }
+
+    function handleForegroundChange(isForeground) {
+        if (isForeground) {
+            clearTimeout(this._backgroundTimeout);
+
+            this._backgroundTimeout = null;
+
+            if (!this._backgroundThrottled) {
+                return;
+            }
+
+            this._backgroundThrottled = false;
+
+            this.start(this._element);
+
+            return;
+        }
+
+        var that = this;
+
+        this._backgroundTimeout = setTimeout(function() {
+            if (applicationActivityDetector.isForeground()) {
+                return;
+            }
+
+            if (that._element.muted) {
+                that._logger.info('Detecting application [background] with muted video. Pausing playback until application focused again.');
+
+                that._element.pause();
+
+                that._backgroundThrottled = true;
+            }
+        }, defaultTimeoutForBackgroundTabBeforeDispose);
     }
 
     return HlsRenderer;

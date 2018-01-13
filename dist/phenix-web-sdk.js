@@ -111,7 +111,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(49)
+    __webpack_require__(50)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (LodashLight) {
     'use strict';
 
@@ -139,7 +139,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(40)
+    __webpack_require__(41)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (assert) {
     return assert;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -173,8 +173,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(45),
-    __webpack_require__(46)
+    __webpack_require__(46),
+    __webpack_require__(47)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Disposable, DisposableList) {
     return {
         Disposable: Disposable,
@@ -204,8 +204,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(23),
-    __webpack_require__(53),
-    __webpack_require__(54)
+    __webpack_require__(54),
+    __webpack_require__(55)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -238,7 +238,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(21),
-    __webpack_require__(47)
+    __webpack_require__(48)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Event, NamedEvents) {
     return {
         Event: Event,
@@ -267,7 +267,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(48)
+    __webpack_require__(49)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (http) {
     'use strict';
 
@@ -381,8 +381,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(52),
     __webpack_require__(51),
-    __webpack_require__(50),
     __webpack_require__(11)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (Logger, ConsoleAppender, logging) {
     'use strict';
@@ -553,7 +553,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 (function(global, factory) {
 
     /* AMD */ if (true)
-        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(39)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(40)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -4337,8 +4337,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(58),
     __webpack_require__(57),
-    __webpack_require__(56),
     __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (MQWebSocket, BatchHttpProto, MQService) {
     return {
@@ -4371,7 +4371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(6),
-    __webpack_require__(44)
+    __webpack_require__(45)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, http, ClosestEndPointResolver) {
     'use strict';
 
@@ -4451,7 +4451,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-01-13T00:05:28Z',
+                version: '2018-01-13T22:48:50Z',
                 _: _.now()
             }
         }, function(err, responseText) {
@@ -4496,7 +4496,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(8),
-    __webpack_require__(74)
+    __webpack_require__(75)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -4698,24 +4698,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(14),
     __webpack_require__(6),
-    __webpack_require__(63),
+    __webpack_require__(64),
     __webpack_require__(13),
     __webpack_require__(91),
     __webpack_require__(92),
-    __webpack_require__(64),
+    __webpack_require__(65),
     __webpack_require__(9),
     __webpack_require__(90),
+    __webpack_require__(89),
     __webpack_require__(88),
-    __webpack_require__(87),
-    __webpack_require__(83),
-    __webpack_require__(80),
+    __webpack_require__(84),
+    __webpack_require__(81),
     __webpack_require__(7),
     __webpack_require__(2),
-    __webpack_require__(78)
+    __webpack_require__(79)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-01-13T00:05:28Z';
+    var sdkVersion = '2018-01-13T22:48:50Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -6599,7 +6599,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(20),
     __webpack_require__(17),
     __webpack_require__(2),
-    __webpack_require__(84)
+    __webpack_require__(85)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
@@ -7403,9 +7403,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(27),
     __webpack_require__(31),
-    __webpack_require__(77),
+    __webpack_require__(78),
     __webpack_require__(30),
-    __webpack_require__(71),
+    __webpack_require__(72),
     __webpack_require__(16),
     __webpack_require__(15)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
@@ -8920,7 +8920,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(52)
+    __webpack_require__(53)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (networkConnectionMonitor) {
     'use strict';
 
@@ -9139,8 +9139,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(62),
-    __webpack_require__(58)
+    __webpack_require__(63),
+    __webpack_require__(59)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, ProtoBuf, mqProto) {
     'use strict';
 
@@ -11035,12 +11035,187 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(5),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, event, disposable) {
+    var defaultDocumentFocusIntervalTimeout = 3000;
+
+    function ApplicationActivityDetector() {
+        this._namedEvents = new event.NamedEvents();
+        this._timeOfLastTabFocusChange = _.now();
+        this._disposables = new disposable.DisposableList();
+        this._isForeground = true;
+
+        this._disposables.add(this._namedEvents);
+
+        detectTabFocusChange.call(this);
+    }
+
+    ApplicationActivityDetector.prototype.isForeground = function() {
+        return this._isForeground;
+    };
+
+    ApplicationActivityDetector.prototype.getTimeSinceLastChange = function() {
+        return _.now() - this._timeOfLastTabFocusChange;
+    };
+
+    ApplicationActivityDetector.prototype.onForeground = function isEnabled(callback) {
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen('foreground', callback);
+    };
+
+    ApplicationActivityDetector.prototype.onBackground = function setEnabled(callback) {
+        assert.isFunction(callback, 'callback');
+
+        return this._namedEvents.listen('background', callback);
+    };
+
+    function detectTabFocusChange() {
+        if (canDetectDirectly()) {
+            return detectTabFocusChangeDirectly.call(this);
+        }
+
+        detectTabFocusChangeIndirectly.call(this);
+    }
+
+    function canDetectDirectly() {
+        return typeof chrome !== 'undefined' && chrome.extension && chrome.extension.onRequest; // eslint-disable-line no-undef
+    }
+
+    function detectTabFocusChangeDirectly() {
+        if (!canDetectDirectly()) {
+            return;
+        }
+
+        var that = this;
+
+        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) { // eslint-disable-line no-undef
+            if(request === "is_selected") {
+                chrome.tabs.getSelected(null, function(tab){ // eslint-disable-line no-undef
+                    var isForeground = tab.id === sender.tab.id;
+
+                    setFocusState.call(that, isForeground);
+
+                    if(isForeground) {
+                        sendResponse(true);
+                    } else {
+                        sendResponse(false);
+                    }
+                });
+            }
+        });
+    }
+
+    function detectTabFocusChangeIndirectly() {
+        var hidden;
+        var visibilityChange;
+        var that = this;
+
+        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+            hidden = "hidden";
+            visibilityChange = "visibilitychange";
+        } else if (typeof document.msHidden !== "undefined") {
+            hidden = "msHidden";
+            visibilityChange = "msvisibilitychange";
+        } else if (typeof document.webkitHidden !== "undefined") {
+            hidden = "webkitHidden";
+            visibilityChange = "webkitvisibilitychange";
+        }
+
+        function handleVisibilityChange() {
+            var isForeground = !document[hidden];
+
+            setFocusState.call(that, isForeground);
+        }
+
+        if (typeof document.addEventListener !== "undefined" && typeof document[hidden] !== "undefined") {
+            _.addEventListener(document, visibilityChange, handleVisibilityChange, false);
+
+            that._disposables.add(new disposable.Disposable(function() {
+                _.removeEventListener(document, visibilityChange, handleVisibilityChange, false);
+            }));
+        } else {
+            listenForDocumentFocus.call(that);
+        }
+    }
+
+    function listenForDocumentFocus() {
+        var that = this;
+
+        that._documentFocusInterval = setInterval(function() {
+            var isForeground = document.hasFocus();
+
+            setFocusState.call(that, isForeground);
+        }, defaultDocumentFocusIntervalTimeout);
+
+        that._disposables.add(new disposable.Disposable(function() {
+            if (_.isNumber(that._documentFocusInterval)) {
+                clearInterval(that._documentFocusInterval);
+            }
+
+            that._documentFocusInterval = null;
+        }));
+    }
+
+    function setFocusState(isForeground) {
+        assert.isBoolean(isForeground, 'isForeground');
+
+        if (this._isForeground === isForeground) {
+            return;
+        }
+
+        if (isForeground) {
+            this._isForeground = true;
+
+            return triggerFocusChange.call(this, 'foreground');
+        }
+
+        this._isForeground = false;
+
+        return triggerFocusChange.call(this, 'background');
+    }
+
+    function triggerFocusChange(state) {
+        var currentTime = _.now();
+        var timeElapsedOfLastState = currentTime - this._timeOfLastTabFocusChange;
+
+        this._timeOfLastTabFocusChange = currentTime;
+        this._namedEvents.fire(state, [timeElapsedOfLastState]);
+    }
+
+    return new ApplicationActivityDetector();
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 36 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11063,9 +11238,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(14),
     __webpack_require__(13),
-    __webpack_require__(65),
-    __webpack_require__(68),
-    __webpack_require__(66)
+    __webpack_require__(66),
+    __webpack_require__(69),
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
@@ -11158,7 +11333,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11181,7 +11356,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(14),
     __webpack_require__(13),
-    __webpack_require__(69)
+    __webpack_require__(70)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
@@ -11227,7 +11402,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11252,7 +11427,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(26),
     __webpack_require__(18),
     __webpack_require__(19),
-    __webpack_require__(72),
+    __webpack_require__(73),
     __webpack_require__(32),
     __webpack_require__(16),
     __webpack_require__(15),
@@ -12486,7 +12661,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -13704,7 +13879,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13855,7 +14030,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14063,7 +14238,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14082,7 +14257,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(41)
+    __webpack_require__(42)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (BatchHttp) {
     'use strict';
 
@@ -14091,7 +14266,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14238,7 +14413,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14257,14 +14432,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(43)
+    __webpack_require__(44)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (ClosestEndPointResolver) {
     return ClosestEndPointResolver;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14301,7 +14476,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14345,7 +14520,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14411,7 +14586,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14635,7 +14810,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15352,7 +15527,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15418,7 +15593,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15446,7 +15621,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-13T00:05:28Z' || '?';
+    var sdkVersion = '2018-01-13T22:48:50Z' || '?';
     var releaseVersion = '2018.1.5';
 
     function Logger() {
@@ -15634,7 +15809,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15723,7 +15898,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15831,7 +16006,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15893,13 +16068,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(e,t){if(true)module.exports=t(__webpack_require__(1),__webpack_require__(0),__webpack_require__(8),__webpack_require__(5),__webpack_require__(3),__webpack_require__(6));else if("function"==typeof define&&define.amd)define(["phenix-web-assert","phenix-web-lodash-light","phenix-web-logging","phenix-web-event","phenix-web-disposable","phenix-web-http"],t);else{var i="object"==typeof exports?t(require("phenix-web-assert"),require("phenix-web-lodash-light"),require("phenix-web-logging"),require("phenix-web-event"),require("phenix-web-disposable"),require("phenix-web-http")):t(e["phenix-web-assert"],e["phenix-web-lodash-light"],e["phenix-web-logging"],e["phenix-web-event"],e["phenix-web-disposable"],e["phenix-web-http"]);for(var n in i)("object"==typeof exports?exports:e)[n]=i[n]}}(this,function(e,t,i,n,r,a){return function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,n){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:n})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=15)}([function(t,i){t.exports=e},function(e,i){e.exports=t},function(e,t){e.exports=i},function(e,t){e.exports=n},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(8),i(5),i(16),i(17),i(10),i(11)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(e,r){r&&t.isStringNotEmpty(r,"playlistUrl"),this.parsedPlaylist=null,this._logger=e||new i.Logger,this.playlistUrl=r,this.baseUrl=r?r.substring(0,r.lastIndexOf("/")+1):"",this._name=r?r.substring(r.lastIndexOf("/"),r.length):"",this._trackAddedEvent=new n.Event,this._playlistTracksByMimeType={},this._mimeTypes=[],this._deliveryType=h(this.playlistUrl),this._type=null}function c(i,n){t.isInstanceOf(i,a,"track"),n=n||e.noop,t.isFunction(n,"eventCallback");var r=i.getMimeType();this._playlistTracksByMimeType[r]||(this._playlistTracksByMimeType[r]=[]),e.includes(this._playlistTracksByMimeType[r],i)||this._playlistTracksByMimeType[r].push(i),e.includes(this._mimeTypes,r)||this._mimeTypes.push(r),this._trackAddedEvent.fireAsync([i],this,n)}function h(e){return/[.]mpd\??[^\s]*/i.test(e)?"Dash":/[.]m3u8\??[^\s]*/i.test(e)?"Hls":null}var g=5;return d.prototype.toString=function(){return"Playlist [playlistUrl="+this.playlistUrl+", baseUrl="+this.baseUrl+", mimeTypes="+this._mimeTypes+", trackAddedEvent(size)="+this._trackAddedEvent.size()+", playlistTracks="+this.getAllPlaylistTracks()+"]"},d.prototype.dispose=function(){e.forOwn(this._playlistTracksByMimeType,function(t){e.forEach(t,function(e){e.dispose()})}),this._playlistTracksByMimeType={},this._trackAddedEvent.dispose()},d.prototype.getPlaylistTracksByMimeType=function(e){return this._playlistTracksByMimeType[e]},d.prototype.fetch=function(t){(function(t){var i=this;r.getWithRetry(i.playlistUrl,{},function(n,a){n&&i._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",i.playlistUrl,n.code,n.message),function(t,i){var n=null,a=[],d=this;switch(this._deliveryType){case"Dash":n=new l(d._logger,t),d.parsedPlaylist=n,d._playbackDurationSinceAvailable=d.parsedPlaylist.publishTime?d.parsedPlaylist.publishTime.getTime()-d.parsedPlaylist.availabilityStartTime.getTime():null,d._suggestedPresentationDelayTotalMillis=e.get(d.parsedPlaylist,["suggestedPresentationDelay","totalMillis"],null),d._totalMediaTimeInMillis=e.get(d.parsedPlaylist,["mediaPresentationDuration","totalMillis"],1/0),d._minBufferTimeTotalMillis=e.get(d.parsedPlaylist,["minBufferTime","totalMillis"],null),d._type=d.parsedPlaylist.type,a=function(t){var i=this;return e.map(t.representations,function(e){return{chunkDuration:e.duration,dataChunkUrlTemplate:e.media,codec:e.mseCodec,bandwidth:e.bandwidth,height:e.height,trackId:e.id,initUrl:e.initialization,mimeType:e.mimeType,totalNumberOfChunks:Math.ceil(i._totalMediaTimeInMillis/e.duration)}})}.call(d,d.parsedPlaylist),e.forEach(a,function(e){c.call(d,new s(d._logger,e))}),i();break;case"Hls":n=new u(d._logger,d._name,t),d.parsedPlaylist=n,d._playbackDurationSinceAvailable=0,d._minBufferTimeTotalMillis=0,d._suggestedPresentationDelayTotalMillis=0,d._totalMediaTimeInMillis=1/0;var m=0;e.forEach(n.streamVariants,function(e){var t=d.baseUrl+e.name,a=new o(d._logger,{mediaSegmentPlaylistUrl:t,codecs:e.codecs.join("|"),bandwidth:e.bandwidth,trackId:e.name,mimeType:"application/octet-stream",height:null});r.getWithRetry(t,{},function(e,t){if(e)return d._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",d.playlistUrl,e.code,e.message);a.updateMediaSegments(t),c.call(d,a),++m===n.streamVariants.length&&(d._type=a.isComplete()?"static":"dynamic","static"===d._type&&(d._totalMediaTimeInMillis=1e3*a.getPlayableDuration()),i())},g)});break;default:throw d._logger.error("[%s] Unsupported Delivery Type [%s]",d.playlistUrl,h(d.playlistUrl)),new Error("Unsupported Delivery Type "+h(d.playlistUrl))}}.call(i,a,function(){t(n,{raw:a,parsed:i.parsedPlaylist})})},g)}).call(this,t)},d.prototype.getType=function(){return this._type},d.prototype.getDeliveryType=function(){return this._deliveryType},d.prototype.getPlaylistTracksByBandwidthPerMimeType=function(i,n){t.isObject(n,"restrictions");var r=this;return e.map(this._mimeTypes,function(t){var a=function(t,i){return 0===e.keys(i).length?t:e.filter(t,function(t){return function(t,i){var n=t.getHeight()||0,r=t.getBandwidth()||0;return e.reduce(i,function(e,t,i){switch(i){case"maxHeight":return n<=t;case"minHeight":return n>=t;case"maxBandwidth":return r<=t;case"minBandwidth":return r>=t;default:throw new Error("Unknown restriction "+i)}},!1)}(t,i)})}(r.getPlaylistTracksByMimeType(t),n),s=e.reduce(a,function(e,t){return t.getBandwidth()>i?e:e&&e.getBandwidth()>t.getBandwidth()?e:t},null)||r.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(0,t);if(s)return s;var o=e.get(e.filter(a,function(e){return!e.getBandwidth()}),"0");if(o)return r._logger.debug("Unable to get track with bandwidth [%s]. Falling back to track [%s].",o.getTrackId()),o;r._logger.warn("Unable to get track with bandwidth [%s]. No other tracks to fallback on.")})},d.prototype.getPlaylistTrackByBandwidthAndMimeType=function(t,i){return e.find(this.getPlaylistTracksByBandwidthPerMimeType(t,{}),function(e){return e.getMimeType()===i})},d.prototype.getPlaylistTrackByMimeTypeAndNextHighestBandwidth=function(t,i){return e.reduce(this.getPlaylistTracksByMimeType(i),function(e,i){return i.getBandwidth()<=t?e:e?e.getBandwidth()>i.getBandwidth()?i:e:i},null)},d.prototype.getAllPlaylistTracks=function(){return[].concat.apply([],e.values(this._playlistTracksByMimeType))},d.prototype.getMimeTypes=function(){return this._mimeTypes},d.prototype.getPlaybackDurationSinceAvailable=function(){return this._playbackDurationSinceAvailable},d.prototype.getSuggestedPresentationDelayTotalMillis=function(){return this._suggestedPresentationDelayTotalMillis},d.prototype.getTotalMediaTimeInMillis=function(){return this._totalMediaTimeInMillis},d.prototype.getMinBufferTimeTotalMillis=function(){return this._minBufferTimeTotalMillis},d.prototype.addEventListener=function(e,i){if(t.isString(e,"eventName"),t.isFunction(i,"listener"),"trackadded"!==e)throw new Error('Event "'+e+'" is unknown.');return this._trackAddedEvent.listen(i)},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2)],void 0!==(r=function(e,t,i){"use strict";function n(e,t,i){}return n.prototype.toString=function(){throw new Error("Must be implemented")},n.prototype.dispose=function(){throw new Error("Must be implemented")},n.prototype.getMseCodec=function(){throw new Error("Must be implemented")},n.prototype.getTrackId=function(){throw new Error("Must be implemented")},n.prototype.getChunkDuration=function(){throw new Error("Must be implemented")},n.prototype.getBandwidth=function(){throw new Error("Must be implemented")},n.prototype.getHeight=function(){throw new Error("Must be implemented")},n.prototype.getMimeType=function(){throw new Error("Must be implemented")},n.prototype.getTotalNumberOfChunks=function(){throw new Error("Must be implemented")},n.prototype.getCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.setCurrentChunkId=function(e){throw new Error("Must be implemented")},n.prototype.incrementCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.addDataChunk=function(e,t,i){throw new Error("Must be implemented")},n.prototype.getChunks=function(){throw new Error("Must be implemented")},n.prototype.addEventListener=function(e,t){throw new Error("Must be implemented")},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(2)],void 0!==(r=function(e,t){"use strict";function i(e,i){this._options=i||{},this._logger=e||new t.Logger,this._rateDataPoints={},this._ewmaPeriods=i.ewmaPeriods||null,this._ewmaMultiplier=this._ewmaPeriods?2/(this._ewmaPeriods+1):null}function n(e,t,i,n,r){var a=(i*(e.length-1)+r(t))/e.length;if(n>0)for(;t.added-e[0].added>n;){var s=e.shift();a=(a*(e.length+1)-r(s))/e.length}return a}return i.prototype.toString=function(){var t=this;return"StatsProvider [rateDataPoints(keys)="+e.keys(this._rateDataPoints)+", rateDataPoints="+e.toString(e.map(this._rateDataPoints,function(e,i){return t.getRateAverages(i)}))+", options="+this._options+"]"},i.prototype.dispose=function(){delete this._rateDataPoints},i.prototype.addRateDataPoint=function(t,i,r,a){if(!e.isNullOrUndefined(this._rateDataPoints)){this._rateDataPoints[t]||(this._rateDataPoints[t]={tenSecDataPoints:[],thirtySecDataPoints:[],oneMinDataPoints:[],twoMinDataPoints:[],ewmaDataPoints:[],tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,smaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0,smaDuration:0});var s={duration:i,amount:r,durationToSecondsFactor:a,rate:r/(i*a),added:e.now()};(function(e,t){var i=function(e){return e.rate},r=function(e){return e.duration};e.tenSecDataPoints.push(t),e.thirtySecDataPoints.push(t),e.oneMinDataPoints.push(t),e.twoMinDataPoints.push(t),e.tenSecAverageRate=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageRate,1e4,i),e.thirtySecAverageRate=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageRate,3e4,i),e.oneMinAverageRate=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageRate,6e4,i),e.twoMinAverageRate=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageRate,12e4,i),e.tenSecAverageDuration=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageDuration,1e4,r),e.thirtySecAverageDuration=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageDuration,3e4,r),e.oneMinAverageDuration=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageDuration,6e4,r),e.twoMinAverageDuration=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageDuration,12e4,r),this._ewmaMultiplier&&(e.ewmaDataPoints.push(t),e.smaRate=n.call(this,e.ewmaDataPoints,t,e.smaRate,-1,i),e.smaDuration=n.call(this,e.ewmaDataPoints,t,e.smaDuration,-1,r),e.ewmaDataPoints.length>=this._ewmaPeriods&&(e.ewmaDataPoints.shift(),e.ewmaDataPoints.length===this._ewmaPeriods?(e.ewmaRate=e.smaRate,e.ewmaDuration=e.smaDuration):(e.ewmaRate=this._ewmaMultiplier*(e.smaRate-e.ewmaRate)+e.ewmaRate,e.ewmaDuration=this._ewmaMultiplier*(e.smaDuration-e.ewmaDuration)+e.ewmaDuration)))}).call(this,this._rateDataPoints[t],s)}},i.prototype.getRateAverages=function(t){if(!e.get(this,["_rateDataPoints",t]))return{tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0};var i=this._rateDataPoints[t];return{tenSecAverageRate:i.tenSecAverageRate,thirtySecAverageRate:i.thirtySecAverageRate,oneMinAverageRate:i.oneMinAverageRate,twoMinAverageRate:i.twoMinAverageRate,ewmaRate:i.ewmaRate,tenSecAverageDuration:i.tenSecAverageDuration,thirtySecAverageDuration:i.thirtySecAverageDuration,oneMinAverageDuration:i.oneMinAverageDuration,twoMinAverageDuration:i.twoMinAverageDuration,ewmaDuration:i.ewmaDuration}},i}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=r},function(e,t){e.exports=a},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e,t,i,n){}return e.prototype.toString=function(){throw new Error("Must be implemented")},e.prototype.dispose=function(){throw new Error("Must be implemented")},e.prototype.initialize=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.getStreamDurationBeforeInitialization=function(){throw new Error("Must be implemented")},e.prototype.getLocalToServerTimeOffset=function(){throw new Error("Must be implemented")},e.prototype.setActiveTracks=function(e){throw new Error("Must be implemented")},e.prototype.initializePlaylistTracks=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.startRequestingDataForActiveTracks=function(){throw new Error("Must be implemented")},e.prototype.isFetchingData=function(){throw new Error("Must be implemented")},e.prototype.seekToChunk=function(e){throw new Error("Must be implemented")},e.prototype.stopRequestingAllData=function(){throw new Error("Must be implemented")},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(19)],void 0!==(r=function(e,t,i){"use strict";function n(n,a){t.isStringNotEmpty(a,"mpdXml"),t.isObject(n,"logger"),this._mpdXml=a,this._logger=n,this.minBufferTime=0,this.type=null,this.publishTime=null,this.availabilityStartTime=null,this.timeShiftBufferDepth=0,this.suggestedPresentationDelay=0,this.minimumUpdatePeriod=0,this.maxSegmentDuration=0,this.profiles=null,this.moreInfoUrl=null,this.programInfoTitle=null,this.representations=[],function(){t.isStringNotEmpty(this._mpdXml,"mpdXml");var n,a=i.parseXml(this._mpdXml),u=a.getElementsByTagName("parsererror");if(u&&u.length>0)throw n="Failed to parse MPD Playlist XML: "+u.item(0).innerText+" (source xml: "+this._mpdXml+")",this._logger.error(n),new Error(n);if("MPD"!==a.documentElement.nodeName)throw n='Invalid MPD Playlist XML. Does not start with "MPD": '+this._mpdXml,this._logger.error(n),new Error(n);this.minBufferTime=r(o(a.documentElement,"minBufferTime")),this.type=o(a.documentElement,"type"),this.publishTime=s(o(a.documentElement,"publishTime")),this.availabilityStartTime=s(o(a.documentElement,"availabilityStartTime")),this.timeShiftBufferDepth=r(o(a.documentElement,"timeShiftBufferDepth")),this.suggestedPresentationDelay=r(o(a.documentElement,"suggestedPresentationDelay")),this.minimumUpdatePeriod=r(o(a.documentElement,"minimumUpdatePeriod")),this.maxSegmentDuration=r(o(a.documentElement,"maxSegmentDuration")),this.mediaPresentationDuration=r(o(a.documentElement,"mediaPresentationDuration")),this.profiles=o(a.documentElement,"profiles");var d=a.getElementsByTagName("ProgramInformation");if(d&&d.length>=1){var c=d.item(0);this.programInfoTitle=l(c,"Title").childNodes[0].nodeValue,this.moreInfoUrl=o(c,"moreInformationURL")}var h=a.getElementsByTagName("ContentProtection");if(this.contentProtectionTags=[],h.length>0)for(var g=0;g<h.length;g++){var m=h.item(g),p=e.reduce(m.attributes,function(e,t){return e[t.name]=t.value,e},{});this.contentProtectionTags.push(p)}for(var f=a.getElementsByTagName("Representation"),y=0;y<f.length;y++){var _=function(e){var t={};if(t.id=o(e,"id"),t.mimeType=o(e,"mimeType"),t.codecs=o(e,"codecs"),t.mseCodec=i.getMSECodec(t.mimeType,t.codecs),t.isAudio=t.mimeType.indexOf("audio")>=0,t.isVideo=t.mimeType.indexOf("video")>=0,!i.isCodecSupported(t.mseCodec))return this._logger.debug("MPD representation has unsupported codec. Skipping stream id [%s] (mimeType=[%s], codecs=[%s])",t.id,t.mimeType,t.codecs),null;var n=o(e,"bandwidth");t.bandwidth=n?parseInt(n,10):null;var r=o(e,"height");t.height=r?parseInt(r,10):null;var a=l(e,"SegmentTemplate");a&&(t.timescale=parseInt(o(a,"timescale")),t.media=o(a,"media"),t.startNumber=parseInt(o(a,"startNumber")),t.duration=parseInt(o(a,"duration")),t.initialization=o(a,"initialization"));return t}.call(this,f.item(y));_&&this.representations.push(_)}}.call(this)}function r(e){if(!e)return null;var t=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/.exec(e);if(t){var i="-"===t[1]?-1:1,n={year:a(t[2],i),month:a(t[3],i),week:a(t[4],i),day:a(t[5],i),hour:a(t[6],i),minute:a(t[7],i),second:a(t[8],i)};return n.totalMillis=1e3*(n.second+60*(n.minute+60*(n.hour+24*n.day))),n}return null}function a(e,t){var i=e&&parseFloat(e.replace(",","."));return(isNaN(i)?0:i)*t}function s(e){if(!e)return null;var t=new Date;return t.setTime(Date.parse(e)),t}function o(e,t){var i=e.attributes.getNamedItem(t);return i?i.value:null}function l(e,t){for(var i=0;i<e.childNodes.length;i++){var n=e.childNodes.item(i);if(n.nodeName===t)return n}return null}return n.prototype.toString=function(){return"Mpd [minBufferTime="+this.minBufferTime+", type="+this.type+", publishTime="+this.publishTime+", availabilityStartTime="+this.availabilityStartTime+", timeShiftBufferDepth="+this.timeShiftBufferDepth+", suggestedPresentationDelay="+this.suggestedPresentationDelay+", minimumUpdatePeriod="+this.minimumUpdatePeriod+", maxSegmentDuration="+this.maxSegmentDuration+", profiles="+this.profiles+", moreInfoUrl="+this.moreInfoUrl+", programInfoTitle="+this.programInfoTitle+", representations="+JSON.stringify(this.representations)+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"M3u8VariantPlaylistString"),t.isStringNotEmpty(r,"name"),t.isObject(i,"logger"),this._rawM3u8VariantPlaylist=a,this._name=r,this._logger=i,function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch(o){case"EXT-X-STREAM-INF":r.streamVariants=r.streamVariants||[];var u=[l,i[a+1]];r.streamVariants.push(function(t){var i=(function(t){var i=e.get(t.match(/(?:CODECS=).*?",/),["0"],""),n=e.get(i.split("="),["1"],"");return n.substring(1,n.length-2)}(t[0])||"").split(","),r=(n(t[0],"FRAME-RATE")||"").trim();return{programId:n(t[0],"PROGRAM-ID"),codecs:i,bandwidth:parseInt(n(t[0],"BANDWIDTH")),averageBandwidth:parseInt(n(t[0],"AVERAGE-BANDWIDTH")),frameRate:parseInt(parseInt(r)||0),name:e.get(t,["1"],"").trim()}}(u));break;case"EXT-X-ALLOW-CACHE":r.allowCache="YES"===l;break;case"#EXT-X-COMBINED":r.combined="YES"===l;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Variant] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3u8VariantPlaylist)}function n(t,i){var n=new RegExp("(?:"+i+"=).*?(?=[,\n\r])"),r=new RegExp("(?:"+i+"=).*?$"),a=e.get(t.match(n)||t.match(r),["0"],"");return e.get(a.split("="),["1"])}return i.prototype.toString=function(){return"M3u8VariantPlaylist[name="+this._name+",numberOfStreamVariants="+this.streamVariants.length+"]"},i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(8)],void 0!==(r=function(e,t,i){"use strict";function n(e){t.isObject(e,"logger"),this._logger=e,this._currentRequestId=0,this._requests={}}function r(t,i,n,u,d){d=d||1;var c=this,h=e.get(i,["delay"],null),g=e.get(i,["retryOptions","delay"],s),m=e.get(i,["retryOptions","backoff"],l),p=e.get(i,["retryOptions","maxAttempts"],o),f=d>1?g*Math.pow(d,m):h,y=e.now(),_=function(a,s){return a&&d<=p?(y=e.now(),r.call(c,t,i,n,u,d+1)):u(a,{requestTime:e.now()-y,data:s})};if(!e.isNumber(h)&&1===d)return a.call(c,t,i,n,_);y+=h,function(e,t,i,n,r){var s=this;this._requests[i]=setTimeout(function(){a.call(s,e,t,i,r)},n)}.call(c,t,i,n,f,_)}function a(e,t,n,r){var a=this;i.get(e,t,function(t,i){if(!a._requests[n])return a._logger.debug("Request handler disposed of before response received for get [%s]",e);t&&a._logger.debug("Status code: [%s] (status text: [%s]) for get [%s]",t.code,t.message,e),r(t,i)})}var s=0,o=1,l=1;return n.prototype.toString=function(){return"HttpRequestManager"},n.prototype.disposePendingRequests=function(){e.forOwn(this._requests,function(t){e.isNumber(t)&&clearTimeout(t)}),this._requests={}},n.prototype.dispose=function(){this.disposePendingRequests(),this._currentRequestId=0},n.prototype.getWithRetry=function(e,i,n){t.isStringNotEmpty(e,"url"),t.isObject(i,"options"),t.isFunction(n,"callback");var a=this._currentRequestId++,s=this;this._requests[a]=!0,r.call(this,e,i,a,function(e,t){return delete s._requests[a],n(e,t)})},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(7),i(14),i(4),i(9),i(23)],void 0!==(r=function(e,t,i,n,r,a,s,o,l){"use strict";function u(u,c,h,g,m){t.isInstanceOf(c,s,"playlist"),t.isNotUndefined(h,"videoElement"),t.isNotUndefined(h.videoWidth,"videoElement.videoWidth"),t.isNotUndefined(g,"playlistChunkFeeder"),t.isInstanceOf(g,o,"playlistChunkFeeder"),e.isUndefined(e.get(m,"bandwidthToStartAt"))||t.isNumber(m.bandwidthToStartAt,"options.bandwidthToStartAt"),e.isUndefined(e.get(m,"trackRestrictions"))||t.isObject(m.trackRestrictions,"options.trackRestrictions"),e.isUndefined(e.get(m,"bufferSizeToPauseFetch"))||t.isNumber(m.bufferSizeToPauseFetch,"options.bufferSizeToPauseFetch"),e.isUndefined(e.get(m,"bufferSizeToResumeFetch"))||t.isNumber(m.bufferSizeToResumeFetch,"options.bufferSizeToResumeFetch"),e.isUndefined(e.get(m,"maximumFastForwardFrequency"))||t.isNumber(m.maximumFastForwardFrequency,"options.maximumFastForwardFrequency"),e.isUndefined(e.get(m,"playbackRateToRecover"))||t.isNumber(m.playbackRateToRecover,"options.playbackRateToRecover");var p=this;this._options=m,this._videoElement=h,this._feeder=g,this._playlist=c,this._disposables=new r.DisposableList,this._logger=u||new i.Logger,this._bandwidthLimit=e.get(m,"bandwidthToStartAt",v),this._trackRestrictions=e.get(m,"trackRestrictions",{}),this._bufferSizeToPauseFetch=e.get(m,"bufferSizeToPauseFetch",b),this._bufferSizeToResumeFetch=e.get(m,"bufferSizeToResumeFetch",k),this._targetBufferSize=e.get(m,"targetBufferSize",T),this._maximumFastForwardFrequency=e.get(m,"maximumFastForwardFrequency",S),this._playbackRateToRecover=e.get(m,"playbackRateToRecover",E),this._playbackStarted=!1,this._isWaiting=!1,this._bufferStats=[],this._browserDetails=new a(window.navigator.userAgent).detect(),function(){var t=this,i=e.get(this._playlist,["parsedPlaylist","contentProtectionTags"],[]);if(0===i.length)return;if(!l.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new l(this._logger,this._videoElement,i,e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i,d.call(t),t._videoElement.play())}),this._disposables.add(this._encryptedMediaHandler)}.call(this),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._playbackTimeLeftEvent=new n.Event,this._playerStartedEvent=new n.Event,this._playerErrorEvent=new n.Event,this._disposables.add(this._feeder),this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerStartedEvent),this._disposables.add(this._playerErrorEvent),this._disposables.add(new r.Disposable(function(){null!==p._switchTrackDisposable&&window.clearTimeout(p._switchTrackDisposable)}))}function d(){var e=this._playlist.getPlaylistTracksByBandwidthPerMimeType(this._bandwidthLimit,this._trackRestrictions);return this._feeder.setActiveTracks(e),e}function c(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=h(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}function h(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}function g(){var t=!0,i=!1;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var n=c.call(this,e.buffer),r=parseFloat(n.timeBufferedButNotPlayed);r<this._bufferSizeToPauseFetch&&(t=!1),r<this._bufferSizeToResumeFetch&&(i=!0)},this)),t&&this._feeder.isFetchingData()&&(this._logger.debug("Pausing feeder due to excess buffer"),P.call(this)),i&&!this._feeder.isFetchingData()&&(this._logger.debug("Starting feeder due to limited buffer"),I.call(this))}function m(e,t){var i=this._mediaSourceBuffers[y(e)],n=this._bufferDetails[_(e)];if(n.chunks.length>0){if(this._videoElement.error)return this._logger.error("Unable to continue appending to buffer. Video element error code [%s] and message [%s]",this._videoElement.error.code,this._videoElement.error.message),P.call(this),this._playerErrorEvent.fire([this._videoElement.error]);var r=n.chunks.shift();this._logger.debug("Appending chunk to buffer for track [%s]",e.getTrackId()),i.buffer.appendBuffer(new Uint8Array(r))}else t&&(g.call(this),n.chunkAddRequested=!0)}function p(t){var i=this._mediaSourceBuffers[y(t)],n=e.bind(function(e){this._logger.warn("Buffer Error [%s]",e)},this),r=!!i.track;if(i.track!==t){var a=this._bufferDetails[_(t)];if(i.track&&i.track!==t&&r&&(i.buffer.removeEventListener("updateend",i.updateEndListener),i.buffer.removeEventListener("error",n),a&&(a.addInitChunkFirst=!0,a.chunkAddRequested=!0,a.chunks=[])),i.track=t,i.updateEndListener=e.bind(i.updateEnd,this,t),i.buffer.addEventListener("updateend",i.updateEndListener),i.buffer.addEventListener("error",n),i.buffer.onerror=n,!r){var s="Dash"===this._playlist.getDeliveryType()?[t.getInitChunkData()]:[];a.chunks=[].concat(s,e.map(t.getChunks(),function(e){return e.data})),"static"===this._playlist.getType()&&"Edge"!==this._browserDetails.browser&&"IE"!==this._browserDetails.browser&&this._mediaSource.setLiveSeekableRange(0,this._playlist.getTotalMediaTimeInMillis()/1e3),m.call(this,t,!1)}}}function f(t){this._logger.debug("Creating MSE buffers for all tracks."),e.forEach(t,e.bind(function(t){(function(t){var i=this,n={track:t,chunks:[],chunkAddRequested:!1},a=y(t),s=!e.includes(e.keys(i._mediaSourceBuffers),a),o=s?i._mediaSource.addSourceBuffer(t.getMseCodec()):i._mediaSourceBuffers[a].buffer,l=_(t);i._bufferDetails[l]=n,s&&(o.mode="segments","static"===i._playlist.getType()&&(o.appendWindowEnd=i._playlist.getTotalMediaTimeInMillis()/1e3),i._logger.debug("Creating MSE Buffer for [%s] with mode [%s]",i._playlist.getType(),o.mode),i._mediaSourceBuffers[a]={buffer:o,updateEnd:function(e){o.updating||m.call(this,e,!0)}},i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceBuffer [%s]",a),i._mediaSource.removeSourceBuffer(o)})));var u=t.addEventListener("chunkadded",e.bind(function(t,r){n.addInitChunkFirst&&"Dash"===i._playlist.getDeliveryType()&&(n.addInitChunkFirst=!1,this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),"Init"),n.chunks.push(t.getInitChunkData())),this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),r.chunkId),n.chunks.push(r.data),n.chunkAddRequested&&(n.chunkAddRequested=!1,o.updating||m.call(this,t,!1));var a=e.now()-this._lastUpdate>=w,s=e.now()-this._lastPlayAttempt>=500;this._isWaiting&&a&&s&&!this._videoElement.paused&&(this._logger.trace("Starting after wait [%s]",e.now()-this._lastUpdate),this._lastPlayAttempt=e.now(),this._videoElement.play())},i,t));i._disposables.add(u)}).call(this,t)},this))}function y(e){return e.getMseCodec().indexOf("video")>=0?"video":e.getMseCodec().indexOf("audio")>=0?"audio":"other"}function _(e){return e.getTrackId()+"_"+e.getMseCodec()}var v=2e6,b=60,k=30,w=1e3,T=5,E=1.03,S=300,C=300,D=2,M=3e5;u.prototype.toString=function(){return e.toString(this)},u.prototype.dispose=function(){this._disposables.dispose(),this._videoElement&&(this._videoElement.load(),this._videoElement.src="",this._videoElement.mediaKeys&&this._videoElement.setMediaKeys(null)),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._bufferStats=[],this._mediaSource=null,this._playlist=null,this._videoElement=null},u.prototype.start=function(){(function(){var t=this;t._mediaSource=new MediaSource;var i=function(){(function(){var t=this,i=d.call(this),n=t._playlist.getAllPlaylistTracks().sort(function(e,t){return-1*(e.getBandwidth()-t.getBandwidth())}),a=e.filter(n,function(t){return!e.includes(i,t)});if(this._logger.info("Initializing feeder with [%s] [%s] playlist of duration [%s]",t._playlist.getType(),t._playlist.getDeliveryType(),t._playlist.getTotalMediaTimeInMillis()/1e3),"static"===t._playlist.getType())t._mediaSource.duration=t._playlist.getTotalMediaTimeInMillis()/1e3;else if("Hls"===t._playlist.getDeliveryType()){t._mediaSource.duration=1/0;var s=e.reduce(i,function(t,i){var n=e.get(i.getLastSegment(),["timestamp"],0);return e.isNullOrUndefined(t)?n:n<t?n:t})||0;t._feeder.seekToChunk(s)}this._logger.debug("Loading tracks: numberOfTracksToInitialize=[%s], all tracks: [%s]",i.length,n),this._feeder.initialize(i,a,function(){f.call(t,i);var n=d.call(t);e.forEach(n,function(e){p.call(t,e)}),function(){var t=this,i=e.bind(function(){this._isWaiting=!1,this._lastUpdate=e.now();var t;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var i=c.call(this,e.buffer);(!t||t>i.timeBufferedButNotPlayed)&&(t=i.timeBufferedButNotPlayed),this._playbackTimeLeftEvent.fire([i.timeBufferedButNotPlayed,e.track],this)},this)),g.call(this),function(t){this._bufferStats.push({size:t,timestamp:e.now()});for(var i=e.get(this._bufferStats,[0,"timestamp"],e.now());e.now()-i>M;)this._bufferStats.shift(),i=e.get(this._bufferStats,[0,"timestamp"],e.now());this._bufferStatsMin=Math.min.apply(null,e.map(this._bufferStats,function(e){return e.size}))}.call(this,t),function(t){if("Dash"===this._playlist.getDeliveryType()||"dynamic"===this._playlist.getType()){var i=this._targetBufferSize+.5,n=this._lastPlaybackRateChange,r=e.now()-this._startTime>C,a=!n||e.now()-n>1e3*this._maximumFastForwardFrequency,s=this._bufferStatsMin>D;t>=i&&1===this._videoElement.playbackRate&&r&&a&&s?(this._logger.info("Adjusting playback rate to [%s] to reduce buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToRecover,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToRecover):s||1===this._videoElement.playbackRate||(this._logger.info("Resuming normal playback rate with buffer size of [%s] and minimum buffer size of [%s]",t,this._bufferStatsMin),this._videoElement.playbackRate=1,this._lastPlaybackRateChange=e.now())}}.call(this,t||0)},t),n=function(e,i,n){t._logger.debug("VIDEO EVENT: [%s]",e),i&&i.call(t,n)},a=e.bind(n,t,"stalled",null),s=e.bind(n,t,"suspend",null),o=e.bind(n,t,"ended",null),l=e.bind(n,t,"error",null),u=e.bind(n,t,"pause",null),d=e.bind(n,t,"play",null),m=e.bind(n,t,"waiting",function(){this._playbackStarted&&(this._logger.debug("Waiting for new chunk or end of track"),this._isWaiting=!0)}),p=e.bind(n,t,"seeking",function(t){var i=e.keys(this._mediaSourceBuffers),n=e.get(i,"0",null),r=this._mediaSourceBuffers[n],a=this;if(r&&this._ready&&"Hls"!==this._playlist.getDeliveryType()){var s=h(r.buffer,t.timeStamp/1e3),o=h(r.buffer,this._videoElement.currentTime),l=e.reduce(this._mediaSourceBuffers,function(t,i){var n=h(i.buffer,a._videoElement.currentTime),r=e.isNumber(n)?i.buffer.buffered.end(n):0;return t?r<t?r:t:r})||this._videoElement.currentTime;if(this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed."),this._feeder.seekToChunk("dynamic"===this._playlist.getType()?this._videoElement.currentTime:l),s!==o||e.isNullOrUndefined(o)){if(this._feeder.isFetchingData())return;this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit)}}}),f=e.bind(n,t,"durationchange",function(){if("dynamic"!==t._playlist.getType())return t._videoElement.removeEventListener("durationchange",f,!1),t._ready=!0;0!==e.get(t,["_videoElement","buffered","length"],0)&&function(e){var t=this;setTimeout(function(){if(t._videoElement.currentTime<t._videoElement.buffered.start(t._videoElement.buffered.length-1)){var i=t._videoElement.buffered.end(t._videoElement.buffered.length-1);t._videoElement.currentTime=i>0?i:0}t._videoElement.currentTime>=t._videoElement.buffered.start(t._videoElement.buffered.length-1)&&(t._ready=!0,e())},10)}.call(t,function(){t._videoElement.removeEventListener("durationchange",f,!1)})});t._videoElement.addEventListener("timeupdate",i,!1),t._videoElement.addEventListener("ended",o,!1),t._videoElement.addEventListener("error",l,!1),t._videoElement.addEventListener("pause",u,!1),t._videoElement.addEventListener("stalled",a,!1),t._videoElement.addEventListener("suspend",s,!1),t._videoElement.addEventListener("play",d,!1),t._videoElement.addEventListener("waiting",m,!1),t._videoElement.addEventListener("seeking",p,!1),t._videoElement.addEventListener("durationchange",f,!1),t._disposables.add(new r.Disposable(function(){t._logger.debug("Cleaning up videoElement listeners"),t._videoElement.removeEventListener("timeupdate",i,!1),t._videoElement.removeEventListener("ended",o,!1),t._videoElement.removeEventListener("error",l,!1),t._videoElement.removeEventListener("pause",u,!1),t._videoElement.removeEventListener("stalled",a,!1),t._videoElement.removeEventListener("suspend",s,!1),t._videoElement.removeEventListener("play",d,!1),t._videoElement.removeEventListener("waiting",m,!1),t._videoElement.removeEventListener("seeking",p,!1),t._videoElement.removeEventListener("durationchange",f,!1)})),I.call(t),t._lastPlayAttempt=e.now(),"Edge"===this._browserDetails.browser||"IE"===this._browserDetails.browser?(t._videoElement.play(),t._playbackStarted=!0,t._playerStartedEvent.fireAsync([],this),t._logger.debug("Playback Started")):t._videoElement.play().then(function(){t._playbackStarted=!0,t._playerStartedEvent.fireAsync([],this),t._logger.debug("Playback Started")}).catch(function(e){t._logger.error("Playback Failed [%s]",e)})}.call(t)},function(){"Hls"!==t._playlist.getDeliveryType()&&f.call(t,a)},function(e){return t._logger.error("Unable to initialize playlist chunk feeder",e),t._playerErrorEvent.fire([e])})}).call(t)};t._mediaSource.addEventListener("sourceopen",i),t._disposables.add(new r.Disposable(function(){t._logger.debug("Cleaning up sourceopen listener"),t._mediaSource.removeEventListener("sourceopen",i)})),t._videoElement.src=window.URL.createObjectURL(t._mediaSource)}).call(this),this._startTime=e.now()},u.prototype.getBandwidthLimit=function(){return this._bandwidthLimit},u.prototype.getTimeLeft=function(){return this._videoElement?c.call(this,this._videoElement).timeBufferedButNotPlayed:0},u.prototype.changeBandwidthLimit=function(t,i){this._logger.debug("Changing playback bandwidth limit: [%s], current limit: [%s]",t,this._bandwidthLimit),this._bandwidthLimit=t,this._switchTrackDisposable=setTimeout(e.bind(function(t){var i=this,n=this._feeder.getActiveTracks(),r=d.call(this),a=e.filter(r,function(t){return!e.find(n,function(e){return e.getTrackId()===t.getTrackId()})});e.forEach(a,function(e){p.call(i,e),i._logger.info("Switched [%s] to track [%s] with [%s] bandwidth limit",y(e),e.getTrackId(),i._bandwidthLimit)});var s=e.reduce(r,function(t,n){var r=i._mediaSourceBuffers[y(n)],a=h(r.buffer,i._videoElement.currentTime),s=n.getChunkDuration()/1e3;if(!e.isNumber(a))return t;var o=Math.round(r.buffer.buffered.end(a)/s)*s;return!e.isNumber(t)||t>o?o:t});e.isNumber(s)||(s=i._videoElement.currentTime),this._feeder.stopRequestingAllData(),this._feeder.seekToChunk(s),this._logger.debug("Pausing of feeder completed."),this._feeder.isFetchingData()||(this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit),t())},this,i||e.noop),250)},u.prototype.addEventListener=function(i,n){switch(t.isString(i,"eventName"),t.isFunction(n,"listener"),i){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(n);case"started":var r=this._playerStartedEvent.listen(n);return this._playbackStarted&&setTimeout(e.bind(n,this),0),r;case"error":return this._playerErrorEvent.listen(n);default:throw new Error('Event "'+i+'" is unknown.')}};var P=function(){this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed.")},I=function(){if(this._feeder.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._feeder.startRequestingDataForActiveTracks()};return u}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(22)],void 0!==(r=function(e){return e}.apply(t,n))&&(e.exports=r)},function(e,t,i){"use strict";var n,r;n=[i(4),i(20),i(21),i(13),i(6),i(24)],void 0!==(r=function(e,t,i,n,r,a){return{Playlist:e,MpdPlaylistChunkFeeder:t,M3u8PlaylistChunkFeeder:i,WebPlayer:n,StatsProvider:r,AdaptiveStreamingManager:a,isSupported:!!window.MediaSource}}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2),i(5)],void 0!==(r=function(e,t,i,n){"use strict";function r(n,r,o){if(e.isObject(n,"logger"),e.isObject(r,"playlistTrackConfig"),e.isStringNotEmpty(r.codec,"playlistTrackConfig.codec"),e.isStringNotEmpty(r.mimeType,"playlistTrackConfig.mimeType"),e.isNumber(r.bandwidth,"playlistTrackConfig.bandwidth"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),e.isStringNotEmpty(r.trackId,"playlistTrackConfig.trackId"),e.isStringNotEmpty(r.initUrl,"playlistTrackConfig.initUrl"),e.isStringNotEmpty(r.dataChunkUrlTemplate,"playlistTrackConfig.dataChunkUrlTemplate"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),o=o||{},this._logger=n||new i.Logger,this._mseCodec=r.codec,this._chunkDuration=r.chunkDuration,this._bandwidth=r.bandwidth,this._height=r.height,this._trackId=r.trackId,this._mimeType=r.mimeType,this._initUrl=r.initUrl,this._dataChunkUrlTemplate=r.dataChunkUrlTemplate,this._totalNumberOfChunks=r.totalNumberOfChunks,this._currentChunkId=null,this._maxChunksToCache=o.maxChunksToCache||a,this._lowWaterMaxChunks=o.lowWaterMaxChunks||s,e.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),e.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new t.Event}var a=20,s=15;return r.prototype=Object.create(n.prototype),r.prototype.constructor=r,r.prototype.toString=function(){return"MpdPlaylistTrack [mseCodec="+this._mseCodec+", maxChunksToCache="+this._maxChunksToCache+", lowWaterMaxChunks="+this._lowWaterMaxChunks+", initChunk="+this._initChunk+", dataChunks(size)="+this._dataChunks.length+", chunkAddedEvent(size)="+this._chunkAddedEvent.size()+", trackId="+(this._trackId?this._trackId:"n/a")+", bandwidth="+(this.bandwidth?this.bandwidth:"n/a")+"]"},r.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},r.prototype.getMseCodec=function(){return this._mseCodec},r.prototype.getTrackId=function(){return this._trackId},r.prototype.getChunkDuration=function(){return this._chunkDuration},r.prototype.getBandwidth=function(){return this._bandwidth},r.prototype.getHeight=function(){return this._height},r.prototype.getMimeType=function(){return this._mimeType},r.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},r.prototype.getInitChunkData=function(){return this._initChunk},r.prototype.setInitChunkData=function(e){this._initChunk=e},r.prototype.getCurrentChunkId=function(){return this._currentChunkId},r.prototype.setCurrentChunkId=function(e){this._currentChunkId=e},r.prototype.incrementCurrentChunkId=function(){null===this._currentChunkId&&this._logger.error("[%s] Attempting to increment `CurrentChunkId` that is not initialized",this._trackId),this._currentChunkId++},r.prototype.getInitUrl=function(){return this._initUrl},r.prototype.getDataChunkUrlTemplate=function(){return this._dataChunkUrlTemplate},r.prototype.addDataChunk=function(t,i,n){e.isNotUndefined(t,"dataChunk"),n=n||function(){},e.isFunction(n,"eventCallback");var r={data:t,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},r.prototype.getChunks=function(){return this._dataChunks},r.prototype.addEventListener=function(t,i){if(e.isString(t,"eventName"),e.isFunction(i,"listener"),"chunkadded"!==t)throw new Error('Event "'+t+'" is unknown.');return this._chunkAddedEvent.listen(i)},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(2),i(5),i(18)],void 0!==(r=function(e,t,i,n,r,a){"use strict";function s(r,a,s){if(t.isObject(r,"logger"),t.isObject(a,"playlistTrackConfig"),t.isStringNotEmpty(a.codecs,"playlistTrackConfig.codecs"),t.isNumber(a.bandwidth,"playlistTrackConfig.bandwidth"),t.isStringNotEmpty(a.trackId,"playlistTrackConfig.trackId"),s=s||{},this._logger=r||new n.Logger,this._mseCodec=function(e){if(e.split("|").length>1)return"video/mp4";return"audio/mp4"}(a.codecs),this._bandwidth=a.bandwidth,this._height=a.height,this._trackId=a.trackId,this._mimeType=a.mimeType,this._totalNumberOfChunks=a.totalNumberOfChunks,this._mediaSegments=[],this._isComplete=!1,this._playableDuration=0,this._mediaSegmentPlaylistUrlInfo=function(t){var i=t.split("?")[0],n=e.get(t.split("?"),[1],""),r=e.reduce(n.split("&"),function(e,t){var i=t.split("=")[0];return i&&(e[i]=t.split("=")[1]),e},{});return{url:i,queryParameters:r}}(a.mediaSegmentPlaylistUrl),this._currentChunkId=null,this._maxChunksToCache=s.maxChunksToCache||o,this._lowWaterMaxChunks=s.lowWaterMaxChunks||l,t.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),t.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new i.Event,this._segmentsReadyEvent=new i.Event}var o=20,l=15;return s.prototype=Object.create(r.prototype),s.prototype.constructor=s,s.prototype.toString=function(){return"M3u8PlaylistTrack"},s.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},s.prototype.getMseCodec=function(){return this._mseCodec},s.prototype.getTrackId=function(){return this._trackId},s.prototype.getChunkDuration=function(){return this._chunkDuration},s.prototype.getBandwidth=function(){return this._bandwidth},s.prototype.getHeight=function(){return this._height},s.prototype.getMimeType=function(){return this._mimeType},s.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},s.prototype.getPlayableDuration=function(){return this._playableDuration},s.prototype.isComplete=function(){return this._isComplete},s.prototype.hasSegments=function(){return this._mediaSegments.length>0},s.prototype.getSegmentByTimestamp=function(t){return e.find(this._mediaSegments,function(e){return e.timestamp<=t&&t<e.timestamp+e.duration})},s.prototype.getLastSegment=function(){return e.get(this._mediaSegments,[this._mediaSegments.length-1],null)},s.prototype.getMediaSegmentPlaylistUrlInfo=function(){return this._mediaSegmentPlaylistUrlInfo},s.prototype.getClosestSegmentNotGreaterThanTimestamp=function(e){return e>this._playableDuration?this._mediaSegments[this._mediaSegments.length-1]:this.getSegmentByTimestamp(e)},s.prototype.isLastMediaSegment=function(t){var i=this.getSegmentByTimestamp(t),n=!this._isComplete&&e.get(i,["timestamp"],0)+e.get(i,["duration"],0)===this._playableDuration,r=!this._isComplete&&t>this._playableDuration;return this._playableDuration===t||n||r},s.prototype.updateMediaSegments=function(t){var i=new a(this._logger,this._trackId,t),n=this._totalNumberOfChunks||0,r=e.map(this._mediaSegments,function(e){return e.name}),s=this,o=e.get(this._mediaSegments,[this._mediaSegments.length-1]),l=e.get(o,["timestamp"])+e.get(o,["duration"])||void 0;e.forEach(i.mediaSegments,function(t){e.includes(r,t.name)||(t.timestamp=e.isUndefined(l)?0:l,s._mediaSegments.push(t),s._playableDuration+=t.duration,l=t.timestamp+t.duration,s._logger.trace("[%s]:[%s]:[%s] Got new segment from playlist [%s]",(new Date).getHours(),(new Date).getMinutes(),(new Date).getSeconds(),t.name))}),n!==this._mediaSegments.length&&(this._isComplete=i.isComplete,this._totalNumberOfChunks=this._mediaSegments.length,this._segmentsReadyEvent.fireAsync([this._mediaSegments],null,e.noop))},s.prototype.addDataChunk=function(e,i,n){t.isNotUndefined(e,"dataChunk"),n=n||function(){},t.isFunction(n,"eventCallback");var r={data:e,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},s.prototype.getChunks=function(){return this._dataChunks},s.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"chunkadded":return this._chunkAddedEvent.listen(i);case"segmentsready":return this._segmentsReadyEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},s}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"m3u8String"),t.isObject(i,"logger"),this._rawM3U8=a,this._logger=i,this._name=r,this.mediaSegments=[],function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch("#EXT-X-ENDLIST"===t&&(o="EXT-X-ENDLIST"),o){case"EXT-X-VERSION":r.version=parseFloat(l);break;case"EXT-X-PROGRAM-DATE-TIME":r.programDateTime=function(e){return e?new Date(e.trim()):null}(l);break;case"EXT-X-TARGETDURATION":r.targetDuration=1e3*parseFloat(l)||0;break;case"EXT-X-MEDIA-SEQUENCE":r.mediaSequence=parseInt(l);break;case"EXTINF":var u=[l,i[a+1]];r.mediaSegments.push(n(u,r.mediaSegments+1));break;case"EXT-X-ENDLIST":r.isComplete=!0;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Segment] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3U8);var s=0;e.forEach(this.mediaSegments,function(e){e.timestamp=s,s+=e.duration}),this.playableDuration=s,this.isComplete=!!this.isComplete}i.prototype.toString=function(){return"vod"};var n=function(t){var i=e.get(t,["0"],"").split(","),n=e.get(i,["0"],0),r=e.get(i,["1"],"").trim(),a=e.get(t,["1"],"").trim();return{duration:parseFloat(n),title:r,name:a}};return i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0)],void 0!==(r=function(e){"use strict";function t(){}return t.prototype.isCodecSupported=function(t){return e.isStringNotEmpty(t,"codec"),window.MediaSource&&"function"==typeof window.MediaSource.isTypeSupported&&window.MediaSource.isTypeSupported(t)},t.prototype.parseXml=function(t){if(e.isStringNotEmpty(t,"xmlString"),void 0!==window.DOMParser)return(new window.DOMParser).parseFromString(t,"text/xml");if(void 0!==window.ActiveXObject&&new window.ActiveXObject("Microsoft.XMLDOM")){var i=new window.ActiveXObject("Microsoft.XMLDOM");return i.async="false",i.loadXML(t),i}throw new Error("No XML parser found")},t.prototype.getMSECodec=function(t,i){return e.isStringNotEmpty(t,"mpdMimeType"),e.isStringNotEmpty(i,"mpdCodecs"),t+'; codecs="'+i+'"'},new t}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(12),i(9),i(4),i(5),i(6),i(10)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(n,a,o,d){t.isInstanceOf(a,s,"playlist"),t.isInstanceOf(a.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isInstanceOf(o,l,"statsProvider"),t.isStringNotEmpty(a.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(a.baseUrl,"playlist.baseUrl"),d&&d.defaultPresentationDelay&&t.isNumber(d.defaultPresentationDelay,"options.defaultPresentationDelay"),this._playlist=a,this._baseUrl=this._playlist.baseUrl,this._statsProvider=o,this._logger=n||new i.Logger,this._httpRequestManager=new r(this._logger),this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._defaultPresentationDelay=e.get(d,"defaultPresentationDelay",b),this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)}function c(i,n,r,a){r=r||e.noop,t.isArray(i,"tracks"),t.isFunction(r,"done");var s=0,l=this;e.forEach(i,function(e){t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(function(e){var t=Math.max(Math.floor(this._streamDurationBeforeInitialization/e),0);return"static"===this._playlist.getType()&&(t=0),this._logger.trace("Getting chunk index to start: [%s], playbackTimePassed=[%s], duration=[%s]",t,this._streamDurationBeforeInitialization,e),t}.call(l,e.getChunkDuration())),function(e,t,i){var n=this;(function(e,t){var i=this;i._logger.trace("Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()),f.call(i,i._baseUrl+e.getInitUrl(),null,function(n,r){i._logger.trace("DONE Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()+(n?": FAILED: "+n.code:": data="+r.data.byteLength)),t(n,r.data)})}).call(n,e,function(r,a){if(r){var s=new Error("Failed to fetch init chunk of stream for config [%s]",e);return s.cause=r,n._logger.error("[%s] (Cause: [%s])",s.message,r),i(s)}if(e.setInitChunkData(a),t){var o=Math.min(Math.floor(n._bufferSize/e.getChunkDuration),1);return n._logger.debug("Got init chunk: data chunksToFetch=[%s], initBufferSize=[%s], chunkDuration=[%s]",o,n._bufferSize,e.getChunkDuration()),p.call(n,e,o,null,i)}i()})}.call(l,e,n,function(e){if(e)return a(e);++s===i.length&&r()})})}function h(){var t=this;e.forEach(t._activeTracks,function(e){e.setCurrentChunkId(g.call(t,e.getChunkDuration()))})}function g(e){var t=e/1e3;return Math.floor(this._currentPlaybackTimeInSeconds/t)}function m(t){var i=this,n=i._activeTracks.length;e.forEach(i._activeTracks,function(r,a){!function(r,a){if(e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})===r){var s=g.call(i,r.getChunkDuration()),o=s>=r.getTotalNumberOfChunks();if("static"===i._playlist.getType()&&o)return a===n-1&&(i._keepFetchingData=!1),i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());p.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),_):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",e),n--),n<=0&&(i._logger.debug("Done fetching chunk with index [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",s,i._keepFetchingData),i._keepFetchingData)){if("dynamic"===i._playlist.getType())return m.call(i,v);m.call(i,null)}})}}(r,a)})}function p(e,t,i,n){var r=this;(function(e,t,i){var n=this,r=function(e,t){return e.replace("$Number%05d$",("00000"+t).substr(-5))}(n._baseUrl+e.getDataChunkUrlTemplate(),e.getCurrentChunkId()),a=e.getCurrentChunkId();n._logger.trace("Fetching data chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),r,e.getCurrentChunkId());var s=e.getMseCodec();f.call(n,r,t,function(t,o){if(n._logger.trace("DONE Fetching data chunk for [%s] : [%s], nextChunkId=[%s]",s,r,e.getCurrentChunkId()+(t?": FAILED: "+t.code:": data="+o.data.byteLength)),t||n._statsProvider.addRateDataPoint(s,o.requestTime,o.data.byteLength,.001),!t&&a===e.getCurrentChunkId())return e.incrementCurrentChunkId(),n._currentPlaybackTimeInSeconds=e.getChunkDuration()*e.getCurrentChunkId()/1e3,e.addDataChunk(o.data,a,function(){i(t)});t?(t.feederReason=404===t.code?"not yet available":"other",i(t)):i(null,o.data)})}).call(r,e,i,function(a){return a&&r._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',e,a),!a&&t>1&&p.call(r,e,t,i,n),n(a)})}function f(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:_,maxAttempts:y},timeout:k};if(e.isNumber(i)&&0!==i)a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a positive number above 0 or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(e,i){e&&r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",e.code,e.message,t),n(e,i)})}var y=15,_=400,v=500,b=5e3,k=5e3;return d.prototype=Object.create(a.prototype),d.prototype.constructor=d,d.prototype.toString=function(){return"MpdPlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},d.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0},d.prototype.initialize=function(i,n,r,a,s){var o=this;r=r||e.noop,t.isFunction(r,"done"),this._initializedAt=e.now(),c.call(o,i,!0,r,function(e){return o._logger.error("Unable to initialize active tracks",e),s(e)}),c.call(o,n,!1,a,function(e){return o._logger.error("Unable to initialize alternate tracks",e),s(e)})},d.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},d.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},d.prototype.setActiveTracks=function(e){this._activeTracks=e},d.prototype.getActiveTracks=function(){return this._activeTracks},d.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),h.call(this),m.call(this,null)},d.prototype.isFetchingData=function(){return this._keepFetchingData},d.prototype.seekToChunk=function(e){this._currentPlaybackTimeInSeconds=Math.floor(e),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds),h.call(this)},d.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests())},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(12),i(9),i(4),i(5),i(6),i(11)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(e,n,a,o){t.isInstanceOf(n,s,"playlist"),t.isInstanceOf(n.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isStringNotEmpty(n.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(n.baseUrl,"playlist.baseUrl"),this._playlist=n,this._baseUrl=this._playlist.baseUrl,this._statsProvider=a,this._logger=e||new i.Logger,this._httpRequestManager=new r(this._logger),this._options=o,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)}function c(){var t=this;e.isNumber(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=setTimeout(function(){(function(t){var i=this,n=0;e.forEach(this._activeTracks,function(r){var a=r.getMediaSegmentPlaylistUrlInfo(),s=e.assign({version:e.now()},a.queryParameters),o={retryOptions:{delay:y,maxAttempts:_},queryParameters:s};i._httpRequestManager.getWithRetry(a.url,o,function(e,s){if(e)return i._logger.debug("Unable to get media segment playlist [%s]",a.url);s&&r.updateMediaSegments(s),++n===i._activeTracks.length&&t()})},f)}).call(t,function(){e.isNullOrUndefined(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=null,c.call(t))})},f))}function h(t){var i=this,n=i._activeTracks.length;i._waitingForNextSegment=!1;e.forEach(i._activeTracks,function(r,a){!function(r){e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})!==r?i._logger.debug("Wrong track type [%s]. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId()):r.isLastMediaSegment(i._currentPlaybackTimeInSeconds)?("dynamic"===i._playlist.getType()&&(i._waitingForNextSegment=!0),i._logger.debug("No more chunks. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId())):g.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),p):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",JSON.stringify(e)),n--),n<=0){i._logger.debug("Done fetching chunk for timestamp [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",i._currentPlaybackTimeInSeconds,i._keepFetchingData);var t=r.isLastMediaSegment(i._currentPlaybackTimeInSeconds);if("static"===i._playlist.getType()&&t)return i._keepFetchingData=!1,i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());if(t)return i._waitingForNextSegment=!0,i._logger.debug("Waiting for new segment on the Segment Playlist for [dynaimic] track [%s] [%s]",r.getTrackId(),r.getMimeType());i._keepFetchingData&&h.call(i,null)}})}(r)})}function g(t,i,n,r){var a=this;(function(t,i,n){var r=this,a=t.getSegmentByTimestamp(r._currentPlaybackTimeInSeconds),s=r._baseUrl+a.name;r._logger.trace("Fetching data chunk for [%s]: [%s], next segment=[%s]",t.getMseCodec(),s,a.name);var o=t.getMseCodec();(function(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:p,maxAttempts:m},timeout:v};if(e.isNumber(i))a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a number or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(e,i){e&&r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",e.code,e.message,t),n(e,i)})}).call(r,s,i,function(e,i){if(r._logger.trace("DONE Fetching data chunk for [%s] : [%s], next segment=[%s]",o,s,a.name+(e?": FAILED: "+e.code:": data="+i.data.byteLength)),e||r._statsProvider.addRateDataPoint(o,i.requestTime,i.data.byteLength,.001),!e)return r._logger.debug("Finished fetching [%s]. Updating timestamp to fetch to [%s]",a.name,a.timestamp+a.duration),r._currentPlaybackTimeInSeconds=a.timestamp+a.duration,t.addDataChunk(i.data,a.name,function(){n(e)});e?(e.feederReason=404===e.code?"not yet available":"other",n(e)):n(null,i.data)})}).call(a,t,n,function(e){return e&&a._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',JSON.stringify(t),e),!e&&i>1&&g.call(a,t,i,n,r),r(e)})}var m=15,p=700,f=200,y=10,_=2,v=5e3;return d.prototype=Object.create(a.prototype),d.prototype.constructor=d,d.prototype.toString=function(){return"M3u8PlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},d.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0,this._segmentsReadyDisposable&&(this._segmentsReadyDisposable.dispose(),this._segmentsReadyDisposable=null)},d.prototype.initialize=function(i,n,r,a,s){r=r||e.noop,t.isFunction(r,"done"),this.setActiveTracks(i),"dynamic"===this._playlist.getType()&&c.call(this);var o=this,l=0,u=function(t){g.call(o,t,1,null,function(t){if(t)return s(t);++l===i.length&&(o._initializedAt=e.now(),r(),a())})};e.forEach(i,function(e){return o._segmentsReadyDisposable=e.addEventListener("segmentsready",function(){if(o._waitingForNextSegment){if(o._logger.debug("Continuing fetching of track [%s] segments after wait",e.getTrackId()),!o._initializedAt)return u(e);h.call(o,null)}}),e.hasSegments()?u(e):o._waitingForNextSegment=!0})},d.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},d.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},d.prototype.setActiveTracks=function(t){this._activeTracks=t;var i=e.map(t,function(e){return e.getTrackId()});this._logger.debug("Setting active tracks [%s]",i)},d.prototype.getActiveTracks=function(){return this._activeTracks},d.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),"dynamic"===this._playlist.getType()&&c.call(this),h.call(this,null)},d.prototype.isFetchingData=function(){return this._keepFetchingData},d.prototype.seekToChunk=function(t){var i=e.get(this._activeTracks,["0"]),n=i.getClosestSegmentNotGreaterThanTimestamp(t),r=e.get(n,["timestamp"]);e.isUndefined(r)?i||(this._currentPlaybackTimeInSeconds=t):this._currentPlaybackTimeInSeconds=Math.floor(n.timestamp),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds)},d.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._waitingForNextSegment=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests(),clearTimeout(this._mediaSegmentRequestTimeout),this._mediaSegmentRequestTimeout=null)},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e){this._userAgent=e}return e.prototype.detect=function(){var e="Unknown",t="?",i=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),n=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return i&&i.length>=2?e=i[1]:this._userAgent.match(/^\(?Mozilla/)&&(e="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(e="IE",(n=this._userAgent.match(/MSIE ([0-9]+)/))?(t=parseInt(n[1],10),(n=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(t=parseInt(n[1],10))):(n=this._userAgent.match(/rv:([0-9]+)/))&&(t=parseInt(n[1],10)))),"Chrome"===e&&this._userAgent.match(/OPR\//)?(e="Opera",n=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===e&&this._userAgent.match(/Edge\//)?(e="Edge",n=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==e&&"IE"!==e||!this._userAgent.match(/Opera/)||(e="Opera",n=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==e&&n&&n.length>=3&&(t=parseInt(n[2],10)),{browser:e,version:t}},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(8),i(7),i(14)],void 0!==(r=function(e,t,i,n,r,a,s){"use strict";function o(s,o,l,u){t.isObject(o,"videoElement");var _=this;this._videoElement=o,this._logger=s||new i.Logger,this._mediaKeys=null,this._licenseRequestRetryTimeout=null,this._disposables=new a.DisposableList;var v=e.bind(y,this);this._videoElement.addEventListener(f,v,!1),this._disposables.add(new a.Disposable(function(){_._videoElement.removeEventListener(f,v,!1)})),this._disposables.add(new a.Disposable(function(){null!==_._licenseRequestRetryTimeout&&window.clearTimeout(_._licenseRequestRetryTimeout)})),this._defaultMediaKeySystemConfig={initDataTypes:["cenc"],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42c01f"'}],audioCapabilities:[{contentType:'audio/mp4; codecs="mp4a.40.2"'}],persistentState:"optional",distinctiveIdentifier:"optional"},this._config={},"Edge"===d.browser||"IE"===d.browser?this._selectedKeySystem=h:this._selectedKeySystem=c,function(t,i){var n=this,r=function(t){return e.keys(e.reduce(t,function(e,t){return e[t]=1,e},{}))}(e.keys(t).concat(e.keys(i)));e.forEach(r,function(r){e.set(n._config,[r],e.assign({},e.get(t,[r],{}),e.get(i,[r],{}))),e.set(n._config,[r,"mediaKeySystemConfiguration"],e.assign({},n._defaultMediaKeySystemConfig,e.get(t,[r,"mediaKeySystemConfiguration"],{}),e.get(i,[r,"mediaKeySystemConfiguration"],{})))})}.call(this,function(t){return e.reduce(t,function(t,i){var n="com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?c:i.schemeIdUri===g?h:i.schemeIdUri;return t[n]={licenseServerUrl:"com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?decodeURIComponent(i.widevineLicenseServerUrl):i.licenseServerUrl,serverCertificateUrl:i.serverCertificateUrl},e.forOwn(i,function(i,r){e.startsWith(r,"mediaKeySystemConfiguration.")&&e.set(t[n],r,i)}),t},{})}(l),u||{}),function(){t.isObject(this._config,"this._config"),e.forOwn(this._config,function(e,i){t.isValidType(i,m,i),t.isStringNotEmpty(e.licenseServerUrl,i+"[licenseServerUrl]"),i===c&&t.isStringNotEmpty(e.serverCertificateUrl,i+"[serverCertificateUrl]"),t.isObject(e.mediaKeySystemConfiguration,i+"[mediaKeySystemConfiguration]"),t.isArrayOfString(e.mediaKeySystemConfiguration.initDataTypes,i+"[mediaKeySystemConfiguration][initDataTypes]"),t.isArray(e.mediaKeySystemConfiguration.videoCapabilities,i+"[mediaKeySystemConfiguration][videoCapabilities]"),t.isArray(e.mediaKeySystemConfiguration.audioCapabilities,i+"[mediaKeySystemConfiguration][audioCapabilities]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.persistentState,i+"[mediaKeySystemConfiguration][persistentState]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.distinctiveIdentifier,i+"[mediaKeySystemConfiguration][distinctiveIdentifier]")})}.call(this),this._drmErrorEvent=new n.Event,this._drmTrackEventRestrictionsAvailableEvent=new n.Event,this._disposables.add(this._drmErrorEvent),this._disposables.add(this._drmTrackEventRestrictionsAvailableEvent),p&&function(){var t=this;if(!this._videoElement.mediaKeys){var i=e.get(this._config,[this._selectedKeySystem,"mediaKeySystemConfiguration"]);window.navigator.requestMediaKeySystemAccess(this._selectedKeySystem,[i]).then(function(i){i.createMediaKeys().catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to create MediaKeys",e)}).then(function(e){return t._mediaKeys=e,t._videoElement.setMediaKeys(e)}).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to set MediaKeys",e)}).then(function(){return new window.Promise(function(i,n){var a=e.get(t._config,[t._selectedKeySystem,"serverCertificateUrl"]);if(!a)return t._logger.info("Not fetching server certificate because [%s] -> [serverCertificateUrl] is not set",t._selectedKeySystem),i();!function(e,t){r.get(e,{mimeType:"text/plain; charset=x-user-defined"},t)}(a,function(e,r){if(e)return n(e);var a=function(e){for(var t=e.length,i=new window.Uint8Array(t),n=0;n<t;n++)i[n]=e.charCodeAt(n);return i}(r);return t._mediaKeys.setServerCertificate(a).then(i).catch(n)})})}).catch(function(e){t._logger.warn("Failed to set service certificate",e)})}).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to request MediaKeySystemAccess with error [%s]",e)})}}.call(this)}function l(e){var t=this,i=e.target;u.call(this,e.message,function(e,n){i.update(n).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Update of keySession with license failed [%s]",e)})})}function u(t,i){var n,a=this,s=e.get(this._config,[this._selectedKeySystem,"licenseServerUrl"]),o={};if(this._selectedKeySystem===h){var l=(new DOMParser).parseFromString(String.fromCharCode.apply(null,new window.Uint16Array(t)),"application/xml");if(!l.getElementsByTagName("Challenge")[0])return i(new Error("[Playready] Cannot find `challenge` in key message"));n=atob(l.getElementsByTagName("Challenge")[0].childNodes[0].nodeValue);var u=l.getElementsByTagName("name"),d=l.getElementsByTagName("value");if(u.length!==d.length)return i(new Error("[Playready] Mismatched header name/value pair in key message"));o.headers={};for(var c=0;c<u.length;c++){var g=e.get(u,[c,"childNodes",0,"nodeValue"]),m=e.get(d,[c,"childNodes",0,"nodeValue"]);g&&m&&(o.headers[g]=m)}o.responseType="arraybuffer"}else o.contentType="application/octet-stream",n=t;r.post(s,n,o,function(e,t){if(e)return a._drmErrorEvent.fire([e]),a._logger.error("Failed to get license with [%s]",e),i(e);if(a._selectedKeySystem===h)return i(null,t);var n=null,r=null;try{a._logger.debug("Attempting to unwrap license response"),n=(t=JSON.parse(t)).license,t.trackRestrictions&&a._drmTrackEventRestrictionsAvailableEvent.fire([t.trackRestrictions])}catch(e){if(!(e instanceof SyntaxError))return a._drmErrorEvent.fire([e]),a._logger.error("Unexpected error [%s]",e);a._logger.debug("Unwrapping of license failed. Assuming that license response is already unwrapped"),n=t}try{r=function(e){for(var t=window.atob(e),i=new Uint8Array(t.length),n=0;n<t.length;++n)i[n]=t.charCodeAt(n);return i}(n)}catch(t){a._drmErrorEvent.fire([e]),a._logger.error("Failed to convert base64 license string [%s] to binary",n),i(t)}i(e,r)})}var d=new s(window.navigator.userAgent).detect(),c="com.widevine.alpha",h="com.microsoft.playready",g="urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95",m=e.freeze([{id:1,name:"org.w3.clearkey"},{id:2,name:c},{id:3,name:h},{id:4,name:g}]),p=!!window.navigator.requestMediaKeySystemAccess,f="encrypted";p||(f="msneedkey"),o.isSupported=function(){return"IE"===d.browser&&11===d.version||!(e.isNullOrUndefined(window.navigator.requestMediaKeySystemAccess)||e.isNullOrUndefined(window.Promise)||e.isNullOrUndefined(window.Uint8Array)||e.isNullOrUndefined(window.atob))},o.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackRestrictionsAvailable":return this._drmTrackEventRestrictionsAvailableEvent.listen(i);case"error":return this._drmErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},o.prototype.toString=function(){return"EncryptedMediaHandler [config="+JSON.stringify(this._config)+"]"},o.prototype.dispose=function(){this._disposables.dispose(),delete this._mediaKeys};var y=function(t,i){var n=this;if(i=i||1,!p)try{this._videoElement.msSetMediaKeys(new window.MSMediaKeys(this._selectedKeySystem))}catch(r){n._drmErrorEvent.fire([new Error('Unable to create MediaKeys ("'+this._selectedKeySystem+'"). Error: '+r.message)])}if(!this._mediaKeys&&!n._videoElement.msKeys){if(i<=20)return n._logger.debug("Attempt [%s] for checking if the media keys have been set",i),void(n._licenseRequestRetryTimeout=setTimeout(function(){y.call(n,t,i+1)},200));var r="Unable to find media keys after "+(i-1)+" attempts";n._logger.warn(r),n._drmErrorEvent.fire([r])}if(n._videoElement.msKeys){var s=n._videoElement.msKeys.createSession("video/mp4",t.initData);s||n._drmErrorEvent.fire([new Error("Could not create key session")]);var o=function(e){u.call(n,e.message.buffer,function(e,t){s.update(new Uint8Array(t))})};s.addEventListener("mskeymessage",o,!1),n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeymessage",o,!1)}));var d=function(){n._drmErrorEvent.fire([new Error("Unexpected `keyerror` event from key session. Code: "+s.error.code+", systemCode: "+s.error.systemCode)])};return s.addEventListener("mskeyerror",d,!1),void n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeyerror",d,!1)}))}var c=n._mediaKeys.createSession();return c.addEventListener("message",e.bind(l,n),!1),n._disposables.add(new a.Disposable(function(){c.removeEventListener("message",e.bind(l,n),!1)})),c.generateRequest(t.initDataType,t.initData).then(function(){n._logger.info("passing the media data to CDM")}).catch(function(e){n._drmErrorEvent.fire([e]),n._logger.error("Unable to create or initialize key session [%s]",e)})};return o}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(7),i(25),i(4),i(13),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o){"use strict";function l(l,f,y,_){t.isInstanceOf(f,a,"playlist"),t.isNotUndefined(y,"webPlayer"),t.isInstanceOf(y,s,"webPlayer"),t.isInstanceOf(_,o,"statsProvider"),this._playlist=f,this._webPlayer=y,this._statsProvider=_,this._logger=l||new i.Logger,this._bandwidthChangeDetails={nextSwitchCheckTime:e.now()+5e3,oldBandwidth:-1},this._disposables=new n.DisposableList,this._webPlayer.addEventListener("started",e.bind(function(){var t=this;this._bandwidthLimits=e.reduce(this._playlist.getMimeTypes(),function(i,n){var r=t._playlist.getPlaylistTracksByMimeType(n)||[],a=e.filter(r,function(t){return e.isNumber(t.getBandwidth())}),s=e.map(a,function(e){return e.getBandwidth()});return r.length>a.length&&t._logger.info("Excluding [%s] tracks without Bandwidth from ABR switching.",r.length-a.length),i[n]={max:Math.max.apply(null,s),min:Math.min.apply(null,s)},i},{}),this._logger.debug("Listening for bandwidth changes with max and min bandwidths of [%s]",this._bandwidthLimits),this._webPlayer.addEventListener("playbacktimeleft",e.bind(function(t,i){if(this._bandwidthChangeDetails.isInProgress||!r.isForeground())return;var n=this._bandwidthLimits[i.getMimeType()],a=this;if(this._bandwidthChangeDetails.nextSwitchCheckTime>0){if(this._bandwidthChangeDetails.nextSwitchCheckTime>e.now())return;this._bandwidthChangeDetails.nextSwitchCheckTime=0,this._bandwidthChangeDetails.oldBandwidth=-1}var s=e.bind(function(){this._bandwidthChangeDetails.isInProgress=!1},this);if(u.call(a,i,t)&&i.getBandwidth()<n.max){this._bandwidthChangeDetails.isInProgress=!0;var o=this._playlist.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(i.getBandwidth(),i.getMimeType());this._playbackTimeout=setTimeout(function(){u.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to higher quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+g,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(o.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}else if(d.call(a,i,t)&&i.getBandwidth()>n.min){this._bandwidthChangeDetails.isInProgress=!0;var l=this._playlist.getPlaylistTrackByBandwidthAndMimeType(i.getBandwidth()-1,i.getMimeType());this._playbackTimeout=setTimeout(function(){d.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to lower quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+m,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(l.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}},this))},this)),this._disposables.add(r.onBackground(e.bind(h,this,!1))),this._disposables.add(r.onForeground(e.bind(h,this,!0))),this._backgroundTimeout=null,this._foregroundBandwidth=null}function u(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t>3.5||i>0&&i<=3*n/4&&t/(n/1e3)>2}function d(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t<1.2||i>0&&i>=7*n/8&&t/(n/1e3)<=1.5}function c(e){return this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration}function h(t){if(null!==this._playbackTimeout&&(clearTimeout(this._playbackTimeout),this._playbackTimeout=null),t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,null===this._foregroundBandwidth||this._foregroundBandwidth===this._webPlayer.getBandwidthLimit())return;var i=this._foregroundBandwidth;return this._foregroundBandwidth=null,this._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+g,this._logger.info("Detected change to [foreground] for tab. Reverting to [%s] previous bandwidth limit",i),this._webPlayer.changeBandwidthLimit(i)}var n=this;this._backgroundTimeout=setTimeout(function(){r.isForeground()||(n._foregroundBandwidth=n._webPlayer.getBandwidthLimit())},f)}var g=15e3,m=5e3,p=500,f=3e3;return l.prototype.dispose=function(){null!==this._playbackTimeout&&clearTimeout(this._playbackTimeout),null!==this._backgroundTimeout&&clearTimeout(this._backgroundTimeout),this._disposables.dispose(),this._backgroundTimeout=null,this._playbackTimeout=null},l}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(7)],void 0!==(r=function(e,t,i,n){function r(){this._namedEvents=new i.NamedEvents,this._timeOfLastTabFocusChange=e.now(),this._disposables=new n.DisposableList,this._isForeground=!0,this._disposables.add(this._namedEvents),function(){if(a())return function(){if(!a())return;var e=this;chrome.extension.onRequest.addListener(function(t,i,n){"is_selected"===t&&chrome.tabs.getSelected(null,function(t){var r=t.id===i.tab.id;s.call(e,r),n(r?!0:!1)})})}.call(this);(function(){function t(){var e=!document[i];s.call(a,e)}var i,r,a=this;void 0!==document.hidden?(i="hidden",r="visibilitychange"):void 0!==document.msHidden?(i="msHidden",r="msvisibilitychange"):void 0!==document.webkitHidden&&(i="webkitHidden",r="webkitvisibilitychange");void 0!==document.addEventListener&&void 0!==document[i]?(e.addEventListener(document,r,t,!1),a._disposables.add(new n.Disposable(function(){e.removeEventListener(document,r,t,!1)}))):function(){var t=this;t._documentFocusInterval=setInterval(function(){var e=document.hasFocus();s.call(t,e)},l),t._disposables.add(new n.Disposable(function(){e.isNumber(t._documentFocusInterval)&&clearInterval(t._documentFocusInterval),t._documentFocusInterval=null}))}.call(a)}).call(this)}.call(this)}function a(){return"undefined"!=typeof chrome&&chrome.extension&&chrome.extension.onRequest}function s(e){if(t.isBoolean(e,"isForeground"),this._isForeground!==e)return e?(this._isForeground=!0,o.call(this,"foreground")):(this._isForeground=!1,o.call(this,"background"))}function o(t){var i=e.now(),n=i-this._timeOfLastTabFocusChange;this._timeOfLastTabFocusChange=i,this._namedEvents.fire(t,[n])}var l=3e3;return r.prototype.isForeground=function(){return this._isForeground},r.prototype.getTimeSinceLastChange=function(){return e.now()-this._timeOfLastTabFocusChange},r.prototype.onForeground=function(e){return t.isFunction(e,"callback"),this._namedEvents.listen("foreground",e)},r.prototype.onBackground=function(e){return t.isFunction(e,"callback"),this._namedEvents.listen("background",e)},new r}.apply(t,n))&&(e.exports=r)}])});
+!function(e,t){if(true)module.exports=t(__webpack_require__(1),__webpack_require__(0),__webpack_require__(8),__webpack_require__(5),__webpack_require__(3),__webpack_require__(6));else if("function"==typeof define&&define.amd)define(["phenix-web-assert","phenix-web-lodash-light","phenix-web-logging","phenix-web-event","phenix-web-disposable","phenix-web-http"],t);else{var i="object"==typeof exports?t(require("phenix-web-assert"),require("phenix-web-lodash-light"),require("phenix-web-logging"),require("phenix-web-event"),require("phenix-web-disposable"),require("phenix-web-http")):t(e["phenix-web-assert"],e["phenix-web-lodash-light"],e["phenix-web-logging"],e["phenix-web-event"],e["phenix-web-disposable"],e["phenix-web-http"]);for(var n in i)("object"==typeof exports?exports:e)[n]=i[n]}}(this,function(e,t,i,n,r,a){return function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,n){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:n})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=15)}([function(t,i){t.exports=e},function(e,i){e.exports=t},function(e,t){e.exports=i},function(e,t){e.exports=n},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(8),i(5),i(16),i(17),i(10),i(11)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(e,r){r&&t.isStringNotEmpty(r,"playlistUrl"),this.parsedPlaylist=null,this._logger=e||new i.Logger,this.playlistUrl=r,this.baseUrl=r?r.substring(0,r.lastIndexOf("/")+1):"",this._name=r?r.substring(r.lastIndexOf("/"),r.length):"",this._trackAddedEvent=new n.Event,this._playlistTracksByMimeType={},this._mimeTypes=[],this._deliveryType=h(this.playlistUrl),this._type=null}function c(i,n){t.isInstanceOf(i,a,"track"),n=n||e.noop,t.isFunction(n,"eventCallback");var r=i.getMimeType();this._playlistTracksByMimeType[r]||(this._playlistTracksByMimeType[r]=[]),e.includes(this._playlistTracksByMimeType[r],i)||this._playlistTracksByMimeType[r].push(i),e.includes(this._mimeTypes,r)||this._mimeTypes.push(r),this._trackAddedEvent.fireAsync([i],this,n)}function h(e){return/[.]mpd\??[^\s]*/i.test(e)?"Dash":/[.]m3u8\??[^\s]*/i.test(e)?"Hls":null}var g=5;return d.prototype.toString=function(){return"Playlist [playlistUrl="+this.playlistUrl+", baseUrl="+this.baseUrl+", mimeTypes="+this._mimeTypes+", trackAddedEvent(size)="+this._trackAddedEvent.size()+", playlistTracks="+this.getAllPlaylistTracks()+"]"},d.prototype.dispose=function(){e.forOwn(this._playlistTracksByMimeType,function(t){e.forEach(t,function(e){e.dispose()})}),this._playlistTracksByMimeType={},this._trackAddedEvent.dispose()},d.prototype.getPlaylistTracksByMimeType=function(e){return this._playlistTracksByMimeType[e]},d.prototype.fetch=function(t){(function(t){var i=this;r.getWithRetry(i.playlistUrl,{},function(n,a){n&&i._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",i.playlistUrl,n.code,n.message),function(t,i){var n=null,a=[],d=this;switch(d._initTime=e.now(),this._deliveryType){case"Dash":n=new l(d._logger,t),d.parsedPlaylist=n,d._playbackDurationSinceAvailable=d.parsedPlaylist.publishTime?d.parsedPlaylist.publishTime.getTime()-d.parsedPlaylist.availabilityStartTime.getTime():null,d._suggestedPresentationDelayTotalMillis=e.get(d.parsedPlaylist,["suggestedPresentationDelay","totalMillis"],null),d._totalMediaTimeInMillis=e.get(d.parsedPlaylist,["mediaPresentationDuration","totalMillis"],1/0),d._minBufferTimeTotalMillis=e.get(d.parsedPlaylist,["minBufferTime","totalMillis"],null),d._type=d.parsedPlaylist.type,a=function(t){var i=this;return e.map(t.representations,function(e){return{chunkDuration:e.duration,dataChunkUrlTemplate:e.media,codec:e.mseCodec,bandwidth:e.bandwidth,height:e.height,trackId:e.id,initUrl:e.initialization,mimeType:e.mimeType,totalNumberOfChunks:Math.ceil(i._totalMediaTimeInMillis/e.duration)}})}.call(d,d.parsedPlaylist),e.forEach(a,function(e){c.call(d,new s(d._logger,e))}),i();break;case"Hls":n=new u(d._logger,d._name,t),d.parsedPlaylist=n,d._playbackDurationSinceAvailable=0,d._minBufferTimeTotalMillis=0,d._suggestedPresentationDelayTotalMillis=0,d._totalMediaTimeInMillis=1/0;var m=0;e.forEach(n.streamVariants,function(e){var t=d.baseUrl+e.name,a=new o(d._logger,{mediaSegmentPlaylistUrl:t,codecs:e.codecs.join("|"),bandwidth:e.bandwidth,trackId:e.name,mimeType:"application/octet-stream",height:null});r.getWithRetry(t,{},function(e,t){if(e)return d._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",d.playlistUrl,e.code,e.message);a.updateMediaSegments(t),c.call(d,a),++m===n.streamVariants.length&&(d._type=a.isComplete()?"static":"dynamic","static"===d._type&&(d._totalMediaTimeInMillis=1e3*a.getPlayableDuration()),i())},g)});break;default:throw d._logger.error("[%s] Unsupported Delivery Type [%s]",d.playlistUrl,h(d.playlistUrl)),new Error("Unsupported Delivery Type "+h(d.playlistUrl))}}.call(i,a,function(){t(n,{raw:a,parsed:i.parsedPlaylist})})},g)}).call(this,t)},d.prototype.getType=function(){return this._type},d.prototype.getDeliveryType=function(){return this._deliveryType},d.prototype.getPlaylistTracksByBandwidthPerMimeType=function(i,n){t.isObject(n,"restrictions");var r=this;return e.map(this._mimeTypes,function(t){var a=function(t,i){return 0===e.keys(i).length?t:e.filter(t,function(t){return function(t,i){var n=t.getHeight()||0,r=t.getBandwidth()||0;return e.reduce(i,function(e,t,i){switch(i){case"maxHeight":return n<=t;case"minHeight":return n>=t;case"maxBandwidth":return r<=t;case"minBandwidth":return r>=t;default:throw new Error("Unknown restriction "+i)}},!1)}(t,i)})}(r.getPlaylistTracksByMimeType(t),n),s=e.reduce(a,function(e,t){return t.getBandwidth()>i?e:e&&e.getBandwidth()>t.getBandwidth()?e:t},null)||r.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(0,t);if(s)return s;var o=e.get(e.filter(a,function(e){return!e.getBandwidth()}),"0");if(o)return r._logger.debug("Unable to get track with bandwidth [%s]. Falling back to track [%s].",o.getTrackId()),o;r._logger.warn("Unable to get track with bandwidth [%s]. No other tracks to fallback on.")})},d.prototype.getPlaylistTrackByBandwidthAndMimeType=function(t,i){return e.find(this.getPlaylistTracksByBandwidthPerMimeType(t,{}),function(e){return e.getMimeType()===i})},d.prototype.getPlaylistTrackByMimeTypeAndNextHighestBandwidth=function(t,i){return e.reduce(this.getPlaylistTracksByMimeType(i),function(e,i){return i.getBandwidth()<=t?e:e?e.getBandwidth()>i.getBandwidth()?i:e:i},null)},d.prototype.getAllPlaylistTracks=function(){return[].concat.apply([],e.values(this._playlistTracksByMimeType))},d.prototype.getMimeTypes=function(){return this._mimeTypes},d.prototype.getPlaybackDurationSinceAvailable=function(){return e.now()-this._initTime+this._playbackDurationSinceAvailable},d.prototype.getSuggestedPresentationDelayTotalMillis=function(){return this._suggestedPresentationDelayTotalMillis},d.prototype.getTotalMediaTimeInMillis=function(){return this._totalMediaTimeInMillis},d.prototype.getMinBufferTimeTotalMillis=function(){return this._minBufferTimeTotalMillis},d.prototype.addEventListener=function(e,i){if(t.isString(e,"eventName"),t.isFunction(i,"listener"),"trackadded"!==e)throw new Error('Event "'+e+'" is unknown.');return this._trackAddedEvent.listen(i)},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2)],void 0!==(r=function(e,t,i){"use strict";function n(e,t,i){}return n.prototype.toString=function(){throw new Error("Must be implemented")},n.prototype.dispose=function(){throw new Error("Must be implemented")},n.prototype.getMseCodec=function(){throw new Error("Must be implemented")},n.prototype.getTrackId=function(){throw new Error("Must be implemented")},n.prototype.getChunkDuration=function(){throw new Error("Must be implemented")},n.prototype.getBandwidth=function(){throw new Error("Must be implemented")},n.prototype.getHeight=function(){throw new Error("Must be implemented")},n.prototype.getMimeType=function(){throw new Error("Must be implemented")},n.prototype.getTotalNumberOfChunks=function(){throw new Error("Must be implemented")},n.prototype.getCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.setCurrentChunkId=function(e){throw new Error("Must be implemented")},n.prototype.incrementCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.addDataChunk=function(e,t,i){throw new Error("Must be implemented")},n.prototype.getChunks=function(){throw new Error("Must be implemented")},n.prototype.addEventListener=function(e,t){throw new Error("Must be implemented")},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(2)],void 0!==(r=function(e,t){"use strict";function i(e,i){this._options=i||{},this._logger=e||new t.Logger,this._rateDataPoints={},this._ewmaPeriods=i.ewmaPeriods||null,this._ewmaMultiplier=this._ewmaPeriods?2/(this._ewmaPeriods+1):null}function n(e,t,i,n,r){var a=(i*(e.length-1)+r(t))/e.length;if(n>0)for(;t.added-e[0].added>n;){var s=e.shift();a=(a*(e.length+1)-r(s))/e.length}return a}return i.prototype.toString=function(){var t=this;return"StatsProvider [rateDataPoints(keys)="+e.keys(this._rateDataPoints)+", rateDataPoints="+e.toString(e.map(this._rateDataPoints,function(e,i){return t.getRateAverages(i)}))+", options="+this._options+"]"},i.prototype.dispose=function(){delete this._rateDataPoints},i.prototype.addRateDataPoint=function(t,i,r,a){if(!e.isNullOrUndefined(this._rateDataPoints)){this._rateDataPoints[t]||(this._rateDataPoints[t]={tenSecDataPoints:[],thirtySecDataPoints:[],oneMinDataPoints:[],twoMinDataPoints:[],ewmaDataPoints:[],tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,smaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0,smaDuration:0});var s={duration:i,amount:r,durationToSecondsFactor:a,rate:r/(i*a),added:e.now()};(function(e,t){var i=function(e){return e.rate},r=function(e){return e.duration};e.tenSecDataPoints.push(t),e.thirtySecDataPoints.push(t),e.oneMinDataPoints.push(t),e.twoMinDataPoints.push(t),e.tenSecAverageRate=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageRate,1e4,i),e.thirtySecAverageRate=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageRate,3e4,i),e.oneMinAverageRate=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageRate,6e4,i),e.twoMinAverageRate=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageRate,12e4,i),e.tenSecAverageDuration=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageDuration,1e4,r),e.thirtySecAverageDuration=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageDuration,3e4,r),e.oneMinAverageDuration=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageDuration,6e4,r),e.twoMinAverageDuration=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageDuration,12e4,r),this._ewmaMultiplier&&(e.ewmaDataPoints.push(t),e.smaRate=n.call(this,e.ewmaDataPoints,t,e.smaRate,-1,i),e.smaDuration=n.call(this,e.ewmaDataPoints,t,e.smaDuration,-1,r),e.ewmaDataPoints.length>=this._ewmaPeriods&&(e.ewmaDataPoints.shift(),e.ewmaDataPoints.length===this._ewmaPeriods?(e.ewmaRate=e.smaRate,e.ewmaDuration=e.smaDuration):(e.ewmaRate=this._ewmaMultiplier*(e.smaRate-e.ewmaRate)+e.ewmaRate,e.ewmaDuration=this._ewmaMultiplier*(e.smaDuration-e.ewmaDuration)+e.ewmaDuration)))}).call(this,this._rateDataPoints[t],s)}},i.prototype.getRateAverages=function(t){if(!e.get(this,["_rateDataPoints",t]))return{tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0};var i=this._rateDataPoints[t];return{tenSecAverageRate:i.tenSecAverageRate,thirtySecAverageRate:i.thirtySecAverageRate,oneMinAverageRate:i.oneMinAverageRate,twoMinAverageRate:i.twoMinAverageRate,ewmaRate:i.ewmaRate,tenSecAverageDuration:i.tenSecAverageDuration,thirtySecAverageDuration:i.thirtySecAverageDuration,oneMinAverageDuration:i.oneMinAverageDuration,twoMinAverageDuration:i.twoMinAverageDuration,ewmaDuration:i.ewmaDuration}},i}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=r},function(e,t){e.exports=a},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e,t,i,n){}return e.prototype.toString=function(){throw new Error("Must be implemented")},e.prototype.dispose=function(){throw new Error("Must be implemented")},e.prototype.initialize=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.getStreamDurationBeforeInitialization=function(){throw new Error("Must be implemented")},e.prototype.getLocalToServerTimeOffset=function(){throw new Error("Must be implemented")},e.prototype.setActiveTracks=function(e){throw new Error("Must be implemented")},e.prototype.initializePlaylistTracks=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.startRequestingDataForActiveTracks=function(){throw new Error("Must be implemented")},e.prototype.isFetchingData=function(){throw new Error("Must be implemented")},e.prototype.seekToChunk=function(e){throw new Error("Must be implemented")},e.prototype.stopRequestingAllData=function(){throw new Error("Must be implemented")},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(19)],void 0!==(r=function(e,t,i){"use strict";function n(n,a){t.isStringNotEmpty(a,"mpdXml"),t.isObject(n,"logger"),this._mpdXml=a,this._logger=n,this.minBufferTime=0,this.type=null,this.publishTime=null,this.availabilityStartTime=null,this.timeShiftBufferDepth=0,this.suggestedPresentationDelay=0,this.minimumUpdatePeriod=0,this.maxSegmentDuration=0,this.profiles=null,this.moreInfoUrl=null,this.programInfoTitle=null,this.representations=[],function(){t.isStringNotEmpty(this._mpdXml,"mpdXml");var n,a=i.parseXml(this._mpdXml),u=a.getElementsByTagName("parsererror");if(u&&u.length>0)throw n="Failed to parse MPD Playlist XML: "+u.item(0).innerText+" (source xml: "+this._mpdXml+")",this._logger.error(n),new Error(n);if("MPD"!==a.documentElement.nodeName)throw n='Invalid MPD Playlist XML. Does not start with "MPD": '+this._mpdXml,this._logger.error(n),new Error(n);this.minBufferTime=r(o(a.documentElement,"minBufferTime")),this.type=o(a.documentElement,"type"),this.publishTime=s(o(a.documentElement,"publishTime")),this.availabilityStartTime=s(o(a.documentElement,"availabilityStartTime")),this.timeShiftBufferDepth=r(o(a.documentElement,"timeShiftBufferDepth")),this.suggestedPresentationDelay=r(o(a.documentElement,"suggestedPresentationDelay")),this.minimumUpdatePeriod=r(o(a.documentElement,"minimumUpdatePeriod")),this.maxSegmentDuration=r(o(a.documentElement,"maxSegmentDuration")),this.mediaPresentationDuration=r(o(a.documentElement,"mediaPresentationDuration")),this.profiles=o(a.documentElement,"profiles");var d=a.getElementsByTagName("ProgramInformation");if(d&&d.length>=1){var c=d.item(0);this.programInfoTitle=l(c,"Title").childNodes[0].nodeValue,this.moreInfoUrl=o(c,"moreInformationURL")}var h=a.getElementsByTagName("ContentProtection");if(this.contentProtectionTags=[],h.length>0)for(var g=0;g<h.length;g++){var m=h.item(g),p=e.reduce(m.attributes,function(e,t){return e[t.name]=t.value,e},{});this.contentProtectionTags.push(p)}for(var f=a.getElementsByTagName("Representation"),y=0;y<f.length;y++){var _=function(e){var t={};if(t.id=o(e,"id"),t.mimeType=o(e,"mimeType"),t.codecs=o(e,"codecs"),t.mseCodec=i.getMSECodec(t.mimeType,t.codecs),t.isAudio=t.mimeType.indexOf("audio")>=0,t.isVideo=t.mimeType.indexOf("video")>=0,!i.isCodecSupported(t.mseCodec))return this._logger.debug("MPD representation has unsupported codec. Skipping stream id [%s] (mimeType=[%s], codecs=[%s])",t.id,t.mimeType,t.codecs),null;var n=o(e,"bandwidth");t.bandwidth=n?parseInt(n,10):null;var r=o(e,"height");t.height=r?parseInt(r,10):null;var a=l(e,"SegmentTemplate");a&&(t.timescale=parseInt(o(a,"timescale")),t.media=o(a,"media"),t.startNumber=parseInt(o(a,"startNumber")),t.duration=parseInt(o(a,"duration")),t.initialization=o(a,"initialization"));return t}.call(this,f.item(y));_&&this.representations.push(_)}}.call(this)}function r(e){if(!e)return null;var t=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/.exec(e);if(t){var i="-"===t[1]?-1:1,n={year:a(t[2],i),month:a(t[3],i),week:a(t[4],i),day:a(t[5],i),hour:a(t[6],i),minute:a(t[7],i),second:a(t[8],i)};return n.totalMillis=1e3*(n.second+60*(n.minute+60*(n.hour+24*n.day))),n}return null}function a(e,t){var i=e&&parseFloat(e.replace(",","."));return(isNaN(i)?0:i)*t}function s(e){if(!e)return null;var t=new Date;return t.setTime(Date.parse(e)),t}function o(e,t){var i=e.attributes.getNamedItem(t);return i?i.value:null}function l(e,t){for(var i=0;i<e.childNodes.length;i++){var n=e.childNodes.item(i);if(n.nodeName===t)return n}return null}return n.prototype.toString=function(){return"Mpd [minBufferTime="+this.minBufferTime+", type="+this.type+", publishTime="+this.publishTime+", availabilityStartTime="+this.availabilityStartTime+", timeShiftBufferDepth="+this.timeShiftBufferDepth+", suggestedPresentationDelay="+this.suggestedPresentationDelay+", minimumUpdatePeriod="+this.minimumUpdatePeriod+", maxSegmentDuration="+this.maxSegmentDuration+", profiles="+this.profiles+", moreInfoUrl="+this.moreInfoUrl+", programInfoTitle="+this.programInfoTitle+", representations="+JSON.stringify(this.representations)+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"M3u8VariantPlaylistString"),t.isStringNotEmpty(r,"name"),t.isObject(i,"logger"),this._rawM3u8VariantPlaylist=a,this._name=r,this._logger=i,function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch(o){case"EXT-X-STREAM-INF":r.streamVariants=r.streamVariants||[];var u=[l,i[a+1]];r.streamVariants.push(function(t){var i=(function(t){var i=e.get(t.match(/(?:CODECS=).*?",/),["0"],""),n=e.get(i.split("="),["1"],"");return n.substring(1,n.length-2)}(t[0])||"").split(","),r=(n(t[0],"FRAME-RATE")||"").trim();return{programId:n(t[0],"PROGRAM-ID"),codecs:i,bandwidth:parseInt(n(t[0],"BANDWIDTH")),averageBandwidth:parseInt(n(t[0],"AVERAGE-BANDWIDTH")),frameRate:parseInt(parseInt(r)||0),name:e.get(t,["1"],"").trim()}}(u));break;case"EXT-X-ALLOW-CACHE":r.allowCache="YES"===l;break;case"#EXT-X-COMBINED":r.combined="YES"===l;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Variant] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3u8VariantPlaylist)}function n(t,i){var n=new RegExp("(?:"+i+"=).*?(?=[,\n\r])"),r=new RegExp("(?:"+i+"=).*?$"),a=e.get(t.match(n)||t.match(r),["0"],"");return e.get(a.split("="),["1"])}return i.prototype.toString=function(){return"M3u8VariantPlaylist[name="+this._name+",numberOfStreamVariants="+this.streamVariants.length+"]"},i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(8)],void 0!==(r=function(e,t,i){"use strict";function n(e){t.isObject(e,"logger"),this._logger=e,this._currentRequestId=0,this._requests={}}function r(t,i,n,u,d){d=d||1;var c=this,h=e.get(i,["delay"],null),g=e.get(i,["retryOptions","delay"],s),m=e.get(i,["retryOptions","backoff"],l),p=e.get(i,["retryOptions","maxAttempts"],o),f=d>1?g*Math.pow(d,m):h,y=e.now(),_=function(a,s){return a&&d<=p?(y=e.now(),r.call(c,t,i,n,u,d+1)):u(a,{requestTime:e.now()-y,data:s})};if(!e.isNumber(h)&&1===d)return a.call(c,t,i,n,_);y+=h,function(e,t,i,n,r){var s=this;this._requests[i]=setTimeout(function(){a.call(s,e,t,i,r)},n)}.call(c,t,i,n,f,_)}function a(e,t,n,r){var a=this;i.get(e,t,function(t,i){if(!a._requests[n])return a._logger.debug("Request handler disposed of before response received for get [%s]",e);t&&a._logger.debug("Status code: [%s] (status text: [%s]) for get [%s]",t.code,t.message,e),r(t,i)})}var s=0,o=1,l=1;return n.prototype.toString=function(){return"HttpRequestManager"},n.prototype.disposePendingRequests=function(){e.forOwn(this._requests,function(t){e.isNumber(t)&&clearTimeout(t)}),this._requests={}},n.prototype.dispose=function(){this.disposePendingRequests(),this._currentRequestId=0},n.prototype.getWithRetry=function(e,i,n){t.isStringNotEmpty(e,"url"),t.isObject(i,"options"),t.isFunction(n,"callback");var a=this._currentRequestId++,s=this;this._requests[a]=!0,r.call(this,e,i,a,function(e,t){return delete s._requests[a],n(e,t)})},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(7),i(14),i(4),i(9),i(23)],void 0!==(r=function(e,t,i,n,r,a,s,o,l){"use strict";function u(u,c,h,g,m){t.isInstanceOf(c,s,"playlist"),t.isNotUndefined(h,"videoElement"),t.isNotUndefined(h.videoWidth,"videoElement.videoWidth"),t.isNotUndefined(g,"playlistChunkFeeder"),t.isInstanceOf(g,o,"playlistChunkFeeder"),e.isUndefined(e.get(m,"bandwidthToStartAt"))||t.isNumber(m.bandwidthToStartAt,"options.bandwidthToStartAt"),e.isUndefined(e.get(m,"trackRestrictions"))||t.isObject(m.trackRestrictions,"options.trackRestrictions"),e.isUndefined(e.get(m,"bufferSizeToPauseFetch"))||t.isNumber(m.bufferSizeToPauseFetch,"options.bufferSizeToPauseFetch"),e.isUndefined(e.get(m,"bufferSizeToResumeFetch"))||t.isNumber(m.bufferSizeToResumeFetch,"options.bufferSizeToResumeFetch"),e.isUndefined(e.get(m,"maximumFastForwardFrequency"))||t.isNumber(m.maximumFastForwardFrequency,"options.maximumFastForwardFrequency"),e.isUndefined(e.get(m,"playbackRateToRecover"))||t.isNumber(m.playbackRateToRecover,"options.playbackRateToRecover");var p=this;this._options=m,this._videoElement=h,this._feeder=g,this._playlist=c,this._disposables=new r.DisposableList,this._logger=u||new i.Logger,this._bandwidthLimit=e.get(m,"bandwidthToStartAt",w),this._trackRestrictions=e.get(m,"trackRestrictions",{}),this._bufferSizeToPauseFetch=e.get(m,"bufferSizeToPauseFetch",k),this._bufferSizeToResumeFetch=e.get(m,"bufferSizeToResumeFetch",T),this._targetBufferSize=e.get(m,"targetBufferSize",S),this._maximumFastForwardFrequency=e.get(m,"maximumFastForwardFrequency",D),this._playbackRateToRecover=e.get(m,"playbackRateToRecover",C),this._playbackStarted=!1,this._isWaiting=!1,this._bufferStats=[],this._browserDetails=new a(window.navigator.userAgent).detect(),function(){var t=this,i=e.get(this._playlist,["parsedPlaylist","contentProtectionTags"],[]);if(0===i.length)return;if(!l.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new l(this._logger,this._videoElement,i,e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i,d.call(t),t._videoElement.play())}),this._disposables.add(this._encryptedMediaHandler)}.call(this),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._playbackTimeLeftEvent=new n.Event,this._playerStartedEvent=new n.Event,this._playerErrorEvent=new n.Event,this._disposables.add(this._feeder),this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerStartedEvent),this._disposables.add(this._playerErrorEvent),this._disposables.add(new r.Disposable(function(){null!==p._switchTrackDisposable&&window.clearTimeout(p._switchTrackDisposable)}))}function d(){var e=this._playlist.getPlaylistTracksByBandwidthPerMimeType(this._bandwidthLimit,this._trackRestrictions);return this._feeder.setActiveTracks(e),e}function c(e,t,i){this._logger.debug("VIDEO EVENT: [%s]",e),t&&t.call(this,i)}function h(t){var i=e.bind(c,this,"durationchange",function(){var n=this;if("dynamic"!==n._playlist.getType())return n._videoElement.removeEventListener("durationchange",i,!1),n._ready=!0;0!==e.get(n,["_videoElement","buffered","length"],0)&&function(e){var t=this;setTimeout(function(){if(t._videoElement.currentTime<t._videoElement.buffered.start(t._videoElement.buffered.length-1)){var i=t._videoElement.buffered.end(t._videoElement.buffered.length-1)-.2;t._videoElement.currentTime=i>0?i:0}t._videoElement.currentTime>=t._videoElement.buffered.start(t._videoElement.buffered.length-1)&&(t._ready=!0,e())},10)}.call(n,function(){n._videoElement.removeEventListener("durationchange",i,!1),t&&t()})});return i}function g(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=m(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}function m(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}function p(){var t=!0,i=!1;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var n=g.call(this,e.buffer),r=parseFloat(n.timeBufferedButNotPlayed);r<this._bufferSizeToPauseFetch&&(t=!1),r<this._bufferSizeToResumeFetch&&(i=!0)},this)),t&&this._feeder.isFetchingData()&&(this._logger.debug("Pausing feeder due to excess buffer"),A.call(this)),!i||this._feeder.isFetchingData()||this._pausedAt||(this._logger.debug("Starting feeder due to limited buffer"),x.call(this))}function f(e,t){var i=this._mediaSourceBuffers[v(e)],n=this._bufferDetails[b(e)];if(n.chunks.length>0){if(this._videoElement.error)return this._logger.error("Unable to continue appending to buffer. Video element error code [%s] and message [%s]",this._videoElement.error.code,this._videoElement.error.message),A.call(this),this._playerErrorEvent.fire([this._videoElement.error]);var r=n.chunks.shift();this._logger.debug("Appending chunk to buffer for track [%s]",e.getTrackId()),i.buffer.appendBuffer(new Uint8Array(r))}else t&&(p.call(this),n.chunkAddRequested=!0)}function y(t){var i=this._mediaSourceBuffers[v(t)],n=e.bind(function(e){this._logger.warn("Buffer Error [%s]",e)},this),r=!!i.track;if(i.track!==t){var a=this._bufferDetails[b(t)];if(i.track&&i.track!==t&&r&&(i.buffer.removeEventListener("updateend",i.updateEndListener),i.buffer.removeEventListener("error",n),a&&(a.addInitChunkFirst=!0,a.chunkAddRequested=!0,a.chunks=[])),i.track=t,i.updateEndListener=e.bind(i.updateEnd,this,t),i.buffer.addEventListener("updateend",i.updateEndListener),i.buffer.addEventListener("error",n),i.buffer.onerror=n,!r){var s="Dash"===this._playlist.getDeliveryType()?[t.getInitChunkData()]:[];a.chunks=[].concat(s,e.map(t.getChunks(),function(e){return e.data})),"static"===this._playlist.getType()&&"Edge"!==this._browserDetails.browser&&"IE"!==this._browserDetails.browser&&this._mediaSource.setLiveSeekableRange(0,this._playlist.getTotalMediaTimeInMillis()/1e3),f.call(this,t,!1)}}}function _(t){this._logger.debug("Creating MSE buffers for all tracks."),e.forEach(t,e.bind(function(t){(function(t){var i=this,n={track:t,chunks:[],chunkAddRequested:!1},a=v(t),s=!e.includes(e.keys(i._mediaSourceBuffers),a),o=s?i._mediaSource.addSourceBuffer(t.getMseCodec()):i._mediaSourceBuffers[a].buffer,l=b(t);i._bufferDetails[l]=n,s&&(o.mode="segments","static"===i._playlist.getType()&&(o.appendWindowEnd=i._playlist.getTotalMediaTimeInMillis()/1e3),i._logger.debug("Creating MSE Buffer for [%s] with mode [%s]",i._playlist.getType(),o.mode),i._mediaSourceBuffers[a]={buffer:o,updateEnd:function(e){o.updating||f.call(this,e,!0)}},i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceBuffer [%s]",a),i._mediaSource.removeSourceBuffer(o)})));var u=t.addEventListener("chunkadded",e.bind(function(t,r){n.addInitChunkFirst&&"Dash"===i._playlist.getDeliveryType()&&(n.addInitChunkFirst=!1,this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),"Init"),n.chunks.push(t.getInitChunkData())),this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),r.chunkId),n.chunks.push(r.data),n.chunkAddRequested&&(n.chunkAddRequested=!1,o.updating||f.call(this,t,!1));var a=e.now()-this._lastUpdate>=E,s=e.now()-this._lastPlayAttempt>=500;this._isWaiting&&a&&s&&!this._videoElement.paused&&(this._logger.trace("Starting after wait [%s]",e.now()-this._lastUpdate),this._lastPlayAttempt=e.now(),this._videoElement.play())},i,t));i._disposables.add(u)}).call(this,t)},this))}function v(e){return e.getMseCodec().indexOf("video")>=0?"video":e.getMseCodec().indexOf("audio")>=0?"audio":"other"}function b(e){return e.getTrackId()+"_"+e.getMseCodec()}var w=2e6,k=60,T=30,E=1e3,S=5,C=1.03,D=300,M=300,P=2,I=3e5;u.prototype.toString=function(){return e.toString(this)},u.prototype.play=function(){if("dynamic"===this._playlist.getType()){var t=this._videoElement.currentTime+(this._pausedAt?(e.now()-this._pausedAt)/1e3:0);this._logger.info("Seeking to live. Most recent timestamp for stream is [%s]",t),this._feeder.seekToChunk(t),x.call(this),this._pausedAt=0;var i=this,n=h.call(this,function(){i._videoElement&&i._videoElement.play()});return setTimeout(function(){i._videoElement.addEventListener("durationchange",n,!1)},300),this._disposables.add(new r.Disposable(function(){i._videoElement.removeEventListener("durationchange",n,!1)}))}x.call(this),this._videoElement&&this._videoElement.play()},u.prototype.pause=function(){this._logger.info("Pausing web player"),A.call(this),this._videoElement&&(this._videoElement.pause(),this._pausedAt=e.now())},u.prototype.getVideoElement=function(){return this._videoElement},u.prototype.dispose=function(){this._disposables.dispose(),this._videoElement&&(this._videoElement.load(),this._videoElement.src="",this._videoElement.mediaKeys&&this._videoElement.setMediaKeys(null)),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._bufferStats=[],this._mediaSource=null,this._playlist=null,this._videoElement=null},u.prototype.start=function(){(function(){var t=this;t._mediaSource=new MediaSource;var i=function(){(function(){var t=this,i=d.call(this),n=t._playlist.getAllPlaylistTracks().sort(function(e,t){return-1*(e.getBandwidth()-t.getBandwidth())}),a=e.filter(n,function(t){return!e.includes(i,t)});if(this._logger.info("Initializing feeder with [%s] [%s] playlist of duration [%s]",t._playlist.getType(),t._playlist.getDeliveryType(),t._playlist.getTotalMediaTimeInMillis()/1e3),"static"===t._playlist.getType())t._mediaSource.duration=t._playlist.getTotalMediaTimeInMillis()/1e3;else if("Hls"===t._playlist.getDeliveryType()){t._mediaSource.duration=1/0;var s=e.reduce(i,function(t,i){var n=e.get(i.getLastSegment(),["timestamp"],0);return e.isNullOrUndefined(t)?n:n<t?n:t})||0;t._feeder.seekToChunk(s)}this._logger.debug("Loading tracks: numberOfTracksToInitialize=[%s], all tracks: [%s]",i.length,n),this._feeder.initialize(i,a,function(){_.call(t,i);var n=d.call(t);e.forEach(n,function(e){y.call(t,e)}),function(){var t=this,i=e.bind(function(){this._isWaiting=!1,this._lastUpdate=e.now();var t;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var i=g.call(this,e.buffer);(!t||t>i.timeBufferedButNotPlayed)&&(t=i.timeBufferedButNotPlayed),this._playbackTimeLeftEvent.fire([i.timeBufferedButNotPlayed,e.track],this)},this)),p.call(this),function(t){this._bufferStats.push({size:t,timestamp:e.now()});for(var i=e.get(this._bufferStats,[0,"timestamp"],e.now());e.now()-i>I;)this._bufferStats.shift(),i=e.get(this._bufferStats,[0,"timestamp"],e.now());this._bufferStatsMin=Math.min.apply(null,e.map(this._bufferStats,function(e){return e.size}))}.call(this,t),function(t){if("Dash"===this._playlist.getDeliveryType()||"dynamic"===this._playlist.getType()){var i=this._targetBufferSize+.5,n=this._lastPlaybackRateChange,r=e.now()-this._startTime>M,a=!n||e.now()-n>1e3*this._maximumFastForwardFrequency,s=this._bufferStatsMin>P;t>=i&&1===this._videoElement.playbackRate&&r&&a&&s?(this._logger.info("Adjusting playback rate to [%s] to reduce buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToRecover,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToRecover):s||1===this._videoElement.playbackRate||(this._logger.info("Resuming normal playback rate with buffer size of [%s] and minimum buffer size of [%s]",t,this._bufferStatsMin),this._videoElement.playbackRate=1,this._lastPlaybackRateChange=e.now())}}.call(this,t||0)},t),n=e.bind(c,t,"stalled",null),a=e.bind(c,t,"suspend",null),s=e.bind(c,t,"ended",null),o=e.bind(c,t,"error",null),l=e.bind(c,t,"pause",null),u=e.bind(c,t,"play",null),d=e.bind(c,t,"waiting",function(){this._playbackStarted&&(this._logger.debug("Waiting for new chunk or end of track"),this._isWaiting=!0)}),f=e.bind(c,t,"seeking",function(t){var i=e.keys(this._mediaSourceBuffers),n=e.get(i,"0",null),r=this._mediaSourceBuffers[n],a=this;if(r&&this._ready&&"Hls"!==this._playlist.getDeliveryType()){var s=m(r.buffer,t.timeStamp/1e3),o=m(r.buffer,this._videoElement.currentTime),l=e.reduce(this._mediaSourceBuffers,function(t,i){var n=m(i.buffer,a._videoElement.currentTime),r=e.isNumber(n)?i.buffer.buffered.end(n):0;return t?r<t?r:t:r})||this._videoElement.currentTime;if(this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed."),this._feeder.seekToChunk("dynamic"===this._playlist.getType()?this._videoElement.currentTime:l),s!==o||e.isNullOrUndefined(o)){if(this._feeder.isFetchingData())return;this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit)}}}),y=h.call(t);t._videoElement.addEventListener("timeupdate",i,!1),t._videoElement.addEventListener("ended",s,!1),t._videoElement.addEventListener("error",o,!1),t._videoElement.addEventListener("pause",l,!1),t._videoElement.addEventListener("stalled",n,!1),t._videoElement.addEventListener("suspend",a,!1),t._videoElement.addEventListener("play",u,!1),t._videoElement.addEventListener("waiting",d,!1),t._videoElement.addEventListener("seeking",f,!1),t._videoElement.addEventListener("durationchange",y,!1),t._disposables.add(new r.Disposable(function(){t._logger.debug("Cleaning up videoElement listeners"),t._videoElement.removeEventListener("timeupdate",i,!1),t._videoElement.removeEventListener("ended",s,!1),t._videoElement.removeEventListener("error",o,!1),t._videoElement.removeEventListener("pause",l,!1),t._videoElement.removeEventListener("stalled",n,!1),t._videoElement.removeEventListener("suspend",a,!1),t._videoElement.removeEventListener("play",u,!1),t._videoElement.removeEventListener("waiting",d,!1),t._videoElement.removeEventListener("seeking",f,!1),t._videoElement.removeEventListener("durationchange",y,!1)})),x.call(t),t._lastPlayAttempt=e.now(),"Edge"===this._browserDetails.browser||"IE"===this._browserDetails.browser?(t._videoElement.play(),t._playbackStarted=!0,t._playerStartedEvent.fireAsync([],this),t._logger.debug("Playback Started")):t._videoElement.play().then(function(){t._playbackStarted=!0,t._playerStartedEvent.fireAsync([],this),t._logger.debug("Playback Started")}).catch(function(e){t._logger.error("Playback Failed [%s]",e)})}.call(t)},function(){"Hls"!==t._playlist.getDeliveryType()&&_.call(t,a)},function(e){return t._logger.error("Unable to initialize playlist chunk feeder",e),t._playerErrorEvent.fire([e])})}).call(t)};t._mediaSource.addEventListener("sourceopen",i),t._disposables.add(new r.Disposable(function(){t._logger.debug("Cleaning up sourceopen listener"),t._mediaSource.removeEventListener("sourceopen",i)})),t._videoElement.src=window.URL.createObjectURL(t._mediaSource)}).call(this),this._startTime=e.now()},u.prototype.getBandwidthLimit=function(){return this._bandwidthLimit},u.prototype.getTimeLeft=function(){return this._videoElement?g.call(this,this._videoElement).timeBufferedButNotPlayed:0},u.prototype.changeBandwidthLimit=function(t,i){this._logger.debug("Changing playback bandwidth limit: [%s], current limit: [%s]",t,this._bandwidthLimit),this._bandwidthLimit=t,this._switchTrackDisposable=setTimeout(e.bind(function(t){var i=this,n=this._feeder.getActiveTracks(),r=d.call(this),a=e.filter(r,function(t){return!e.find(n,function(e){return e.getTrackId()===t.getTrackId()})});e.forEach(a,function(e){y.call(i,e),i._logger.info("Switched [%s] to track [%s] with [%s] bandwidth limit",v(e),e.getTrackId(),i._bandwidthLimit)});var s=e.reduce(r,function(t,n){var r=i._mediaSourceBuffers[v(n)],a=m(r.buffer,i._videoElement.currentTime),s=n.getChunkDuration()/1e3;if(!e.isNumber(a))return t;var o=Math.round(r.buffer.buffered.end(a)/s)*s;return!e.isNumber(t)||t>o?o:t});e.isNumber(s)||(s=i._videoElement.currentTime),this._feeder.stopRequestingAllData(),this._feeder.seekToChunk(s),this._logger.debug("Pausing of feeder completed."),this._feeder.isFetchingData()||(this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit),t())},this,i||e.noop),250)},u.prototype.addEventListener=function(i,n){switch(t.isString(i,"eventName"),t.isFunction(n,"listener"),i){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(n);case"started":var r=this._playerStartedEvent.listen(n);return this._playbackStarted&&setTimeout(e.bind(n,this),0),r;case"error":return this._playerErrorEvent.listen(n);default:throw new Error('Event "'+i+'" is unknown.')}};var A=function(){this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed.")},x=function(){if(this._feeder.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._feeder.startRequestingDataForActiveTracks()};return u}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(22)],void 0!==(r=function(e){return e}.apply(t,n))&&(e.exports=r)},function(e,t,i){"use strict";var n,r;n=[i(4),i(20),i(21),i(13),i(6),i(24)],void 0!==(r=function(e,t,i,n,r,a){return{Playlist:e,MpdPlaylistChunkFeeder:t,M3u8PlaylistChunkFeeder:i,WebPlayer:n,StatsProvider:r,AdaptiveStreamingManager:a,isSupported:!!window.MediaSource}}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2),i(5)],void 0!==(r=function(e,t,i,n){"use strict";function r(n,r,o){if(e.isObject(n,"logger"),e.isObject(r,"playlistTrackConfig"),e.isStringNotEmpty(r.codec,"playlistTrackConfig.codec"),e.isStringNotEmpty(r.mimeType,"playlistTrackConfig.mimeType"),e.isNumber(r.bandwidth,"playlistTrackConfig.bandwidth"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),e.isStringNotEmpty(r.trackId,"playlistTrackConfig.trackId"),e.isStringNotEmpty(r.initUrl,"playlistTrackConfig.initUrl"),e.isStringNotEmpty(r.dataChunkUrlTemplate,"playlistTrackConfig.dataChunkUrlTemplate"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),o=o||{},this._logger=n||new i.Logger,this._mseCodec=r.codec,this._chunkDuration=r.chunkDuration,this._bandwidth=r.bandwidth,this._height=r.height,this._trackId=r.trackId,this._mimeType=r.mimeType,this._initUrl=r.initUrl,this._dataChunkUrlTemplate=r.dataChunkUrlTemplate,this._totalNumberOfChunks=r.totalNumberOfChunks,this._currentChunkId=null,this._maxChunksToCache=o.maxChunksToCache||a,this._lowWaterMaxChunks=o.lowWaterMaxChunks||s,e.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),e.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new t.Event}var a=20,s=15;return r.prototype=Object.create(n.prototype),r.prototype.constructor=r,r.prototype.toString=function(){return"MpdPlaylistTrack [mseCodec="+this._mseCodec+", maxChunksToCache="+this._maxChunksToCache+", lowWaterMaxChunks="+this._lowWaterMaxChunks+", initChunk="+this._initChunk+", dataChunks(size)="+this._dataChunks.length+", chunkAddedEvent(size)="+this._chunkAddedEvent.size()+", trackId="+(this._trackId?this._trackId:"n/a")+", bandwidth="+(this.bandwidth?this.bandwidth:"n/a")+"]"},r.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},r.prototype.getMseCodec=function(){return this._mseCodec},r.prototype.getTrackId=function(){return this._trackId},r.prototype.getChunkDuration=function(){return this._chunkDuration},r.prototype.getBandwidth=function(){return this._bandwidth},r.prototype.getHeight=function(){return this._height},r.prototype.getMimeType=function(){return this._mimeType},r.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},r.prototype.getInitChunkData=function(){return this._initChunk},r.prototype.setInitChunkData=function(e){this._initChunk=e},r.prototype.getCurrentChunkId=function(){return this._currentChunkId},r.prototype.setCurrentChunkId=function(e){this._currentChunkId=e},r.prototype.incrementCurrentChunkId=function(){null===this._currentChunkId&&this._logger.error("[%s] Attempting to increment `CurrentChunkId` that is not initialized",this._trackId),this._currentChunkId++},r.prototype.getInitUrl=function(){return this._initUrl},r.prototype.getDataChunkUrlTemplate=function(){return this._dataChunkUrlTemplate},r.prototype.addDataChunk=function(t,i,n){e.isNotUndefined(t,"dataChunk"),n=n||function(){},e.isFunction(n,"eventCallback");var r={data:t,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},r.prototype.getChunks=function(){return this._dataChunks},r.prototype.addEventListener=function(t,i){if(e.isString(t,"eventName"),e.isFunction(i,"listener"),"chunkadded"!==t)throw new Error('Event "'+t+'" is unknown.');return this._chunkAddedEvent.listen(i)},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(2),i(5),i(18)],void 0!==(r=function(e,t,i,n,r,a){"use strict";function s(r,a,s){if(t.isObject(r,"logger"),t.isObject(a,"playlistTrackConfig"),t.isStringNotEmpty(a.codecs,"playlistTrackConfig.codecs"),t.isNumber(a.bandwidth,"playlistTrackConfig.bandwidth"),t.isStringNotEmpty(a.trackId,"playlistTrackConfig.trackId"),s=s||{},this._logger=r||new n.Logger,this._mseCodec=function(e){if(e.split("|").length>1)return"video/mp4";return"audio/mp4"}(a.codecs),this._bandwidth=a.bandwidth,this._height=a.height,this._trackId=a.trackId,this._mimeType=a.mimeType,this._totalNumberOfChunks=a.totalNumberOfChunks,this._mediaSegments=[],this._isComplete=!1,this._playableDuration=0,this._mediaSegmentPlaylistUrlInfo=function(t){var i=t.split("?")[0],n=e.get(t.split("?"),[1],""),r=e.reduce(n.split("&"),function(e,t){var i=t.split("=")[0];return i&&(e[i]=t.split("=")[1]),e},{});return{url:i,queryParameters:r}}(a.mediaSegmentPlaylistUrl),this._currentChunkId=null,this._maxChunksToCache=s.maxChunksToCache||o,this._lowWaterMaxChunks=s.lowWaterMaxChunks||l,t.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),t.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new i.Event,this._segmentsReadyEvent=new i.Event}var o=20,l=15;return s.prototype=Object.create(r.prototype),s.prototype.constructor=s,s.prototype.toString=function(){return"M3u8PlaylistTrack"},s.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},s.prototype.getMseCodec=function(){return this._mseCodec},s.prototype.getTrackId=function(){return this._trackId},s.prototype.getChunkDuration=function(){return this._chunkDuration},s.prototype.getBandwidth=function(){return this._bandwidth},s.prototype.getHeight=function(){return this._height},s.prototype.getMimeType=function(){return this._mimeType},s.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},s.prototype.getPlayableDuration=function(){return this._playableDuration},s.prototype.isComplete=function(){return this._isComplete},s.prototype.hasSegments=function(){return this._mediaSegments.length>0},s.prototype.getSegmentByTimestamp=function(t){return e.find(this._mediaSegments,function(e){return e.timestamp<=t&&t<e.timestamp+e.duration})},s.prototype.getLastSegment=function(){return e.get(this._mediaSegments,[this._mediaSegments.length-1],null)},s.prototype.getMediaSegmentPlaylistUrlInfo=function(){return this._mediaSegmentPlaylistUrlInfo},s.prototype.getClosestSegmentNotGreaterThanTimestamp=function(e){return e>this._playableDuration?this._mediaSegments[this._mediaSegments.length-1]:this.getSegmentByTimestamp(e)},s.prototype.isLastMediaSegment=function(t){var i=this.getSegmentByTimestamp(t),n=!this._isComplete&&e.get(i,["timestamp"],0)+e.get(i,["duration"],0)===this._playableDuration,r=!this._isComplete&&t>this._playableDuration;return this._playableDuration===t||n||r},s.prototype.updateMediaSegments=function(t){var i=new a(this._logger,this._trackId,t),n=this._totalNumberOfChunks||0,r=e.map(this._mediaSegments,function(e){return e.name}),s=this,o=e.get(this._mediaSegments,[this._mediaSegments.length-1]),l=e.get(o,["timestamp"])+e.get(o,["duration"])||void 0;e.forEach(i.mediaSegments,function(t){e.includes(r,t.name)||(t.timestamp=e.isUndefined(l)?0:l,s._mediaSegments.push(t),s._playableDuration+=t.duration,l=t.timestamp+t.duration,s._logger.trace("[%s]:[%s]:[%s] Got new segment from playlist [%s]",(new Date).getHours(),(new Date).getMinutes(),(new Date).getSeconds(),t.name))}),n!==this._mediaSegments.length&&(this._isComplete=i.isComplete,this._totalNumberOfChunks=this._mediaSegments.length,this._segmentsReadyEvent.fireAsync([this._mediaSegments],null,e.noop))},s.prototype.addDataChunk=function(e,i,n){t.isNotUndefined(e,"dataChunk"),n=n||function(){},t.isFunction(n,"eventCallback");var r={data:e,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},s.prototype.getChunks=function(){return this._dataChunks},s.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"chunkadded":return this._chunkAddedEvent.listen(i);case"segmentsready":return this._segmentsReadyEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},s}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"m3u8String"),t.isObject(i,"logger"),this._rawM3U8=a,this._logger=i,this._name=r,this.mediaSegments=[],function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch("#EXT-X-ENDLIST"===t&&(o="EXT-X-ENDLIST"),o){case"EXT-X-VERSION":r.version=parseFloat(l);break;case"EXT-X-PROGRAM-DATE-TIME":r.programDateTime=function(e){return e?new Date(e.trim()):null}(l);break;case"EXT-X-TARGETDURATION":r.targetDuration=1e3*parseFloat(l)||0;break;case"EXT-X-MEDIA-SEQUENCE":r.mediaSequence=parseInt(l);break;case"EXTINF":var u=[l,i[a+1]];r.mediaSegments.push(n(u,r.mediaSegments+1));break;case"EXT-X-ENDLIST":r.isComplete=!0;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Segment] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3U8);var s=0;e.forEach(this.mediaSegments,function(e){e.timestamp=s,s+=e.duration}),this.playableDuration=s,this.isComplete=!!this.isComplete}i.prototype.toString=function(){return"vod"};var n=function(t){var i=e.get(t,["0"],"").split(","),n=e.get(i,["0"],0),r=e.get(i,["1"],"").trim(),a=e.get(t,["1"],"").trim();return{duration:parseFloat(n),title:r,name:a}};return i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0)],void 0!==(r=function(e){"use strict";function t(){}return t.prototype.isCodecSupported=function(t){return e.isStringNotEmpty(t,"codec"),window.MediaSource&&"function"==typeof window.MediaSource.isTypeSupported&&window.MediaSource.isTypeSupported(t)},t.prototype.parseXml=function(t){if(e.isStringNotEmpty(t,"xmlString"),void 0!==window.DOMParser)return(new window.DOMParser).parseFromString(t,"text/xml");if(void 0!==window.ActiveXObject&&new window.ActiveXObject("Microsoft.XMLDOM")){var i=new window.ActiveXObject("Microsoft.XMLDOM");return i.async="false",i.loadXML(t),i}throw new Error("No XML parser found")},t.prototype.getMSECodec=function(t,i){return e.isStringNotEmpty(t,"mpdMimeType"),e.isStringNotEmpty(i,"mpdCodecs"),t+'; codecs="'+i+'"'},new t}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(12),i(9),i(4),i(5),i(6),i(10)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(n,a,o,d){t.isInstanceOf(a,s,"playlist"),t.isInstanceOf(a.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isInstanceOf(o,l,"statsProvider"),t.isStringNotEmpty(a.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(a.baseUrl,"playlist.baseUrl"),d&&d.defaultPresentationDelay&&t.isNumber(d.defaultPresentationDelay,"options.defaultPresentationDelay"),this._playlist=a,this._baseUrl=this._playlist.baseUrl,this._statsProvider=o,this._logger=n||new i.Logger,this._httpRequestManager=new r(this._logger),this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._defaultPresentationDelay=e.get(d,"defaultPresentationDelay",b),this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)}function c(i,n,r,a){r=r||e.noop,t.isArray(i,"tracks"),t.isFunction(r,"done");var s=0,l=this;e.forEach(i,function(e){t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(function(e){var t=Math.max(Math.floor(this._streamDurationBeforeInitialization/e),0);return"static"===this._playlist.getType()&&(t=0),this._logger.trace("Getting chunk index to start: [%s], playbackTimePassed=[%s], duration=[%s]",t,this._streamDurationBeforeInitialization,e),t}.call(l,e.getChunkDuration())),function(e,t,i){var n=this;(function(e,t){var i=this;i._logger.trace("Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()),f.call(i,i._baseUrl+e.getInitUrl(),null,function(n,r){i._logger.trace("DONE Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()+(n?": FAILED: "+n.code:": data="+r.data.byteLength)),t(n,r.data)})}).call(n,e,function(r,a){if(r){var s=new Error("Failed to fetch init chunk of stream for config [%s]",e);return s.cause=r,n._logger.error("[%s] (Cause: [%s])",s.message,r),i(s)}if(e.setInitChunkData(a),t){var o=Math.min(Math.floor(n._bufferSize/e.getChunkDuration),1);return n._logger.debug("Got init chunk: data chunksToFetch=[%s], initBufferSize=[%s], chunkDuration=[%s]",o,n._bufferSize,e.getChunkDuration()),p.call(n,e,o,null,i)}i()})}.call(l,e,n,function(e){if(e)return a(e);++s===i.length&&r()})})}function h(){var t=this;e.forEach(t._activeTracks,function(e){e.setCurrentChunkId(g.call(t,e.getChunkDuration()))})}function g(e){var t=e/1e3;return Math.floor(this._currentPlaybackTimeInSeconds/t)}function m(t){var i=this,n=i._activeTracks.length;e.forEach(i._activeTracks,function(r,a){!function(r,a){if(e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})===r){var s=g.call(i,r.getChunkDuration()),o=s>=r.getTotalNumberOfChunks();if("static"===i._playlist.getType()&&o)return a===n-1&&(i._keepFetchingData=!1),i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());p.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),_):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",e),n--),n<=0&&(i._logger.debug("Done fetching chunk with index [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",s,i._keepFetchingData),i._keepFetchingData)){if("dynamic"===i._playlist.getType())return m.call(i,v);m.call(i,null)}})}}(r,a)})}function p(e,t,i,n){var r=this;(function(e,t,i){var n=this,r=function(e,t){return e.replace("$Number%05d$",("00000"+t).substr(-5))}(n._baseUrl+e.getDataChunkUrlTemplate(),e.getCurrentChunkId()),a=e.getCurrentChunkId();n._logger.trace("Fetching data chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),r,e.getCurrentChunkId());var s=e.getMseCodec();f.call(n,r,t,function(t,o){if(n._logger.trace("DONE Fetching data chunk for [%s] : [%s], nextChunkId=[%s]",s,r,e.getCurrentChunkId()+(t?": FAILED: "+t.code:": data="+o.data.byteLength)),t||n._statsProvider.addRateDataPoint(s,o.requestTime,o.data.byteLength,.001),!t&&a===e.getCurrentChunkId())return e.incrementCurrentChunkId(),n._currentPlaybackTimeInSeconds=e.getChunkDuration()*e.getCurrentChunkId()/1e3,e.addDataChunk(o.data,a,function(){i(t)});t?(t.feederReason=404===t.code?"not yet available":"other",i(t)):i(null,o.data)})}).call(r,e,i,function(a){return a&&r._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',e,a),!a&&t>1&&p.call(r,e,t,i,n),n(a)})}function f(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:_,maxAttempts:y},timeout:w};if(e.isNumber(i)&&0!==i)a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a positive number above 0 or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(e,i){e&&r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",e.code,e.message,t),n(e,i)})}var y=15,_=400,v=500,b=5e3,w=5e3;return d.prototype=Object.create(a.prototype),d.prototype.constructor=d,d.prototype.toString=function(){return"MpdPlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},d.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0},d.prototype.initialize=function(i,n,r,a,s){var o=this;r=r||e.noop,t.isFunction(r,"done"),this._initializedAt=e.now(),c.call(o,i,!0,r,function(e){return o._logger.error("Unable to initialize active tracks",e),s(e)}),c.call(o,n,!1,a,function(e){return o._logger.error("Unable to initialize alternate tracks",e),s(e)})},d.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},d.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},d.prototype.setActiveTracks=function(e){this._activeTracks=e},d.prototype.getActiveTracks=function(){return this._activeTracks},d.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),h.call(this),m.call(this,null)},d.prototype.isFetchingData=function(){return this._keepFetchingData},d.prototype.seekToChunk=function(e){this._currentPlaybackTimeInSeconds=Math.floor(e),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds),h.call(this)},d.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests())},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(12),i(9),i(4),i(5),i(6),i(11)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(e,n,a,o){t.isInstanceOf(n,s,"playlist"),t.isInstanceOf(n.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isStringNotEmpty(n.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(n.baseUrl,"playlist.baseUrl"),this._playlist=n,this._baseUrl=this._playlist.baseUrl,this._statsProvider=a,this._logger=e||new i.Logger,this._httpRequestManager=new r(this._logger),this._options=o,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)}function c(){var t=this;e.isNumber(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=setTimeout(function(){(function(t){var i=this,n=0;e.forEach(this._activeTracks,function(r){var a=r.getMediaSegmentPlaylistUrlInfo(),s=e.assign({version:e.now()},a.queryParameters),o={retryOptions:{delay:y,maxAttempts:_},queryParameters:s};i._httpRequestManager.getWithRetry(a.url,o,function(e,s){if(e)return i._logger.debug("Unable to get media segment playlist [%s]",a.url);s&&r.updateMediaSegments(s),++n===i._activeTracks.length&&t()})},f)}).call(t,function(){e.isNullOrUndefined(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=null,c.call(t))})},f))}function h(t){var i=this,n=i._activeTracks.length;i._waitingForNextSegment=!1;e.forEach(i._activeTracks,function(r,a){!function(r){e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})!==r?i._logger.debug("Wrong track type [%s]. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId()):r.isLastMediaSegment(i._currentPlaybackTimeInSeconds)?("dynamic"===i._playlist.getType()&&(i._waitingForNextSegment=!0),i._logger.debug("No more chunks. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId())):g.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),p):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",JSON.stringify(e)),n--),n<=0){i._logger.debug("Done fetching chunk for timestamp [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",i._currentPlaybackTimeInSeconds,i._keepFetchingData);var t=r.isLastMediaSegment(i._currentPlaybackTimeInSeconds);if("static"===i._playlist.getType()&&t)return i._keepFetchingData=!1,i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());if(t)return i._waitingForNextSegment=!0,i._logger.debug("Waiting for new segment on the Segment Playlist for [dynaimic] track [%s] [%s]",r.getTrackId(),r.getMimeType());i._keepFetchingData&&h.call(i,null)}})}(r)})}function g(t,i,n,r){var a=this;(function(t,i,n){var r=this,a=t.getSegmentByTimestamp(r._currentPlaybackTimeInSeconds),s=r._baseUrl+a.name;r._logger.trace("Fetching data chunk for [%s]: [%s], next segment=[%s]",t.getMseCodec(),s,a.name);var o=t.getMseCodec();(function(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:p,maxAttempts:m},timeout:v};if(e.isNumber(i))a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a number or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(e,i){e&&r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",e.code,e.message,t),n(e,i)})}).call(r,s,i,function(e,i){if(r._logger.trace("DONE Fetching data chunk for [%s] : [%s], next segment=[%s]",o,s,a.name+(e?": FAILED: "+e.code:": data="+i.data.byteLength)),e||r._statsProvider.addRateDataPoint(o,i.requestTime,i.data.byteLength,.001),!e)return r._logger.debug("Finished fetching [%s]. Updating timestamp to fetch to [%s]",a.name,a.timestamp+a.duration),r._currentPlaybackTimeInSeconds=a.timestamp+a.duration,t.addDataChunk(i.data,a.name,function(){n(e)});e?(e.feederReason=404===e.code?"not yet available":"other",n(e)):n(null,i.data)})}).call(a,t,n,function(e){return e&&a._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',JSON.stringify(t),e),!e&&i>1&&g.call(a,t,i,n,r),r(e)})}var m=15,p=700,f=200,y=10,_=2,v=5e3;return d.prototype=Object.create(a.prototype),d.prototype.constructor=d,d.prototype.toString=function(){return"M3u8PlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},d.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0,this._segmentsReadyDisposable&&(this._segmentsReadyDisposable.dispose(),this._segmentsReadyDisposable=null)},d.prototype.initialize=function(i,n,r,a,s){r=r||e.noop,t.isFunction(r,"done"),this.setActiveTracks(i),"dynamic"===this._playlist.getType()&&c.call(this);var o=this,l=0,u=function(t){g.call(o,t,1,null,function(t){if(t)return s(t);++l===i.length&&(o._initializedAt=e.now(),r(),a())})};e.forEach(i,function(e){return o._segmentsReadyDisposable=e.addEventListener("segmentsready",function(){if(o._waitingForNextSegment){if(o._logger.debug("Continuing fetching of track [%s] segments after wait",e.getTrackId()),!o._initializedAt)return u(e);h.call(o,null)}}),e.hasSegments()?u(e):o._waitingForNextSegment=!0})},d.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},d.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},d.prototype.setActiveTracks=function(t){this._activeTracks=t;var i=e.map(t,function(e){return e.getTrackId()});this._logger.debug("Setting active tracks [%s]",i)},d.prototype.getActiveTracks=function(){return this._activeTracks},d.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),"dynamic"===this._playlist.getType()&&c.call(this),h.call(this,null)},d.prototype.isFetchingData=function(){return this._keepFetchingData},d.prototype.seekToChunk=function(t){var i=e.get(this._activeTracks,["0"]),n=i.getClosestSegmentNotGreaterThanTimestamp(t),r=e.get(n,["timestamp"]);e.isUndefined(r)?i||(this._currentPlaybackTimeInSeconds=t):this._currentPlaybackTimeInSeconds=Math.floor(n.timestamp),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds)},d.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._waitingForNextSegment=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests(),clearTimeout(this._mediaSegmentRequestTimeout),this._mediaSegmentRequestTimeout=null)},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e){this._userAgent=e}return e.prototype.detect=function(){var e="Unknown",t="?",i=this._userAgent.match(/(Chrome|Chromium|Firefox|Opera|Safari)+\//),n=this._userAgent.match(/(Chrome|Chromium|Firefox|Version)+\/([0-9]+)\./);return i&&i.length>=2?e=i[1]:this._userAgent.match(/^\(?Mozilla/)&&(e="Mozilla",(this._userAgent.match(/MSIE/)||this._userAgent.match(/; Trident\/.*rv:[0-9]+/))&&(e="IE",(n=this._userAgent.match(/MSIE ([0-9]+)/))?(t=parseInt(n[1],10),(n=this._userAgent.match(/MSIE [0-9]+.*MSIE ([0-9]+)/))&&(t=parseInt(n[1],10))):(n=this._userAgent.match(/rv:([0-9]+)/))&&(t=parseInt(n[1],10)))),"Chrome"===e&&this._userAgent.match(/OPR\//)?(e="Opera",n=this._userAgent.match(/(OPR)\/([0-9]+)\./)):"Chrome"===e&&this._userAgent.match(/Edge\//)?(e="Edge",n=this._userAgent.match(/(Edge)\/([0-9]+)\./)):"Firefox"!==e&&"IE"!==e||!this._userAgent.match(/Opera/)||(e="Opera",n=this._userAgent.match(/(Opera) ([0-9]+)\./)),"IE"!==e&&n&&n.length>=3&&(t=parseInt(n[2],10)),{browser:e,version:t}},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(8),i(7),i(14)],void 0!==(r=function(e,t,i,n,r,a,s){"use strict";function o(s,o,l,u){t.isObject(o,"videoElement");var _=this;this._videoElement=o,this._logger=s||new i.Logger,this._mediaKeys=null,this._licenseRequestRetryTimeout=null,this._disposables=new a.DisposableList;var v=e.bind(y,this);this._videoElement.addEventListener(f,v,!1),this._disposables.add(new a.Disposable(function(){_._videoElement.removeEventListener(f,v,!1)})),this._disposables.add(new a.Disposable(function(){null!==_._licenseRequestRetryTimeout&&window.clearTimeout(_._licenseRequestRetryTimeout)})),this._defaultMediaKeySystemConfig={initDataTypes:["cenc"],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42c01f"'}],audioCapabilities:[{contentType:'audio/mp4; codecs="mp4a.40.2"'}],persistentState:"optional",distinctiveIdentifier:"optional"},this._config={},"Edge"===d.browser||"IE"===d.browser?this._selectedKeySystem=h:this._selectedKeySystem=c,function(t,i){var n=this,r=function(t){return e.keys(e.reduce(t,function(e,t){return e[t]=1,e},{}))}(e.keys(t).concat(e.keys(i)));e.forEach(r,function(r){e.set(n._config,[r],e.assign({},e.get(t,[r],{}),e.get(i,[r],{}))),e.set(n._config,[r,"mediaKeySystemConfiguration"],e.assign({},n._defaultMediaKeySystemConfig,e.get(t,[r,"mediaKeySystemConfiguration"],{}),e.get(i,[r,"mediaKeySystemConfiguration"],{})))})}.call(this,function(t){return e.reduce(t,function(t,i){var n="com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?c:i.schemeIdUri===g?h:i.schemeIdUri;return t[n]={licenseServerUrl:"com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?decodeURIComponent(i.widevineLicenseServerUrl):i.licenseServerUrl,serverCertificateUrl:i.serverCertificateUrl},e.forOwn(i,function(i,r){e.startsWith(r,"mediaKeySystemConfiguration.")&&e.set(t[n],r,i)}),t},{})}(l),u||{}),function(){t.isObject(this._config,"this._config"),e.forOwn(this._config,function(e,i){t.isValidType(i,m,i),t.isStringNotEmpty(e.licenseServerUrl,i+"[licenseServerUrl]"),i===c&&t.isStringNotEmpty(e.serverCertificateUrl,i+"[serverCertificateUrl]"),t.isObject(e.mediaKeySystemConfiguration,i+"[mediaKeySystemConfiguration]"),t.isArrayOfString(e.mediaKeySystemConfiguration.initDataTypes,i+"[mediaKeySystemConfiguration][initDataTypes]"),t.isArray(e.mediaKeySystemConfiguration.videoCapabilities,i+"[mediaKeySystemConfiguration][videoCapabilities]"),t.isArray(e.mediaKeySystemConfiguration.audioCapabilities,i+"[mediaKeySystemConfiguration][audioCapabilities]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.persistentState,i+"[mediaKeySystemConfiguration][persistentState]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.distinctiveIdentifier,i+"[mediaKeySystemConfiguration][distinctiveIdentifier]")})}.call(this),this._drmErrorEvent=new n.Event,this._drmTrackEventRestrictionsAvailableEvent=new n.Event,this._disposables.add(this._drmErrorEvent),this._disposables.add(this._drmTrackEventRestrictionsAvailableEvent),p&&function(){var t=this;if(!this._videoElement.mediaKeys){var i=e.get(this._config,[this._selectedKeySystem,"mediaKeySystemConfiguration"]);window.navigator.requestMediaKeySystemAccess(this._selectedKeySystem,[i]).then(function(i){i.createMediaKeys().catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to create MediaKeys",e)}).then(function(e){return t._mediaKeys=e,t._videoElement.setMediaKeys(e)}).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to set MediaKeys",e)}).then(function(){return new window.Promise(function(i,n){var a=e.get(t._config,[t._selectedKeySystem,"serverCertificateUrl"]);if(!a)return t._logger.info("Not fetching server certificate because [%s] -> [serverCertificateUrl] is not set",t._selectedKeySystem),i();!function(e,t){r.get(e,{mimeType:"text/plain; charset=x-user-defined"},t)}(a,function(e,r){if(e)return n(e);var a=function(e){for(var t=e.length,i=new window.Uint8Array(t),n=0;n<t;n++)i[n]=e.charCodeAt(n);return i}(r);return t._mediaKeys.setServerCertificate(a).then(i).catch(n)})})}).catch(function(e){t._logger.warn("Failed to set service certificate",e)})}).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Unable to request MediaKeySystemAccess with error [%s]",e)})}}.call(this)}function l(e){var t=this,i=e.target;u.call(this,e.message,function(e,n){i.update(n).catch(function(e){t._drmErrorEvent.fire([e]),t._logger.error("Update of keySession with license failed [%s]",e)})})}function u(t,i){var n,a=this,s=e.get(this._config,[this._selectedKeySystem,"licenseServerUrl"]),o={};if(this._selectedKeySystem===h){var l=(new DOMParser).parseFromString(String.fromCharCode.apply(null,new window.Uint16Array(t)),"application/xml");if(!l.getElementsByTagName("Challenge")[0])return i(new Error("[Playready] Cannot find `challenge` in key message"));n=atob(l.getElementsByTagName("Challenge")[0].childNodes[0].nodeValue);var u=l.getElementsByTagName("name"),d=l.getElementsByTagName("value");if(u.length!==d.length)return i(new Error("[Playready] Mismatched header name/value pair in key message"));o.headers={};for(var c=0;c<u.length;c++){var g=e.get(u,[c,"childNodes",0,"nodeValue"]),m=e.get(d,[c,"childNodes",0,"nodeValue"]);g&&m&&(o.headers[g]=m)}o.responseType="arraybuffer"}else o.contentType="application/octet-stream",n=t;r.post(s,n,o,function(e,t){if(e)return a._drmErrorEvent.fire([e]),a._logger.error("Failed to get license with [%s]",e),i(e);if(a._selectedKeySystem===h)return i(null,t);var n=null,r=null;try{a._logger.debug("Attempting to unwrap license response"),n=(t=JSON.parse(t)).license,t.trackRestrictions&&a._drmTrackEventRestrictionsAvailableEvent.fire([t.trackRestrictions])}catch(e){if(!(e instanceof SyntaxError))return a._drmErrorEvent.fire([e]),a._logger.error("Unexpected error [%s]",e);a._logger.debug("Unwrapping of license failed. Assuming that license response is already unwrapped"),n=t}try{r=function(e){for(var t=window.atob(e),i=new Uint8Array(t.length),n=0;n<t.length;++n)i[n]=t.charCodeAt(n);return i}(n)}catch(t){a._drmErrorEvent.fire([e]),a._logger.error("Failed to convert base64 license string [%s] to binary",n),i(t)}i(e,r)})}var d=new s(window.navigator.userAgent).detect(),c="com.widevine.alpha",h="com.microsoft.playready",g="urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95",m=e.freeze([{id:1,name:"org.w3.clearkey"},{id:2,name:c},{id:3,name:h},{id:4,name:g}]),p=!!window.navigator.requestMediaKeySystemAccess,f="encrypted";p||(f="msneedkey"),o.isSupported=function(){return"IE"===d.browser&&11===d.version||!(e.isNullOrUndefined(window.navigator.requestMediaKeySystemAccess)||e.isNullOrUndefined(window.Promise)||e.isNullOrUndefined(window.Uint8Array)||e.isNullOrUndefined(window.atob))},o.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackRestrictionsAvailable":return this._drmTrackEventRestrictionsAvailableEvent.listen(i);case"error":return this._drmErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},o.prototype.toString=function(){return"EncryptedMediaHandler [config="+JSON.stringify(this._config)+"]"},o.prototype.dispose=function(){this._disposables.dispose(),delete this._mediaKeys};var y=function(t,i){var n=this;if(i=i||1,!p)try{this._videoElement.msSetMediaKeys(new window.MSMediaKeys(this._selectedKeySystem))}catch(r){n._drmErrorEvent.fire([new Error('Unable to create MediaKeys ("'+this._selectedKeySystem+'"). Error: '+r.message)])}if(!this._mediaKeys&&!n._videoElement.msKeys){if(i<=20)return n._logger.debug("Attempt [%s] for checking if the media keys have been set",i),void(n._licenseRequestRetryTimeout=setTimeout(function(){y.call(n,t,i+1)},200));var r="Unable to find media keys after "+(i-1)+" attempts";n._logger.warn(r),n._drmErrorEvent.fire([r])}if(n._videoElement.msKeys){var s=n._videoElement.msKeys.createSession("video/mp4",t.initData);s||n._drmErrorEvent.fire([new Error("Could not create key session")]);var o=function(e){u.call(n,e.message.buffer,function(e,t){s.update(new Uint8Array(t))})};s.addEventListener("mskeymessage",o,!1),n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeymessage",o,!1)}));var d=function(){n._drmErrorEvent.fire([new Error("Unexpected `keyerror` event from key session. Code: "+s.error.code+", systemCode: "+s.error.systemCode)])};return s.addEventListener("mskeyerror",d,!1),void n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeyerror",d,!1)}))}var c=n._mediaKeys.createSession();return c.addEventListener("message",e.bind(l,n),!1),n._disposables.add(new a.Disposable(function(){c.removeEventListener("message",e.bind(l,n),!1)})),c.generateRequest(t.initDataType,t.initData).then(function(){n._logger.info("passing the media data to CDM")}).catch(function(e){n._drmErrorEvent.fire([e]),n._logger.error("Unable to create or initialize key session [%s]",e)})};return o}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(7),i(25),i(4),i(13),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o){"use strict";function l(l,f,y,_){t.isInstanceOf(f,a,"playlist"),t.isNotUndefined(y,"webPlayer"),t.isInstanceOf(y,s,"webPlayer"),t.isInstanceOf(_,o,"statsProvider"),this._playlist=f,this._webPlayer=y,this._statsProvider=_,this._logger=l||new i.Logger,this._bandwidthChangeDetails={nextSwitchCheckTime:e.now()+5e3,oldBandwidth:-1},this._disposables=new n.DisposableList,this._webPlayer.addEventListener("started",e.bind(function(){var t=this;this._bandwidthLimits=e.reduce(this._playlist.getMimeTypes(),function(i,n){var r=t._playlist.getPlaylistTracksByMimeType(n)||[],a=e.filter(r,function(t){return e.isNumber(t.getBandwidth())}),s=e.map(a,function(e){return e.getBandwidth()});return r.length>a.length&&t._logger.info("Excluding [%s] tracks without Bandwidth from ABR switching.",r.length-a.length),i[n]={max:Math.max.apply(null,s),min:Math.min.apply(null,s)},i},{}),this._logger.debug("Listening for bandwidth changes with max and min bandwidths of [%s]",this._bandwidthLimits),this._webPlayer.addEventListener("playbacktimeleft",e.bind(function(t,i){if(this._bandwidthChangeDetails.isInProgress||!r.isForeground())return;var n=this._bandwidthLimits[i.getMimeType()],a=this;if(this._bandwidthChangeDetails.nextSwitchCheckTime>0){if(this._bandwidthChangeDetails.nextSwitchCheckTime>e.now())return;this._bandwidthChangeDetails.nextSwitchCheckTime=0,this._bandwidthChangeDetails.oldBandwidth=-1}var s=e.bind(function(){this._bandwidthChangeDetails.isInProgress=!1},this);if(u.call(a,i,t)&&i.getBandwidth()<n.max){this._bandwidthChangeDetails.isInProgress=!0;var o=this._playlist.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(i.getBandwidth(),i.getMimeType());this._playbackTimeout=setTimeout(function(){u.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to higher quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+g,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(o.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}else if(d.call(a,i,t)&&i.getBandwidth()>n.min){this._bandwidthChangeDetails.isInProgress=!0;var l=this._playlist.getPlaylistTrackByBandwidthAndMimeType(i.getBandwidth()-1,i.getMimeType());this._playbackTimeout=setTimeout(function(){d.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to lower quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+m,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(l.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}},this))},this)),this._disposables.add(r.onBackground(e.bind(h,this,!1))),this._disposables.add(r.onForeground(e.bind(h,this,!0))),this._backgroundTimeout=null,this._foregroundBandwidth=null}function u(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t>3.5||i>0&&i<=3*n/4&&t/(n/1e3)>2}function d(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t<1.2||i>0&&i>=7*n/8&&t/(n/1e3)<=1.5}function c(e){return this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration}function h(t){null!==this._playbackTimeout&&(clearTimeout(this._playbackTimeout),this._playbackTimeout=null);var i=this._webPlayer.getVideoElement();if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,null===this._foregroundBandwidth)return;var n=this._foregroundBandwidth;return this._foregroundBandwidth=null,n!==this._webPlayer.getBandwidthLimit()&&(this._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+g,this._logger.info("Detected change to [foreground] for tab. Reverting to [%s] previous bandwidth limit from [%s]",n,this._webPlayer.getBandwidthLimit()),this._webPlayer.changeBandwidthLimit(n)),void(i.muted&&"dynamic"===this._playlist.getType()&&(this._logger.info("Detecting application [foreground] with muted video. Resuming playback at most recent available chunk."),this._webPlayer.play()))}var a=this;this._backgroundTimeout=setTimeout(function(){r.isForeground()||(a._foregroundBandwidth=a._webPlayer.getBandwidthLimit(),i.muted&&"dynamic"===a._playlist.getType()&&(a._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),a._webPlayer.pause()))},f)}var g=15e3,m=5e3,p=500,f=3e3;return l.prototype.dispose=function(){null!==this._playbackTimeout&&clearTimeout(this._playbackTimeout),null!==this._backgroundTimeout&&clearTimeout(this._backgroundTimeout),this._disposables.dispose(),this._backgroundTimeout=null,this._playbackTimeout=null},l}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(7)],void 0!==(r=function(e,t,i,n){function r(){this._namedEvents=new i.NamedEvents,this._timeOfLastTabFocusChange=e.now(),this._disposables=new n.DisposableList,this._isForeground=!0,this._disposables.add(this._namedEvents),function(){if(a())return function(){if(!a())return;var e=this;chrome.extension.onRequest.addListener(function(t,i,n){"is_selected"===t&&chrome.tabs.getSelected(null,function(t){var r=t.id===i.tab.id;s.call(e,r),n(r?!0:!1)})})}.call(this);(function(){function t(){var e=!document[i];s.call(a,e)}var i,r,a=this;void 0!==document.hidden?(i="hidden",r="visibilitychange"):void 0!==document.msHidden?(i="msHidden",r="msvisibilitychange"):void 0!==document.webkitHidden&&(i="webkitHidden",r="webkitvisibilitychange");void 0!==document.addEventListener&&void 0!==document[i]?(e.addEventListener(document,r,t,!1),a._disposables.add(new n.Disposable(function(){e.removeEventListener(document,r,t,!1)}))):function(){var t=this;t._documentFocusInterval=setInterval(function(){var e=document.hasFocus();s.call(t,e)},l),t._disposables.add(new n.Disposable(function(){e.isNumber(t._documentFocusInterval)&&clearInterval(t._documentFocusInterval),t._documentFocusInterval=null}))}.call(a)}).call(this)}.call(this)}function a(){return"undefined"!=typeof chrome&&chrome.extension&&chrome.extension.onRequest}function s(e){if(t.isBoolean(e,"isForeground"),this._isForeground!==e)return e?(this._isForeground=!0,o.call(this,"foreground")):(this._isForeground=!1,o.call(this,"background"))}function o(t){var i=e.now(),n=i-this._timeOfLastTabFocusChange;this._timeOfLastTabFocusChange=i,this._namedEvents.fire(t,[n])}var l=3e3;return r.prototype.isForeground=function(){return this._isForeground},r.prototype.getTimeSinceLastChange=function(){return e.now()-this._timeOfLastTabFocusChange},r.prototype.onForeground=function(e){return t.isFunction(e,"callback"),this._namedEvents.listen("foreground",e)},r.prototype.onBackground=function(e){return t.isFunction(e,"callback"),this._namedEvents.listen("background",e)},new r}.apply(t,n))&&(e.exports=r)}])});
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15920,7 +16095,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(42),
+    __webpack_require__(43),
     __webpack_require__(24),
     __webpack_require__(10)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, BatchHttp, MQProtocol, ByteBuffer) {
@@ -15949,7 +16124,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15971,7 +16146,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(5),
-    __webpack_require__(60),
+    __webpack_require__(61),
     __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
@@ -16074,7 +16249,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16202,7 +16377,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16549,7 +16724,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16568,7 +16743,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(59)
+    __webpack_require__(60)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function (ReconnectingWebSocket) {
     'use strict';
 
@@ -16577,7 +16752,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -16767,7 +16942,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -21369,7 +21544,7 @@ process.umask = function() { return 0; };
             if (typeof filename === 'string') {
 
                 if (ProtoBuf.Util.IS_NODE)
-                    filename = __webpack_require__(35)['resolve'](filename);
+                    filename = __webpack_require__(36)['resolve'](filename);
                 if (this.files[filename] === true)
                     return this.reset();
                 this.files[filename] = true;
@@ -21378,7 +21553,7 @@ process.umask = function() { return 0; };
 
                 var root = filename.root;
                 if (ProtoBuf.Util.IS_NODE)
-                    root = __webpack_require__(35)['resolve'](root);
+                    root = __webpack_require__(36)['resolve'](root);
                 if (root.indexOf("\\") >= 0 || filename.file.indexOf("\\") >= 0)
                     delim = '\\';
                 var fname = root + delim + filename.file;
@@ -21971,10 +22146,10 @@ process.umask = function() { return 0; };
     return ProtoBuf;
 });
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(61)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(62)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21998,8 +22173,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(12),
     __webpack_require__(2),
-    __webpack_require__(76),
-    __webpack_require__(75)
+    __webpack_require__(77),
+    __webpack_require__(76)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -22353,7 +22528,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22911,7 +23086,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22958,7 +23133,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23078,7 +23253,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23220,7 +23395,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23241,7 +23416,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(67)
+    __webpack_require__(68)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -23282,7 +23457,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23380,7 +23555,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23714,7 +23889,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23737,7 +23912,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(3),
-    __webpack_require__(70)
+    __webpack_require__(71)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, ChatService) {
     'use strict';
 
@@ -23875,7 +24050,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24097,7 +24272,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24214,7 +24389,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24236,7 +24411,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(28),
-    __webpack_require__(73)
+    __webpack_require__(74)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
@@ -24277,7 +24452,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25185,7 +25360,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26889,7 +27064,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27014,7 +27189,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27071,7 +27246,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27094,10 +27269,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(6),
+    __webpack_require__(3),
     __webpack_require__(2),
+    __webpack_require__(35),
     __webpack_require__(9),
     __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var streamEndedBeforeSetupTimeout = 5000;
@@ -27106,6 +27283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultUnreadableContentErrorTimeout = 250;
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
+    var defaultTimeoutForBackgroundTabBeforeDispose = 3000;
 
     function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -27142,6 +27320,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         try {
             var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
+            this._disposables = new disposable.DisposableList();
+
+            this._disposables.add(applicationActivityDetector.onBackground(_.bind(handleForegroundChange, this, false)));
+            this._disposables.add(applicationActivityDetector.onForeground(_.bind(handleForegroundChange, this, true)));
+
             if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
                 setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
             } else {
@@ -27170,6 +27353,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._dimensionsChangedMonitor.stop();
 
         this._streamTelemetry.stop();
+
+        this._disposables.dispose();
 
         if (this._element) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -27424,12 +27609,46 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
+    function handleForegroundChange(isForeground) {
+        if (isForeground) {
+            clearTimeout(this._backgroundTimeout);
+
+            this._backgroundTimeout = null;
+
+            if (!this._backgroundThrottled) {
+                return;
+            }
+
+            this._backgroundThrottled = false;
+
+            this.start(this._element);
+
+            return;
+        }
+
+        var that = this;
+
+        this._backgroundTimeout = setTimeout(function() {
+            if (applicationActivityDetector.isForeground()) {
+                return;
+            }
+
+            if (that._element.muted) {
+                that._logger.info('Detecting application [background] with muted video. Pausing playback until application focused again.');
+
+                that._element.pause();
+
+                that._backgroundThrottled = true;
+            }
+        }, defaultTimeoutForBackgroundTabBeforeDispose);
+    }
+
     return HlsRenderer;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27452,9 +27671,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(2),
+    __webpack_require__(83),
+    __webpack_require__(80),
     __webpack_require__(82),
-    __webpack_require__(79),
-    __webpack_require__(81),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, event, rtc, ShakaRenderer, HlsRenderer, PhenixPlayerRenderer, streamEnums) {
     'use strict';
@@ -27588,7 +27807,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27612,7 +27831,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(8),
     __webpack_require__(5),
     __webpack_require__(6),
-    __webpack_require__(55),
+    __webpack_require__(56),
     __webpack_require__(2),
     __webpack_require__(9),
     __webpack_require__(7)
@@ -27978,7 +28197,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28384,7 +28603,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28526,7 +28745,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28566,7 +28785,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28670,7 +28889,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28777,7 +28996,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -28799,15 +29018,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(89),
-    __webpack_require__(86),
+    __webpack_require__(35),
+    __webpack_require__(87),
     __webpack_require__(2)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-13T00:05:28Z' || '?';
+    var sdkVersion = '2018-01-13T22:48:50Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -29034,7 +29253,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -29062,7 +29281,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-01-13T00:05:28Z' || '?';
+    var sdkVersion = '2018-01-13T22:48:50Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -29294,181 +29513,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 89 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(5),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, event, disposable) {
-    var defaultDocumentFocusIntervalTimeout = 3000;
-
-    function ApplicationActivityDetector() {
-        this._namedEvents = new event.NamedEvents();
-        this._timeOfLastTabFocusChange = _.now();
-        this._disposables = new disposable.DisposableList();
-        this._isForeground = true;
-
-        this._disposables.add(this._namedEvents);
-
-        detectTabFocusChange.call(this);
-    }
-
-    ApplicationActivityDetector.prototype.isForeground = function() {
-        return this._isForeground;
-    };
-
-    ApplicationActivityDetector.prototype.getTimeSinceLastChange = function() {
-        return _.now() - this._timeOfLastTabFocusChange;
-    };
-
-    ApplicationActivityDetector.prototype.onForeground = function isEnabled(callback) {
-        assert.isFunction(callback, 'callback');
-
-        return this._namedEvents.listen('foreground', callback);
-    };
-
-    ApplicationActivityDetector.prototype.onBackground = function setEnabled(callback) {
-        assert.isFunction(callback, 'callback');
-
-        return this._namedEvents.listen('background', callback);
-    };
-
-    function detectTabFocusChange() {
-        if (canDetectDirectly()) {
-            return detectTabFocusChangeDirectly.call(this);
-        }
-
-        detectTabFocusChangeIndirectly.call(this);
-    }
-
-    function canDetectDirectly() {
-        return typeof chrome !== 'undefined' && chrome.extension && chrome.extension.onRequest; // eslint-disable-line no-undef
-    }
-
-    function detectTabFocusChangeDirectly() {
-        if (!canDetectDirectly()) {
-            return;
-        }
-
-        var that = this;
-
-        chrome.extension.onRequest.addListener(function(request, sender, sendResponse) { // eslint-disable-line no-undef
-            if(request === "is_selected") {
-                chrome.tabs.getSelected(null, function(tab){ // eslint-disable-line no-undef
-                    var isForeground = tab.id === sender.tab.id;
-
-                    setFocusState.call(that, isForeground);
-
-                    if(isForeground) {
-                        sendResponse(true);
-                    } else {
-                        sendResponse(false);
-                    }
-                });
-            }
-        });
-    }
-
-    function detectTabFocusChangeIndirectly() {
-        var hidden;
-        var visibilityChange;
-        var that = this;
-
-        if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
-            hidden = "hidden";
-            visibilityChange = "visibilitychange";
-        } else if (typeof document.msHidden !== "undefined") {
-            hidden = "msHidden";
-            visibilityChange = "msvisibilitychange";
-        } else if (typeof document.webkitHidden !== "undefined") {
-            hidden = "webkitHidden";
-            visibilityChange = "webkitvisibilitychange";
-        }
-
-        function handleVisibilityChange() {
-            var isForeground = !document[hidden];
-
-            setFocusState.call(that, isForeground);
-        }
-
-        if (typeof document.addEventListener !== "undefined" && typeof document[hidden] !== "undefined") {
-            _.addEventListener(document, visibilityChange, handleVisibilityChange, false);
-
-            that._disposables.add(new disposable.Disposable(function() {
-                _.removeEventListener(document, visibilityChange, handleVisibilityChange, false);
-            }));
-        } else {
-            listenForDocumentFocus.call(that);
-        }
-    }
-
-    function listenForDocumentFocus() {
-        var that = this;
-
-        that._documentFocusInterval = setInterval(function() {
-            var isForeground = document.hasFocus();
-
-            setFocusState.call(that, isForeground);
-        }, defaultDocumentFocusIntervalTimeout);
-
-        that._disposables.add(new disposable.Disposable(function() {
-            if (_.isNumber(that._documentFocusInterval)) {
-                clearInterval(that._documentFocusInterval);
-            }
-
-            that._documentFocusInterval = null;
-        }));
-    }
-
-    function setFocusState(isForeground) {
-        assert.isBoolean(isForeground, 'isForeground');
-
-        if (this._isForeground === isForeground) {
-            return;
-        }
-
-        if (isForeground) {
-            this._isForeground = true;
-
-            return triggerFocusChange.call(this, 'foreground');
-        }
-
-        this._isForeground = false;
-
-        return triggerFocusChange.call(this, 'background');
-    }
-
-    function triggerFocusChange(state) {
-        var currentTime = _.now();
-        var timeElapsedOfLastState = currentTime - this._timeOfLastTabFocusChange;
-
-        this._timeOfLastTabFocusChange = currentTime;
-        this._namedEvents.fire(state, [timeElapsedOfLastState]);
-    }
-
-    return new ApplicationActivityDetector();
-}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29491,7 +29535,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(28),
-    __webpack_require__(85)
+    __webpack_require__(86)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -30243,11 +30287,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(8),
     __webpack_require__(17),
     __webpack_require__(19),
-    __webpack_require__(36),
     __webpack_require__(37),
+    __webpack_require__(38),
     __webpack_require__(20),
     __webpack_require__(18),
-    __webpack_require__(38)
+    __webpack_require__(39)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress) {
     window.PhenixPCast = PCast;
 
