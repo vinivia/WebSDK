@@ -382,7 +382,7 @@ define([
                 return;
             }
 
-            if (that._element.muted) {
+            if (!webkitVideoHasAudio(that._element)) {
                 that._logger.info('Detecting application [background] with muted video. Pausing playback until application focused again.');
 
                 that._element.pause();
@@ -390,6 +390,14 @@ define([
                 that._backgroundThrottled = true;
             }
         }, defaultTimeoutForBackgroundTabBeforeDispose);
+    }
+
+    function webkitVideoHasAudio(video) {
+        if (video.muted) {
+            return false;
+        }
+
+        return _.get(video, ['webkitAudioDecodedByteCount'], 0) > 0 || _.get(video, ['audioTracks', 'length'], 0) > 0 || video.webkitHasAudio;
     }
 
     return HlsRenderer;
