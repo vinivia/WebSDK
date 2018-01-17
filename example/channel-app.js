@@ -62,12 +62,21 @@ requirejs([
         }
 
         var createRoomExpress = function createPCastExpress() {
-            roomExpress = new sdk.express.RoomExpress({
+            var expressOptions = {
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null
-            });
+            };
+
+            if (app.getUrlParameter('ssmr')) {
+                expressOptions.streamingSourceMapping = {
+                    patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),
+                    replacement: app.getUrlParameter('ssmr')
+                };
+            }
+
+            roomExpress = new sdk.express.RoomExpress(expressOptions);
         };
 
         var channelSubscriber;
@@ -79,9 +88,18 @@ requirejs([
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
             var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
+            var subscriberOptions = {};
 
             if (!channelAlias) {
                 return;
+            }
+
+            if (app.getUrlParameter('minBuffer')) {
+                subscriberOptions.targetMinBufferSize = parseFloat(app.getUrlParameter('minBuffer'));
+            }
+
+            if (app.getUrlParameter('targetDuration')) {
+                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
             }
 
             capabilities.push($('#subscriber-mode option:selected').val());
@@ -94,7 +112,8 @@ requirejs([
                 alias: channelAlias,
                 capabilities: capabilities,
                 videoElement: channelVideoEl,
-                streamSelectionStrategy: streamSelectionStrategy
+                streamSelectionStrategy: streamSelectionStrategy,
+                subscriberOptions: subscriberOptions
             }, function joinChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

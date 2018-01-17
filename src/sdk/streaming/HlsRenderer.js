@@ -74,6 +74,10 @@ define([
             this._disposables.add(applicationActivityDetector.onBackground(_.bind(handleForegroundChange, this, false)));
             this._disposables.add(applicationActivityDetector.onForeground(_.bind(handleForegroundChange, this, true)));
 
+            this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+            this._streamTelemetry.recordRebuffering(elementToAttachTo);
+            this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+
             if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
                 setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
             } else {
@@ -211,10 +215,6 @@ define([
             elementToAttachTo.muted = true;
         }
 
-        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        this._streamTelemetry.recordRebuffering(elementToAttachTo);
-        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
         _.addEventListener(elementToAttachTo, 'error', this._onError, true);
         _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
         _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
@@ -291,6 +291,7 @@ define([
         }
 
         var that = this;
+        var currentVideoTime = this._element.currentTime;
 
         if (this._lastProgress.count === 0) {
             this._lastProgress.setupRetry++;
@@ -302,6 +303,14 @@ define([
                     reload.call(that);
                 }
             }, getTimeoutOrMinimum.call(that));
+
+            setTimeout(function() {
+                if (that._element && that._element.currentTime === currentVideoTime && !that._element.paused && canReload.call(that)) {
+                    that._logger.warn('Reloading stream after being stalled for [%s] seconds', timeoutForStallWithoutProgressToRestart / 1000);
+
+                    reloadIfAble.call(that);
+                }
+            }, timeoutForStallWithoutProgressToRestart);
 
             setTimeout(_.bind(endIfReady, that), streamEndedBeforeSetupTimeout);
         }
@@ -339,13 +348,13 @@ define([
     function reload() {
         this._logger.info('[%s] Attempting to reload Hls stream.', this._streamId);
 
-        this._element.pause();
-        this._element.src = '';
-        this._element.currentTime = 0;
+        try {
+            this._element.setAttribute('src', '');
 
-        this._element.src = this._playlistUri;
-        this._element.load();
-        this._element.play();
+            this._element.setAttribute('src', this._playlistUri);
+        } catch (e) {
+            this._logger.warn('Error while reloading Hls stream [%s]', e);
+        }
     }
 
     function getTimeoutOrMinimum() {

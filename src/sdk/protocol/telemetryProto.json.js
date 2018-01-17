@@ -384,6 +384,14 @@ define([
                         "id": 23
                     },
                     {
+                        "name": "VideoBitRate",
+                        "id": 28
+                    },
+                    {
+                        "name": "AudioBitRate",
+                        "id": 29
+                    },
+                    {
                         "name": "FrameRateChanged",
                         "id": 12
                     },

@@ -1620,6 +1620,12 @@ define([
         } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(hlsMatch[1]);
 
+            if (options.hlsTargetDuration) {
+                assert.isNumber(options.hlsTargetDuration, 'options.hlsTargetDuration');
+
+                playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
+            }
+
             return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, options);
         }
 
@@ -1637,7 +1643,7 @@ define([
         var onPlayerError = function onPlayerError(source, event) {
             that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
 
-            liveStreamDecorator.streamErrorCallback(playerKind, event.detail);
+            liveStreamDecorator.streamErrorCallback(playerKind, event);
         };
 
         var onStop = function onStop(reason) {

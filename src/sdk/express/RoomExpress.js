@@ -379,7 +379,7 @@ define([
                 }
 
                 if (error || (response && response.status !== 'ok')) {
-                    that._logger.info('[%s] Issue with stream. Trying next member', mediaStreamId, response ? response.status : '', error);
+                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, response ? response.status : '', error);
 
                     return tryNextMember(response ? response.status : '');
                 }
@@ -572,6 +572,10 @@ define([
                         monitor.setMonitorTrackState(tracks[0], state === trackEnums.states.trackEnabled.name);
                     }
                 }, {initial: 'notify'}));
+            }
+
+            if (error && parseInt(error.category) === 6) {
+                return callback(error, {status: 'device-insecure'});
             }
 
             callback(error, response);

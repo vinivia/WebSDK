@@ -533,6 +533,11 @@ requirejs([
 
         var subscribe = function subscribe() {
             var streamToken = $('#streamTokenForViewing').val();
+            var subscriberOptions = {};
+
+            if (app.getUrlParameter('targetDuration')) {
+                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
+            }
 
             pcast.subscribe(streamToken, function subscribeCallback(pcast, status, mediaStream) {
                 if (status !== 'ok') {
@@ -606,7 +611,7 @@ requirejs([
 
                 subscriberMediaStream = mediaStream;
                 $('#stopSubscriber').removeClass('disabled');
-            });
+            }, subscriberOptions);
         };
 
         var stopSubscriber = function(reason) {
