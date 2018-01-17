@@ -195,7 +195,6 @@ define([
             var timeSinceStop = _.now() - videoStalled;
 
             that.recordMetric('Buffering', {uint64: timeSinceStop});
-            that.recordMetric('Playing');
 
             logMetric.call(that, '[buffering] Stream has recovered from stall after [%s] milliseconds', timeSinceStop);
 
@@ -218,6 +217,26 @@ define([
             _.removeEventListener(video, 'playing', listenForContinuation);
             _.removeEventListener(video, 'progress', listenForContinuation);
             _.removeEventListener(video, 'timeupdate', listenForContinuation);
+        }));
+    };
+
+    StreamTelemetry.prototype.recordVideoPlayingAndPausing = function(video) {
+        var that = this;
+
+        var listenForPlayChange = function() {
+            if (video.paused) {
+                that.recordMetric('Playing', {boolean: false});
+            } else {
+                that.recordMetric('Playing', {boolean: true});
+            }
+        };
+
+        _.addEventListener(video, 'pause', listenForPlayChange);
+        _.addEventListener(video, 'playing', listenForPlayChange);
+
+        this._disposables.add(new disposable.Disposable(function() {
+            _.removeEventListener(video, 'pause', listenForPlayChange);
+            _.removeEventListener(video, 'playing', listenForPlayChange);
         }));
     };
 

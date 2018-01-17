@@ -71,6 +71,11 @@ define([
         this._playlist = playlist;
         this._element = elementToAttachTo;
 
+        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
+        this._streamTelemetry.recordRebuffering(elementToAttachTo);
+        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+        this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
+
         playlist.fetch(function(err) {
             if (err) {
                 throw new Error(err);
@@ -225,12 +230,8 @@ define([
             chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, {});
         }
 
-        if (rtc.browser === 'Chrome') {
-            playerOptions.targetBufferSize = 4;
-        }
-
-        if (rtc.browser === 'IE' || rtc.browser === 'Edge') {
-            playerOptions.maximumFastForwardFrequency = 180;
+        if (_.isNumber(that._options.targetMinBufferSize)) {
+            playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
         }
 
         var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._playlist, this._element, chunksFeeder, playerOptions);
