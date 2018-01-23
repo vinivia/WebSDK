@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2018.1.10",
+  "version": "2018.1.11",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -30,9 +30,6 @@
     "lint-fix": "eslint ./ --fix",
     "prepack": "npm run webpack-workflow-example && npm run add-copyright",
     "add-copyright": "./../phenix/scripts/add-copyright.sh ./"
-  },
-  "engines": {
-    "node": "8.4.0"
   },
   "devDependencies": {
     "animate.css": "3.5.2",
