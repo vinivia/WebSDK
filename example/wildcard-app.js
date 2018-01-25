@@ -40,7 +40,8 @@ requirejs.config({
         'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
         'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
         'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
-        'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min'
+        'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min',
+        'phenix-web-application-activity-detector': 'phenix-web-application-activity-detector/dist/phenix-web-application-activity-detector.min'
     }
 });
 

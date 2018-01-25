@@ -20,7 +20,7 @@ define([
     'phenix-web-http',
     'phenix-web-disposable',
     'phenix-rtc',
-    '../telemetry/applicationActivityDetector',
+    'phenix-web-application-activity-detector',
     '../DimensionsChangedMonitor',
     './stream.json'
 ], function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DimensionsChangedMonitor, streamEnums) {

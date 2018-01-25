@@ -31,7 +31,7 @@ define([
     AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
         var data = appendAuthDataTo.call(this, {});
 
-        http.postWithRetry(this._backendUri + '/auth', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
@@ -43,7 +43,7 @@ define([
             capabilities: capabilities
         });
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
@@ -68,11 +68,11 @@ define([
             data.alternateOriginStreamIds = alternateStreamIds;
         }
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), null, _.bind(handleResponse, this, callback), 1);
+        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
     };
 
     AdminAPI.prototype.getStreams = function getStreams(callback) {
-        http.getWithRetry(this._backendUri + '/streams', null, _.bind(handleResponse, this, callback), 1);
+        http.getWithRetry(this._backendUri + '/streams', {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
     };
 
     function appendAuthDataTo(data) {
@@ -84,7 +84,7 @@ define([
             return callback(error, {});
         }
 
-        var res = JSON.parse(response);
+        var res = JSON.parse(response.data);
 
         if (res.status !== 'ok') {
             return callback(null, {status: res.status});

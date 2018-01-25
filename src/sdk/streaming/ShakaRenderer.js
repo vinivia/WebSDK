@@ -360,17 +360,17 @@ define([
             }
         };
 
-        function addToPlayerconfig(error, serverCertificate) {
+        function addToPlayerconfig(error, serverCertificateResponse) {
             if (error) {
                 callback(error);
 
                 return;
             }
 
-            widevineServiceCertificate = serverCertificate; // Cache so that we can reuse
+            widevineServiceCertificate = serverCertificateResponse.data; // Cache so that we can reuse
 
             playerConfig.drm.advanced['com.widevine.alpha'] = {
-                'serverCertificate': convertBinaryStringToUint8Array(serverCertificate),
+                'serverCertificate': convertBinaryStringToUint8Array(serverCertificateResponse.data),
                 'persistentStateRequired': true,
                 'distinctiveIdentifierRequired': false
             };
