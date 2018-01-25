@@ -48,7 +48,8 @@ var configs = [{
             'phenix-web-observable': path.resolve(__dirname, 'node_modules', 'phenix-web-observable'),
             'phenix-web-reconnecting-web-socket': path.resolve(__dirname, 'node_modules', 'phenix-web-reconnecting-web-socket'),
             'phenix-web-player': path.resolve(__dirname, 'node_modules', 'phenix-web-player', 'dist', 'phenix-web-player.min'),
-            'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser', 'dist', 'phenix-web-detect-browser')
+            'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser'),
+            'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
         }
     }
 }];

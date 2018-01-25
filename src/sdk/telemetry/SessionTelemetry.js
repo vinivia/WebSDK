@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-disposable',
-    './applicationActivityDetector',
+    'phenix-web-application-activity-detector',
     './NetworkMonitor',
     'phenix-rtc'
 ], function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {

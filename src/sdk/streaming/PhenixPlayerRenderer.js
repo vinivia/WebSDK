@@ -212,10 +212,16 @@ define([
         var that = this;
         var statsProvider = new phenixWebPlayer.StatsProvider(this._throttledLogger, {ewmaPeriods: 30});
         var playerOptions = {bandwidthToStartAt: that._options.bandwidthToStartAt || bandwidthAt720};
+        var chunksFeederOptions = {};
         var chunksFeeder;
 
+        if (_.isNumber(that._options.targetMinBufferSize)) {
+            playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
+            chunksFeederOptions.targetBufferSizeInMS = that._options.targetMinBufferSize * 1000;
+        }
+
         if (this._playlist.getDeliveryType() === 'Dash') {
-            chunksFeeder = new phenixWebPlayer.MpdPlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, {});
+            chunksFeeder = new phenixWebPlayer.MpdPlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, chunksFeederOptions);
 
             if (that._options.isDrmProtectedContent) {
                 playerOptions.drm = {
@@ -227,11 +233,7 @@ define([
                 };
             }
         } else if (this._playlist.getDeliveryType() === 'Hls') {
-            chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, {});
-        }
-
-        if (_.isNumber(that._options.targetMinBufferSize)) {
-            playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
+            chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, chunksFeederOptions);
         }
 
         var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._playlist, this._element, chunksFeeder, playerOptions);

@@ -98,20 +98,21 @@ define([
             queryParameters: {
                 version: '%SDKVERSION%',
                 _: _.now()
-            }
-        }, function(err, responseText) {
+            },
+            retryOptions: {maxAttempts: maxAttempts}
+        }, function(err, response) {
             if (err) {
                 return callback(new Error('Failed to resolve an end point', err));
             }
 
-            var endPoints = responseText.split(',');
+            var endPoints = response.data.split(',');
 
             if (endPoints.length < 1) {
                 callback(new Error('Failed to discover end points'));
             }
 
             callback(undefined, endPoints);
-        }, maxAttempts);
+        });
     }
 
     return PCastEndPoint;

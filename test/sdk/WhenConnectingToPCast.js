@@ -54,16 +54,16 @@ define([
             expect(applicationId).to.be.a('string');
             expect(secret).to.be.a('string');
 
-            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), null, function(error, data) {
+            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
                 if (error) {
                     done(error);
                 }
 
-                authToken = JSON.parse(data).authenticationToken;
+                authToken = JSON.parse(response.data).authenticationToken;
 
                 expect(authToken).to.be.a('string');
                 done();
-            }, 0);
+            });
         });
 
         it('returns descriptor from toString before being started', function() {
