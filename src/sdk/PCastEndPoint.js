@@ -16,8 +16,9 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-web-closest-endpoint-resolver'
-], function(_, http, ClosestEndPointResolver) {
+], function(_, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
     var maxAttempts = 4;
@@ -38,6 +39,7 @@ define([
         this._version = version;
         this._baseUri = baseUri;
         this._logger = logger;
+        this._disposables = new disposable.DisposableList();
         this._sessionTelemetry = sessionTelemetry;
     }
 
@@ -49,6 +51,10 @@ define([
 
     PCastEndPoint.prototype.resolveUri = function(callback /* (error, {uri, roundTripTime}) */) {
         return resolveUri.call(this, this._baseUri, callback);
+    };
+
+    PCastEndPoint.prototype.dispose = function() {
+        this._disposables.dispose();
     };
 
     PCastEndPoint.prototype.toString = function() {
@@ -85,6 +91,8 @@ define([
                 });
 
                 closestEndPointResolver.resolveAll(endPoints);
+
+                that._disposables.add(closestEndPointResolver);
             });
         } else {
             // Not supported
@@ -93,7 +101,7 @@ define([
     }
 
     function getEndpoints(baseUri, callback) {
-        http.getWithRetry(baseUri + '/pcast/endPoints', {
+        var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
                 version: '%SDKVERSION%',
@@ -113,6 +121,8 @@ define([
 
             callback(undefined, endPoints);
         });
+
+        this._disposables.add(requestDisposable);
     }
 
     return PCastEndPoint;
