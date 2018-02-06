@@ -109,7 +109,7 @@ define([
         return now - this._start;
     };
 
-    SessionTelemetry.prototype.stop = function() {
+    SessionTelemetry.prototype.dispose = function() {
         this._disposables.dispose();
 
         this.recordMetric('Stopped');

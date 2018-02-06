@@ -17,6 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
+    'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
     './PCastProtocol',
@@ -33,7 +34,7 @@ define([
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -53,19 +54,23 @@ define([
             }
         }
 
+        if (!_.isNullOrUndefined(options.disableMultiplePCastInstanceWarning)) {
+            assert.isBoolean(options.disableMultiplePCastInstanceWarning, 'options.disableMultiplePCastInstanceWarning');
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
-        this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
-        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shaka = options.shaka;
         this._videojs = options.videojs || window.videojs;
         this._status = 'offline';
         this._streamingSourceMapping = options.streamingSourceMapping;
+        this._disposables = new disposable.DisposableList();
+        this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
 
         var that = this;
 
@@ -89,7 +94,7 @@ define([
     }
 
     PCast.prototype.getBaseUri = function() {
-        return this._endPoint.getBaseUri();
+        return this._baseUri;
     };
 
     PCast.prototype.getStatus = function() {
@@ -121,12 +126,25 @@ define([
             throw new Error('"Already started"');
         }
 
+        if (!_.isNumber(window.__phenixInstantiatedPCastCount)) {
+            window.__phenixInstantiatedPCastCount = 1;
+        } else {
+            window.__phenixInstantiatedPCastCount++;
+        }
+
+        if (window.__phenixInstantiatedPCastCount > 1 && !this._disableMultiplePCastInstanceWarning) {
+            this._logger.warn('Avoid using multiple instances of PCast as this uses unnecessary resources and will reduce performance. This is your [%s] simultaneous instance. Remember to dispose all resources when done with them by calling .stop() or .dispose()',
+                window.__phenixInstantiatedPCastCount);
+        }
+
         this._stopped = false;
         this._started = true;
         this._authToken = authToken;
         this._authenticationCallback = authenticationCallback;
         this._onlineCallback = onlineCallback;
         this._offlineCallback = offlineCallback;
+        this._sessionTelemetry = new SessionTelemetry(this._logger, this._metricsTransmitter);
+        this._endPoint = new PCastEndPoint(this._version, this._baseUri, this._logger, this._sessionTelemetry);
 
         transitionToStatus.call(this, 'connecting');
 
@@ -134,6 +152,9 @@ define([
         this._mediaStreams = {};
         this._publishers = {};
         this._gumStreams = [];
+
+        this._disposables.add(this._endPoint);
+        this._disposables.add(this._sessionTelemetry);
 
         var that = this;
 
@@ -222,6 +243,10 @@ define([
                 this._sessionTelemetrySubscription.dispose();
                 this._sessionTelemetry.setSessionId(null);
             }
+
+            window.__phenixInstantiatedPCastCount--;
+
+            this._disposables.dispose();
         }
     };
 
