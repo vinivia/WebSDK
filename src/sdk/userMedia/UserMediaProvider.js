@@ -102,12 +102,12 @@ define([
         };
 
         return getUserMediaConstraints.call(this, options, function(error, response) {
-            if (response.status === 'cancelled') {
-                return onUserMediaCancelled();
+            if (_.get(response, ['status']) !== 'ok') {
+                return onUserMediaFailure(error);
             }
 
-            if (response.status !== 'ok') {
-                return onUserMediaFailure(error);
+            if (response.status === 'cancelled') {
+                return onUserMediaCancelled();
             }
 
             var constraints = response.constraints;

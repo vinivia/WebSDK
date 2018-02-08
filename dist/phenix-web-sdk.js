@@ -4487,7 +4487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-02-07T15:52:06Z',
+                version: '2018-02-09T21:16:04Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4755,7 +4755,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-02-07T15:52:06Z';
+    var sdkVersion = '2018-02-09T21:16:04Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -8694,13 +8694,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 case 'framerate':
                 default:
                     // Always try without frame rate if constraint name not defined
+                    if (frameRate) {
+                        that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
+                        nextFrameRate = null;
 
-                    if (!frameRate) {
+                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    }
+
+                    // Then try to reduce resolution
+                    if (!resolution) {
                         break;
                     }
 
-                    that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
-                    nextFrameRate = null;
+                    that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
+                        constraintName, nextResolution.height, nextResolution.width);
+                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
 
                     return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
                 }
@@ -13974,7 +13982,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 42 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -14864,8 +14871,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     var requestMethods = {
-        get: 'GET',
-        post: 'POST'
+        'get': 'GET',
+        'post': 'POST',
+        'put': 'PUT',
+        'delete': 'DELETE' // Delete is reserved
     };
     var defaultTimeout = 3000;
     var defaultMaxAttempts = 1;
@@ -14913,12 +14922,46 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     Http.prototype.post = function postWithRetry(url, data, settings, callback) {
+        return methodWithData.call(this, requestMethods.post, url, data, settings, callback);
+    };
+
+    Http.prototype.put = function postWithRetry(url, data, settings, callback) {
+        return methodWithData.call(this, requestMethods.put, url, data, settings, callback);
+    };
+
+    Http.prototype.delete = function postWithRetry(url, data, settings, callback) {
+        return methodWithData.call(this, requestMethods.delete, url, data, settings, callback);
+    };
+
+    Http.prototype.getWithRetry = function getWithRetry(url, settings, callback) {
+        var methodWithoutCallback = _.bind(this.get, this, url, settings);
+        var requestState = {
+            startTime: _.now(),
+            isDisposed: false
+        };
+
+        return handleMethodWithRetry.call(this, url, settings, methodWithoutCallback, requestState, callback);
+    };
+
+    Http.prototype.postWithRetry = function postWithRetry(url, data, settings, callback) {
+        return methodRetryWithData.call(this, this.post, url, data, settings, callback);
+    };
+
+    Http.prototype.putWithRetry = function postWithRetry(url, data, settings, callback) {
+        return methodRetryWithData.call(this, this.put, url, data, settings, callback);
+    };
+
+    Http.prototype.deleteWithRetry = function postWithRetry(url, data, settings, callback) {
+        return methodRetryWithData.call(this, this.delete, url, data, settings, callback);
+    };
+
+    function methodWithData(method, url, data, settings, callback) {
         settings = settings || {};
 
         validateSettings(settings);
 
         var requestUrl = appendQueryParameters(settings.queryParameters || {}, url);
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod(requestMethods.post, requestUrl, callback);
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod(method, requestUrl, callback);
         var handleResponse = _.bind(appendResponseTimeAndContinue, this, _.now(), callback);
 
         if (!xhr) {
@@ -14936,27 +14979,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         xhr.timeout = settings.timeout || 15000;
 
         xhr.send(data);
-    };
+    }
 
-    Http.prototype.getWithRetry = function getWithRetry(url, settings, callback) {
-        var methodWithoutCallback = _.bind(this.get, this, url, settings);
+    function methodRetryWithData(method, url, data, settings, callback) {
+        var methodWithoutCallback = _.bind(method, this, url, data, settings);
         var requestState = {
             startTime: _.now(),
             isDisposed: false
         };
 
         return handleMethodWithRetry.call(this, url, settings, methodWithoutCallback, requestState, callback);
-    };
-
-    Http.prototype.postWithRetry = function postWithRetry(url, data, settings, callback) {
-        var methodWithoutCallback = _.bind(this.post, this, url, data, settings);
-        var requestState = {
-            startTime: _.now(),
-            isDisposed: false
-        };
-
-        return handleMethodWithRetry.call(this, url, settings, methodWithoutCallback, requestState, callback);
-    };
+    }
 
     function validateSettings(settings) {
         assert.isObject(settings, 'settings');
@@ -15975,7 +16008,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-07T15:52:06Z' || '?';
+    var sdkVersion = '2018-02-09T21:16:04Z' || '?';
     var releaseVersion = '2018.1.13';
 
     function Logger() {
@@ -29400,7 +29433,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-07T15:52:06Z' || '?';
+    var sdkVersion = '2018-02-09T21:16:04Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -29655,7 +29688,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-07T15:52:06Z' || '?';
+    var sdkVersion = '2018-02-09T21:16:04Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -30176,6 +30209,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 type: 'get-desktop-media',
                 sources: ['screen', 'window', 'tab', 'audio']
             }, function(response) {
+                var shouldCheckIfScreenShareStillInstalled = !response;
+
+                if (shouldCheckIfScreenShareStillInstalled) {
+                    return checkForScreenSharingCapability.call(that, function(isEnabled) {
+                        handleCheckForScreenSharing.call(that, isEnabled);
+
+                        return callback(new Error('extension-failure'));
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return callback(new Error(response.status), response);
                 }
@@ -30370,7 +30413,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         switch (phenixRTC.browser) {
         case 'Chrome':
             if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) {
-                that._logger.info('Screen sharing NOT available');
+                that._logger.info('Screen sharing NOT available. Runtime not supported');
 
                 return null;
             }
@@ -30504,12 +30547,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         return getUserMediaConstraints.call(this, options, function(error, response) {
-            if (response.status === 'cancelled') {
-                return onUserMediaCancelled();
+            if (_.get(response, ['status']) !== 'ok') {
+                return onUserMediaFailure(error);
             }
 
-            if (response.status !== 'ok') {
-                return onUserMediaFailure(error);
+            if (response.status === 'cancelled') {
+                return onUserMediaCancelled();
             }
 
             var constraints = response.constraints;

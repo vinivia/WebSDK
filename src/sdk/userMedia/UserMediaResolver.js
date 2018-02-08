@@ -484,13 +484,21 @@ define([
                 case 'framerate':
                 default:
                     // Always try without frame rate if constraint name not defined
+                    if (frameRate) {
+                        that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
+                        nextFrameRate = null;
 
-                    if (!frameRate) {
+                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    }
+
+                    // Then try to reduce resolution
+                    if (!resolution) {
                         break;
                     }
 
-                    that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
-                    nextFrameRate = null;
+                    that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
+                        constraintName, nextResolution.height, nextResolution.width);
+                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
 
                     return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
                 }
