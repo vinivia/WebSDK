@@ -202,6 +202,16 @@ define([
                 type: 'get-desktop-media',
                 sources: ['screen', 'window', 'tab', 'audio']
             }, function(response) {
+                var shouldCheckIfScreenShareStillInstalled = !response;
+
+                if (shouldCheckIfScreenShareStillInstalled) {
+                    return checkForScreenSharingCapability.call(that, function(isEnabled) {
+                        handleCheckForScreenSharing.call(that, isEnabled);
+
+                        return callback(new Error('extension-failure'));
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return callback(new Error(response.status), response);
                 }
@@ -396,7 +406,7 @@ define([
         switch (phenixRTC.browser) {
         case 'Chrome':
             if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.sendMessage) {
-                that._logger.info('Screen sharing NOT available');
+                that._logger.info('Screen sharing NOT available. Runtime not supported');
 
                 return null;
             }
