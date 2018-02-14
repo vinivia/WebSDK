@@ -27,6 +27,8 @@ define([
     var defaultVideoBitRateThreshold = 6000;
     var defaultConditionCountForNotificationThreshold = 3;
     var defaultTimeoutForNoData = 5000;
+    var minEdgeMonitoringInterval = 6000;
+    var minEdgeConditionCountForNotification = 2;
 
     function PeerConnectionMonitor(name, peerConnection, logger) {
         assert.isString(name, 'name');
@@ -57,6 +59,17 @@ define([
         this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
         this._pausedTracks = [];
+
+        if (phenixRTC.browser === 'Edge') {
+            var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
+
+            this._monitoringInterval = Math.max(this._monitoringInterval, minEdgeMonitoringInterval);
+            this._conditionMonitoringInterval = Math.max(this._conditionMonitoringInterval, minEdgeMonitoringInterval);
+            this._conditionCountForNotificationThreshold = Math.max(Math.ceil(conditionMaxDuration / this._monitoringInterval), minEdgeConditionCountForNotification);
+
+            this._logger.info('Using modified options for optimal monitoring of PeerConnection on [Edge]. Monitor Interval [%s], Condition Monitor Interval [%s], Condition Count For Notification [%s]',
+                this._monitoringInterval, this._conditionMonitoringInterval, this._conditionCountForNotificationThreshold);
+        }
 
         return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
     };

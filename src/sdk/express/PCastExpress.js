@@ -610,6 +610,10 @@ define([
             };
 
             subscriber.setStreamErrorCallback(function(playerRenderer, errorType, error) {
+                if (errorType === 'real-time' && error.message === 'connection-timeout') {
+                    return retrySubscriber.call(that, error.message);
+                }
+
                 if (errorType === 'shaka' && error.severity !== shakaEnums.errorSeverity.critical.id) {
                     return; // Ignore error
                 }
