@@ -84,17 +84,13 @@ define([
     };
 
     PhenixLiveStream.prototype.setStreamEndedCallback = function setStreamEndedCallback(callback) {
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isFunction(callback, 'callback');
 
         this.streamEndedCallback = callback;
     };
 
     PhenixLiveStream.prototype.setStreamErrorCallback = function setStreamErrorCallback(callback) {
-        if (!_.isFunction(callback)) {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isFunction(callback, 'callback');
 
         this.streamErrorCallback = callback;
     };
@@ -112,13 +108,8 @@ define([
     };
 
     PhenixLiveStream.prototype.monitor = function monitor(options, callback) {
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
     };
 
     PhenixLiveStream.prototype.getMonitor = function getMonitor() {

@@ -24,17 +24,19 @@ define([
     './PCastEndPoint',
     './userMedia/ScreenShareExtensionManager',
     './userMedia/UserMediaProvider',
-    './PeerConnectionMonitor',
+    './streaming/PeerConnectionMonitor',
     './DimensionsChangedMonitor',
     './telemetry/metricsTransmitterFactory',
     './telemetry/StreamTelemetry',
     './telemetry/SessionTelemetry',
+    './streaming/PeerConnection',
     './streaming/StreamWrapper',
     './streaming/PhenixLiveStream',
+    './streaming/PhenixRealTimeStream',
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, StreamWrapper, PhenixLiveStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -658,6 +660,7 @@ define([
             }
 
             var masterStream = event.stream;
+            var kind = 'real-time';
 
             if (!masterStream) {
                 state.failed = true;
@@ -668,289 +671,19 @@ define([
 
             that._logger.info('[%s] Got remote stream', streamId);
 
-            streamTelemetry.setProperty('kind', 'real-time');
+            streamTelemetry.setProperty('kind', kind);
 
-            var createMediaStream = function createMediaStream(stream) {
-                var internalMediaStream = {
-                    children: [],
-                    monitor: null,
-                    renderer: null,
-                    isStopped: false,
-                    isStreamEnded: false,
+            var streamOptions = _.assign({networkLag: that._networkOneWayLatency}, options);
+            var realTimeStream = new PhenixRealTimeStream(streamId, masterStream, peerConnection, streamTelemetry, streamOptions, that._logger);
+            var realTimeStreamDecorator = new StreamWrapper(kind, realTimeStream, that._logger);
 
-                    mediaStream: {
-                        createRenderer: function createRenderer() {
-                            var element = null;
-                            var dimensionsChangedMonitor = new DimensionsChangedMonitor(that._logger);
+            var onError = function onError(source, event) {
+                that._logger.warn('Phenix Real-Time Stream Error [%s] [%s]', source, event);
 
-                            return {
-                                start: function start(elementToAttachTo) {
-                                    element = phenixRTC.attachMediaStream(elementToAttachTo, stream);
-
-                                    streamTelemetry.recordTimeToFirstFrame(element);
-                                    streamTelemetry.recordRebuffering(element);
-                                    streamTelemetry.recordVideoResolutionChanges(this, element);
-
-                                    if (options.receiveAudio === false) {
-                                        element.muted = true;
-                                    }
-
-                                    internalMediaStream.renderer = this;
-
-                                    dimensionsChangedMonitor.start(this, element);
-
-                                    return element;
-                                },
-
-                                stop: function stop() {
-                                    dimensionsChangedMonitor.stop();
-
-                                    streamTelemetry.stop();
-
-                                    if (element) {
-                                        if (typeof element.pause === 'function') {
-                                            element.pause();
-                                        }
-
-                                        if (phenixRTC.browser === 'Edge') {
-                                            element.src = '';
-                                        }
-
-                                        if (element.src && (phenixRTC.browser === 'IE')) {
-                                            element.src = null;
-                                        } else if (element.src) {
-                                            element.src = '';
-                                        }
-
-                                        if (element.srcObject) {
-                                            element.srcObject = null;
-                                        }
-
-                                        element = null;
-                                    }
-
-                                    internalMediaStream.renderer = null;
-                                },
-
-                                getStats: function getStats() {
-                                    if (!element) {
-                                        return {
-                                            width: 0,
-                                            height: 0,
-                                            currentTime: 0.0,
-                                            lag: 0.0,
-                                            networkState: streamEnums.networkStates.networkNoSource.id
-                                        };
-                                    }
-
-                                    var trueCurrentTime = (_.now() - options.originStartTime) / 1000;
-                                    var lag = that._networkOneWayLatency / 1000; // Check RTC stats instead
-
-                                    return {
-                                        width: element.videoWidth || element.width,
-                                        height: element.videoHeight || element.height,
-                                        currentTime: trueCurrentTime,
-                                        lag: lag,
-                                        networkState: element.networkState
-                                    };
-                                },
-
-                                setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                                    if (typeof callback !== 'function') {
-                                        throw new Error('"callback" must be a function');
-                                    }
-
-                                    this.dataQualityChangedCallback = callback;
-                                },
-
-                                addVideoDisplayDimensionsChangedCallback: function addVideoDisplayDimensionsChangedCallback(callback, options) {
-                                    dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
-                                }
-                            };
-                        },
-
-                        setStreamEndedCallback: function setStreamEndedCallback(callback) {
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            this.streamEndedCallback = callback;
-                        },
-
-                        setStreamErrorCallback: function setStreamErrorCallback(callback) {
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            this.streamErrorCallback = callback;
-                        },
-
-                        stop: function stop(reason) {
-                            if (internalMediaStream.isStopped) {
-                                return;
-                            }
-
-                            stopWebRTCStream(stream);
-
-                            if (noTracksAreActiveInMaster() || phenixRTC.browser === 'Edge' || phenixRTC.browser === 'IE') {
-                                destroyMasterMediaStream(reason);
-                            }
-
-                            internalMediaStream.isStopped = true;
-                        },
-
-                        monitor: function monitor(options, callback) {
-                            if (typeof options !== 'object') {
-                                throw new Error('"options" must be an object');
-                            }
-
-                            if (typeof callback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            var monitor = new PeerConnectionMonitor(streamId, peerConnection, that._logger);
-
-                            options.direction = 'inbound';
-
-                            monitor.start(options, function activeCallback() {
-                                return internalMediaStream.mediaStream.isActive();
-                            }, function monitorCallback(reason) {
-                                that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', streamId, reason);
-
-                                return callback(internalMediaStream.mediaStream, 'client-side-failure', reason);
-                            });
-
-                            internalMediaStream.monitor = monitor;
-
-                            return monitor;
-                        },
-
-                        getMonitor: function getMonitor() {
-                            return internalMediaStream.monitor;
-                        },
-
-                        getStats: function getStats(callback) {
-                            assert.isFunction(callback, 'callback');
-
-                            if (!this._lastStats) {
-                                this._lastStats = {};
-                            }
-
-                            var that = this;
-
-                            return phenixRTC.getStats(peerConnection, null, function(stats) {
-                                callback(convertPeerConnectionStats(stats, that._lastStats));
-                            });
-                        },
-
-                        getStream: function getStream() {
-                            return stream;
-                        },
-
-                        isActive: function isActive() {
-                            var isMasterStreamStopped = state.stopped;
-                            var isMasterStreamDestroyed = typeof that._mediaStreams[streamId] !== 'object';
-                            var isCurrentStreamStopped = internalMediaStream.isStopped;
-
-                            return !isMasterStreamStopped && !isMasterStreamDestroyed && !isCurrentStreamStopped;
-                        },
-
-                        getStreamId: function getStreamId() {
-                            return streamId;
-                        },
-
-                        select: function select(trackSelectCallback) {
-                            if (typeof trackSelectCallback !== 'function') {
-                                throw new Error('"callback" must be a function');
-                            }
-
-                            if (typeof window.MediaStream !== 'function') {
-                                throw new Error('MediaStream not supported in current browser');
-                            }
-
-                            var tracks = masterStream.getTracks();
-                            var streamToAttach = new window.MediaStream();
-
-                            for (var i = 0; i < tracks.length; i++) {
-                                if (trackSelectCallback(tracks[i], i)) {
-                                    streamToAttach.addTrack(tracks[i]);
-                                }
-                            }
-
-                            if (streamToAttach.getTracks().length === 0) {
-                                return that._logger.warn('No tracks selected');
-                            }
-
-                            var newMediaStream = createMediaStream(streamToAttach);
-                            internalMediaStream.children.push(newMediaStream);
-
-                            return newMediaStream.mediaStream;
-                        }
-                    },
-
-                    streamErrorCallback: function(errorSource, error) {
-                        // Recursively calls all children error callbacks
-                        for (var i = 0; i < internalMediaStream.children.length; i++) {
-                            internalMediaStream.children[i].streamErrorCallback(errorSource, error);
-                        }
-
-                        var mediaStream = internalMediaStream.mediaStream;
-
-                        if (typeof mediaStream.streamErrorCallback === 'function') {
-                            mediaStream.streamErrorCallback(mediaStream, errorSource, error);
-                        }
-                    },
-
-                    streamEndedCallback: function(status, reason) {
-                        // Recursively calls all children ended callbacks
-                        for (var i = 0; i < internalMediaStream.children.length; i++) {
-                            internalMediaStream.children[i].streamEndedCallback(status, reason);
-                        }
-
-                        if (internalMediaStream.isStreamEnded) {
-                            return;
-                        }
-
-                        var mediaStream = internalMediaStream.mediaStream;
-
-                        internalMediaStream.isStreamEnded = true;
-
-                        if (typeof mediaStream.streamEndedCallback === 'function') {
-                            mediaStream.streamEndedCallback(mediaStream, status, reason);
-                        }
-
-                        mediaStream.stop();
-
-                        if (internalMediaStream.renderer) {
-                            internalMediaStream.renderer.stop();
-                        }
-                    },
-
-                    dataQualityChangedCallback: function(status, reason) {
-                        for (var i = 0; i < internalMediaStream.children.length; i++) {
-                            internalMediaStream.children[i].dataQualityChangedCallback(status, reason);
-                        }
-
-                        var renderer = internalMediaStream.renderer;
-
-                        if (!renderer) {
-                            return;
-                        }
-
-                        if (typeof renderer.dataQualityChangedCallback === 'function') {
-                            renderer.dataQualityChangedCallback(renderer, status, reason);
-                        }
-                    }
-                };
-
-                return internalMediaStream;
+                realTimeStreamDecorator.streamErrorCallback(kind, event);
             };
 
-            function noTracksAreActiveInMaster() {
-                return isStreamStopped(masterStream);
-            }
-
-            function destroyMasterMediaStream(reason) {
+            var onStop = function destroyMasterMediaStream(reason) {
                 if (state.stopped) {
                     return;
                 }
@@ -974,13 +707,14 @@ define([
                 });
 
                 state.stopped = true;
-            }
+            };
 
-            var internalMediaStream = createMediaStream(masterStream);
+            realTimeStreamDecorator.on(streamEnums.streamEvents.playerError.name, onError);
+            realTimeStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
 
-            that._mediaStreams[streamId] = internalMediaStream;
+            that._mediaStreams[streamId] = realTimeStreamDecorator;
 
-            callback.call(that, internalMediaStream.mediaStream);
+            callback.call(that, realTimeStream);
         };
 
         _.addEventListener(peerConnection, 'addstream', onAddStream);
@@ -1391,7 +1125,7 @@ define([
                                 var that = this;
 
                                 return phenixRTC.getStats(peerConnection, null, function(stats) {
-                                    callback(convertPeerConnectionStats(stats, that._lastStats));
+                                    callback(PeerConnection.convertPeerConnectionStats(stats, that._lastStats));
                                 });
                             }
                         };
@@ -1724,131 +1458,12 @@ define([
         }
     }
 
-    function stopWebRTCStream(stream) {
-        if (stream && _.isFunction(stream.stop, 'stream.stop')) {
-            stream.stop();
-        }
-
-        if (stream && _.isFunction(stream.getTracks, 'stream.getTracks')) {
-            var tracks = stream.getTracks();
-
-            for (var i = 0; i < tracks.length; i++) {
-                var track = tracks[i];
-
-                track.stop();
-            }
-        }
-    }
-
-    function isStreamStopped(stream) {
-        return _.reduce(stream.getTracks(), function(isStopped, track) {
-            return isStopped && isTrackStopped(track);
-        }, true);
-    }
-
-    function isTrackStopped(track) {
-        if (typeof track !== 'object') {
-            throw new Error('Invalid track.');
-        }
-
-        return track.readyState === 'ended';
-    }
-
     function closePeerConnection(streamId, peerConnection, reason) {
         if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
             this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
             peerConnection.close();
             peerConnection.__closing = true;
         }
-    }
-
-    function convertPeerConnectionStats(stats, lastStats) {
-        if (!stats) {
-            return null;
-        }
-
-        var newStats = [];
-
-        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived) {
-            if (ssrc) {
-                if (!_.hasIndexOrKey(lastStats, ssrc)) {
-                    lastStats[ssrc] = {timestamp: 0};
-                }
-
-                var timeDelta = parseFloat(timestamp) - lastStats[ssrc].timestamp;
-                var up = calculateUploadRate(parseFloat(bytesSent), lastStats[ssrc].bytesSent, timeDelta);
-                var down = calculateDownloadRate(parseFloat(bytesReceived), lastStats[ssrc].bytesReceived, timeDelta);
-
-                lastStats[ssrc].bytesSent = parseFloat(bytesSent);
-                lastStats[ssrc].bytesReceived = parseFloat(bytesReceived);
-                lastStats[ssrc].timestamp = parseFloat(timestamp);
-
-                newStats.push({
-                    uploadRate: up,
-                    downloadRate: down,
-                    mediaType: mediaType,
-                    ssrc: ssrc
-                });
-            }
-        };
-
-        if (_.isFunction(stats.result)) {
-            _.forEach(stats.result(), function(statsReport) {
-                if (statsReport.type === 'ssrc') {
-                    var ssrc = statsReport.stat('ssrc');
-                    var bytesSent = statsReport.stat('bytesSent');
-                    var bytesReceived = statsReport.stat('bytesReceived');
-                    var mediaType = statsReport.stat('mediaType');
-                    var timestamp = statsReport.timestamp.getTime();
-
-                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived);
-                }
-            });
-        } else if (_.isFunction(stats.values)) {
-            _.forEach(Array.from(stats.values()), function(statsReport) {
-                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
-                        return;
-                    }
-
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
-                }
-            });
-        } else {
-            _.forEach(stats, function(statsReport) {
-                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
-                        return;
-                    }
-
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
-                }
-            });
-        }
-
-        return newStats;
-    }
-
-    function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
-        if (bytesSent) {
-            var bytesSentBefore = prevBytesSent || 0;
-            var bps = 8 * 1000 * (bytesSent - bytesSentBefore) / timeDelta;
-
-            return Math.round(bps / 1000);
-        }
-
-        return 0;
-    }
-
-    function calculateDownloadRate(bytesReceived, prevBytesReceived, timeDelta) {
-        if (bytesReceived) {
-            var bytesReceivedBefore = prevBytesReceived || 0;
-            var bps = 8 * 1000 * (bytesReceived - bytesReceivedBefore) / timeDelta;
-
-            return Math.round(bps / 1000);
-        }
-
-        return 0;
     }
 
     function parseProtobufMessage(message) {

@@ -19,7 +19,7 @@ define([
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
-    'sdk/PeerConnectionMonitor'
+    'sdk/streaming/PeerConnectionMonitor'
 ], function(PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, PeerConnectionMonitor) {
     describe('When Subscribing with Express PCast', function() {
         var mockBackendUri = 'https://mockUri';

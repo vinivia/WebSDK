@@ -25,7 +25,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json',
-    'sdk/PeerConnectionMonitor'
+    'sdk/streaming/PeerConnectionMonitor'
 ], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When Joining a Channel With Express Room That Has A Presenter', function() {
         var mockBackendUri = 'https://mockUri';
