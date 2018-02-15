@@ -372,11 +372,20 @@ requirejs([
                         message: 'The published stream ended for reason "' + reason + '"'
                     });
                 });
+                publisher.monitor({}, function() {
+                    app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Publish</strong>',
+                        message: 'Monitor condition'
+                    });
+                });
 
                 var limit = publisher.limitBandwidth(400000);
 
                 setTimeout(function() {
-                    limit.dispose();
+                    if (limit) {
+                        limit.dispose();
+                    }
                 }, 10000);
 
                 app.createNotification('success', {

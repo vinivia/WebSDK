@@ -168,6 +168,10 @@ define([
                                 videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
                                 lastVideoBytes[trackId] = currentBytes;
 
+                                if (phenixRTC.browser === 'Edge') {
+                                    hasFrameRate = false;
+                                }
+
                                 break;
                             case 'audio':
                                 that._logger.debug('[%s] Outbound [%s] [%s]',
