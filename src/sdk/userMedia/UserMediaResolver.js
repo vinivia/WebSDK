@@ -124,8 +124,16 @@ define([
 
         if (video) {
             constraints.video = {
-                height: height,
-                width: width,
+                height: {
+                    min: height,
+                    max: height,
+                    exact: height
+                },
+                width: {
+                    min: width,
+                    max: width,
+                    exact: width
+                },
                 frameRate: frameRate
             };
 
@@ -468,7 +476,7 @@ define([
             var nextFrameRate = frameRate;
             var constraintName = getConstraintNameFromError(error);
 
-            if (error && (error.name === 'ConstraintNotSatisfiedError' || error.name === 'OverconstrainedError') || error.constructor.name === 'OverconstrainedError') {
+            if (error && (error.name === 'ConstraintNotSatisfiedError' || error.name === 'OverconstrainedError') || error.constructor.name === 'OverconstrainedError' || (error.code === 'unavailable' && RTC.browser === 'Edge')) {
                 switch (constraintName.toLowerCase()) {
                 case 'width':
                 case 'height':

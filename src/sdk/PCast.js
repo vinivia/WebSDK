@@ -288,10 +288,6 @@ define([
     };
 
     PCast.prototype.publish = function(streamToken, streamToPublish, callback, tags, options) {
-        if (phenixRTC.browser === 'Edge') {
-            throw new Error('Publishing not supported on Edge');
-        }
-
         if (phenixRTC.browser === 'IE') {
             throw new Error('Publishing not supported on IE');
         }

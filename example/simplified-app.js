@@ -189,6 +189,7 @@ requirejs([
             var remoteVideoEl = $('#remoteVideo')[0];
             var capabilities = [];
             var constraints = getConstraints();
+            var quality = $('#gum-quality option:selected').val();
             var subscribeMethod = _.bind(pcastExpress.subscribe, pcastExpress);
 
             if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
@@ -206,7 +207,8 @@ requirejs([
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
                 monitor: {callback: onMonitorEvent},
-                streamToken: 'dud'
+                streamToken: 'dud',
+                resolution: parseInt(quality)
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

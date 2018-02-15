@@ -217,6 +217,10 @@ define('video-player', [
     }
 
     var setVideoWidthAndHeight = function setVideoWithAndHeight(dimensions, options) {
+        if (rtc.browser === 'Edge') {
+            return;
+        }
+
         var videoOptions = options || {};
         var minWidth = videoOptions.minWidth || 160;
         var minHeight = videoOptions.minHeight || 120;
