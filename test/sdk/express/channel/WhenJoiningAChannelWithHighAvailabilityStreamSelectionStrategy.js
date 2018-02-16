@@ -120,11 +120,11 @@ define([
 
             httpStubber.stubStreamRequest(function(request, body) {
                 switch (subscribeCount) {
-                case 1:
+                case 0:
                     return expect(body.originStreamId).to.be.equal(parseStreamIdFromUri(primaryMember.streams[0].uri));
-                case 2:
+                case 1:
                     return expect(body.originStreamId).to.be.equal(parseStreamIdFromUri(alternateMember.streams[0].uri));
-                case 3:
+                case 2:
                     return expect(body.originStreamId).to.be.equal(parseStreamIdFromUri(normalMember.streams[0].uri));
                 default:
                     return;
@@ -164,11 +164,11 @@ define([
 
             httpStubber.stubStreamRequest(function(request, body) {
                 switch (subscribeCount) {
+                case 0:
+                    return expect(_.includes(body.originStreamId, 'primary')).to.be.true;
                 case 1:
                     return expect(_.includes(body.originStreamId, 'primary')).to.be.true;
                 case 2:
-                    return expect(_.includes(body.originStreamId, 'primary')).to.be.true;
-                case 3:
                     return expect(body.originStreamId).to.be.equal(parseStreamIdFromUri(alternateMember.streams[0].uri));
                 default:
                     return;
@@ -210,9 +210,9 @@ define([
 
             httpStubber.stubStreamRequest(function(request, body) {
                 switch (subscribeCount) {
-                case 1:
+                case 0:
                     return expect(_.includes(body.originStreamId, 'primary')).to.be.true;
-                case 2:
+                case 1:
                     return expect(_.includes(body.originStreamId, 'primary')).to.be.true;
                 default:
                     return;
@@ -251,7 +251,7 @@ define([
 
             httpStubber.stubStreamRequest(function(request, body) {
                 switch (subscribeCount) {
-                case 1:
+                case 0:
                     return expect(body.originStreamId).to.be.equal(parseStreamIdFromUri(primaryMember.streams[0].uri));
                 default:
                     return;

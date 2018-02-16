@@ -107,6 +107,22 @@ define([
         return this._observableStatus;
     };
 
+    PCast.prototype.isStarted = function() {
+        return this._started;
+    };
+
+    PCast.prototype.reAuthenticate = function(authToken) {
+        assert.isStringNotEmpty(authToken, 'authToken');
+
+        if (this._observableStatus.getValue() === 'online') {
+            throw new Error('already-authenticated');
+        }
+
+        this._authToken = authToken;
+
+        reconnected.call(this);
+    };
+
     PCast.prototype.start = function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
         if (typeof authToken !== 'string') {
             throw new Error('"authToken" must be a string');
@@ -517,12 +533,10 @@ define([
                         that._logger.error('Failed to authenticate [%s]', error);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
-                        that.stop('unauthorized');
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to authenticate, status [%s]', response.status);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
-                        that.stop('unauthorized');
                     } else {
                         transitionToStatus.call(that, 'online');
 
@@ -542,29 +556,35 @@ define([
 
         this._logger.info('Attempting to re-authenticate after reconnect event');
 
+        reAuthenticate.call(this);
+    }
+
+    function reAuthenticate() {
         var that = this;
 
         if (!that._stopped) {
             that._protocol.authenticate(that._authToken, function(error, response) {
-                var suppressCallback = that._connected === true;
+                var suppressCallbackIfNeverDisconnected = that._connected === true;
 
                 if (error) {
                     that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
 
-                    return transitionToStatus.call(that, 'offline');
+                    return transitionToStatus.call(that, 'offline', 'reconnect-failed');
                 }
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
 
-                    return transitionToStatus.call(that, 'offline');
+                    var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
+
+                    return transitionToStatus.call(that, 'offline', reason);
                 }
 
                 that._connected = true;
 
                 that._logger.info('Successfully authenticated after reconnect to WebSocket');
 
-                return transitionToStatus.call(that, 'online', suppressCallback);
+                return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
             });
         }
     }
@@ -1429,7 +1449,7 @@ define([
         callback.call(this, liveStreamDecorator.getPhenixMediaStream());
     }
 
-    function transitionToStatus(newStatus, suppressCallback) {
+    function transitionToStatus(newStatus, reason, suppressCallback) {
         var oldStatus = this.getStatus();
 
         if (oldStatus !== newStatus) {
@@ -1445,7 +1465,7 @@ define([
             case 'reconnected':
                 break;
             case 'offline':
-                this._offlineCallback.call(this);
+                this._offlineCallback.call(this, reason);
 
                 break;
             case 'online':

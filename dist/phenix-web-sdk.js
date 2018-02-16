@@ -4487,7 +4487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-02-14T22:59:16Z',
+                version: '2018-02-16T21:41:40Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4757,7 +4757,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-02-14T22:59:16Z';
+    var sdkVersion = '2018-02-16T21:41:40Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -4823,6 +4823,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     PCast.prototype.getObservableStatus = function() {
         return this._observableStatus;
+    };
+
+    PCast.prototype.isStarted = function() {
+        return this._started;
+    };
+
+    PCast.prototype.reAuthenticate = function(authToken) {
+        assert.isStringNotEmpty(authToken, 'authToken');
+
+        if (this._observableStatus.getValue() === 'online') {
+            throw new Error('already-authenticated');
+        }
+
+        this._authToken = authToken;
+
+        reconnected.call(this);
     };
 
     PCast.prototype.start = function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
@@ -5235,12 +5251,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         that._logger.error('Failed to authenticate [%s]', error);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
-                        that.stop('unauthorized');
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to authenticate, status [%s]', response.status);
                         transitionToStatus.call(that, 'offline');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
-                        that.stop('unauthorized');
                     } else {
                         transitionToStatus.call(that, 'online');
 
@@ -5260,29 +5274,35 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._logger.info('Attempting to re-authenticate after reconnect event');
 
+        reAuthenticate.call(this);
+    }
+
+    function reAuthenticate() {
         var that = this;
 
         if (!that._stopped) {
             that._protocol.authenticate(that._authToken, function(error, response) {
-                var suppressCallback = that._connected === true;
+                var suppressCallbackIfNeverDisconnected = that._connected === true;
 
                 if (error) {
                     that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
 
-                    return transitionToStatus.call(that, 'offline');
+                    return transitionToStatus.call(that, 'offline', 'reconnect-failed');
                 }
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
 
-                    return transitionToStatus.call(that, 'offline');
+                    var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
+
+                    return transitionToStatus.call(that, 'offline', reason);
                 }
 
                 that._connected = true;
 
                 that._logger.info('Successfully authenticated after reconnect to WebSocket');
 
-                return transitionToStatus.call(that, 'online', suppressCallback);
+                return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
             });
         }
     }
@@ -6147,7 +6167,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         callback.call(this, liveStreamDecorator.getPhenixMediaStream());
     }
 
-    function transitionToStatus(newStatus, suppressCallback) {
+    function transitionToStatus(newStatus, reason, suppressCallback) {
         var oldStatus = this.getStatus();
 
         if (oldStatus !== newStatus) {
@@ -6163,7 +6183,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             case 'reconnected':
                 break;
             case 'offline':
-                this._offlineCallback.call(this);
+                this._offlineCallback.call(this, reason);
 
                 break;
             case 'online':
@@ -6291,6 +6311,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var unauthorizedStatus = 'unauthorized';
     var capacityBackoffTimeout = 1000;
     var defaultPrerollSkipDuration = 500;
+    var defaultOnlineTimeout = 20000;
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
@@ -6305,6 +6326,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isFunction(options.onError, 'options.onError');
         }
 
+        if (!_.isNullOrUndefined(options.onlineTimeout)) {
+            assert.isNumber(options.onlineTimeout, 'options.onlineTimeout');
+
+            if (options.onlineTimeout < 0) {
+                throw new Error('"options.onlineTimeout" must be a positive number');
+            }
+        }
+
         this._pcast = null;
         this._subscribers = {};
         this._publishers = {};
@@ -6315,6 +6344,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._reauthCount = 0;
         this._authToken = options.authToken;
         this._onError = options.onError;
+        this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultOnlineTimeout;
 
         instantiatePCast.call(this);
     }
@@ -6427,7 +6457,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             if (options.userMediaStream) {
                 return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
@@ -6500,7 +6534,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             var remoteOptions = _.assign({
                 connectOptions: [],
                 capabilities: []
@@ -6571,7 +6609,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             if (options.streamToken) {
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
@@ -6609,11 +6651,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return callback();
         }
 
+        var onlineTimeout = setTimeout(function() {
+            subscription.dispose();
+            callback(new Error('timeout'));
+        }, this._onlineTimeout);
+
         var subscription = this._pcast.getObservableStatus().subscribe(function(status) {
             if (status !== 'online') {
                 return;
             }
 
+            clearTimeout(onlineTimeout);
             subscription.dispose();
 
             return callback();
@@ -6633,8 +6681,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 },
                 function onlineCallback() {
                     handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                }, function offlineCallback(reason) {
+                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
                 });
         }
 
@@ -6656,8 +6704,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 },
                 function onlineCallback() {
                     handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                }, function offlineCallback(reason) {
+                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
                 });
         });
     }
@@ -6673,6 +6721,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             that._reauthCount++;
 
             switch (response.status) {
+            case 'reconnect-failed':
             case 'unauthorized':
                 delete this._authToken;
 
@@ -6682,11 +6731,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
 
-                return instantiatePCast.call(that);
+                return getAuthTokenAndReAuthenticate.call(that);
             case 'capacity':
             case 'network-unavailable':
                 return setTimeout(function() {
-                    instantiatePCast.call(that);
+                    if (!that._pcast.isStarted()) {
+                        return instantiatePCast.call(that);
+                    }
+
+                    return getAuthTokenAndReAuthenticate.call(that);
                 }, capacityBackoffTimeout * that._reauthCount * that._reauthCount);
             case 'failed':
             default:
@@ -6701,6 +6754,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         that._isInstantiated = true;
+    }
+
+    function getAuthTokenAndReAuthenticate() {
+        var that = this;
+
+        this._adminAPI.createAuthenticationToken(function(error, response) {
+            if (error) {
+                return handlePCastInstantiated.call(that, error);
+            }
+
+            if (response.status !== 'ok') {
+                return handlePCastInstantiated.call(that, null, response);
+            }
+
+            that._pcast.reAuthenticate(response.authenticationToken);
+        });
     }
 
     function handleError(e) {
@@ -9370,6 +9439,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, http) {
     'use strict';
 
+    var networkUnavailableCode = 0;
+    var requestMaxTimeout = 20000;
+    var defaultRequestOptions = {
+        timeout: requestMaxTimeout,
+        retryOptions: {
+            backoff: 1.5,
+            delay: 1000,
+            maxAttempts: 3,
+            additionalRetryErrorCodes: [networkUnavailableCode]
+        }
+    };
+
     function AdminAPI(backendUri, authenticationData) {
         assert.isStringNotEmpty(backendUri, 'backendUri');
         assert.isObject(authenticationData, 'authenticationData');
@@ -9380,8 +9461,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
         var data = appendAuthDataTo.call(this, {});
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/auth', JSON.stringify(data), defaultRequestOptions);
 
-        http.postWithRetry(this._backendUri + '/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
@@ -9392,8 +9474,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             sessionId: sessionId,
             capabilities: capabilities
         });
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
@@ -9418,12 +9501,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             data.alternateOriginStreamIds = alternateStreamIds;
         }
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
+
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.getStreams = function getStreams(callback) {
-        http.getWithRetry(this._backendUri + '/streams', {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        var requestWithoutCallback = _.bind(http.getWithRetry, http, this._backendUri + '/streams', defaultRequestOptions);
+
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
+
+    function requestWithTimeout(requestWithoutCallback, callback) {
+        var requestTimeout = null;
+        var disposable = requestWithoutCallback(_.bind(handleResponse, this, function(error, response) {
+            clearTimeout(requestTimeout);
+
+            callback(error, response);
+        }));
+
+        requestTimeout = setTimeout(function() {
+            disposable.dispose();
+            callback(new Error('timeout'));
+        }, requestMaxTimeout);
+    }
 
     function appendAuthDataTo(data) {
         return _.assign({}, data, this._authenticationData);
@@ -12230,7 +12331,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
         var uniqueId = _.uniqueId();
 
-        this._pcastExpress.waitForOnline(function() {
+        this._pcastExpress.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             var activeRoomService = findActiveRoom.call(that, roomId, alias);
 
             if (activeRoomService) {
@@ -16322,7 +16427,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-14T22:59:16Z' || '?';
+    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
     var releaseVersion = '2018.1.14';
 
     function Logger() {
@@ -29594,7 +29699,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-14T22:59:16Z' || '?';
+    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -29849,7 +29954,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-14T22:59:16Z' || '?';
+    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

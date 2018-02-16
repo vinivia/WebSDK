@@ -44,6 +44,12 @@ define([
         }, callback);
     };
 
+    WebSocketStubber.prototype.stubAuthRequestFailure = function(status, callback) {
+        setupStubIfNoneExist.call(this);
+
+        this.stubResponse('pcast.Authenticate', {status: status}, callback);
+    };
+
     WebSocketStubber.prototype.stubSetupStream = function(callback) {
         this.stubResponse('pcast.SetupStream', {
             status: 'ok',
@@ -94,6 +100,18 @@ define([
     WebSocketStubber.prototype.triggerConnected = function() {
         if (this._namedEvents) {
             this._namedEvents.fire('connected');
+        }
+    };
+
+    WebSocketStubber.prototype.triggerReconnected = function() {
+        if (this._namedEvents) {
+            this._namedEvents.fire('reconnected');
+        }
+    };
+
+    WebSocketStubber.prototype.triggerDisconnected = function() {
+        if (this._namedEvents) {
+            this._namedEvents.fire('disconnected');
         }
     };
 

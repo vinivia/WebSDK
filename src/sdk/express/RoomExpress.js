@@ -586,7 +586,11 @@ define([
         var that = this;
         var uniqueId = _.uniqueId();
 
-        this._pcastExpress.waitForOnline(function() {
+        this._pcastExpress.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             var activeRoomService = findActiveRoom.call(that, roomId, alias);
 
             if (activeRoomService) {
