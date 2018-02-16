@@ -27,6 +27,7 @@ define([
     var unauthorizedStatus = 'unauthorized';
     var capacityBackoffTimeout = 1000;
     var defaultPrerollSkipDuration = 500;
+    var defaultOnlineTimeout = 20000;
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
@@ -41,6 +42,14 @@ define([
             assert.isFunction(options.onError, 'options.onError');
         }
 
+        if (!_.isNullOrUndefined(options.onlineTimeout)) {
+            assert.isNumber(options.onlineTimeout, 'options.onlineTimeout');
+
+            if (options.onlineTimeout < 0) {
+                throw new Error('"options.onlineTimeout" must be a positive number');
+            }
+        }
+
         this._pcast = null;
         this._subscribers = {};
         this._publishers = {};
@@ -51,6 +60,7 @@ define([
         this._reauthCount = 0;
         this._authToken = options.authToken;
         this._onError = options.onError;
+        this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultOnlineTimeout;
 
         instantiatePCast.call(this);
     }
@@ -163,7 +173,11 @@ define([
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             if (options.userMediaStream) {
                 return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
@@ -236,7 +250,11 @@ define([
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             var remoteOptions = _.assign({
                 connectOptions: [],
                 capabilities: []
@@ -307,7 +325,11 @@ define([
 
         var that = this;
 
-        this.waitForOnline(function() {
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
             if (options.streamToken) {
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
@@ -345,11 +367,17 @@ define([
             return callback();
         }
 
+        var onlineTimeout = setTimeout(function() {
+            subscription.dispose();
+            callback(new Error('timeout'));
+        }, this._onlineTimeout);
+
         var subscription = this._pcast.getObservableStatus().subscribe(function(status) {
             if (status !== 'online') {
                 return;
             }
 
+            clearTimeout(onlineTimeout);
             subscription.dispose();
 
             return callback();
@@ -369,8 +397,8 @@ define([
                 },
                 function onlineCallback() {
                     handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                }, function offlineCallback(reason) {
+                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
                 });
         }
 
@@ -392,8 +420,8 @@ define([
                 },
                 function onlineCallback() {
                     handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'offline'});
+                }, function offlineCallback(reason) {
+                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
                 });
         });
     }
@@ -409,6 +437,7 @@ define([
             that._reauthCount++;
 
             switch (response.status) {
+            case 'reconnect-failed':
             case 'unauthorized':
                 delete this._authToken;
 
@@ -418,11 +447,15 @@ define([
 
                 that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
 
-                return instantiatePCast.call(that);
+                return getAuthTokenAndReAuthenticate.call(that);
             case 'capacity':
             case 'network-unavailable':
                 return setTimeout(function() {
-                    instantiatePCast.call(that);
+                    if (!that._pcast.isStarted()) {
+                        return instantiatePCast.call(that);
+                    }
+
+                    return getAuthTokenAndReAuthenticate.call(that);
                 }, capacityBackoffTimeout * that._reauthCount * that._reauthCount);
             case 'failed':
             default:
@@ -437,6 +470,22 @@ define([
         }
 
         that._isInstantiated = true;
+    }
+
+    function getAuthTokenAndReAuthenticate() {
+        var that = this;
+
+        this._adminAPI.createAuthenticationToken(function(error, response) {
+            if (error) {
+                return handlePCastInstantiated.call(that, error);
+            }
+
+            if (response.status !== 'ok') {
+                return handlePCastInstantiated.call(that, null, response);
+            }
+
+            that._pcast.reAuthenticate(response.authenticationToken);
+        });
     }
 
     function handleError(e) {

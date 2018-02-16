@@ -20,6 +20,18 @@ define([
 ], function(_, assert, http) {
     'use strict';
 
+    var networkUnavailableCode = 0;
+    var requestMaxTimeout = 20000;
+    var defaultRequestOptions = {
+        timeout: requestMaxTimeout,
+        retryOptions: {
+            backoff: 1.5,
+            delay: 1000,
+            maxAttempts: 3,
+            additionalRetryErrorCodes: [networkUnavailableCode]
+        }
+    };
+
     function AdminAPI(backendUri, authenticationData) {
         assert.isStringNotEmpty(backendUri, 'backendUri');
         assert.isObject(authenticationData, 'authenticationData');
@@ -30,8 +42,9 @@ define([
 
     AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
         var data = appendAuthDataTo.call(this, {});
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/auth', JSON.stringify(data), defaultRequestOptions);
 
-        http.postWithRetry(this._backendUri + '/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
@@ -42,8 +55,9 @@ define([
             sessionId: sessionId,
             capabilities: capabilities
         });
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
@@ -68,12 +82,30 @@ define([
             data.alternateOriginStreamIds = alternateStreamIds;
         }
 
-        http.postWithRetry(this._backendUri + '/stream', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
+
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
     AdminAPI.prototype.getStreams = function getStreams(callback) {
-        http.getWithRetry(this._backendUri + '/streams', {retryOptions: {maxAttempts: 1}}, _.bind(handleResponse, this, callback));
+        var requestWithoutCallback = _.bind(http.getWithRetry, http, this._backendUri + '/streams', defaultRequestOptions);
+
+        return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
+
+    function requestWithTimeout(requestWithoutCallback, callback) {
+        var requestTimeout = null;
+        var disposable = requestWithoutCallback(_.bind(handleResponse, this, function(error, response) {
+            clearTimeout(requestTimeout);
+
+            callback(error, response);
+        }));
+
+        requestTimeout = setTimeout(function() {
+            disposable.dispose();
+            callback(new Error('timeout'));
+        }, requestMaxTimeout);
+    }
 
     function appendAuthDataTo(data) {
         return _.assign({}, data, this._authenticationData);

@@ -1,0 +1,249 @@
+/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+define([
+    'phenix-web-lodash-light',
+    'sdk/express/PCastExpress',
+    '../../../test/mock/HttpStubber',
+    '../../../test/mock/WebSocketStubber',
+    '../../../test/mock/ChromeRuntimeStubber',
+    '../../../test/mock/PeerConnectionStubber'
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    describe('When Reconnecting to PCast', function() {
+        var mockBackendUri = 'https://mockUri';
+        var mockAuthData = {
+            name: 'mockUser',
+            password: 'somePassword'
+        };
+
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var peerConnectionStubber = new PeerConnectionStubber();
+        var pcastExpress;
+
+        before(function() {
+            chromeRuntimeStubber.stub();
+            peerConnectionStubber.stub();
+        });
+
+        beforeEach(function(done) {
+            httpStubber = new HttpStubber();
+            httpStubber.stubAuthRequest();
+            httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
+            pcastExpress = new PCastExpress({
+                backendUri: mockBackendUri,
+                authenticationData: mockAuthData,
+                uri: 'wss://mockURI',
+                onError: _.noop
+            });
+
+            websocketStubber.stubSetupStream();
+            websocketStubber.triggerConnected();
+
+            pcastExpress.waitForOnline(function() {
+                websocketStubber.triggerReconnected();
+                done();
+            });
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+            peerConnectionStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
+            pcastExpress.dispose();
+        });
+
+        it('successfully subscribes to stream', function(done) {
+            pcastExpress.subscribe({
+                capabilities: [],
+                streamId: 'MockStreamId'
+            }, function(error, response) {
+                expect(error).to.not.exist;
+                expect(response.mediaStream).to.be.a('object');
+                done();
+            });
+        });
+
+        it('successfully publishes a stream', function(done) {
+            pcastExpress.publish({
+                capabilities: [],
+                userMediaStream: {}
+            }, function(error, response) {
+                expect(response.publisher).to.be.a('object');
+                done();
+            });
+        });
+
+        describe('When auth fails with status unauthorized and then successfully reconnects after getting a new auth token', function() {
+            var reauthTokenSpy = null;
+
+            beforeEach(function(done) {
+                reauthTokenSpy = sinon.spy();
+
+                websocketStubber.stubAuthRequestFailure('unauthorized');
+                httpStubber.stubAuthRequest(function() {
+                    websocketStubber.stubAuthRequest();
+                    reauthTokenSpy();
+                });
+                websocketStubber.triggerReconnected();
+
+                pcastExpress.waitForOnline(function() {
+                    sinon.assert.calledOnce(reauthTokenSpy);
+                    done();
+                });
+            });
+
+            it('successfully subscribes to stream', function(done) {
+                pcastExpress.subscribe({
+                    capabilities: [],
+                    streamId: 'MockStreamId'
+                }, function(error, response) {
+                    expect(error).to.not.exist;
+                    expect(response.mediaStream).to.be.a('object');
+                    done();
+                });
+            });
+
+            it('successfully publishes a stream', function(done) {
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: {}
+                }, function(error, response) {
+                    expect(response.publisher).to.be.a('object');
+                    done();
+                });
+            });
+        });
+
+        describe('When auth fails with status unauthorized and then fails to reconnect', function() {
+            var setTimeoutClone = setTimeout;
+
+            beforeEach(function() {
+                window.setTimeout = function(callback, timeout) {
+                    return setTimeoutClone(callback, timeout / 100);
+                };
+
+                websocketStubber.stubAuthRequestFailure('unauthorized');
+                websocketStubber.triggerReconnected();
+            });
+
+            afterEach(function() {
+                window.setTimeout = setTimeoutClone;
+            });
+
+            it('fails to subscribe to stream within 20000 ms', function(done) {
+                var start = _.now();
+
+                pcastExpress.subscribe({
+                    capabilities: [],
+                    streamId: 'MockStreamId'
+                }, function(error) {
+                    expect(error.message).to.be.equal('timeout');
+                    expect((_.now() - start) >= (20000 / 100)).to.be.true;
+                    done();
+                });
+            });
+
+            it('fails to publish a stream within 20000 ms', function(done) {
+                var start = _.now();
+
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: {}
+                }, function(error) {
+                    expect(error.message).to.be.equal('timeout');
+                    expect((_.now() - start) >= (20000 / 100)).to.be.true;
+                    done();
+                });
+            });
+        });
+
+        describe('When auth fails with status capacity', function() {
+            var reauthTokenSpy = null;
+            var setTimeoutClone = setTimeout;
+
+            beforeEach(function() {
+                reauthTokenSpy = sinon.spy();
+
+                window.setTimeout = function(callback, timeout) {
+                    return setTimeoutClone(callback, timeout / 100);
+                };
+
+                websocketStubber.stubAuthRequestFailure('capacity');
+                httpStubber.stubAuthRequest(reauthTokenSpy);
+                websocketStubber.triggerReconnected();
+            });
+
+            afterEach(function() {
+                window.setTimeout = setTimeoutClone;
+            });
+
+            it('attempts to reconnect 2 times after 6000 ms', function(done) {
+                setTimeout(function() {
+                    sinon.assert.calledTwice(reauthTokenSpy);
+                    done();
+                }, 6000);
+            });
+
+            it('attempts to reconnect 3 times after 10000 ms', function(done) {
+                setTimeout(function() {
+                    sinon.assert.calledThrice(reauthTokenSpy);
+                    done();
+                }, 10000);
+            });
+        });
+
+        describe('When PCast disconnects then reconnects', function() {
+            beforeEach(function(done) {
+                websocketStubber.triggerDisconnected();
+
+                setTimeout(function() {
+                    websocketStubber.triggerReconnected();
+                    done();
+                }, 100);
+            });
+
+            it('successfully subscribes to stream', function(done) {
+                pcastExpress.subscribe({
+                    capabilities: [],
+                    streamId: 'MockStreamId'
+                }, function(error, response) {
+                    expect(error).to.not.exist;
+                    expect(response.mediaStream).to.be.a('object');
+                    done();
+                });
+            });
+
+            it('successfully publishes a stream', function(done) {
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: {}
+                }, function(error, response) {
+                    expect(response.publisher).to.be.a('object');
+                    done();
+                });
+            });
+        });
+    });
+});

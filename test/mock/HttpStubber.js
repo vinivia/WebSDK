@@ -88,14 +88,15 @@ define(['phenix-web-lodash-light'], function(_) {
                 var handlerKey = _.find(_.keys(that._handlers), function(key) {
                     return sentRequest.url.toLowerCase().indexOf(key) > -1;
                 });
+
                 var handler = handlerKey ? that._handlers[handlerKey] : that._defaultHandler;
 
                 if (sentRequest.url.toLowerCase().indexOf('telemetry') === -1 ) {
-                    req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
-
                     if (handler.callback) {
                         handler.callback(req, JSON.parse(req.requestBody));
                     }
+
+                    req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
                 }
 
                 return false;

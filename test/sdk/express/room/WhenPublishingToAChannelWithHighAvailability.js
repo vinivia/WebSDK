@@ -179,11 +179,13 @@ define([
                 }
 
                 if (createViewerTokenCount === 1) {
-                    websocketStubber.stubEvent('chat.RoomEvent', {
-                        eventType: room.events.memberJoined.name,
-                        roomId: roomId,
-                        members: [member1]
-                    });
+                    setTimeout(function() {
+                        websocketStubber.stubEvent('chat.RoomEvent', {
+                            eventType: room.events.memberJoined.name,
+                            roomId: roomId,
+                            members: [member1]
+                        });
+                    }, 10);
                 }
 
                 if (createViewerTokenCount === 2) {
