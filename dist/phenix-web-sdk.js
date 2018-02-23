@@ -4487,7 +4487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-02-16T21:41:40Z',
+                version: '2018-02-23T20:53:17Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4757,7 +4757,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-02-16T21:41:40Z';
+    var sdkVersion = '2018-02-23T20:53:17Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -12209,6 +12209,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 streamInfo: {}
             }, options);
 
+            if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
+                publishOptions.tags = ['channelId:' + room.getRoomId()].concat(publishOptions.tags || []);
+            } else {
+                publishOptions.tags = ['roomId:' + room.getRoomId()].concat(publishOptions.tags || []);
+            }
+
             if (options.streamUri) {
                 var remoteOptions = _.assign({connectOptions: []}, publishOptions);
                 var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
@@ -16427,8 +16433,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
-    var releaseVersion = '2018.1.14';
+    var sdkVersion = '2018-02-23T20:53:17Z' || '?';
+    var releaseVersion = '2018.1.15';
 
     function Logger() {
         this._appenders = [];
@@ -29699,7 +29705,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
+    var sdkVersion = '2018-02-23T20:53:17Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -29954,7 +29960,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-02-16T21:41:40Z' || '?';
+    var sdkVersion = '2018-02-23T20:53:17Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

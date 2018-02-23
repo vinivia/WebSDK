@@ -464,6 +464,12 @@ define([
                 streamInfo: {}
             }, options);
 
+            if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
+                publishOptions.tags = ['channelId:' + room.getRoomId()].concat(publishOptions.tags || []);
+            } else {
+                publishOptions.tags = ['roomId:' + room.getRoomId()].concat(publishOptions.tags || []);
+            }
+
             if (options.streamUri) {
                 var remoteOptions = _.assign({connectOptions: []}, publishOptions);
                 var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
