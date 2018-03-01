@@ -24,6 +24,8 @@ define([
 ], function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
+    var apiVersion = 5;
+
     function PCastProtocol(uri, deviceId, version, logger) {
         assert.isStringNotEmpty(uri, 'uri');
         assert.isString(deviceId, 'deviceId');
@@ -33,7 +35,7 @@ define([
         this._deviceId = deviceId;
         this._version = version;
         this._logger = logger;
-        this._mqWebSocket = new proto.MQWebSocket(uri, this._logger, [pcastProto, chatProto]);
+        this._mqWebSocket = new proto.MQWebSocket(uri, this._logger, [pcastProto, chatProto], apiVersion);
         this._observableSessionId = new observable.Observable(null).extend({rateLimit: 0});
     }
 
