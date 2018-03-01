@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
+    'phenix-web-observable',
     'phenix-web-disposable',
     '../AdminAPI',
     './PCastExpress',
@@ -26,7 +27,7 @@ define([
     '../room/member.json',
     '../room/stream.json',
     '../room/track.json'
-], function(_, assert, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
+], function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -49,25 +50,32 @@ define([
         this._activeRoomServices = [];
         this._membersSubscriptions = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
+
+        var that = this;
+
+        this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
+            if (!pcast) {
+                var roomServicesToCleanUp = _.assign({}, that._roomServices);
+
+                _.forOwn(that._membersSubscriptions, function(membersSubscription) {
+                    membersSubscription.dispose();
+                });
+
+                that._pcastExpress.waitForOnline(function() {
+                    _.forOwn(roomServicesToCleanUp, function(roomService) {
+                        roomService.stop();
+                    });
+                }, true);
+
+                that._membersSubscriptions = {};
+                that._roomServices = {};
+                that._activeRoomServices = [];
+            }
+        });
     }
 
     RoomExpress.prototype.dispose = function dispose() {
-        _.forOwn(this._membersSubscriptions, function(membersSubscription) {
-            membersSubscription.dispose();
-        });
-        _.forOwn(this._roomServicePublishers, function(publishers) {
-            _.forEach(publishers, function(publisher) {
-                publisher.stop();
-            });
-        });
-        _.forOwn(this._roomServices, function(roomService) {
-            roomService.stop();
-        });
-
-        this._membersSubscriptions = {};
-        this._roomServicePublishers = {};
-        this._roomServices = {};
-        this._activeRoomServices = [];
+        disposeOfRoomServices.call(this);
 
         if (this._shouldDisposeOfPCastExpress) {
             this._pcastExpress.dispose();
@@ -120,17 +128,6 @@ define([
         });
     };
 
-    RoomExpress.prototype.createChannel = function createChannel(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isObject(options.room, 'options.room');
-
-        var createRoomOptions = _.assign({}, options);
-
-        createRoomOptions.room.type = roomEnums.types.channel.name;
-
-        this.createRoom(createRoomOptions, callback);
-    };
-
     RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(joinRoomCallback, 'joinRoomCallback');
@@ -157,245 +154,35 @@ define([
         }
 
         var that = this;
-        var role = options.role;
-        var screenName = options.screenName || _.uniqueId();
-
-        createRoomService.call(this, options.roomId, options.alias, function(error, roomServiceResponse) {
-            if (error) {
-                return joinRoomCallback(error);
+        var joinRoomWithPCast = function(pcast) {
+            if (!pcast) {
+                return;
             }
 
-            if (roomServiceResponse.status !== 'ok') {
-                return joinRoomCallback(null, roomServiceResponse);
-            }
+            joinRoomWithOptions.call(that, options, function(error, response) {
+                var joinRoomResponse = response;
 
-            var roomService = roomServiceResponse.roomService;
-            var activeRoom = roomService.getObservableActiveRoom().getValue();
+                if (joinRoomResponse && joinRoomResponse.roomService) {
+                    var leaveRoom = joinRoomResponse.roomService.leaveRoom;
 
-            if (!activeRoom) {
-                roomService.start(role, screenName);
-            }
+                    joinRoomResponse.roomService.leaveRoom = function(callback) {
+                        if (subscription && pcast.getObservableStatus() !== 'offline') {
+                            subscription.dispose();
+                        }
 
-            if (options.streams) {
-                updateSelfStreamsAndRole.call(that, options.streams, options.role, roomService, function(error) {
-                    if (error) {
-                        return joinRoomCallback(error);
-                    }
-                });
-            }
-
-            if (activeRoom && membersChangedCallback) {
-                joinRoomCallback(null, {
-                    status: 'ok',
-                    roomService: roomService
-                });
-
-                return activeRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-            }
-
-            roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
-                if (error) {
-                    roomService.stop();
-
-                    return joinRoomCallback(error);
+                        leaveRoom(callback);
+                    };
                 }
 
-                if (roomResponse.status === 'not-found') {
-                    roomService.stop();
-
-                    return joinRoomCallback(null, {status: 'room-not-found'});
-                }
-
-                if (roomResponse.status !== 'ok' && roomResponse.status !== 'already-in-room') {
-                    roomService.stop();
-
-                    return joinRoomCallback(null, roomResponse);
-                }
-
-                var room = roomResponse.room;
-
-                that._activeRoomServices.push(roomService);
-
-                joinRoomCallback(null, {
-                    status: 'ok',
-                    roomService: roomService
-                });
-
-                if (membersChangedCallback) {
-                    return room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-                }
-            });
-        });
-    };
-
-    // TODO (dcy) Refactor channel related methods into separate class
-    RoomExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(joinChannelCallback, 'joinChannelCallback');
-        assert.isFunction(subscriberCallback, 'subscriberCallback');
-
-        if (options.videoElement) {
-            assert.isObject(options.videoElement, 'options.videoElement');
-        }
-
-        if (options.streamSelectionStrategy) {
-            assert.isStringNotEmpty(options.streamSelectionStrategy, 'options.streamSelectionStrategy');
-        }
-
-        var channelOptions = _.assign({
-            type: roomEnums.types.channel.name,
-            role: memberEnums.roles.audience.name
-        }, options);
-        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger);
-        var lastMediaStream;
-        var lastStreamId;
-        var channelRoomService;
-        var channelId = '';
-        var that = this;
-
-        var joinRoomCallback = function(error, response) {
-            var channelResponse = !response || _.assign({}, response);
-
-            if (response && response.roomService) {
-                var leaveRoom = response.roomService.leaveRoom;
-                var room = response.roomService.getObservableActiveRoom().getValue();
-
-                channelRoomService = response.roomService;
-                channelId = room ? room.getRoomId() : '';
-
-                that._logger.info('Joined channel [%s] with [%s] selection strategy', channelId, memberSelector.getStrategy());
-
-                channelResponse.roomService.leaveRoom = function(callback) {
-                    if (lastMediaStream) {
-                        lastMediaStream.stop();
-                    }
-
-                    leaveRoom(callback);
-                };
-            }
-
-            joinChannelCallback(error, channelResponse);
+                joinRoomCallback(error, response);
+            }, membersChangedCallback);
         };
 
-        this.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members, streamErrorStatus) {
-            var presenters = _.filter(members, function(member) {
-                return member.getObservableRole().getValue() === memberEnums.roles.presenter.name;
-            });
-            var forceNewMemberSelection = !!streamErrorStatus || !lastMediaStream || !lastStreamId;
-            var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
-            var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
-            var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
+        if (this._pcastExpress.getPCastObservable()) {
+            return joinRoomWithPCast(this._pcastExpress.getPCastObservable());
+        }
 
-            if (!selectedPresenter || !presenterStream) {
-                if (presenters.length === 0) {
-                    return subscriberCallback(null, {status: 'no-stream-playing'});
-                }
-
-                if (streamErrorStatus) {
-                    that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
-                        lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
-
-                    return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
-                }
-
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
-
-            if (!checkifStreamingIsAvailable(presenterStream.getUri()) && _.includes(options.capabilities, 'streaming')) {
-                return subscriberCallback(null, {status: 'streaming-not-available'});
-            }
-
-            if (!streamId) {
-                that._logger.info('Channel [%s] presenter has no stream', channelId);
-
-                return subscriberCallback(null, {status: 'no-stream-playing'});
-            }
-
-            if (streamId === lastStreamId) {
-                if (streamErrorStatus) {
-                    that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
-                        lastStreamId, channelId, streamErrorStatus);
-
-                    return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
-                }
-
-                return;
-            } else if (lastStreamId && lastMediaStream) {
-                lastMediaStream.stop();
-            }
-
-            var tryNextMember = function(streamStatus) {
-                var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
-                var members = room ? room.getObservableMembers().getValue() : [];
-
-                if (!room) {
-                    return; // No longer in room.
-                }
-
-                return membersChangedCallback(members, streamStatus);
-            };
-
-            function monitorChannelSubsciber(mediaStreamId, error, response) {
-                if (lastStreamId !== mediaStreamId) {
-                    return; // Ignore old streams
-                }
-
-                if (error) {
-                    return tryNextMember('unable-to-subscribe');
-                }
-
-                // Don't continue - Tell client
-                if (response.reason === 'app-background') {
-                    return subscriberCallback(error, response);
-                }
-
-                if (response.retry && memberSelector.getStrategy() !== 'high-availability') {
-                    return response.retry();
-                }
-
-                if (response.status !== 'ok') {
-                    return tryNextMember(response.status);
-                }
-            }
-
-            var subscribeOptions = _.assign({}, {
-                monitor: {
-                    callback: _.bind(monitorChannelSubsciber, this, streamId),
-                    options: {conditionCountForNotificationThreshold: 8}
-                }
-            }, options);
-            var hadPreviousStreamReason = streamErrorStatus ? 'recovered-from-failure' : 'stream-override';
-            var successReason = lastStreamId ? hadPreviousStreamReason : 'stream-started';
-
-            lastStreamId = streamId;
-
-            var mediaStreamCallback = function mediaStreamCallback(mediaStreamId, error, response) {
-                if (lastStreamId !== mediaStreamId) {
-                    return; // Ignore old streams
-                }
-
-                if (response && response.status === 'ok') {
-                    response.reason = successReason;
-                }
-
-                if (error || (response && response.status !== 'ok')) {
-                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, response ? response.status : '', error);
-
-                    return tryNextMember(response ? response.status : '');
-                }
-
-                if (response && response.mediaStream) {
-                    lastMediaStream = response.mediaStream;
-                } else {
-                    lastStreamId = null;
-                    lastMediaStream = null;
-                }
-
-                subscriberCallback(error, response);
-            };
-
-            that.subscribeToMemberStream(presenterStream, subscribeOptions, _.bind(mediaStreamCallback, this, streamId));
-        });
+        var subscription = this._pcastExpress.getPCastObservable().subscribe(joinRoomWithPCast);
     };
 
     RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
@@ -500,7 +287,7 @@ define([
                 roomId: room.getRoomId()
             });
 
-            that.joinRoom(joinRoomAsAudienceOptions, function(error, response) {
+            joinRoomWithOptions.call(that, joinRoomAsAudienceOptions, function(error, response) {
                 if (error) {
                     return callback(error);
                 }
@@ -520,20 +307,6 @@ define([
         var publishScreenOptions = _.assign({}, options, {mediaConstraints: {screen: true}});
 
         this.publishToRoom(publishScreenOptions, callback);
-    };
-
-    RoomExpress.prototype.publishToChannel = function publishToChannel(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-
-        var channelOptions = _.assign({
-            memberRole: memberEnums.roles.presenter.name,
-            streamType: streamEnums.types.presentation.name
-        }, options);
-
-        options.room.type = roomEnums.types.channel.name;
-
-        this.publishToRoom(channelOptions, callback);
     };
 
     RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
@@ -588,6 +361,25 @@ define([
         });
     };
 
+    function disposeOfRoomServices() {
+        _.forOwn(this._membersSubscriptions, function(membersSubscription) {
+            membersSubscription.dispose();
+        });
+        _.forOwn(this._roomServicePublishers, function(publishers) {
+            _.forEach(publishers, function(publisher) {
+                publisher.stop();
+            });
+        });
+        _.forOwn(this._roomServices, function(roomService) {
+            roomService.stop();
+        });
+
+        this._membersSubscriptions = {};
+        this._roomServicePublishers = {};
+        this._roomServices = {};
+        this._activeRoomServices = [];
+    }
+
     function createRoomService(roomId, alias, callback) {
         var that = this;
         var uniqueId = _.uniqueId();
@@ -632,6 +424,7 @@ define([
 
         roomService.stop = function() {
             roomServiceStop.call(roomService);
+
             delete that._roomServices[uniqueId];
         };
 
@@ -664,6 +457,105 @@ define([
         };
 
         return roomService;
+    }
+
+    function joinRoomWithOptions(options, joinRoomCallback, membersChangedCallback) {
+        var that = this;
+        var role = options.role;
+        var screenName = options.screenName || _.uniqueId();
+
+        createRoomService.call(that, options.roomId, options.alias, function(error, roomServiceResponse) {
+            if (error) {
+                return joinRoomCallback(error);
+            }
+
+            if (roomServiceResponse.status !== 'ok') {
+                return joinRoomCallback(null, roomServiceResponse);
+            }
+
+            var roomService = roomServiceResponse.roomService;
+            var activeRoomObservable = roomService.getObservableActiveRoom();
+            var activeRoom = activeRoomObservable.getValue();
+            var membersSubscription = null;
+
+            if (!activeRoom) {
+                roomService.start(role, screenName);
+            }
+
+            if (options.streams) {
+                updateSelfStreamsAndRole.call(that, options.streams, options.role, roomService, function(error) {
+                    if (error) {
+                        return joinRoomCallback(error);
+                    }
+                });
+            }
+
+            if (activeRoom && membersChangedCallback) {
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
+                return activeRoomObservable.subscribe(function(newRoom) {
+                    if (membersSubscription) {
+                        membersSubscription.dispose();
+                        membersSubscription = null;
+                    }
+
+                    if (!newRoom) {
+                        return;
+                    }
+
+                    membersSubscription = newRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                }, {initial: 'notify'});
+            }
+
+            roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
+                if (error) {
+                    roomService.stop();
+
+                    return joinRoomCallback(error);
+                }
+
+                if (roomResponse.status === 'not-found') {
+                    roomService.stop();
+
+                    return joinRoomCallback(null, {status: 'room-not-found'});
+                }
+
+                if (roomResponse.status !== 'ok' && roomResponse.status !== 'already-in-room') {
+                    roomService.stop();
+
+                    return joinRoomCallback(null, roomResponse);
+                }
+
+                var room = roomResponse.room;
+
+                that._activeRoomServices.push(roomService);
+
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
+                if (membersChangedCallback) {
+                    membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+
+                    return activeRoomObservable.subscribe(function(newRoom) {
+                        if (membersSubscription) {
+                            membersSubscription.dispose();
+                            membersSubscription = null;
+                        }
+
+                        if (!newRoom) {
+                            return;
+                        }
+
+                        membersSubscription = newRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
+                    }, {initial: 'notify'});
+                }
+            });
+        });
     }
 
     function subscribeToMemberStream(subscribeOptions, isScreen, callback) {
@@ -732,7 +624,7 @@ define([
 
             publisher.stop = function() {
                 clearInterval(refreshTokenTimeout);
-                publisherStop();
+                publisherStop.apply(publisher, arguments);
             };
 
             if (options.enableWildcardCapability) {
@@ -981,13 +873,13 @@ define([
                     var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
                     var roomService = findActiveRoom.call(that, room.getRoomId());
 
-                    publisherStop();
+                    publisherStop.apply(publisher, arguments);
 
                     if (!roomService) {
                         return;
                     }
 
-                    updateSelfStreamsAndRole.call(that, streamsAfterStop, options.memberRole, roomService, function(error) {
+                    updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, streamsAfterStop, options.memberRole, roomService, options, function(error) {
                         if (error) {
                             return callback(error);
                         }
@@ -998,7 +890,7 @@ define([
             return callback(null, _.assign({}, responseObject, response));
         };
 
-        updateSelfStreamsAndRole.call(that, options.streams, options.memberRole, activeRoomService, handleUpdate);
+        updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, options.streams, options.memberRole, activeRoomService, options, handleUpdate);
     }
 
     function mapNewPublisherStreamToMemberStreams(publisherStream, room) {
@@ -1047,20 +939,57 @@ define([
     }
 
     function updateSelfStreamsAndRole(streams, role, roomService, callback) {
-        var activeRoom = roomService.getObservableActiveRoom().getValue();
+        var activeRoom = roomService ? roomService.getObservableActiveRoom().getValue() : null;
 
-        if (streams) {
-            var self = roomService.getSelf();
-
-            self.setStreams(streams);
+        if (streams && roomService) {
+            roomService.getSelf().setStreams(streams);
         }
 
-        if (role) {
-            self.getObservableRole().setValue(role);
+        if (role && roomService) {
+            roomService.getSelf().getObservableRole().setValue(role);
         }
 
         if (activeRoom && roomService.getSelf()) {
-            updateSelfWithRetry.call(this, roomService.getSelf(), callback);
+            return updateSelfWithRetry.call(this, roomService.getSelf(), callback);
+        }
+    }
+
+    function updateSelfStreamsAndRoleAndEnterRoomIfNecessary(streams, role, roomService, options, callback) {
+        var activeRoomService = findActiveRoom.call(this, options.room.roomId, options.room.alias);
+        var activeRoom = roomService ? roomService.getObservableActiveRoom().getValue() : null;
+        var shouldJoinRoom = !activeRoom && !activeRoomService;
+        var that = this;
+
+        if (streams && activeRoomService) {
+            activeRoomService.getSelf().setStreams(streams);
+        }
+
+        if (role && activeRoomService) {
+            activeRoomService.getSelf().getObservableRole().setValue(role);
+        }
+
+        if (activeRoom && activeRoomService.getSelf()) {
+            return updateSelfWithRetry.call(this, activeRoomService.getSelf(), callback);
+        }
+
+        if (shouldJoinRoom) {
+            var joinRoomAsPresenterOptions = _.assign({
+                role: role,
+                alias: _.get(options, ['room', 'alias']),
+                roomId: _.get(options, ['room', 'roomId'])
+            }, options);
+
+            joinRoomWithOptions.call(that, joinRoomAsPresenterOptions, function(error, response) {
+                if (error) {
+                    return callback(error);
+                }
+
+                if (response.status !== 'ok' && response.status !== 'already-in-room') {
+                    return callback(null, response);
+                }
+
+                callback(error, response);
+            });
         }
     }
 
@@ -1069,33 +998,39 @@ define([
         var that = this;
         var maxUpdateSelfRetries = 5;
 
-        self.commitChanges(function handleUpdateSelf(error, response) {
-            if (error) {
-                updateSelfErrors++;
-            }
+        try {
+            self.commitChanges(function handleUpdateSelf(error, response) {
+                console.log(updateSelfErrors);
 
-            if (response && response.status !== 'ok') {
-                updateSelfErrors++;
-            }
+                if (error) {
+                    updateSelfErrors++;
+                }
 
-            if (response && response.status === 'ok') {
-                updateSelfErrors = 0;
+                if (response && response.status !== 'ok') {
+                    updateSelfErrors++;
+                }
 
-                return !callback || callback(null, response);
-            }
+                if (response && response.status === 'ok') {
+                    updateSelfErrors = 0;
 
-            if (updateSelfErrors >= maxUpdateSelfRetries) {
-                that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
+                    return !callback || callback(null, response);
+                }
 
-                return callback(new Error('Unable to update self'));
-            }
+                if (updateSelfErrors >= maxUpdateSelfRetries) {
+                    that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
 
-            if (updateSelfErrors > 0 && updateSelfErrors < maxUpdateSelfRetries) {
-                that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
+                    return callback(new Error('Unable to update self'));
+                }
 
-                return self.commitChanges(handleUpdateSelf);
-            }
-        });
+                if (updateSelfErrors > 0 && updateSelfErrors < maxUpdateSelfRetries) {
+                    that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
+
+                    return self.commitChanges(handleUpdateSelf);
+                }
+            });
+        } catch (error) {
+            callback(error);
+        }
     }
 
     function monitorSubsciberOrPublisher(callback, error, response) {
@@ -1125,18 +1060,6 @@ define([
         default:
             throw new Error('Unsupported Room Type');
         }
-    }
-
-    function checkifStreamingIsAvailable(uri) {
-        var deferToCreateToken = true;
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-
-        if (_.values(streamInfo).length === 0) {
-            return deferToCreateToken;
-        }
-
-        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        return !!streamInfo.streamTokenForLiveStream || !!streamInfo.streamTokenStreaming;
     }
 
     function parseStreamTokenFromStreamUri(uri, capabilities) {

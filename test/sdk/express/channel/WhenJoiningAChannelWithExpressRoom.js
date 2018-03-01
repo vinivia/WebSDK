@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 define([
     'phenix-web-lodash-light',
-    'sdk/express/RoomExpress',
+    'sdk/express/ChannelExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
@@ -24,7 +24,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
     describe('When Joining a Channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
@@ -64,7 +64,7 @@ define([
 
         var httpStubber;
         var websocketStubber;
-        var roomExpress;
+        var channelExpress;
         var response;
 
         beforeEach(function(done) {
@@ -75,7 +75,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({
+            channelExpress = new ChannelExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData
             });
@@ -88,7 +88,7 @@ define([
 
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
-            roomExpress.getPCastExpress().waitForOnline(done);
+            channelExpress.getPCastExpress().waitForOnline(done);
 
             websocketStubber.triggerConnected();
         });
@@ -96,11 +96,11 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.dispose();
+            channelExpress.dispose();
         });
 
         it('Has method joinRoom', function() {
-            expect(roomExpress.joinChannel).to.be.a('function');
+            expect(channelExpress.joinChannel).to.be.a('function');
         });
 
         it('Expect joinChannel protocol to be called with just alias and participant member role', function() {
@@ -109,7 +109,7 @@ define([
                 expect(message.member.role).to.be.equal(member.roles.participant.name);
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 alias: mockRoom.alias,
                 role: member.roles.participant.name
             }, function() {}, function(){});
@@ -121,18 +121,18 @@ define([
                 expect(message.member.role).to.be.equal(member.roles.audience.name);
             });
 
-            roomExpress.joinChannel({alias: mockRoom.alias}, function() {}, function(){});
+            channelExpress.joinChannel({alias: mockRoom.alias}, function() {}, function(){});
         });
 
         // Write member joined logic -
         it('Expect joinChannel members subscription event with presenter with no streams playing to return no-streams-playing', function(done) {
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
             }, function(error, response) {
-                var presenter = new Member(response.roomService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [], 123);
+                var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [], 123);
 
-                response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([presenter]);
+                response.channelService.getObservableActiveChannel().getValue().getObservableMembers().setValue([presenter]);
             }, function(error, response){
                 expect(response.status).to.be.equal(noStreamsPlayingStatus);
                 expect(response.mediaStream).to.not.exist;
@@ -142,13 +142,13 @@ define([
         });
 
         it('Expect joinChannel members subscription event with participant with streams to return no streams playing status', function(done) {
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
             }, function(error, response) {
-                var presenter = new Member(response.roomService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [mockStream], 123);
+                var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [mockStream], 123);
 
-                response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([presenter]);
+                response.channelService.getObservableActiveChannel().getValue().getObservableMembers().setValue([presenter]);
             }, function(error, response){
                 expect(response.status).to.be.equal(noStreamsPlayingStatus);
                 expect(response.mediaStream).to.not.exist;
@@ -158,37 +158,37 @@ define([
         });
 
         it('Expect joinChannel members subscription event with presenter with streams playing to parse pcast uri from streamId', function(done) {
-            roomExpress.getPCastExpress().subscribe = sinon.stub(roomExpress.getPCastExpress(), 'subscribe').callsFake(function(options) {
+            channelExpress.getPCastExpress().subscribe = sinon.stub(channelExpress.getPCastExpress(), 'subscribe').callsFake(function(options) {
                 expect(options.streamId).to.be.equal(mockStreamId);
 
                 done();
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
             }, function(error, response) {
-                var presenter = new Member(response.roomService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
+                var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
 
-                response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([presenter]);
+                response.channelService.getObservableActiveChannel().getValue().getObservableMembers().setValue([presenter]);
             }, function(){ });
         });
 
         it('Expect joinChannel members subscription event with presenter with streams playing to trigger subscribe event', function(done) {
-            roomExpress.getPCastExpress().subscribe = sinon.stub(roomExpress.getPCastExpress(), 'subscribe').callsFake(function(options, callback) {
+            channelExpress.getPCastExpress().subscribe = sinon.stub(channelExpress.getPCastExpress(), 'subscribe').callsFake(function(options, callback) {
                 callback(null, {
                     status: 'ok',
                     mediaStream: mockMediaStream
                 });
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
             }, function(error, response) {
-                var presenter = new Member(response.roomService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
+                var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
 
-                response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([presenter]);
+                response.channelService.getObservableActiveChannel().getValue().getObservableMembers().setValue([presenter]);
             }, function(error, response){
                 expect(response.mediaStream).to.exist;
 

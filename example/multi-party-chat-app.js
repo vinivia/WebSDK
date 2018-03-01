@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,14 +208,12 @@ requirejs([
             return roomExpress.publishToRoom(options, function(error, response) {
                 if (error) {
                     setUserMessage('Unable to publish to Room: ' + error.message);
-                    leaveRoomAndStopPublisher();
 
                     throw error;
                 }
 
                 if (response.status !== 'ok' && response.status !== 'ended') {
                     setUserMessage('New Status: ' + response.status);
-                    leaveRoomAndStopPublisher();
 
                     throw new Error(response.status);
                 }
@@ -357,7 +355,7 @@ requirejs([
                 monitor: {callback: onMonitorEvent}
             };
             var handleSubscribe = function(error, response) {
-                if (!response.mediaStream) {
+                if (!response || !response.mediaStream) {
                     return;
                 }
 

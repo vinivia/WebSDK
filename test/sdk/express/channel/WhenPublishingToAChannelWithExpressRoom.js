@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,13 +15,13 @@
  */
 define([
     'phenix-web-lodash-light',
-    'sdk/express/RoomExpress',
+    'sdk/express/ChannelExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
     describe('When Publishing to a Channel With Express Room', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -33,7 +33,7 @@ define([
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
-        var roomExpress;
+        var channelExpress;
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -60,7 +60,7 @@ define([
                 }
             });
 
-            roomExpress = new RoomExpress({
+            channelExpress = new ChannelExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData,
                 uri: 'wss://mockURI'
@@ -75,13 +75,13 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.dispose();
+            channelExpress.dispose();
         });
 
         it('Expect stream ended reason of censored to trigger a callback and not re-publish', function(done) {
             var publishCount = 0;
 
-            roomExpress.publishToChannel({
+            channelExpress.publishToChannel({
                 capabilities: [],
                 room: {
                     alias: 'ChannelAlias',
@@ -112,7 +112,7 @@ define([
         it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
             var publishCount = 0;
 
-            roomExpress.publishToChannel({
+            channelExpress.publishToChannel({
                 capabilities: [],
                 room: {
                     alias: 'ChannelAlias',

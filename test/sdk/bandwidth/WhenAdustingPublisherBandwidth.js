@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ define([
             pin: '',
             type: roomEnum.types.multiPartyChat.name
         };
+        var pcast;
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -53,7 +54,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            var pcast = new PCast();
+            pcast = new PCast();
 
             pcast.start('AuthToken', function() {}, function onlineCallback() {
                 roomService = new RoomService(pcast);
@@ -88,11 +89,13 @@ define([
             httpStubber.restore();
             websocketStubber.restore();
 
+            publisherBandwidthAdjuster.close();
+
             if (roomService) {
                 roomService.stop();
             }
 
-            publisherBandwidthAdjuster.close();
+            pcast.stop();
 
             self.sessionId = 'MockSessionId';
         });

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,10 +54,10 @@ requirejs([
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
     var init = function init() {
-        var roomExpress;
+        var channelExpress;
 
-        var createRoomExpress = function createPCastExpress() {
-            roomExpress = new sdk.express.RoomExpress({
+        var createChannelExpress = function createPCastExpress() {
+            channelExpress = new sdk.express.ChannelExpress({
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
@@ -67,7 +67,7 @@ requirejs([
 
         var channelPublisher;
         var publisherPlayer;
-        var roomService;
+        var channelService;
 
         var publishLocalMediaToChannel = function publishToChannel() {
             var channelAlias = $('#alias').val();
@@ -81,9 +81,9 @@ requirejs([
 
             capabilities.push($('#publish-quality option:selected').val());
 
-            roomExpress.publishToChannel({
+            channelExpress.publishToChannel({
                 mediaConstraints: getConstraints(),
-                room: {
+                channel: {
                     alias: channelAlias,
                     name: channelAlias
                 },
@@ -134,7 +134,7 @@ requirejs([
                     message: 'Successfully published to Channel "' + channelAlias + '"'
                 });
 
-                roomService = response.roomService;
+                channelService = response.channelService;
                 channelPublisher = response.publisher;
                 publisherPlayer = new Player('channelVideo');
 
@@ -155,8 +155,8 @@ requirejs([
                 publisherPlayer = null;
             }
 
-            if (roomService) {
-                roomService.leaveRoom(function(error, response) {
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
                     if (error) {
                         throw error;
                     }
@@ -165,7 +165,7 @@ requirejs([
                         throw new Error(response.status);
                     }
 
-                    roomService = null;
+                    channelService = null;
                 });
             }
 
@@ -173,13 +173,13 @@ requirejs([
         };
 
         app.setOnReset(function() {
-            createRoomExpress();
+            createChannelExpress();
         });
 
         $('#publish').click(publishLocalMediaToChannel);
         $('#stopPublisher').click(stopPublisher);
 
-        createRoomExpress();
+        createChannelExpress();
     };
 
     function getConstraints() {
