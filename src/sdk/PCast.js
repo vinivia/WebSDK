@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,8 +115,10 @@ define([
         assert.isStringNotEmpty(authToken, 'authToken');
 
         if (this._observableStatus.getValue() === 'online') {
-            throw new Error('already-authenticated');
+            return this._logger.warn('Already authenticated. Denying request to re-authenticate');
         }
+
+        this._logger.info('Attempting to re-authenticate with new auth token [%s]', authToken);
 
         this._authToken = authToken;
 
@@ -233,7 +235,7 @@ define([
                 endStream.call(that, publisherStreamId, reason);
 
                 if (!_.includes(publisher.getOptions(), 'detached')) {
-                    publisher.stop(reason);
+                    publisher.stop(reason, true);
                 }
             });
             _.forOwn(this._peerConnections, function(mediaStream, peerConnectionStreamId) {
@@ -350,6 +352,7 @@ define([
                 that._logger.warn('Failed to create uploader, status [%s]', response.status);
 
                 switch (response.status) {
+                case 'timeout':
                 case 'capacity':
                 case 'unauthorized':
                     return callback.call(that, that, response.status);
@@ -436,6 +439,7 @@ define([
                 case 'origin-stream-ended':
                 case 'streaming-not-available':
                 case 'unauthorized':
+                case 'timeout':
                     return callback.call(that, that, response.status);
                 default:
                     return callback.call(that, that, 'failed');
@@ -522,6 +526,14 @@ define([
     }
 
     function connected() {
+        if (areAllPeerConnectionsOffline.call(this) && this._observableStatus.getValue() === 'offline') {
+            this._logger.warn('[PCast] connected after being offline. Going offline.');
+
+            transitionToStatus.call(this, 'critical-network-issue');
+
+            return this.stop();
+        }
+
         var that = this;
 
         this._connected = true;
@@ -531,11 +543,11 @@ define([
                 if (that._authenticationCallback) {
                     if (error) {
                         that._logger.error('Failed to authenticate [%s]', error);
-                        transitionToStatus.call(that, 'offline');
+                        transitionToStatus.call(that, 'unauthorized');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to authenticate, status [%s]', response.status);
-                        transitionToStatus.call(that, 'offline');
+                        transitionToStatus.call(that, 'unauthorized');
                         that._authenticationCallback.call(that, that, 'unauthorized', '');
                     } else {
                         transitionToStatus.call(that, 'online');
@@ -569,7 +581,7 @@ define([
                 if (error) {
                     that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
 
-                    return transitionToStatus.call(that, 'offline', 'reconnect-failed');
+                    return transitionToStatus.call(that, 'reconnect-failed');
                 }
 
                 if (response.status !== 'ok') {
@@ -577,7 +589,7 @@ define([
 
                     var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
 
-                    return transitionToStatus.call(that, 'offline', reason);
+                    return transitionToStatus.call(that, reason);
                 }
 
                 that._connected = true;
@@ -590,8 +602,26 @@ define([
     }
 
     function disconnected() {
+        if (areAllPeerConnectionsOffline.call(this) && this._observableStatus.getValue() === 'reconnecting') {
+            this._logger.warn('[PCast] disconnected after attempting to reconnect. Going offline.');
+
+            transitionToStatus.call(this, 'critical-network-issue');
+
+            return this.stop();
+        }
+
         this._connected = false;
         transitionToStatus.call(this, 'offline');
+    }
+
+    function areAllPeerConnectionsOffline() {
+        return _.reduce(this._peerConnections, function(isOffline, peerConnection) {
+            if (!isOffline) {
+                return isOffline;
+            }
+
+            return peerConnection.iceConnectionState === 'closed';
+        }, true);
     }
 
     function getStreamEndedReason(value) {
@@ -940,7 +970,7 @@ define([
             offerSdp = offerSdp.replace(/(\na=ice-options:trickle)/g, '');
         }
 
-        var onFailure = function onFailure() {
+        var onFailure = function onFailure(status) {
             if (state.failed) {
                 return;
             }
@@ -952,7 +982,7 @@ define([
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
-            callback.call(that, undefined, 'failed');
+            callback.call(that, undefined, status || 'failed');
         };
 
         function onSetRemoteDescriptionSuccess() {
@@ -969,7 +999,7 @@ define([
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to set answer description, status [%s]', response.status);
 
-                        return onFailure();
+                        return onFailure(response.status);
                     }
 
                     function onSetLocalDescriptionSuccess() {
@@ -1263,7 +1293,7 @@ define([
             offerSdp = offerSdp.replace(/(\na=ice-options:trickle)/g, '');
         }
 
-        var onFailure = function onFailure() {
+        var onFailure = function onFailure(status) {
             if (state.failed) {
                 return;
             }
@@ -1275,7 +1305,7 @@ define([
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
-            callback.call(that, undefined, 'failed');
+            callback.call(that, undefined, status || 'failed');
         };
 
         function onSetRemoteDescriptionSuccess() {
@@ -1292,7 +1322,7 @@ define([
                     } else if (response.status !== 'ok') {
                         that._logger.warn('Failed to set answer description, status [%s]', response.status);
 
-                        return onFailure();
+                        return onFailure(response.status);
                     }
 
                     function onSetLocalDescriptionSuccess() {
@@ -1464,14 +1494,12 @@ define([
             case 'reconnecting':
             case 'reconnected':
                 break;
+            case 'unauthorized':
+            case 'reconnect-failed':
             case 'offline':
-                this._offlineCallback.call(this, reason);
-
-                break;
+                return this._offlineCallback.call(this);
             case 'online':
-                this._onlineCallback.call(this);
-
-                break;
+                return this._onlineCallback.call(this);
             default:
                 break;
             }

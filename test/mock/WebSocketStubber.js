@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,12 +35,12 @@ define([
         this._defaultResponse.callback = callback;
     };
 
-    WebSocketStubber.prototype.stubAuthRequest = function(callback) {
+    WebSocketStubber.prototype.stubAuthRequest = function(sessionId, callback) {
         setupStubIfNoneExist.call(this);
 
         this.stubResponse('pcast.Authenticate', {
             status: 'ok',
-            sessionId: 'MockSessionId'
+            sessionId: sessionId || 'MockSessionId'
         }, callback);
     };
 
@@ -163,7 +163,8 @@ define([
             },
             getApiVersion: function() {
                 return 'version';
-            }
+            },
+            disposeOfPendingRequests: _.noop
         };
 
         proto.MQWebSocket = function() { // eslint-disable-line no-global-assign

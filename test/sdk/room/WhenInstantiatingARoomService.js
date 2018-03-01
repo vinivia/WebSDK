@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,6 +134,8 @@ define([
                 roomService.stop();
             }
 
+            pcast.stop();
+
             self.sessionId = 'MockSessionId';
         });
 
@@ -157,7 +159,7 @@ define([
 
         describe('When Room does not exist', function() {
             it('Returns no roomChatService', function() {
-                var roomChatService = roomService.getRoomChatService();
+                var roomChatService = roomService.getChatService();
 
                 expect(roomChatService).to.be.equal(null);
             });

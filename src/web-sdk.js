@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,9 @@ define('phenix-web-sdk', [
     './sdk/bandwidth/BandwidthMonitor',
     './sdk/userMedia/UserMediaResolver',
     './sdk/express/PCastExpress',
-    './sdk/express/RoomExpress'
-], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress) {
+    './sdk/express/RoomExpress',
+    './sdk/express/ChannelExpress'
+], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
     window.PhenixPCast = PCast;
 
     return {
@@ -38,7 +39,8 @@ define('phenix-web-sdk', [
         RTC: rtc,
         express: {
             PCastExpress: PCastExpress,
-            RoomExpress: RoomExpress
+            RoomExpress: RoomExpress,
+            ChannelExpress: ChannelExpress
         }
     };
 });

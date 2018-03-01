@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ define([
             password: 'somePassword'
         };
 
+        var setTimeoutClone = setTimeout;
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -40,6 +41,10 @@ define([
         });
 
         beforeEach(function(done) {
+            window.setTimeout = function(callback, timeout) {
+                return setTimeoutClone(callback, timeout / 100);
+            };
+
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -51,7 +56,8 @@ define([
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData,
                 uri: 'wss://mockURI',
-                onError: _.noop
+                onError: _.noop,
+                onlineTimeout: 60000
             });
 
             websocketStubber.stubSetupStream();
@@ -72,6 +78,7 @@ define([
             httpStubber.restore();
             websocketStubber.restore();
             pcastExpress.dispose();
+            window.setTimeout = setTimeoutClone;
         });
 
         it('successfully subscribes to stream', function(done) {
@@ -95,7 +102,7 @@ define([
             });
         });
 
-        describe('When auth fails with status unauthorized and then successfully reconnects after getting a new auth token', function() {
+        describe('When auth fails with status unauthorized and then successfully reconnects with a new session id after getting a new auth token', function() {
             var reauthTokenSpy = null;
 
             beforeEach(function(done) {
@@ -103,7 +110,7 @@ define([
 
                 websocketStubber.stubAuthRequestFailure('unauthorized');
                 httpStubber.stubAuthRequest(function() {
-                    websocketStubber.stubAuthRequest();
+                    websocketStubber.stubAuthRequest('NewSessionId');
                     reauthTokenSpy();
                 });
                 websocketStubber.triggerReconnected();
@@ -136,20 +143,59 @@ define([
             });
         });
 
-        describe('When auth fails with status unauthorized and then fails to reconnect', function() {
-            var setTimeoutClone = setTimeout;
+        describe('When auth fails with status unauthorized while publishing and then successfully reconnects with a new session id after getting a new auth token', function() {
+            var reauthTokenSpy = null;
 
-            beforeEach(function() {
-                window.setTimeout = function(callback, timeout) {
-                    return setTimeoutClone(callback, timeout / 100);
-                };
+            beforeEach(function(done) {
+                reauthTokenSpy = sinon.spy();
 
-                websocketStubber.stubAuthRequestFailure('unauthorized');
-                websocketStubber.triggerReconnected();
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: {}
+                }, function(error, response) {
+                    expect(response.publisher).to.be.a('object');
+
+                    websocketStubber.stubAuthRequestFailure('unauthorized');
+                    httpStubber.stubAuthRequest(function() {
+                        websocketStubber.stubAuthRequest('NewSessionId');
+                        reauthTokenSpy();
+                    });
+                    websocketStubber.triggerReconnected();
+
+                    pcastExpress.waitForOnline(function() {
+                        expect(response.publisher.isActive()).to.be.true;
+                        sinon.assert.calledOnce(reauthTokenSpy);
+                        done();
+                    });
+                });
             });
 
-            afterEach(function() {
-                window.setTimeout = setTimeoutClone;
+            it('successfully subscribes to stream', function(done) {
+                pcastExpress.subscribe({
+                    capabilities: [],
+                    streamId: 'MockStreamId'
+                }, function(error, response) {
+                    expect(error).to.not.exist;
+                    expect(response.mediaStream).to.be.a('object');
+                    done();
+                });
+            });
+
+            it('successfully publishes a stream', function(done) {
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: {}
+                }, function(error, response) {
+                    expect(response.publisher).to.be.a('object');
+                    done();
+                });
+            });
+        });
+
+        describe('When auth fails with status unauthorized and then fails to reconnect', function() {
+            beforeEach(function() {
+                websocketStubber.stubAuthRequestFailure('unauthorized');
+                websocketStubber.triggerReconnected();
             });
 
             it('fails to subscribe to stream within 20000 ms', function(done) {
@@ -181,36 +227,26 @@ define([
 
         describe('When auth fails with status capacity', function() {
             var reauthTokenSpy = null;
-            var setTimeoutClone = setTimeout;
 
             beforeEach(function() {
                 reauthTokenSpy = sinon.spy();
-
-                window.setTimeout = function(callback, timeout) {
-                    return setTimeoutClone(callback, timeout / 100);
-                };
-
                 websocketStubber.stubAuthRequestFailure('capacity');
                 httpStubber.stubAuthRequest(reauthTokenSpy);
                 websocketStubber.triggerReconnected();
             });
 
-            afterEach(function() {
-                window.setTimeout = setTimeoutClone;
+            it('attempts to reconnect at least 2 times after 6000 ms plus some randomness', function(done) {
+                setTimeout(function() {
+                    expect(reauthTokenSpy.callCount >= 2).to.be.true;
+                    done();
+                }, 6500);
             });
 
-            it('attempts to reconnect 2 times after 6000 ms', function(done) {
+            it('attempts to reconnect at least 3 times after 15000 ms plus some randomness', function(done) {
                 setTimeout(function() {
-                    sinon.assert.calledTwice(reauthTokenSpy);
+                    expect(reauthTokenSpy.callCount >= 3).to.be.true;
                     done();
-                }, 6000);
-            });
-
-            it('attempts to reconnect 3 times after 10000 ms', function(done) {
-                setTimeout(function() {
-                    sinon.assert.calledThrice(reauthTokenSpy);
-                    done();
-                }, 10000);
+                }, 17000);
             });
         });
 

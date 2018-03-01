@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ define([
         return leaveRoomRequest.call(that, callback);
     };
 
-    RoomService.prototype.getRoomChatService = function getRoomChatService() {
+    RoomService.prototype.getChatService = function getChatService() {
         if (!this._roomChatService && this._activeRoom.getValue()) {
             this._roomChatService = new RoomChatService(this);
         }
@@ -182,6 +182,10 @@ define([
         activeMember._update(cachedMember.toJson());
     };
 
+    RoomService.prototype.isInRoom = function isInRoom() {
+        return !!this._activeRoom.getValue();
+    };
+
     RoomService.prototype.toString = function toString() {
         return 'RoomService';
     };
@@ -230,6 +234,8 @@ define([
         var self = this._self.getValue().toJson();
         var roomService = this;
 
+        this._logger.info('Resetting self after sessionId changed to [%s]', sessionId);
+
         this._self.setValue(new Member(roomService, self.state, sessionId || '', self.screenName, self.role, self.streams, self.lastUpdate));
     }
 
@@ -246,8 +252,10 @@ define([
         var roomId = activeRoom.getRoomId();
         var alias = activeRoom.getObservableAlias().getValue();
 
-        that.leaveRoom(function() {
-            that.enterRoom(roomId, alias, function() {
+        that._logger.info('Leaving and re-entering room after reset of self model');
+
+        leaveRoomRequest.call(that, function() {
+            enterRoomRequest.call(that, roomId, alias, function() {
                 that._logger.info('Room Reset Completed');
             });
         });
@@ -367,7 +375,7 @@ define([
     }
 
     function handlePCastSessionIdChanged(sessionId) {
-        if (this.getSelf() && this.getSelf().getSessionId() === sessionId) {
+        if (this.getSelf() && this.getSelf().getSessionId() === (sessionId || '')) {
             return;
         }
 

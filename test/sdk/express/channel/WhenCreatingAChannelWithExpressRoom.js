@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 define([
     'phenix-web-lodash-light',
-    'sdk/express/RoomExpress',
+    'sdk/express/ChannelExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, room) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, room) {
     describe('When Creating a Channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -39,7 +39,7 @@ define([
 
         var httpStubber;
         var websocketStubber;
-        var roomExpress;
+        var channelExpress;
         var response;
 
         beforeEach(function(done) {
@@ -50,7 +50,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({
+            channelExpress = new ChannelExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData
             });
@@ -63,7 +63,7 @@ define([
 
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
-            roomExpress.getPCastExpress().waitForOnline(done);
+            channelExpress.getPCastExpress().waitForOnline(done);
 
             websocketStubber.triggerConnected();
         });
@@ -71,11 +71,11 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.dispose();
+            channelExpress.dispose();
         });
 
         it('Has method createChannel', function() {
-            expect(roomExpress.createChannel).to.be.a('function');
+            expect(channelExpress.createChannel).to.be.a('function');
         });
 
         it('Expect createRoom protocol to be called with channel type', function() {
@@ -83,17 +83,17 @@ define([
                 expect(message.room.type).to.be.equal(room.types.channel.name);
             });
 
-            roomExpress.createChannel({room: mockRoom}, function() {});
+            channelExpress.createChannel({channel: mockRoom}, function() {});
         });
 
-        it('Expect room to be returned from createChannel', function() {
+        it('Expect channel to be returned from createChannel', function() {
             websocketStubber.stubResponse('chat.CreateRoom', {
                 status: 'ok',
                 room: mockRoom
             });
 
-            roomExpress.createChannel({room: mockRoom}, function(error, response) {
-                expect(response.room).to.exist;
+            channelExpress.createChannel({channel: mockRoom}, function(error, response) {
+                expect(response.channel).to.exist;
             });
         });
     });

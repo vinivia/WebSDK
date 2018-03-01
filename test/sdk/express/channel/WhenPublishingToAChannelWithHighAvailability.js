@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 define([
     'phenix-web-lodash-light',
-    'sdk/express/RoomExpress',
+    'sdk/express/ChannelExpress',
     'sdk/room/Stream',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -26,7 +26,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, RoomExpress, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
+], function(_, ChannelExpress, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
     describe('When publishing to a channel with high availability', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -53,7 +53,7 @@ define([
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
-        var roomExpress;
+        var channelExpress;
         var response;
 
         before(function() {
@@ -76,7 +76,7 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', response);
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
-            roomExpress = new RoomExpress({
+            channelExpress = new ChannelExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData,
                 uri: 'wss://mockURI'
@@ -93,11 +93,11 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.dispose();
+            channelExpress.dispose();
         });
 
         it('has method publishToChannel', function() {
-            expect(roomExpress.publishToChannel).to.be.a('function');
+            expect(channelExpress.publishToChannel).to.be.a('function');
         });
 
         it('creates a viewer token with no alternateOriginStreamIds when no other members are present', function(done) {
@@ -108,7 +108,7 @@ define([
                 }
             });
 
-            roomExpress.publishToChannel({
+            channelExpress.publishToChannel({
                 capabilities: [],
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
@@ -153,7 +153,7 @@ define([
                 }
             });
 
-            roomExpress.publishToRoom({
+            channelExpress.publishToChannel({
                 capabilities: [],
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
@@ -211,7 +211,7 @@ define([
                 screenName: 'primary1'
             };
 
-            roomExpress.publishToChannel({
+            channelExpress.publishToChannel({
                 capabilities: [],
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {

@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-web-http'
-], function(_, assert, http) {
+    'phenix-web-http',
+    'phenix-web-disposable'
+], function(_, assert, http, disposable) {
     'use strict';
 
     var networkUnavailableCode = 0;
@@ -38,7 +39,12 @@ define([
 
         this._backendUri = backendUri;
         this._authenticationData = authenticationData;
+        this._disposables = new disposable.DisposableList();
     }
+
+    AdminAPI.prototype.dispose = function() {
+        return this._disposables.dispose();
+    };
 
     AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
         var data = appendAuthDataTo.call(this, {});
@@ -94,17 +100,22 @@ define([
     };
 
     function requestWithTimeout(requestWithoutCallback, callback) {
-        var requestTimeout = null;
-        var disposable = requestWithoutCallback(_.bind(handleResponse, this, function(error, response) {
-            clearTimeout(requestTimeout);
+        var requestTimeoutId = null;
+        var requestDisposable = requestWithoutCallback(_.bind(handleResponse, this, function(error, response) {
+            clearTimeout(requestTimeoutId);
 
             callback(error, response);
         }));
 
-        requestTimeout = setTimeout(function() {
-            disposable.dispose();
+        requestTimeoutId = setTimeout(function() {
+            requestDisposable.dispose();
             callback(new Error('timeout'));
         }, requestMaxTimeout);
+
+        this._disposables.add(requestDisposable);
+        this._disposables.add(new disposable.Disposable(function() {
+            clearTimeout(requestTimeoutId);
+        }));
     }
 
     function appendAuthDataTo(data) {

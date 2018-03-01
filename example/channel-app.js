@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ requirejs([
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
     var init = function init() {
-        var roomExpress;
+        var channelExpress;
 
         if (app.getUrlParameter('m') || app.getUrlParameter('mode')) {
             var subscriberMode = app.getModeFromAbbreviation(app.getUrlParameter('m') || app.getUrlParameter('mode'));
@@ -62,7 +62,7 @@ requirejs([
             $('#subscriber-mode').val(subscriberMode);
         }
 
-        var createRoomExpress = function createPCastExpress() {
+        var createChannelExpress = function createPCastExpress() {
             var expressOptions = {
                 backendUri: app.getBaseUri() + '/pcast',
                 authenticationData: app.getAuthData(),
@@ -77,7 +77,7 @@ requirejs([
                 };
             }
 
-            roomExpress = new sdk.express.RoomExpress(expressOptions);
+            channelExpress = new sdk.express.ChannelExpress(expressOptions);
         };
 
         var channelSubscriber;
@@ -109,7 +109,7 @@ requirejs([
                 capabilities.push($(this).val());
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 alias: channelAlias,
                 capabilities: capabilities,
                 videoElement: channelVideoEl,
@@ -146,7 +146,7 @@ requirejs([
                     message: 'Successfully joined Channel "' + channelAlias + '"'
                 });
 
-                leaveChannelCallback = response.roomService.stop;
+                leaveChannelCallback = response.channelService.stop;
 
                 $('#leaveChannel').removeClass('disabled');
             }, function subscriberCallback(error, response) {
@@ -212,13 +212,13 @@ requirejs([
         };
 
         app.setOnReset(function() {
-            createRoomExpress();
+            createChannelExpress();
         });
 
         $('#joinChannel').click(joinChannel);
         $('#leaveChannel').click(leaveChannel);
 
-        createRoomExpress();
+        createChannelExpress();
         joinChannel();
     };
 

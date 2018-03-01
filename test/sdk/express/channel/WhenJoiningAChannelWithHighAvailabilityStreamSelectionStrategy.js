@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 define([
     'phenix-web-lodash-light',
-    'sdk/express/RoomExpress',
+    'sdk/express/ChannelExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -26,7 +26,7 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When Joining a Channel With High Availability Stream Selection Strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -38,7 +38,7 @@ define([
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
-        var roomExpress;
+        var channelExpress;
         var streamModel = {
             uri: pcastPrefix + 'streamId',
             type: stream.types.presentation.name,
@@ -79,10 +79,11 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', joinRoomResponse);
             websocketStubber.stubSetupStream();
 
-            roomExpress = new RoomExpress({
+            channelExpress = new ChannelExpress({
                 backendUri: mockBackendUri,
                 authenticationData: mockAuthData,
-                uri: 'wss://mockURI'
+                uri: 'wss://mockURI',
+                onlineTimeout: 600000
             });
         });
 
@@ -94,7 +95,7 @@ define([
         afterEach(function() {
             httpStubber.restore();
             websocketStubber.restore();
-            roomExpress.dispose();
+            channelExpress.dispose();
         });
 
         function createMember(type, suffix) {
@@ -131,7 +132,7 @@ define([
                 }
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
@@ -175,7 +176,7 @@ define([
                 }
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
@@ -219,7 +220,7 @@ define([
                 }
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
@@ -258,7 +259,7 @@ define([
                 }
             });
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
@@ -305,7 +306,7 @@ define([
 
             httpStubber.stubStreamRequest();
 
-            roomExpress.joinChannel({
+            channelExpress.joinChannel({
                 capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'

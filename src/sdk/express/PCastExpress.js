@@ -1,5 +1,5 @@
 /**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,23 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
+    'phenix-web-observable',
     '../AdminAPI',
     '../userMedia/UserMediaResolver',
     '../PCast',
     'phenix-rtc',
     '../streaming/shaka.json'
-], function(_, assert, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
+], function(_, assert, observable, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
     var capacityBackoffTimeout = 1000;
     var defaultPrerollSkipDuration = 500;
-    var defaultOnlineTimeout = 20000;
+    var defaultUserActionOnlineTimeout = 20000;
+    var defaultReconnectOptions = {
+        maxOfflineTime: 3 * 60 * 1000,
+        maxReconnectFrequency: 60 * 1000
+    };
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
@@ -50,29 +55,57 @@ define([
             }
         }
 
-        this._pcast = null;
+        if (options.reconnectOptions) {
+            assert.isObject(options.reconnectOptions, 'options.reconnectOptions');
+            assert.isNumber(options.reconnectOptions.maxOfflineTime, 'options.reconnectOptions.maxOfflineTime');
+            assert.isNumber(options.reconnectOptions.maxReconnectFrequency, 'options.reconnectOptions.maxReconnectFrequency');
+        }
+
+        this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._subscribers = {};
         this._publishers = {};
         this._adminAPI = new AdminAPI(options.backendUri, options.authenticationData);
-        this._pcast = new PCast(options);
-        this._logger = this._pcast.getLogger();
         this._isInstantiated = false;
         this._reauthCount = 0;
+        this._reconnectCount = 0;
         this._authToken = options.authToken;
         this._onError = options.onError;
-        this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultOnlineTimeout;
+        this._options = options;
+        this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultUserActionOnlineTimeout;
+        this._reconnectOptions = options.reconnectOptions || defaultReconnectOptions;
+        this._logger = null;
 
         instantiatePCast.call(this);
     }
 
     PCastExpress.prototype.dispose = function dispose() {
-        if (this._pcast) {
-            this._pcast.stop();
+        if (this._listedForCriticalNetworkRecoveryDisposable) {
+            this._listedForCriticalNetworkRecoveryDisposable.dispose();
+            this._listedForCriticalNetworkRecoveryDisposable = null;
         }
+
+        if (this._pcastObservable.getValue()) {
+            this._pcastObservable.getValue().stop();
+            this._pcastObservable.setValue(null);
+        }
+
+        if (_.isNumber(this._instantiatePCastTimeout)) {
+            clearTimeout(this._instantiatePCastTimeout);
+            this._instantiatePCastTimeout = null;
+        }
+
+        this._adminAPI.dispose();
+
+        this._reconnectCount = 0;
+        this._reauthCount = 0;
     };
 
     PCastExpress.prototype.getPCast = function getPCast() {
-        return this._pcast;
+        return this._pcastObservable.getValue();
+    };
+
+    PCastExpress.prototype.getPCastObservable = function() {
+        return this._pcastObservable;
     };
 
     PCastExpress.prototype.getAdminAPI = function getAdminAPI() {
@@ -105,34 +138,18 @@ define([
             assert.isFunction(options.onScreenShare, 'options.onScreenShare');
         }
 
-        var userMediaResolver = new UserMediaResolver(that._pcast, options.aspectRatio, options.resolution, options.frameRate, function(screenOptions) {
-            screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
+        if (that._pcastObservable.getValue()) {
+            return resolveUserMedia.call(that, that._pcastObservable.getValue(), options, callback);
+        }
 
-            if (screenOptions.resolution) {
-                assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+        var pcastSubscription = that._pcastObservable.subscribe(function(pcast) {
+            if (!pcast) {
+                return;
             }
 
-            if (screenOptions.frameRate) {
-                assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
-            }
+            pcastSubscription.dispose();
 
-            if (screenOptions.aspectRatio) {
-                assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
-            }
-
-            return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
-        });
-
-        userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (options.onResolveMedia) {
-                options.onResolveMedia(response.options);
-            }
-
-            callback(null, _.assign({status: 'ok'}, response));
+            resolveUserMedia.call(that, pcast, options, callback);
         });
     };
 
@@ -334,7 +351,7 @@ define([
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
-            that._adminAPI.createStreamTokenForSubscribing(that._pcast.getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
+            that._adminAPI.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
                     return callback(error);
                 }
@@ -344,7 +361,7 @@ define([
                 }
 
                 subscribeToStream.call(that, response.streamToken, options, callback);
-            }, 1);
+            });
         });
     };
 
@@ -360,131 +377,203 @@ define([
         return this.subscribe(subscribeToScreenOptions, callback);
     };
 
-    PCastExpress.prototype.waitForOnline = function waitForOnline(callback) {
+    PCastExpress.prototype.waitForOnline = function waitForOnline(callback, isNotUserAction) {
         assert.isFunction(callback, 'callback');
 
-        if (this._pcast.getStatus() === 'online') {
+        if (this._pcastObservable.getValue() && this._pcastObservable.getValue().getStatus() === 'online') {
             return callback();
         }
 
+        var that = this;
+        var disposeOfWaitTimeout = isNotUserAction ? _.get(that._reconnectOptions, ['maxOfflineTime']) : this._onlineTimeout;
+        var pcastSubscription = null;
+        var statusSubscription = null;
         var onlineTimeout = setTimeout(function() {
-            subscription.dispose();
-            callback(new Error('timeout'));
-        }, this._onlineTimeout);
+            that._logger.info('Disposing of Express Online listener after [%s] ms', disposeOfWaitTimeout);
 
-        var subscription = this._pcast.getObservableStatus().subscribe(function(status) {
-            if (status !== 'online') {
+            if (pcastSubscription) {
+                pcastSubscription.dispose();
+            }
+
+            if (statusSubscription) {
+                statusSubscription.dispose();
+            }
+
+            callback(new Error('timeout'));
+        }, disposeOfWaitTimeout);
+
+        this._logger.info('Waiting for Online status before continuing. Timeout set to [%s]', disposeOfWaitTimeout);
+
+        var subscribeToStatusChange = function(pcast) {
+            if (statusSubscription) {
+                statusSubscription.dispose();
+            }
+
+            if (!pcast) {
                 return;
             }
 
-            clearTimeout(onlineTimeout);
-            subscription.dispose();
+            statusSubscription = pcast.getObservableStatus().subscribe(function(status) {
+                if (status !== 'online') {
+                    return;
+                }
 
-            return callback();
-        });
+                clearTimeout(onlineTimeout);
+                statusSubscription.dispose();
+                pcastSubscription.dispose();
+
+                return callback();
+            }, {initial: 'notify'});
+        };
+
+        if (this._pcastObservable.getValue()) {
+            subscribeToStatusChange(this._pcastObservable.getValue());
+        }
+
+        pcastSubscription = this._pcastObservable.subscribe(subscribeToStatusChange);
     };
 
     function instantiatePCast() {
         var that = this;
 
+        if (!this._pcastObservable.getValue()) {
+            var pcastOptions = _.assign({logger: this._logger}, this._options);
+
+            this._pcastObservable.setValue(new PCast(pcastOptions));
+        }
+
+        if (!this._logger) {
+            this._logger = this._pcastObservable.getValue().getLogger();
+        }
+
+        if (!this._pcastStatusSubscription) {
+            this._pcastStatusSubscription = this._pcastObservable.getValue().getObservableStatus().subscribe(_.bind(onPCastStatusChange, this));
+        }
+
         if (this._authToken) {
-            return this._pcast.start(this._authToken,
-                function authenticationCallback(pcast, status, sessionId) {
-                    handlePCastInstantiated.call(that, null, {
-                        status: status,
-                        sessionId: sessionId
-                    });
-                },
-                function onlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback(reason) {
-                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
-                });
+            return this._pcastObservable.getValue().start(this._authToken, _.noop, _.noop, _.noop);
         }
 
         this._adminAPI.createAuthenticationToken(function(error, response) {
+            if (error && error.message === 'timeout') {
+                return onPCastStatusChange.call(that, error.message);
+            }
+
             if (error) {
-                return handlePCastInstantiated.call(that, error);
+                return handleError.call(that, error);
             }
 
             if (response.status !== 'ok') {
-                return handlePCastInstantiated.call(that, null, response);
+                return onPCastStatusChange.call(that, response.status);
             }
 
-            that._pcast.start(response.authenticationToken,
-                function authenticationToken(pcast, status, sessionId) {
-                    handlePCastInstantiated.call(that, null, {
-                        status: status,
-                        sessionId: sessionId
-                    });
-                },
-                function onlineCallback() {
-                    handlePCastInstantiated.call(that, null, {status: 'ok'});
-                }, function offlineCallback(reason) {
-                    handlePCastInstantiated.call(that, null, {status: reason || 'offline'});
-                });
+            if (!that._pcastObservable.getValue()) {
+                return that._logger.warn('Unable to authenticate. PCast not instantiated.');
+            }
+
+            that._pcastObservable.getValue().start(response.authenticationToken, _.noop, _.noop, _.noop);
         });
     }
 
-    function handlePCastInstantiated(error, response) {
-        if (error) {
-            return handleError.call(this, error);
-        }
-
+    function onPCastStatusChange(status) {
         var that = this;
 
-        if (response && response.status !== 'ok' && response.status !== 'offline') {
+        switch (status) {
+        case 'timeout':
+        case 'critical-network-issue':
+            if (that._pcastObservable.getValue()) {
+                that._pcastObservable.getValue().stop('express-recovery');
+                that._pcastObservable.setValue(null);
+            }
+
+            if (that._pcastStatusSubscription) {
+                that._pcastStatusSubscription.dispose();
+                that._pcastStatusSubscription = null;
+            }
+
+            that._reconnectCount++;
+
+            return instantiateWithBackoff.call(that);
+        case 'reconnect-failed':
+        case 'unauthorized':
+            delete this._authToken;
+
             that._reauthCount++;
 
-            switch (response.status) {
-            case 'reconnect-failed':
-            case 'unauthorized':
-                delete this._authToken;
-
-                if (that._reauthCount > 1) {
-                    return handleError.call(this, new Error(response.status));
-                }
-
-                that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
-
-                return getAuthTokenAndReAuthenticate.call(that);
-            case 'capacity':
-            case 'network-unavailable':
-                return setTimeout(function() {
-                    if (!that._pcast.isStarted()) {
-                        return instantiatePCast.call(that);
-                    }
-
-                    return getAuthTokenAndReAuthenticate.call(that);
-                }, capacityBackoffTimeout * that._reauthCount * that._reauthCount);
-            case 'failed':
-            default:
-                return handleError.call(this, new Error(response.status));
+            if (that._reauthCount > 1) {
+                return handleError.call(this, new Error(status));
             }
+
+            that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
+
+            return getAuthTokenAndReAuthenticate.call(that);
+        case 'capacity':
+        case 'network-unavailable':
+            that._reconnectCount++;
+
+            return instantiateWithBackoff.call(that);
+        case 'online':
+            that._reauthCount = 0;
+            that._reconnectCount = 0;
+
+            if (!that._isInstantiated) {
+                that._logger.info('Express API successfully instantiated');
+            }
+
+            that._isInstantiated = true;
+
+            return;
+        case 'reconnecting':
+        case 'reconnected':
+        case 'connecting':
+            break; // Everything ok
+        case 'offline':
+            return;
+        case 'failed':
+        default:
+            return handleError.call(that, new Error(status));
         }
+    }
 
-        this._reauthCount = 0;
+    function instantiateWithBackoff() {
+        var that = this;
+        var staticTimeout = Math.min(capacityBackoffTimeout * that._reconnectCount * that._reconnectCount, this._reconnectOptions.maxReconnectFrequency);
+        var maxOffsetInSeconds = Math.min(staticTimeout / 10000, 5);
+        var randomLinearOffset = Math.random() * maxOffsetInSeconds * 1000;
+        var timeoutWithRandomOffset = staticTimeout + randomLinearOffset;
 
-        if (!that._isInstantiated) {
-            that._logger.info('Express API successfully instantiated');
-        }
+        this._logger.info('Waiting for [%s] ms before continuing to attempt to reconnect to PCast', timeoutWithRandomOffset);
 
-        that._isInstantiated = true;
+        this._instantiatePCastTimeout = setTimeout(function() {
+            if (!that._pcastObservable.getValue() || !that._pcastObservable.getValue().isStarted()) {
+                return instantiatePCast.call(that);
+            }
+
+            return getAuthTokenAndReAuthenticate.call(that);
+        }, timeoutWithRandomOffset);
     }
 
     function getAuthTokenAndReAuthenticate() {
         var that = this;
 
         this._adminAPI.createAuthenticationToken(function(error, response) {
+            if (error && error.message === 'timeout') {
+                return onPCastStatusChange.call(that, error.message);
+            }
+
             if (error) {
-                return handlePCastInstantiated.call(that, error);
+                return handleError.call(that, error);
             }
 
             if (response.status !== 'ok') {
-                return handlePCastInstantiated.call(that, null, response);
+                return onPCastStatusChange.call(that, response.status);
             }
 
-            that._pcast.reAuthenticate(response.authenticationToken);
+            if (!that._pcastObservable.getValue()) {
+                return that._logger.warn('Unable to authenticate. PCast not instantiated.');
+            }
+
+            that._pcastObservable.getValue().reAuthenticate(response.authenticationToken);
         });
     }
 
@@ -496,6 +585,38 @@ define([
         this._onError(e);
     }
 
+    function resolveUserMedia(pcast, options, callback) {
+        var userMediaResolver = new UserMediaResolver(pcast, options.aspectRatio, options.resolution, options.frameRate, function(screenOptions) {
+            screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
+
+            if (screenOptions.resolution) {
+                assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+            }
+
+            if (screenOptions.frameRate) {
+                assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
+            }
+
+            if (screenOptions.aspectRatio) {
+                assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
+            }
+
+            return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
+        });
+
+        userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (options.onResolveMedia) {
+                options.onResolveMedia(response.options);
+            }
+
+            callback(null, _.assign({status: 'ok'}, response));
+        });
+    }
+
     function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
 
@@ -505,17 +626,27 @@ define([
             return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
         }
 
-        that._adminAPI.createStreamTokenForPublishing(that._pcast.getProtocol().getSessionId(), options.capabilities, function(error, response) {
+        that.waitForOnline(function(error) {
             if (error) {
                 return callback(error);
             }
 
-            if (response.status !== 'ok') {
-                return callback(null, response);
-            }
+            var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
 
-            publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
-        }, 1);
+            that._logger.info('Session Id [%s]', sessionId);
+
+            that._adminAPI.createStreamTokenForPublishing(sessionId, options.capabilities, function(error, response) {
+                if (error) {
+                    return callback(error);
+                }
+
+                if (response.status !== 'ok') {
+                    return callback(null, response);
+                }
+
+                publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+            });
+        }, options.isContinuation);
     }
 
     function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
@@ -533,19 +664,23 @@ define([
         var publishCallback = function publishCallback(pcast, status, publisher) {
             var retryPublisher = function retryPublisher(reason) {
                 var placeholder = _.uniqueId();
+                var optionsWithToken = _.assign({
+                    streamToken: streamToken,
+                    isContinuation: true
+                }, options);
 
                 that._publishers[placeholder] = true;
                 publisher.stop(reason, true);
 
-                publishUserMediaOrUri.call(that, streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+                getStreamingTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
 
                 delete that._publishers[placeholder];
             };
 
-            if (status === unauthorizedStatus && options.streamToken) {
+            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
                 that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
 
-                var reAuthOptions = _.assign({}, options);
+                var reAuthOptions = _.assign({isContinuation: true}, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -586,15 +721,22 @@ define([
             });
         };
 
-        that._pcast.publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
+        that.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
+            that._pcastObservable.getValue().publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
+        }, options.isContinuation);
     }
 
     function subscribeToStream(streamToken, options, callback) {
         var that = this;
 
-        that._pcast.subscribe(streamToken, function(pcast, status, subscriber) {
+        var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
                 var placeholder = _.uniqueId();
+                var retryOptions = _.assign({isContinuation: true}, options);
 
                 that._subscribers[placeholder] = true;
 
@@ -602,15 +744,15 @@ define([
 
                 that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
 
-                subscribeToStream.call(that, streamToken, options, callback);
+                subscribeToStream.call(that, streamToken, retryOptions, callback);
 
                 delete that._subscribers[placeholder];
             };
 
-            if (status === unauthorizedStatus && options.streamToken) {
+            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
                 that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
 
-                var reAuthOptions = _.assign({}, options);
+                var reAuthOptions = _.assign({isContinuation: true}, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -639,7 +781,7 @@ define([
             }
 
             var isPublisher = false;
-            var noopCallback = function() {};
+            var noopCallback = _.noop;
             var subscriberEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retrySubscriber, isPublisher);
 
             if (options.monitor) {
@@ -679,7 +821,15 @@ define([
             }
 
             callback(null, subscribeResponse);
-        }, options.subscriberOptions);
+        };
+
+        that.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
+            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, options.subscriberOptions);
+        }, options.isContinuation);
     }
 
     function createExpressPublisher(publisher, videoElement, cleanUpUserMediaOnStop) {
