@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Phenix WebSDK Simplified Publish/Subscribe Example</title>
+    <title>Phenix WebSDK Viewer Example</title>
 
     <link rel="stylesheet" href="bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="animate.css/animate.min.css">
@@ -116,7 +116,7 @@
     <script>
         var __phenixPageLoadTime = new Date().getTime();
     </script>
-    <script data-main="simplified-app" src="requirejs/require.js"></script>
+    <script data-main="viewer-app" src="requirejs/require.js"></script>
 </head>
 <body>
 
@@ -179,61 +179,20 @@
         <div class="col-md-4 col-md-offset-3 text-center client">
             <div class="form-group">
                 <div class="col-md-10 col-md-offset-1 text-center">
-                    <p>Select <strong>User Media</strong> and <strong>Capabilities</strong>, then click Publish. </p>
-                    <select class="form-control" id="gum-quality">
-                        <option value="144">144p</option>
-                        <option value="180">180p</option>
-                        <option value="240">240p</option>
-                        <option value="360">360p</option>
-                        <option value="480">480p</option>
-                        <option value="720" selected>720p</option>
-                        <option value="1080">1080p</option>
-                    </select>
-                    <select class="form-control" id="gum-source">
-                        <option value="cameraAndMicrophone">Camera & Microphone</option>
-                        <option value="screen">Screen</option>
-                        <option value="camera">Camera</option>
-                        <option value="microphone">Microphone</option>
-                        <option value="cameraMicrophoneAndScreen">Camera & Microphone & Screen</option>
-                        <option value="screenAndScreenAudio">Screen & Audio (Chrome - Windows or Chrome OS)</option>
-                        <option value="desktop">Screen (Desktop-FF)</option>
-                        <option value="application">Screen (Application-FF)</option>
-                    </select>
-                    <select class="form-control" id="publish-capabilities" multiple>
-                        <option value="archive">Archive</option>
-                        <option value="archive-audio-only">Archive Audio-Only</option>
-                        <option value="streaming">Streaming</option>
-                        <option value="on-demand">On Demand</option>
-                        <option value="low-latency">Low Latency (Streaming)</option>
-                        <option value="prefer-h264">H264 (Real-time)</option>
-                        <option value="drm">DRM</option>
-                        <option value="high-fidelity">High Fidelity (Audio)</option>
-                        <option value="multi-bitrate">Multi Bitrate</option>
-                    </select>
-                    <select class="form-control" id="publish-quality">
-                        <option value="ld">LD</option>
-                        <option value="sd">SD</option>
-                        <option value="hd" selected="true">HD</option>
-                        <option value="fhd">FHD</option>
-                        <option value="uhd">UHD</option>
-                    </select>
-                    <input id="publish" type="button" value="Publish Local User Media"/>
-                    <input id="stopPublisher" class="disabled" type="button" value="Stop Publisher"/>
+                    <p>Select an available stream.</p>
+                    <div class="form-group">
+                        <label for="stream">Stream:</label>
+                        <select class="from-control" id="stream">
+                        </select>
+                        <input id="stream-refresh" type="button" value="Refresh" for="stream"/>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row text-center">
-        <div id="videoListLocal" class="col-md-4 col-md-offset-4 text-center">
-            <video id="localVideo" class="local" width="160" height="120" muted="true"></video>
-            <video id="localVideoSecondary" class="local hidden" width="160" height="120" muted="true"></video>
-            </div>
-        </div>
-    </div>
-    <div class="row text-center">
-        <span>Publisher Stream Id</span>
-        <input class="streamIdForPublishing" type="text" placeholder="streamId" readonly/>
+        <input type="text" class="hidden-no-space" id="originStreamId"  readonly/>
     </div>
 
     <div class="row step step-2">
@@ -241,7 +200,7 @@
             <span class="badge">2</span>
         </div>
         <div class="col-md-4 col-md-offset-3 text-center client">
-            <p>Subscribe to a stream using the <strong>streamToken</strong>.</p>
+            <p>Subscribe to a stream.</p>
             <select class="form-control" id="subscriber-mode">
                 <option value="real-time">Real-time</option>
                 <option value="broadcast">Broadcast</option>

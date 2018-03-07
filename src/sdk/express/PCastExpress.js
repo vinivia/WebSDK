@@ -17,12 +17,13 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
+    'phenix-web-player',
     '../AdminAPI',
     '../userMedia/UserMediaResolver',
     '../PCast',
     'phenix-rtc',
     '../streaming/shaka.json'
-], function(_, assert, observable, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
+], function(_, assert, observable, phenixWebPlayer, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -362,7 +363,7 @@ define([
 
                 subscribeToStream.call(that, response.streamToken, options, callback);
             });
-        });
+        }, options.isContinuation);
     };
 
     PCastExpress.prototype.subscribeToScreen = function subscribeToScreen(options, callback) {
@@ -813,6 +814,14 @@ define([
 
                 if (errorType === 'shaka' && error.severity !== shakaEnums.errorSeverity.critical.id) {
                     return; // Ignore error
+                }
+
+                if (errorType === 'phenix-player' && error.severity === phenixWebPlayer.errors.severity.RECOVERABLE) {
+                    var reAuthOptions = _.assign({isContinuation: true}, options);
+
+                    delete reAuthOptions.streamToken;
+
+                    return that.subscribe(reAuthOptions, callback);
                 }
 
                 that._logger.warn('[%s] Error while playing stream with Express API. Stopping stream.', expressSubscriber.getStreamId(), error);
