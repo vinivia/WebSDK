@@ -1443,12 +1443,11 @@ define([
         var that = this;
         var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, this._shaka, this._logger);
         var liveStreamDecorator = new StreamWrapper(kind, liveStream, this._logger);
-        var playerKind = this._shaka && kind === streamEnums.types.dash.name ? 'shaka' : kind;
 
         var onPlayerError = function onPlayerError(source, event) {
             that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
 
-            liveStreamDecorator.streamErrorCallback(playerKind, event);
+            liveStreamDecorator.streamErrorCallback(source, event);
         };
 
         var onStop = function onStop(reason) {
@@ -1478,7 +1477,7 @@ define([
     function transitionToStatus(newStatus, reason, suppressCallback) {
         var oldStatus = this.getStatus();
 
-        if (oldStatus !== newStatus) {
+        if (oldStatus !== newStatus && !(isOfflineStatus(oldStatus) && newStatus === 'offline')) {
             this._observableStatus.setValue(newStatus);
 
             if (suppressCallback) {
@@ -1490,6 +1489,7 @@ define([
             case 'reconnecting':
             case 'reconnected':
                 break;
+            case 'critical-network-issue':
             case 'unauthorized':
             case 'reconnect-failed':
             case 'offline':
@@ -1500,6 +1500,10 @@ define([
                 break;
             }
         }
+    }
+
+    function isOfflineStatus(status) {
+        return status === 'critical-network-issue' || status === 'offline';
     }
 
     function closePeerConnection(streamId, peerConnection, reason) {

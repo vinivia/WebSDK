@@ -78,7 +78,7 @@ define([
 
         playlist.fetch(function(err) {
             if (err) {
-                throw new Error(err);
+                return that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix-player', err]);
             }
 
             setupPlayer.call(that);
@@ -152,7 +152,7 @@ define([
 
                 finalizeStreamEnded();
 
-                that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix', e]);
+                that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix-player', e]);
             }
         }
     };
@@ -253,7 +253,7 @@ define([
             return reloadIfAble.call(this);
         }
 
-        this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix', e]);
+        this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix-player', e]);
     }
 
     function reload() {
