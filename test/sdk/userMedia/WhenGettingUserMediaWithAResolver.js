@@ -21,7 +21,7 @@ define([
     '../../../test/mock/UserMediaStubber',
     '../../../test/mock/ChromeRuntimeStubber'
 ], function(_, rtc, UserMediaResolver, PCast, UserMediaStubber, ChromeRuntimeStubber) {
-    describe('When getting user media with a resolver', function() { // eslint-disable-line mocha/no-exclusive-tests
+    describe('When getting user media with a resolver', function() {
         var userMediaStubber = new UserMediaStubber();
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var pcast;
@@ -61,7 +61,11 @@ define([
         it('returns the user media on a successful callback', function(done) {
             var callbackStub = sinon.stub();
 
-            userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
+            userMediaResolver = new UserMediaResolver(pcast, {
+                aspectRatio: '16x9',
+                resolutionHeight: 720,
+                frameRate: 15
+            });
 
             userMediaStubber.stub(callbackStub);
 
@@ -80,7 +84,11 @@ define([
         it('returns an error when it fails to resolve media', function(done) {
             var callbackStub = sinon.stub();
 
-            userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
+            userMediaResolver = new UserMediaResolver(pcast, {
+                aspectRatio: '16x9',
+                resolutionHeight: 720,
+                frameRate: 15
+            });
 
             userMediaStubber.stubCriticalError(callbackStub);
 
@@ -99,7 +107,11 @@ define([
             var failureStub = sinon.stub();
             var callbackStub = sinon.stub();
 
-            userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
+            userMediaResolver = new UserMediaResolver(pcast, {
+                aspectRatio: '16x9',
+                resolutionHeight: 720,
+                frameRate: 15
+            });
 
             userMediaStubber.stubResolutionError(function() {
                 failureStub();
@@ -122,7 +134,11 @@ define([
         it('successfully resolves screen to video', function(done) {
             var callbackStub = sinon.stub();
 
-            userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
+            userMediaResolver = new UserMediaResolver(pcast, {
+                aspectRatio: '16x9',
+                resolutionHeight: 720,
+                frameRate: 15
+            });
 
             userMediaStubber.stub(function(constraints) {
                 expect(constraints.video).to.exist;
@@ -141,7 +157,11 @@ define([
         it('returns an error after exhausting all resolution options', function(done) {
             var callbackStub = sinon.stub();
 
-            userMediaResolver = new UserMediaResolver(pcast, '16x9', 720, 15);
+            userMediaResolver = new UserMediaResolver(pcast, {
+                aspectRatio: '16x9',
+                resolutionHeight: 720,
+                frameRate: 15
+            });
 
             userMediaStubber.stubResolutionError(callbackStub);
 
@@ -150,6 +170,173 @@ define([
                 expect(response).to.not.exist;
                 sinon.assert.called(callbackStub);
                 done();
+            });
+        });
+
+        describe('When using the default resolution strategy of fallbackToLowerThenHigher', function() {
+            it('will first try lower resolution followed by higher resolutions', function(done) {
+                var heightToStartAt = 720;
+                var isHigherResolutionCalled = false;
+                var isLowerResolutionCalled = false;
+
+                userMediaResolver = new UserMediaResolver(pcast, {
+                    aspectRatio: '16x9',
+                    resolutionHeight: heightToStartAt,
+                    frameRate: 15
+                });
+
+                userMediaStubber.stubResolutionError(function(constraints) {
+                    var height = null;
+
+                    if (_.isObject(constraints.video.height)) {
+                        height = constraints.video.height.min;
+                    } else if (_.isObject(constraints.video.mandatory)) {
+                        height = constraints.video.mandatory.minHeight;
+                    }
+
+                    if (height !== null && height > heightToStartAt) {
+                        isHigherResolutionCalled = true;
+                    }
+
+                    if (height !== null && height < heightToStartAt) {
+                        isLowerResolutionCalled = true;
+                    }
+                });
+
+                userMediaResolver.getUserMedia({video: true}, function(error, response) {
+                    expect(error).to.exist;
+                    expect(response).to.not.exist;
+                    expect(isHigherResolutionCalled).to.be.true;
+                    expect(isLowerResolutionCalled).to.be.true;
+                    done();
+                });
+            });
+        });
+
+        describe('When using fallbackToLower resolution strategy', function() {
+            it('will first try lower resolution and not try any higher resolutions', function(done) {
+                var heightToStartAt = 720;
+                var isHigherResolutionCalled = false;
+                var isLowerResolutionCalled = false;
+
+                userMediaResolver = new UserMediaResolver(pcast, {
+                    aspectRatio: '16x9',
+                    resolutionHeight: heightToStartAt,
+                    frameRate: 15,
+                    resolutionSelectionStrategy: 'fallbackToLower'
+                });
+
+                userMediaStubber.stubResolutionError(function(constraints) {
+                    var height = null;
+
+                    if (_.isObject(constraints.video.height)) {
+                        height = constraints.video.height.min;
+                    } else if (_.isObject(constraints.video.mandatory)) {
+                        height = constraints.video.mandatory.minHeight;
+                    }
+
+                    if (height !== null && height > heightToStartAt) {
+                        isHigherResolutionCalled = true;
+                    }
+
+                    if (height !== null && height < heightToStartAt) {
+                        isLowerResolutionCalled = true;
+                    }
+                });
+
+                userMediaResolver.getUserMedia({video: true}, function(error, response) {
+                    expect(error).to.exist;
+                    expect(response).to.not.exist;
+                    expect(isHigherResolutionCalled).to.not.be.true;
+                    expect(isLowerResolutionCalled).to.be.true;
+                    done();
+                });
+            });
+        });
+
+        describe('When using fallbackToHigher resolution strategy', function() {
+            it('will first try higher resolution and not try any lower resolutions', function(done) {
+                var heightToStartAt = 720;
+                var isHigherResolutionCalled = false;
+                var isLowerResolutionCalled = false;
+
+                userMediaResolver = new UserMediaResolver(pcast, {
+                    aspectRatio: '16x9',
+                    resolutionHeight: heightToStartAt,
+                    frameRate: 15,
+                    resolutionSelectionStrategy: 'fallbackToHigher'
+                });
+
+                userMediaStubber.stubResolutionError(function(constraints) {
+                    var height = null;
+
+                    if (_.isObject(constraints.video.height)) {
+                        height = constraints.video.height.min;
+                    } else if (_.isObject(constraints.video.mandatory)) {
+                        height = constraints.video.mandatory.minHeight;
+                    }
+
+                    console.log(height, heightToStartAt);
+
+                    if (height !== null && height > heightToStartAt) {
+                        isHigherResolutionCalled = true;
+                    }
+
+                    if (height !== null && height < heightToStartAt) {
+                        isLowerResolutionCalled = true;
+                    }
+                });
+
+                userMediaResolver.getUserMedia({video: true}, function(error, response) {
+                    expect(error).to.exist;
+                    expect(response).to.not.exist;
+                    expect(isHigherResolutionCalled).to.be.true;
+                    expect(isLowerResolutionCalled).to.not.be.true;
+                    done();
+                });
+            });
+        });
+
+        describe('When using exact resolution strategy', function() {
+            it('will not try any higher and any lower resolutions', function(done) {
+                var heightToStartAt = 720;
+                var isHigherResolutionCalled = false;
+                var isLowerResolutionCalled = false;
+
+                userMediaResolver = new UserMediaResolver(pcast, {
+                    aspectRatio: '16x9',
+                    resolutionHeight: heightToStartAt,
+                    frameRate: 15,
+                    resolutionSelectionStrategy: 'exact'
+                });
+
+                userMediaStubber.stubResolutionError(function(constraints) {
+                    var height = null;
+
+                    if (_.isObject(constraints.video.height)) {
+                        height = constraints.video.height.min;
+                    } else if (_.isObject(constraints.video.mandatory)) {
+                        height = constraints.video.mandatory.minHeight;
+                    }
+
+                    console.log(height, heightToStartAt);
+
+                    if (height !== null && height > heightToStartAt) {
+                        isHigherResolutionCalled = true;
+                    }
+
+                    if (height !== null && height < heightToStartAt) {
+                        isLowerResolutionCalled = true;
+                    }
+                });
+
+                userMediaResolver.getUserMedia({video: true}, function(error, response) {
+                    expect(error).to.exist;
+                    expect(response).to.not.exist;
+                    expect(isHigherResolutionCalled).to.not.be.true;
+                    expect(isLowerResolutionCalled).to.not.be.true;
+                    done();
+                });
             });
         });
     });

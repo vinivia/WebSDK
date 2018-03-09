@@ -16,64 +16,36 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc'
-], function(_, assert, RTC) {
+    'phenix-rtc',
+    './ResolutionProvider'
+], function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
-    // ToDo: Add supported frame rates [30, 15]
-    var aspectRatios = [
-        {
-            '16x9': [
-                {2160: 3840}, // 4k (UHD)
-                {1080: 1920}, // 1080p (FHD)
-                {768: 1366}, //
-                {720: 1280}, // 720p(HD)
-                {576: 1024},
-                {480: 853}, // 480p
-                {360: 640}, // 360p (nHD)
-                {180: 320}
-            ]
-        },
-        {
-            '4x3': [
-                {1200: 1600}, // UXGA
-                {1080: 1440},
-                {720: 960},
-                {600: 800}, // SVGA
-                {576: 768},
-                {480: 640}, // VGA
-                {360: 480},
-                {288: 352}, // CIF
-                {240: 320}, // QVGA
-                {144: 176}, // QCIF
-                {120: 160} // QQVGA
-            ]
-        }
-    ];
-
-    function UserMediaResolver(pcast, defaultAspectRatio, defaultResolutionHeight, defaultFrameRate, onScreenShare) {
+    function UserMediaResolver(pcast, options) {
         assert.isObject(pcast, 'pcast');
+
+        if (options) {
+            assert.isObject(options, 'options');
+        }
+
+        if (options && options.screenShare) {
+            assert.isFunction(options.screenShare, 'options.screenShare');
+        }
 
         this._pcast = pcast;
         this._logger = pcast.getLogger();
-        this._defaultAspectRatio = defaultAspectRatio || '16x9';
-        this._defaultResolutionHeight = defaultResolutionHeight || 720;
-        this._defaultFrameRate = defaultFrameRate || 15;
-        this._onScreenShare = onScreenShare;
+        this._options = options || {};
+        this._onScreenShare = _.get(options, ['onScreenShare']);
     }
 
     UserMediaResolver.prototype.getUserMedia = function getUserMedia(deviceOptions, callback) {
         assert.isObject(deviceOptions, 'deviceOptions');
 
-        var aspectRatioHeights = getObjectValueInArray(this._defaultAspectRatio, aspectRatios);
-        var width = getObjectValueInArray(this._defaultResolutionHeight, aspectRatioHeights) || calculateWidthByAspectRatio(this._defaultResolutionHeight, this._defaultAspectRatio);
-        var resolution = {
-            height: this._defaultResolutionHeight,
-            width: width,
-            aspectRatio: this._defaultAspectRatio
-        };
+        var resolutionProvider = new ResolutionProvider(this._options);
+        var resolution = resolutionProvider.getDefaultResolution();
+        var frameRate = resolutionProvider.getDefaultFrameRate();
 
-        getUserMediaWithOptions.call(this, deviceOptions, resolution, this._defaultFrameRate, callback);
+        getUserMediaWithOptions.call(this, deviceOptions, resolution, frameRate, resolutionProvider, callback);
     };
 
     UserMediaResolver.prototype.getVendorSpecificConstraints = function getVendorSpecificConstraints(deviceOptions, resolution, frameRate) {
@@ -96,23 +68,6 @@ define([
 
         return setUserMediaOptionsForOtherBrowsers(deviceOptions, resolution, frameRate);
     };
-
-    function calculateWidthByAspectRatio(height, aspectRatio) {
-        switch (aspectRatio) {
-        case '16x9':
-            return roundUpToNearestEvenNumber((16 / 9) * height);
-        case '4x3':
-            return roundUpToNearestEvenNumber((4 / 3) * height);
-        default:
-            throw new Error('Aspect Ratio not supported');
-        }
-    }
-
-    function roundUpToNearestEvenNumber(value) {
-        assert.isNumber(value, 'value');
-
-        return 2 * Math.floor((value + 1) / 2);
-    }
 
     function setUserMediaOptionsForEdge(deviceOptions, resolution, frameRate) {
         var video = deviceOptions.video;
@@ -455,7 +410,7 @@ define([
         return constraints;
     }
 
-    function getUserMediaWithOptions(deviceOptions, resolution, frameRate, callback) {
+    function getUserMediaWithOptions(deviceOptions, resolution, frameRate, resolutionProvider, callback) {
         var constraints = this.getVendorSpecificConstraints(deviceOptions, resolution || {}, frameRate);
         var hasVideo = !!constraints.video;
         var that = this;
@@ -476,19 +431,24 @@ define([
             var nextFrameRate = frameRate;
             var constraintName = getConstraintNameFromError(error);
 
-            if (error && (error.name === 'ConstraintNotSatisfiedError' || error.name === 'OverconstrainedError') || error.constructor.name === 'OverconstrainedError' || (error.code === 'unavailable' && RTC.browser === 'Edge')) {
+            if (error && (
+                error.name === 'ConstraintNotSatisfiedError'
+                || error.name === 'OverconstrainedError'
+                || error.constructor.name === 'OverconstrainedError'
+                || (error.code === 'unavailable' && RTC.browser === 'Edge'))
+            ) {
                 switch (constraintName.toLowerCase()) {
                 case 'width':
                 case 'height':
-                    if (!resolution) {
+                    if (!resolution || !resolutionProvider.canResolveNextResolution()) {
                         break;
                     }
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
+                    nextResolution = resolutionProvider.getNextResolution(resolution.height, resolution.aspectRatio);
 
-                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                 case 'framerate':
                 default:
                     // Always try without frame rate if constraint name not defined
@@ -496,19 +456,19 @@ define([
                         that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
                         nextFrameRate = null;
 
-                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                     }
 
                     // Then try to reduce resolution
-                    if (!resolution) {
+                    if (!resolution || !resolutionProvider.canResolveNextResolution()) {
                         break;
                     }
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
+                    nextResolution = resolutionProvider.getNextResolution(resolution.height, resolution.aspectRatio);
 
-                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                 }
             }
 
@@ -527,7 +487,7 @@ define([
 
                 if (clientConstraints.resolutionHeight && clientConstraints.aspectRatio) {
                     resolution = {
-                        width: calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
+                        width: resolutionProvider.calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
                         height: clientConstraints.resolutionHeight
                     };
                 }
@@ -604,91 +564,6 @@ define([
         }
 
         return '';
-    }
-
-    function getNextResolution(height, aspectRatio) {
-        var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
-        var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
-        var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
-
-        var newAspectRatio;
-        var newAspectRatioHeights;
-        var newHeight;
-        var newWidth;
-
-        if (!_.isNumber(heightIndex)) {
-            heightIndex = getClosestKeyIndex(height, aspectRatioHeights);
-        } else {
-            if (heightIndex === aspectRatioHeights.length - 1) {
-                if (aspectRatioHeights.length - 1 === 0) {
-                    return null;
-                }
-
-                aspectRatioIndex++;
-
-                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-                newHeight = this._defaultResolutionHeight;
-                newWidth = calculateWidthByAspectRatio(newHeight, newAspectRatio);
-
-                return {
-                    aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
-                };
-            }
-
-            heightIndex++;
-        }
-
-        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        newWidth = newAspectRatioHeights[heightIndex][newHeight];
-
-        return {
-            aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
-        };
-    }
-
-    function getObjectValueInArray(value, collection) {
-        var valueObject = _.find(collection, function(item) {
-            return item.hasOwnProperty(value);
-        });
-
-        return valueObject ? valueObject[value] : null;
-    }
-
-    function getIndexInArray(value, collection) {
-        return _.findIndex(collection, function(item) {
-            return item.hasOwnProperty(value);
-        });
-    }
-
-    function getIndexKey(index, collection) {
-        var keys = _.keys(collection[index]);
-
-        return keys[0];
-    }
-
-    function getIndexValue(index, collection) {
-        var keys = _.keys(collection[index]);
-
-        return collection[index][keys[0]];
-    }
-
-    function getClosestKeyIndex(value, collection) {
-        return _.reduce(collection, function(closestIndex, nextItem, index) {
-            if (!closestIndex) {
-                return index;
-            }
-
-            var currentClosestKey = _.keys(collection[closestIndex])[0];
-            var nextKey = _.keys(nextItem)[0];
-
-            return Math.abs(value - nextKey) < Math.abs(value - currentClosestKey) ? index : closestIndex;
-        });
     }
 
     return UserMediaResolver;

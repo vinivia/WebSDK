@@ -586,22 +586,28 @@ define([
     }
 
     function resolveUserMedia(pcast, options, callback) {
-        var userMediaResolver = new UserMediaResolver(pcast, options.aspectRatio, options.resolution, options.frameRate, function(screenOptions) {
-            screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
+        var userMediaResolver = new UserMediaResolver(pcast, {
+            aspectRatio: options.aspectRatio,
+            resolutionHeight: options.resolution,
+            frameRate: options.frameRate,
+            resolutionSelectionStrategy: options.resolutionSelectionStrategy,
+            onScreenShare: function(screenOptions) {
+                screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
 
-            if (screenOptions.resolution) {
-                assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+                if (screenOptions.resolution) {
+                    assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+                }
+
+                if (screenOptions.frameRate) {
+                    assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
+                }
+
+                if (screenOptions.aspectRatio) {
+                    assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
+                }
+
+                return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
             }
-
-            if (screenOptions.frameRate) {
-                assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
-            }
-
-            if (screenOptions.aspectRatio) {
-                assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
-            }
-
-            return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
         });
 
         userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {

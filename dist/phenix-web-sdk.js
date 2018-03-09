@@ -88,7 +88,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 103);
+/******/ 	return __webpack_require__(__webpack_require__.s = 104);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4631,7 +4631,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-03-08T21:13:13Z',
+                version: '2018-03-09T18:24:04Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4965,8 +4965,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(6),
     __webpack_require__(72),
     __webpack_require__(16),
-    __webpack_require__(100),
     __webpack_require__(101),
+    __webpack_require__(102),
     __webpack_require__(40),
     __webpack_require__(9),
     __webpack_require__(99),
@@ -4982,7 +4982,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-03-08T21:13:13Z';
+    var sdkVersion = '2018-03-09T18:24:04Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -7119,22 +7119,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function resolveUserMedia(pcast, options, callback) {
-        var userMediaResolver = new UserMediaResolver(pcast, options.aspectRatio, options.resolution, options.frameRate, function(screenOptions) {
-            screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
+        var userMediaResolver = new UserMediaResolver(pcast, {
+            aspectRatio: options.aspectRatio,
+            resolutionHeight: options.resolution,
+            frameRate: options.frameRate,
+            resolutionSelectionStrategy: options.resolutionSelectionStrategy,
+            onScreenShare: function(screenOptions) {
+                screenOptions = options.onScreenShare ? options.onScreenShare(screenOptions) : screenOptions;
 
-            if (screenOptions.resolution) {
-                assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+                if (screenOptions.resolution) {
+                    assert.isNumber(screenOptions.resolution, 'clientOptions.resolution');
+                }
+
+                if (screenOptions.frameRate) {
+                    assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
+                }
+
+                if (screenOptions.aspectRatio) {
+                    assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
+                }
+
+                return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
             }
-
-            if (screenOptions.frameRate) {
-                assert.isNumber(screenOptions.frameRate, 'screenOptions.frameRate');
-            }
-
-            if (screenOptions.aspectRatio) {
-                assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
-            }
-
-            return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
         });
 
         userMediaResolver.getUserMedia(options.mediaConstraints, function(error, response) {
@@ -8540,8 +8546,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         try {
             self.commitChanges(function handleUpdateSelf(error, response) {
-                console.log(updateSelfErrors);
-
                 if (error) {
                     updateSelfErrors++;
                 }
@@ -9517,64 +9521,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, RTC) {
+    __webpack_require__(3),
+    __webpack_require__(100)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
-    // ToDo: Add supported frame rates [30, 15]
-    var aspectRatios = [
-        {
-            '16x9': [
-                {2160: 3840}, // 4k (UHD)
-                {1080: 1920}, // 1080p (FHD)
-                {768: 1366}, //
-                {720: 1280}, // 720p(HD)
-                {576: 1024},
-                {480: 853}, // 480p
-                {360: 640}, // 360p (nHD)
-                {180: 320}
-            ]
-        },
-        {
-            '4x3': [
-                {1200: 1600}, // UXGA
-                {1080: 1440},
-                {720: 960},
-                {600: 800}, // SVGA
-                {576: 768},
-                {480: 640}, // VGA
-                {360: 480},
-                {288: 352}, // CIF
-                {240: 320}, // QVGA
-                {144: 176}, // QCIF
-                {120: 160} // QQVGA
-            ]
-        }
-    ];
-
-    function UserMediaResolver(pcast, defaultAspectRatio, defaultResolutionHeight, defaultFrameRate, onScreenShare) {
+    function UserMediaResolver(pcast, options) {
         assert.isObject(pcast, 'pcast');
+
+        if (options) {
+            assert.isObject(options, 'options');
+        }
+
+        if (options && options.screenShare) {
+            assert.isFunction(options.screenShare, 'options.screenShare');
+        }
 
         this._pcast = pcast;
         this._logger = pcast.getLogger();
-        this._defaultAspectRatio = defaultAspectRatio || '16x9';
-        this._defaultResolutionHeight = defaultResolutionHeight || 720;
-        this._defaultFrameRate = defaultFrameRate || 15;
-        this._onScreenShare = onScreenShare;
+        this._options = options || {};
+        this._onScreenShare = _.get(options, ['onScreenShare']);
     }
 
     UserMediaResolver.prototype.getUserMedia = function getUserMedia(deviceOptions, callback) {
         assert.isObject(deviceOptions, 'deviceOptions');
 
-        var aspectRatioHeights = getObjectValueInArray(this._defaultAspectRatio, aspectRatios);
-        var width = getObjectValueInArray(this._defaultResolutionHeight, aspectRatioHeights) || calculateWidthByAspectRatio(this._defaultResolutionHeight, this._defaultAspectRatio);
-        var resolution = {
-            height: this._defaultResolutionHeight,
-            width: width,
-            aspectRatio: this._defaultAspectRatio
-        };
+        var resolutionProvider = new ResolutionProvider(this._options);
+        var resolution = resolutionProvider.getDefaultResolution();
+        var frameRate = resolutionProvider.getDefaultFrameRate();
 
-        getUserMediaWithOptions.call(this, deviceOptions, resolution, this._defaultFrameRate, callback);
+        getUserMediaWithOptions.call(this, deviceOptions, resolution, frameRate, resolutionProvider, callback);
     };
 
     UserMediaResolver.prototype.getVendorSpecificConstraints = function getVendorSpecificConstraints(deviceOptions, resolution, frameRate) {
@@ -9597,23 +9573,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         return setUserMediaOptionsForOtherBrowsers(deviceOptions, resolution, frameRate);
     };
-
-    function calculateWidthByAspectRatio(height, aspectRatio) {
-        switch (aspectRatio) {
-        case '16x9':
-            return roundUpToNearestEvenNumber((16 / 9) * height);
-        case '4x3':
-            return roundUpToNearestEvenNumber((4 / 3) * height);
-        default:
-            throw new Error('Aspect Ratio not supported');
-        }
-    }
-
-    function roundUpToNearestEvenNumber(value) {
-        assert.isNumber(value, 'value');
-
-        return 2 * Math.floor((value + 1) / 2);
-    }
 
     function setUserMediaOptionsForEdge(deviceOptions, resolution, frameRate) {
         var video = deviceOptions.video;
@@ -9956,7 +9915,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return constraints;
     }
 
-    function getUserMediaWithOptions(deviceOptions, resolution, frameRate, callback) {
+    function getUserMediaWithOptions(deviceOptions, resolution, frameRate, resolutionProvider, callback) {
         var constraints = this.getVendorSpecificConstraints(deviceOptions, resolution || {}, frameRate);
         var hasVideo = !!constraints.video;
         var that = this;
@@ -9977,19 +9936,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var nextFrameRate = frameRate;
             var constraintName = getConstraintNameFromError(error);
 
-            if (error && (error.name === 'ConstraintNotSatisfiedError' || error.name === 'OverconstrainedError') || error.constructor.name === 'OverconstrainedError' || (error.code === 'unavailable' && RTC.browser === 'Edge')) {
+            if (error && (
+                error.name === 'ConstraintNotSatisfiedError'
+                || error.name === 'OverconstrainedError'
+                || error.constructor.name === 'OverconstrainedError'
+                || (error.code === 'unavailable' && RTC.browser === 'Edge'))
+            ) {
                 switch (constraintName.toLowerCase()) {
                 case 'width':
                 case 'height':
-                    if (!resolution) {
+                    if (!resolution || !resolutionProvider.canResolveNextResolution()) {
                         break;
                     }
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
+                    nextResolution = resolutionProvider.getNextResolution(resolution.height, resolution.aspectRatio);
 
-                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                 case 'framerate':
                 default:
                     // Always try without frame rate if constraint name not defined
@@ -9997,19 +9961,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
                         nextFrameRate = null;
 
-                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                        return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                     }
 
                     // Then try to reduce resolution
-                    if (!resolution) {
+                    if (!resolution || !resolutionProvider.canResolveNextResolution()) {
                         break;
                     }
 
                     that._logger.warn('Unable to get user media with constraint [%s] with height [%s] and width [%s]. Retrying with next closest resolution.',
                         constraintName, nextResolution.height, nextResolution.width);
-                    nextResolution = getNextResolution.call(that, resolution.height, resolution.aspectRatio);
+                    nextResolution = resolutionProvider.getNextResolution(resolution.height, resolution.aspectRatio);
 
-                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, callback);
+                    return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                 }
             }
 
@@ -10028,7 +9992,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 if (clientConstraints.resolutionHeight && clientConstraints.aspectRatio) {
                     resolution = {
-                        width: calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
+                        width: resolutionProvider.calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
                         height: clientConstraints.resolutionHeight
                     };
                 }
@@ -10105,91 +10069,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         return '';
-    }
-
-    function getNextResolution(height, aspectRatio) {
-        var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
-        var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
-        var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
-
-        var newAspectRatio;
-        var newAspectRatioHeights;
-        var newHeight;
-        var newWidth;
-
-        if (!_.isNumber(heightIndex)) {
-            heightIndex = getClosestKeyIndex(height, aspectRatioHeights);
-        } else {
-            if (heightIndex === aspectRatioHeights.length - 1) {
-                if (aspectRatioHeights.length - 1 === 0) {
-                    return null;
-                }
-
-                aspectRatioIndex++;
-
-                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-                newHeight = this._defaultResolutionHeight;
-                newWidth = calculateWidthByAspectRatio(newHeight, newAspectRatio);
-
-                return {
-                    aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
-                };
-            }
-
-            heightIndex++;
-        }
-
-        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        newWidth = newAspectRatioHeights[heightIndex][newHeight];
-
-        return {
-            aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
-        };
-    }
-
-    function getObjectValueInArray(value, collection) {
-        var valueObject = _.find(collection, function(item) {
-            return item.hasOwnProperty(value);
-        });
-
-        return valueObject ? valueObject[value] : null;
-    }
-
-    function getIndexInArray(value, collection) {
-        return _.findIndex(collection, function(item) {
-            return item.hasOwnProperty(value);
-        });
-    }
-
-    function getIndexKey(index, collection) {
-        var keys = _.keys(collection[index]);
-
-        return keys[0];
-    }
-
-    function getIndexValue(index, collection) {
-        var keys = _.keys(collection[index]);
-
-        return collection[index][keys[0]];
-    }
-
-    function getClosestKeyIndex(value, collection) {
-        return _.reduce(collection, function(closestIndex, nextItem, index) {
-            if (!closestIndex) {
-                return index;
-            }
-
-            var currentClosestKey = _.keys(collection[closestIndex])[0];
-            var nextKey = _.keys(nextItem)[0];
-
-            return Math.abs(value - nextKey) < Math.abs(value - currentClosestKey) ? index : closestIndex;
-        });
     }
 
     return UserMediaResolver;
@@ -17219,7 +17098,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-08T21:13:13Z' || '?';
+    var sdkVersion = '2018-03-09T18:24:04Z' || '?';
     var releaseVersion = '2018.1.15';
 
     function Logger() {
@@ -18940,7 +18819,7 @@ process.umask = function() { return 0; };
             if (callback && typeof callback != 'function')
                 callback = null;
             if (Util.IS_NODE) {
-                var fs = __webpack_require__(102);
+                var fs = __webpack_require__(103);
                 if (callback) {
                     fs.readFile(path, function(err, data) {
                         if (err)
@@ -30450,7 +30329,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-08T21:13:13Z' || '?';
+    var sdkVersion = '2018-03-09T18:24:04Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -30705,7 +30584,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-08T21:13:13Z' || '?';
+    var sdkVersion = '2018-03-09T18:24:04Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -31020,6 +30899,350 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert) {
+    'use strict';
+
+    // ToDo: Add supported frame rates [30, 15]
+    var aspectRatios = [
+        {
+            '16x9': [
+                {2160: 3840}, // 4k (UHD)
+                {1080: 1920}, // 1080p (FHD)
+                {768: 1366}, //
+                {720: 1280}, // 720p(HD)
+                {576: 1024},
+                {480: 853}, // 480p
+                {360: 640}, // 360p (nHD)
+                {180: 320}
+            ]
+        },
+        {
+            '4x3': [
+                {1200: 1600}, // UXGA
+                {1080: 1440},
+                {720: 960},
+                {600: 800}, // SVGA
+                {576: 768},
+                {480: 640}, // VGA
+                {360: 480},
+                {288: 352}, // CIF
+                {240: 320}, // QVGA
+                {144: 176}, // QCIF
+                {120: 160} // QQVGA
+            ]
+        }
+    ];
+    var resolutionSelectionStrategies = {
+        fallbackToLower: {
+            id: 0,
+            name: 'fallbackToLower'
+        },
+        fallbackToHigher: {
+            id: 1,
+            name: 'fallbackToHigher'
+        },
+        fallbackToLowerThenHigher: {
+            id: 2,
+            name: 'fallbackToLowerThenHigher'
+        },
+        exact: {
+            id: 3,
+            name: 'exact'
+        }
+    };
+
+    function ResolutionProvider(options) {
+        assert.isObject(options, 'options');
+
+        if (options.resolutionSelectionStrategy) {
+            assert.isValidType(options.resolutionSelectionStrategy, resolutionSelectionStrategies, 'options.resolutionSelectionStrategy');
+        }
+
+        if (options.aspectRatio) {
+            assert.isStringNotEmpty(options.aspectRatio, 'options.aspectRatio');
+        }
+
+        if (options.resolutionHeight) {
+            assert.isNumber(options.resolutionHeight, 'options.resolutionHeight');
+        }
+
+        if (options.frameRate) {
+            assert.isNumber(options.frameRate, 'options.frameRate');
+        }
+
+        this._resolutionSelectionStrategy = options.resolutionSelectionStrategy || resolutionSelectionStrategies.fallbackToLowerThenHigher.name;
+        this._defaultAspectRatio = options.aspectRatio || '16x9';
+        this._defaultResolutionHeight = options.resolutionHeight || 720;
+        this._defaultFrameRate = options.frameRate || 15;
+    }
+
+    ResolutionProvider.prototype.getDefaultResolution = function getDefaultResolution() {
+        var aspectRatioHeights = getObjectValueInArray(this._defaultAspectRatio, aspectRatios);
+        var width = getObjectValueInArray(this._defaultResolutionHeight, aspectRatioHeights) || this.calculateWidthByAspectRatio(this._defaultResolutionHeight, this._defaultAspectRatio);
+
+        return {
+            height: this._defaultResolutionHeight,
+            width: width,
+            aspectRatio: this._defaultAspectRatio
+        };
+    };
+
+    ResolutionProvider.prototype.getDefaultFrameRate = function getDefaultFrameRate() {
+        return this._defaultFrameRate;
+    };
+
+    ResolutionProvider.prototype.getNextResolution = function getNextResolution(height, aspectRatio) {
+        assert.isNumber(height, 'height');
+        assert.isStringNotEmpty(aspectRatio, 'aspectRatio');
+
+        switch (this._resolutionSelectionStrategy) {
+        case resolutionSelectionStrategies.fallbackToLower.name:
+            return getNextLowestResolution.call(this, height, aspectRatio);
+        case resolutionSelectionStrategies.fallbackToHigher.name:
+            return getNextHighestResolution.call(this, height, aspectRatio);
+        case resolutionSelectionStrategies.fallbackToLowerThenHigher.name:
+            var nextResolution = null;
+
+            if (height > this._defaultResolutionHeight) {
+                nextResolution = getNextHighestResolution.call(this, height, aspectRatio);
+            } else {
+                nextResolution = getNextLowestResolution.call(this, height, aspectRatio);
+
+                if (!nextResolution || !nextResolution.height) {
+                    nextResolution = getNextHighestResolution.call(this, this._defaultResolutionHeight, this._defaultAspectRatio);
+                }
+            }
+
+            return nextResolution;
+        case resolutionSelectionStrategies.exact.name:
+        default:
+            return;
+        }
+    };
+
+    ResolutionProvider.prototype.canResolveNextResolution = function() {
+        return this._resolutionSelectionStrategy !== resolutionSelectionStrategies.exact.name;
+    };
+
+    ResolutionProvider.prototype.calculateWidthByAspectRatio = function calculateWidthByAspectRatio(height, aspectRatio) {
+        switch (aspectRatio) {
+        case '16x9':
+            return roundUpToNearestEvenNumber((16 / 9) * height);
+        case '4x3':
+            return roundUpToNearestEvenNumber((4 / 3) * height);
+        default:
+            throw new Error('Aspect Ratio not supported');
+        }
+    };
+
+    function roundUpToNearestEvenNumber(value) {
+        assert.isNumber(value, 'value');
+
+        return 2 * Math.floor((value + 1) / 2);
+    }
+
+    function getNextHighestResolution(height, aspectRatio) {
+        var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
+        var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
+        var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
+        var isLargestHeight = heightIndex === 0;
+        var isSmallestAspectRatio = aspectRatios.length - 1 === aspectRatioIndex;
+
+        var newAspectRatio;
+        var newAspectRatioHeights;
+        var newHeight;
+        var newWidth;
+
+        if (!_.isNumber(heightIndex)) {
+            heightIndex = getNextHighestKeyIndex(height, aspectRatioHeights);
+
+            if (!heightIndex) {
+                return;
+            }
+        } else {
+            if (isLargestHeight) {
+                if (isSmallestAspectRatio) {
+                    return null;
+                }
+
+                aspectRatioIndex++;
+
+                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+                newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
+                heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
+                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
+                newWidth = this.calculateWidthByAspectRatio(newHeight, newAspectRatio);
+
+                return {
+                    aspectRatio: newAspectRatio,
+                    height: parseInt(newHeight),
+                    width: parseInt(newWidth)
+                };
+            }
+
+            heightIndex--;
+        }
+
+        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
+
+        return {
+            aspectRatio: newAspectRatio,
+            height: parseInt(newHeight),
+            width: parseInt(newWidth)
+        };
+    }
+
+    function getNextLowestResolution(height, aspectRatio) {
+        var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
+        var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
+        var heightIndex = getIndexInArray(height.toString(), aspectRatioHeights);
+        var isSmallestHeight = heightIndex === aspectRatioHeights.length - 1;
+        var isSmallestAspectRatio = aspectRatios.length - 1 === aspectRatioIndex;
+
+        var newAspectRatio;
+        var newAspectRatioHeights;
+        var newHeight;
+        var newWidth;
+
+        if (!_.isNumber(heightIndex)) {
+            heightIndex = getNextLowestKeyIndex(height, aspectRatioHeights);
+
+            if (!heightIndex) {
+                return;
+            }
+        } else {
+            if (isSmallestHeight) {
+                if (isSmallestAspectRatio) {
+                    return null;
+                }
+
+                aspectRatioIndex++;
+
+                newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+                newHeight = this._defaultResolutionHeight;
+                newWidth = this.calculateWidthByAspectRatio(newHeight, newAspectRatio);
+
+                return {
+                    aspectRatio: newAspectRatio,
+                    height: parseInt(newHeight),
+                    width: parseInt(newWidth)
+                };
+            }
+
+            heightIndex++;
+        }
+
+        newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
+        newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
+
+        return {
+            aspectRatio: newAspectRatio,
+            height: parseInt(newHeight),
+            width: parseInt(newWidth)
+        };
+    }
+
+    function getObjectValueInArray(value, collection) {
+        var valueObject = _.find(collection, function(item) {
+            return item.hasOwnProperty(value);
+        });
+
+        return valueObject ? valueObject[value] : null;
+    }
+
+    function getIndexInArray(value, collection) {
+        return _.findIndex(collection, function(item) {
+            return item.hasOwnProperty(value);
+        });
+    }
+
+    function getIndexKey(index, collection) {
+        var keys = _.keys(collection[index]);
+
+        return keys[0];
+    }
+
+    function getIndexValue(index, collection) {
+        var keys = _.keys(collection[index]);
+
+        return collection[index][keys[0]];
+    }
+
+    function getNextHighestKeyIndex(value, collection) {
+        if ( _.keys(collection[0])[0] < value) {
+            return null;
+        }
+
+        return _.reduce(collection, function(closestIndex, nextItem, index) {
+            if (!closestIndex) {
+                return index;
+            }
+
+            var currentClosestKey = _.keys(collection[closestIndex])[0];
+            var nextKey = _.keys(nextItem)[0];
+
+            if (nextKey < value) {
+                return closestIndex;
+            }
+
+            return Math.abs(value - nextKey) < Math.abs(value - currentClosestKey) ? index : closestIndex;
+        });
+    }
+
+    function getNextLowestKeyIndex(value, collection) {
+        if ( _.keys(collection[collection.length - 1])[0] > value) {
+            return null;
+        }
+
+        console.log(value, collection[collection.length - 1][0]);
+
+        return _.reduce(collection, function(closestIndex, nextItem, index) {
+            if (!closestIndex) {
+                return index;
+            }
+
+            var currentClosestKey = _.keys(collection[closestIndex])[0];
+            var nextKey = _.keys(nextItem)[0];
+
+            if (nextKey > value) {
+                return closestIndex;
+            }
+
+            return Math.abs(value - nextKey) < Math.abs(value - currentClosestKey) ? index : closestIndex;
+        });
+    }
+
+    return ResolutionProvider;
+}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31457,7 +31680,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31708,13 +31931,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
