@@ -1000,8 +1000,6 @@ define([
 
         try {
             self.commitChanges(function handleUpdateSelf(error, response) {
-                console.log(updateSelfErrors);
-
                 if (error) {
                     updateSelfErrors++;
                 }

@@ -268,7 +268,11 @@ requirejs([
                 var quality = $('#gum-quality option:selected').val();
                 var framerate = $('#gum-framerate option:selected').val();
                 var aspectRatio = $('#gum-aspect-ratio option:selected').val();
-                var userMediaResolver = new sdk.UserMediaResolver(pcast, aspectRatio, parseInt(quality), parseInt(framerate));
+                var userMediaResolver = new sdk.UserMediaResolver(pcast, {
+                    aspectRatio: aspectRatio,
+                    resolutionHeight: parseInt(quality),
+                    frameRate: parseInt(framerate)
+                });
                 var deviceOptions = {
                     screen: _.includes(source.toLowerCase(), 'screen'),
                     audio: _.includes(source.toLowerCase(), 'microphone'),
