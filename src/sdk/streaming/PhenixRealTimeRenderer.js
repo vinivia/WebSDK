@@ -44,6 +44,18 @@ define([
     };
 
     PhenixRealTimeRenderer.prototype.start = function(elementToAttachTo) {
+        var hasAudioTrack = !!_.find(this._streamSrc.getTracks(), function(track) {
+            return track.kind === 'audio';
+        });
+
+        if (!this._options.canPlaybackAudio) {
+            if (this._options.disableAudioIfNoOutputFound && this._options.forcedAudioDisabled) {
+                this._logger.warn('[%s] Missing audio playback device. Audio has been disabled on stream. Try setting up an audio device and re-subscribe in order to receive audio.', this._streamId);
+            } else if (!this._options.disableAudioIfNoOutputFound && hasAudioTrack) {
+                this._logger.warn('[%s] Missing audio playback device. May experience audio and/or video failure. Try setting up an audio device OR pass the [disableAudioIfNoOutputFound] option when subscribing to disable audio playback when no devices are attached.', this._streamId);
+            }
+        }
+
         this._element = rtc.attachMediaStream(elementToAttachTo, this._streamSrc);
 
         this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);

@@ -145,7 +145,8 @@ requirejs([
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
                 monitor: {callback: onMonitorEvent},
-                streamToken: 'dud'
+                streamToken: 'dud',
+                subscriberOptions: {disableAudioIfNoOutputFound: true}
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

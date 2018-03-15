@@ -20,6 +20,7 @@ define([
     'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
+    './audio/AudioContext',
     './PCastProtocol',
     './PCastEndPoint',
     './userMedia/ScreenShareExtensionManager',
@@ -36,7 +37,7 @@ define([
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -73,6 +74,7 @@ define([
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
+        this._canPlaybackAudio = true;
 
         var that = this;
 
@@ -92,6 +94,7 @@ define([
 
         if (phenixRTC.webrtcSupported) {
             setLocalH264Profile.call(this);
+            setAudioState.call(this);
         }
     }
 
@@ -414,73 +417,84 @@ define([
         }
 
         var that = this;
-        var streamType = 'download';
-        var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
-        var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
-        var createStreamOptions = _.assign({}, {useNativeHlsPlayer: defaultToHlsNative}, options);
 
-        streamTelemetry.setProperty('resource', streamType);
+        setAudioState.call(that, function() {
+            var streamType = 'download';
+            var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
+            var streamTelemetry = new StreamTelemetry(that.getProtocol().getSessionId(), that._logger, that._metricsTransmitter);
+            var createStreamOptions = _.assign({}, {useNativeHlsPlayer: defaultToHlsNative}, options);
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
-            if (error) {
-                that._logger.error('Failed to create downloader [%s]', error);
+            createStreamOptions.canPlaybackAudio = that._canPlaybackAudio;
 
-                return callback.call(that, that, 'failed');
-            } else if (response.status !== 'ok') {
-                that._logger.warn('Failed to create downloader, status [%s]', response.status);
-
-                switch (response.status) {
-                case 'capacity':
-                case 'stream-ended':
-                case 'origin-stream-ended':
-                case 'streaming-not-available':
-                case 'unauthorized':
-                case 'timeout':
-                    return callback.call(that, that, response.status);
-                default:
-                    return callback.call(that, that, 'failed');
-                }
-            } else {
-                var streamId = response.createStreamResponse.streamId;
-                var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
-                var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
-                var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-
-                if (offerSdp.match(/a=x-playlist:/)) {
-                    create = createLiveViewer;
-                }
-
-                streamTelemetry.setStreamId(streamId);
-                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
-                streamTelemetry.recordMetric('Provisioned');
-                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
-                    resource: that.getBaseUri(),
-                    kind: 'https'
-                });
-
-                createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
-
-                if (phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && that._h264ProfileId && isMobile()) {
-                    var profileLevelIdToReplace = sdpUtil.getH264ProfileId(offerSdp);
-
-                    if (profileLevelIdToReplace !== that._h264ProfileId) {
-                        that._logger.info('[%s] Replacing h264 profile level id [%s] with new value [%s] in offer sdp',
-                            streamId, profileLevelIdToReplace, that._h264ProfileId);
-
-                        offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, that._h264ProfileId);
-                    }
-                }
-
-                return create.call(that, streamId, offerSdp, streamTelemetry, function(phenixMediaStream, error) {
-                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
-
-                    if (error) {
-                        callback.call(that, that, 'failed', null);
-                    } else {
-                        callback.call(that, that, 'ok', phenixMediaStream);
-                    }
-                }, createStreamOptions);
+            if (!that._canPlaybackAudio && options.disableAudioIfNoOutputFound && options.receiveAudio !== false) {
+                setupStreamOptions.receiveAudio = false;
+                createStreamOptions.receiveAudio = false;
+                createStreamOptions.forcedAudioDisabled = true;
             }
+
+            streamTelemetry.setProperty('resource', streamType);
+
+            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
+                if (error) {
+                    that._logger.error('Failed to create downloader [%s]', error);
+
+                    return callback.call(that, that, 'failed');
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('Failed to create downloader, status [%s]', response.status);
+
+                    switch (response.status) {
+                    case 'capacity':
+                    case 'stream-ended':
+                    case 'origin-stream-ended':
+                    case 'streaming-not-available':
+                    case 'unauthorized':
+                    case 'timeout':
+                        return callback.call(that, that, response.status);
+                    default:
+                        return callback.call(that, that, 'failed');
+                    }
+                } else {
+                    var streamId = response.createStreamResponse.streamId;
+                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
+                    var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
+                    var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
+
+                    if (offerSdp.match(/a=x-playlist:/)) {
+                        create = createLiveViewer;
+                    }
+
+                    streamTelemetry.setStreamId(streamId);
+                    streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                    streamTelemetry.recordMetric('Provisioned');
+                    streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
+                        resource: that.getBaseUri(),
+                        kind: 'https'
+                    });
+
+                    createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+
+                    if (phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && that._h264ProfileId && isMobile()) {
+                        var profileLevelIdToReplace = sdpUtil.getH264ProfileId(offerSdp);
+
+                        if (profileLevelIdToReplace !== that._h264ProfileId) {
+                            that._logger.info('[%s] Replacing h264 profile level id [%s] with new value [%s] in offer sdp',
+                                streamId, profileLevelIdToReplace, that._h264ProfileId);
+
+                            offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, that._h264ProfileId);
+                        }
+                    }
+
+                    return create.call(that, streamId, offerSdp, streamTelemetry, function(phenixMediaStream, error) {
+                        streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+
+                        if (error) {
+                            callback.call(that, that, 'failed', null);
+                        } else {
+                            callback.call(that, that, 'ok', phenixMediaStream);
+                        }
+                    }, createStreamOptions);
+                }
+            });
         });
     };
 
@@ -931,6 +945,39 @@ define([
             offerToReceiveAudio: true,
             offerToReceiveVideo: true
         });
+    }
+
+    function setAudioState(done) {
+        var that = this;
+
+        switch (phenixRTC.browser) {
+        case 'Edge':
+            return phenixRTC.getDestinations(function(destinations) {
+                var audioDestinations = _.filter(destinations, function(destination) {
+                    return destination.kind === 'audio';
+                });
+
+                if (audioDestinations.length === 0) {
+                    if (that._canPlaybackAudio) {
+                        that._logger.info('Detected no audio devices attached to machine');
+                    }
+
+                    that._canPlaybackAudio = false;
+                } else {
+                    that._canPlaybackAudio = true;
+                }
+
+                if (done) {
+                    done();
+                }
+            });
+        default:
+            if (done) {
+                done();
+            }
+
+            break;
+        }
     }
 
     function createPublisherPeerConnection(peerConnectionConfig, mediaStream, streamId, offerSdp, streamTelemetry, callback, createOptions, streamOptions) {
