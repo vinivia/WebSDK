@@ -552,7 +552,7 @@ define([
                         }
 
                         membersSubscription = newRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-                    }, {initial: 'notify'});
+                    });
                 }
             });
         });
