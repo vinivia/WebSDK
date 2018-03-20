@@ -32,7 +32,7 @@ define(['phenix-web-lodash-light'], function(_) {
 
         var newStats = [];
 
-        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived) {
+        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction) {
             if (ssrc) {
                 if (!_.hasIndexOrKey(lastStats, ssrc)) {
                     lastStats[ssrc] = {timestamp: 0};
@@ -50,7 +50,8 @@ define(['phenix-web-lodash-light'], function(_) {
                     uploadRate: up,
                     downloadRate: down,
                     mediaType: mediaType,
-                    ssrc: ssrc
+                    ssrc: ssrc,
+                    direction: direction
                 });
             }
         };
@@ -63,8 +64,9 @@ define(['phenix-web-lodash-light'], function(_) {
                     var bytesReceived = statsReport.stat('bytesReceived');
                     var mediaType = statsReport.stat('mediaType');
                     var timestamp = statsReport.timestamp.getTime();
+                    var direction = statsReport.id.indexOf('send') > -1 ? 'upload' : 'download';
 
-                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived);
+                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction);
                 }
             });
         } else if (_.isFunction(stats.values)) {
@@ -74,7 +76,9 @@ define(['phenix-web-lodash-light'], function(_) {
                         return;
                     }
 
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
                 }
             });
         } else {
@@ -84,7 +88,9 @@ define(['phenix-web-lodash-light'], function(_) {
                         return;
                     }
 
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
                 }
             });
         }

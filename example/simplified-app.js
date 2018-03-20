@@ -154,6 +154,8 @@ requirejs([
 
                 publisherPlayer.start(publisher);
 
+                window.publisher = publisher;
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',

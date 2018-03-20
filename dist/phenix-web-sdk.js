@@ -4631,7 +4631,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-03-19T18:03:11Z',
+                version: '2018-03-20T19:19:29Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4983,7 +4983,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-03-19T18:03:11Z';
+    var sdkVersion = '2018-03-20T19:19:29Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -12611,7 +12611,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var newStats = [];
 
-        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived) {
+        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction) {
             if (ssrc) {
                 if (!_.hasIndexOrKey(lastStats, ssrc)) {
                     lastStats[ssrc] = {timestamp: 0};
@@ -12629,7 +12629,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     uploadRate: up,
                     downloadRate: down,
                     mediaType: mediaType,
-                    ssrc: ssrc
+                    ssrc: ssrc,
+                    direction: direction
                 });
             }
         };
@@ -12642,8 +12643,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var bytesReceived = statsReport.stat('bytesReceived');
                     var mediaType = statsReport.stat('mediaType');
                     var timestamp = statsReport.timestamp.getTime();
+                    var direction = statsReport.id.indexOf('send') > -1 ? 'upload' : 'download';
 
-                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived);
+                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction);
                 }
             });
         } else if (_.isFunction(stats.values)) {
@@ -12653,7 +12655,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         return;
                     }
 
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
                 }
             });
         } else {
@@ -12663,7 +12667,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         return;
                     }
 
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived);
+                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
+
+                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
                 }
             });
         }
@@ -17222,7 +17228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-19T18:03:11Z' || '?';
+    var sdkVersion = '2018-03-20T19:19:29Z' || '?';
     var releaseVersion = '2018.1.16';
 
     function Logger() {
@@ -30412,7 +30418,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-19T18:03:11Z' || '?';
+    var sdkVersion = '2018-03-20T19:19:29Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -30667,7 +30673,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-03-19T18:03:11Z' || '?';
+    var sdkVersion = '2018-03-20T19:19:29Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
