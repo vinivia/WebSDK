@@ -234,6 +234,8 @@ define([
 
     function handleError(e) {
         if (canReload.call(this) && e && (e.code === 3 || e.severity === phenixWebPlayer.errors.severity.RECOVERABLE)) {
+            this._logger.warn('Reloading unhealthy stream after error event [%s]', e);
+
             return reloadIfAble.call(this);
         }
 
@@ -283,17 +285,18 @@ define([
         if (this._lastProgress.buffered !== null) {
             var oldTimeElapsed = this._lastProgress.averageLength * this._lastProgress.count;
             var newTimeElapsed = oldTimeElapsed + (bufferedEnd - this._lastProgress.buffered);
+            var isStalled = this._lastProgress.lastCurrentTime !== this._element.currentTime;
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
 
-            if (this._lastProgress.lastCurrentTime !== this._element.currentTime) {
+            if (!isStalled) {
                 this._lastProgress.lastCurrentTimeOccurenceTimestamp = _.now();
             }
 
             var hasExceededStallTimeout = this._lastProgress.lastCurrentTimeOccurenceTimestamp && _.now() - this._lastProgress.lastCurrentTimeOccurenceTimestamp > timeoutForStallWithoutProgressToRestart;
 
-            if (hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
+            if (isStalled && hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
                 this._logger.warn('Reloading stream after current time has not changed for [%s] seconds due to unregistered stall.', timeoutForStallWithoutProgressToRestart / 1000);
 
                 reloadIfAble.call(this);
@@ -309,7 +312,7 @@ define([
 
         that._logger.info('[%s] Loading Phenix Live stream player stalled caused by [%s] event.', that._streamId, event.type);
 
-        if (that._lastProgress.time === 0) {
+        if (that._lastProgress.time === 0 || that._element.paused) {
             return;
         }
 

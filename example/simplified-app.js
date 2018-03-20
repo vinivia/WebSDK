@@ -179,6 +179,7 @@ requirejs([
             var constraints = getConstraints();
             var quality = $('#gum-quality option:selected').val();
             var subscribeMethod = _.bind(pcastExpress.subscribe, pcastExpress);
+            var subscriberOptions = {};
 
             if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
                 subscribeMethod = _.bind(pcastExpress.subscribeToScreen, pcastExpress);
@@ -188,6 +189,10 @@ requirejs([
                 capabilities.push($(this).val());
             });
 
+            if (app.getUrlParameter('preferNative')) {
+                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
+            }
+
             capabilities.push($('#subscriber-mode option:selected').val());
 
             subscribeMethod({
@@ -196,7 +201,8 @@ requirejs([
                 videoElement: remoteVideoEl,
                 monitor: {callback: onMonitorEvent},
                 streamToken: 'dud',
-                resolution: parseInt(quality)
+                resolution: parseInt(quality),
+                subscriberOptions: subscriberOptions
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

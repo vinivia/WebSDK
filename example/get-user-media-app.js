@@ -553,6 +553,10 @@ requirejs([
                 subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
             }
 
+            if (app.getUrlParameter('preferNative')) {
+                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
+            }
+
             pcast.subscribe(streamToken, function subscribeCallback(pcast, status, mediaStream) {
                 if (status !== 'ok') {
                     app.createNotification('danger', {

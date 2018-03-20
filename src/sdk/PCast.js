@@ -20,6 +20,7 @@ define([
     'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
+    'phenix-web-player',
     './audio/AudioContext',
     './PCastProtocol',
     './PCastEndPoint',
@@ -37,11 +38,10 @@ define([
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, phenixWebPlayer, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
-    var defaultToHlsNative = true;
 
     function PCast(options) {
         options = options || {};
@@ -442,7 +442,7 @@ define([
             var streamType = 'download';
             var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
             var streamTelemetry = new StreamTelemetry(that.getProtocol().getSessionId(), that._logger, that._metricsTransmitter);
-            var createStreamOptions = _.assign({}, {useNativeHlsPlayer: defaultToHlsNative}, options);
+            var createStreamOptions = _.assign({}, options);
 
             createStreamOptions.canPlaybackAudio = that._canPlaybackAudio;
 
@@ -478,8 +478,9 @@ define([
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                     var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
+                    var isLive = offerSdp.match(/a=x-playlist:/);
 
-                    if (offerSdp.match(/a=x-playlist:/)) {
+                    if (isLive) {
                         create = createLiveViewer;
                     }
 
@@ -493,7 +494,7 @@ define([
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isLive && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -1504,16 +1505,17 @@ define([
         var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8\??[^\s]*)/m);
         var manifestUrl = _.get(dashMatch, [1], '');
         var playlistUrl = _.get(hlsMatch, [1], '');
+        var dashManifestOffered = dashMatch && dashMatch.length === 2;
+        var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
+        var preferHls = isIOS() || phenixRTC.browser === 'Safari';
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        var shouldPlayHls = isIOS() || phenixRTC.browser === 'Safari';
-
-        if (dashMatch && dashMatch.length === 2 && !shouldPlayHls) {
-            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
+        if (dashManifestOffered && phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !preferHls) {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
 
             if (options.isDrmProtectedContent) {
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
@@ -1527,8 +1529,8 @@ define([
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsMatch && hlsMatch.length === 2 && typeof document === 'object' && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(hlsMatch[1]);
+        } else if (hlsPlaylistOffered && phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
 
             if (options.hlsTargetDuration) {
                 assert.isNumber(options.hlsTargetDuration, 'options.hlsTargetDuration');
@@ -1536,10 +1538,18 @@ define([
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, options);
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: preferHls}, options));
         }
 
-        that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
+        if (!dashManifestOffered && !hlsPlaylistOffered) {
+            that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback) {
+            that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
+        }
 
         return callback.call(that, undefined, 'failed');
     }

@@ -102,6 +102,10 @@ requirejs([
                 subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
             }
 
+            if (app.getUrlParameter('preferNative')) {
+                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
+            }
+
             capabilities.push($('#subscriber-mode option:selected').val());
 
             $('#subscriber-drm-capabilities option:selected').each(function() {

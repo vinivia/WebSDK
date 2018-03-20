@@ -1,3 +1,18 @@
+/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -76,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 85);
+/******/ 	return __webpack_require__(__webpack_require__.s = 84);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -99,7 +114,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(84)
+    __webpack_require__(83)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(LodashLight) {
     'use strict';
 
@@ -127,7 +142,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(81)
+    __webpack_require__(80)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert) {
     return assert;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -137,22 +152,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(83),__webpack_require__(1),__webpack_require__(7));else { var d, c; }}(this,function(a,b,c,d){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=11)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(3))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b,c){var d,e;d=[c(1),c(5),c(0)],e=function(a,b,c){"use strict";function d(a,c,d){var f=this;this._ghost=a,this._stream=c,this._isUsingPlugin=d,this._events={};var g=function(a){f._loaded=!0,f._enabled=a===!0,a?j.call(f):o("Failed to create Phenix video element"),f._onReady&&f._onReady(f._enabled)};try{if(this._video=e(d),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){f._loaded=!1},l.call(this),document.body&&document.body.contains||n("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost),!d)return g(!0);var h=new b;h.waitForReady(this._video,g)}catch(i){o("Error while loading Phenix RTC"+i),g(!1)}}function e(a){var b=document.createElement("video");return a&&(b=document.createElement("object"),b.type="application/x-phenix-video"),b}function f(a,b,c){if(!this._isUsingPlugin)return this._video.addEventListener(a,b,c);var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&h.call(this,a)),d.push(b)}function g(a,b,c){if(!this._isUsingPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function h(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function i(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function j(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)h.call(this,a[b]);this.hookUpEvents(),k.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function k(){var b=this,d=["style"];if(a.get(c,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===b._ghost&&d.indexOf(a.attributeName)===-1&&(b._video[a.attributeName]=b._ghost[a.attributeName])})}),f={attributes:!0};e.observe(b._ghost,f)}else n("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),b._ghost.addEventListener?b._ghost.addEventListener("DOMAttrModified",function(a){b._video[a.target.tagName]=b._ghost[a.target.tagName]},!1):b._ghost.attachEvent("onpropertychange",function(a){b._video[a.target.tagName]=b._ghost[a.target.tagName]})}function l(){var b=this;if(a.get(c,["MutationObserver"])){var d=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var c=0;c<a.addedNodes.length;c++){var d=a.addedNodes[c];a.target!==b._video&&(d===b._ghost?(a.target.replaceChild(b._video,b._ghost),j.call(b)):m(a.target,b._ghost)&&(b._ghost.parentNode.replaceChild(b._video,b._ghost),j.call(b)))}})}),e={childList:!0,attributes:!1,characterData:!1,subtree:!0};d.observe(document.body,e)}else n("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),f(b._ghost,"DOMNodeInserted",function(){b._ghost.parentNode.replaceChild(b._video,b._ghost)},!1)}function m(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var n=function(){console.log.apply(console,arguments)}||function(){},o=function(){console.error.apply(console,arguments)}||n;return d.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){i(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,i(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,i(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,i(b,"ended")}),this.addEventListener("loadedmetadata",function(){b.width=a._video.width,b.height=a._video.height,i(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,i(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,i(b,"resize")})},d.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},d.prototype.getElement=function(){return this._video},d.prototype.addEventListener=function(a,b,c){f.call(this,a,b,c)},d.prototype.removeEventListener=function(a,b,c){g.call(this,a,b,c)},d}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b,c){var d,e;d=[c(1),c(6),c(7),c(2),c(0),c(13),c(12)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){(function(b){var c,c;!function(b){a.exports=b()}(function(){return function a(b,d,e){function f(h,i){if(!d[h]){if(!b[h]){var j="function"==typeof c&&c;if(!i&&j)return c(h,!0);if(g)return c(h,!0);var k=new Error("Cannot find module '"+h+"'");throw k.code="MODULE_NOT_FOUND",k}var l=d[h]={exports:{}};b[h][0].call(l.exports,function(a){var c=b[h][1][a];return f(c?c:a)},l,l.exports,a,b,d,e)}return d[h].exports}for(var g="function"==typeof c&&c,h=0;h<e.length;h++)f(e[h]);return f}({1:[function(a,b,c){},{}],2:[function(a,c,d){(function(b){"use strict";var d=a("./adapter_factory.js");c.exports=d({window:b.window})}).call(this,"undefined"!=typeof b?b:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./adapter_factory.js":3}],3:[function(a,b,c){"use strict";b.exports=function(b,c){var d=b&&b.window,e={shimChrome:!0,shimFirefox:!0,shimEdge:!0,shimSafari:!0};for(var f in c)hasOwnProperty.call(c,f)&&(e[f]=c[f]);var g=a("./utils"),h=g.log,i=g.detectBrowser(d),j={browserDetails:i,extractVersion:g.extractVersion,disableLog:g.disableLog,disableWarnings:g.disableWarnings},k=a("./chrome/chrome_shim")||null,l=a("./edge/edge_shim")||null,m=a("./firefox/firefox_shim")||null,n=a("./safari/safari_shim")||null;switch(i.browser){case"chrome":if(!k||!k.shimPeerConnection||!e.shimChrome)return h("Chrome shim is not included in this adapter release."),j;h("adapter.js shimming chrome."),j.browserShim=k,k.shimGetUserMedia(d),k.shimMediaStream(d),g.shimCreateObjectURL(d),k.shimSourceObject(d),k.shimPeerConnection(d),k.shimOnTrack(d),k.shimAddTrackRemoveTrack(d),k.shimGetSendersWithDtmf(d);break;case"firefox":if(!m||!m.shimPeerConnection||!e.shimFirefox)return h("Firefox shim is not included in this adapter release."),j;h("adapter.js shimming firefox."),j.browserShim=m,m.shimGetUserMedia(d),g.shimCreateObjectURL(d),m.shimSourceObject(d),m.shimPeerConnection(d),m.shimOnTrack(d);break;case"edge":if(!l||!l.shimPeerConnection||!e.shimEdge)return h("MS edge shim is not included in this adapter release."),j;h("adapter.js shimming edge."),j.browserShim=l,l.shimGetUserMedia(d),g.shimCreateObjectURL(d),l.shimPeerConnection(d),l.shimReplaceTrack(d);break;case"safari":if(!n||!e.shimSafari)return h("Safari shim is not included in this adapter release."),j;h("adapter.js shimming safari."),j.browserShim=n,g.shimCreateObjectURL(d),n.shimRTCIceServerUrls(d),n.shimCallbacksAPI(d),n.shimLocalStreamsAPI(d),n.shimRemoteStreamsAPI(d),n.shimGetUserMedia(d);break;default:h("Unsupported browser!")}return j}},{"./chrome/chrome_shim":4,"./edge/edge_shim":1,"./firefox/firefox_shim":6,"./safari/safari_shim":8,"./utils":9}],4:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log,f={shimMediaStream:function(a){a.MediaStream=a.MediaStream||a.webkitMediaStream},shimOnTrack:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("ontrack"in a.RTCPeerConnection.prototype)){Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&this.removeEventListener("track",this._ontrack),this.addEventListener("track",this._ontrack=a)}});var b=a.RTCPeerConnection.prototype.setRemoteDescription;a.RTCPeerConnection.prototype.setRemoteDescription=function(){var c=this;return c._ontrackpoly||(c._ontrackpoly=function(b){b.stream.addEventListener("addtrack",function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.track.id}):{track:d.track};var f=new Event("track");f.track=d.track,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)}),b.stream.getTracks().forEach(function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.id}):{track:d};var f=new Event("track");f.track=d,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)})},c.addEventListener("addstream",c._ontrackpoly)),b.apply(c,arguments)}}},shimGetSendersWithDtmf:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("getSenders"in a.RTCPeerConnection.prototype)&&"createDTMFSender"in a.RTCPeerConnection.prototype){var b=function(a,b){return{track:b,get dtmf(){return void 0===this._dtmf&&("audio"===b.kind?this._dtmf=a.createDTMFSender(b):this._dtmf=null),this._dtmf},_pc:a}};if(!a.RTCPeerConnection.prototype.getSenders){a.RTCPeerConnection.prototype.getSenders=function(){return this._senders=this._senders||[],this._senders.slice()};var c=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addTrack=function(a,d){var e=this,f=c.apply(e,arguments);return f||(f=b(e,a),e._senders.push(f)),f};var d=a.RTCPeerConnection.prototype.removeTrack;a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;d.apply(b,arguments);var c=b._senders.indexOf(a);c!==-1&&b._senders.splice(c,1)}}var e=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(a){var c=this;c._senders=c._senders||[],e.apply(c,[a]),a.getTracks().forEach(function(a){c._senders.push(b(c,a))})};var f=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._senders=b._senders||[],f.apply(b,[b._streams[a.id]||a]),a.getTracks().forEach(function(a){var c=b._senders.find(function(b){return b.track===a});c&&b._senders.splice(b._senders.indexOf(c),1)})}}else if("object"==typeof a&&a.RTCPeerConnection&&"getSenders"in a.RTCPeerConnection.prototype&&"createDTMFSender"in a.RTCPeerConnection.prototype&&a.RTCRtpSender&&!("dtmf"in a.RTCRtpSender.prototype)){var g=a.RTCPeerConnection.prototype.getSenders;a.RTCPeerConnection.prototype.getSenders=function(){var a=this,b=g.apply(a,[]);return b.forEach(function(b){b._pc=a}),b},Object.defineProperty(a.RTCRtpSender.prototype,"dtmf",{get:function(){return void 0===this._dtmf&&("audio"===this.track.kind?this._dtmf=this._pc.createDTMFSender(this.track):this._dtmf=null),this._dtmf}})}},shimSourceObject:function(a){var b=a&&a.URL;"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this._srcObject},set:function(a){var c=this;return this._srcObject=a,this.src&&b.revokeObjectURL(this.src),a?(this.src=b.createObjectURL(a),a.addEventListener("addtrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)}),void a.addEventListener("removetrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)})):void(this.src="")}}))},shimAddTrackRemoveTrack:function(a){if(!a.RTCPeerConnection.prototype.addTrack){var b=a.RTCPeerConnection.prototype.getLocalStreams;a.RTCPeerConnection.prototype.getLocalStreams=function(){var a=this,c=b.apply(this);return a._reverseStreams=a._reverseStreams||{},c.map(function(b){return a._reverseStreams[b.id]})};var c=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(b){var d=this;if(d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{},b.getTracks().forEach(function(a){var b=d.getSenders().find(function(b){return b.track===a});if(b)throw new DOMException("Track already exists.","InvalidAccessError")}),!d._reverseStreams[b.id]){var e=new a.MediaStream(b.getTracks());d._streams[b.id]=e,d._reverseStreams[e.id]=b,b=e}c.apply(d,[b])};var d=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._streams=b._streams||{},b._reverseStreams=b._reverseStreams||{},d.apply(b,[b._streams[a.id]||a]),delete b._reverseStreams[b._streams[a.id]?b._streams[a.id].id:a.id],delete b._streams[a.id]},a.RTCPeerConnection.prototype.addTrack=function(b,c){var d=this;if("closed"===d.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");var e=[].slice.call(arguments,1);if(1!==e.length||!e[0].getTracks().find(function(a){return a===b}))throw new DOMException("The adapter.js addTrack polyfill only supports a single  stream which is associated with the specified track.","NotSupportedError");var f=d.getSenders().find(function(a){return a.track===b});if(f)throw new DOMException("Track already exists.","InvalidAccessError");d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{};var g=d._streams[c.id];if(g)g.addTrack(b),d.dispatchEvent(new Event("negotiationneeded"));else{var h=new a.MediaStream([b]);d._streams[c.id]=h,d._reverseStreams[h.id]=c,d.addStream(h)}return d.getSenders().find(function(a){return a.track===b})},a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;if("closed"===b.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");if(!a._pc)throw new DOMException("Argument 1 of RTCPeerConnection.removeTrack does not implement interface RTCRtpSender.","TypeError");var c=a._pc===b;if(!c)throw new DOMException("Sender was not created by this connection.","InvalidAccessError");b._streams=b._streams||{};var d;Object.keys(b._streams).forEach(function(c){var e=b._streams[c].getTracks().find(function(b){return a.track===b});e&&(d=b._streams[c])}),d&&(1===d.getTracks().length?b.removeStream(d):d.removeTrack(a.track),b.dispatchEvent(new Event("negotiationneeded")))}}},shimPeerConnection:function(a){var b=d.detectBrowser(a);if(a.RTCPeerConnection){var c=a.RTCPeerConnection;a.RTCPeerConnection=function(a,b){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new c(a,b)},a.RTCPeerConnection.prototype=c.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return c.generateCertificate}})}else a.RTCPeerConnection=function(b,c){return e("PeerConnection"),b&&b.iceTransportPolicy&&(b.iceTransports=b.iceTransportPolicy),new a.webkitRTCPeerConnection(b,c)},a.RTCPeerConnection.prototype=a.webkitRTCPeerConnection.prototype,a.webkitRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.webkitRTCPeerConnection.generateCertificate}});var f=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,b,c){var d=this,e=arguments;if(arguments.length>0&&"function"==typeof a)return f.apply(this,arguments);if(0===f.length&&(0===arguments.length||"function"!=typeof arguments[0]))return f.apply(this,[]);var g=function(a){var b={},c=a.result();return c.forEach(function(a){var c={id:a.id,timestamp:a.timestamp,type:{localcandidate:"local-candidate",remotecandidate:"remote-candidate"}[a.type]||a.type};a.names().forEach(function(b){c[b]=a.stat(b)}),b[c.id]=c}),b},h=function(a){return new Map(Object.keys(a).map(function(b){return[b,a[b]]}))};if(arguments.length>=2){var i=function(a){e[1](h(g(a)))};return f.apply(this,[i,arguments[0]])}return new Promise(function(a,b){f.apply(d,[function(b){a(h(g(b)))},b])}).then(b,c)},b.version<51&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=arguments,b=this,d=new Promise(function(d,e){c.apply(b,[a[0],d,e])});return a.length<2?d:d.then(function(){a[1].apply(null,[])},function(b){a.length>=3&&a[2].apply(null,[b])})}}),b.version<52&&["createOffer","createAnswer"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=this;if(arguments.length<1||1===arguments.length&&"object"==typeof arguments[0]){var b=1===arguments.length?arguments[0]:void 0;return new Promise(function(d,e){c.apply(a,[d,e,b])})}return c.apply(this,arguments)}}),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var g=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?g.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())}}};b.exports={shimMediaStream:f.shimMediaStream,shimOnTrack:f.shimOnTrack,shimAddTrackRemoveTrack:f.shimAddTrackRemoveTrack,shimGetSendersWithDtmf:f.shimGetSendersWithDtmf,shimSourceObject:f.shimSourceObject,shimPeerConnection:f.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils.js":9,"./getusermedia":5}],5:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=function(a){if("object"!=typeof a||a.mandatory||a.optional)return a;var b={};return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d="object"==typeof a[c]?a[c]:{ideal:a[c]};void 0!==d.exact&&"number"==typeof d.exact&&(d.min=d.max=d.exact);var e=function(a,b){return a?a+b.charAt(0).toUpperCase()+b.slice(1):"deviceId"===b?"sourceId":b};if(void 0!==d.ideal){b.optional=b.optional||[];var f={};"number"==typeof d.ideal?(f[e("min",c)]=d.ideal,b.optional.push(f),f={},f[e("max",c)]=d.ideal,b.optional.push(f)):(f[e("",c)]=d.ideal,b.optional.push(f))}void 0!==d.exact&&"number"!=typeof d.exact?(b.mandatory=b.mandatory||{},b.mandatory[e("",c)]=d.exact):["min","max"].forEach(function(a){void 0!==d[a]&&(b.mandatory=b.mandatory||{},b.mandatory[e(a,c)]=d[a])})}}),a.advanced&&(b.optional=(b.optional||[]).concat(a.advanced)),b},g=function(a,d){if(a=JSON.parse(JSON.stringify(a)),a&&"object"==typeof a.audio){var g=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],delete a[b])};a=JSON.parse(JSON.stringify(a)),g(a.audio,"autoGainControl","googAutoGainControl"),g(a.audio,"noiseSuppression","googNoiseSuppression"),a.audio=f(a.audio)}if(a&&"object"==typeof a.video){var h=a.video.facingMode;h=h&&("object"==typeof h?h:{ideal:h});var i=b.version<61;if(h&&("user"===h.exact||"environment"===h.exact||"user"===h.ideal||"environment"===h.ideal)&&(!c.mediaDevices.getSupportedConstraints||!c.mediaDevices.getSupportedConstraints().facingMode||i)){delete a.video.facingMode;var j;if("environment"===h.exact||"environment"===h.ideal?j=["back","rear"]:"user"!==h.exact&&"user"!==h.ideal||(j=["front"]),j)return c.mediaDevices.enumerateDevices().then(function(b){b=b.filter(function(a){return"videoinput"===a.kind});var c=b.find(function(a){return j.some(function(b){return a.label.toLowerCase().indexOf(b)!==-1})});return!c&&b.length&&j.indexOf("back")!==-1&&(c=b[b.length-1]),c&&(a.video.deviceId=h.exact?{exact:c.deviceId}:{ideal:c.deviceId}),a.video=f(a.video),e("chrome: "+JSON.stringify(a)),d(a)})}a.video=f(a.video)}return e("chrome: "+JSON.stringify(a)),d(a)},h=function(a){return{name:{PermissionDeniedError:"NotAllowedError",InvalidStateError:"NotReadableError",DevicesNotFoundError:"NotFoundError",ConstraintNotSatisfiedError:"OverconstrainedError",TrackStartError:"NotReadableError",MediaDeviceFailedDueToShutdown:"NotReadableError",MediaDeviceKillSwitchOn:"NotReadableError"}[a.name]||a.name,message:a.message,constraint:a.constraintName,toString:function(){return this.name+(this.message&&": ")+this.message}}},i=function(a,b,d){g(a,function(a){c.webkitGetUserMedia(a,b,function(a){d(h(a))})})};c.getUserMedia=i;var j=function(a){return new Promise(function(b,d){c.getUserMedia(a,b,d)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:j,enumerateDevices:function(){return new Promise(function(b){var c={audio:"audioinput",video:"videoinput"};return a.MediaStreamTrack.getSources(function(a){b(a.map(function(a){return{label:a.label,kind:c[a.kind],deviceId:a.id,groupId:""}}))})})},getSupportedConstraints:function(){return{deviceId:!0,echoCancellation:!0,facingMode:!0,frameRate:!0,height:!0,width:!0}}}),c.mediaDevices.getUserMedia){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return g(a,function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("","NotFoundError");return b},function(a){return Promise.reject(h(a))})})}}else c.mediaDevices.getUserMedia=function(a){return j(a)};"undefined"==typeof c.mediaDevices.addEventListener&&(c.mediaDevices.addEventListener=function(){e("Dummy mediaDevices.addEventListener called.")}),"undefined"==typeof c.mediaDevices.removeEventListener&&(c.mediaDevices.removeEventListener=function(){e("Dummy mediaDevices.removeEventListener called.")})}},{"../utils.js":9}],6:[function(a,b,c){"use strict";var d=a("../utils"),e={shimOnTrack:function(a){"object"!=typeof a||!a.RTCPeerConnection||"ontrack"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&(this.removeEventListener("track",this._ontrack),this.removeEventListener("addstream",this._ontrackpoly)),this.addEventListener("track",this._ontrack=a),this.addEventListener("addstream",this._ontrackpoly=function(a){a.stream.getTracks().forEach(function(b){var c=new Event("track");c.track=b,c.receiver={track:b},c.streams=[a.stream],this.dispatchEvent(c)}.bind(this))}.bind(this))}})},shimSourceObject:function(a){"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this.mozSrcObject},set:function(a){this.mozSrcObject=a}}))},shimPeerConnection:function(a){var b=d.detectBrowser(a);if("object"==typeof a&&(a.RTCPeerConnection||a.mozRTCPeerConnection)){a.RTCPeerConnection||(a.RTCPeerConnection=function(c,d){if(b.version<38&&c&&c.iceServers){for(var e=[],f=0;f<c.iceServers.length;f++){var g=c.iceServers[f];if(g.hasOwnProperty("urls"))for(var h=0;h<g.urls.length;h++){var i={url:g.urls[h]};0===g.urls[h].indexOf("turn")&&(i.username=g.username,i.credential=g.credential),e.push(i)}else e.push(c.iceServers[f])}c.iceServers=e}return new a.mozRTCPeerConnection(c,d)},a.RTCPeerConnection.prototype=a.mozRTCPeerConnection.prototype,a.mozRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.mozRTCPeerConnection.generateCertificate}}),a.RTCSessionDescription=a.mozRTCSessionDescription,a.RTCIceCandidate=a.mozRTCIceCandidate),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var c=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?c.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())};var e=function(a){var b=new Map;return Object.keys(a).forEach(function(c){b.set(c,a[c]),b[c]=a[c]}),b},f={inboundrtp:"inbound-rtp",outboundrtp:"outbound-rtp",candidatepair:"candidate-pair",localcandidate:"local-candidate",remotecandidate:"remote-candidate"},g=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,c,d){return g.apply(this,[a||null]).then(function(a){if(b.version<48&&(a=e(a)),b.version<53&&!c)try{a.forEach(function(a){a.type=f[a.type]||a.type})}catch(d){if("TypeError"!==d.name)throw d;a.forEach(function(b,c){a.set(c,Object.assign({},b,{type:f[b.type]||b.type}))})}return a}).then(c,d)}}}};b.exports={shimOnTrack:e.shimOnTrack,shimSourceObject:e.shimSourceObject,shimPeerConnection:e.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils":9,"./getusermedia":7}],7:[function(a,b,c){"use strict";var d=a("../utils"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=a&&a.MediaStreamTrack,g=function(a){return{name:{InternalError:"NotReadableError",NotSupportedError:"TypeError",PermissionDeniedError:"NotAllowedError",SecurityError:"NotAllowedError"}[a.name]||a.name,message:{"The operation is insecure.":"The request is not allowed by the user agent or the platform in the current context."}[a.message]||a.message,constraint:a.constraint,toString:function(){return this.name+(this.message&&": ")+this.message}}},h=function(a,d,f){var h=function(a){if("object"!=typeof a||a.require)return a;var b=[];return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d=a[c]="object"==typeof a[c]?a[c]:{ideal:a[c]};if(void 0===d.min&&void 0===d.max&&void 0===d.exact||b.push(c),void 0!==d.exact&&("number"==typeof d.exact?d.min=d.max=d.exact:a[c]=d.exact,delete d.exact),void 0!==d.ideal){a.advanced=a.advanced||[];var e={};"number"==typeof d.ideal?e[c]={min:d.ideal,max:d.ideal}:e[c]=d.ideal,a.advanced.push(e),delete d.ideal,Object.keys(d).length||delete a[c]}}}),b.length&&(a.require=b),a};return a=JSON.parse(JSON.stringify(a)),b.version<38&&(e("spec: "+JSON.stringify(a)),a.audio&&(a.audio=h(a.audio)),a.video&&(a.video=h(a.video)),e("ff37: "+JSON.stringify(a))),c.mozGetUserMedia(a,d,function(a){f(g(a))})},i=function(a){return new Promise(function(b,c){h(a,b,c)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:i,addEventListener:function(){},removeEventListener:function(){}}),c.mediaDevices.enumerateDevices=c.mediaDevices.enumerateDevices||function(){return new Promise(function(a){var b=[{kind:"audioinput",deviceId:"default",label:"",groupId:""},{kind:"videoinput",deviceId:"default",label:"",groupId:""}];a(b)})},b.version<41){var j=c.mediaDevices.enumerateDevices.bind(c.mediaDevices);c.mediaDevices.enumerateDevices=function(){return j().then(void 0,function(a){if("NotFoundError"===a.name)return[];throw a})}}if(b.version<49){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("The object can not be found here.","NotFoundError");return b},function(a){return Promise.reject(g(a))})}}if(!(b.version>55&&"autoGainControl"in c.mediaDevices.getSupportedConstraints())){var l=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],
+!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(82),__webpack_require__(1),__webpack_require__(7));else { var d, c; }}(this,function(a,b,c,d){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=11)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(3))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b,c){var d,e;d=[c(1),c(5),c(0)],e=function(a,b,c){"use strict";function d(a,c,d){var f=this;this._ghost=a,this._stream=c,this._isUsingPlugin=d,this._events={};var g=function(a){f._loaded=!0,f._enabled=a===!0,a?j.call(f):o("Failed to create Phenix video element"),f._onReady&&f._onReady(f._enabled)};try{if(this._video=e(d),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._video.onunload=function(){f._loaded=!1},l.call(this),document.body&&document.body.contains||n("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&this._ghost.parentNode.replaceChild(this._video,this._ghost),!d)return g(!0);var h=new b;h.waitForReady(this._video,g)}catch(i){o("Error while loading Phenix RTC"+i),g(!1)}}function e(a){var b=document.createElement("video");return a&&(b=document.createElement("object"),b.type="application/x-phenix-video"),b}function f(a,b,c){if(!this._isUsingPlugin)return this._video.addEventListener(a,b,c);var d=this._events[a];d||(d=this._events[a]=[],this._loaded&&h.call(this,a)),d.push(b)}function g(a,b,c){if(!this._isUsingPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}function h(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function i(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function j(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)h.call(this,a[b]);this.hookUpEvents(),k.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghost.cssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&(this._video.src=this._stream)}function k(){var b=this,d=["style"];if(a.get(c,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===b._ghost&&d.indexOf(a.attributeName)===-1&&(b._video[a.attributeName]=b._ghost[a.attributeName])})}),f={attributes:!0};e.observe(b._ghost,f)}else n("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),b._ghost.addEventListener?b._ghost.addEventListener("DOMAttrModified",function(a){b._video[a.target.tagName]=b._ghost[a.target.tagName]},!1):b._ghost.attachEvent("onpropertychange",function(a){b._video[a.target.tagName]=b._ghost[a.target.tagName]})}function l(){var b=this;if(a.get(c,["MutationObserver"])){var d=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var c=0;c<a.addedNodes.length;c++){var d=a.addedNodes[c];a.target!==b._video&&(d===b._ghost?(a.target.replaceChild(b._video,b._ghost),j.call(b)):m(a.target,b._ghost)&&(b._ghost.parentNode.replaceChild(b._video,b._ghost),j.call(b)))}})}),e={childList:!0,attributes:!1,characterData:!1,subtree:!0};d.observe(document.body,e)}else n("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details."),f(b._ghost,"DOMNodeInserted",function(){b._ghost.parentNode.replaceChild(b._video,b._ghost)},!1)}function m(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var n=function(){console.log.apply(console,arguments)}||function(){},o=function(){console.error.apply(console,arguments)}||n;return d.prototype.hookUpEvents=function(){var a=this,b=this._ghost;this.addEventListener("error",function(){i(b,"error")}),this.addEventListener("mute",function(){b.muted=a._video.muted,i(b,"mute")}),this.addEventListener("unmute",function(){b.muted=a._video.muted,i(b,"unmute")}),this.addEventListener("ended",function(){b.ended=a._video.ended,i(b,"ended")}),this.addEventListener("loadedmetadata",function(){b.width=a._video.width,b.height=a._video.height,i(b,"loadedmetadata")}),this.addEventListener("loadeddata",function(){b.width=a._video.width,b.height=a._video.height,i(b,"loadeddata")}),this.addEventListener("resize",function(){b.width=a._video.width,b.height=a._video.height,i(b,"resize")})},d.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},d.prototype.getElement=function(){return this._video},d.prototype.addEventListener=function(a,b,c){f.call(this,a,b,c)},d.prototype.removeEventListener=function(a,b,c){g.call(this,a,b,c)},d}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b,c){var d,e;d=[c(1),c(6),c(7),c(2),c(0),c(13),c(12)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){(function(b){var c,c;!function(b){a.exports=b()}(function(){return function a(b,d,e){function f(h,i){if(!d[h]){if(!b[h]){var j="function"==typeof c&&c;if(!i&&j)return c(h,!0);if(g)return c(h,!0);var k=new Error("Cannot find module '"+h+"'");throw k.code="MODULE_NOT_FOUND",k}var l=d[h]={exports:{}};b[h][0].call(l.exports,function(a){var c=b[h][1][a];return f(c?c:a)},l,l.exports,a,b,d,e)}return d[h].exports}for(var g="function"==typeof c&&c,h=0;h<e.length;h++)f(e[h]);return f}({1:[function(a,b,c){},{}],2:[function(a,c,d){(function(b){"use strict";var d=a("./adapter_factory.js");c.exports=d({window:b.window})}).call(this,"undefined"!=typeof b?b:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./adapter_factory.js":3}],3:[function(a,b,c){"use strict";b.exports=function(b,c){var d=b&&b.window,e={shimChrome:!0,shimFirefox:!0,shimEdge:!0,shimSafari:!0};for(var f in c)hasOwnProperty.call(c,f)&&(e[f]=c[f]);var g=a("./utils"),h=g.log,i=g.detectBrowser(d),j={browserDetails:i,extractVersion:g.extractVersion,disableLog:g.disableLog,disableWarnings:g.disableWarnings},k=a("./chrome/chrome_shim")||null,l=a("./edge/edge_shim")||null,m=a("./firefox/firefox_shim")||null,n=a("./safari/safari_shim")||null;switch(i.browser){case"chrome":if(!k||!k.shimPeerConnection||!e.shimChrome)return h("Chrome shim is not included in this adapter release."),j;h("adapter.js shimming chrome."),j.browserShim=k,k.shimGetUserMedia(d),k.shimMediaStream(d),g.shimCreateObjectURL(d),k.shimSourceObject(d),k.shimPeerConnection(d),k.shimOnTrack(d),k.shimAddTrackRemoveTrack(d),k.shimGetSendersWithDtmf(d);break;case"firefox":if(!m||!m.shimPeerConnection||!e.shimFirefox)return h("Firefox shim is not included in this adapter release."),j;h("adapter.js shimming firefox."),j.browserShim=m,m.shimGetUserMedia(d),g.shimCreateObjectURL(d),m.shimSourceObject(d),m.shimPeerConnection(d),m.shimOnTrack(d);break;case"edge":if(!l||!l.shimPeerConnection||!e.shimEdge)return h("MS edge shim is not included in this adapter release."),j;h("adapter.js shimming edge."),j.browserShim=l,l.shimGetUserMedia(d),g.shimCreateObjectURL(d),l.shimPeerConnection(d),l.shimReplaceTrack(d);break;case"safari":if(!n||!e.shimSafari)return h("Safari shim is not included in this adapter release."),j;h("adapter.js shimming safari."),j.browserShim=n,g.shimCreateObjectURL(d),n.shimRTCIceServerUrls(d),n.shimCallbacksAPI(d),n.shimLocalStreamsAPI(d),n.shimRemoteStreamsAPI(d),n.shimGetUserMedia(d);break;default:h("Unsupported browser!")}return j}},{"./chrome/chrome_shim":4,"./edge/edge_shim":1,"./firefox/firefox_shim":6,"./safari/safari_shim":8,"./utils":9}],4:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log,f={shimMediaStream:function(a){a.MediaStream=a.MediaStream||a.webkitMediaStream},shimOnTrack:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("ontrack"in a.RTCPeerConnection.prototype)){Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&this.removeEventListener("track",this._ontrack),this.addEventListener("track",this._ontrack=a)}});var b=a.RTCPeerConnection.prototype.setRemoteDescription;a.RTCPeerConnection.prototype.setRemoteDescription=function(){var c=this;return c._ontrackpoly||(c._ontrackpoly=function(b){b.stream.addEventListener("addtrack",function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.track.id}):{track:d.track};var f=new Event("track");f.track=d.track,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)}),b.stream.getTracks().forEach(function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.id}):{track:d};var f=new Event("track");f.track=d,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)})},c.addEventListener("addstream",c._ontrackpoly)),b.apply(c,arguments)}}},shimGetSendersWithDtmf:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("getSenders"in a.RTCPeerConnection.prototype)&&"createDTMFSender"in a.RTCPeerConnection.prototype){var b=function(a,b){return{track:b,get dtmf(){return void 0===this._dtmf&&("audio"===b.kind?this._dtmf=a.createDTMFSender(b):this._dtmf=null),this._dtmf},_pc:a}};if(!a.RTCPeerConnection.prototype.getSenders){a.RTCPeerConnection.prototype.getSenders=function(){return this._senders=this._senders||[],this._senders.slice()};var c=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addTrack=function(a,d){var e=this,f=c.apply(e,arguments);return f||(f=b(e,a),e._senders.push(f)),f};var d=a.RTCPeerConnection.prototype.removeTrack;a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;d.apply(b,arguments);var c=b._senders.indexOf(a);c!==-1&&b._senders.splice(c,1)}}var e=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(a){var c=this;c._senders=c._senders||[],e.apply(c,[a]),a.getTracks().forEach(function(a){c._senders.push(b(c,a))})};var f=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._senders=b._senders||[],f.apply(b,[b._streams[a.id]||a]),a.getTracks().forEach(function(a){var c=b._senders.find(function(b){return b.track===a});c&&b._senders.splice(b._senders.indexOf(c),1)})}}else if("object"==typeof a&&a.RTCPeerConnection&&"getSenders"in a.RTCPeerConnection.prototype&&"createDTMFSender"in a.RTCPeerConnection.prototype&&a.RTCRtpSender&&!("dtmf"in a.RTCRtpSender.prototype)){var g=a.RTCPeerConnection.prototype.getSenders;a.RTCPeerConnection.prototype.getSenders=function(){var a=this,b=g.apply(a,[]);return b.forEach(function(b){b._pc=a}),b},Object.defineProperty(a.RTCRtpSender.prototype,"dtmf",{get:function(){return void 0===this._dtmf&&("audio"===this.track.kind?this._dtmf=this._pc.createDTMFSender(this.track):this._dtmf=null),this._dtmf}})}},shimSourceObject:function(a){var b=a&&a.URL;"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this._srcObject},set:function(a){var c=this;return this._srcObject=a,this.src&&b.revokeObjectURL(this.src),a?(this.src=b.createObjectURL(a),a.addEventListener("addtrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)}),void a.addEventListener("removetrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)})):void(this.src="")}}))},shimAddTrackRemoveTrack:function(a){if(!a.RTCPeerConnection.prototype.addTrack){var b=a.RTCPeerConnection.prototype.getLocalStreams;a.RTCPeerConnection.prototype.getLocalStreams=function(){var a=this,c=b.apply(this);return a._reverseStreams=a._reverseStreams||{},c.map(function(b){return a._reverseStreams[b.id]})};var c=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(b){var d=this;if(d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{},b.getTracks().forEach(function(a){var b=d.getSenders().find(function(b){return b.track===a});if(b)throw new DOMException("Track already exists.","InvalidAccessError")}),!d._reverseStreams[b.id]){var e=new a.MediaStream(b.getTracks());d._streams[b.id]=e,d._reverseStreams[e.id]=b,b=e}c.apply(d,[b])};var d=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._streams=b._streams||{},b._reverseStreams=b._reverseStreams||{},d.apply(b,[b._streams[a.id]||a]),delete b._reverseStreams[b._streams[a.id]?b._streams[a.id].id:a.id],delete b._streams[a.id]},a.RTCPeerConnection.prototype.addTrack=function(b,c){var d=this;if("closed"===d.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");var e=[].slice.call(arguments,1);if(1!==e.length||!e[0].getTracks().find(function(a){return a===b}))throw new DOMException("The adapter.js addTrack polyfill only supports a single  stream which is associated with the specified track.","NotSupportedError");var f=d.getSenders().find(function(a){return a.track===b});if(f)throw new DOMException("Track already exists.","InvalidAccessError");d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{};var g=d._streams[c.id];if(g)g.addTrack(b),d.dispatchEvent(new Event("negotiationneeded"));else{var h=new a.MediaStream([b]);d._streams[c.id]=h,d._reverseStreams[h.id]=c,d.addStream(h)}return d.getSenders().find(function(a){return a.track===b})},a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;if("closed"===b.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");if(!a._pc)throw new DOMException("Argument 1 of RTCPeerConnection.removeTrack does not implement interface RTCRtpSender.","TypeError");var c=a._pc===b;if(!c)throw new DOMException("Sender was not created by this connection.","InvalidAccessError");b._streams=b._streams||{};var d;Object.keys(b._streams).forEach(function(c){var e=b._streams[c].getTracks().find(function(b){return a.track===b});e&&(d=b._streams[c])}),d&&(1===d.getTracks().length?b.removeStream(d):d.removeTrack(a.track),b.dispatchEvent(new Event("negotiationneeded")))}}},shimPeerConnection:function(a){var b=d.detectBrowser(a);if(a.RTCPeerConnection){var c=a.RTCPeerConnection;a.RTCPeerConnection=function(a,b){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new c(a,b)},a.RTCPeerConnection.prototype=c.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return c.generateCertificate}})}else a.RTCPeerConnection=function(b,c){return e("PeerConnection"),b&&b.iceTransportPolicy&&(b.iceTransports=b.iceTransportPolicy),new a.webkitRTCPeerConnection(b,c)},a.RTCPeerConnection.prototype=a.webkitRTCPeerConnection.prototype,a.webkitRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.webkitRTCPeerConnection.generateCertificate}});var f=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,b,c){var d=this,e=arguments;if(arguments.length>0&&"function"==typeof a)return f.apply(this,arguments);if(0===f.length&&(0===arguments.length||"function"!=typeof arguments[0]))return f.apply(this,[]);var g=function(a){var b={},c=a.result();return c.forEach(function(a){var c={id:a.id,timestamp:a.timestamp,type:{localcandidate:"local-candidate",remotecandidate:"remote-candidate"}[a.type]||a.type};a.names().forEach(function(b){c[b]=a.stat(b)}),b[c.id]=c}),b},h=function(a){return new Map(Object.keys(a).map(function(b){return[b,a[b]]}))};if(arguments.length>=2){var i=function(a){e[1](h(g(a)))};return f.apply(this,[i,arguments[0]])}return new Promise(function(a,b){f.apply(d,[function(b){a(h(g(b)))},b])}).then(b,c)},b.version<51&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=arguments,b=this,d=new Promise(function(d,e){c.apply(b,[a[0],d,e])});return a.length<2?d:d.then(function(){a[1].apply(null,[])},function(b){a.length>=3&&a[2].apply(null,[b])})}}),b.version<52&&["createOffer","createAnswer"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=this;if(arguments.length<1||1===arguments.length&&"object"==typeof arguments[0]){var b=1===arguments.length?arguments[0]:void 0;return new Promise(function(d,e){c.apply(a,[d,e,b])})}return c.apply(this,arguments)}}),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var g=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?g.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())}}};b.exports={shimMediaStream:f.shimMediaStream,shimOnTrack:f.shimOnTrack,shimAddTrackRemoveTrack:f.shimAddTrackRemoveTrack,shimGetSendersWithDtmf:f.shimGetSendersWithDtmf,shimSourceObject:f.shimSourceObject,shimPeerConnection:f.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils.js":9,"./getusermedia":5}],5:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=function(a){if("object"!=typeof a||a.mandatory||a.optional)return a;var b={};return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d="object"==typeof a[c]?a[c]:{ideal:a[c]};void 0!==d.exact&&"number"==typeof d.exact&&(d.min=d.max=d.exact);var e=function(a,b){return a?a+b.charAt(0).toUpperCase()+b.slice(1):"deviceId"===b?"sourceId":b};if(void 0!==d.ideal){b.optional=b.optional||[];var f={};"number"==typeof d.ideal?(f[e("min",c)]=d.ideal,b.optional.push(f),f={},f[e("max",c)]=d.ideal,b.optional.push(f)):(f[e("",c)]=d.ideal,b.optional.push(f))}void 0!==d.exact&&"number"!=typeof d.exact?(b.mandatory=b.mandatory||{},b.mandatory[e("",c)]=d.exact):["min","max"].forEach(function(a){void 0!==d[a]&&(b.mandatory=b.mandatory||{},b.mandatory[e(a,c)]=d[a])})}}),a.advanced&&(b.optional=(b.optional||[]).concat(a.advanced)),b},g=function(a,d){if(a=JSON.parse(JSON.stringify(a)),a&&"object"==typeof a.audio){var g=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],delete a[b])};a=JSON.parse(JSON.stringify(a)),g(a.audio,"autoGainControl","googAutoGainControl"),g(a.audio,"noiseSuppression","googNoiseSuppression"),a.audio=f(a.audio)}if(a&&"object"==typeof a.video){var h=a.video.facingMode;h=h&&("object"==typeof h?h:{ideal:h});var i=b.version<61;if(h&&("user"===h.exact||"environment"===h.exact||"user"===h.ideal||"environment"===h.ideal)&&(!c.mediaDevices.getSupportedConstraints||!c.mediaDevices.getSupportedConstraints().facingMode||i)){delete a.video.facingMode;var j;if("environment"===h.exact||"environment"===h.ideal?j=["back","rear"]:"user"!==h.exact&&"user"!==h.ideal||(j=["front"]),j)return c.mediaDevices.enumerateDevices().then(function(b){b=b.filter(function(a){return"videoinput"===a.kind});var c=b.find(function(a){return j.some(function(b){return a.label.toLowerCase().indexOf(b)!==-1})});return!c&&b.length&&j.indexOf("back")!==-1&&(c=b[b.length-1]),c&&(a.video.deviceId=h.exact?{exact:c.deviceId}:{ideal:c.deviceId}),a.video=f(a.video),e("chrome: "+JSON.stringify(a)),d(a)})}a.video=f(a.video)}return e("chrome: "+JSON.stringify(a)),d(a)},h=function(a){return{name:{PermissionDeniedError:"NotAllowedError",InvalidStateError:"NotReadableError",DevicesNotFoundError:"NotFoundError",ConstraintNotSatisfiedError:"OverconstrainedError",TrackStartError:"NotReadableError",MediaDeviceFailedDueToShutdown:"NotReadableError",MediaDeviceKillSwitchOn:"NotReadableError"}[a.name]||a.name,message:a.message,constraint:a.constraintName,toString:function(){return this.name+(this.message&&": ")+this.message}}},i=function(a,b,d){g(a,function(a){c.webkitGetUserMedia(a,b,function(a){d(h(a))})})};c.getUserMedia=i;var j=function(a){return new Promise(function(b,d){c.getUserMedia(a,b,d)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:j,enumerateDevices:function(){return new Promise(function(b){var c={audio:"audioinput",video:"videoinput"};return a.MediaStreamTrack.getSources(function(a){b(a.map(function(a){return{label:a.label,kind:c[a.kind],deviceId:a.id,groupId:""}}))})})},getSupportedConstraints:function(){return{deviceId:!0,echoCancellation:!0,facingMode:!0,frameRate:!0,height:!0,width:!0}}}),c.mediaDevices.getUserMedia){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return g(a,function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("","NotFoundError");return b},function(a){return Promise.reject(h(a))})})}}else c.mediaDevices.getUserMedia=function(a){return j(a)};"undefined"==typeof c.mediaDevices.addEventListener&&(c.mediaDevices.addEventListener=function(){e("Dummy mediaDevices.addEventListener called.")}),"undefined"==typeof c.mediaDevices.removeEventListener&&(c.mediaDevices.removeEventListener=function(){e("Dummy mediaDevices.removeEventListener called.")})}},{"../utils.js":9}],6:[function(a,b,c){"use strict";var d=a("../utils"),e={shimOnTrack:function(a){"object"!=typeof a||!a.RTCPeerConnection||"ontrack"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&(this.removeEventListener("track",this._ontrack),this.removeEventListener("addstream",this._ontrackpoly)),this.addEventListener("track",this._ontrack=a),this.addEventListener("addstream",this._ontrackpoly=function(a){a.stream.getTracks().forEach(function(b){var c=new Event("track");c.track=b,c.receiver={track:b},c.streams=[a.stream],this.dispatchEvent(c)}.bind(this))}.bind(this))}})},shimSourceObject:function(a){"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this.mozSrcObject},set:function(a){this.mozSrcObject=a}}))},shimPeerConnection:function(a){var b=d.detectBrowser(a);if("object"==typeof a&&(a.RTCPeerConnection||a.mozRTCPeerConnection)){a.RTCPeerConnection||(a.RTCPeerConnection=function(c,d){if(b.version<38&&c&&c.iceServers){for(var e=[],f=0;f<c.iceServers.length;f++){var g=c.iceServers[f];if(g.hasOwnProperty("urls"))for(var h=0;h<g.urls.length;h++){var i={url:g.urls[h]};0===g.urls[h].indexOf("turn")&&(i.username=g.username,i.credential=g.credential),e.push(i)}else e.push(c.iceServers[f])}c.iceServers=e}return new a.mozRTCPeerConnection(c,d)},a.RTCPeerConnection.prototype=a.mozRTCPeerConnection.prototype,a.mozRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.mozRTCPeerConnection.generateCertificate}}),a.RTCSessionDescription=a.mozRTCSessionDescription,a.RTCIceCandidate=a.mozRTCIceCandidate),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var c=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?c.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())};var e=function(a){var b=new Map;return Object.keys(a).forEach(function(c){b.set(c,a[c]),b[c]=a[c]}),b},f={inboundrtp:"inbound-rtp",outboundrtp:"outbound-rtp",candidatepair:"candidate-pair",localcandidate:"local-candidate",remotecandidate:"remote-candidate"},g=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,c,d){return g.apply(this,[a||null]).then(function(a){if(b.version<48&&(a=e(a)),b.version<53&&!c)try{a.forEach(function(a){a.type=f[a.type]||a.type})}catch(d){if("TypeError"!==d.name)throw d;a.forEach(function(b,c){a.set(c,Object.assign({},b,{type:f[b.type]||b.type}))})}return a}).then(c,d)}}}};b.exports={shimOnTrack:e.shimOnTrack,shimSourceObject:e.shimSourceObject,shimPeerConnection:e.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils":9,"./getusermedia":7}],7:[function(a,b,c){"use strict";var d=a("../utils"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=a&&a.MediaStreamTrack,g=function(a){return{name:{InternalError:"NotReadableError",NotSupportedError:"TypeError",PermissionDeniedError:"NotAllowedError",SecurityError:"NotAllowedError"}[a.name]||a.name,message:{"The operation is insecure.":"The request is not allowed by the user agent or the platform in the current context."}[a.message]||a.message,constraint:a.constraint,toString:function(){return this.name+(this.message&&": ")+this.message}}},h=function(a,d,f){var h=function(a){if("object"!=typeof a||a.require)return a;var b=[];return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d=a[c]="object"==typeof a[c]?a[c]:{ideal:a[c]};if(void 0===d.min&&void 0===d.max&&void 0===d.exact||b.push(c),void 0!==d.exact&&("number"==typeof d.exact?d.min=d.max=d.exact:a[c]=d.exact,delete d.exact),void 0!==d.ideal){a.advanced=a.advanced||[];var e={};"number"==typeof d.ideal?e[c]={min:d.ideal,max:d.ideal}:e[c]=d.ideal,a.advanced.push(e),delete d.ideal,Object.keys(d).length||delete a[c]}}}),b.length&&(a.require=b),a};return a=JSON.parse(JSON.stringify(a)),b.version<38&&(e("spec: "+JSON.stringify(a)),a.audio&&(a.audio=h(a.audio)),a.video&&(a.video=h(a.video)),e("ff37: "+JSON.stringify(a))),c.mozGetUserMedia(a,d,function(a){f(g(a))})},i=function(a){return new Promise(function(b,c){h(a,b,c)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:i,addEventListener:function(){},removeEventListener:function(){}}),c.mediaDevices.enumerateDevices=c.mediaDevices.enumerateDevices||function(){return new Promise(function(a){var b=[{kind:"audioinput",deviceId:"default",label:"",groupId:""},{kind:"videoinput",deviceId:"default",label:"",groupId:""}];a(b)})},b.version<41){var j=c.mediaDevices.enumerateDevices.bind(c.mediaDevices);c.mediaDevices.enumerateDevices=function(){return j().then(void 0,function(a){if("NotFoundError"===a.name)return[];throw a})}}if(b.version<49){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("The object can not be found here.","NotFoundError");return b},function(a){return Promise.reject(g(a))})}}if(!(b.version>55&&"autoGainControl"in c.mediaDevices.getSupportedConstraints())){var l=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],
 delete a[b])},m=c.mediaDevices.getUserMedia.bind(c.mediaDevices);if(c.mediaDevices.getUserMedia=function(a){return"object"==typeof a&&"object"==typeof a.audio&&(a=JSON.parse(JSON.stringify(a)),l(a.audio,"autoGainControl","mozAutoGainControl"),l(a.audio,"noiseSuppression","mozNoiseSuppression")),m(a)},f&&f.prototype.getSettings){var n=f.prototype.getSettings;f.prototype.getSettings=function(){var a=n.apply(this,arguments);return l(a,"mozAutoGainControl","autoGainControl"),l(a,"mozNoiseSuppression","noiseSuppression"),a}}if(f&&f.prototype.applyConstraints){var o=f.prototype.applyConstraints;f.prototype.applyConstraints=function(a){return"audio"===this.kind&&"object"==typeof a&&(a=JSON.parse(JSON.stringify(a)),l(a,"autoGainControl","mozAutoGainControl"),l(a,"noiseSuppression","mozNoiseSuppression")),o.apply(this,[a])}}}c.getUserMedia=function(a,e,f){return b.version<44?h(a,e,f):(d.deprecated("navigator.getUserMedia","navigator.mediaDevices.getUserMedia"),void c.mediaDevices.getUserMedia(a).then(e,f))}}},{"../utils":9}],8:[function(a,b,c){"use strict";var d=a("../utils"),e={shimLocalStreamsAPI:function(a){if("object"==typeof a&&a.RTCPeerConnection){if("getLocalStreams"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getLocalStreams=function(){return this._localStreams||(this._localStreams=[]),this._localStreams}),"getStreamById"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getStreamById=function(a){var b=null;return this._localStreams&&this._localStreams.forEach(function(c){c.id===a&&(b=c)}),this._remoteStreams&&this._remoteStreams.forEach(function(c){c.id===a&&(b=c)}),b}),!("addStream"in a.RTCPeerConnection.prototype)){var b=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addStream=function(a){this._localStreams||(this._localStreams=[]),this._localStreams.indexOf(a)===-1&&this._localStreams.push(a);var c=this;a.getTracks().forEach(function(d){b.call(c,d,a)})},a.RTCPeerConnection.prototype.addTrack=function(a,c){c&&(this._localStreams?this._localStreams.indexOf(c)===-1&&this._localStreams.push(c):this._localStreams=[c]),b.call(this,a,c)}}"removeStream"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.removeStream=function(a){this._localStreams||(this._localStreams=[]);var b=this._localStreams.indexOf(a);if(b!==-1){this._localStreams.splice(b,1);var c=this,d=a.getTracks();this.getSenders().forEach(function(a){d.indexOf(a.track)!==-1&&c.removeTrack(a)})}})}},shimRemoteStreamsAPI:function(a){"object"==typeof a&&a.RTCPeerConnection&&("getRemoteStreams"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getRemoteStreams=function(){return this._remoteStreams?this._remoteStreams:[]}),"onaddstream"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"onaddstream",{get:function(){return this._onaddstream},set:function(a){this._onaddstream&&(this.removeEventListener("addstream",this._onaddstream),this.removeEventListener("track",this._onaddstreampoly)),this.addEventListener("addstream",this._onaddstream=a),this.addEventListener("track",this._onaddstreampoly=function(a){var b=a.streams[0];if(this._remoteStreams||(this._remoteStreams=[]),!(this._remoteStreams.indexOf(b)>=0)){this._remoteStreams.push(b);var c=new Event("addstream");c.stream=a.streams[0],this.dispatchEvent(c)}}.bind(this))}}))},shimCallbacksAPI:function(a){if("object"==typeof a&&a.RTCPeerConnection){var b=a.RTCPeerConnection.prototype,c=b.createOffer,d=b.createAnswer,e=b.setLocalDescription,f=b.setRemoteDescription,g=b.addIceCandidate;b.createOffer=function(a,b){var d=arguments.length>=2?arguments[2]:arguments[0],e=c.apply(this,[d]);return b?(e.then(a,b),Promise.resolve()):e},b.createAnswer=function(a,b){var c=arguments.length>=2?arguments[2]:arguments[0],e=d.apply(this,[c]);return b?(e.then(a,b),Promise.resolve()):e};var h=function(a,b,c){var d=e.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d};b.setLocalDescription=h,h=function(a,b,c){var d=f.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d},b.setRemoteDescription=h,h=function(a,b,c){var d=g.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d},b.addIceCandidate=h}},shimGetUserMedia:function(a){var b=a&&a.navigator;b.getUserMedia||(b.webkitGetUserMedia?b.getUserMedia=b.webkitGetUserMedia.bind(b):b.mediaDevices&&b.mediaDevices.getUserMedia&&(b.getUserMedia=function(a,c,d){b.mediaDevices.getUserMedia(a).then(c,d)}.bind(b)))},shimRTCIceServerUrls:function(a){var b=a.RTCPeerConnection;a.RTCPeerConnection=function(a,c){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,delete g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new b(a,c)},a.RTCPeerConnection.prototype=b.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return b.generateCertificate}})}};b.exports={shimCallbacksAPI:e.shimCallbacksAPI,shimLocalStreamsAPI:e.shimLocalStreamsAPI,shimRemoteStreamsAPI:e.shimRemoteStreamsAPI,shimGetUserMedia:e.shimGetUserMedia,shimRTCIceServerUrls:e.shimRTCIceServerUrls}},{"../utils":9}],9:[function(a,b,c){"use strict";var d=!0,e=!0,f={disableLog:function(a){return"boolean"!=typeof a?new Error("Argument type: "+typeof a+". Please use a boolean."):(d=a,a?"adapter.js logging disabled":"adapter.js logging enabled")},disableWarnings:function(a){return"boolean"!=typeof a?new Error("Argument type: "+typeof a+". Please use a boolean."):(e=!a,"adapter.js deprecation warnings "+(a?"disabled":"enabled"))},log:function(){if("object"==typeof window){if(d)return;"undefined"!=typeof console&&"function"==typeof console.log&&console.log.apply(console,arguments)}},deprecated:function(a,b){e&&console.warn(a+" is deprecated, please use "+b+" instead.")},extractVersion:function(a,b,c){var d=a.match(b);return d&&d.length>=c&&parseInt(d[c],10)},detectBrowser:function(a){var b=a&&a.navigator,c={};if(c.browser=null,c.version=null,"undefined"==typeof a||!a.navigator)return c.browser="Not a browser.",c;if(b.mozGetUserMedia)c.browser="firefox",c.version=this.extractVersion(b.userAgent,/Firefox\/(\d+)\./,1);else if(b.webkitGetUserMedia)if(a.webkitRTCPeerConnection)c.browser="chrome",c.version=this.extractVersion(b.userAgent,/Chrom(e|ium)\/(\d+)\./,2);else{if(!b.userAgent.match(/Version\/(\d+).(\d+)/))return c.browser="Unsupported webkit-based browser with GUM support but no WebRTC support.",c;c.browser="safari",c.version=this.extractVersion(b.userAgent,/AppleWebKit\/(\d+)\./,1)}else if(b.mediaDevices&&b.userAgent.match(/Edge\/(\d+).(\d+)$/))c.browser="edge",c.version=this.extractVersion(b.userAgent,/Edge\/(\d+).(\d+)$/,2);else{if(!b.mediaDevices||!b.userAgent.match(/AppleWebKit\/(\d+)\./))return c.browser="Not a supported browser.",c;c.browser="safari",c.version=this.extractVersion(b.userAgent,/AppleWebKit\/(\d+)\./,1)}return c},shimCreateObjectURL:function(a){var b=a&&a.URL;if("object"==typeof a&&a.HTMLMediaElement&&"srcObject"in a.HTMLMediaElement.prototype){var c=b.createObjectURL.bind(b),d=b.revokeObjectURL.bind(b),e=new Map,g=0;b.createObjectURL=function(a){if("getTracks"in a){var b="polyblob:"+ ++g;return e.set(b,a),f.deprecated("URL.createObjectURL(stream)","elem.srcObject = stream"),b}return c(a)},b.revokeObjectURL=function(a){d(a),e["delete"](a)};var h=Object.getOwnPropertyDescriptor(a.HTMLMediaElement.prototype,"src");Object.defineProperty(a.HTMLMediaElement.prototype,"src",{get:function(){return h.get.apply(this)},set:function(a){return this.srcObject=e.get(a)||null,h.set.apply(this,[a])}});var i=a.HTMLMediaElement.prototype.setAttribute;a.HTMLMediaElement.prototype.setAttribute=function(){return 2===arguments.length&&"src"===(""+arguments[0]).toLowerCase()&&(this.srcObject=e.get(arguments[1])||null),i.apply(this,arguments)}}}};b.exports={log:f.log,deprecated:f.deprecated,disableLog:f.disableLog,disableWarnings:f.disableWarnings,extractVersion:f.extractVersion,shimCreateObjectURL:f.shimCreateObjectURL,detectBrowser:f.detectBrowser.bind(f)}},{}]},{},[2])(2)})}).call(b,c(3))},function(a,b,c){"use strict";var d,e;d=[c(8),c(9)],e=function(a,b){return a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(6),c(7),c(5),c(4)],e=function(a,b,c,d,e){"use strict";function f(){var a=this;this._root=h(),this._version="?";var b=function(b){a._loaded=!0,a._enabled=b===!0,a._version=a._phenixRTC.phenixVersion||"?.?.?.?",q(b?"Phenix RTC "+a._version:"No Phenix RTC"),a._onReady&&a._onReady(a._enabled)};try{this._phenixRTC=i(this._root),this._phenixRTC.onunload=function(){a._loaded=!1};var c=new d;c.waitForReady(this._phenixRTC,b)}catch(e){r("Error while loading Phenix RTC"+e)}}function g(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function h(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function i(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function j(a,b){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=b,a;var c=new e(a,b,(!0));return c.getElement().phenixPresenter=c,c.getElement()}function k(b){var c=function(){var c=null;switch(arguments.length){case 0:c=new b;break;case 1:c=new b(arguments[0]);break;case 2:c=new b(arguments[0],arguments[1]);break;case 3:c=new b(arguments[0],arguments[1],arguments[2]);break;case 4:c=new b(arguments[0],arguments[1],arguments[2],arguments[3]);break;case 5:c=new b(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4]);break;default:throw new Error("Unsupported number of arguments in Phenix Object Constructor")}return c.phenixAddEventListener=a.bind(l,c),c.phenixRemoveEventListener=a.bind(m,c),c};return a.forOwn(b,function(a,b){c[b]=a}),c}function l(a,c){b.stringNotEmpty(a,"name"),b.isFunction(c,"listener"),n.call(this,a),o.call(this,a,c)}function m(a,b){p.call(this,a,b)}function n(b){if(!this.events||!this.events[b]){this.events||(this.events={});var d=this.events;d[b]={observable:(new c.Observable).extend({timeout:0}),subscription:null,listeners:[]},this.phenixSetEventListener(b,a.bind(d[b].observable.setValue,d[b].observable)),d[b].subscription=d[b].observable.subscribe(function(c){var e=d[b],f=e.listeners;a.forEach(f,function(a){a(c)})})}}function o(a,b){if(!this.events||!this.events[a])throw new Error("No event observable for event: "+name);this.events[a].listeners.push(b)}function p(b,c){this.events&&this.events.events[b]&&(this.events[b].listeners=a.filter(this.events[b].listeners,function(a){return c!==a}))}var q=function(){console.log.apply(console,arguments)}||function(){},r=function(){console.error.apply(console,arguments)}||q;return f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.onLoaded=function(a){this._onLoaded=a},f.prototype.isLoaded=function(){return this._loaded===!0},f.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent&&(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/)))try{return new window.ActiveXObject("PhenixP2P.RTC"),!0}catch(c){return!1}return!1},f.prototype.isEnabled=function(){return g.call(this),this._phenixRTC&&void 0!==this._phenixRTC.phenixVersion},f.prototype.getVersion=function(){return g.call(this),this._version},f.prototype.getRTCPeerConnectionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCPeerConnection)},f.prototype.getRTCSessionDescriptionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCSessionDescription)},f.prototype.getRTCIceCandidateConstructor=function(){return g.call(this),k(this._phenixRTC.RTCIceCandidate)},f.prototype.getSourcesDelegate=function(){var a=this;return function(b){return g.call(a),a._phenixRTC.getSources(b)}},f.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,d){return g.call(a),a._phenixRTC.getUserMedia(b,c,d)}},f.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},f.prototype.attachMediaStream=function(a,b){return g.call(this),j.call(this,a,b)},f.prototype.reattachMediaStream=function(a,b){return g.call(this),this.attachMediaStream(a,b.src)},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(10),c(0),c(4)],e=function(a,b,c,d,e){"use strict";function f(){if(v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(y=a.bind(k,null,"input")),navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(z=a.bind(k,null,"output")),(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia||d.getUserMedia)&&(A=g),!d.RTCPeerConnection)return t("[%s] browser version [%s] does not appear to be WebRTC-capable",u.browser,u.version);switch(u.browser){case"Firefox":t("Firefox detected",u),C=function(a,b){t("Attaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b),a.mozSrcObject=b,a.play(),c===!0&&(a.muted=!0),a},E=function(a,b){t("Reattaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b.srcObject),a.mozSrcObject=b.mozSrcObject,a.play(),c===!0&&(a.muted=!0),a},B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Opera":t("Opera detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Chrome":t("Webkit detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Edge":t("Edge detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Safari":t("Safari detected",u),C=function(b,c){return a.isObject(c)&&(b.__phenixHasPlayedWebRtc=!0),b=l(b,c)},D=function(a,b){return a.__phenixHasPlayedWebRtc?(a=new e(a,b,(!1)).getElement(),a.play(),a):m(a,b)},E=n,B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;case"ReactNative":t("React Native detected",u),C=function(){t("attachMediaStream not supported in React Native environment")},D=function(){t("attachUriStream not supported in React Native environment")},E=function(){t("reattachMediaStream not supported in React Native environment")},B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;default:t("Browser does not appear to be WebRTC-capable",u)}}function g(b,c,e){var f=a.bind(h,this,b,c,e);return navigator&&a.isFunction(navigator.getUserMedia)?navigator.getUserMedia(b,f,e):d&&a.isFunction(d.getUserMedia)?d.getUserMedia(b,f,e):void 0}function h(a,b,c,d){setTimeout(function(){for(var e=d.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){t(a.timeStamp,"Track",g.id,g.label,"ended")},t("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState)return i("User media not available",c,e)}var h=(a.audio?1:0)+(a.video?1:0);return e.length!==h?i("Unable to get all requested user media.",c,e):void b(d)},100)}function i(a,b,c){try{var d=new Error(a);d.code="unavailable",b(d)}finally{j(c)}}function j(a){for(var b=0;b<a.length;b++)a[b].stop()}function k(a,b){if("input"!==a&&"output"!==a)throw new Error("Unsupported device type "+a);navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices().then(function(c){var d=[];c.forEach(function(b){b.kind==="audio"+a?d.push({kind:"audio",id:b.deviceId,label:b.label}):b.kind==="video"+a&&d.push({kind:"video",id:b.deviceId,label:b.label})}),b(d)})}function l(a,b){return"undefined"!=typeof a.srcObject?a.srcObject=b:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=b:"undefined"!=typeof a.src?a.src=URL.createObjectURL(b):t("Error attaching stream to element."),a.play(),a}function m(a,b){return a.src=b,a.play(),a}function n(a,b){return a.src=b.src,a}function o(a,b,c){b(p(a,c))}function p(b,c){switch(u.browser){case"Edge":c.forEach(function(a){a.mediaType=q(b,a.codecId),a.bytesSent=s(a.packetsSent,a.mediaType),a.bytesReceived=s(a.packetsReceived,a.mediaType)});break;case"Safari":c.forEach(function(b){a.includes(b.id.toLowerCase(),"audio")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="audio"),a.includes(b.id.toLowerCase(),"video")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="video")})}return c}function q(b,c){if(c){var d;return r(b,function(b){a.startsWith(b,"video")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="video"),a.startsWith(b,"audio")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="audio")}),d}}function r(b,c){var d=b.localDescription.sdp.split("m="),e=b.remoteDescription.sdp.split("m=");return d.length===e.length&&a.findIndex(d,function(a,b){return c(a,b,e)})}function s(a,b){var c=parseInt(a)||0;return"audio"===b?100*c:"video"===b?1080*c:void 0}var t=function(){console.log.apply(console,arguments)},u=new b(navigator.userAgent).detect(),v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,y=null,z=null,A=null,B=null,C=null,D=null,E=null,F=!1;return function(){f();var a={RTCPeerConnection:v,RTCSessionDescription:w,RTCIceCandidate:x,getSources:y,getDestinations:z,getUserMedia:A,getStats:B,attachMediaStream:C,attachUriStream:D||m,reattachMediaStream:E,webrtcSupported:F};return a.exportGlobal=function(){d.RTCPeerConnection=a.RTCPeerConnection,d.RTCSessionDescription=a.RTCSessionDescription,d.RTCIceCandidate=a.RTCIceCandidate},a}}.apply(b,d),!(void 0!==e&&(a.exports=e))}])});
 
 /***/ }),
@@ -175,8 +175,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(80),
-    __webpack_require__(79)
+    __webpack_require__(79),
+    __webpack_require__(78)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Disposable, DisposableList) {
     return {
         Disposable: Disposable,
@@ -205,8 +205,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(23),
-    __webpack_require__(72)
+    __webpack_require__(20),
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Event, NamedEvents) {
     return {
         Event: Event,
@@ -235,7 +235,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(54)
+    __webpack_require__(53)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(http) {
     'use strict';
 
@@ -349,9 +349,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(25),
-    __webpack_require__(78),
-    __webpack_require__(77)
+    __webpack_require__(24),
+    __webpack_require__(77),
+    __webpack_require__(76)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -365,6 +365,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
+    'use strict';
+
+    return getGlobal();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -490,32 +516,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
-    'use strict';
-
-    return getGlobal();
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -535,9 +535,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(76),
-    __webpack_require__(73),
-    __webpack_require__(12)
+    __webpack_require__(75),
+    __webpack_require__(72),
+    __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Logger, ConsoleAppender, logging) {
     'use strict';
 
@@ -557,6 +557,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+    'use strict';
+
+    return {isSupported: false};
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -573,8 +600,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(68),
-    __webpack_require__(57),
-    __webpack_require__(20)
+    __webpack_require__(56),
+    __webpack_require__(18)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(MQWebSocket, BatchHttpProto, MQService) {
     return {
         MQWebSocket: MQWebSocket,
@@ -585,7 +612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -623,7 +650,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -645,7 +672,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(29)
+    __webpack_require__(28)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
@@ -1199,33 +1226,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-    'use strict';
-
-    return {isSupported: false};
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1360,6 +1360,464 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
+    'use strict';
+
+    var telemetryProto = {
+        "package": "telemetry",
+        "messages": [
+            {
+                "name": "LogData",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "LogLevel",
+                        "name": "level",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "category",
+                        "id": 3
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "message",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "source",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "fullQualifiedName",
+                        "id": 11
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 6
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "userId",
+                        "id": 7
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "environment",
+                        "id": 8
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "version",
+                        "id": 9
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "float",
+                        "name": "runtime",
+                        "id": 10
+                    }
+                ]
+            },
+            {
+                "name": "StoreLogRecords",
+                "fields": [
+                    {
+                        "rule": "repeated",
+                        "type": "LogData",
+                        "name": "records",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "StoreLogRecordsResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint64",
+                        "name": "storedRecords",
+                        "id": 2
+                    }
+                ]
+            },
+            {
+                "name": "MetricValue",
+                "fields": [
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "string",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "float",
+                        "name": "float",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "uint64",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "int64",
+                        "name": "int64",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bool",
+                        "name": "boolean",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 6
+                    }
+                ]
+            },
+            {
+                "name": "MetricData",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "timestamp",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "source",
+                        "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "resource",
+                        "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "kind",
+                        "id": 6
+                    },
+                    {
+                        "rule": "required",
+                        "type": "Metric",
+                        "name": "metric",
+                        "id": 7
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "MetricValue",
+                        "name": "value",
+                        "id": 8
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "MetricValue",
+                        "name": "previousValue",
+                        "id": 9
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "uint64",
+                        "name": "elapsed",
+                        "id": 10
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "fullQualifiedName",
+                        "id": 11
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "environment",
+                        "id": 12
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "version",
+                        "id": 13
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "tool",
+                        "id": 14
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "toolVersion",
+                        "id": 15
+                    },
+                    {
+                        "rule": "required",
+                        "type": "float",
+                        "name": "runtime",
+                        "id": 16
+                    }
+                ]
+            },
+            {
+                "name": "SubmitMetricRecords",
+                "fields": [
+                    {
+                        "rule": "repeated",
+                        "type": "MetricData",
+                        "name": "records",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "SubmitMetricRecordsResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint64",
+                        "name": "storedRecords",
+                        "id": 2
+                    }
+                ]
+            }
+        ],
+        "enums": [
+            {
+                "name": "LogLevel",
+                "values": [
+                    {
+                        "name": "Trace",
+                        "id": 0
+                    },
+                    {
+                        "name": "Debug",
+                        "id": 1
+                    },
+                    {
+                        "name": "Info",
+                        "id": 2
+                    },
+                    {
+                        "name": "Warn",
+                        "id": 3
+                    },
+                    {
+                        "name": "Error",
+                        "id": 4
+                    },
+                    {
+                        "name": "Fatal",
+                        "id": 5
+                    }
+                ]
+            },
+            {
+                "name": "Metric",
+                "values": [
+                    {
+                        "name": "RoundTripTime",
+                        "id": 0
+                    },
+                    {
+                        "name": "DownlinkThroughputCapacity",
+                        "id": 26
+                    },
+                    {
+                        "name": "Initialized",
+                        "id": 1
+                    },
+                    {
+                        "name": "Provisioned",
+                        "id": 2
+                    },
+                    {
+                        "name": "SetupCompleted",
+                        "id": 3
+                    },
+                    {
+                        "name": "Offset",
+                        "id": 4
+                    },
+                    {
+                        "name": "TimeToFirstFrame",
+                        "id": 5
+                    },
+                    {
+                        "name": "Playing",
+                        "id": 6
+                    },
+                    {
+                        "name": "Stalled",
+                        "id": 7
+                    },
+                    {
+                        "name": "Buffering",
+                        "id": 8
+                    },
+                    {
+                        "name": "Seeking",
+                        "id": 22
+                    },
+                    {
+                        "name": "Stopped",
+                        "id": 9
+                    },
+                    {
+                        "name": "BitRateAdaptation",
+                        "id": 10
+                    },
+                    {
+                        "name": "ResolutionChanged",
+                        "id": 11
+                    },
+                    {
+                        "name": "DisplayResolutionChanged",
+                        "id": 23
+                    },
+                    {
+                        "name": "VideoBitRate",
+                        "id": 28
+                    },
+                    {
+                        "name": "AudioBitRate",
+                        "id": 29
+                    },
+                    {
+                        "name": "FrameRateChanged",
+                        "id": 12
+                    },
+                    {
+                        "name": "FramesDropped",
+                        "id": 13
+                    },
+                    {
+                        "name": "PacketsLost",
+                        "id": 14
+                    },
+                    {
+                        "name": "PictureLost",
+                        "id": 15
+                    },
+                    {
+                        "name": "PlayoutDelayChanged",
+                        "id": 16
+                    },
+                    {
+                        "name": "CodecChanged",
+                        "id": 17
+                    },
+                    {
+                        "name": "PlayerEvent",
+                        "id": 21
+                    },
+                    {
+                        "name": "MetricDropped",
+                        "id": 18
+                    },
+                    {
+                        "name": "NetworkOffline",
+                        "id": 19
+                    },
+                    {
+                        "name": "NetworkOnline",
+                        "id": 20
+                    },
+                    {
+                        "name": "NetworkType",
+                        "id": 27
+                    },
+                    {
+                        "name": "ApplicationForeground",
+                        "id": 24
+                    },
+                    {
+                        "name": "ApplicationBackground",
+                        "id": 25
+                    }
+                ]
+            }
+        ]
+    };
+
+    return telemetryProto;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * Copyright 2018 Phenix Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1375,16 +1833,634 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(39)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
+    __webpack_require__(0),
+    __webpack_require__(63),
+    __webpack_require__(61),
+    __webpack_require__(60)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, Pbf, Schema, mqProto) {
     'use strict';
 
-    return new ApplicationActivityDetector();
+    function MQProtocol(protocols, apiVersion) {
+        var that = this;
+
+        this._schemas = {};
+
+        this._schemas[mqProto.package] = new Schema(mqProto);
+
+        _.forEach(protocols, function(protocol) {
+            that._schemas[protocol.package] = new Schema(protocol);
+        });
+
+        this._apiVersion = apiVersion || 3;
+    }
+
+    MQProtocol.prototype.getApiVersion = function() {
+        return this._apiVersion;
+    };
+
+    MQProtocol.prototype.encode = function(type, data) {
+        if (typeof type !== 'string') {
+            throw new Error("'type' must be a string");
+        }
+
+        if (typeof data !== 'object') {
+            throw new Error("'data' must be an object");
+        }
+
+        var typeQuery = type.split('.');
+        var namespace = _.get(typeQuery, [0]);
+        var subType = _.get(typeQuery, [1]);
+        var schema = _.get(this._schemas, [namespace]);
+        var message = new Pbf();
+
+        schema.write(subType, data, message);
+
+        return message.finish();
+    };
+
+    MQProtocol.prototype.decode = function(type, value) {
+        if (typeof type !== 'string') {
+            throw new Error("'type' must be a string");
+        }
+
+        var typeQuery = type.split('.');
+        var namespace = _.get(typeQuery, [0]);
+        var subType = _.get(typeQuery, [1]);
+        var schema = _.get(this._schemas, [namespace]);
+        var message = new Pbf(value);
+        var decodedMessage = schema.read(subType, message);
+
+        return decodedMessage;
+    };
+
+    return MQProtocol;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 17 */
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(4),
+    __webpack_require__(3),
+    __webpack_require__(17),
+    __webpack_require__(59)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, disposable, MQProtocol, Base64) {
+    'use strict';
+
+    var clientRequestIdPrefix = 'C';
+    var continuationStatus = 'continuation';
+    var continuationPollInterval = 2000;
+    var continuationTimeout = 300000;
+    var defaultRequestTimeout = 18000;
+
+    function MQService(logger, sendCallback, receiveCallback, protocols, apiVersion) {
+        assert.isObject(logger, 'logger');
+        assert.isFunction(sendCallback, 'sendCallback');
+        assert.isFunction(receiveCallback, 'receiveCallback');
+
+        this._logger = logger;
+        this._mqProtocol = new MQProtocol(protocols, apiVersion);
+
+        this._nextRequestId = 0;
+        this._namedEvents = new event.NamedEvents();
+        this._requests = {};
+        this._responses = {};
+        this._requestListeners = {};
+        this._requestTimeouts = {};
+        this._requestTimestamps = {};
+        this._continuationTimeouts = {};
+
+        this._receiveCallback = receiveCallback;
+        this._sendCallback = sendCallback;
+
+        receiveCallback(_.bind(onMessage, this));
+    }
+
+    MQService.prototype.onEvent = function(eventName, handler) {
+        if (this._disposed) {
+            return this._logger.warn('Proto already disposed of. Unable to listen for event');
+        }
+
+        assert.isStringNotEmpty(eventName, 'eventName');
+        assert.isFunction(handler, 'handler');
+
+        return this._namedEvents.listen(eventName, handler);
+    };
+
+    MQService.prototype.onRequest = function(requestName, handler) {
+        if (this._disposed) {
+            return this._logger.warn('Proto already disposed of. Unable to listen for request');
+        }
+
+        assert.isStringNotEmpty(requestName, 'requestName');
+        assert.isFunction(handler, 'handler');
+
+        if (this._requestListeners[requestName]) {
+            this._logger.warn('May not set multiple handlers for the same request. Overriding existing handlers for request [%s]', requestName);
+        }
+
+        this._requestListeners[requestName] = handler;
+
+        var that = this;
+
+        return new disposable.Disposable(function() {
+            that._requestListeners[requestName] = null;
+        });
+    };
+
+    MQService.prototype.sendRequest = function sendRequest(type, message, callback, settings) {
+        if (this._disposed) {
+            this._logger.warn('Proto already disposed of. Unable to send request');
+
+            return callback(null, {status: 'proto-disposed'});
+        }
+
+        settings = settings || {};
+
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(message, 'message');
+        assert.isObject(settings, 'settings');
+
+        if (callback) {
+            assert.isFunction(callback, 'callback');
+        }
+
+        if (settings.timeout) {
+            assert.isNumber(settings.timeout, 'settings.timeout');
+        }
+
+        var requestId = clientRequestIdPrefix + (this._nextRequestId++).toString();
+        var request = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, message),
+            messageType: 'Request'
+        };
+
+        this._requests[requestId] = _.bind(handleResponseAndContinuations, this, requestId, type, message, settings.timeout, callback);
+
+        return sendRequestWithTimeout.call(this, requestId, request, message, settings.timeout, callback);
+    };
+
+    MQService.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
+        if (this._disposed) {
+            this._logger.warn('Proto already disposed of. Unable to send response');
+
+            return callback(null, {status: 'proto-disposed'});
+        }
+
+        assert.isStringNotEmpty(requestId, 'requestId');
+        assert.isStringNotEmpty(type, 'type');
+        assert.isObject(message, 'message');
+
+        var start = this._responses[requestId];
+
+        if (!start) {
+            this._logger.error('Already responded to request [%s]', requestId);
+
+            callback(new Error('no-response-handler'));
+        }
+
+        var response = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, message),
+            messageType: 'Response',
+            wallTime: [_.now() - start]
+        };
+
+        encodeAndSendMessage.call(this, response, message);
+
+        delete this._responses[requestId];
+
+        return callback(null, {status: 'ok'});
+    };
+
+    MQService.prototype.disposeOfRequests = function() {
+        _.forOwn(this._requestTimeouts, function(timeout) {
+            clearTimeout(timeout);
+        });
+
+        _.forOwn(this._continuationTimeouts, function(timeout) {
+            clearTimeout(timeout);
+        });
+
+        this._requests = {};
+        this._responses = {};
+        this._requestListeners = {};
+        this._requestTimeouts = {};
+        this._requestTimestamps = {};
+        this._continuationTimeouts = {};
+    };
+
+    MQService.prototype.dispose = function() {
+        this._disposed = true;
+        this._receiveCallback = null;
+        this._sendCallback = null;
+
+        this.disposeOfRequests();
+
+        this._namedEvents.dispose();
+    };
+
+    MQService.prototype.getApiVersion = function getApiVersion() {
+        return this._mqProtocol.getApiVersion();
+    };
+
+    MQService.prototype.toString = function() {
+        return 'Proto[' + this._webSocket.toString() + ']';
+    };
+
+    function triggerEvent(eventName, args) {
+        this._namedEvents.fire(eventName, args, this);
+    }
+
+    function onMessage(evt) {
+        if (this._disposed) {
+            return this._logger.warn('Proto already disposed of. Unable process message');
+        }
+
+        var message;
+        var messageBody;
+        var callback;
+
+        try {
+            message = this._mqProtocol.decode('mq.Message', Base64.toByteArray(evt.data));
+            callback = this._requests[message.requestId];
+
+            this._logger.info('>> [%s] [%s]', message.messageType, message.type);
+
+            messageBody = this._mqProtocol.decode(message.type, message.payload);
+        } catch (e) {
+            this._logger.error(e);
+
+            if (callback) {
+                return callback(e);
+            }
+
+            throw e;
+        }
+
+        triggerReceivedEvent.call(this, message, messageBody, evt.data.length);
+
+        switch (message.messageType) {
+        case 'Response':
+            if (messageBody.status !== continuationStatus) {
+                delete this._requests[message.requestId];
+            }
+
+            clearTimeout(this._requestTimeouts[message.requestId]);
+
+            delete this._requestTimeouts[message.requestId];
+
+            if (!callback) {
+                return;
+            }
+
+            if (message.type === 'mq.Error') {
+                var error = messageBody;
+
+                return callback(error, null);
+            }
+
+            return callback(null, messageBody);
+        case 'Request':
+            var sendResponse = _.bind(this.sendResponse, this, message.requestId, message.type + 'Response');
+            var requestListener = this._requestListeners[message.type];
+
+            this._responses[message.requestId] = _.now();
+
+            if (requestListener) {
+                requestListener(messageBody, sendResponse);
+            } else {
+                this._logger.info('Received request without a subscribed listener');
+            }
+
+            break;
+        case 'Event':
+            return triggerEvent.call(this, message.type, [messageBody]);
+        default:
+            return this._logger.warn('>> Unsupported message type [%s]', message.messageType);
+        }
+    }
+
+    function handleResponseAndContinuations(requestId, type, message, timeout, callback, error, response) {
+        if (response && response.status === continuationStatus) {
+            if (!this._continuationTimeouts[requestId] && this._requests[requestId]) {
+                this._continuationTimeouts[requestId] = listenForContinuationTimeout.call(this, requestId, callback);
+            }
+
+            return sendRequestWithContinuation.call(this, requestId, type, message, response, timeout, callback);
+        }
+
+        clearTimeout(this._continuationTimeouts[requestId]);
+
+        delete this._continuationTimeouts[requestId];
+
+        return callback(error, response);
+    }
+
+    function sendRequestWithContinuation(requestId, type, message, response, timeout, callback) {
+        if (!response || (!response.continuationId && !response.routeKey)) {
+            this._logger.warn('Received request for continuation without a continuationId or routeKey');
+
+            return callback();
+        }
+
+        var messageWithContinuation = _.assign({}, message, {
+            continuationId: response.continuationId,
+            routeKey: response.routeKey
+        });
+        var request = {
+            requestId: requestId,
+            type: type,
+            payload: this._mqProtocol.encode(type, messageWithContinuation),
+            messageType: 'Request'
+        };
+        var that = this;
+
+        return setTimeout(function() {
+            if (!that._requests[requestId]) {
+                return;
+            }
+
+            return sendRequestWithTimeout.call(that, requestId, request, messageWithContinuation, timeout, callback);
+        }, continuationPollInterval);
+    }
+
+    function sendRequestWithTimeout(requestId, request, payload, timeout, callback) {
+        if (this._requestTimeouts[requestId]) {
+            clearTimeout(this._requestTimeouts[requestId]);
+        }
+
+        var requestTimeout = timeout || defaultRequestTimeout;
+
+        this._requestTimeouts[requestId] = setTimeout(_.bind(handleRequestTimeout, this, requestId, requestTimeout, callback), requestTimeout);
+
+        return encodeAndSendMessage.call(this, request, payload);
+    }
+
+    function encodeAndSendMessage(message, payload) {
+        var encodedMessage = Base64.toString(this._mqProtocol.encode('mq.Message', message));
+
+        triggerSentEvent.call(this, message, payload, encodedMessage.length);
+
+        return this._sendCallback(encodedMessage);
+    }
+
+    function listenForContinuationTimeout(requestId, callback) {
+        return setTimeout(_.bind(handleRequestTimeout, this, requestId, continuationTimeout, callback), continuationTimeout);
+    }
+
+    function handleRequestTimeout(requestId, timeout, callback) {
+        if (!this._requests[requestId]) {
+            return;
+        }
+
+        triggerTimeoutEvent.call(this, requestId, timeout);
+
+        this._logger.warn('Request [%s] has not completed in [%s] ms. Dropping request.', requestId, timeout);
+
+        delete this._requests[requestId];
+
+        return callback(null, {status: 'timeout'});
+    }
+
+    function triggerReceivedEvent(message, payload, bytes) {
+        var now = _.now();
+        var sentTimestamp = this._requestTimestamps[message.requestId];
+
+        if (_.isNumber(sentTimestamp)) {
+            var totalRequestTime = now - sentTimestamp;
+
+            message.wallTime = [totalRequestTime].concat(message.wallTime);
+        }
+
+        this._namedEvents.fireAsync('received', [{
+            key: message.requestId,
+            messageType: message.messageType,
+            type: message.type,
+            wallTime: message.wallTime,
+            received: now,
+            bytes: bytes,
+            payload: payload
+        }]);
+
+        delete this._requestTimestamps[message.requestId];
+    }
+
+    function triggerSentEvent(message, payload, bytes) {
+        var now = _.now();
+
+        this._requestTimestamps[message.requestId] = now;
+
+        this._namedEvents.fireAsync('sent', [{
+            key: message.requestId,
+            messageType: message.messageType,
+            type: message.type,
+            received: now,
+            bytes: bytes,
+            payload: payload
+        }]);
+    }
+
+    function triggerTimeoutEvent(requestId, timeout) {
+        this._namedEvents.fireAsync('timeout', [{
+            key: requestId,
+            timeout: timeout
+        }]);
+
+        delete this._requestTimestamps[requestId];
+    }
+
+    return MQService;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(64)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(networkConnectionMonitor) {
+    'use strict';
+
+    return networkConnectionMonitor;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable) {
+    'use strict';
+
+    function Event() {
+        this._listeners = [];
+    }
+
+    Event.prototype.fire = function(args, context) {
+        fireEvent.call(this, args, context);
+    };
+
+    Event.prototype.fireAsync = function(args, context, callback) {
+        fireEvent.call(this, args, context, callback || function() {});
+    };
+
+    Event.prototype.listen = function(listener) {
+        var that = this;
+
+        assert.isFunction(listener, 'listener');
+
+        that._listeners.push(listener);
+
+        return new disposable.Disposable(function() {
+            that._listeners = _.remove(that._listeners, function(item) {
+                return item === listener;
+            });
+        });
+    };
+
+    Event.prototype.size = function() {
+        return this._listeners.length;
+    };
+
+    Event.prototype.dispose = function() {
+        this._listeners = [];
+    };
+
+    Event.prototype.toString = function() {
+        return 'Event|' + this.size();
+    };
+
+    function fireEvent(args, context, asyncCallback) {
+        var that = this;
+
+        if (_.isNullOrUndefined(args)) {
+            args = [];
+        }
+
+        assert.isArray(args, 'args');
+
+        var notifyListeners = function notifyListeners() {
+            _.forEach(that._listeners, function(listener) {
+                listener.apply(context, args);
+            });
+        };
+
+        if (asyncCallback) {
+            setTimeout(function() {
+                notifyListeners();
+                asyncCallback();
+            }, 0);
+        } else {
+            notifyListeners();
+        }
+    }
+
+    return Event;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
+    'use strict';
+
+    var environment = {};
+
+    environment.parseEnvFromPcastBaseUri = function(uri) {
+        uri = uri.toLowerCase();
+
+        if (_.includes(uri, 'local')) {
+            return 'local';
+        } else if (_.includes(uri, 'stg')) {
+            return 'staging';
+        }
+
+        return 'production';
+    };
+
+    return environment;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1995,1111 +3071,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function() {
-    'use strict';
-
-    var telemetryProto = {
-        "package": "telemetry",
-        "messages": [
-            {
-                "name": "LogData",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "LogLevel",
-                        "name": "level",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 2
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "category",
-                        "id": 3
-                    },
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "message",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "source",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "fullQualifiedName",
-                        "id": 11
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 6
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "userId",
-                        "id": 7
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "environment",
-                        "id": 8
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "version",
-                        "id": 9
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "float",
-                        "name": "runtime",
-                        "id": 10
-                    }
-                ]
-            },
-            {
-                "name": "StoreLogRecords",
-                "fields": [
-                    {
-                        "rule": "repeated",
-                        "type": "LogData",
-                        "name": "records",
-                        "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "StoreLogRecordsResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "uint64",
-                        "name": "storedRecords",
-                        "id": 2
-                    }
-                ]
-            },
-            {
-                "name": "MetricValue",
-                "fields": [
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "string",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "float",
-                        "name": "float",
-                        "id": 2
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "uint64",
-                        "name": "uint64",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "int64",
-                        "name": "int64",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "bool",
-                        "name": "boolean",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 6
-                    }
-                ]
-            },
-            {
-                "name": "MetricData",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "timestamp",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 2
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "streamId",
-                        "id": 3
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "source",
-                        "id": 4
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "resource",
-                        "id": 5
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "kind",
-                        "id": 6
-                    },
-                    {
-                        "rule": "required",
-                        "type": "Metric",
-                        "name": "metric",
-                        "id": 7
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "MetricValue",
-                        "name": "value",
-                        "id": 8
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "MetricValue",
-                        "name": "previousValue",
-                        "id": 9
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "uint64",
-                        "name": "elapsed",
-                        "id": 10
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "fullQualifiedName",
-                        "id": 11
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "environment",
-                        "id": 12
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "version",
-                        "id": 13
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "tool",
-                        "id": 14
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "string",
-                        "name": "toolVersion",
-                        "id": 15
-                    },
-                    {
-                        "rule": "required",
-                        "type": "float",
-                        "name": "runtime",
-                        "id": 16
-                    }
-                ]
-            },
-            {
-                "name": "SubmitMetricRecords",
-                "fields": [
-                    {
-                        "rule": "repeated",
-                        "type": "MetricData",
-                        "name": "records",
-                        "id": 1
-                    }
-                ]
-            },
-            {
-                "name": "SubmitMetricRecordsResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "uint64",
-                        "name": "storedRecords",
-                        "id": 2
-                    }
-                ]
-            }
-        ],
-        "enums": [
-            {
-                "name": "LogLevel",
-                "values": [
-                    {
-                        "name": "Trace",
-                        "id": 0
-                    },
-                    {
-                        "name": "Debug",
-                        "id": 1
-                    },
-                    {
-                        "name": "Info",
-                        "id": 2
-                    },
-                    {
-                        "name": "Warn",
-                        "id": 3
-                    },
-                    {
-                        "name": "Error",
-                        "id": 4
-                    },
-                    {
-                        "name": "Fatal",
-                        "id": 5
-                    }
-                ]
-            },
-            {
-                "name": "Metric",
-                "values": [
-                    {
-                        "name": "RoundTripTime",
-                        "id": 0
-                    },
-                    {
-                        "name": "DownlinkThroughputCapacity",
-                        "id": 26
-                    },
-                    {
-                        "name": "Initialized",
-                        "id": 1
-                    },
-                    {
-                        "name": "Provisioned",
-                        "id": 2
-                    },
-                    {
-                        "name": "SetupCompleted",
-                        "id": 3
-                    },
-                    {
-                        "name": "Offset",
-                        "id": 4
-                    },
-                    {
-                        "name": "TimeToFirstFrame",
-                        "id": 5
-                    },
-                    {
-                        "name": "Playing",
-                        "id": 6
-                    },
-                    {
-                        "name": "Stalled",
-                        "id": 7
-                    },
-                    {
-                        "name": "Buffering",
-                        "id": 8
-                    },
-                    {
-                        "name": "Seeking",
-                        "id": 22
-                    },
-                    {
-                        "name": "Stopped",
-                        "id": 9
-                    },
-                    {
-                        "name": "BitRateAdaptation",
-                        "id": 10
-                    },
-                    {
-                        "name": "ResolutionChanged",
-                        "id": 11
-                    },
-                    {
-                        "name": "DisplayResolutionChanged",
-                        "id": 23
-                    },
-                    {
-                        "name": "VideoBitRate",
-                        "id": 28
-                    },
-                    {
-                        "name": "AudioBitRate",
-                        "id": 29
-                    },
-                    {
-                        "name": "FrameRateChanged",
-                        "id": 12
-                    },
-                    {
-                        "name": "FramesDropped",
-                        "id": 13
-                    },
-                    {
-                        "name": "PacketsLost",
-                        "id": 14
-                    },
-                    {
-                        "name": "PictureLost",
-                        "id": 15
-                    },
-                    {
-                        "name": "PlayoutDelayChanged",
-                        "id": 16
-                    },
-                    {
-                        "name": "CodecChanged",
-                        "id": 17
-                    },
-                    {
-                        "name": "PlayerEvent",
-                        "id": 21
-                    },
-                    {
-                        "name": "MetricDropped",
-                        "id": 18
-                    },
-                    {
-                        "name": "NetworkOffline",
-                        "id": 19
-                    },
-                    {
-                        "name": "NetworkOnline",
-                        "id": 20
-                    },
-                    {
-                        "name": "NetworkType",
-                        "id": 27
-                    },
-                    {
-                        "name": "ApplicationForeground",
-                        "id": 24
-                    },
-                    {
-                        "name": "ApplicationBackground",
-                        "id": 25
-                    }
-                ]
-            }
-        ]
-    };
-
-    return telemetryProto;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(64),
-    __webpack_require__(62),
-    __webpack_require__(61)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, Pbf, Schema, mqProto) {
-    'use strict';
-
-    function MQProtocol(protocols, apiVersion) {
-        var that = this;
-
-        this._schemas = {};
-
-        this._schemas[mqProto.package] = new Schema(mqProto);
-
-        _.forEach(protocols, function(protocol) {
-            that._schemas[protocol.package] = new Schema(protocol);
-        });
-
-        this._apiVersion = apiVersion || 3;
-    }
-
-    MQProtocol.prototype.getApiVersion = function() {
-        return this._apiVersion;
-    };
-
-    MQProtocol.prototype.encode = function(type, data) {
-        if (typeof type !== 'string') {
-            throw new Error("'type' must be a string");
-        }
-
-        if (typeof data !== 'object') {
-            throw new Error("'data' must be an object");
-        }
-
-        var typeQuery = type.split('.');
-        var namespace = _.get(typeQuery, [0]);
-        var subType = _.get(typeQuery, [1]);
-        var schema = _.get(this._schemas, [namespace]);
-        var message = new Pbf();
-
-        schema.write(subType, data, message);
-
-        return message.finish();
-    };
-
-    MQProtocol.prototype.decode = function(type, value) {
-        if (typeof type !== 'string') {
-            throw new Error("'type' must be a string");
-        }
-
-        var typeQuery = type.split('.');
-        var namespace = _.get(typeQuery, [0]);
-        var subType = _.get(typeQuery, [1]);
-        var schema = _.get(this._schemas, [namespace]);
-        var message = new Pbf(value);
-        var decodedMessage = schema.read(subType, message);
-
-        return decodedMessage;
-    };
-
-    return MQProtocol;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(4),
-    __webpack_require__(3),
-    __webpack_require__(19),
-    __webpack_require__(60)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, disposable, MQProtocol, Base64) {
-    'use strict';
-
-    var clientRequestIdPrefix = 'C';
-    var continuationStatus = 'continuation';
-    var continuationPollInterval = 2000;
-    var continuationTimeout = 300000;
-    var defaultRequestTimeout = 18000;
-
-    function MQService(logger, sendCallback, receiveCallback, protocols, apiVersion) {
-        assert.isObject(logger, 'logger');
-        assert.isFunction(sendCallback, 'sendCallback');
-        assert.isFunction(receiveCallback, 'receiveCallback');
-
-        this._logger = logger;
-        this._mqProtocol = new MQProtocol(protocols, apiVersion);
-
-        this._nextRequestId = 0;
-        this._namedEvents = new event.NamedEvents();
-        this._requests = {};
-        this._responses = {};
-        this._requestListeners = {};
-        this._requestTimeouts = {};
-        this._requestTimestamps = {};
-        this._continuationTimeouts = {};
-
-        this._receiveCallback = receiveCallback;
-        this._sendCallback = sendCallback;
-
-        receiveCallback(_.bind(onMessage, this));
-    }
-
-    MQService.prototype.onEvent = function(eventName, handler) {
-        if (this._disposed) {
-            return this._logger.warn('Proto already disposed of. Unable to listen for event');
-        }
-
-        assert.isStringNotEmpty(eventName, 'eventName');
-        assert.isFunction(handler, 'handler');
-
-        return this._namedEvents.listen(eventName, handler);
-    };
-
-    MQService.prototype.onRequest = function(requestName, handler) {
-        if (this._disposed) {
-            return this._logger.warn('Proto already disposed of. Unable to listen for request');
-        }
-
-        assert.isStringNotEmpty(requestName, 'requestName');
-        assert.isFunction(handler, 'handler');
-
-        if (this._requestListeners[requestName]) {
-            this._logger.warn('May not set multiple handlers for the same request. Overriding existing handlers for request [%s]', requestName);
-        }
-
-        this._requestListeners[requestName] = handler;
-
-        var that = this;
-
-        return new disposable.Disposable(function() {
-            that._requestListeners[requestName] = null;
-        });
-    };
-
-    MQService.prototype.sendRequest = function sendRequest(type, message, callback, settings) {
-        if (this._disposed) {
-            this._logger.warn('Proto already disposed of. Unable to send request');
-
-            return callback(null, {status: 'proto-disposed'});
-        }
-
-        settings = settings || {};
-
-        assert.isStringNotEmpty(type, 'type');
-        assert.isObject(message, 'message');
-        assert.isObject(settings, 'settings');
-
-        if (callback) {
-            assert.isFunction(callback, 'callback');
-        }
-
-        if (settings.timeout) {
-            assert.isNumber(settings.timeout, 'settings.timeout');
-        }
-
-        var requestId = clientRequestIdPrefix + (this._nextRequestId++).toString();
-        var request = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message),
-            messageType: 'Request'
-        };
-
-        this._requests[requestId] = _.bind(handleResponseAndContinuations, this, requestId, type, message, settings.timeout, callback);
-
-        return sendRequestWithTimeout.call(this, requestId, request, message, settings.timeout, callback);
-    };
-
-    MQService.prototype.sendResponse = function sendResponse(requestId, type, message, callback) {
-        if (this._disposed) {
-            this._logger.warn('Proto already disposed of. Unable to send response');
-
-            return callback(null, {status: 'proto-disposed'});
-        }
-
-        assert.isStringNotEmpty(requestId, 'requestId');
-        assert.isStringNotEmpty(type, 'type');
-        assert.isObject(message, 'message');
-
-        var start = this._responses[requestId];
-
-        if (!start) {
-            this._logger.error('Already responded to request [%s]', requestId);
-
-            callback(new Error('no-response-handler'));
-        }
-
-        var response = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, message),
-            messageType: 'Response',
-            wallTime: [_.now() - start]
-        };
-
-        encodeAndSendMessage.call(this, response, message);
-
-        delete this._responses[requestId];
-
-        return callback(null, {status: 'ok'});
-    };
-
-    MQService.prototype.disposeOfRequests = function() {
-        _.forOwn(this._requestTimeouts, function(timeout) {
-            clearTimeout(timeout);
-        });
-
-        _.forOwn(this._continuationTimeouts, function(timeout) {
-            clearTimeout(timeout);
-        });
-
-        this._requests = {};
-        this._responses = {};
-        this._requestListeners = {};
-        this._requestTimeouts = {};
-        this._requestTimestamps = {};
-        this._continuationTimeouts = {};
-    };
-
-    MQService.prototype.dispose = function() {
-        this._disposed = true;
-        this._receiveCallback = null;
-        this._sendCallback = null;
-
-        this.disposeOfRequests();
-
-        this._namedEvents.dispose();
-    };
-
-    MQService.prototype.getApiVersion = function getApiVersion() {
-        return this._mqProtocol.getApiVersion();
-    };
-
-    MQService.prototype.toString = function() {
-        return 'Proto[' + this._webSocket.toString() + ']';
-    };
-
-    function triggerEvent(eventName, args) {
-        this._namedEvents.fire(eventName, args, this);
-    }
-
-    function onMessage(evt) {
-        if (this._disposed) {
-            return this._logger.warn('Proto already disposed of. Unable process message');
-        }
-
-        var message;
-        var messageBody;
-        var callback;
-
-        try {
-            message = this._mqProtocol.decode('mq.Message', Base64.toByteArray(evt.data));
-            callback = this._requests[message.requestId];
-
-            this._logger.info('>> [%s] [%s]', message.messageType, message.type);
-
-            messageBody = this._mqProtocol.decode(message.type, message.payload);
-        } catch (e) {
-            this._logger.error(e);
-
-            if (callback) {
-                return callback(e);
-            }
-
-            throw e;
-        }
-
-        triggerReceivedEvent.call(this, message, messageBody, evt.data.length);
-
-        switch (message.messageType) {
-        case 'Response':
-            if (messageBody.status !== continuationStatus) {
-                delete this._requests[message.requestId];
-            }
-
-            clearTimeout(this._requestTimeouts[message.requestId]);
-
-            delete this._requestTimeouts[message.requestId];
-
-            if (!callback) {
-                return;
-            }
-
-            if (message.type === 'mq.Error') {
-                var error = messageBody;
-
-                return callback(error, null);
-            }
-
-            return callback(null, messageBody);
-        case 'Request':
-            var sendResponse = _.bind(this.sendResponse, this, message.requestId, message.type + 'Response');
-            var requestListener = this._requestListeners[message.type];
-
-            this._responses[message.requestId] = _.now();
-
-            if (requestListener) {
-                requestListener(messageBody, sendResponse);
-            } else {
-                this._logger.info('Received request without a subscribed listener');
-            }
-
-            break;
-        case 'Event':
-            return triggerEvent.call(this, message.type, [messageBody]);
-        default:
-            return this._logger.warn('>> Unsupported message type [%s]', message.messageType);
-        }
-    }
-
-    function handleResponseAndContinuations(requestId, type, message, timeout, callback, error, response) {
-        if (response && response.status === continuationStatus) {
-            if (!this._continuationTimeouts[requestId] && this._requests[requestId]) {
-                this._continuationTimeouts[requestId] = listenForContinuationTimeout.call(this, requestId, callback);
-            }
-
-            return sendRequestWithContinuation.call(this, requestId, type, message, response, timeout, callback);
-        }
-
-        clearTimeout(this._continuationTimeouts[requestId]);
-
-        delete this._continuationTimeouts[requestId];
-
-        return callback(error, response);
-    }
-
-    function sendRequestWithContinuation(requestId, type, message, response, timeout, callback) {
-        if (!response || (!response.continuationId && !response.routeKey)) {
-            this._logger.warn('Received request for continuation without a continuationId or routeKey');
-
-            return callback();
-        }
-
-        var messageWithContinuation = _.assign({}, message, {
-            continuationId: response.continuationId,
-            routeKey: response.routeKey
-        });
-        var request = {
-            requestId: requestId,
-            type: type,
-            payload: this._mqProtocol.encode(type, messageWithContinuation),
-            messageType: 'Request'
-        };
-        var that = this;
-
-        return setTimeout(function() {
-            if (!that._requests[requestId]) {
-                return;
-            }
-
-            return sendRequestWithTimeout.call(that, requestId, request, messageWithContinuation, timeout, callback);
-        }, continuationPollInterval);
-    }
-
-    function sendRequestWithTimeout(requestId, request, payload, timeout, callback) {
-        if (this._requestTimeouts[requestId]) {
-            clearTimeout(this._requestTimeouts[requestId]);
-        }
-
-        var requestTimeout = timeout || defaultRequestTimeout;
-
-        this._requestTimeouts[requestId] = setTimeout(_.bind(handleRequestTimeout, this, requestId, requestTimeout, callback), requestTimeout);
-
-        return encodeAndSendMessage.call(this, request, payload);
-    }
-
-    function encodeAndSendMessage(message, payload) {
-        var encodedMessage = Base64.toString(this._mqProtocol.encode('mq.Message', message));
-
-        triggerSentEvent.call(this, message, payload, encodedMessage.length);
-
-        return this._sendCallback(encodedMessage);
-    }
-
-    function listenForContinuationTimeout(requestId, callback) {
-        return setTimeout(_.bind(handleRequestTimeout, this, requestId, continuationTimeout, callback), continuationTimeout);
-    }
-
-    function handleRequestTimeout(requestId, timeout, callback) {
-        if (!this._requests[requestId]) {
-            return;
-        }
-
-        triggerTimeoutEvent.call(this, requestId, timeout);
-
-        this._logger.warn('Request [%s] has not completed in [%s] ms. Dropping request.', requestId, timeout);
-
-        delete this._requests[requestId];
-
-        return callback(null, {status: 'timeout'});
-    }
-
-    function triggerReceivedEvent(message, payload, bytes) {
-        var now = _.now();
-        var sentTimestamp = this._requestTimestamps[message.requestId];
-
-        if (_.isNumber(sentTimestamp)) {
-            var totalRequestTime = now - sentTimestamp;
-
-            message.wallTime = [totalRequestTime].concat(message.wallTime);
-        }
-
-        this._namedEvents.fireAsync('received', [{
-            key: message.requestId,
-            messageType: message.messageType,
-            type: message.type,
-            wallTime: message.wallTime,
-            received: now,
-            bytes: bytes,
-            payload: payload
-        }]);
-
-        delete this._requestTimestamps[message.requestId];
-    }
-
-    function triggerSentEvent(message, payload, bytes) {
-        var now = _.now();
-
-        this._requestTimestamps[message.requestId] = now;
-
-        this._namedEvents.fireAsync('sent', [{
-            key: message.requestId,
-            messageType: message.messageType,
-            type: message.type,
-            received: now,
-            bytes: bytes,
-            payload: payload
-        }]);
-    }
-
-    function triggerTimeoutEvent(requestId, timeout) {
-        this._namedEvents.fireAsync('timeout', [{
-            key: requestId,
-            timeout: timeout
-        }]);
-
-        delete this._requestTimestamps[requestId];
-    }
-
-    return MQService;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(65)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(networkConnectionMonitor) {
-    'use strict';
-
-    return networkConnectionMonitor;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
-    'use strict';
-
-    var environment = {};
-
-    environment.parseEnvFromPcastBaseUri = function(uri) {
-        uri = uri.toLowerCase();
-
-        if (_.includes(uri, 'local')) {
-            return 'local';
-        } else if (_.includes(uri, 'stg')) {
-            return 'staging';
-        }
-
-        return 'production';
-    };
-
-    return environment;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable) {
-    'use strict';
-
-    function Event() {
-        this._listeners = [];
-    }
-
-    Event.prototype.fire = function(args, context) {
-        fireEvent.call(this, args, context);
-    };
-
-    Event.prototype.fireAsync = function(args, context, callback) {
-        fireEvent.call(this, args, context, callback || function() {});
-    };
-
-    Event.prototype.listen = function(listener) {
-        var that = this;
-
-        assert.isFunction(listener, 'listener');
-
-        that._listeners.push(listener);
-
-        return new disposable.Disposable(function() {
-            that._listeners = _.remove(that._listeners, function(item) {
-                return item === listener;
-            });
-        });
-    };
-
-    Event.prototype.size = function() {
-        return this._listeners.length;
-    };
-
-    Event.prototype.dispose = function() {
-        this._listeners = [];
-    };
-
-    Event.prototype.toString = function() {
-        return 'Event|' + this.size();
-    };
-
-    function fireEvent(args, context, asyncCallback) {
-        var that = this;
-
-        if (_.isNullOrUndefined(args)) {
-            args = [];
-        }
-
-        assert.isArray(args, 'args');
-
-        var notifyListeners = function notifyListeners() {
-            _.forEach(that._listeners, function(listener) {
-                listener.apply(context, args);
-            });
-        };
-
-        if (asyncCallback) {
-            setTimeout(function() {
-                notifyListeners();
-                asyncCallback();
-            }, 0);
-        } else {
-            notifyListeners();
-        }
-    }
-
-    return Event;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3124,28 +3096,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(71),
     __webpack_require__(5),
-    __webpack_require__(52),
+    __webpack_require__(11),
     __webpack_require__(51),
-    __webpack_require__(48),
-    __webpack_require__(45),
+    __webpack_require__(50),
+    __webpack_require__(47),
     __webpack_require__(44),
-    __webpack_require__(17),
-    __webpack_require__(8),
     __webpack_require__(43),
-    __webpack_require__(41),
+    __webpack_require__(22),
+    __webpack_require__(9),
+    __webpack_require__(42),
     __webpack_require__(40),
+    __webpack_require__(39),
     __webpack_require__(15),
-    __webpack_require__(37),
-    __webpack_require__(36),
-    __webpack_require__(32),
+    __webpack_require__(35),
+    __webpack_require__(34),
+    __webpack_require__(31),
     __webpack_require__(6),
     __webpack_require__(2),
-    __webpack_require__(30)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+    __webpack_require__(29)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, phenixWebPlayer, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-05-16T22:37:24Z';
-    var defaultToHlsNative = true;
+    var sdkVersion = '2018-05-23T23:22:37Z';
 
     function PCast(options) {
         options = options || {};
@@ -3546,7 +3518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var streamType = 'download';
             var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
             var streamTelemetry = new StreamTelemetry(that.getProtocol().getSessionId(), that._logger, that._metricsTransmitter);
-            var createStreamOptions = _.assign({}, {useNativeHlsPlayer: defaultToHlsNative}, options);
+            var createStreamOptions = _.assign({}, options);
 
             createStreamOptions.canPlaybackAudio = that._canPlaybackAudio;
 
@@ -3582,8 +3554,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                     var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
+                    var isLive = offerSdp.match(/a=x-playlist:/);
 
-                    if (offerSdp.match(/a=x-playlist:/)) {
+                    if (isLive) {
                         create = createLiveViewer;
                     }
 
@@ -3597,7 +3570,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isLive && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -4608,16 +4581,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8\??[^\s]*)/m);
         var manifestUrl = _.get(dashMatch, [1], '');
         var playlistUrl = _.get(hlsMatch, [1], '');
+        var dashManifestOffered = dashMatch && dashMatch.length === 2;
+        var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
+        var preferHls = isIOS() || phenixRTC.browser === 'Safari';
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        var shouldPlayHls = isIOS() || phenixRTC.browser === 'Safari';
-
-        if (dashMatch && dashMatch.length === 2 && !shouldPlayHls) {
-            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(dashMatch[1]) || /x-widevine-service-certificate/.test(offerSdp);
+        if (dashManifestOffered && phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !preferHls) {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
 
             if (options.isDrmProtectedContent) {
                 options.widevineServiceCertificateUrl = offerSdp.match(/a=x-widevine-service-certificate:([^\n][^\s]*)/m)[1];
@@ -4631,8 +4605,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsMatch && hlsMatch.length === 2 && typeof document === 'object' && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
-            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(hlsMatch[1]);
+        } else if (hlsPlaylistOffered && phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
 
             if (options.hlsTargetDuration) {
                 assert.isNumber(options.hlsTargetDuration, 'options.hlsTargetDuration');
@@ -4640,10 +4614,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, options);
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: preferHls}, options));
         }
 
-        that._logger.warn('[%s] Offer does not contain a supported manifest', streamId, offerSdp);
+        if (!dashManifestOffered && !hlsPlaylistOffered) {
+            that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback) {
+            that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
+        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+            that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
+        }
 
         return callback.call(that, undefined, 'failed');
     }
@@ -4828,7 +4810,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5018,7 +5000,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5058,7 +5040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5204,7 +5186,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5226,12 +5208,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(7),
+    __webpack_require__(11),
+    __webpack_require__(26),
     __webpack_require__(14),
-    __webpack_require__(27),
-    __webpack_require__(13),
-    __webpack_require__(24),
+    __webpack_require__(23),
     __webpack_require__(2),
-    __webpack_require__(26)
+    __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
@@ -6232,7 +6214,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6574,7 +6556,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6690,7 +6672,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6714,7 +6696,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(5),
     __webpack_require__(2),
-    __webpack_require__(8),
+    __webpack_require__(9),
     __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
@@ -6855,7 +6837,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6879,8 +6861,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(2),
     __webpack_require__(15),
-    __webpack_require__(17),
-    __webpack_require__(31),
+    __webpack_require__(22),
+    __webpack_require__(30),
     __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, PhenixRealTimeRenderer, streamEnums) {
     'use strict';
@@ -7120,7 +7102,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7144,9 +7126,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(10),
     __webpack_require__(4),
     __webpack_require__(5),
-    __webpack_require__(14),
+    __webpack_require__(11),
     __webpack_require__(2),
-    __webpack_require__(8),
+    __webpack_require__(9),
     __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
@@ -7359,6 +7341,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function handleError(e) {
         if (canReload.call(this) && e && (e.code === 3 || e.severity === phenixWebPlayer.errors.severity.RECOVERABLE)) {
+            this._logger.warn('Reloading unhealthy stream after error event [%s]', e);
+
             return reloadIfAble.call(this);
         }
 
@@ -7408,17 +7392,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         if (this._lastProgress.buffered !== null) {
             var oldTimeElapsed = this._lastProgress.averageLength * this._lastProgress.count;
             var newTimeElapsed = oldTimeElapsed + (bufferedEnd - this._lastProgress.buffered);
+            var isStalled = this._lastProgress.lastCurrentTime !== this._element.currentTime;
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
 
-            if (this._lastProgress.lastCurrentTime !== this._element.currentTime) {
+            if (!isStalled) {
                 this._lastProgress.lastCurrentTimeOccurenceTimestamp = _.now();
             }
 
             var hasExceededStallTimeout = this._lastProgress.lastCurrentTimeOccurenceTimestamp && _.now() - this._lastProgress.lastCurrentTimeOccurenceTimestamp > timeoutForStallWithoutProgressToRestart;
 
-            if (hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
+            if (isStalled && hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
                 this._logger.warn('Reloading stream after current time has not changed for [%s] seconds due to unregistered stall.', timeoutForStallWithoutProgressToRestart / 1000);
 
                 reloadIfAble.call(this);
@@ -7434,7 +7419,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         that._logger.info('[%s] Loading Phenix Live stream player stalled caused by [%s] event.', that._streamId, event.type);
 
-        if (that._lastProgress.time === 0) {
+        if (that._lastProgress.time === 0 || that._element.paused) {
             return;
         }
 
@@ -7491,426 +7476,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(4),
-    __webpack_require__(5),
-    __webpack_require__(3),
-    __webpack_require__(2),
-    __webpack_require__(16),
-    __webpack_require__(8),
-    __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DimensionsChangedMonitor, streamEnums) {
-    'use strict';
-
-    var streamEndedBeforeSetupTimeout = 5000;
-    var numberOfTimesToRetryHlsStalledHlsStream = 5;
-    var originStreamReadyDuration = 6000;
-    var defaultUnreadableContentErrorTimeout = 250;
-    var timeoutForStallWithoutProgressToRestart = 6000;
-    var minTimeBeforeNextReload = 15000;
-    var defaultTimeoutForBackgroundTabBeforeDispose = 3000;
-
-    function HlsRenderer(streamId, uri, streamTelemetry, options, logger) {
-        this._logger = logger;
-        this._streamId = streamId;
-        this._playlistUri = encodeURI(uri).replace(/[#]/g, '%23');
-        this._bufferSizeHistory = [];
-        this._streamTelemetry = streamTelemetry;
-        this._options = options;
-        this._element = null;
-        this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
-        this._lastProgress = {
-            time: 0,
-            buffered: null,
-            averageLength: 0,
-            count: 0,
-            setupRetry: 0,
-            lastCurrentTime: 0,
-            lastCurrentTimeOccurenceTimestamp: 0
-        };
-        this._namedEvents = new event.NamedEvents();
-
-        this._onStalled = _.bind(stalled, this);
-        this._onProgress = _.bind(onProgress, this);
-        this._onEnded = _.bind(ended, this);
-        this._onError = _.bind(onError, this);
-        this._onWaiting = _.bind(waiting, this);
-    }
-
-    HlsRenderer.prototype.on = function(name, callback) {
-        return this._namedEvents.listen(name, callback);
-    };
-
-    HlsRenderer.prototype.start = function(elementToAttachTo) {
-        try {
-            var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
-
-            this._disposables = new disposable.DisposableList();
-
-            this._disposables.add(applicationActivityDetector.onBackground(_.bind(handleForegroundChange, this, false)));
-            this._disposables.add(applicationActivityDetector.onForeground(_.bind(handleForegroundChange, this, true)));
-
-            this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-            this._streamTelemetry.recordRebuffering(elementToAttachTo);
-            this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-
-            if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent) {
-                setTimeout(_.bind(setupPlayer, this, elementToAttachTo), originStreamReadyDuration);
-            } else {
-                setupPlayer.call(this, elementToAttachTo);
-            }
-        } catch (e) {
-            this._logger.error('[%s] Error while loading HLS live stream [%s]', this._streamId, e.code, e);
-
-            this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['hls', e]);
-        }
-
-        return elementToAttachTo;
-    };
-
-    HlsRenderer.prototype.stop = function(reason, waitForLastChunk) {
-        var that = this;
-
-        if (that._waitingForFinalization) {
-            return;
-        }
-
-        if (waitForLastChunk) {
-            return that._waitForLastChunk = true;
-        }
-
-        this._dimensionsChangedMonitor.stop();
-
-        this._streamTelemetry.stop();
-
-        this._disposables.dispose();
-
-        if (this._element) {
-            var finalizeStreamEnded = function finalizeStreamEnded() {
-                if (that._element) {
-                    _.removeEventListener(that._element, 'error', that._onError, true);
-                    _.removeEventListener(that._element, 'stalled', that._onStalled, false);
-                    _.removeEventListener(that._element, 'pause', that._onStalled, false);
-                    _.removeEventListener(that._element, 'suspend', that._onStalled, false);
-                    _.removeEventListener(that._element, 'progress', that._onProgress, false);
-                    _.removeEventListener(that._element, 'ended', that._onEnded, false);
-                    _.removeEventListener(that._element, 'waiting', that._onWaiting, false);
-
-                    if (rtc.browser === 'Safari' && rtc.browserVersion >= 11) {
-                        that._element.setAttribute('src', '');
-                    } else {
-                        that._element.src = '';
-                    }
-
-                    that._element = null;
-                }
-
-                var reason = '';
-
-                that._namedEvents.fire(streamEnums.rendererEvents.ended.name, [reason]);
-            };
-
-            try {
-                that._element.pause();
-
-                that._logger.info('[%s] HLS live stream has been destroyed', that._streamId);
-
-                finalizeStreamEnded();
-            } catch (e) {
-                that._logger.error('[%s] Error while destroying HLS live stream [%s]', that._streamId, e.code, e);
-
-                finalizeStreamEnded();
-
-                that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['hls', e]);
-            }
-
-            that._waitingForFinalization = true;
-        }
-    };
-
-    HlsRenderer.prototype.getStats = function() {
-        if (!this._element) {
-            return {
-                width: 0,
-                height: 0,
-                currentTime: 0.0,
-                lag: 0.0,
-                networkState: streamEnums.networkStates.networkNoSource.id
-            };
-        }
-
-        var currentTime = this._element ? this._element.currentTime || 0.0 : 0.0;
-        var buffered = (this._element && this._element.buffered && this._element.buffered.length > 0) ? this._element.buffered.end(this._element.buffered.length - 1) : 0;
-        var currentBufferSize = Math.max(0, buffered - currentTime);
-
-        this._bufferSizeHistory.push(currentBufferSize);
-
-        if (this._bufferSizeHistory.length > 15) {
-            this._bufferSizeHistory.shift();
-        }
-
-        var estimatedBufferSize = 0;
-
-        for (var i = 0, len = this._bufferSizeHistory.length; i < len; i++) {
-            estimatedBufferSize = Math.max(estimatedBufferSize, this._bufferSizeHistory[i]);
-        }
-
-        var chunkDuration = 2.0; // TODO (sbi) Parse chunk duration from manifest
-        var trueCurrentTime = (_.now() - this._options.originStartTime) / 1000;
-        var lag = 2.0 * chunkDuration + estimatedBufferSize;
-        var estimatedCurrentTime = trueCurrentTime - lag;
-
-        return {
-            width: this._element.videoWidth || this._element.width,
-            height: this._element.videoHeight || this._element.height,
-            currentTime: estimatedCurrentTime,
-            originTime: trueCurrentTime,
-            lag: lag,
-            networkState: this._element.networkState
-        };
-    };
-
-    HlsRenderer.prototype.setDataQualityChangedCallback = function(callback) {
-        assert.isFunction(callback, 'callback');
-
-        this.dataQualityChangedCallback = callback;
-    };
-
-    HlsRenderer.prototype.getPlayer = function() {
-        return null;
-    };
-
-    HlsRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
-    };
-
-    function setupPlayer(elementToAttachTo) {
-        rtc.attachUriStream(elementToAttachTo, this._playlistUri);
-
-        if (this._options.receiveAudio === false) {
-            elementToAttachTo.muted = true;
-        }
-
-        _.addEventListener(elementToAttachTo, 'error', this._onError, true);
-        _.addEventListener(elementToAttachTo, 'stalled', this._onStalled, false);
-        _.addEventListener(elementToAttachTo, 'pause', this._onStalled, false);
-        _.addEventListener(elementToAttachTo, 'suspend', this._onStalled, false);
-        _.addEventListener(elementToAttachTo, 'progress', this._onProgress, false);
-        _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
-        _.addEventListener(elementToAttachTo, 'waiting', this._onWaiting, false);
-
-        this._element = elementToAttachTo;
-
-        this._dimensionsChangedMonitor.start(this, this._element);
-    }
-
-    function onError(e) {
-        var that = this;
-        var timeout = defaultUnreadableContentErrorTimeout * that._lastProgress.setupRetry * that._lastProgress.setupRetry;
-        var hasNotStartedYet = that._lastProgress.count === 0;
-        var hasNotExceededMaxRetries = that._lastProgress.setupRetry <= numberOfTimesToRetryHlsStalledHlsStream;
-
-        if (_.get(this._element, ['error', 'code']) === 4 && hasNotStartedYet && hasNotExceededMaxRetries) {
-            return setTimeout(function() {
-                that._lastProgress.setupRetry++;
-                reload.call(that);
-            }, Math.max(timeout, defaultUnreadableContentErrorTimeout));
-        }
-
-        this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['player', e]);
-    }
-
-    function onProgress() {
-        this._lastProgress.time = _.now();
-
-        if (this._element.buffered.length === 0) {
-            return this._logger.debug('[%s] Hls stream progress event fired without any buffered content', this._streamId);
-        }
-
-        var bufferedEnd = this._element.buffered.end(this._element.buffered.length - 1);
-
-        if (this._lastProgress.buffered === bufferedEnd) {
-            return;
-        }
-
-        // Start and end times are unreliable for overall length of stream.
-        if (this._lastProgress.buffered !== null) {
-            var oldTimeElapsed = this._lastProgress.averageLength * this._lastProgress.count;
-            var newTimeElapsed = oldTimeElapsed + (bufferedEnd - this._lastProgress.buffered);
-
-            this._lastProgress.count += 1;
-            this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
-
-            if (this._lastProgress.lastCurrentTime !== this._element.currentTime) {
-                this._lastProgress.lastCurrentTimeOccurenceTimestamp = _.now();
-            }
-
-            var hasExceededStallTimeout = this._lastProgress.lastCurrentTimeOccurenceTimestamp && _.now() - this._lastProgress.lastCurrentTimeOccurenceTimestamp > timeoutForStallWithoutProgressToRestart;
-
-            if (hasExceededStallTimeout && this._element && !this._element.paused && canReload.call(this)) {
-                this._logger.warn('Reloading stream after current time has not changed for [%s] seconds due to unregistered stall.', timeoutForStallWithoutProgressToRestart / 1000);
-
-                reloadIfAble.call(this);
-            }
-        }
-
-        this._lastProgress.buffered = bufferedEnd;
-        this._lastProgress.setupRetry = 0;
-        this._lastProgress.lastCurrentTime = this._element.currentTime;
-    }
-
-    function stalled() {
-        this._logger.info('[%s] Loading Hls stream stalled.', this._streamId);
-
-        if (this._lastProgress.setupRetry > numberOfTimesToRetryHlsStalledHlsStream) {
-            return this._logger.warn('[%s] Unable to recover from stalled Hls Stream.', this._streamId);
-        }
-
-        var that = this;
-        var currentVideoTime = this._element.currentTime;
-
-        if (this._lastProgress.count === 0) {
-            this._lastProgress.setupRetry++;
-            reload.call(that);
-        } else {
-            setTimeout(function() {
-                if (that._lastProgress.count === 0) {
-                    that._lastProgress.setupRetry++;
-                    reload.call(that);
-                }
-            }, getTimeoutOrMinimum.call(that));
-
-            setTimeout(function() {
-                if (that._element && that._element.currentTime === currentVideoTime && !that._element.paused && canReload.call(that)) {
-                    that._logger.warn('Reloading stream after being stalled for [%s] seconds', timeoutForStallWithoutProgressToRestart / 1000);
-
-                    reloadIfAble.call(that);
-                }
-            }, timeoutForStallWithoutProgressToRestart);
-
-            setTimeout(_.bind(endIfReady, that), streamEndedBeforeSetupTimeout);
-        }
-    }
-
-    function ended() {
-        this._logger.info('[%s] Hls stream ended', this._streamId);
-        this.stop('ended');
-    }
-
-    function waiting() {
-        this._logger.info('Time elapsed since last progress [%s]', _.now() - this._lastProgress.time);
-
-        setTimeout(_.bind(endIfReady, this), getTimeoutOrMinimum.call(this));
-    }
-
-    function canReload() {
-        var hasElapsedMinTimeSinceLastReload = !this._lastReloadTime || _.now() - this._lastReloadTime > minTimeBeforeNextReload;
-
-        return this._element && !this._waitForLastChunk && this._element.buffered.length !== 0 && hasElapsedMinTimeSinceLastReload;
-    }
-
-    function reloadIfAble() {
-        if (!canReload.call(this)) {
-            return;
-        }
-
-        this._logger.warn('Reloading unhealthy stream that was active for at least [%s] seconds', minTimeBeforeNextReload / 1000);
-
-        this._lastReloadTime = _.now();
-
-        reload.call(this);
-    }
-
-    function reload() {
-        this._logger.info('[%s] Attempting to reload Hls stream.', this._streamId);
-
-        try {
-            this._element.setAttribute('src', '');
-
-            this._element.setAttribute('src', this._playlistUri);
-        } catch (e) {
-            this._logger.warn('Error while reloading Hls stream [%s]', e);
-        }
-    }
-
-    function getTimeoutOrMinimum() {
-        return this._lastProgress.averageLength * 1.5 < 2000 ? 2000 : this._lastProgress.averageLength * 1.5;
-    }
-
-    function endIfReady() {
-        if (_.now() - this._lastProgress.time > getTimeoutOrMinimum.call(this) && this._waitForLastChunk) {
-            this.stop('ended');
-        }
-    }
-
-    function handleForegroundChange(isForeground) {
-        if (isForeground) {
-            clearTimeout(this._backgroundTimeout);
-
-            this._backgroundTimeout = null;
-
-            if (!this._backgroundThrottled) {
-                return;
-            }
-
-            this._backgroundThrottled = false;
-
-            this.start(this._element);
-
-            return;
-        }
-
-        var that = this;
-
-        this._backgroundTimeout = setTimeout(function() {
-            if (applicationActivityDetector.isForeground()) {
-                return;
-            }
-
-            if (!webkitVideoHasAudio(that._element)) {
-                that._logger.info('Detecting application [background] with muted video. Pausing playback until application focused again.');
-
-                that._element.pause();
-
-                that._backgroundThrottled = true;
-            }
-        }, defaultTimeoutForBackgroundTabBeforeDispose);
-    }
-
-    function webkitVideoHasAudio(video) {
-        if (video.muted) {
-            return false;
-        }
-
-        return _.get(video, ['webkitAudioDecodedByteCount'], 0) > 0 || _.get(video, ['audioTracks', 'length'], 0) > 0 || video.webkitHasAudio;
-    }
-
-    return HlsRenderer;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7934,7 +7500,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(5),
     __webpack_require__(2),
-    __webpack_require__(8),
+    __webpack_require__(9),
     __webpack_require__(6)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
@@ -8316,7 +7882,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8339,11 +7905,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(35),
-    __webpack_require__(34),
     __webpack_require__(33),
+    __webpack_require__(32),
     __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, ShakaRenderer, HlsRenderer, PhenixPlayerRenderer, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, ShakaRenderer, PhenixPlayerRenderer, streamEnums) {
     'use strict';
 
     function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
@@ -8375,11 +7940,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             break;
         case streamEnums.types.hls.name:
-            if (PhenixPlayerRenderer.isSupported() && !this._options.useNativeHlsPlayer) {
-                this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            } else {
-                this._renderer = new HlsRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            }
+            this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         default:
@@ -8466,7 +8027,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8608,7 +8169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8716,7 +8277,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8897,7 +8458,35 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 40 */
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(37)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
+    'use strict';
+
+    return new ApplicationActivityDetector();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8919,15 +8508,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(16),
     __webpack_require__(38),
+    __webpack_require__(36),
     __webpack_require__(2)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-16T22:37:24Z' || '?';
+    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9154,7 +8743,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 41 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9182,7 +8771,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-16T22:37:24Z' || '?';
+    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -9433,7 +9022,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9454,9 +9043,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(11),
+    __webpack_require__(12),
     __webpack_require__(2),
-    __webpack_require__(18)
+    __webpack_require__(16)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, proto, rtc, telemetryProto) {
     function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
@@ -9537,7 +9126,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9558,8 +9147,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(22),
-    __webpack_require__(42)
+    __webpack_require__(21),
+    __webpack_require__(41)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -9600,7 +9189,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9867,7 +9456,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10309,7 +9898,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10465,7 +10054,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10484,14 +10073,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(46)
+    __webpack_require__(45)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ClosestEndPointResolver) {
     return ClosestEndPointResolver;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10513,7 +10102,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(5),
     __webpack_require__(3),
-    __webpack_require__(47)
+    __webpack_require__(46)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
@@ -10600,7 +10189,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-05-16T22:37:24Z',
+                version: '2018-05-23T23:22:37Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -10626,7 +10215,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10656,7 +10245,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12712,7 +12301,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12734,10 +12323,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(7),
-    __webpack_require__(11),
+    __webpack_require__(12),
     __webpack_require__(2),
-    __webpack_require__(50),
-    __webpack_require__(49)
+    __webpack_require__(49),
+    __webpack_require__(48)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -13105,7 +12694,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13153,7 +12742,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13173,7 +12762,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(1),
-    __webpack_require__(9)
+    __webpack_require__(8)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert, global) {
     'use strict';
 
@@ -13224,7 +12813,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13577,7 +13166,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13599,8 +13188,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(9),
-    __webpack_require__(21),
+    __webpack_require__(8),
+    __webpack_require__(19),
     __webpack_require__(5),
     __webpack_require__(7),
     __webpack_require__(3)
@@ -13851,7 +13440,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13870,7 +13459,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(55)
+    __webpack_require__(54)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(BatchHttp) {
     'use strict';
 
@@ -13879,7 +13468,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13900,9 +13489,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(56),
-    __webpack_require__(19),
-    __webpack_require__(53)
+    __webpack_require__(55),
+    __webpack_require__(17),
+    __webpack_require__(52)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, BatchHttp, MQProtocol, Binary) {
     'use strict';
 
@@ -13931,7 +13520,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -14073,7 +13662,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -14092,11 +13681,11 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
  limitations under the License.
  */
 
-module.exports = __webpack_require__(58);
+module.exports = __webpack_require__(57);
 
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14117,8 +13706,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(9),
-    __webpack_require__(59)
+    __webpack_require__(8),
+    __webpack_require__(58)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, lxiv) {
     'use strict';
 
@@ -14177,7 +13766,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14305,7 +13894,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14625,7 +14214,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -14715,7 +14304,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14723,7 +14312,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 module.exports = Pbf;
 
-var ieee754 = __webpack_require__(63);
+var ieee754 = __webpack_require__(62);
 
 function Pbf(buf) {
     this.buf = ArrayBuffer.isView && ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf || 0);
@@ -15340,7 +14929,7 @@ function writeUtf8(buf, str, pos) {
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15360,7 +14949,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(9),
+    __webpack_require__(8),
     __webpack_require__(4),
     __webpack_require__(7),
     __webpack_require__(3)
@@ -15428,7 +15017,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15449,7 +15038,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(21)
+    __webpack_require__(19)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, networkConnectionMonitor) {
     'use strict';
 
@@ -15809,6 +15398,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(65)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ReconnectingWebSocket) {
+    'use strict';
+
+    return ReconnectingWebSocket;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
 /* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15828,11 +15445,61 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(66)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ReconnectingWebSocket) {
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(20)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
     'use strict';
 
-    return ReconnectingWebSocket;
+    function NamedEvents() {
+        this._events = {};
+    }
+
+    NamedEvents.prototype.fire = function(name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fire(args, context);
+        }
+    };
+
+    NamedEvents.prototype.fireAsync = function(name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fireAsync(args, context);
+        }
+    };
+
+    NamedEvents.prototype.listen = function listen(name, listener) {
+        assert.isStringNotEmpty(name, 'name');
+
+        var event = _.includes(_.keys(this._events), name) ? this._events[name] : (this._events[name] = new Event());
+
+        return event.listen(listener);
+    };
+
+    NamedEvents.prototype.size = function size(name) {
+        if (_.includes(_.keys(this._events), name)) {
+            return this._events[name].size();
+        }
+
+        return 0;
+    };
+
+    NamedEvents.prototype.dispose = function dispose() {
+        _.forOwn(this._events, function(event) {
+            event.dispose();
+        });
+
+        this._events = {};
+    };
+
+    NamedEvents.prototype.toString = function toString() {
+        return 'NamedEvents|' + _.keys(this._events).length;
+    };
+
+    return NamedEvents;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -15859,8 +15526,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(67),
-    __webpack_require__(20)
+    __webpack_require__(66),
+    __webpack_require__(18)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
 
@@ -15992,8 +15659,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(2),
     __webpack_require__(10),
-    __webpack_require__(11),
-    __webpack_require__(18)
+    __webpack_require__(12),
+    __webpack_require__(16)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
     function TelemetryAppender(uri) {
         assert.isString(uri, 'uri');
@@ -16107,7 +15774,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(22),
+    __webpack_require__(21),
     __webpack_require__(69)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
     var config = {
@@ -16226,85 +15893,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(23)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
-    'use strict';
-
-    function NamedEvents() {
-        this._events = {};
-    }
-
-    NamedEvents.prototype.fire = function(name, args, context) {
-        assert.isStringNotEmpty(name, 'name');
-
-        if (_.includes(_.keys(this._events), name)) {
-            this._events[name].fire(args, context);
-        }
-    };
-
-    NamedEvents.prototype.fireAsync = function(name, args, context) {
-        assert.isStringNotEmpty(name, 'name');
-
-        if (_.includes(_.keys(this._events), name)) {
-            this._events[name].fireAsync(args, context);
-        }
-    };
-
-    NamedEvents.prototype.listen = function listen(name, listener) {
-        assert.isStringNotEmpty(name, 'name');
-
-        var event = _.includes(_.keys(this._events), name) ? this._events[name] : (this._events[name] = new Event());
-
-        return event.listen(listener);
-    };
-
-    NamedEvents.prototype.size = function size(name) {
-        if (_.includes(_.keys(this._events), name)) {
-            return this._events[name].size();
-        }
-
-        return 0;
-    };
-
-    NamedEvents.prototype.dispose = function dispose() {
-        _.forOwn(this._events, function(event) {
-            event.dispose();
-        });
-
-        this._events = {};
-    };
-
-    NamedEvents.prototype.toString = function toString() {
-        return 'NamedEvents|' + _.keys(this._events).length;
-    };
-
-    return NamedEvents;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(12)
+    __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging) {
     'use strict';
 
@@ -16349,7 +15938,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, exports) {
 
 var g;
@@ -16375,7 +15964,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16415,10 +16004,10 @@ module.exports = g;
     return getGlobal;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(74)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(73)))
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16439,16 +16028,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(9),
-    __webpack_require__(12)
+    __webpack_require__(8),
+    __webpack_require__(13)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, logging) {
     'use strict';
 
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-16T22:37:24Z' || '?';
-    var releaseVersion = '2018.2.4';
+    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
+    var releaseVersion = '2018.2.6';
 
     function Logger() {
         this._appenders = [];
@@ -16635,7 +16224,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16697,7 +16286,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16718,7 +16307,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(25)
+    __webpack_require__(24)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Observable) {
     'use strict';
 
@@ -16805,7 +16394,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16861,7 +16450,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16910,7 +16499,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17060,7 +16649,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17158,7 +16747,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 83 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17177,14 +16766,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(82)
+    __webpack_require__(81)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
     return detectBrowser;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 84 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17912,7 +17501,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 85 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17936,9 +17525,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(2),
     __webpack_require__(10),
-    __webpack_require__(24),
-    __webpack_require__(13),
-    __webpack_require__(28)
+    __webpack_require__(23),
+    __webpack_require__(14),
+    __webpack_require__(27)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, UserMediaResolver, PCastExpress) {
     rtc.global.PhenixPCast = PCast;
 

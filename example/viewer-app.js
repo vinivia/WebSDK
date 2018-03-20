@@ -132,6 +132,7 @@ requirejs([
             var streamId = $('#originStreamId').val();
             var remoteVideoEl = $('#remoteVideo')[0];
             var capabilities = [];
+            var subscriberOptions = {disableAudioIfNoOutputFound: true};
 
             $('#subscriber-drm-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());
@@ -139,13 +140,17 @@ requirejs([
 
             capabilities.push($('#subscriber-mode option:selected').val());
 
+            if (app.getUrlParameter('preferNative')) {
+                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
+            }
+
             pcastExpress.subscribe({
                 streamId: streamId,
                 capabilities: capabilities,
                 videoElement: remoteVideoEl,
                 monitor: {callback: onMonitorEvent},
                 streamToken: 'dud',
-                subscriberOptions: {disableAudioIfNoOutputFound: true}
+                subscriberOptions: subscriberOptions
             }, function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {

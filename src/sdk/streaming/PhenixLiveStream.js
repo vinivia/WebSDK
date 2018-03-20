@@ -19,10 +19,9 @@ define([
     'phenix-web-event',
     'phenix-rtc',
     './ShakaRenderer',
-    './HlsRenderer',
     './PhenixPlayerRenderer',
     './stream.json'
-], function(_, assert, event, rtc, ShakaRenderer, HlsRenderer, PhenixPlayerRenderer, streamEnums) {
+], function(_, assert, event, rtc, ShakaRenderer, PhenixPlayerRenderer, streamEnums) {
     'use strict';
 
     function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
@@ -54,11 +53,7 @@ define([
 
             break;
         case streamEnums.types.hls.name:
-            if (PhenixPlayerRenderer.isSupported() && !this._options.useNativeHlsPlayer) {
-                this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            } else {
-                this._renderer = new HlsRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            }
+            this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         default:
