@@ -280,8 +280,12 @@ requirejs([
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Monitor Event</strong>',
-                    message: 'Monitor Event triggered (' + response.status + ')'
+                    message: 'Monitor Event triggered (' + response.message + ')'
                 });
+            }
+
+            if (app.getUrlParameter('ackFailure') === 'true' && response.acknowledgeFailure) {
+                return response.acknowledgeFailure();
             }
 
             if (response.retry) {

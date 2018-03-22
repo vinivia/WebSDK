@@ -19,8 +19,9 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber'
-], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    '../../../test/mock/PeerConnectionStubber',
+    '../../../test/mock/UserMediaStubber'
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Reconnecting to PCast', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -95,7 +96,7 @@ define([
         it('successfully publishes a stream', function(done) {
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {}
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 expect(response.publisher).to.be.a('object');
                 done();
@@ -135,7 +136,7 @@ define([
             it('successfully publishes a stream', function(done) {
                 pcastExpress.publish({
                     capabilities: [],
-                    userMediaStream: {}
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');
                     done();
@@ -151,7 +152,7 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
-                    userMediaStream: {}
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');
 
@@ -184,7 +185,7 @@ define([
             it('successfully publishes a stream', function(done) {
                 pcastExpress.publish({
                     capabilities: [],
-                    userMediaStream: {}
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');
                     done();
@@ -216,7 +217,7 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
-                    userMediaStream: {}
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error) {
                     expect(error.message).to.be.equal('timeout');
                     expect((_.now() - start) >= (20000 / 100)).to.be.true;
@@ -274,7 +275,7 @@ define([
             it('successfully publishes a stream', function(done) {
                 pcastExpress.publish({
                     capabilities: [],
-                    userMediaStream: {}
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');
                     done();

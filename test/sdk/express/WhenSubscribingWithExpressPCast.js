@@ -89,7 +89,7 @@ define([
             var startClone = PeerConnectionMonitor.prototype.start;
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
-                monitorCallback(clientFailureReason);
+                monitorCallback(null, {type: clientFailureReason});
             };
 
             pcastExpress.subscribe({
@@ -120,7 +120,7 @@ define([
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
                 setTimeout(function() {
                     if (subscribeCount < 2) {
-                        monitorCallback(clientFailureReason);
+                        monitorCallback(null, {type: clientFailureReason});
                     }
                 }, 10);
             };
@@ -161,7 +161,7 @@ define([
                     if (subscribeCount < 2) {
                         websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
 
-                        monitorCallback(clientFailureReason);
+                        monitorCallback(null, {type: clientFailureReason});
                     }
                 }, 10);
             };

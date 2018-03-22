@@ -181,7 +181,8 @@ define([
     };
 
     function wrapNativeMediaStream(stream) {
-        var lastTrackStates = {};
+        var lastTrackEnabledStates = {};
+        var lastTrackReadyStates = {};
         var that = this;
 
         setTimeout(function listenForTrackChanges() {
@@ -190,13 +191,28 @@ define([
             }
 
             _.forEach(stream.getTracks(), function(track) {
-                if (_.hasIndexOrKey(lastTrackStates, track.id) && lastTrackStates[track.id] !== track.enabled) {
-                    track.dispatchEvent(new window.Event('StateChange'));
+                if (_.hasIndexOrKey(lastTrackEnabledStates, track.id) && lastTrackEnabledStates[track.id] !== track.enabled) {
+                    var trackEnabledChangeEvent = new window.Event('trackenabledchange');
 
-                    that._logger.info('[%s] Detected track [%s] enabled change of [%s]', stream.id, track.id, track.enabled);
+                    trackEnabledChangeEvent.data = track;
+
+                    track.dispatchEvent(trackEnabledChangeEvent);
+
+                    that._logger.info('[%s] Detected track [%s] enabled change to [%s]', stream.id, track.id, track.enabled);
                 }
 
-                lastTrackStates[track.id] = track.enabled;
+                if (_.hasIndexOrKey(lastTrackReadyStates, track.id) && lastTrackReadyStates[track.id] !== track.readyState) {
+                    var readyStateChangeEvent = new window.Event('readystatechange');
+
+                    readyStateChangeEvent.data = track;
+
+                    track.dispatchEvent(readyStateChangeEvent);
+
+                    that._logger.info('[%s] Detected track [%s] Ready State change to [%s]', stream.id, track.id, track.readyState);
+                }
+
+                lastTrackEnabledStates[track.id] = track.enabled;
+                lastTrackReadyStates[track.id] = track.readyState;
             });
 
             setTimeout(listenForTrackChanges, listenForMediaStreamTrackChangesTimeout);

@@ -101,7 +101,7 @@ define([
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
                 setTimeout(function() {
-                    monitorCallback('client-side-failure');
+                    monitorCallback(null, {type: 'client-side-failure'});
                 }, 3);
             };
 

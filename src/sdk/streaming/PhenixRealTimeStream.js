@@ -150,10 +150,14 @@ define([
 
         monitor.start(options, function activeCallback() {
             return that.isActive();
-        }, function monitorCallback(reason) {
-            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, reason);
+        }, function monitorCallback(error, monitorEvent) {
+            if (error) {
+                that._logger.warn('[%s] Media stream monitor triggered unrecoverable error [%s]', error);
+            }
 
-            return callback(that, 'client-side-failure', reason);
+            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.type);
+
+            return callback(that, 'client-side-failure', monitorEvent);
         });
 
         this._monitor = monitor;
