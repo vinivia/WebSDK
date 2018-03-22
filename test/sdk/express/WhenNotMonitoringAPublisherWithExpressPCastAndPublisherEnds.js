@@ -19,8 +19,9 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber'
-], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    '../../../test/mock/PeerConnectionStubber',
+    '../../../test/mock/UserMediaStubber'
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Not Monitoring a Publisher with Express PCast And Publisher Ends', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -72,7 +73,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {}
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function() {
                 subscribeCount++;
 
@@ -99,7 +100,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {}
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function() {
                 subscribeCount++;
 
@@ -130,7 +131,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {}
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function() {
                 subscribeCount++;
 

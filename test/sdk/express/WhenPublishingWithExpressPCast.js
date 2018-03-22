@@ -19,8 +19,9 @@ define([
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
+    '../../../test/mock/UserMediaStubber',
     'sdk/streaming/PeerConnectionMonitor'
-], function(PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, PeerConnectionMonitor) {
+], function(PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
     describe('When Publishing with Express PCast', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -76,7 +77,7 @@ define([
         it('Expect publisher to be returned in subscribe callback', function(done) {
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {}
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 expect(response.publisher).to.be.a('object');
                 done();
@@ -89,12 +90,12 @@ define([
             var startClone = PeerConnectionMonitor.prototype.start;
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
-                monitorCallback(null, clientFailureReason);
+                monitorCallback(null, {type: clientFailureReason});
             };
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {
@@ -120,14 +121,14 @@ define([
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
                 setTimeout(function() {
                     if (subscribeCount < 2) {
-                        monitorCallback(null, clientFailureReason);
+                        monitorCallback(null, {type: clientFailureReason});
                     }
                 }, 10);
             };
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {
@@ -161,14 +162,14 @@ define([
                     if (subscribeCount < 2) {
                         websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
 
-                        monitorCallback(null, clientFailureReason);
+                        monitorCallback(null, {type: clientFailureReason});
                     }
                 }, 10);
             };
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
                     callback: function(error, response) {

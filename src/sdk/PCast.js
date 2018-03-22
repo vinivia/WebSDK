@@ -1162,6 +1162,10 @@ define([
                                 };
                             },
 
+                            getMonitor: function getMonitor() {
+                                return publisherMonitor;
+                            },
+
                             monitor: function monitor(options, callback) {
                                 if (typeof options !== 'object') {
                                     throw new Error('"options" must be an object');
@@ -1177,19 +1181,32 @@ define([
 
                                 monitor.start(options, function activeCallback() {
                                     return that._publishers[streamId] === publisher && !state.stopped;
-                                }, function monitorCallback(reason) {
-                                    that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, reason);
+                                }, function monitorCallback(error, monitorEvent) {
+                                    if (error) {
+                                        that._logger.warn('[%s] Publisher monitor triggered unrecoverable error [%s]', error);
+                                    }
 
-                                    return callback(publisher, 'client-side-failure', reason);
+                                    that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, monitorEvent.type);
+
+                                    return callback(publisher, 'client-side-failure', monitorEvent);
+                                });
+
+                                _.forEach(mediaStream.getTracks(), function(track) {
+                                    _.addEventListener(track, 'readystatechange', function() {
+                                        if (track.readyState === 'ended') {
+                                            that._logger.warn('[%s] Publisher track has failed [%s]', streamId, track);
+
+                                            return callback(publisher, 'camera-track-failure', {
+                                                type: track.kind + '-track-ended',
+                                                message: 'Publisher ' + track.kind + ' track has ended in an unrecoverable way. This may require reconfiguring your camera or microphone.'
+                                            });
+                                        }
+                                    });
                                 });
 
                                 publisherMonitor = monitor;
 
                                 return monitor;
-                            },
-
-                            getMonitor: function getMonitor() {
-                                return publisherMonitor;
                             },
 
                             setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {

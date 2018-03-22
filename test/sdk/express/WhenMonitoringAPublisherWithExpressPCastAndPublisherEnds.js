@@ -19,8 +19,9 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber'
-], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    '../../../test/mock/PeerConnectionStubber',
+    '../../../test/mock/UserMediaStubber'
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Monitoring a Publisher with Express PCast And Publisher Ends', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -70,7 +71,7 @@ define([
         it('Expect reason of app-background to return retry function', function(done) {
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     callback: function(error, response) {
                         expect(response.retry).to.be.a('function');
@@ -94,7 +95,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     callback: function(error, response) {
                         if (subscribeCount === 1) {
@@ -126,7 +127,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {callback: monitorCallback}
             }, function() {
                 subscribeCount++;
@@ -150,7 +151,7 @@ define([
         it('Expect reason of custom to automatically return no retry function', function(done) {
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     callback: function(error, response) {
                         expect(response.retry).to.not.be.true;
@@ -180,7 +181,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                userMediaStream: {},
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {callback: monitorCallback}
             }, function() {
                 subscribeCount++;

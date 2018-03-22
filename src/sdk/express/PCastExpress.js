@@ -211,7 +211,7 @@ define([
 
                 getStreamingTokenAndPublish.call(that, response.userMedia, options, true, callback);
             });
-        });
+        }, options.isContinuation);
     };
 
     var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
@@ -677,9 +677,14 @@ define([
                 }, options);
 
                 that._publishers[placeholder] = true;
-                publisher.stop(reason, true);
 
-                getStreamingTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
+                if (reason === 'camera-track-failure') {
+                    publisher.stop(reason, false);
+                    that.publish(options, callback);
+                } else {
+                    publisher.stop(reason, true);
+                    getStreamingTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
+                }
 
                 delete that._publishers[placeholder];
             };
@@ -952,13 +957,14 @@ define([
         });
     }
 
-    function onMonitorCallback(callback, retry, stream, reason, description) { // eslint-disable-line no-unused-vars
+    function onMonitorCallback(callback, retry, stream, reason, monitorEvent) { // eslint-disable-line no-unused-vars
         switch (reason) {
+        case 'camera-track-failure':
         case 'client-side-failure':
-            callback(null, {
+            callback(null, _.assign({
                 status: reason,
                 retry: _.bind(retry, null, reason)
-            });
+            }, monitorEvent));
 
             // Handle failure event, redo stream
             break;

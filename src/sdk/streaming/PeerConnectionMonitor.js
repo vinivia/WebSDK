@@ -352,24 +352,41 @@ define([
                 }
 
                 var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+                var acknowledgeFailure = function acknowledgeFailure() {
+                    that._logger.info('[%s] Failure has been acknowledged', name);
+
+                    conditionCount = Number.MIN_VALUE;
+
+                    setTimeout(nextCheck, that._monitoringInterval);
+                };
 
                 if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    if (!monitorCallback('condition', frameRate, videoBitRate, audioBitRate)) {
-                        if (isStreamDead) {
-                            return that._logger.error('[%s] Failure detected with 0 bps audio and video for [%s] seconds', name, defaultTimeoutForNoData / 1000);
-                        }
+                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, and video bit rate [' + videoBitRate + '] bps';
+                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
+                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
+                    var monitorEvent = {
+                        type: 'condition',
+                        message: failureMessage,
+                        report: report,
+                        frameRate: frameRate,
+                        videoBitRate: videoBitRate,
+                        audioBitRate: audioBitRate,
+                        acknowledgeFailure: acknowledgeFailure
+                    };
 
-                        that._logger.error('[%s] Failure detected with frame rate [%s] FPS and bit rate [%s/%s] bps: [%s]', name, frameRate, audioBitRate, videoBitRate, report);
+                    if (!monitorCallback(null, monitorEvent)) {
+                        that._logger.error(failureMessage + ': [%s]', report);
                     } else {
-                        // Failure is acknowledged and muted
-                        conditionCount = Number.MIN_VALUE;
-                        setTimeout(nextCheck, that._monitoringInterval);
+                        acknowledgeFailure();
                     }
                 } else {
                     setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
                 }
             }, function errorCallback(error) {
-                monitorCallback('error', error);
+                monitorCallback(error, {
+                    type: 'error',
+                    message: 'Unable to get Connection statistics. Connection may have failed.'
+                });
             });
         }
 
@@ -423,7 +440,7 @@ define([
         }
     }
 
-    function getStats(peerConnection, selector, activeCallback, successCallback, monitorCallback) {
+    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
         if (!activeCallback()) {
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
@@ -432,8 +449,8 @@ define([
             var report = normalizeStatsReport(response);
 
             successCallback(report);
-        }, function(e) {
-            monitorCallback('error', e);
+        }, function(error) {
+            errorCallback(error);
         });
     }
 
