@@ -404,6 +404,12 @@ define([
                         "id": 1
                     },
                     {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "roomId",
+                        "id": 5
+                    },
+                    {
                         "rule": "required",
                         "type": "MemberUpdate",
                         "name": "member",

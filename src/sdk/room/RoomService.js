@@ -637,6 +637,8 @@ define([
 
         this._authService.assertAuthorized();
 
+        var activeRoom = this._activeRoom.getValue();
+        var roomId = activeRoom.getRoomId();
         var memberIsSelf = member.getSessionId() === this.getSelf().getSessionId();
         var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
         var memberForRequest = buildMemberForRequest.call(this, member, cachedMember);
@@ -652,7 +654,7 @@ define([
 
         var that = this;
 
-        this._protocol.updateMember(memberForRequest, timestamp,
+        this._protocol.updateMember(roomId, memberForRequest, timestamp,
             function handleUpdateMemberResponse(error, response) {
                 if (error) {
                     that._logger.error('Update of member failed with error [%s]', error);

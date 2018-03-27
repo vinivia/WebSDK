@@ -3117,7 +3117,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, phenixWebPlayer, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-05-23T23:22:37Z';
+    var sdkVersion = '2018-05-24T22:12:07Z';
 
     function PCast(options) {
         options = options || {};
@@ -8516,7 +8516,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
+    var sdkVersion = '2018-05-24T22:12:07Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -8771,7 +8771,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
+    var sdkVersion = '2018-05-24T22:12:07Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10189,7 +10189,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-05-23T23:22:37Z',
+                version: '2018-05-24T22:12:07Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -12598,7 +12598,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._mqWebSocket.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
-    PCastProtocol.prototype.updateMember = function(member, timestamp, callback) {
+    PCastProtocol.prototype.updateMember = function(roomId, member, timestamp, callback) {
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -12607,6 +12608,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var updateMember = {
             sessionId: this.getSessionId(),
+            roomId: roomId,
             member: member,
             timestamp: timestamp
         };
@@ -16036,8 +16038,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-23T23:22:37Z' || '?';
-    var releaseVersion = '2018.2.6';
+    var sdkVersion = '2018-05-24T22:12:07Z' || '?';
+    var releaseVersion = '2018.2.7';
 
     function Logger() {
         this._appenders = [];

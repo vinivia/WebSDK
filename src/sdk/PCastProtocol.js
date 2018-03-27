@@ -292,7 +292,8 @@ define([
         return this._mqWebSocket.sendRequest('chat.LeaveRoom', leaveRoom, callback);
     };
 
-    PCastProtocol.prototype.updateMember = function(member, timestamp, callback) {
+    PCastProtocol.prototype.updateMember = function(roomId, member, timestamp, callback) {
+        assert.isStringNotEmpty(roomId, 'roomId');
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
@@ -301,6 +302,7 @@ define([
 
         var updateMember = {
             sessionId: this.getSessionId(),
+            roomId: roomId,
             member: member,
             timestamp: timestamp
         };

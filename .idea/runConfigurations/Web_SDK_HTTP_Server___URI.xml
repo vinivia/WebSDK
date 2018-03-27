@@ -1,11 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Web SDK HTTP Server + URI" type="NodeJSConfigurationType" factoryName="Node.js" singleton="true" path-to-node="$USER_HOME$/.nvm/versions/node/v8.4.0/bin/node" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="Web SDK HTTP Server + URI" type="NodeJSConfigurationType" factoryName="Node.js" singleton="true" path-to-node="$USER_HOME$/.nvm/versions/node/v8.11.1/bin/node" path-to-js-file="example/httpserver.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
-    <browser start="true" url="https://local.phenixp2p.com:8843/StreamURI.html?url=https://local.phenixp2p.com:8443&amp;applicationId=admin&amp;secret=secret" />
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
-      <browser start="true" url="https://local.phenixp2p.com:8843/StreamURI.html?url=https://local.phenixp2p.com:8443&amp;applicationId=admin&amp;secret=secret" />
+      <browser start="true" url="https://local.phenixrts.com:8843/StreamURI.html?url=https://local.phenixp2p.com:8443&amp;applicationId=admin&amp;secret=secret" />
     </EXTENSION>
     <method />
   </configuration>
