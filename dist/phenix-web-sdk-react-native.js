@@ -4629,7 +4629,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-04-10T22:13:05Z',
+                version: '2018-04-11T21:42:19Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4981,7 +4981,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-04-10T22:13:05Z';
+    var sdkVersion = '2018-04-11T21:42:19Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -5287,7 +5287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         streamTelemetry.setProperty('resource', streamType);
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
 
@@ -5379,7 +5379,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             streamTelemetry.setProperty('resource', streamType);
 
-            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
+            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create downloader [%s]', error);
 
@@ -17381,8 +17381,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = getGlobal()['__phenixPageLoadTime'] || getGlobal()['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-10T22:13:05Z' || '?';
-    var releaseVersion = '2018.2.1';
+    var sdkVersion = '2018-04-11T21:42:19Z' || '?';
+    var releaseVersion = '2018.2.2';
 
     function Logger() {
         this._appenders = [];
@@ -24092,7 +24092,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._mqWebSocket.sendRequest('pcast.Bye', bye, callback);
     };
 
-    PCastProtocol.prototype.setupStream = function(streamType, streamToken, options, callback) {
+    PCastProtocol.prototype.setupStream = function(streamType, streamToken, options, rtt, callback) {
         assert.isStringNotEmpty(streamType, 'streamType');
         assert.isStringNotEmpty(streamToken, 'streamToken');
         assert.isObject(options, 'options');
@@ -24100,6 +24100,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var browser = phenixRTC.browser || 'UnknownBrowser';
         var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
+        var rttString = 'rtt[http]=' + rtt;
         var setupStream = {
             streamToken: streamToken,
             createStream: {
@@ -24107,16 +24108,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 options: ['data-quality-notifications'],
                 connectUri: options.connectUri,
                 connectOptions: options.connectOptions || [],
-                tags: options.tags || []
+                tags: options.tags || [],
+                userAgent: _.get(phenixRTC, ['global', 'navigator', 'userAgent'], browserWithVersion)
             }
         };
 
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
-                options: [streamType, browser, browserWithVersion],
+                options: [streamType, browser, browserWithVersion, rttString],
                 apiVersion: this._mqWebSocket.getApiVersion()
             };
+
+            if (isAndroid() && streamType === 'download') {
+                setupStream.createStream.createOfferDescription.options.push('prefer-vp8');
+            }
+
+            if (typeof screen !== undefined) {
+                setupStream.createStream.createOfferDescription.options.push('screen=' + screen.width + 'x' + screen.height);
+            }
         }
 
         if (options.receiveAudio === false) {
@@ -24365,6 +24375,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     PCastProtocol.prototype.toString = function() {
         return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
+
+    function isAndroid() {
+        return /(android)/i.test(_.get(phenixRTC, ['global', 'navigator', 'userAgent'], ''));
+    }
 
     return PCastProtocol;
 }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -26400,6 +26414,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var pcastProto = {
         "package": "pcast",
+        "options": {"optimize_for": "LITE_RUNTIME"},
         "messages": [
             {
                 "name": "Authenticate",
@@ -26593,6 +26608,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     {
                         "rule": "repeated",
                         "type": "string",
+                        "name": "originStreamIds",
+                        "id": 10
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
                         "name": "options",
                         "id": 3
                     },
@@ -26613,6 +26634,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "string",
                         "name": "tags",
                         "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "userAgent",
+                        "id": 11
                     },
                     {
                         "rule": "optional",
@@ -27383,6 +27410,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     },
                     {
                         "rule": "required",
+                        "type": "uint64",
+                        "name": "startTime",
+                        "id": 4
+                    },
+                    {
+                        "rule": "required",
                         "type": "string",
                         "name": "uri",
                         "id": 3
@@ -27413,6 +27446,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 ]
             },
             {
+                "name": "ResourceIdle",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "routeKey",
+                        "id": 2
+                    }
+                ]
+            },
+            {
+                "name": "ResourceIdleResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    }
+                ]
+            },
+            {
                 "name": "StreamPlaylist",
                 "fields": [
                     {
@@ -27438,6 +27499,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "string",
                         "name": "uri",
                         "id": 4
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bool",
+                        "name": "isVariant",
+                        "id": 5,
+                        "options": {"default": true}
                     }
                 ],
                 "enums": [
@@ -27457,7 +27525,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 ]
             },
             {
-                "name": "ForwardToClient",
+                "name": "StreamRtmp",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "uri",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint32",
+                        "name": "height",
+                        "id": 3
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint32",
+                        "name": "bitrate",
+                        "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "SendEventToClient",
                 "fields": [
                     {
                         "rule": "required",
@@ -27480,13 +27577,59 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 ]
             },
             {
-                "name": "ForwardToClientResponse",
+                "name": "SendEventToClientResponse",
                 "fields": [
                     {
                         "rule": "required",
                         "type": "string",
                         "name": "status",
                         "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "SendRequestToClient",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "connectionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "type",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 3
+                    }
+                ]
+            },
+            {
+                "name": "SendRequestToClientResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "type",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 3
                     }
                 ]
             },
@@ -27567,6 +27710,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "bool",
                         "name": "isProtectedContent",
                         "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "drmToken",
+                        "id": 3
                     }
                 ]
             },
@@ -27790,6 +27939,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "string",
                         "name": "status",
                         "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "endpoint",
+                        "id": 2
                     }
                 ]
             },
@@ -27863,8 +28018,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     {
                         "rule": "repeated",
                         "type": "string",
+                        "name": "alternateOriginStreamIds",
+                        "id": 6
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
                         "name": "capabilities",
                         "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bool",
+                        "name": "permissive",
+                        "id": 7,
+                        "options": {"default": false}
                     }
                 ]
             },
@@ -27901,28 +28069,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "id": 2
                     },
                     {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "streamToken",
-                        "id": 3
-                    },
-                    {
                         "rule": "optional",
                         "type": "string",
                         "name": "sessionId",
-                        "id": 4
+                        "id": 3
                     },
                     {
                         "rule": "required",
                         "type": "string",
                         "name": "originStreamId",
-                        "id": 5
+                        "id": 4
                     },
                     {
                         "rule": "repeated",
                         "type": "string",
                         "name": "capabilities",
-                        "id": 6
+                        "id": 5
                     }
                 ]
             },
@@ -27988,6 +28150,60 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             },
             {
                 "name": "TerminateStreamResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "DeleteStream",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "applicationId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "secret",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3,
+                        "oneof": "streamOrToken"
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamToken",
+                        "id": 5,
+                        "oneof": "streamOrToken"
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "reason",
+                        "id": 4
+                    }
+                ],
+                "oneofs": {
+                    "streamOrToken": [
+                        3,
+                        5
+                    ]
+                }
+            },
+            {
+                "name": "DeleteStreamResponse",
                 "fields": [
                     {
                         "rule": "required",
@@ -28069,6 +28285,156 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         "type": "Stream",
                         "name": "streams",
                         "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "GetPlaylistUris",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "applicationId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "secret",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
+                        "name": "options",
+                        "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "GetPlaylistUrisResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "Playlist",
+                        "name": "playlists",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "StreamMetadata",
+                        "name": "streamInfo",
+                        "id": 3
+                    }
+                ],
+                "messages": [
+                    {
+                        "name": "PlaylistMetadata",
+                        "fields": [
+                            {
+                                "rule": "optional",
+                                "type": "uint32",
+                                "name": "bitrate",
+                                "id": 1
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "uint32",
+                                "name": "height",
+                                "id": 2
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "float",
+                                "name": "framesPerSecond",
+                                "id": 3
+                            }
+                        ]
+                    },
+                    {
+                        "name": "StreamMetadata",
+                        "fields": [
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "startTime",
+                                "id": 1
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "string",
+                                "name": "endTime",
+                                "id": 2
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Playlist",
+                        "fields": [
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "name",
+                                "id": 1
+                            },
+                            {
+                                "rule": "required",
+                                "type": "PlaylistType",
+                                "name": "type",
+                                "id": 2
+                            },
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "uri",
+                                "id": 3
+                            },
+                            {
+                                "rule": "required",
+                                "type": "bool",
+                                "name": "isVariant",
+                                "id": 4
+                            },
+                            {
+                                "rule": "required",
+                                "type": "bool",
+                                "name": "isProtected",
+                                "id": 5
+                            },
+                            {
+                                "rule": "required",
+                                "type": "PlaylistMetadata",
+                                "name": "info",
+                                "id": 6
+                            }
+                        ]
+                    }
+                ],
+                "enums": [
+                    {
+                        "name": "PlaylistType",
+                        "values": [
+                            {
+                                "name": "Hls",
+                                "id": 0
+                            },
+                            {
+                                "name": "Dash",
+                                "id": 1
+                            }
+                        ]
                     }
                 ]
             }
@@ -30594,7 +30960,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-10T22:13:05Z' || '?';
+    var sdkVersion = '2018-04-11T21:42:19Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -30849,7 +31215,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-10T22:13:05Z' || '?';
+    var sdkVersion = '2018-04-11T21:42:19Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');

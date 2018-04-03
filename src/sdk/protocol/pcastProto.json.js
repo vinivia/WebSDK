@@ -19,6 +19,7 @@ define([
 
     var pcastProto = {
         "package": "pcast",
+        "options": {"optimize_for": "LITE_RUNTIME"},
         "messages": [
             {
                 "name": "Authenticate",
@@ -212,6 +213,12 @@ define([
                     {
                         "rule": "repeated",
                         "type": "string",
+                        "name": "originStreamIds",
+                        "id": 10
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
                         "name": "options",
                         "id": 3
                     },
@@ -232,6 +239,12 @@ define([
                         "type": "string",
                         "name": "tags",
                         "id": 4
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "userAgent",
+                        "id": 11
                     },
                     {
                         "rule": "optional",
@@ -1002,6 +1015,12 @@ define([
                     },
                     {
                         "rule": "required",
+                        "type": "uint64",
+                        "name": "startTime",
+                        "id": 4
+                    },
+                    {
+                        "rule": "required",
                         "type": "string",
                         "name": "uri",
                         "id": 3
@@ -1032,6 +1051,34 @@ define([
                 ]
             },
             {
+                "name": "ResourceIdle",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "sessionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "routeKey",
+                        "id": 2
+                    }
+                ]
+            },
+            {
+                "name": "ResourceIdleResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    }
+                ]
+            },
+            {
                 "name": "StreamPlaylist",
                 "fields": [
                     {
@@ -1057,6 +1104,13 @@ define([
                         "type": "string",
                         "name": "uri",
                         "id": 4
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bool",
+                        "name": "isVariant",
+                        "id": 5,
+                        "options": {"default": true}
                     }
                 ],
                 "enums": [
@@ -1076,7 +1130,36 @@ define([
                 ]
             },
             {
-                "name": "ForwardToClient",
+                "name": "StreamRtmp",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "uri",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint32",
+                        "name": "height",
+                        "id": 3
+                    },
+                    {
+                        "rule": "required",
+                        "type": "uint32",
+                        "name": "bitrate",
+                        "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "SendEventToClient",
                 "fields": [
                     {
                         "rule": "required",
@@ -1099,13 +1182,59 @@ define([
                 ]
             },
             {
-                "name": "ForwardToClientResponse",
+                "name": "SendEventToClientResponse",
                 "fields": [
                     {
                         "rule": "required",
                         "type": "string",
                         "name": "status",
                         "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "SendRequestToClient",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "connectionId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "type",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 3
+                    }
+                ]
+            },
+            {
+                "name": "SendRequestToClientResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "type",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bytes",
+                        "name": "payload",
+                        "id": 3
                     }
                 ]
             },
@@ -1186,6 +1315,12 @@ define([
                         "type": "bool",
                         "name": "isProtectedContent",
                         "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "drmToken",
+                        "id": 3
                     }
                 ]
             },
@@ -1409,6 +1544,12 @@ define([
                         "type": "string",
                         "name": "status",
                         "id": 1
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "endpoint",
+                        "id": 2
                     }
                 ]
             },
@@ -1482,8 +1623,21 @@ define([
                     {
                         "rule": "repeated",
                         "type": "string",
+                        "name": "alternateOriginStreamIds",
+                        "id": 6
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
                         "name": "capabilities",
                         "id": 5
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "bool",
+                        "name": "permissive",
+                        "id": 7,
+                        "options": {"default": false}
                     }
                 ]
             },
@@ -1520,28 +1674,22 @@ define([
                         "id": 2
                     },
                     {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "streamToken",
-                        "id": 3
-                    },
-                    {
                         "rule": "optional",
                         "type": "string",
                         "name": "sessionId",
-                        "id": 4
+                        "id": 3
                     },
                     {
                         "rule": "required",
                         "type": "string",
                         "name": "originStreamId",
-                        "id": 5
+                        "id": 4
                     },
                     {
                         "rule": "repeated",
                         "type": "string",
                         "name": "capabilities",
-                        "id": 6
+                        "id": 5
                     }
                 ]
             },
@@ -1607,6 +1755,60 @@ define([
             },
             {
                 "name": "TerminateStreamResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    }
+                ]
+            },
+            {
+                "name": "DeleteStream",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "applicationId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "secret",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3,
+                        "oneof": "streamOrToken"
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "streamToken",
+                        "id": 5,
+                        "oneof": "streamOrToken"
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "string",
+                        "name": "reason",
+                        "id": 4
+                    }
+                ],
+                "oneofs": {
+                    "streamOrToken": [
+                        3,
+                        5
+                    ]
+                }
+            },
+            {
+                "name": "DeleteStreamResponse",
                 "fields": [
                     {
                         "rule": "required",
@@ -1688,6 +1890,156 @@ define([
                         "type": "Stream",
                         "name": "streams",
                         "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "GetPlaylistUris",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "applicationId",
+                        "id": 1
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "secret",
+                        "id": 2
+                    },
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "streamId",
+                        "id": 3
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "string",
+                        "name": "options",
+                        "id": 4
+                    }
+                ]
+            },
+            {
+                "name": "GetPlaylistUrisResponse",
+                "fields": [
+                    {
+                        "rule": "required",
+                        "type": "string",
+                        "name": "status",
+                        "id": 1
+                    },
+                    {
+                        "rule": "repeated",
+                        "type": "Playlist",
+                        "name": "playlists",
+                        "id": 2
+                    },
+                    {
+                        "rule": "optional",
+                        "type": "StreamMetadata",
+                        "name": "streamInfo",
+                        "id": 3
+                    }
+                ],
+                "messages": [
+                    {
+                        "name": "PlaylistMetadata",
+                        "fields": [
+                            {
+                                "rule": "optional",
+                                "type": "uint32",
+                                "name": "bitrate",
+                                "id": 1
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "uint32",
+                                "name": "height",
+                                "id": 2
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "float",
+                                "name": "framesPerSecond",
+                                "id": 3
+                            }
+                        ]
+                    },
+                    {
+                        "name": "StreamMetadata",
+                        "fields": [
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "startTime",
+                                "id": 1
+                            },
+                            {
+                                "rule": "optional",
+                                "type": "string",
+                                "name": "endTime",
+                                "id": 2
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Playlist",
+                        "fields": [
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "name",
+                                "id": 1
+                            },
+                            {
+                                "rule": "required",
+                                "type": "PlaylistType",
+                                "name": "type",
+                                "id": 2
+                            },
+                            {
+                                "rule": "required",
+                                "type": "string",
+                                "name": "uri",
+                                "id": 3
+                            },
+                            {
+                                "rule": "required",
+                                "type": "bool",
+                                "name": "isVariant",
+                                "id": 4
+                            },
+                            {
+                                "rule": "required",
+                                "type": "bool",
+                                "name": "isProtected",
+                                "id": 5
+                            },
+                            {
+                                "rule": "required",
+                                "type": "PlaylistMetadata",
+                                "name": "info",
+                                "id": 6
+                            }
+                        ]
+                    }
+                ],
+                "enums": [
+                    {
+                        "name": "PlaylistType",
+                        "values": [
+                            {
+                                "name": "Hls",
+                                "id": 0
+                            },
+                            {
+                                "name": "Dash",
+                                "id": 1
+                            }
+                        ]
                     }
                 ]
             }

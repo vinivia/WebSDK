@@ -346,7 +346,7 @@ define([
 
         streamTelemetry.setProperty('resource', streamType);
 
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
+        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
 
@@ -438,7 +438,7 @@ define([
 
             streamTelemetry.setProperty('resource', streamType);
 
-            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, function(error, response) {
+            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create downloader [%s]', error);
 

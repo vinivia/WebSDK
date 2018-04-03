@@ -103,7 +103,7 @@ define([
         return this._mqWebSocket.sendRequest('pcast.Bye', bye, callback);
     };
 
-    PCastProtocol.prototype.setupStream = function(streamType, streamToken, options, callback) {
+    PCastProtocol.prototype.setupStream = function(streamType, streamToken, options, rtt, callback) {
         assert.isStringNotEmpty(streamType, 'streamType');
         assert.isStringNotEmpty(streamToken, 'streamToken');
         assert.isObject(options, 'options');
@@ -111,6 +111,7 @@ define([
 
         var browser = phenixRTC.browser || 'UnknownBrowser';
         var browserWithVersion = browser + '-' + (phenixRTC.browserVersion || 0);
+        var rttString = 'rtt[http]=' + rtt;
         var setupStream = {
             streamToken: streamToken,
             createStream: {
@@ -118,16 +119,25 @@ define([
                 options: ['data-quality-notifications'],
                 connectUri: options.connectUri,
                 connectOptions: options.connectOptions || [],
-                tags: options.tags || []
+                tags: options.tags || [],
+                userAgent: _.get(phenixRTC, ['global', 'navigator', 'userAgent'], browserWithVersion)
             }
         };
 
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
-                options: [streamType, browser, browserWithVersion],
+                options: [streamType, browser, browserWithVersion, rttString],
                 apiVersion: this._mqWebSocket.getApiVersion()
             };
+
+            if (isAndroid() && streamType === 'download') {
+                setupStream.createStream.createOfferDescription.options.push('prefer-vp8');
+            }
+
+            if (typeof screen !== undefined) {
+                setupStream.createStream.createOfferDescription.options.push('screen=' + screen.width + 'x' + screen.height);
+            }
         }
 
         if (options.receiveAudio === false) {
@@ -376,6 +386,10 @@ define([
     PCastProtocol.prototype.toString = function() {
         return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
+
+    function isAndroid() {
+        return /(android)/i.test(_.get(phenixRTC, ['global', 'navigator', 'userAgent'], ''));
+    }
 
     return PCastProtocol;
 });
