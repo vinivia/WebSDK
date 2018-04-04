@@ -3,9 +3,9 @@
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>
-    <browser start="true" url="https://local.phenixp2p.com:8843/GetUserMedia.html?url=https://local.phenixp2p.com:8443&amp;applicationId=admin&amp;secret=secret" />
+    <browser start="true" url="https://local.phenixrts.com:8843/GetUserMedia.html?url=https://local.phenixrts.com:8443&amp;applicationId=admin&amp;secret=secret" />
     <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSStartBrowserRunConfigurationExtension">
-      <browser start="true" url="https://local.phenixp2p.com:8843/GetUserMedia.html?url=https://local.phenixp2p.com:8443&amp;applicationId=admin&amp;secret=secret" />
+      <browser start="true" url="https://local.phenixrts.com:8843/GetUserMedia.html?url=https://local.phenixrts.com:8443&amp;applicationId=admin&amp;secret=secret" />
     </EXTENSION>
     <method />
   </configuration>
