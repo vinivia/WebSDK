@@ -316,8 +316,6 @@ define([
             return null;
         }
 
-        console.log(value, collection[collection.length - 1][0]);
-
         return _.reduce(collection, function(closestIndex, nextItem, index) {
             if (!closestIndex) {
                 return index;

@@ -106,7 +106,7 @@ define([
             }
         } else if (phenixRTC.browser === 'Firefox' && phenixRTC.browserVersion >= minimumSupportFirefoxVersionForUnWhiteListedScreenShare) {
             callback(true);
-        } else if (phenixRTC.browser === 'Firefox' && typeof window.PCastScreenSharing === 'object') {
+        } else if (phenixRTC.browser === 'Firefox' && typeof phenixRTC.global.PCastScreenSharing === 'object') {
             callback(true);
         } else {
             callback(false);
@@ -131,6 +131,10 @@ define([
 
     function addLinkHeaderElement() {
         var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
+
+        if (typeof document !== "object") {
+            return;
+        }
 
         var links = document.getElementsByTagName('link');
 
@@ -374,7 +378,7 @@ define([
             };
 
             intervalId = setInterval(function() {
-                if (typeof window.PCastScreenSharing === 'object') {
+                if (typeof phenixRTC.global.PCastScreenSharing === 'object') {
                     return success();
                 }
 

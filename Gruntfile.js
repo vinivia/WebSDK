@@ -77,6 +77,13 @@ module.exports = function(grunt) {
             }
         },
         webpack: webpackConfigs,
-        uglify: {minify: {files: {'dist/phenix-web-sdk.min.js': ['dist/phenix-web-sdk.js']}}}
+        uglify: {
+            minify: {
+                files: {
+                    'dist/phenix-web-sdk.min.js': ['dist/phenix-web-sdk.js'],
+                    'dist/phenix-web-sdk-react-native.min.js': ['dist/phenix-web-sdk-react-native.js']
+                }
+            }
+        }
     });
 };

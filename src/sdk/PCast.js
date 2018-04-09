@@ -69,7 +69,7 @@ define([
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shaka = options.shaka;
-        this._videojs = options.videojs || window.videojs;
+        this._videojs = options.videojs || phenixRTC.global.videojs;
         this._status = 'offline';
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
@@ -78,18 +78,22 @@ define([
 
         var that = this;
 
-        _.addEventListener(window, 'unload', function() {
+        _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
 
             return that.stop();
         });
 
         if (!options.disableBeforeUnload) {
-            _.addEventListener(window, 'beforeunload', function() {
+            _.addEventListener(phenixRTC.global, 'beforeunload', function() {
                 that._logger.info('Window Before Unload Event Triggered');
 
                 return that.stop();
             });
+        }
+
+        if (!phenixRTC.webrtcSupported && phenixRTC.browser === 'ReactNative') {
+            phenixRTC.shim();
         }
 
         if (phenixRTC.webrtcSupported) {
@@ -149,15 +153,15 @@ define([
             throw new Error('"Already started"');
         }
 
-        if (!_.isNumber(window.__phenixInstantiatedPCastCount)) {
-            window.__phenixInstantiatedPCastCount = 1;
+        if (!_.isNumber(phenixRTC.global.__phenixInstantiatedPCastCount)) {
+            phenixRTC.global.__phenixInstantiatedPCastCount = 1;
         } else {
-            window.__phenixInstantiatedPCastCount++;
+            phenixRTC.global.__phenixInstantiatedPCastCount++;
         }
 
-        if (window.__phenixInstantiatedPCastCount > 1 && !this._disableMultiplePCastInstanceWarning) {
+        if (phenixRTC.global.__phenixInstantiatedPCastCount > 1 && !this._disableMultiplePCastInstanceWarning) {
             this._logger.warn('Avoid using multiple instances of PCast as this uses unnecessary resources and will reduce performance. This is your [%s] simultaneous instance. Remember to dispose all resources when done with them by calling .stop() or .dispose()',
-                window.__phenixInstantiatedPCastCount);
+                phenixRTC.global.__phenixInstantiatedPCastCount);
         }
 
         this._stopped = false;
@@ -267,7 +271,7 @@ define([
                 this._sessionTelemetry.setSessionId(null);
             }
 
-            window.__phenixInstantiatedPCastCount--;
+            phenixRTC.global.__phenixInstantiatedPCastCount--;
 
             this._disposables.dispose();
         }
@@ -936,7 +940,7 @@ define([
                 return that._logger.info('Unable to find local h264 profile level id');
             }
 
-            that._logger.info('Found local h264 profile level id [%s]', h264ProfileId);
+            that._logger.info('Found local h264 profile level id [%s]', h264ProfileId, offer.sdp);
 
             that._h264ProfileId = h264ProfileId;
         }, function(e) {
@@ -1285,7 +1289,7 @@ define([
 
             var mediaConstraints = {mandatory: {}};
 
-            if (phenixRTC.browser === 'Chrome') {
+            if (phenixRTC.browser === 'Chrome' || phenixRTC.browser === 'ReactNative') {
                 mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo === true;
                 mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio === true;
             } else {
@@ -1351,6 +1355,10 @@ define([
             offerSdp += 'a=end-of-candidates';
 
             offerSdp = offerSdp.replace(/(\na=ice-options:trickle)/g, '');
+        }
+
+        if (phenixRTC.browser === 'ReactNative') {
+            offerSdp = setGroupLineOrderToMatchMediaSectionOrder(offerSdp);
         }
 
         var onFailure = function onFailure(status) {
@@ -1429,7 +1437,7 @@ define([
 
             var mediaConstraints = {mandatory: {}};
 
-            if (phenixRTC.browser === 'Chrome') {
+            if (phenixRTC.browser === 'Chrome' || phenixRTC.browser === 'ReactNative') {
                 mediaConstraints.mandatory.OfferToReceiveVideo = createOptions.receiveVideo !== false;
                 mediaConstraints.mandatory.OfferToReceiveAudio = createOptions.receiveAudio !== false;
             } else {
@@ -1486,7 +1494,7 @@ define([
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsMatch && hlsMatch.length === 2 && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
+        } else if (hlsMatch && hlsMatch.length === 2 && typeof document === 'object' && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe') {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(hlsMatch[1]);
 
             if (options.hlsTargetDuration) {
@@ -1637,15 +1645,31 @@ define([
     }
 
     var isMobile = function() {
-        var userAgent = window.navigator.userAgent;
+        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
 
         return isIOS() || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
     };
 
     var isIOS = function() {
-        var userAgent = window.navigator.userAgent;
+        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
 
-        return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        return /iPad|iPhone|iPod/.test(userAgent) && !phenixRTC.global.MSStream;
+    };
+
+    var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {
+        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
+        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
+        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
+
+        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
+            return sdp.indexOf('m=' + nameA) > sdp.indexOf('m=' + nameB);
+        });
+
+        if (sortedMediaSegmentNames.length > 0) {
+            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
+        }
+
+        return sdp;
     };
 
     return PCast;

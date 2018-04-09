@@ -27,7 +27,7 @@ define('phenix-web-sdk', [
     './sdk/express/RoomExpress',
     './sdk/express/ChannelExpress'
 ], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
-    window.PhenixPCast = PCast;
+    rtc.global.PhenixPCast = PCast;
 
     return {
         PCast: PCast,

@@ -25,6 +25,18 @@ define([
 ], function(_, chai, sinon, sinonChai) {
     'use strict';
 
+    var documentCreateElementShim = document.createElement;
+    document.createElement = function(type) {
+        if (type === 'video') {
+            return {
+                canPlayType: function() {
+                }
+            };
+        }
+
+        return documentCreateElementShim.call(document, type);
+    };
+
     tests.keys().forEach(tests);
     components.keys().forEach(components);
 

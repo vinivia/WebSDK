@@ -421,6 +421,25 @@ define([
             });
 
             return normalizedReport;
+        case 'ReactNative':
+            var stats = _.isString(response) ? JSON.parse(response) : response;
+
+            stats.forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.values.forEach(function(value) {
+                    _.keys(value).forEach(function(key) {
+                        normalizedStatistics[key] = value[key];
+                    });
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
         case 'Chrome':
         default:
             response.result().forEach(function(report) {
@@ -455,8 +474,8 @@ define([
     }
 
     function getAllTracks(peerConnection) {
-        var localStreams = peerConnection.getLocalStreams();
-        var remoteStreams = peerConnection.getRemoteStreams();
+        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
+        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
         var localTracks = [];
         var remoteTracks = [];
 

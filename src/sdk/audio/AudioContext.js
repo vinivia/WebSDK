@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 define([
-], function() {
+    'phenix-rtc'
+], function(rtc) {
     'use strict';
 
     function AudioContext() {
@@ -22,11 +23,11 @@ define([
     }
 
     AudioContext.prototype.init = function init() {
-        if (!window.AudioContext && !window.webkitAudioContext) {
+        if (!rtc.global.AudioContext && !rtc.global.webkitAudioContext) {
             throw new Error('Browser does not support AudioContext');
         }
 
-        this._audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        this._audioContext = new (rtc.global.AudioContext || rtc.global.webkitAudioContext)();
     };
 
     AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {

@@ -41,8 +41,15 @@ define([
 
             pcast = new PCast();
 
-            var parser = document.createElement('a');
-            parser.href = pcast.getBaseUri();
+            var url = pcast.getBaseUri();
+
+            if (url.indexOf('://')) {
+                url = url.split('://')[1];
+            }
+
+            if (url.indexOf('/')) {
+                url = url.split('/')[0];
+            }
 
             var applicationId = process.env.PHENIX_APPLICATION_ID;
             var secret = process.env.PHENIX_SECRET;
@@ -54,7 +61,7 @@ define([
             expect(applicationId).to.be.a('string');
             expect(secret).to.be.a('string');
 
-            http.postWithRetry('https://' + parser.hostname + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
+            http.postWithRetry('https://' + url + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
                 if (error) {
                     done(error);
                 }

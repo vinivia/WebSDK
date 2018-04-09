@@ -294,8 +294,8 @@ define([
             throw new Error(error);
         }
 
-        if (!_.isFunction(window.atob)) {
-            error = 'window.atob support required for DRM';
+        if (!_.isFunction(rtc.global.atob)) {
+            error = 'rtc.global.atob support required for DRM';
             this._logger.error(error);
 
             throw new Error(error);
@@ -312,7 +312,7 @@ define([
                 var responseAsString = String.fromCharCode.apply(null, binaryResponseAsTypedArray);
                 var parsedResponse = JSON.parse(responseAsString);
                 var base64License = parsedResponse.license;
-                var decodedLicense = window.atob(base64License);
+                var decodedLicense = rtc.global.atob(base64License);
 
                 response.data = new Uint8Array(decodedLicense.length);
 

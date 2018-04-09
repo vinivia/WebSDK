@@ -24,7 +24,7 @@ define([
         assert.isString(uri, 'uri');
 
         this._loggingUrl = '/telemetry/metrics';
-        this._domain = location.hostname;
+        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
         this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {

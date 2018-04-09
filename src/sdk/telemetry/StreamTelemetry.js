@@ -21,7 +21,7 @@ define([
 ], function(_, assert, disposable, phenixRTC) {
     'use strict';
 
-    var start = window['__phenixPageLoadTime'] || window['__pageLoadTime'] || _.now();
+    var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = '%ENVIRONMENT%' || '?';
     var sdkVersion = '%SDKVERSION%' || '?';
 

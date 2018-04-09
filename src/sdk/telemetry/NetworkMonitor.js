@@ -17,8 +17,9 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-event',
-    'phenix-web-disposable'
-], function(_, assert, event, disposable) {
+    'phenix-web-disposable',
+    'phenix-rtc'
+], function(_, assert, event, disposable, rtc) {
     function NetworkMonitor(logger) {
         assert.isObject(logger, 'logger');
 
@@ -38,7 +39,7 @@ define([
     }
 
     NetworkMonitor.prototype.isSupported = function() {
-        return window.navigator && window.navigator.connection;
+        return rtc.global.navigator && rtc.global.navigator.connection;
     };
 
     NetworkMonitor.prototype.getDownlinkThroughputCapacity = function() {
@@ -46,7 +47,7 @@ define([
             return -1;
         }
 
-        return window.navigator.connection.downlink || window.navigator.connection.downlinkMax;
+        return rtc.global.navigator.connection.downlink || rtc.global.navigator.connection.downlinkMax;
     };
 
     NetworkMonitor.prototype.getEffectiveType = function() {
@@ -54,7 +55,7 @@ define([
             return 'Unknown';
         }
 
-        return window.navigator.connection.effectiveType || window.navigator.connection.type;
+        return rtc.global.navigator.connection.effectiveType || rtc.global.navigator.connection.type;
     };
 
     NetworkMonitor.prototype.getRoundTripTime = function() {
@@ -62,7 +63,7 @@ define([
             return -1;
         }
 
-        return window.navigator.connection.rtt || window.navigator.connection.type;
+        return rtc.global.navigator.connection.rtt || rtc.global.navigator.connection.type;
     };
 
     NetworkMonitor.prototype.onNetworkChange = function(callback) {

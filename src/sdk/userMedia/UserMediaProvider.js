@@ -17,7 +17,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc'
-], function(_, assert, RTC) {
+], function(_, assert, rtc) {
     'use strict';
 
     var listenForMediaStreamTrackChangesTimeout = 2000;
@@ -112,7 +112,7 @@ define([
 
             var constraints = response.constraints;
 
-            if (that._onScreenShare && (options.screen || options.screenAudio) && RTC.browser === 'Chrome') {
+            if (that._onScreenShare && (options.screen || options.screenAudio) && rtc.browser === 'Chrome') {
                 constraints = that._onScreenShare(constraints);
 
                 if (!constraints) {
@@ -121,7 +121,7 @@ define([
             }
 
             try {
-                RTC.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
+                rtc.getUserMedia(constraints, onUserMediaSuccess, onUserMediaFailure);
             } catch (e) {
                 onUserMediaFailure(e);
             }
@@ -191,8 +191,8 @@ define([
             }
 
             _.forEach(stream.getTracks(), function(track) {
-                if (_.hasIndexOrKey(lastTrackEnabledStates, track.id) && lastTrackEnabledStates[track.id] !== track.enabled) {
-                    var trackEnabledChangeEvent = new window.Event('trackenabledchange');
+                if (rtc.global.Event && _.hasIndexOrKey(lastTrackEnabledStates, track.id) && lastTrackEnabledStates[track.id] !== track.enabled) {
+                    var trackEnabledChangeEvent = new rtc.global.Event('trackenabledchange');
 
                     trackEnabledChangeEvent.data = track;
 
@@ -201,8 +201,8 @@ define([
                     that._logger.info('[%s] Detected track [%s] enabled change to [%s]', stream.id, track.id, track.enabled);
                 }
 
-                if (_.hasIndexOrKey(lastTrackReadyStates, track.id) && lastTrackReadyStates[track.id] !== track.readyState) {
-                    var readyStateChangeEvent = new window.Event('readystatechange');
+                if (rtc.global.Event && _.hasIndexOrKey(lastTrackReadyStates, track.id) && lastTrackReadyStates[track.id] !== track.readyState) {
+                    var readyStateChangeEvent = new rtc.global.Event('readystatechange');
 
                     readyStateChangeEvent.data = track;
 

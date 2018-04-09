@@ -64,10 +64,10 @@ define([
 
     PhenixRealTimeStream.prototype.select = function select(trackSelectCallback) {
         assert.isFunction(trackSelectCallback, 'trackSelectCallback');
-        assert.isFunction(window.MediaStream, 'window.MediaStream');
+        assert.isFunction(rtc.global.MediaStream, 'rtc.global.MediaStream');
 
         var tracks = this._streamSrc.getTracks();
-        var streamToAttach = new window.MediaStream();
+        var streamToAttach = new rtc.global.MediaStream();
 
         for (var i = 0; i < tracks.length; i++) {
             if (trackSelectCallback(tracks[i], i)) {

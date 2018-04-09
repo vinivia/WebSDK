@@ -52,6 +52,41 @@ var configs = [{
             'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
         }
     }
+}, {
+    entry: path.join(__dirname, 'src', 'web-sdk.js'),
+    devtool: 'source-map',
+    target: 'web',
+    output: {
+        path: './dist',
+        filename: 'phenix-web-sdk-react-native.js',
+        library: 'phenix-web-sdk',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
+    },
+    plugins: [
+        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}}),
+        new CaseSensitivePathsPlugin(),
+        new webpack.DefinePlugin({'document': JSON.stringify('{}')})
+    ],
+    resolve: {
+        alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
+            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native.min'),
+            'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
+            'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
+            'phenix-web-batch-http': path.resolve(__dirname, 'node_modules', 'phenix-web-batch-http'),
+            'phenix-web-logging': path.resolve(__dirname, 'node_modules', 'phenix-web-logging'),
+            'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable'),
+            'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event'),
+            'phenix-web-http': path.resolve(__dirname, 'node_modules', 'phenix-web-http'),
+            'phenix-web-proto': path.resolve(__dirname, 'node_modules', 'phenix-web-proto'),
+            'phenix-web-network-connection-monitor': path.resolve(__dirname, 'node_modules', 'phenix-web-network-connection-monitor'),
+            'phenix-web-observable': path.resolve(__dirname, 'node_modules', 'phenix-web-observable'),
+            'phenix-web-reconnecting-web-socket': path.resolve(__dirname, 'node_modules', 'phenix-web-reconnecting-web-socket'),
+            'phenix-web-player': path.resolve(__dirname, 'node_modules', 'phenix-web-player', 'dist', 'phenix-web-player.min'),
+            'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser'),
+            'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
+        }
+    }
 }];
 
 module.exports = configs;

@@ -25,7 +25,7 @@ define([
         assert.isString(uri, 'uri');
 
         this._loggingUrl = '/telemetry/logs';
-        this._domain = location.hostname;
+        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
