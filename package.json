@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2018.2.0",
+  "version": "2018.2.1",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -33,7 +33,7 @@
     "deploy-examples:example": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R example/* gs://phenix-assets-us/examples",
     "deploy-examples:src": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R src/* gs://phenix-assets-us/examples",
     "deploy-examples:dist": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R dist/* gs://phenix-assets-us/examples",
-    "deploy-examples:deps":"gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R node_modules/phenix-* node_modules/jquery node_modules/lodash node_modules/bootstrap node_modules/bootstrap-notify node_modules/fingerprintjs2 node_modules/shaka-player node_modules/requirejs node_modules/animate.css gs://phenix-assets-us/examples",
+    "deploy-examples:deps": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R node_modules/phenix-* node_modules/jquery node_modules/lodash node_modules/bootstrap node_modules/bootstrap-notify node_modules/fingerprintjs2 node_modules/shaka-player node_modules/requirejs node_modules/animate.css gs://phenix-assets-us/examples",
     "deploy-examples": "node scripts/deploy-examples.js"
   },
   "devDependencies": {
@@ -87,7 +87,7 @@
     "moment": "2.17.1",
     "phantomjs-prebuilt": "2.1.14",
     "phenix-react-gum-configuration": "2017.4.6",
-    "phenix-rtc": "2018.2.0",
+    "phenix-rtc": "2018.2.1",
     "phenix-web-application-activity-detector": "2018.2.0",
     "phenix-web-assert": "2018.1.1",
     "phenix-web-batch-http": "2018.2.0",

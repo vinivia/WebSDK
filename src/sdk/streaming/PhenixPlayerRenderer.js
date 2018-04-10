@@ -29,6 +29,7 @@ define([
     var bandwidthAt720 = 3000000;
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
+    var originStreamReadyDuration = 6000;
 
     function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, logger) {
         this._logger = logger;
@@ -65,10 +66,8 @@ define([
     PhenixPlayerRenderer.prototype.start = function(elementToAttachTo) {
         var that = this;
         var loggerAtWarningThreshold = createWarningThresholdLogger(this._logger);
-        var playlist = new phenixWebPlayer.Playlist(loggerAtWarningThreshold, this._manifestUri);
 
         this._throttledLogger = loggerAtWarningThreshold;
-        this._playlist = playlist;
         this._element = elementToAttachTo;
 
         this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
@@ -76,13 +75,7 @@ define([
         this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
         this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
 
-        playlist.fetch(function(err) {
-            if (err) {
-                return that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['phenix-player', err]);
-            }
-
-            setupPlayer.call(that);
-        });
+        setupPlayer.call(that);
 
         if (that._options.receiveAudio === false) {
             elementToAttachTo.muted = true;
@@ -140,9 +133,6 @@ define([
 
             try {
                 that._player.dispose();
-                that._playlist.dispose();
-                that._statsProvider.dispose();
-                that._adaptiveStreamingManager.dispose();
 
                 that._logger.info('[%s] Phenix live stream has been destroyed', that._streamId);
 
@@ -158,7 +148,7 @@ define([
     };
 
     PhenixPlayerRenderer.prototype.getStats = function() {
-        if (!this._statsProvider || !this._player) {
+        if (!this._player) {
             return {
                 width: 0,
                 height: 0,
@@ -168,17 +158,16 @@ define([
             };
         }
 
-        var stat = _.assign(this._statsProvider.getRateAverages(), {
-            currentTime: 0,
-            lag: 0
-        });
-        var currentTime = _.get(this._element, ['currentTime'], 0);
+        var stat = this._player.getStats();
+        var currentTime = stat.currentTime || this._element.currentTime;
         var trueCurrentTime = (_.now() - this._options.originStartTime) / 1000;
-        var lag = Math.max(0.0, trueCurrentTime - currentTime);
 
-        if (this._element) {
-            stat.currentTime = currentTime;
-            stat.lag = lag;
+        if (stat.isNative && stat.deliveryType === 'Hls') {
+            stat.currentTime = trueCurrentTime - stat.lag;
+        }
+
+        if (!stat.isNative) {
+            stat.lag = Math.max(0.0, trueCurrentTime - currentTime);
         }
 
         if (stat.estimatedBandwidth > 0) {
@@ -210,19 +199,14 @@ define([
 
     function setupPlayer() {
         var that = this;
-        var statsProvider = new phenixWebPlayer.StatsProvider(this._throttledLogger, {ewmaPeriods: 30});
-        var playerOptions = {bandwidthToStartAt: that._options.bandwidthToStartAt || bandwidthAt720};
-        var chunksFeederOptions = {};
-        var chunksFeeder;
+        var playerOptions = _.assign({bandwidthToStartAt: bandwidthAt720}, that._options);
 
         if (_.isNumber(that._options.targetMinBufferSize)) {
             playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
-            chunksFeederOptions.targetBufferSizeInMS = that._options.targetMinBufferSize * 1000;
+            playerOptions.targetBufferSizeInMS = that._options.targetMinBufferSize * 1000;
         }
 
-        if (this._playlist.getDeliveryType() === 'Dash') {
-            chunksFeeder = new phenixWebPlayer.MpdPlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, chunksFeederOptions);
-
+        if (_.includes(this._manifestUri, '.mpd')) {
             if (that._options.isDrmProtectedContent) {
                 playerOptions.drm = {
                     'com.widevine.alpha': {
@@ -232,24 +216,24 @@ define([
                     'com.microsoft.playready': {licenseServerUrl: that._options.playreadyLicenseUrl}
                 };
             }
-        } else if (this._playlist.getDeliveryType() === 'Hls') {
-            chunksFeeder = new phenixWebPlayer.M3u8PlaylistChunkFeeder(this._throttledLogger, this._playlist, statsProvider, chunksFeederOptions);
         }
 
-        var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._playlist, this._element, chunksFeeder, playerOptions);
-        var adaptiveStreamingManagerIgnored = new phenixWebPlayer.AdaptiveStreamingManager(this._throttledLogger, this._playlist, webPlayer, statsProvider);
+        var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._element, playerOptions);
+        var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
-        webPlayer.start();
+        if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent && _.includes(this._manifestUri, '.m3u8')) {
+            setTimeout(_.bind(webPlayer.start, webPlayer, that._manifestUri), originStreamReadyDuration);
+        } else {
+            webPlayer.start(that._manifestUri);
+        }
 
         that._player = webPlayer;
-        that._statsProvider = statsProvider;
-        that._adaptiveStreamingManager = adaptiveStreamingManagerIgnored;
 
         _.addEventListener(that._player, 'error', _.bind(handleError, that));
     }
 
     function handleError(e) {
-        if (e && e.code === 3 && canReload.call(this)) {
+        if (canReload.call(this) && e && (e.code === 3 || e.severity === phenixWebPlayer.errors.severity.RECOVERABLE)) {
             return reloadIfAble.call(this);
         }
 
@@ -258,14 +242,8 @@ define([
 
     function reload() {
         this._player.dispose();
-        this._playlist.dispose();
-        this._statsProvider.dispose();
-        this._adaptiveStreamingManager.dispose();
 
         this._player = null;
-        this._playlist = null;
-        this._statsProvider = null;
-        this._adaptiveStreamingManager = null;
 
         this.start(this._element);
     }
