@@ -25,13 +25,12 @@ console.log('Using version', sdkVersion);
 module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-sed');
     grunt.loadNpmTasks('grunt-webpack');
     grunt.loadNpmTasks('grunt-zip');
 
     grunt.registerTask('default', []);
-    grunt.registerTask('pack', ['uglify', 'zip']);
+    grunt.registerTask('pack', ['zip']);
     grunt.registerTask('build', ['default', 'clean', 'copy:chrome-app', 'webpack', 'sed', 'pack']);
 
     grunt.initConfig({
@@ -76,14 +75,6 @@ module.exports = function(grunt) {
                 dest: 'dist/pcast-screen-sharing.zip'
             }
         },
-        webpack: webpackConfigs,
-        uglify: {
-            minify: {
-                files: {
-                    'dist/phenix-web-sdk.min.js': ['dist/phenix-web-sdk.js'],
-                    'dist/phenix-web-sdk-react-native.min.js': ['dist/phenix-web-sdk-react-native.js']
-                }
-            }
-        }
+        webpack: webpackConfigs
     });
 };

@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 /* global __dirname module */
-var webpack = require('webpack');
-var path = require('path');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const webpack = require('webpack');
+const path = require('path');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const merge = require('webpack-merge');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const assert = require('phenix-web-assert/dist/phenix-web-assert.min');
+const assertNames = '^' + Object.keys(assert.__proto__).join('$|^') + '$';
+const uglifyManglePropRegex = new RegExp('^_[^_].*' + '|^global$|' + assertNames);
 
-var configs = [{
-    entry: path.join(__dirname, 'src', 'web-sdk.js'),
-    devtool: 'source-map',
+var baseConfig = {
     target: 'web',
     output: {
-        path: './dist',
-        filename: 'phenix-web-sdk.js',
+        path: path.resolve(__dirname, './dist'),
         library: 'phenix-web-sdk',
         libraryTarget: 'umd',
         umdNamedDefine: true
@@ -35,7 +37,6 @@ var configs = [{
     ],
     resolve: {
         alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
-            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min'),
             'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
             'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
             'phenix-web-batch-http': path.resolve(__dirname, 'node_modules', 'phenix-web-batch-http'),
@@ -52,41 +53,70 @@ var configs = [{
             'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
         }
     }
-}, {
-    entry: path.join(__dirname, 'src', 'web-sdk.js'),
-    devtool: 'source-map',
-    target: 'web',
-    output: {
-        path: './dist',
-        filename: 'phenix-web-sdk-react-native.js',
-        library: 'phenix-web-sdk',
-        libraryTarget: 'umd',
-        umdNamedDefine: true
-    },
-    plugins: [
-        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}}),
-        new CaseSensitivePathsPlugin(),
-        new webpack.DefinePlugin({'document': JSON.stringify('{}')})
-    ],
+};
+
+var normalConfig = {entry: path.join(__dirname, 'src', 'web-sdk.js')};
+var lightConfig = {
+    entry: path.join(__dirname, 'src', 'web-sdk-light.js'),
     resolve: {
-        alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
-            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native.min'),
-            'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
-            'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert'),
-            'phenix-web-batch-http': path.resolve(__dirname, 'node_modules', 'phenix-web-batch-http'),
-            'phenix-web-logging': path.resolve(__dirname, 'node_modules', 'phenix-web-logging'),
-            'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable'),
-            'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event'),
-            'phenix-web-http': path.resolve(__dirname, 'node_modules', 'phenix-web-http'),
-            'phenix-web-proto': path.resolve(__dirname, 'node_modules', 'phenix-web-proto'),
-            'phenix-web-network-connection-monitor': path.resolve(__dirname, 'node_modules', 'phenix-web-network-connection-monitor'),
-            'phenix-web-observable': path.resolve(__dirname, 'node_modules', 'phenix-web-observable'),
-            'phenix-web-reconnecting-web-socket': path.resolve(__dirname, 'node_modules', 'phenix-web-reconnecting-web-socket'),
-            'phenix-web-player': path.resolve(__dirname, 'node_modules', 'phenix-web-player', 'dist', 'phenix-web-player.min'),
-            'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser'),
-            'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
+        alias: {
+            './protocol/chatProto.json': path.resolve(__dirname, 'src', 'sdk/protocol/shimProto.json'),
+            'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-no-edge.min'),
+            'phenix-web-player': path.resolve(__dirname, 'src', 'playerShim')
         }
+    }
+};
+
+var mainConfigs = [{
+    devtool: 'source-map',
+    output: {filename: 'phenix-web-sdk.js'},
+    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min')}},
+    optimization: {minimize: false}
+}, {
+    output: {filename: 'phenix-web-sdk.min.js'},
+    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min')}},
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    mangle: {properties: {regex: uglifyManglePropRegex}},
+                    output: {beautify: false},
+                    compress: {passes: 2}
+                }
+            })
+        ]
+    }
+}];
+var reactNativeConfigs = [{
+    devtool: 'source-map',
+    output: {filename: 'phenix-web-sdk-react-native.js'},
+    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native.min')}},
+    optimization: {minimize: false}
+}, {
+    output: {filename: 'phenix-web-sdk-react-native.min.js'},
+    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native.min')}},
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    mangle: {properties: {regex: uglifyManglePropRegex}},
+                    output: {beautify: false},
+                    compress: {passes: 2}
+                }
+            })
+        ]
     }
 }];
 
-module.exports = configs;
+var normalConfigs = mainConfigs.concat(reactNativeConfigs).map(function(config) {
+    return merge(baseConfig, config, normalConfig);
+});
+var lightConfigs = mainConfigs.map(function(config) {
+    config = merge(baseConfig, config, lightConfig);
+
+    config.output.filename = config.output.filename.replace('phenix-web-sdk', 'phenix-web-sdk-light');
+
+    return config;
+});
+
+module.exports = normalConfigs.concat(lightConfigs);
