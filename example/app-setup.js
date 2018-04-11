@@ -25,6 +25,7 @@ define('app-setup', [
 ], function($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
     var enabledSteps = ['step-1'];
     var onStepsReset;
+    var defaultPublisherQuality = 'hd';
 
     var init = function init() {
         $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
@@ -78,6 +79,28 @@ define('app-setup', [
 
         if (getUrlParameter('alias')) {
             $('#alias').val(getUrlParameter('alias'));
+        }
+
+        if ($('#publish-capabilities')) {
+            _.forOwn(getPublisherCapabilities(), function(title, capability) {
+                $('#publish-capabilities').append($('<option></option>').attr('value', capability).text(title));
+            });
+        }
+
+        if ($('#subscriber-mode')) {
+            _.forOwn(getSubscriberCapabilities(), function(title, capability) {
+                $('#subscriber-mode').append($('<option></option>').attr('value', capability).text(title));
+            });
+        }
+
+        if ($('#publish-quality')) {
+            _.forOwn(getPublisherQualities(), function(title, capability) {
+                $('#publish-quality').append($('<option></option>').attr('value', capability).text(title));
+            });
+
+            if ($('#publish-quality [value=' + defaultPublisherQuality + ']')) {
+                $('#publish-quality [value=' + defaultPublisherQuality + ']').attr('selected', 'selected');
+            }
         }
 
         var updateOptions = function updateOptions() {
@@ -246,6 +269,46 @@ define('app-setup', [
         }
 
         return 'https://phenixrts.com/video';
+    };
+
+    var getPublisherCapabilities = function() {
+        return {
+            'archive': 'Archive',
+            'archive-audio-only': 'Archive Audio Only',
+            'streaming': 'Streaming',
+            'on-demand': 'On Demand',
+            'low-latency': 'Low Latency (Streaming)',
+            'prefer-h264': 'H264 (Real-time)',
+            'drm': 'DRM',
+            'high-fidelity': 'High Fidelity (Audio)',
+            'multi-bitrate': 'Multi Bitrate (MBR)',
+            'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
+            'multi-bitrate-codec=h264': 'H264 MBR Codec'
+        };
+    };
+
+    var getSubscriberCapabilities = function() {
+        return {
+            'real-time': 'Real-time',
+            'prefer-vp8': 'Real-time VP8',
+            'prefer-h264': 'Real-time H264',
+            'broadcast': 'Broadcast',
+            'streaming': 'Live',
+            'on-demand': 'On Demand'
+        };
+    };
+
+    var getPublisherQualities = function() {
+        return {
+            'vvld': 'VVLD',
+            'vld': 'VLD',
+            'ld': 'LD',
+            'sd': 'SD',
+            'hd': 'HD',
+            'fhd': 'FHD',
+            'xhd': 'XHD',
+            'uhd': 'UHD'
+        };
     };
 
     return {

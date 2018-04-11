@@ -184,23 +184,8 @@
         </div>
         <div class="col-md-4 text-center server">
             <p>Create a publish <strong>streamToken</strong> using the <strong>sessionId</strong>.</p>
-            <select class="form-control" id="publish-capabilities" multiple>
-                <option value="streaming">Streaming</option>
-                <option value="on-demand">On Demand</option>
-                <option value="prefer-h264">H264</option>
-                <option value="drm">DRM</option>
-            </select>
-            <select class="form-control" id="publish-quality">
-                <option value="uld">ULD</option>
-                <option value="vvld">VVLD</option>
-                <option value="vld">VLD</option>
-                <option value="ld">LD</option>
-                <option value="sd">SD</option>
-                <option value="hd" selected="true">HD</option>
-                <option value="fhd">FHD</option>
-                <option value="xhd">XHD</option>
-                <option value="uhd">UHD</option>
-            </select>
+            <select class="form-control" id="publish-capabilities" multiple></select>
+            <select class="form-control" id="publish-quality"></select>
             <input id="sessionIdForPublishing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="createStreamTokenForPublishing" type="button" value="Create Publish Stream Token"/>
         </div>
@@ -262,13 +247,7 @@
         <div class="col-md-4 text-center server">
             <p>Create a viewing <strong>streamToken</strong> using the <strong>sessionId</strong> and
                 <strong>originStreamId</strong>.</p>
-            <select class="form-control" id="subscriber-mode">
-                <option value="real-time">Real-time</option>
-                <option value="broadcast">Broadcast</option>
-                <option value="streaming">Live</option>
-                <option value="on-demand">On Demand</option>
-                <option value="prefer-h264">H264</option>
-            </select>
+            <select class="form-control" id="subscriber-mode"></select>
             <br/>
             <p>Choose <strong>DRM modifiers</strong></p>
             <select class="form-control" id="subscriber-drm-capabilities" size="2" multiple>
