@@ -131,11 +131,7 @@ define([
                 apiVersion: this._mqWebSocket.getApiVersion()
             };
 
-            if (isAndroid() && streamType === 'download') {
-                setupStream.createStream.createOfferDescription.options.push('prefer-vp8');
-            }
-
-            if (typeof screen !== undefined) {
+            if (typeof screen !== 'undefined') {
                 setupStream.createStream.createOfferDescription.options.push('screen=' + screen.width + 'x' + screen.height);
             }
         }
@@ -386,10 +382,6 @@ define([
     PCastProtocol.prototype.toString = function() {
         return 'PCastProtocol[' + this._mqWebSocket.toString() + ']';
     };
-
-    function isAndroid() {
-        return /(android)/i.test(_.get(phenixRTC, ['global', 'navigator', 'userAgent'], ''));
-    }
 
     return PCastProtocol;
 });
