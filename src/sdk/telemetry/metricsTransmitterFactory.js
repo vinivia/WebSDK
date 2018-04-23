@@ -22,8 +22,8 @@ define([
     var config = {
         urls: {
             local: '',
-            staging: 'https://telemetry-stg.phenixp2p.com',
-            production: 'https://telemetry.phenixp2p.com'
+            staging: 'https://telemetry-stg.phenixrts.com',
+            production: 'https://telemetry.phenixrts.com'
         }
     };
 
