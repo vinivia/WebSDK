@@ -116,7 +116,7 @@ define([
             streamToken: streamToken,
             createStream: {
                 sessionId: this.getSessionId(),
-                options: ['data-quality-notifications'],
+                options: ['data-quality-notifications', rttString],
                 connectUri: options.connectUri,
                 connectOptions: options.connectOptions || [],
                 tags: options.tags || [],
@@ -127,7 +127,7 @@ define([
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
-                options: [streamType, browser, browserWithVersion, rttString],
+                options: [streamType, browser, browserWithVersion],
                 apiVersion: this._mqWebSocket.getApiVersion()
             };
 
