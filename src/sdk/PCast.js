@@ -1426,9 +1426,21 @@ define([
                         };
                     }
 
+                    var localSdp = response.sessionDescription.sdp;
+
+                    if (isIOS()) {
+                        var version = _.get(getIOSVersion(), ['major']);
+
+                        that._logger.info('iOS Version is [%s]', version);
+
+                        if (version < 11) {
+                            localSdp = localSdp.replace('BUNDLE audio video', 'BUNDLE video audio'); // Without this only video-only streams work on iOS 10
+                        }
+                    }
+
                     var sessionDescription = new phenixRTC.RTCSessionDescription({
                         type: 'answer',
-                        sdp: response.sessionDescription.sdp
+                        sdp: localSdp
                     });
 
                     peerConnection.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
@@ -1655,6 +1667,20 @@ define([
 
         return /iPad|iPhone|iPod/.test(userAgent) && !phenixRTC.global.MSStream;
     };
+
+    function getIOSVersion() {
+        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
+
+        if (/iP(hone|od|ad)/.test(userAgent)) {
+            var version = userAgent.match(/.*OS (\d+)_(\d+)_?(\d+)? like Mac OS X/);
+
+            return {
+                major: parseInt(_.get(version, [1], 0), 10),
+                minor: parseInt(_.get(version, [2], 0), 10),
+                patch: parseInt(_.get(version, [3], 0), 10)
+            };
+        }
+    }
 
     var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {
         var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);

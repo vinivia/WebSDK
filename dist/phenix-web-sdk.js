@@ -4631,7 +4631,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-04-17T00:14:18Z',
+                version: '2018-04-25T23:11:27Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4983,7 +4983,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-04-17T00:14:18Z';
+    var sdkVersion = '2018-04-25T23:11:27Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -6369,9 +6369,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         };
                     }
 
+                    var localSdp = response.sessionDescription.sdp;
+
+                    if (isIOS()) {
+                        var version = _.get(getIOSVersion(), ['major']);
+
+                        that._logger.info('iOS Version is [%s]', version);
+
+                        if (version < 11) {
+                            localSdp = localSdp.replace('BUNDLE audio video', 'BUNDLE video audio'); // Without this only video-only streams work on iOS 10
+                        }
+                    }
+
                     var sessionDescription = new phenixRTC.RTCSessionDescription({
                         type: 'answer',
-                        sdp: response.sessionDescription.sdp
+                        sdp: localSdp
                     });
 
                     peerConnection.setLocalDescription(sessionDescription, onSetLocalDescriptionSuccess, onFailure);
@@ -6598,6 +6610,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         return /iPad|iPhone|iPod/.test(userAgent) && !phenixRTC.global.MSStream;
     };
+
+    function getIOSVersion() {
+        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
+
+        if (/iP(hone|od|ad)/.test(userAgent)) {
+            var version = userAgent.match(/.*OS (\d+)_(\d+)_?(\d+)? like Mac OS X/);
+
+            return {
+                major: parseInt(_.get(version, [1], 0), 10),
+                minor: parseInt(_.get(version, [2], 0), 10),
+                patch: parseInt(_.get(version, [3], 0), 10)
+            };
+        }
+    }
 
     var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {
         var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
@@ -17386,8 +17412,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = getGlobal()['__phenixPageLoadTime'] || getGlobal()['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-17T00:14:18Z' || '?';
-    var releaseVersion = '2018.2.3';
+    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
+    var releaseVersion = '2018.2.4';
 
     function Logger() {
         this._appenders = [];
@@ -30957,7 +30983,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-17T00:14:18Z' || '?';
+    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -31212,7 +31238,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-17T00:14:18Z' || '?';
+    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
