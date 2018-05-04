@@ -283,7 +283,8 @@ define('app-setup', [
             'high-fidelity': 'High Fidelity (Audio)',
             'multi-bitrate': 'Multi Bitrate (MBR)',
             'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
-            'multi-bitrate-codec=h264': 'H264 MBR Codec'
+            'multi-bitrate-codec=h264': 'H264 MBR Codec',
+            'origin-shield': 'Origin Shield'
         };
     };
 
