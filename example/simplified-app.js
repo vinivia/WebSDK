@@ -53,9 +53,13 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
-    var init = function init() {
-        var pcastExpress;
+    var pcastExpress;
+    var publisher;
+    var publisherPlayer;
+    var subscriberMediaStream = null;
+    var subscriberPlayer = null;
 
+    var init = function init() {
         var createPCastExpress = function createPCastExpress() {
             var pcastOptions = {
                 backendUri: app.getBaseUri() + '/pcast',
@@ -74,9 +78,6 @@ requirejs([
 
             pcastExpress = new sdk.express.PCastExpress(pcastOptions);
         };
-
-        var publisher;
-        var publisherPlayer;
 
         var publish = function publish() {
             var localVideoEl = $('#localVideo')[0];
@@ -171,21 +172,6 @@ requirejs([
             });
         };
 
-        var stopPublisher = function() {
-            if (publisher) {
-                publisher.stop();
-                publisher = null;
-                $('#stopPublisher').addClass('disabled');
-            }
-
-            if (publisherPlayer) {
-                publisherPlayer.stop();
-            }
-        };
-
-        var subscriberMediaStream = null;
-        var subscriberPlayer = null;
-
         var subscribe = function subscribe() {
             var streamId = $('.streamIdForPublishing').val();
             var remoteVideoEl = $('#remoteVideo')[0];
@@ -255,18 +241,6 @@ requirejs([
             });
         };
 
-        var stopSubscriber = function(reason) {
-            if (subscriberMediaStream) {
-                subscriberMediaStream.stop(reason);
-                subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
-            }
-
-            if (subscriberPlayer) {
-                subscriberPlayer.stop();
-            }
-        };
-
         function onMonitorEvent(error, response) {
             if (error) {
                 return app.createNotification('danger', {
@@ -328,6 +302,42 @@ requirejs([
 
         createPCastExpress();
     };
+
+    var stopPublisher = function() {
+        if (publisher) {
+            publisher.stop();
+            publisher = null;
+            $('#stopPublisher').addClass('disabled');
+        }
+
+        if (publisherPlayer) {
+            publisherPlayer.stop();
+        }
+    };
+
+    var stopSubscriber = function(reason) {
+        if (subscriberMediaStream) {
+            subscriberMediaStream.stop(reason);
+            subscriberMediaStream = null;
+            $('#stopSubscriber').addClass('disabled');
+        }
+
+        if (subscriberPlayer) {
+            subscriberPlayer.stop();
+        }
+    };
+
+    $('#applicationId').change(function() {
+        stopPublisher();
+        stopSubscriber();
+        init();
+    });
+
+    $('#secret').change(function() {
+        stopPublisher();
+        stopSubscriber();
+        init();
+    });
 
     $(function() {
         app.init();

@@ -53,9 +53,11 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
-    var init = function init() {
-        var pcastExpress;
+    var pcastExpress;
+    var subscriberMediaStream = null;
+    var subscriberPlayer = null;
 
+    var init = function init() {
         var createPCastExpress = function createPCastExpress() {
             var pcastOptions = {
                 backendUri: app.getBaseUri() + '/pcast',
@@ -126,9 +128,6 @@ requirejs([
             }
         };
 
-        var subscriberMediaStream = null;
-        var subscriberPlayer = null;
-
         var subscribe = function subscribe() {
             var streamId = $('#originStreamId').val();
             var remoteVideoEl = $('#remoteVideo')[0];
@@ -191,18 +190,6 @@ requirejs([
             });
         };
 
-        var stopSubscriber = function(reason) {
-            if (subscriberMediaStream) {
-                subscriberMediaStream.stop(reason);
-                subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
-            }
-
-            if (subscriberPlayer) {
-                subscriberPlayer.stop();
-            }
-        };
-
         function onMonitorEvent(error, response) {
             if (error) {
                 return app.createNotification('danger', {
@@ -238,6 +225,28 @@ requirejs([
         createPCastExpress();
         listStreams();
     };
+
+    var stopSubscriber = function(reason) {
+        if (subscriberMediaStream) {
+            subscriberMediaStream.stop(reason);
+            subscriberMediaStream = null;
+            $('#stopSubscriber').addClass('disabled');
+        }
+
+        if (subscriberPlayer) {
+            subscriberPlayer.stop();
+        }
+    };
+
+    $('#applicationId').change(function() {
+        stopSubscriber();
+        init();
+    });
+
+    $('#secret').change(function() {
+        stopSubscriber();
+        init();
+    });
 
     $(function() {
         app.init();

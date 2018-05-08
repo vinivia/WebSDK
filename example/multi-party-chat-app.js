@@ -53,6 +53,23 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
+    var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
+    var stopButton = document.getElementById('stopButton');
+    var publishScreenShareButton = document.getElementById('publishScreenButton');
+    var stopScreenShareButton = document.getElementById('stopPublishScreenButton');
+    var videoList = document.getElementById('videoList');
+    var selfVideoList = document.getElementById('selfVideoList');
+    var publisher = null;
+    var screenPublisher = null;
+    var lowQualityPublisher = null;
+    var roomService = null;
+    var screenName = 'ScreenName' + Math.floor(Math.random() * 10000) + 1; // Helpful if unique but we don't enforce this. You might set this to be an email or a nickname, or both. Then parse it when joining the room.
+    var memberRole = 'Participant';
+    var membersStore = [];
+    var memberSubscriptions = {};
+    var videoSources = [];
+    var audioSources = [];
+
     var init = function init() {
         var roomExpress;
 
@@ -65,23 +82,6 @@ requirejs([
             });
         };
 
-        var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
-        var stopButton = document.getElementById('stopButton');
-        var publishScreenShareButton = document.getElementById('publishScreenButton');
-        var stopScreenShareButton = document.getElementById('stopPublishScreenButton');
-        var videoList = document.getElementById('videoList');
-        var selfVideoList = document.getElementById('selfVideoList');
-        var publisher = null;
-        var screenPublisher = null;
-        var lowQualityPublisher = null;
-        var roomService = null;
-        var screenName = 'ScreenName' + Math.floor(Math.random() * 10000) + 1; // Helpful if unique but we don't enforce this. You might set this to be an email or a nickname, or both. Then parse it when joining the room.
-        var memberRole = 'Participant';
-        var membersStore = [];
-        var memberSubscriptions = {};
-        var videoSources = [];
-        var audioSources = [];
-
         sdk.RTC.getSources(function(sources) {
             videoSources = sources.filter(function(source) {
                 return source.kind === 'video';
@@ -90,57 +90,6 @@ requirejs([
                 return source.kind === 'audio';
             });
         });
-
-        function displayElement(element) {
-            element.className = element.className.substring(0, element.className.indexOf(' hide'));
-        }
-
-        function hideElement(element) {
-            if (element.className.indexOf('hide') === -1) {
-                element.className += ' hide';
-            }
-        }
-
-        function leaveRoomAndStopPublisher() {
-            if (publisher) {
-                publisher.publisher.stop();
-                publisher.videoElement.remove();
-
-                publisher = null;
-            }
-
-            if (lowQualityPublisher) {
-                lowQualityPublisher.publisher.stop();
-
-                lowQualityPublisher = null;
-            }
-
-            if (screenPublisher) {
-                screenPublisher.publisher.stop();
-                screenPublisher.videoElement.remove();
-
-                screenPublisher = null;
-            }
-
-            if (roomService) {
-                roomService.leaveRoom(function(error, response) {
-                    if (error) {
-                        throw error;
-                    }
-
-                    if (response.status !== 'ok') {
-                        throw new Error(response.status);
-                    }
-
-                    roomService = null;
-                });
-            }
-
-            removeOldMembers([]);
-
-            hideElement(stopButton);
-            displayElement(publishAndJoinRoomButton);
-        }
 
         function publishVideoAndCameraAtTwoQualitiesAndJoinRoom() {
             if (videoSources.length === 0 || audioSources.length === 0) {
@@ -481,6 +430,70 @@ requirejs([
 
         createRoomExpress();
     };
+
+    function leaveRoomAndStopPublisher() {
+        if (publisher) {
+            publisher.publisher.stop();
+            publisher.videoElement.remove();
+
+            publisher = null;
+        }
+
+        if (lowQualityPublisher) {
+            lowQualityPublisher.publisher.stop();
+
+            lowQualityPublisher = null;
+        }
+
+        if (screenPublisher) {
+            screenPublisher.publisher.stop();
+            screenPublisher.videoElement.remove();
+
+            screenPublisher = null;
+        }
+
+        if (roomService) {
+            roomService.leaveRoom(function(error, response) {
+                if (error) {
+                    throw error;
+                }
+
+                if (response.status !== 'ok') {
+                    throw new Error(response.status);
+                }
+
+                roomService = null;
+            });
+        }
+
+        membersStore = [];
+        memberSubscriptions = {};
+        videoSources = [];
+        audioSources = [];
+
+        hideElement(stopButton);
+        displayElement(publishAndJoinRoomButton);
+    }
+
+    function displayElement(element) {
+        element.className = element.className.substring(0, element.className.indexOf(' hide'));
+    }
+
+    function hideElement(element) {
+        if (element.className.indexOf('hide') === -1) {
+            element.className += ' hide';
+        }
+    }
+
+    $('#applicationId').change(function() {
+        leaveRoomAndStopPublisher();
+        init();
+    });
+
+    $('#secret').change(function() {
+        leaveRoomAndStopPublisher();
+        init();
+    });
 
     $(function() {
         app.init();

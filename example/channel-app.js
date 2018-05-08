@@ -53,9 +53,12 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
-    var init = function init() {
-        var channelExpress;
+    var channelExpress;
+    var channelSubscriber;
+    var channelPlayer;
+    var leaveChannelCallback;
 
+    var init = function init() {
         if (app.getUrlParameter('m') || app.getUrlParameter('mode')) {
             var subscriberMode = app.getModeFromAbbreviation(app.getUrlParameter('m') || app.getUrlParameter('mode'));
 
@@ -79,10 +82,6 @@ requirejs([
 
             channelExpress = new sdk.express.ChannelExpress(expressOptions);
         };
-
-        var channelSubscriber;
-        var channelPlayer;
-        var leaveChannelCallback;
 
         var joinChannel = function joinChannel() {
             var channelAlias = $('#alias').val();
@@ -194,23 +193,6 @@ requirejs([
             });
         };
 
-        var leaveChannel = function leaveChannel() {
-            if (channelSubscriber) {
-                channelSubscriber.stop();
-                channelSubscriber = null;
-            }
-
-            if (channelPlayer) {
-                channelPlayer.stop();
-            }
-
-            if (leaveChannelCallback) {
-                leaveChannelCallback();
-                leaveChannelCallback = null;
-                $('#leaveChannel').addClass('disabled');
-            }
-        };
-
         app.setOnReset(function() {
             createChannelExpress();
         });
@@ -221,6 +203,33 @@ requirejs([
         createChannelExpress();
         joinChannel();
     };
+
+    var leaveChannel = function leaveChannel() {
+        if (channelSubscriber) {
+            channelSubscriber.stop();
+            channelSubscriber = null;
+        }
+
+        if (channelPlayer) {
+            channelPlayer.stop();
+        }
+
+        if (leaveChannelCallback) {
+            leaveChannelCallback();
+            leaveChannelCallback = null;
+            $('#leaveChannel').addClass('disabled');
+        }
+    };
+
+    $('#applicationId').change(function() {
+        leaveChannel();
+        init();
+    });
+
+    $('#secret').change(function() {
+        leaveChannel();
+        init();
+    });
 
     $(function() {
         app.init();

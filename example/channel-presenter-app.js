@@ -53,9 +53,12 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, shaka, Player, app) {
-    var init = function init() {
-        var channelExpress;
+    var channelExpress;
+    var channelPublisher;
+    var publisherPlayer;
+    var channelService;
 
+    var init = function init() {
         var createChannelExpress = function createPCastExpress() {
             channelExpress = new sdk.express.ChannelExpress({
                 backendUri: app.getBaseUri() + '/pcast',
@@ -64,10 +67,6 @@ requirejs([
                 shaka: app.getUrlParameter('shaka') ? shaka : null
             });
         };
-
-        var channelPublisher;
-        var publisherPlayer;
-        var channelService;
 
         var publishLocalMediaToChannel = function publishToChannel() {
             var channelAlias = $('#alias').val();
@@ -144,34 +143,6 @@ requirejs([
             });
         };
 
-        var stopPublisher = function stopPublisher() {
-            if (channelPublisher) {
-                channelPublisher.stop();
-                channelPublisher = null;
-            }
-
-            if (publisherPlayer) {
-                publisherPlayer.stop();
-                publisherPlayer = null;
-            }
-
-            if (channelService) {
-                channelService.leaveChannel(function(error, response) {
-                    if (error) {
-                        throw error;
-                    }
-
-                    if (response.status !== 'ok') {
-                        throw new Error(response.status);
-                    }
-
-                    channelService = null;
-                });
-            }
-
-            $('#stopPublisher').addClass('disabled');
-        };
-
         app.setOnReset(function() {
             createChannelExpress();
         });
@@ -230,6 +201,44 @@ requirejs([
 
         return userMediaOptions;
     }
+
+    var stopPublisher = function stopPublisher() {
+        if (channelPublisher) {
+            channelPublisher.stop();
+            channelPublisher = null;
+        }
+
+        if (publisherPlayer) {
+            publisherPlayer.stop();
+            publisherPlayer = null;
+        }
+
+        if (channelService) {
+            channelService.leaveChannel(function(error, response) {
+                if (error) {
+                    throw error;
+                }
+
+                if (response.status !== 'ok') {
+                    throw new Error(response.status);
+                }
+
+                channelService = null;
+            });
+        }
+
+        $('#stopPublisher').addClass('disabled');
+    };
+
+    $('#applicationId').change(function() {
+        stopPublisher();
+        init();
+    });
+
+    $('#secret').change(function() {
+        stopPublisher();
+        init();
+    });
 
     $(function() {
         app.init();

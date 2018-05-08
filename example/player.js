@@ -143,7 +143,7 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-play play video-control';
-        element.dataset.targetVideo = this.videoId;
+        _.set(element, ['dataset', 'targetVideo'], this.videoId);
         element.onclick = handlePlayButtonClick.bind(this);
 
         return element;
@@ -153,7 +153,7 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-pause video-control pause';
-        element.dataset.targetVideo = this.videoId;
+        _.set(element, ['dataset', 'targetVideo'], this.videoId);
         element.onclick = handlePauseButtonClick.bind(this);
 
         return element;
@@ -163,7 +163,7 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-facetime-video toggle-off video-control mute-video';
-        element.dataset.targetVideo = this.videoId;
+        _.set(element, ['dataset', 'targetVideo'], this.videoId);
         element.onclick = handleMuteVideoButtonClick.bind(this);
 
         return element;
@@ -173,7 +173,7 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-volume-off video-control mute';
-        element.dataset.targetVideo = this.videoId;
+        _.set(element, ['dataset', 'targetVideo'], this.videoId);
         element.onclick = handleMuteButtonClick.bind(this);
 
         return element;
@@ -183,7 +183,7 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-fullscreen video-control fullscreen';
-        element.dataset.targetVideo = this.videoId;
+        _.set(element, ['dataset', 'targetVideo'], this.videoId);
         element.onclick = handleFullscreenButtonClick.bind(this);
 
         return element;
@@ -208,7 +208,7 @@ define('video-player', [
             var element = document.createElement('span');
 
             element.className = 'video-control ' + timingElement.className;
-            element.dataset.targetVideo = this.videoId;
+            _.set(element, ['dataset', 'targetVideo'], this.videoId);
             element.title = timingElement.title;
             element.innerHTML = '0.0';
 
@@ -362,13 +362,13 @@ define('video-player', [
     var handlePlayButtonClick = function handlePlayButtonClick(clickEvent) {
         var element = clickEvent.target;
 
-        if (!element.dataset.targetVideo) {
+        if (!_.get(element, ['dataset', 'targetVideo'])) {
             throw new Error('Button Must Have Target');
         }
 
-        console.log('Play ' + element.dataset.targetVideo);
+        console.log('Play ' + _.get(element, ['dataset', 'targetVideo']));
 
-        var video = $('#' + element.dataset.targetVideo)[0];
+        var video = $('#' + _.get(element, ['dataset', 'targetVideo']))[0];
 
         video.play();
     };
@@ -376,13 +376,13 @@ define('video-player', [
     var handlePauseButtonClick = function handlePauseButtonClick(clickEvent) {
         var element = clickEvent.target;
 
-        if (!element.dataset.targetVideo) {
+        if (!_.get(element, ['dataset', 'targetVideo'])) {
             throw new Error('Button Must Have Target');
         }
 
-        console.log('Pause ' + element.dataset.targetVideo);
+        console.log('Pause ' + _.get(element, ['dataset', 'targetVideo']));
 
-        var video = $('#' + element.dataset.targetVideo)[0];
+        var video = $('#' + _.get(element, ['dataset', 'targetVideo']))[0];
 
         video.pause();
     };
@@ -390,7 +390,7 @@ define('video-player', [
     var handleFullscreenButtonClick = function handleFullscreenButtonClick(clickEvent) {
         var element = clickEvent.target;
 
-        if (!element.dataset.targetVideo) {
+        if (!_.get(element, ['dataset', 'targetVideo'])) {
             throw new Error('Button Must Have Target');
         }
 
@@ -399,12 +399,12 @@ define('video-player', [
 
     var handleMuteButtonClick = function handleMuteButtonClick(clickEvent) {
         var element = clickEvent.target;
-        var video = $('#' + element.dataset.targetVideo);
+        var video = $('#' + _.get(element, ['dataset', 'targetVideo']));
         var isLocal = video.hasClass('local');
         var isAudioMuted;
         var shallBeMuted;
 
-        if (!element.dataset.targetVideo) {
+        if (!_.get(element, ['dataset', 'targetVideo'])) {
             throw new Error('Button Must Have Target');
         }
 
@@ -426,7 +426,7 @@ define('video-player', [
     var handleMuteVideoButtonClick = function handleMuteVideoButtonClick(clickEvent) {
         var element = clickEvent.target;
 
-        if (!element.dataset.targetVideo) {
+        if (!_.get(element, ['dataset', 'targetVideo'])) {
             throw new Error('Button Must Have Target');
         }
 

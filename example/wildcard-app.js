@@ -54,10 +54,15 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, observable, sdk, shaka, Player, app) {
+    var pcastExpress;
+    var subscriberMediaStream = null;
+    var subscriberPlayer = null;
+    var publisher;
+    var publisherPlayer;
+
     var init = function init() {
         var authWildcardToken = new observable.Observable();
         var publisherWildcardToken = new observable.Observable();
-        var pcastExpress;
 
         var createAuthToken = function createStreamToken() {
             var data = {
@@ -109,9 +114,6 @@ requirejs([
                 authToken: authToken
             });
         };
-
-        var publisher;
-        var publisherPlayer;
 
         var publishWithToken = function() {
             if (publisherWildcardToken.getValue()) {
@@ -195,21 +197,6 @@ requirejs([
             });
         };
 
-        var stopPublisher = function() {
-            if (publisher) {
-                publisher.stop();
-                publisher = null;
-                $('#stopPublisher').addClass('disabled');
-            }
-
-            if (publisherPlayer) {
-                publisherPlayer.stop();
-            }
-        };
-
-        var subscriberMediaStream = null;
-        var subscriberPlayer = null;
-
         var subscribe = function subscribe() {
             var streamId = $('.streamIdForPublishing').val();
             var remoteVideoEl = $('#remoteVideo')[0];
@@ -264,18 +251,6 @@ requirejs([
 
                 $('#stopSubscriber').removeClass('disabled');
             });
-        };
-
-        var stopSubscriber = function(reason) {
-            if (subscriberMediaStream) {
-                subscriberMediaStream.stop(reason);
-                subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
-            }
-
-            if (subscriberPlayer) {
-                subscriberPlayer.stop();
-            }
         };
 
         function onMonitorEvent(error, response) {
@@ -371,6 +346,42 @@ requirejs([
             authDisposable.dispose();
         });
     };
+
+    var stopPublisher = function() {
+        if (publisher) {
+            publisher.stop();
+            publisher = null;
+            $('#stopPublisher').addClass('disabled');
+        }
+
+        if (publisherPlayer) {
+            publisherPlayer.stop();
+        }
+    };
+
+    var stopSubscriber = function(reason) {
+        if (subscriberMediaStream) {
+            subscriberMediaStream.stop(reason);
+            subscriberMediaStream = null;
+            $('#stopSubscriber').addClass('disabled');
+        }
+
+        if (subscriberPlayer) {
+            subscriberPlayer.stop();
+        }
+    };
+
+    $('#applicationId').change(function() {
+        stopPublisher();
+        stopSubscriber();
+        init();
+    });
+
+    $('#secret').change(function() {
+        stopPublisher();
+        stopSubscriber();
+        init();
+    });
 
     $(function() {
         app.init();
