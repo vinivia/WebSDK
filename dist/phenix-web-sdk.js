@@ -4631,7 +4631,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-04-25T23:11:27Z',
+                version: '2018-05-15T00:00:21Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4983,7 +4983,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-04-25T23:11:27Z';
+    var sdkVersion = '2018-05-15T00:00:21Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -5040,7 +5040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (phenixRTC.webrtcSupported) {
-            setLocalH264Profile.call(this);
+            setEnvironmentCodecDefaults.call(this);
             setAudioState.call(this);
         }
     }
@@ -5320,6 +5320,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
 
+                    if (phenixRTC.browser === 'Opera' && that._h264ProfileIds.length > 0) {
+                        // For publishing we need any profile and level that is equal to or greater than the offer's profile and level
+                        var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
+                        var preferredLevelId = sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
+
+                        if (!preferredLevelId) {
+                            that._logger.warn('[%s] Unable to find new publisher h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
+                                streamId, profileLevelIdToReplace, that._h264ProfileIds);
+                        } else if (profileLevelIdToReplace !== preferredLevelId) {
+                            that._logger.info('[%s] Replacing publisher h264 profile level id [%s] with new value [%s] in offer sdp',
+                                streamId, profileLevelIdToReplace, preferredLevelId);
+
+                            offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, profileLevelIdToReplace, preferredLevelId);
+                        }
+                    }
+
                     return createPublisherPeerConnection.call(that, peerConnectionConfig, streamToPublish, streamId, offerSdp, streamTelemetry, function(phenixPublisher, error) {
                         streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
 
@@ -5420,14 +5436,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && that._h264ProfileId && isMobile()) {
-                        var profileLevelIdToReplace = sdpUtil.getH264ProfileId(offerSdp);
+                    if (((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                        // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
+                        var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
+                        var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
 
-                        if (profileLevelIdToReplace !== that._h264ProfileId) {
-                            that._logger.info('[%s] Replacing h264 profile level id [%s] with new value [%s] in offer sdp',
-                                streamId, profileLevelIdToReplace, that._h264ProfileId);
+                        if (!preferredLevelId) {
+                            that._logger.warn('[%s] Unable to find new subscriber h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
+                                streamId, profileLevelIdToReplace, that._h264ProfileIds);
+                        } else if (profileLevelIdToReplace !== preferredLevelId) {
+                            that._logger.info('[%s] Replacing subscriber h264 profile level id [%s] with new value [%s] in offer sdp',
+                                streamId, profileLevelIdToReplace, preferredLevelId);
 
-                            offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, that._h264ProfileId);
+                            offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, profileLevelIdToReplace, preferredLevelId);
                         }
                     }
 
@@ -5866,7 +5887,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         callback(publisher);
     }
 
-    function setLocalH264Profile() {
+    function setEnvironmentCodecDefaults() {
         var that = this;
         var peerConnection = new phenixRTC.RTCPeerConnection();
 
@@ -5877,15 +5898,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         peerConnection.createOffer(function(offer) {
-            var h264ProfileId = sdpUtil.getH264ProfileId(offer.sdp);
+            var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
 
-            if (!h264ProfileId) {
+            if (h264ProfileIds.length === 0) {
                 return that._logger.info('Unable to find local h264 profile level id');
             }
 
-            that._logger.info('Found local h264 profile level id [%s]', h264ProfileId, offer.sdp);
+            that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
 
-            that._h264ProfileId = h264ProfileId;
+            that._h264ProfileIds = h264ProfileIds;
         }, function(e) {
             that._logger.error('Unable to create offer to get local h264 profile level id', e);
         }, {
@@ -17412,7 +17433,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = getGlobal()['__phenixPageLoadTime'] || getGlobal()['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
+    var sdkVersion = '2018-05-15T00:00:21Z' || '?';
     var releaseVersion = '2018.2.4';
 
     function Logger() {
@@ -24136,7 +24157,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             streamToken: streamToken,
             createStream: {
                 sessionId: this.getSessionId(),
-                options: ['data-quality-notifications'],
+                options: ['data-quality-notifications', rttString],
                 connectUri: options.connectUri,
                 connectOptions: options.connectOptions || [],
                 tags: options.tags || [],
@@ -24147,7 +24168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
                 streamId: '',
-                options: [streamType, browser, browserWithVersion, rttString],
+                options: [streamType, browser, browserWithVersion],
                 apiVersion: this._mqWebSocket.getApiVersion()
             };
 
@@ -25469,8 +25490,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var config = {
         urls: {
             local: '',
-            staging: 'https://telemetry-stg.phenixp2p.com',
-            production: 'https://telemetry.phenixp2p.com'
+            staging: 'https://telemetry-stg.phenixrts.com',
+            production: 'https://telemetry.phenixrts.com'
         }
     };
 
@@ -28757,25 +28778,84 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     }
 
-    sdpUtil.prototype.getH264ProfileId = function getUserMedia(offerSdp) {
+    sdpUtil.prototype.getH264ProfileIds = function getH264ProfileIds(offerSdp) {
         assert.isStringNotEmpty(offerSdp, 'offerSdp');
 
-        var h264ProfileIdMatch = _.get(offerSdp.match(h264ProfileIdRegex), '0', '');
+        var h264ProfileIds = [];
+        var h264ProfileIdMatch = offerSdp.match(h264ProfileIdRegex);
+        var restOfOffer = offerSdp;
 
-        return _.get(h264ProfileIdMatch.split('='), '1', null);
+        while (h264ProfileIdMatch) {
+            var h264ProfileId = _.get(h264ProfileIdMatch, '0', '');
+
+            h264ProfileIds.push(h264ProfileId.split('=')[1]);
+
+            restOfOffer = restOfOffer.substring(h264ProfileIdMatch.index + h264ProfileId.length, offerSdp.length);
+            h264ProfileIdMatch = restOfOffer.match(h264ProfileIdRegex);
+        }
+
+        return h264ProfileIds;
     };
 
-    sdpUtil.prototype.replaceH264ProfileId = function getUserMedia(offerSdp, newProfileId) {
+    sdpUtil.prototype.replaceH264ProfileId = function replaceH264ProfileId(offerSdp, profileIdToReplace, newProfileId) {
         assert.isStringNotEmpty(offerSdp, 'offerSdp');
         assert.isStringNotEmpty(newProfileId, 'newProfileId');
 
-        var currentProfileId = this.getH264ProfileId(offerSdp);
+        var profileIds = this.getH264ProfileIds(offerSdp);
 
-        if (!currentProfileId) {
+        if (!_.includes(profileIds, profileIdToReplace)) {
             return offerSdp;
         }
 
-        return offerSdp.replace('profile-level-id=' + currentProfileId, 'profile-level-id=' + newProfileId);
+        return offerSdp.replace('profile-level-id=' + profileIdToReplace, 'profile-level-id=' + newProfileId);
+    };
+
+    sdpUtil.prototype.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
+        if (_.includes(profileIds, replaceProfileId)) {
+            return replaceProfileId;
+        }
+
+        var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
+            var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
+            var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
+            var profile = parseInt(profileId.substring(0, 2), 16);
+            var level = parseInt(profileId.substring(4, 6), 16);
+
+            // We prefer the profile that we are replacing
+            if (selectedProfile !== profile) {
+                return selectedProfileId;
+            }
+
+            return selectedLevel >= level ? selectedProfileId : profileId;
+        }, replaceProfileId);
+
+        return nextProfileId === replaceProfileId ? null : nextProfileId;
+    };
+
+    sdpUtil.prototype.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
+        var matchingProfile = this.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(profileIds, replaceProfileId);
+
+        if (matchingProfile) {
+            return matchingProfile;
+        }
+
+        var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
+            var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
+            var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
+            var profile = parseInt(profileId.substring(0, 2), 16);
+            var level = parseInt(profileId.substring(4, 6), 16);
+
+            // We prefer the profile that we are replacing
+            if (selectedProfile < profile) {
+                return profileId;
+            } else if (profile < selectedProfile) {
+                return selectedProfileId;
+            }
+
+            return selectedLevel > level ? selectedProfileId : profileId;
+        }, replaceProfileId);
+
+        return nextProfileId === replaceProfileId ? null : nextProfileId;
     };
 
     return new sdpUtil();
@@ -30983,7 +31063,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
+    var sdkVersion = '2018-05-15T00:00:21Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -31238,7 +31318,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-04-25T23:11:27Z' || '?';
+    var sdkVersion = '2018-05-15T00:00:21Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -31516,8 +31596,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var config = {
         urls: {
             local: '',
-            staging: 'https://telemetry-stg.phenixp2p.com',
-            production: 'https://telemetry.phenixp2p.com'
+            staging: 'https://telemetry-stg.phenixrts.com',
+            production: 'https://telemetry.phenixrts.com'
         }
     };
 
