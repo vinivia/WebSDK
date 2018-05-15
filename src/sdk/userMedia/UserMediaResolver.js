@@ -421,8 +421,8 @@ define([
                     userMedia: userMedia,
                     options: {
                         frameRate: hasVideo ? frameRate : null,
-                        resolution: hasVideo ? resolution.height : null,
-                        aspectRatio: hasVideo ? resolution.aspectRatio : null
+                        resolution: hasVideo ? _.get(resolution, ['height'], null) : null,
+                        aspectRatio: hasVideo ? _.get(resolution, ['aspectRatio'], null) : null
                     }
                 });
             }

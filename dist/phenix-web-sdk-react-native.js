@@ -4629,7 +4629,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-05-15T22:36:15Z',
+                version: '2018-05-15T23:23:03Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -4981,7 +4981,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-05-15T22:36:15Z';
+    var sdkVersion = '2018-05-15T23:23:03Z';
     var defaultToHlsNative = true;
 
     function PCast(options) {
@@ -10078,8 +10078,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     userMedia: userMedia,
                     options: {
                         frameRate: hasVideo ? frameRate : null,
-                        resolution: hasVideo ? resolution.height : null,
-                        aspectRatio: hasVideo ? resolution.aspectRatio : null
+                        resolution: hasVideo ? _.get(resolution, ['height'], null) : null,
+                        aspectRatio: hasVideo ? _.get(resolution, ['aspectRatio'], null) : null
                     }
                 });
             }
@@ -17428,7 +17428,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory= 'websdk';
     var start = getGlobal()['__phenixPageLoadTime'] || getGlobal()['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-15T22:36:15Z' || '?';
+    var sdkVersion = '2018-05-15T23:23:03Z' || '?';
     var releaseVersion = '2018.2.4';
 
     function Logger() {
@@ -31058,7 +31058,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-15T22:36:15Z' || '?';
+    var sdkVersion = '2018-05-15T23:23:03Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -31313,7 +31313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-05-15T22:36:15Z' || '?';
+    var sdkVersion = '2018-05-15T23:23:03Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
