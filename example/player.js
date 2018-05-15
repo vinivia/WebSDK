@@ -143,7 +143,11 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-play play video-control';
-        _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+        if (element.dataset) {
+            element.dataset.targetVideo = this.videoId;
+        }
+
         element.onclick = handlePlayButtonClick.bind(this);
 
         return element;
@@ -153,7 +157,11 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-pause video-control pause';
-        _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+        if (element.dataset) {
+            element.dataset.targetVideo = this.videoId;
+        }
+
         element.onclick = handlePauseButtonClick.bind(this);
 
         return element;
@@ -163,7 +171,11 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-facetime-video toggle-off video-control mute-video';
-        _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+        if (element.dataset) {
+            element.dataset.targetVideo = this.videoId;
+        }
+
         element.onclick = handleMuteVideoButtonClick.bind(this);
 
         return element;
@@ -173,7 +185,11 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-volume-off video-control mute';
-        _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+        if (element.dataset) {
+            element.dataset.targetVideo = this.videoId;
+        }
+
         element.onclick = handleMuteButtonClick.bind(this);
 
         return element;
@@ -183,7 +199,11 @@ define('video-player', [
         var element = document.createElement('span');
 
         element.className = 'glyphicon glyphicon-fullscreen video-control fullscreen';
-        _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+        if (element.dataset) {
+            element.dataset.targetVideo = this.videoId;
+        }
+
         element.onclick = handleFullscreenButtonClick.bind(this);
 
         return element;
@@ -208,7 +228,11 @@ define('video-player', [
             var element = document.createElement('span');
 
             element.className = 'video-control ' + timingElement.className;
-            _.set(element, ['dataset', 'targetVideo'], this.videoId);
+
+            if (element.dataset) {
+                element.dataset.targetVideo = this.videoId;
+            }
+
             element.title = timingElement.title;
             element.innerHTML = '0.0';
 

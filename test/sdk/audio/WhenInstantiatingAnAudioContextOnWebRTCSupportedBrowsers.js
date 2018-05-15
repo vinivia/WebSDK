@@ -35,6 +35,10 @@ define([
         var audioContext;
 
         beforeEach(function() {
+            if (!window.AudioContext) {
+                return this.skip();
+            }
+
             audioContext = new AudioContext();
         });
 
@@ -64,12 +68,20 @@ define([
             var nativeAudioContext;
 
             beforeEach(function() {
+                if (!audioContext) {
+                    return;
+                }
+
                 audioContext.init();
 
                 nativeAudioContext = audioContext.getNativeAudioContext();
             });
 
             afterEach(function() {
+                if (!nativeAudioContext) {
+                    return;
+                }
+
                 nativeAudioContext.close();
             });
 

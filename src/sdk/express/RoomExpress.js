@@ -304,7 +304,7 @@ define([
     };
 
     RoomExpress.prototype.publishScreenToRoom = function publishScreenToRoom(options, callback) {
-        var publishScreenOptions = _.assign({}, options, {mediaConstraints: {screen: true}});
+        var publishScreenOptions = _.assign({mediaConstraints: {screen: true}}, options);
 
         this.publishToRoom(publishScreenOptions, callback);
     };
