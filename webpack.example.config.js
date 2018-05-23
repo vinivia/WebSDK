@@ -34,18 +34,6 @@ var configs = [{
     },
     plugins: [
         new CleanWebpackPlugin([path.join(distDir, 'workflow-example')]),
-        new webpack.optimize.UglifyJsPlugin({
-            beautify: false,
-            mangle: {
-                'screw_ie8': true,
-                'keep_fnames': false
-            },
-            compress: {
-                'screw_ie8': true,
-                'warnings': false
-            },
-            comments: false
-        }),
         new webpack.DefinePlugin({'window.BUILD_ENV': JSON.stringify('webpack')}),
         new CaseSensitivePathsPlugin(),
         new HtmlWebpackPlugin({
@@ -95,7 +83,8 @@ var configs = [{
             'video-player': path.join(appDir, 'player.js'),
             'app-setup': path.join(appDir, 'app-setup.js')
         }
-    }
+    },
+    optimization: {minimize: true}
 }];
 
 module.exports = configs;
