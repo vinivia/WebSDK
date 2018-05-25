@@ -293,6 +293,7 @@ define('app-setup', [
             'real-time': 'Real-time',
             'prefer-vp8': 'Real-time VP8',
             'prefer-h264': 'Real-time H264',
+            'single-bitrate': 'Real-time SBR',
             'broadcast': 'Broadcast',
             'streaming': 'Live',
             'on-demand': 'On Demand'

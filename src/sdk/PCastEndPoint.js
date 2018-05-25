@@ -43,7 +43,7 @@ define([
         this._sessionTelemetry = sessionTelemetry;
     }
 
-    PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixp2p.com';
+    PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixrts.com';
 
     PCastEndPoint.prototype.getBaseUri = function() {
         return this._baseUri;
