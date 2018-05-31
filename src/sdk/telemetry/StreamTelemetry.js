@@ -126,9 +126,11 @@ define([
         };
 
         _.addEventListener(video, 'loadeddata', listenForFirstFrame);
+        _.addEventListener(video, 'loadedmetadata', listenForFirstFrame);
 
         var timeToFirstFrameListenerDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'loadeddata', listenForFirstFrame);
+            _.removeEventListener(video, 'loadedmetadata', listenForFirstFrame);
         });
 
         // Ensure TTFF is not recorded if stop is called before first frame

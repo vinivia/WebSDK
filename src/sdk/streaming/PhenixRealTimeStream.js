@@ -35,7 +35,6 @@ define([
         this._options = options;
         this._logger = logger;
         this._renderer = null;
-        this._element = null;
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
         this._childrenStreams = [];

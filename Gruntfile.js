@@ -23,7 +23,6 @@ const webpackConfigs = require('./webpack.config');
 console.log('Using version', sdkVersion);
 
 module.exports = function(grunt) {
-    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-sed');
     grunt.loadNpmTasks('grunt-webpack');
@@ -31,11 +30,10 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', []);
     grunt.registerTask('pack', ['zip']);
-    grunt.registerTask('build', ['default', 'clean', 'copy:chrome-app', 'webpack', 'sed', 'pack']);
+    grunt.registerTask('build', ['default', 'webpack', 'copy:chrome-app', 'sed', 'pack']);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        clean: ['build'],
         copy: {
             'chrome-app': {
                 files: [

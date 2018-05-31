@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 /* global __dirname module */
-var webpack = require('webpack');
-var path = require('path');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var CleanWebpackPlugin = require('clean-webpack-plugin');
-
+const webpack = require('webpack');
+const path = require('path');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const appDir = path.join(__dirname, './example');
 const distDir = path.join(__dirname, './dist');
 

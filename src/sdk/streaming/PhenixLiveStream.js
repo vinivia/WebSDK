@@ -18,10 +18,12 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-rtc',
+    'phenix-web-player',
     './ShakaRenderer',
     './PhenixPlayerRenderer',
+    './FlashRenderer',
     './stream.json'
-], function(_, assert, event, rtc, ShakaRenderer, PhenixPlayerRenderer, streamEnums) {
+], function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
     'use strict';
 
     function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
@@ -33,7 +35,6 @@ define([
         this._shaka = shaka;
         this._logger = logger;
         this._renderer = null;
-        this._element = null;
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
     }
@@ -54,6 +55,10 @@ define([
             break;
         case streamEnums.types.hls.name:
             this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+
+            break;
+        case streamEnums.types.rtmp.name:
+            this._renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         default:
@@ -133,6 +138,19 @@ define([
 
     PhenixLiveStream.prototype.getRenderer = function getRenderer() {
         return this._renderer;
+    };
+
+    PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
+        switch (type) {
+        case streamEnums.types.dash.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
+        case streamEnums.types.hls.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+        case streamEnums.types.rtmp.name:
+            return FlashRenderer.isSupported();
+        default:
+            return false;
+        }
     };
 
     return PhenixLiveStream;

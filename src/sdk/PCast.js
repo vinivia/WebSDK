@@ -20,7 +20,6 @@ define([
     'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
-    'phenix-web-player',
     './audio/AudioContext',
     './PCastProtocol',
     './PCastEndPoint',
@@ -38,7 +37,7 @@ define([
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, phenixWebPlayer, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -70,6 +69,7 @@ define([
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shaka = options.shaka;
         this._videojs = options.videojs || phenixRTC.global.videojs;
+        this._rtmpOptions = options.rtmp || {};
         this._status = 'offline';
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
@@ -100,6 +100,10 @@ define([
         if (phenixRTC.webrtcSupported) {
             setEnvironmentCodecDefaults.call(this);
             setAudioState.call(this);
+
+            if (PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
+                this._logger.info('Flash detected');
+            }
         }
     }
 
@@ -1502,6 +1506,8 @@ define([
     function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
+        var rtmpQuery = /a=x-rtmp:(rtmp:\/\/[^\n]*)/m;
+        var rtmpMatch = offerSdp.match(rtmpQuery);
         var dashMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]mpd\??[^\s]*)/m);
         var hlsMatch = offerSdp.match(/a=x-playlist:([^\n]*[.]m3u8\??[^\s]*)/m);
         var manifestUrl = _.get(dashMatch, [1], '');
@@ -1509,13 +1515,39 @@ define([
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
         var preferHls = isIOS() || phenixRTC.browser === 'Safari';
+        var canPlaybackRtmp = PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name);
+        var canPlaybackDash = PhenixLiveStream.canPlaybackType(streamEnums.types.dash.name);
+        var canPlaybackHls = PhenixLiveStream.canPlaybackType(streamEnums.types.hls.name);
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (dashManifestOffered && phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !preferHls) {
+        if (rtmpMatch && canPlaybackRtmp) {
+            var rtmpUris = [];
+
+            while (rtmpMatch) {
+                var rtmpUriAndAttributes = _.get(rtmpMatch, [1], '');
+                var rtmpUri = _.get(rtmpUriAndAttributes.match(/(rtmp:\/\/[^\n\s]*)/), [0]);
+                var bitrate = _.get(rtmpUriAndAttributes.match(/bitrate=([^\n\s;]*)/), [1]);
+                var resolution = _.get(rtmpUriAndAttributes.match(/resolution=([^\n\s;]*)/), [1]);
+
+                offerSdp = offerSdp.replace(rtmpUriAndAttributes, '');
+
+                if (rtmpUri) {
+                    rtmpUris.push({
+                        uri: rtmpUri,
+                        bitrate: bitrate,
+                        resolution: resolution
+                    });
+                }
+
+                rtmpMatch = offerSdp.match(rtmpQuery);
+            }
+
+            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({}, this._rtmpOptions, options));
+        } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
 
             if (options.isDrmProtectedContent) {
@@ -1530,7 +1562,7 @@ define([
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsPlaylistOffered && phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+        } else if (hlsPlaylistOffered && canPlaybackHls) {
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
 
             if (options.hlsTargetDuration) {
@@ -1544,11 +1576,11 @@ define([
 
         if (!dashManifestOffered && !hlsPlaylistOffered) {
             that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
-        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback && !phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+        } else if (!canPlaybackDash && !canPlaybackHls) {
             that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
-        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback) {
+        } else if (!canPlaybackDash) {
             that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
-        } else if (!phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback) {
+        } else if (!canPlaybackHls) {
             that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
         }
 

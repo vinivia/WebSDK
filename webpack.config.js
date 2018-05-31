@@ -19,14 +19,17 @@ const path = require('path');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const merge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const assert = require('phenix-web-assert/dist/phenix-web-assert.min');
 const assertNames = '^' + Object.keys(assert.__proto__).join('$|^') + '$';
 const uglifyManglePropRegex = new RegExp('^_[^_].*' + '|^global$|' + assertNames);
+const distDir = path.resolve(__dirname, './dist');
 
 var baseConfig = {
+    mode: 'production',
     target: 'web',
     output: {
-        path: path.resolve(__dirname, './dist'),
+        path: distDir,
         library: 'phenix-web-sdk',
         libraryTarget: 'umd',
         umdNamedDefine: true
@@ -118,5 +121,7 @@ var lightConfigs = mainConfigs.map(function(config) {
 
     return config;
 });
+
+normalConfigs[0].plugins.push(new CleanWebpackPlugin(distDir, {exclude: ['rtmp-flash-renderer.swf', '.gitignore']}));
 
 module.exports = normalConfigs.concat(lightConfigs);

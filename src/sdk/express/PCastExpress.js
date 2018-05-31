@@ -99,6 +99,8 @@ define([
 
         this._reconnectCount = 0;
         this._reauthCount = 0;
+
+        this._logger.info('Disposed PCast Express Instance');
     };
 
     PCastExpress.prototype.getPCast = function getPCast() {
@@ -345,6 +347,8 @@ define([
 
         this.waitForOnline(function(error) {
             if (error) {
+                that._logger.error('Failed to subscribe after error waiting for online status', error);
+
                 return callback(error);
             }
 
@@ -354,10 +358,14 @@ define([
 
             that._adminAPI.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
+                    that._logger.error('Failed to create stream token for subscribing', error);
+
                     return callback(error);
                 }
 
                 if (response.status !== 'ok') {
+                    that._logger.warn('Failed to create stream token for subscribing with status [%s]', response.status);
+
                     return callback(null, response);
                 }
 
@@ -635,19 +643,25 @@ define([
 
         that.waitForOnline(function(error) {
             if (error) {
+                that._logger.error('Failed to create stream token for publishing after waiting for online status', error);
+
                 return callback(error);
             }
 
             var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
 
-            that._logger.info('Session Id [%s]', sessionId);
+            that._logger.info('[%s] Creating stream token for publishing', sessionId);
 
             that._adminAPI.createStreamTokenForPublishing(sessionId, options.capabilities, function(error, response) {
                 if (error) {
+                    that._logger.error('[%s] Failed to create stream token for publishing', sessionId, error);
+
                     return callback(error);
                 }
 
                 if (response.status !== 'ok') {
+                    that._logger.warn('[%s] Failed to create stream token for publishing with status [%s]', sessionId, response.status);
+
                     return callback(null, response);
                 }
 
@@ -678,6 +692,8 @@ define([
 
                 that._publishers[placeholder] = true;
 
+                that._logger.warn('Retrying publisher after failure with reason [%s]', reason);
+
                 if (reason === 'camera-track-failure') {
                     publisher.stop(reason, false);
                     that.publish(options, callback);
@@ -700,6 +716,8 @@ define([
             }
 
             if (status !== 'ok') {
+                that._logger.warn('Failure to publish with status [%s]', status);
+
                 return callback(null, {status: status});
             }
 
@@ -772,6 +790,8 @@ define([
             }
 
             if (status === 'streaming-not-ready') {
+                that._logger.warn('Failure to subscribe with status [%s]. Try again in a few seconds.', status);
+
                 return callback(null, {
                     status: status,
                     retry: _.bind(retrySubscriber, that, status)
@@ -779,6 +799,8 @@ define([
             }
 
             if (status !== 'ok') {
+                that._logger.warn('Failure to subscribe with status [%s]', status);
+
                 return callback(null, {status: status});
             }
 
@@ -822,6 +844,8 @@ define([
                 }
 
                 if (errorType === 'phenix-player' && error.severity === phenixWebPlayer.errors.severity.RECOVERABLE) {
+                    that._logger.warn('[%s] Recoverable error occurred while playing stream with Express API. Attempting to subscribe again.', expressSubscriber.getStreamId(), error);
+
                     var reAuthOptions = _.assign({isContinuation: true}, options);
 
                     delete reAuthOptions.streamToken;
@@ -829,7 +853,7 @@ define([
                     return that.subscribe(reAuthOptions, callback);
                 }
 
-                that._logger.warn('[%s] Error while playing stream with Express API. Stopping stream.', expressSubscriber.getStreamId(), error);
+                that._logger.warn('[%s] Error occurred while playing stream with Express API. Stopping stream.', expressSubscriber.getStreamId(), error);
 
                 expressSubscriber.stop();
 

@@ -31,6 +31,7 @@ if (window.BUILD_ENV === 'webpack') {
             'shaka-player': 'shaka-player/dist/shaka-player.compiled',
             'video-player': 'player',
             'app-setup': 'app-setup',
+            'mediaelement': 'mediaelement/build/mediaelement',
             'phenix-web-lodash-light': 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min',
             'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
             'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
@@ -55,9 +56,10 @@ requirejs([
     'fingerprintjs2',
     'phenix-web-sdk',
     'shaka-player',
+    'mediaelement', // Required. Imports global variable for rtmp player
     'video-player',
     'app-setup'
-], function($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
+], function($, _, bootstrapNotify, Fingerprint, sdk, shaka, MediaElement, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localPrimaryPlayer = null;
@@ -110,7 +112,8 @@ requirejs([
             var uri = app.getUri();
             var pcastOptions = {
                 uri: uri,
-                shaka: app.getUrlParameter('shaka') ? shaka : null
+                shaka: app.getUrlParameter('shaka') ? shaka : null,
+                rtmp: {swfSrc: './rtmp-flash-renderer.swf'}
             };
 
             adminBaseUri = app.getBaseUri();

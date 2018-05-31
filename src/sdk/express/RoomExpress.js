@@ -80,6 +80,8 @@ define([
         if (this._shouldDisposeOfPCastExpress) {
             this._pcastExpress.dispose();
         }
+
+        this._logger.info('Disposed Room Express Instance');
     };
 
     RoomExpress.prototype.getPCastExpress = function getPCastExpress() {
@@ -448,7 +450,7 @@ define([
                     delete that._membersSubscriptions[room.getRoomId()];
                 }
 
-                that._logger.info('Successfully disposed of Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
+                that._logger.info('Successfully disposed Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
                 roomService.stop();
 

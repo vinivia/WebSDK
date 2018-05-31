@@ -55,6 +55,8 @@ define([
         if (this._shouldDisposeOfRoomExpress) {
             this._roomExpress.dispose();
         }
+
+        this._logger.info('Disposed Channel Express Instance');
     };
 
     ChannelExpress.prototype.getRoomExpress = function getPCastExpress() {

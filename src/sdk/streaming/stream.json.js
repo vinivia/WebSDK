@@ -48,6 +48,10 @@ define([
             hls: {
                 id: 2,
                 name: 'hls'
+            },
+            rtmp: {
+                id: 0,
+                name: 'rtmp'
             }
         },
         streamEvents: {
