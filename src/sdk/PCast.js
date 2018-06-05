@@ -75,6 +75,7 @@ define([
         this._disposables = new disposable.DisposableList();
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
+        this._h264ProfileIds = [];
 
         var that = this;
 
