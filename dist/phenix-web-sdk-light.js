@@ -3120,7 +3120,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-06T19:17:19Z';
+    var sdkVersion = '2018-06-07T19:08:22Z';
 
     function PCast(options) {
         options = options || {};
@@ -4040,22 +4040,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             peerConnection.addTransceiver('video');
         }
 
-        peerConnection.createOffer(function(offer) {
-            var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
+        try {
+            peerConnection.createOffer(function(offer) {
+                var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
 
-            if (h264ProfileIds.length === 0) {
-                return that._logger.info('Unable to find local h264 profile level id');
-            }
+                if (h264ProfileIds.length === 0) {
+                    return that._logger.info('Unable to find local h264 profile level id');
+                }
 
-            that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
+                that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
 
-            that._h264ProfileIds = h264ProfileIds;
-        }, function(e) {
-            that._logger.error('Unable to create offer to get local h264 profile level id', e);
-        }, {
-            offerToReceiveAudio: true,
-            offerToReceiveVideo: true
-        });
+                that._h264ProfileIds = h264ProfileIds;
+            }, function(e) {
+                that._logger.error('Unable to create offer to get local h264 profile level id', e);
+            }, {
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            });
+        } catch (e) {
+            that._logger.error('Failed to set environment defaults. Creating the Offer failed', e);
+        }
     }
 
     function setAudioState(done) {
@@ -8908,7 +8912,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-06T19:17:19Z' || '?';
+    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9163,7 +9167,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-06T19:17:19Z' || '?';
+    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10583,7 +10587,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-06T19:17:19Z',
+                version: '2018-06-07T19:08:22Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16432,8 +16436,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-06T19:17:19Z' || '?';
-    var releaseVersion = '2018.2.7';
+    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
+    var releaseVersion = '2018.2.8';
 
     function Logger() {
         this._appenders = [];

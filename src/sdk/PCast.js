@@ -960,22 +960,26 @@ define([
             peerConnection.addTransceiver('video');
         }
 
-        peerConnection.createOffer(function(offer) {
-            var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
+        try {
+            peerConnection.createOffer(function(offer) {
+                var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
 
-            if (h264ProfileIds.length === 0) {
-                return that._logger.info('Unable to find local h264 profile level id');
-            }
+                if (h264ProfileIds.length === 0) {
+                    return that._logger.info('Unable to find local h264 profile level id');
+                }
 
-            that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
+                that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
 
-            that._h264ProfileIds = h264ProfileIds;
-        }, function(e) {
-            that._logger.error('Unable to create offer to get local h264 profile level id', e);
-        }, {
-            offerToReceiveAudio: true,
-            offerToReceiveVideo: true
-        });
+                that._h264ProfileIds = h264ProfileIds;
+            }, function(e) {
+                that._logger.error('Unable to create offer to get local h264 profile level id', e);
+            }, {
+                offerToReceiveAudio: true,
+                offerToReceiveVideo: true
+            });
+        } catch (e) {
+            that._logger.error('Failed to set environment defaults. Creating the Offer failed', e);
+        }
     }
 
     function setAudioState(done) {
