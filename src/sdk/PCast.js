@@ -126,10 +126,6 @@ define([
         if (phenixRTC.webrtcSupported) {
             setEnvironmentCodecDefaults.call(this);
             setAudioState.call(this);
-
-            if (PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
-                this._logger.info('Flash detected');
-            }
         }
     }
 
@@ -1545,7 +1541,6 @@ define([
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
         var preferHls = isIOS() || phenixRTC.browser === 'Safari';
-        var canPlaybackRtmp = PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name);
         var canPlaybackDash = PhenixLiveStream.canPlaybackType(streamEnums.types.dash.name);
         var canPlaybackHls = PhenixLiveStream.canPlaybackType(streamEnums.types.hls.name);
 
@@ -1554,8 +1549,10 @@ define([
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (rtmpMatch && canPlaybackRtmp) {
+        if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
             var rtmpUris = [];
+
+            this._logger.info('Selecting flash playback for rtmp.');
 
             while (rtmpMatch) {
                 var rtmpUriAndAttributes = _.get(rtmpMatch, [1], '');
@@ -1578,6 +1575,8 @@ define([
 
             return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({}, this._rtmpOptions, options));
         } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
+            this._logger.info('Selecting dash playback for live stream.');
+
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
 
             if (options.isDrmProtectedContent) {
@@ -1593,6 +1592,8 @@ define([
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
         } else if (hlsPlaylistOffered && canPlaybackHls) {
+            this._logger.info('Selecting hls playback for live stream.');
+
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
 
             if (options.hlsTargetDuration) {

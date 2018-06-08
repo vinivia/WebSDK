@@ -21,8 +21,9 @@ define([
     'phenix-web-http',
     'phenix-web-player',
     'phenix-rtc',
+    '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, logging, event, http, phenixWebPlayer, rtc, streamEnums) {
+], function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;
@@ -42,15 +43,14 @@ define([
         this._options = options;
         this._renderer = null;
         this._phenixVideo = null;
+        this._playerElement = null;
         this._namedEvents = new event.NamedEvents();
+        this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
 
         this._onStalled = _.bind(stalled, this);
         this._onEnded = _.bind(ended, this);
         this._onError = _.bind(handleError, this);
-        this._MediaElement = options.MediaElement || rtc.global.MediaElement;
         this._swfSrc = options.swfSrc || defaultSwfFileSrc;
-        this._swfSrcPath = this._swfSrc.substring(0, this._swfSrc.lastIndexOf('/') + 1);
-        this._swfSrcFileName = this._swfSrc.substring(this._swfSrc.lastIndexOf('/') + 1);
     }
 
     FlashRenderer.isSupported = function() {
@@ -62,52 +62,32 @@ define([
     };
 
     FlashRenderer.prototype.start = function(elementToAttachTo) {
-        if (!this._MediaElement) {
-            throw new Error('MediaElement must exist. Please include mediaelement.js library');
-        }
-
         var that = this;
-        var sources = _.map(this._streamsInfo, function(info) {
-            return {
-                src: info.uri,
-                type: 'video/rtmp'
-            };
-        });
-        var firstRtmpUri = _.get(this._streamsInfo, [0, 'uri'], '');
-        var uriEndpoint = firstRtmpUri.substring(0, firstRtmpUri.lastIndexOf('/'));
+        var options = {
+            streamId: this._streamId,
+            swfSrc: this._swfSrc
+        };
 
-        this._phenixVideo = new rtc.PhenixVideo(elementToAttachTo);
+        this._originElement = elementToAttachTo;
+        this._phenixVideo = new rtc.PhenixVideo(elementToAttachTo, this._streamsInfo, 'flash', options);
 
         this._phenixVideo.hookUpEvents();
 
-        this._player = new this._MediaElement(this._phenixVideo.getElement(), {
-            flashStreamer: uriEndpoint,
-            plugins: ['flash', 'silverlight'],
-            alwaysShowControls: false,
-            success: function(mediaElement) {
-                that._playerMediaElement = mediaElement;
-            },
-            pluginPath: this._swfSrcPath,
-            filename: this._swfSrcFileName,
-            renderers: ['flash_video'],
-            error: that._onError
-        });
+        this._playerElement = this._phenixVideo.getElement();
 
-        this._streamTelemetry.recordTimeToFirstFrame(this._playerMediaElement);
-        this._streamTelemetry.recordRebuffering(this._playerMediaElement);
-        this._streamTelemetry.recordVideoResolutionChanges(this, this._playerMediaElement);
-        this._streamTelemetry.recordVideoPlayingAndPausing(this._playerMediaElement);
+        this._streamTelemetry.recordTimeToFirstFrame(this._originElement);
+        this._streamTelemetry.recordRebuffering(this._originElement);
+        this._streamTelemetry.recordVideoResolutionChanges(this, this._originElement);
+        this._streamTelemetry.recordVideoPlayingAndPausing(this._originElement);
 
-        this._player.setSrc(sources);
-
-        if (this._playerMediaElement) {
-            this._playerMediaElement.play();
+        if (this._playerElement) {
+            this._playerElement.play();
         }
 
-        _.addEventListener(this._playerMediaElement, 'stalled', that._onStalled, false);
-        _.addEventListener(this._playerMediaElement, 'pause', that._onStalled, false);
-        _.addEventListener(this._playerMediaElement, 'suspend', that._onStalled, false);
-        _.addEventListener(this._playerMediaElement, 'ended', that._onEnded, false);
+        _.addEventListener(this._originElement, 'stalled', that._onStalled, false);
+        _.addEventListener(this._originElement, 'pause', that._onStalled, false);
+        _.addEventListener(this._originElement, 'suspend', that._onStalled, false);
+        _.addEventListener(this._originElement, 'ended', that._onEnded, false);
 
         return elementToAttachTo;
     };
@@ -117,14 +97,25 @@ define([
 
         this._streamTelemetry.stop();
 
-        if (this._player) {
+        if (this._phenixVideo) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
-                disposePlayer.call(that);
+                if (that._playerElement) {
+                    _.removeEventListener(that._originElement, 'stalled', that._onStalled, false);
+                    _.removeEventListener(that._originElement, 'pause', that._onStalled, false);
+                    _.removeEventListener(that._originElement, 'suspend', that._onStalled, false);
+                    _.removeEventListener(that._originElement, 'ended', that._onEnded, false);
+                }
+
+                that._playerElement = null;
+                that._originElement = null;
 
                 that._namedEvents.fire(streamEnums.rendererEvents.ended.name, [reason]);
             };
 
             try {
+                this._phenixVideo.destroy();
+                this._phenixVideo = null;
+
                 finalizeStreamEnded();
 
                 this._logger.info('[%s] Flash player has been destroyed', this._streamId);
@@ -139,7 +130,7 @@ define([
     };
 
     FlashRenderer.prototype.getStats = function() {
-        if (!this._playerMediaElement) {
+        if (!this._playerElement) {
             return {
                 width: 0,
                 height: 0,
@@ -150,7 +141,7 @@ define([
         }
 
         var stat = {};
-        var currentTime = this._playerMediaElement.currentTime;
+        var currentTime = this._playerElement.currentTime;
         var trueCurrentTime = (_.now() - this._options.originStartTime) / 1000;
 
         stat.lag = Math.max(0.0, trueCurrentTime - currentTime);
@@ -178,55 +169,18 @@ define([
         return this._player;
     };
 
-    FlashRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function() {
-        this._logger.warn('Unable to detect dimensions changes');
+    FlashRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
+        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
-
-    function disposePlayer() {
-        this._player.pause();
-        this._player.setSrc({
-            src: '',
-            type: 'video/mp4'
-        });
-
-        if (this._player.load) {
-            this._player.load();
-        }
-
-        if (this._playerMediaElement && this._playerMediaElement.parentNode) {
-            this._playerMediaElement.parentNode.replaceChild(this._phenixVideo.getElement(), this._playerMediaElement);
-        }
-
-        if (this._phenixVideo) {
-            this._phenixVideo.destroy();
-            this._phenixVideo.src = '';
-        }
-
-        if (this._playerMediaElement) {
-            _.removeEventListener(this._playerMediaElement, 'stalled', this._onStalled, false);
-            _.removeEventListener(this._playerMediaElement, 'pause', this._onStalled, false);
-            _.removeEventListener(this._playerMediaElement, 'suspend', this._onStalled, false);
-            _.removeEventListener(this._playerMediaElement, 'ended', this._onEnded, false);
-        }
-
-        this._player = null;
-        this._phenixVideo = null;
-        this._playerMediaElement = null;
-    }
 
     function handleError(e) {
         this._namedEvents.fire(streamEnums.rendererEvents.error.name, ['flash-player', e]);
     }
 
     function reload() {
-        this._player.dispose();
+        this._phenixVideo.destroy();
 
-        this._player = null;
-
-        var videoElement = this._phenixVideo.getElement();
-
-        disposePlayer.call(this);
-        this.start(videoElement);
+        this.start(this._originElement);
     }
 
     function reloadIfAble() {
@@ -244,7 +198,7 @@ define([
     function canReload() {
         var hasElapsedMinTimeSinceLastReload = !this._lastReloadTime || _.now() - this._lastReloadTime > minTimeBeforeNextReload;
 
-        return this._playerMediaElement && !this._waitForLastChunk && this._player && this._playerMediaElement.buffered.length !== 0 && hasElapsedMinTimeSinceLastReload;
+        return this._playerElement && !this._waitForLastChunk && this._player && this._playerElement.buffered.length !== 0 && hasElapsedMinTimeSinceLastReload;
     }
 
     function stalled(event) {
@@ -252,10 +206,10 @@ define([
 
         that._logger.info('[%s] Loading flash player stalled caused by [%s] event.', that._streamId, event.type);
 
-        var currentVideoTime = that._playerMediaElement.currentTime;
+        var currentVideoTime = that._playerElement.currentTime;
 
         setTimeout(function() {
-            if (that._playerMediaElement && that._playerMediaElement.currentTime === currentVideoTime && !that._playerMediaElement.paused && canReload.call(that)) {
+            if (that._playerElement && that._playerElement.currentTime === currentVideoTime && !that._playerElement.paused && canReload.call(that)) {
                 that._logger.warn('Reloading stream after being stalled for [%s] seconds', timeoutForStallWithoutProgressToRestart / 1000);
 
                 reloadIfAble.call(that);

@@ -52,8 +52,8 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         cwd: 'generated/',
-                        src: ['rtmp-flash-renderer.swf'],
-                        dest: 'dist'
+                        src: ['**'],
+                        dest: 'dist/flash'
                     }
                 ]
             }

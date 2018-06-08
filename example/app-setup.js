@@ -314,6 +314,10 @@ define('app-setup', [
         };
     };
 
+    var getSwfFilePath = function() {
+        return './flash/rtmp-flash-renderer-2018.2.11.swf';
+    };
+
     return {
         init: init,
         getUri: getUri,
@@ -331,6 +335,7 @@ define('app-setup', [
         setLoggerVersion: setLoggerVersion,
         getModeFromAbbreviation: getModeFromAbbreviation,
         isMobile: isMobile,
-        getDefaultReplaceUrl: getDefaultReplaceUrl
+        getDefaultReplaceUrl: getDefaultReplaceUrl,
+        getSwfFilePath: getSwfFilePath
     };
 });

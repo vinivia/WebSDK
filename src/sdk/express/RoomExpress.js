@@ -69,6 +69,8 @@ define([
                     });
                 }, true);
 
+                that._logger.info('Resetting Room Express after change in pcast.');
+
                 that._membersSubscriptions = {};
                 that._roomServices = {};
                 that._activeRoomServices = [];

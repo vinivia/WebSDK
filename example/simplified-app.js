@@ -29,7 +29,6 @@ requirejs.config({
         'shaka-player': 'shaka-player/dist/shaka-player.compiled',
         'video-player': 'player',
         'app-setup': 'app-setup',
-        'mediaelement': 'mediaelement/build/mediaelement',
         'phenix-web-lodash-light': 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min',
         'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
         'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
@@ -51,10 +50,9 @@ requirejs([
     'lodash',
     'phenix-web-sdk',
     'shaka-player',
-    'mediaelement', // Required. Imports global variable for rtmp player
     'video-player',
     'app-setup'
-], function($, _, sdk, shaka, MediaElement, Player, app) {
+], function($, _, sdk, shaka, Player, app) {
     var pcastExpress;
     var publisher;
     var publisherPlayer;
@@ -68,9 +66,8 @@ requirejs([
                 authenticationData: app.getAuthData(),
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
-                MediaElement: MediaElement,
                 authToken: 'dud',
-                rtmp: {swfSrc: './rtmp-flash-renderer.swf'}
+                rtmp: {swfSrc: app.getSwfFilePath()}
             };
 
             if (app.getUrlParameter('ssmr')) {
@@ -118,6 +115,8 @@ requirejs([
                 videoElement: localVideoEl,
                 monitor: {callback: onMonitorEvent},
                 streamToken: 'dud',
+                resolution: 720,
+                frameRate: 30,
                 onResolveMedia: function(options) {
                     return app.createNotification('success', {
                         icon: 'glyphicon glyphicon-remove-sign',
