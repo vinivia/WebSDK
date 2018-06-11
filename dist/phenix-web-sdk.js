@@ -1042,7 +1042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-07T19:08:22Z',
+                version: '2018-06-11T21:40:43Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8020,7 +8020,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-07T19:08:22Z';
+    var sdkVersion = '2018-06-11T21:40:43Z';
 
     function PCast(options) {
         options = options || {};
@@ -12970,7 +12970,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         if (this._lastProgress.buffered !== null) {
             var oldTimeElapsed = this._lastProgress.averageLength * this._lastProgress.count;
             var newTimeElapsed = oldTimeElapsed + (bufferedEnd - this._lastProgress.buffered);
-            var isStalled = this._lastProgress.lastCurrentTime !== this._element.currentTime;
+            var isStalled = this._lastProgress.lastCurrentTime === this._element.currentTime;
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
@@ -14084,7 +14084,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
+    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14339,7 +14339,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
+    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -19261,13 +19261,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function appendQueryParameters(queryParameters, url) {
-        var queryParameterString = _.reduce(queryParameters, function(paramString, value, key) {
-            paramString += !paramString ? '?' : '&';
+        var indexOfHash = url.lastIndexOf('#');
+        var indexOfQuerySeparator = url.indexOf('?');
+        var serializedJsonAsQueryString = _.reduce(queryParameters, function(paramString, value, key) {
+            paramString += !paramString ? '' : '&';
 
             return paramString + key.toString() + '=' + value.toString();
         }, '');
+        var hashString = indexOfHash === -1 ? '' : url.substring(indexOfHash + 1);
+        var queryString = indexOfQuerySeparator === -1 ? '' : url.substring(indexOfQuerySeparator + 1, hashString ? indexOfHash : url.length);
+        var concatenatedQueryString = serializedJsonAsQueryString + (queryString ? ('&' + queryString) : '');
+        var urlBeforeQueryAndHash = url.replace('?' + queryString, '').replace('#' + hashString, '');
 
-        return queryParameterString.length > 0 ? url + queryParameterString : url;
+        url = urlBeforeQueryAndHash;
+
+        if (concatenatedQueryString) {
+            url += '?' + concatenatedQueryString;
+        }
+
+        if (hashString) {
+            url += '#' + hashString;
+        }
+
+        return url;
     }
 
     function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
@@ -23504,8 +23520,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-07T19:08:22Z' || '?';
-    var releaseVersion = '2018.2.8';
+    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
+    var releaseVersion = '2018.2.9';
 
     function Logger() {
         this._appenders = [];

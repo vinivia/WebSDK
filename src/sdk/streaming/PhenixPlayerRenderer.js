@@ -285,7 +285,7 @@ define([
         if (this._lastProgress.buffered !== null) {
             var oldTimeElapsed = this._lastProgress.averageLength * this._lastProgress.count;
             var newTimeElapsed = oldTimeElapsed + (bufferedEnd - this._lastProgress.buffered);
-            var isStalled = this._lastProgress.lastCurrentTime !== this._element.currentTime;
+            var isStalled = this._lastProgress.lastCurrentTime === this._element.currentTime;
 
             this._lastProgress.count += 1;
             this._lastProgress.averageLength = newTimeElapsed / this._lastProgress.count;
