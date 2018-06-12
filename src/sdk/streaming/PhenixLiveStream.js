@@ -143,9 +143,9 @@ define([
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
         switch (type) {
         case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
-        case streamEnums.types.hls.name:
             return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+        case streamEnums.types.hls.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
         case streamEnums.types.rtmp.name:
             return FlashRenderer.isSupported();
         default:

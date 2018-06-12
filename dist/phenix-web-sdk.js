@@ -1042,7 +1042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-11T21:40:43Z',
+                version: '2018-06-12T17:12:39Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8020,7 +8020,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-11T21:40:43Z';
+    var sdkVersion = '2018-06-12T17:12:39Z';
 
     function PCast(options) {
         options = options || {};
@@ -13608,9 +13608,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
         switch (type) {
         case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
-        case streamEnums.types.hls.name:
             return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+        case streamEnums.types.hls.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
         case streamEnums.types.rtmp.name:
             return FlashRenderer.isSupported();
         default:
@@ -14084,7 +14084,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
+    var sdkVersion = '2018-06-12T17:12:39Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14339,7 +14339,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
+    var sdkVersion = '2018-06-12T17:12:39Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -23520,8 +23520,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-11T21:40:43Z' || '?';
-    var releaseVersion = '2018.2.9';
+    var sdkVersion = '2018-06-12T17:12:39Z' || '?';
+    var releaseVersion = '2018.2.10';
 
     function Logger() {
         this._appenders = [];
