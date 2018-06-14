@@ -67,8 +67,6 @@ define([
                 pcast.start('mockAuthToken', function(){}, function(){
                     done();
                 }, function(){});
-
-                websocketStubber.triggerConnected();
             });
 
             afterEach(function() {

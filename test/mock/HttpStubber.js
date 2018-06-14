@@ -96,7 +96,13 @@ define(['phenix-web-lodash-light'], function(_) {
                         handler.callback(req, JSON.parse(req.requestBody));
                     }
 
-                    req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
+                    setTimeout(function() {
+                        try {
+                            req.respond(200, {'Content-Type': handler.type}, JSON.stringify(handler.response));
+                        } catch (error) {
+                            console.log("Error sending request", error);
+                        }
+                    }, 1);
                 }
 
                 return false;

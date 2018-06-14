@@ -3028,7 +3028,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-21T21:45:58Z';
+    var sdkVersion = '2018-06-27T23:08:05Z';
 
     function PCast(options) {
         options = options || {};
@@ -5181,6 +5181,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
+    AdminAPI.prototype.createStreamTokenForPublishingToExternal = function createStreamTokenForPublishingToExternal(sessionId, capabilities, streamId, callback) {
+        this.createStreamTokenForSubscribing(sessionId, capabilities, streamId, null, callback);
+    };
+
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
@@ -5231,6 +5235,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disposables.add(new disposable.Disposable(function() {
             clearTimeout(requestTimeoutId);
         }));
+
+        return requestDisposable;
     }
 
     function appendAuthDataTo(data) {
@@ -5493,7 +5499,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (options.mediaConstraints) {
-            throw new Error('Invalid argument, Media Constraints, for publishing remote.');
+            throw new Error('Invalid argument: mediaConstraints, passed on publishRemote. Local media not allowed when publishing remote content.');
         }
 
         if (options.videoElement) {
@@ -5562,6 +5568,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
             getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
+        });
+    };
+
+    PCastExpress.prototype.publishStreamToExternal = function publishStreamToExternal(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+        assert.isStringNotEmpty(options.streamId, 'options.streamId');
+        assert.isStringNotEmpty(options.externalUri, 'options.externalUri');
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.connectOptions) {
+            assert.isArray(options.connectOptions, 'options.connectOptions');
+        }
+
+        if (options.mediaConstraints) {
+            throw new Error('Invalid argument: mediaConstraints, passed on publishStreamToExternal. Local media not allowed when publishing remote content.');
+        }
+
+        if (options.videoElement) {
+            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+        }
+
+        if (options.monitor) {
+            assert.isObject(options.monitor, 'options.monitor');
+            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
+            if (options.monitor.options) {
+                assert.isObject(options.monitor.options, 'options.monitor.options');
+            }
+        }
+
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
+        var that = this;
+
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
+            var remoteOptions = _.assign({
+                connectOptions: [],
+                capabilities: []
+            }, options);
+
+            if (!_.includes(remoteOptions.capabilities, 'egress')) {
+                remoteOptions.capabilities.push('egress');
+            }
+
+            if (!_.includes(remoteOptions.capabilities, 'egress-own-stream')) {
+                remoteOptions.capabilities.push('egress-own-stream');
+            }
+
+            getStreamingTokenAndPublish.call(that, remoteOptions.externalUri, remoteOptions, false, callback);
         });
     };
 
@@ -5910,10 +5975,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
+            var isEgress = _.includes(options.capabilities, 'egress');
+            var generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishing, that._adminAPI, sessionId, options.capabilities);
+
+            if (isEgress) {
+                generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishingToExternal, that._adminAPI, sessionId, options.capabilities, options.streamId);
+            }
 
             that._logger.info('[%s] Creating stream token for publishing', sessionId);
 
-            that._adminAPI.createStreamTokenForPublishing(sessionId, options.capabilities, function(error, response) {
+            generateStreamToken(function(error, response) {
                 if (error) {
                     that._logger.error('[%s] Failed to create stream token for publishing', sessionId, error);
 
@@ -8908,7 +8979,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9163,7 +9234,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10583,7 +10654,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-21T21:45:58Z',
+                version: '2018-06-27T23:08:05Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16370,8 +16441,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
-    var releaseVersion = '2018.2.11';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
+    var releaseVersion = '2018.2.12';
 
     function Logger() {
         this._appenders = [];

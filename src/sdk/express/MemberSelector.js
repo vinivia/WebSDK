@@ -77,14 +77,18 @@ define([
         return this._blackListedMembers.length;
     };
 
-    MemberSelector.prototype.dispose = function dispose() {
+    MemberSelector.prototype.reset = function() {
         this._lastSelectedMember = null;
         this._blackListedMembers = [];
     };
 
-    MemberSelector.getSimilarMembers = function(screenName, members) {
+    MemberSelector.prototype.dispose = function dispose() {
+        this.reset();
+    };
+
+    MemberSelector.getSimilarMembers = function(screenName, optionalSessionId, members) {
         var otherMembers = _.filter(members, function(member) {
-            return member.getObservableScreenName().getValue() !== screenName;
+            return member.getObservableScreenName().getValue() !== screenName && (!optionalSessionId || member.getSessionId() !== optionalSessionId);
         });
         var primaryMembers = _.filter(otherMembers, isPrimary);
         var alternateMembers = _.filter(otherMembers, isAlternate);

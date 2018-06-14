@@ -81,7 +81,6 @@ define([
             });
 
             websocketStubber.stubSetupStream();
-            websocketStubber.triggerConnected();
 
             roomExpress.getPCastExpress().waitForOnline(function() {
                 websocketStubber.triggerReconnected();

@@ -62,7 +62,6 @@ define([
             });
 
             websocketStubber.stubSetupStream();
-            websocketStubber.triggerConnected();
 
             pcastExpress.waitForOnline(function() {
                 websocketStubber.triggerReconnected();

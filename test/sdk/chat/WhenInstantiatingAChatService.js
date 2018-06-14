@@ -56,8 +56,6 @@ define([
 
             websocketStubber.stubResponse('chat.FetchRoomConversation', response);
             websocketStubber.stubResponse('chat.SendMessageToRoom', response);
-
-            websocketStubber.triggerConnected();
         });
 
         after(function() {

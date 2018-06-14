@@ -151,8 +151,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('upon failure iterates through each primary member before iterating through alternates', function(done) {
@@ -195,8 +193,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('upon failure iterates through each primary member even with the same screen name and different sessionIds and streamIds', function(done) {
@@ -239,8 +235,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('does not iterate through members when primary stream ends with reason of app-background', function(done) {
@@ -279,8 +273,6 @@ define([
                 expect(subscribeCount).to.be.equal(1);
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('fails if all members trigger client side failure before timeout', function(done) {
@@ -321,8 +313,6 @@ define([
                 expect(subscribeCount).to.be.equal(2);
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

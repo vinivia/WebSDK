@@ -69,8 +69,6 @@ define([
 
                 done();
             }, function offlineCallback() {});
-
-            websocketStubber.triggerConnected();
         });
 
         after(function() {

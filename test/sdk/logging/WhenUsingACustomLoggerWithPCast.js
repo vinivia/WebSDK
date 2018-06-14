@@ -42,7 +42,7 @@ define([
             peerConnectionStubber.stub();
         });
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             websocketStubber = new WebSocketStubber();
 
             pcast = new PCast({
@@ -54,8 +54,13 @@ define([
 
             pcast.start('mockAuthToken', function(){}, function(){}, function(){});
 
-            websocketStubber.triggerConnected();
             websocketStubber.stubSetupStream();
+
+            pcast.getObservableStatus().subscribe(function(status) {
+                if (status === 'online') {
+                    done();
+                }
+            });
         });
 
         after(function() {

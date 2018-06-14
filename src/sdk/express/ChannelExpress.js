@@ -145,6 +145,10 @@ define([
 
             if (!selectedPresenter || !presenterStream) {
                 if (presenters.length === 0) {
+                    memberSelector.reset();
+                    lastMediaStream = null;
+                    lastStreamId = null;
+
                     return subscriberCallback(null, {status: 'no-stream-playing'});
                 }
 

@@ -121,8 +121,6 @@ define([
                 viewerStreamSelectionStrategy: 'high-availability',
                 screenName: 'primary'
             }, function() {});
-
-            websocketStubber.triggerConnected();
         });
 
         it('creates a viewer token with one alternateOriginStreamIds when one other similar members are present', function(done) {
@@ -166,8 +164,6 @@ define([
                 viewerStreamSelectionStrategy: 'high-availability',
                 screenName: 'primary2'
             }, function() {});
-
-            websocketStubber.triggerConnected();
         });
 
         it('creates a viewer token with one alternateOriginStreamIds when a similar member joins', function(done) {
@@ -224,8 +220,6 @@ define([
                 viewerStreamSelectionStrategy: 'high-availability',
                 screenName: 'primary'
             }, function() {});
-
-            websocketStubber.triggerConnected();
         });
     });
 });

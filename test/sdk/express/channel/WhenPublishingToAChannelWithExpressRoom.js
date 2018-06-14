@@ -105,8 +105,6 @@ define([
                 expect(response.status).to.be.equal('censored');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
@@ -136,8 +134,6 @@ define([
                 expect(response.reason).to.be.equal('ended');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

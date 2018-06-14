@@ -66,6 +66,10 @@ define([
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
+    AdminAPI.prototype.createStreamTokenForPublishingToExternal = function createStreamTokenForPublishingToExternal(sessionId, capabilities, streamId, callback) {
+        this.createStreamTokenForSubscribing(sessionId, capabilities, streamId, null, callback);
+    };
+
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
@@ -116,6 +120,8 @@ define([
         this._disposables.add(new disposable.Disposable(function() {
             clearTimeout(requestTimeoutId);
         }));
+
+        return requestDisposable;
     }
 
     function appendAuthDataTo(data) {

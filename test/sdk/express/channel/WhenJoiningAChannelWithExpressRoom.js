@@ -89,8 +89,6 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
             channelExpress.getPCastExpress().waitForOnline(done);
-
-            websocketStubber.triggerConnected();
         });
 
         afterEach(function() {

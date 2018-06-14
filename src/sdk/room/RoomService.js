@@ -339,6 +339,19 @@ define([
             return;
         }
 
+        var that = this;
+
+        var memberIsSelf = function(member) {
+            return member.sessionId === that.getSelf().getSessionId();
+        };
+
+        var leftSelf = _.find(members, memberIsSelf);
+        var self = this.getSelf();
+
+        if (self && leftSelf) {
+            self.getObservableLastUpdate().setValue(leftSelf.lastUpdate);
+        }
+
         room._removeMembers(members);
         cachedRoom._removeMembers(members);
 

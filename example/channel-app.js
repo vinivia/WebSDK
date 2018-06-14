@@ -150,7 +150,7 @@ requirejs([
                     message: 'Successfully joined Channel "' + channelAlias + '"'
                 });
 
-                leaveChannelCallback = response.channelService.stop;
+                leaveChannelCallback = _.bind(response.channelService.stop, response.channelService);
 
                 $('#leaveChannel').removeClass('disabled');
             }, function subscriberCallback(error, response) {

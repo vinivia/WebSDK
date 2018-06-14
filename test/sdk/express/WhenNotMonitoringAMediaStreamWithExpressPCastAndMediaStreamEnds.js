@@ -89,8 +89,6 @@ define([
                     });
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of error to automatically retry publisher without triggering callback', function(done) {
@@ -113,8 +111,6 @@ define([
                 expect(subscribeCount).to.be.equal(2);
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect reason of capacity to automatically retry after a timeout', function(done) {
@@ -148,8 +144,6 @@ define([
                 expect(timeoutLength).to.be.greaterThan(5);
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

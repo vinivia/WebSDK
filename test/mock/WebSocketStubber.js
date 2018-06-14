@@ -70,6 +70,50 @@ define([
         }, callback);
     };
 
+    WebSocketStubber.prototype.stubUpdateMemberResponse = function(callback) {
+        var that = this;
+
+        this.stubResponse('chat.UpdateMember', {status: 'ok'}, function(type, message) {
+            if (message.member.role === 'Audience') {
+                that.stubEvent('chat.RoomEvent', {
+                    roomId: message.roomId,
+                    eventType: 'MemberLeft',
+                    members: [message.member]
+                });
+            }
+
+            if (message.member.role && message.member.role !== 'Audience') {
+                that.stubEvent('chat.RoomEvent', {
+                    roomId: message.roomId,
+                    eventType: 'MemberJoined',
+                    members: [message.member]
+                });
+            }
+
+            if (callback) {
+                callback();
+            }
+        });
+    };
+
+    WebSocketStubber.prototype.stubJoinRoomResponse = function(room, members, callback) {
+        var response = {
+            status: 'ok',
+            room: room,
+            members: members.slice()
+        };
+
+        this.stubResponse('chat.JoinRoom', response, function(type, message) {
+            if (message.member.role && message.member.role !== 'Audience') {
+                response.members.push(message.member);
+            }
+
+            if (callback) {
+                callback();
+            }
+        });
+    };
+
     WebSocketStubber.prototype.stubResponse = function(type, message, callback) {
         setupStubIfNoneExist.call(this);
 
@@ -168,6 +212,10 @@ define([
         };
 
         proto.MQWebSocket = function() { // eslint-disable-line no-global-assign
+            setTimeout(function() {
+                that.triggerConnected();
+            }, 0);
+
             return that._mockMQWebSocket;
         };
     }

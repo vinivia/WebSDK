@@ -71,6 +71,7 @@ define([
 
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
+            websocketStubber.stubUpdateMemberResponse();
             websocketStubber.stubResponse('chat.JoinRoom', response);
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
@@ -113,8 +114,6 @@ define([
                 expect(response.publisher).to.be.a('object');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('results in new member with the same stream info as passed argument', function(done) {
@@ -127,10 +126,7 @@ define([
             streamInfo[infoKey1] = infoValue1;
             streamInfo[infoKey2] = infoValue2;
 
-            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                mockRoom.members = [message.member];
-                response.members = [message.member];
-            });
+            websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
                 capabilities: [],
@@ -150,6 +146,10 @@ define([
                 alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
+                if (members.length === 0) {
+                    return;
+                }
+
                 expect(members.length).to.be.equal(1);
 
                 var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
@@ -158,15 +158,10 @@ define([
                 expect(memberStreamInfo.streamToken).to.be.a('string');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('results in new member with real-time streamToken if no capability passed in', function(done) {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                mockRoom.members = [message.member];
-                response.members = [message.member];
-            });
+            websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
@@ -185,6 +180,10 @@ define([
                 alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
+                if (members.length === 0) {
+                    return;
+                }
+
                 expect(members.length).to.be.equal(1);
 
                 var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
@@ -192,15 +191,10 @@ define([
                 expect(memberStreamInfo.streamToken).to.be.a('string');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('results in new member with streaming and real-time streamToken if streaming capability passed in', function(done) {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                mockRoom.members = [message.member];
-                response.members = [message.member];
-            });
+            websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
@@ -219,6 +213,10 @@ define([
                 alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
+                if (members.length === 0) {
+                    return;
+                }
+
                 expect(members.length).to.be.equal(1);
 
                 var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
@@ -227,15 +225,10 @@ define([
                 expect(memberStreamInfo.streamTokenForLiveStream).to.be.a('string');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('results in new member with no stream tokens if not using wildcard tokens', function(done) {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                mockRoom.members = [message.member];
-                response.members = [message.member];
-            });
+            websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
@@ -255,6 +248,10 @@ define([
                 alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
+                if (members.length === 0) {
+                    return;
+                }
+
                 expect(members.length).to.be.equal(1);
 
                 var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
@@ -262,8 +259,6 @@ define([
                 expect(_.values(memberStreamInfo).length).to.be.equal(0);
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

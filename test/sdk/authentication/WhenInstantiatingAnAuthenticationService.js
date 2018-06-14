@@ -44,8 +44,6 @@ define([
                 authenticationService = new AuthenticationService(pcast);
                 done();
             }, function offlineCallback() {});
-
-            websocketStubber.triggerConnected();
         });
 
         after(function() {

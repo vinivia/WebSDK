@@ -118,8 +118,6 @@ define([
             websocketStubber.stubResponse('chat.CreateRoom', response);
             websocketStubber.stubResponse('chat.UpdateMember', response);
             websocketStubber.stubResponse('chat.UpdateRoom', response);
-
-            websocketStubber.triggerConnected();
         });
 
         after(function() {

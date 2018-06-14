@@ -64,8 +64,6 @@ define([
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
             channelExpress.getPCastExpress().waitForOnline(done);
-
-            websocketStubber.triggerConnected();
         });
 
         afterEach(function() {

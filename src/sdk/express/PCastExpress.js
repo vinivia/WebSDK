@@ -232,7 +232,7 @@ define([
         }
 
         if (options.mediaConstraints) {
-            throw new Error('Invalid argument, Media Constraints, for publishing remote.');
+            throw new Error('Invalid argument: mediaConstraints, passed on publishRemote. Local media not allowed when publishing remote content.');
         }
 
         if (options.videoElement) {
@@ -301,6 +301,65 @@ define([
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
             getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
+        });
+    };
+
+    PCastExpress.prototype.publishStreamToExternal = function publishStreamToExternal(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+        assert.isStringNotEmpty(options.streamId, 'options.streamId');
+        assert.isStringNotEmpty(options.externalUri, 'options.externalUri');
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.connectOptions) {
+            assert.isArray(options.connectOptions, 'options.connectOptions');
+        }
+
+        if (options.mediaConstraints) {
+            throw new Error('Invalid argument: mediaConstraints, passed on publishStreamToExternal. Local media not allowed when publishing remote content.');
+        }
+
+        if (options.videoElement) {
+            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+        }
+
+        if (options.monitor) {
+            assert.isObject(options.monitor, 'options.monitor');
+            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
+            if (options.monitor.options) {
+                assert.isObject(options.monitor.options, 'options.monitor.options');
+            }
+        }
+
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
+        var that = this;
+
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
+            var remoteOptions = _.assign({
+                connectOptions: [],
+                capabilities: []
+            }, options);
+
+            if (!_.includes(remoteOptions.capabilities, 'egress')) {
+                remoteOptions.capabilities.push('egress');
+            }
+
+            if (!_.includes(remoteOptions.capabilities, 'egress-own-stream')) {
+                remoteOptions.capabilities.push('egress-own-stream');
+            }
+
+            getStreamingTokenAndPublish.call(that, remoteOptions.externalUri, remoteOptions, false, callback);
         });
     };
 
@@ -649,10 +708,16 @@ define([
             }
 
             var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
+            var isEgress = _.includes(options.capabilities, 'egress');
+            var generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishing, that._adminAPI, sessionId, options.capabilities);
+
+            if (isEgress) {
+                generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishingToExternal, that._adminAPI, sessionId, options.capabilities, options.streamId);
+            }
 
             that._logger.info('[%s] Creating stream token for publishing', sessionId);
 
-            that._adminAPI.createStreamTokenForPublishing(sessionId, options.capabilities, function(error, response) {
+            generateStreamToken(function(error, response) {
                 if (error) {
                     that._logger.error('[%s] Failed to create stream token for publishing', sessionId, error);
 

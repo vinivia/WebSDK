@@ -63,7 +63,9 @@ define([
 
             http.postWithRetry('https://' + url + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
                 if (error) {
-                    done(error);
+                    console.error(error);
+
+                    return done(error);
                 }
 
                 authToken = JSON.parse(response.data).authenticationToken;

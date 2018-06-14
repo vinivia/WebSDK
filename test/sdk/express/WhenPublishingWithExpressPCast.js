@@ -82,8 +82,6 @@ define([
                 expect(response.publisher).to.be.a('object');
                 done();
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor to return a response with retry', function(done) {
@@ -110,8 +108,6 @@ define([
                     }
                 }
             }, function() {});
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor retry to setup a new publisher', function(done) {
@@ -149,8 +145,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
 
         it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function(done) {
@@ -190,8 +184,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

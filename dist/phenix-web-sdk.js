@@ -1042,7 +1042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-21T21:45:58Z',
+                version: '2018-06-27T23:08:05Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1425,14 +1425,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._blackListedMembers.length;
     };
 
-    MemberSelector.prototype.dispose = function dispose() {
+    MemberSelector.prototype.reset = function() {
         this._lastSelectedMember = null;
         this._blackListedMembers = [];
     };
 
-    MemberSelector.getSimilarMembers = function(screenName, members) {
+    MemberSelector.prototype.dispose = function dispose() {
+        this.reset();
+    };
+
+    MemberSelector.getSimilarMembers = function(screenName, optionalSessionId, members) {
         var otherMembers = _.filter(members, function(member) {
-            return member.getObservableScreenName().getValue() !== screenName;
+            return member.getObservableScreenName().getValue() !== screenName && (!optionalSessionId || member.getSessionId() !== optionalSessionId);
         });
         var primaryMembers = _.filter(otherMembers, isPrimary);
         var alternateMembers = _.filter(otherMembers, isAlternate);
@@ -1616,9 +1620,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._pcastExpress = options.pcastExpress || new PCastExpress(options);
         this._shouldDisposeOfPCastExpress = !options.pcastExpress;
         this._roomServices = {};
+        this._externalPublishers = [];
         this._roomServicePublishers = {};
         this._activeRoomServices = [];
         this._membersSubscriptions = {};
+        this._publisherDisposables = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
         this._disposed = false;
@@ -1937,7 +1943,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(error, {status: 'device-insecure'});
             }
 
-            callback(error, response);
+            var responseWithOriginStreamId = _.assign({originStreamId: streamId}, response);
+
+            callback(error, responseWithOriginStreamId);
         });
     };
 
@@ -1956,6 +1964,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._membersSubscriptions = {};
         this._roomServicePublishers = {};
+        this._externalPublishers = [];
         this._roomServices = {};
         this._activeRoomServices = [];
     }
@@ -2057,24 +2066,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var activeRoomObservable = roomService.getObservableActiveRoom();
             var activeRoom = activeRoomObservable.getValue();
             var membersSubscription = null;
+            var setupMembersSubscription = function setupMembersSubscription() {
+                var room = activeRoomObservable.getValue();
 
-            if (!activeRoom) {
-                roomService.start(role, screenName);
-            }
+                if (!room) {
+                    return that._logger.warn('Unable to setup members subscription. Not in room.');
+                }
 
-            if (options.streams) {
-                updateSelfStreamsAndRole.call(that, options.streams, options.role, roomService, function(error) {
-                    if (error) {
-                        return joinRoomCallback(error);
-                    }
-                });
-            }
-
-            if (activeRoom && membersChangedCallback) {
-                joinRoomCallback(null, {
-                    status: 'ok',
-                    roomService: roomService
-                });
+                membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
 
                 return activeRoomObservable.subscribe(function(newRoom) {
                     if (membersSubscription) {
@@ -2087,7 +2086,51 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     }
 
                     membersSubscription = newRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-                }, {initial: 'notify'});
+                });
+            };
+
+            if (!activeRoom) {
+                roomService.start(role, screenName);
+            }
+
+            if (options.streams && options.streams.length > 0) {
+                var stream = options.streams[0]; // TODO(dy) support multiple streams
+
+                if (options.streamsWildcardTokenCapabilities && !_.includes(options.streams[0].uri, Stream.getPCastPrefix())) {
+                    options.streams[0].uri = Stream.getPCastPrefix() + options.streams[0].uri;
+                    that._externalPublishers.push(options.streams[0].uri);
+                }
+
+                if (options.streamsWildcardTokenCapabilities && activeRoom && !_.includes(stream.uri, 'streamToken')) {
+                    return createViewerStreamTokensAndUpdateSelf.call(that, options, stream, activeRoom, function(error, response) {
+                        joinRoomCallback(error, _.assign({roomService: roomService}, response));
+
+                        if (membersChangedCallback) {
+                            return setupMembersSubscription();
+                        }
+                    });
+                }
+
+                var roleToJoin = options.streamsWildcardTokenCapabilities && !activeRoom && !_.includes(stream.uri, 'streamToken') ? memberEnums.roles.audience.name : options.role;
+
+                updateSelfStreamsAndRole.call(that, options.streams, roleToJoin, roomService, function(error) {
+                    if (error) {
+                        return joinRoomCallback(error);
+                    }
+                });
+            }
+
+            if (activeRoom) {
+                joinRoomCallback(null, {
+                    status: 'ok',
+                    roomService: roomService
+                });
+
+                if (membersChangedCallback) {
+                    setupMembersSubscription();
+                }
+
+                return;
             }
 
             roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
@@ -2110,8 +2153,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 var room = roomResponse.room;
+                var stream = _.get(options, ['streams', 0]); // TODO(dy) support multiple streams
 
                 that._activeRoomServices.push(roomService);
+
+                if (options.streamsWildcardTokenCapabilities && stream && !_.includes(stream.uri, 'streamToken')) {
+                    return createViewerStreamTokensAndUpdateSelf.call(that, options, stream, room, function(error, response) {
+                        joinRoomCallback(error, _.assign({roomService: roomService}, response));
+
+                        if (membersChangedCallback) {
+                            return setupMembersSubscription();
+                        }
+                    });
+                }
 
                 joinRoomCallback(null, {
                     status: 'ok',
@@ -2119,20 +2173,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 });
 
                 if (membersChangedCallback) {
-                    membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-
-                    return activeRoomObservable.subscribe(function(newRoom) {
-                        if (membersSubscription) {
-                            membersSubscription.dispose();
-                            membersSubscription = null;
-                        }
-
-                        if (!newRoom) {
-                            return;
-                        }
-
-                        membersSubscription = newRoom.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
-                    });
+                    return setupMembersSubscription();
                 }
             });
         });
@@ -2191,6 +2232,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
         var publisher;
         var refreshTokenIntervalId;
+        var callbackWithPublisher = function(error, response) {
+            callback(error, response ? _.assign({publisher: publisher}, response) : response);
+        };
 
         var handlePublish = function(error, response) {
             if (refreshTokenIntervalId && publisher) {
@@ -2198,11 +2242,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (error) {
-                return callback(error);
+                return callbackWithPublisher(error);
             }
 
             if (response.status !== 'ok') {
-                return callback(null, response);
+                return callbackWithPublisher(null, response);
             }
 
             addPublisher.call(that, response.publisher, room);
@@ -2210,12 +2254,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             publisher = response.publisher;
 
+            that._publisherDisposables[publisher.getStreamId()] = new disposable.DisposableList();
+
             var publisherStop = _.bind(publisher.stop, publisher);
 
             publisher.stop = function() {
                 clearInterval(refreshTokenIntervalId);
+
+                removePublisher.call(that, publisher, room);
+
+                var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
+                var roomService = findActiveRoom.call(that, room.getRoomId());
+                var publisherDisposable = that._publisherDisposables[publisher.getStreamId()];
+
+                if (publisherDisposable) {
+                    publisherDisposable.dispose();
+
+                    delete that._publisherDisposables[publisher.getStreamId()];
+                }
+
                 publisherStop.apply(publisher, arguments);
+
+                if (!roomService) {
+                    return;
+                }
+
+                updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, streamsAfterStop, streamsAfterStop.length === 0 ? memberEnums.roles.audience.name : options.memberRole, roomService, room, options, function(error) {
+                    if (error) {
+                        return callbackWithPublisher(error);
+                    }
+                });
             };
+
+            listenForTrackStateChange.call(that, publisher, room);
 
             if (options.enableWildcardCapability) {
                 refreshTokenIntervalId = setInterval(function() {
@@ -2225,9 +2296,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
                     var activeRoom = activeRoomService ? activeRoomService.getObservableActiveRoom().getValue() : room;
 
-                    createViewerStreamTokensAndUpdateSelf.call(that, options, publisher, activeRoom, function ignoreSuccess(error, response) {
+                    createOptionalViewerStreamTokensAndUpdateSelf.call(that, options, publisher, activeRoom, function ignoreSuccess(error, response) {
                         if (error || response.status !== 'ok') {
-                            callback(error, response);
+                            callbackWithPublisher(error, response);
                         }
                     });
                 }, defaultStreamWildcardTokenRefreshInterval);
@@ -2237,7 +2308,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }));
             }
 
-            createViewerStreamTokensAndUpdateSelf.call(that, options, response.publisher, room, callback);
+            createOptionalViewerStreamTokensAndUpdateSelf.call(that, options, response.publisher, room, callbackWithPublisher);
         };
 
         if (_.get(options, ['mediaConstraints', 'screen'], false)) {
@@ -2267,24 +2338,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     }
 
-    function createViewerStreamTokensAndUpdateSelf(options, publisher, room, callback) {
-        var that = this;
+    function createOptionalViewerStreamTokensAndUpdateSelf(options, publisher, room, callback) {
         var streamType = options.streamType;
         var streamInfo = options.streamInfo;
-        var composeWithAdditionalStreams = options.viewerStreamSelectionStrategy === 'high-availability' && room.getObservableType().getValue() === roomEnums.types.channel.name;
-        var additionalStreamIds = null;
-        var handleJoinRoomCallback = callback;
-        var disposable;
+        var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
 
         if (!options.enableWildcardCapability) {
-            var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
-            var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
+            var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
+            var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(this, publisherStream, room)});
 
-            return updateSelfAndListenForChanges.call(that, updateSelfOptions, handleJoinRoomCallback, publisher, room);
+            return updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(this, updateSelfOptions.streams, updateSelfOptions.memberRole, activeRoomService, room, updateSelfOptions, callback);
         }
 
+        return createViewerStreamTokensAndUpdateSelf.call(this, options, publisherStream, room, callback);
+    }
+
+    function createViewerStreamTokensAndUpdateSelf(options, publisherStream, room, callback) {
+        var that = this;
+        var composeWithAdditionalStreams = options.viewerStreamSelectionStrategy === 'high-availability' && room.getObservableType().getValue() === roomEnums.types.channel.name;
+        var additionalStreamIds = [];
+        var handleJoinRoomCallback = callback;
+        var publisherStreamId = Stream.parsePCastStreamIdFromStreamUri(_.get(publisherStream, 'uri', ''));
+        var protocol = that.getPCastExpress().getPCast().getProtocol();
+        var sessionId = protocol ? protocol.getSessionId() : '';
+        var disposables = that._publisherDisposables[publisherStreamId];
+        var disposable;
+
         if (composeWithAdditionalStreams) {
-            var membersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, room.getObservableMembers().getValue());
+            var membersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, sessionId, room.getObservableMembers().getValue());
 
             additionalStreamIds = getValidStreamIds(membersWithSameContent);
 
@@ -2300,122 +2381,131 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var activeRoom = roomService.getObservableActiveRoom().getValue();
 
                 disposable = activeRoom.getObservableMembers().subscribe(function(members) {
-                    var newMembersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, members);
+                    var self = roomService.getSelf();
+                    var selfSessionId = self ? self.getSessionId() : '';
+                    var newMembersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, selfSessionId, members);
                     var newAdditionalStreamIds = getValidStreamIds(newMembersWithSameContent);
                     var areTheSame = newAdditionalStreamIds.length === additionalStreamIds.length && _.reduce(newAdditionalStreamIds, function(areAllPreviousTheSame, streamId) {
                         return areAllPreviousTheSame ? _.includes(additionalStreamIds, streamId) : areAllPreviousTheSame;
                     }, true);
+                    var selfStreams = self ? self.getObservableStreams().getValue() : [];
+                    var publishedSelfStream = _.find(selfStreams, function(stream) {
+                        return stream.getPCastStreamId() === publisherStreamId;
+                    });
+
+                    if (!publishedSelfStream) {
+                        disposable.dispose();
+                        disposable = null;
+
+                        return;
+                    }
 
                     if (areTheSame) {
                         return;
                     }
 
-                    that._logger.debug('Members with similar content to stream [%s] have changed. Generating new wildcard viewer token', publisher.getStreamId());
+                    that._logger.debug('Members with similar content to stream [%s] have changed. Generating new wildcard viewer token', publisherStreamId);
 
                     disposable.dispose();
                     disposable = null;
 
-                    createViewerStreamTokensAndUpdateSelf.call(that, options, publisher, activeRoom, function ignoreSuccess(error, response) {
+                    createViewerStreamTokensAndUpdateSelf.call(that, options, publisherStream, activeRoom, function ignoreSuccess(error, response) {
                         if (error || response.status !== 'ok') {
                             callback(error, response);
                         }
                     });
                 });
+
+                if (disposables) {
+                    disposables.add(disposable);
+                }
             };
         }
 
-        if (additionalStreamIds && additionalStreamIds.length > 0) {
-            that._logger.debug('Creating [real-time] viewer wildcard stream token for published stream [%s] with [%s] additional streams', publisher.getStreamId(), additionalStreamIds.length);
-        } else {
-            that._logger.debug('Creating [real-time] viewer wildcard stream token for published stream [%s]', publisher.getStreamId());
-        }
-
-        that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', [], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenResponse) {
+        return generateAllStreamTokensAndCreateStream.call(this, options.capabilities, publisherStreamId, additionalStreamIds, publisherStream, function(error, response) {
             if (error) {
                 return callback(error);
             }
 
-            if (createStreamTokenResponse.status !== 'ok') {
-                return callback(null, createStreamTokenResponse);
+            if (response.status !== 'ok') {
+                return callback(null, response);
             }
 
-            if (additionalStreamIds && additionalStreamIds.length > 0) {
-                that._logger.debug('Creating [broadcast] viewer wildcard stream token for published stream [%s] with [%s] additional streams', publisher.getStreamId(), additionalStreamIds.length);
-            } else {
-                that._logger.debug('Creating [broadcast] viewer wildcard stream token for published stream [%s]', publisher.getStreamId());
-            }
+            var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
+            var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
 
-            that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['broadcast'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenBroadcastResponse) {
-                if (error) {
-                    return callback(error);
-                }
+            return updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, updateSelfOptions.streams, updateSelfOptions.memberRole, activeRoomService, room, updateSelfOptions, handleJoinRoomCallback);
+        });
+    }
 
-                if (createStreamTokenBroadcastResponse.status !== 'ok') {
-                    return callback(null, createStreamTokenBroadcastResponse);
-                }
-
-                if (_.includes(options.capabilities, 'streaming')) {
-                    if (additionalStreamIds && additionalStreamIds.length > 0) {
-                        that._logger.debug('Creating [streaming] viewer wildcard stream token for published stream [%s] with [%s] additional streams', publisher.getStreamId(), additionalStreamIds.length);
-                    } else {
-                        that._logger.debug('Creating [streaming] viewer wildcard stream token for published stream [%s]', publisher.getStreamId());
-                    }
-
-                    return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenWithStreamingResponse) {
-                        if (error) {
-                            return callback(error);
-                        }
-
-                        if (createStreamTokenWithStreamingResponse.status !== 'ok') {
-                            return callback(null, createStreamTokenWithStreamingResponse);
-                        }
-
-                        if (_.includes(options.capabilities, 'drm')) {
-                            if (additionalStreamIds && additionalStreamIds.length > 0) {
-                                that._logger.debug('Creating [drm-open-access] and [drm-hollywood] viewer wildcard stream token for published stream [%s] with [%s] additional streams', publisher.getStreamId(), additionalStreamIds.length);
-                            } else {
-                                that._logger.debug('Creating [drm-open-access] and [drm-hollywood] viewer wildcard stream token for published stream [%s]', publisher.getStreamId());
-                            }
-
-                            return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming', 'drm-open-access'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenWithStreamingDrmOpenAccessResponse) {
-                                if (error) {
-                                    return callback(error);
-                                }
-
-                                if (createStreamTokenWithStreamingDrmOpenAccessResponse.status !== 'ok') {
-                                    return callback(null, createStreamTokenWithStreamingDrmOpenAccessResponse);
-                                }
-
-                                return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', ['streaming', 'drm-hollywood'], publisher.getStreamId(), additionalStreamIds, function(error, createStreamTokenWithStreamingDrmHollywoodResponse) {
-                                    if (error) {
-                                        return callback(error);
-                                    }
-
-                                    if (createStreamTokenWithStreamingDrmHollywoodResponse.status !== 'ok') {
-                                        return callback(null, createStreamTokenWithStreamingDrmHollywoodResponse);
-                                    }
-
-                                    var drmTokens = [createStreamTokenWithStreamingDrmOpenAccessResponse.streamToken, createStreamTokenWithStreamingDrmHollywoodResponse.streamToken];
-                                    var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenBroadcastResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken, drmTokens);
-                                    var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
-
-                                    updateSelfAndListenForChanges.call(that, updateSelfOptions, handleJoinRoomCallback, publisher, room);
-                                });
-                            });
-                        }
-
-                        var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenBroadcastResponse.streamToken, createStreamTokenWithStreamingResponse.streamToken);
-                        var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
-
-                        updateSelfAndListenForChanges.call(that, updateSelfOptions, handleJoinRoomCallback, publisher, room);
-                    });
-                }
-
-                var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, createStreamTokenResponse.streamToken, createStreamTokenBroadcastResponse.streamToken);
-                var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(that, publisherStream, room)});
-
-                updateSelfAndListenForChanges.call(that, updateSelfOptions, handleJoinRoomCallback, publisher, room);
+    function generateAllStreamTokensAndCreateStream(publisherCapabilities, streamId, additionalStreamIds, stream, callback) {
+        var generateStreamTokenRequests = [];
+        var numberOfCompletedRequests = 0;
+        var requestCancelled = false;
+        var disposeOfRequests = function() {
+            _.forEach(generateStreamTokenRequests, function(disposable) {
+                disposable.dispose();
             });
+        };
+
+        var completedRequestsCallback = function(error, response) {
+            if (requestCancelled) {
+                return;
+            }
+
+            if (error || response.status !== 'ok') {
+                disposeOfRequests();
+
+                requestCancelled = true;
+
+                return callback(error, response);
+            }
+
+            numberOfCompletedRequests++;
+
+            if (numberOfCompletedRequests === generateStreamTokenRequests.length) {
+                callback(null, {status: 'ok'});
+            }
+        };
+
+        this._logger.debug('Creating [real-time] and [broadcast] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamId, additionalStreamIds.length);
+
+        generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, [], streamId, additionalStreamIds, stream, 'streamToken', completedRequestsCallback));
+        generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['broadcast'], streamId, additionalStreamIds, stream, 'streamTokenForBroadcastStream', completedRequestsCallback));
+
+        if (_.includes(publisherCapabilities, 'streaming')) {
+            this._logger.debug('Creating [streaming] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamId, additionalStreamIds.length);
+
+            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['streaming'], streamId, additionalStreamIds, stream, 'streamTokenForLiveStream', completedRequestsCallback));
+        }
+
+        if (_.includes(publisherCapabilities, 'drm')) {
+            this._logger.debug('Creating [drm-open-access] and [drm-hollywood] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamId, additionalStreamIds.length);
+
+            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['streaming', 'drm-open-access'], streamId, additionalStreamIds, stream, 'streamTokenForLiveStreamWithDrmOpenAccess', completedRequestsCallback));
+            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['streaming', 'drm-hollywood'], streamId, additionalStreamIds, stream, 'streamTokenForLiveStreamWithDrmHollywood', completedRequestsCallback));
+        }
+
+        return disposeOfRequests;
+    }
+
+    function generateWildcardStreamTokenAndAppendToStream(capabilities, streamId, additionalStreamIds, stream, tokenName, callback) {
+        var that = this;
+
+        return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', capabilities, streamId, additionalStreamIds, function(error, response) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (response.status !== 'ok') {
+                return callback(null, response);
+            }
+
+            var prefix = _.includes(stream.uri, '?') ? '&' : '?';
+
+            stream.uri = stream.uri + prefix + tokenName + '=' + response.streamToken;
+
+            callback(null, response);
         });
     }
 
@@ -2432,62 +2522,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }, []);
     }
 
-    function updateSelfAndListenForChanges(options, callback, publisher, room) {
-        var that = this;
-        var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
-        var responseObject = {
-            publisher: publisher,
-            roomService: activeRoomService
-        };
-        var handleUpdate = function(error, response) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (response.status === 'ok') {
-                activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
-
-                var selfStreams = activeRoomService.getSelf().getObservableStreams().getValue();
-                var publishedSelfStream = _.find(selfStreams, function(selfStream) {
-                    return selfStream.getPCastStreamId() === publisher.getStreamId();
-                });
-
-                listenForTrackStateChange.call(that, publisher.getStream(), publishedSelfStream);
-            }
-
-            // TODO(DY) Clean up once event based listeners are exposed on the publisher for stop/end
-            if (response.status === 'ok' && !publisher._cleanUpRoomWrapper) {
-                var publisherStop = _.bind(publisher.stop, publisher);
-
-                publisher._cleanUpRoomWrapper = true;
-
-                publisher.stop = function() {
-                    removePublisher.call(that, publisher, room);
-
-                    var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
-                    var roomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
-
-                    publisherStop.apply(publisher, arguments);
-
-                    if (!roomService) {
-                        return;
-                    }
-
-                    updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, streamsAfterStop, options.memberRole, roomService, room, options, function(error) {
-                        if (error) {
-                            return callback(error);
-                        }
-                    });
-                };
-            }
-
-            return callback(null, _.assign({}, responseObject, response));
-        };
-
-        updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, options.streams, options.memberRole, activeRoomService, room, options, handleUpdate);
-    }
-
     function mapNewPublisherStreamToMemberStreams(publisherStream, room) {
+        var that = this;
         var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
         var defaultStreams = publisherStream ? [publisherStream] : [];
 
@@ -2519,16 +2555,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
                 var isPCastStream = !!pcastStreamId;
                 var hasSamePCastStreamId = isPCastStream && pcastStreamId === Stream.parsePCastStreamIdFromStreamUri(publisherStream.uri);
+                var isTheSameWithoutQueryParams = publisherStream.uri.split('?')[0] === stream.uri.split('?')[0];
                 var hasSameType = stream.type === publisherStream.type;
 
-                return (!hasSameUri && !hasSamePCastStreamId) || !hasSameType;
+                return (!hasSameUri && !hasSamePCastStreamId && !isTheSameWithoutQueryParams) || !hasSameType;
             });
 
             selfStreams.push(publisherStream);
         }
 
         return _.filter(selfStreams, function(stream) {
-            return _.includes(publisherIds, Stream.parsePCastStreamIdFromStreamUri(stream.uri) || stream.uri);
+            return !Stream.parsePCastStreamIdFromStreamUri(stream.uri)
+                || _.includes(publisherIds, Stream.parsePCastStreamIdFromStreamUri(stream.uri) || stream.uri)
+                || _.includes(that._externalPublishers, stream.uri.split('?')[0]);
         });
     }
 
@@ -2540,7 +2579,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (role && roomService) {
-            roomService.getSelf().getObservableRole().setValue(role);
+            roomService.getSelf().getObservableRole().setValue(streams.length === 0 ? memberEnums.roles.audience.name : role);
         }
 
         if (activeRoom && roomService.getSelf()) {
@@ -2747,14 +2786,35 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return publishedStream;
     }
 
-    function listenForTrackStateChange(stream, memberStream) {
-        var tracks = stream.getTracks();
+    function listenForTrackStateChange(publisher, room) {
         var that = this;
+        var disposables = that._publisherDisposables[publisher.getStreamId()];
+        var stream = publisher.getStream();
+
+        if (!stream) {
+            return;
+        }
+
+        var tracks = stream.getTracks();
 
         _.forEach(tracks, function(track) {
-            _.addEventListener(track, 'StateChange', function() {
+            var handleStateChange = function handleStateChange() {
                 var state = track.enabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name;
+                var activeRoomService = findActiveRoom.call(that, room.getRoomId());
+
+                if (!activeRoomService || !activeRoomService.getSelf()) {
+                    return;
+                }
+
+                var selfStreams = activeRoomService.getSelf().getObservableStreams().getValue();
+                var memberStream = _.find(selfStreams, function(selfStream) {
+                    return selfStream.getPCastStreamId() === publisher.getStreamId();
+                });
                 var self = getSelfAssociatedWithStream.call(that, memberStream);
+
+                if (!memberStream) {
+                    return that._logger.warn('[%s] [%s] Unable to update member state change after track state change [%s]. Member stream no longer exists on member model.', stream.id, track.id, track.enabled);
+                }
 
                 that._logger.info('[%s] [%s] Track state changed to [%s], updating room member stream state [%s]', stream.id, track.id, track.enabled, state);
 
@@ -2767,7 +2827,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 if (self) {
                     updateSelfWithRetry.call(that, self);
                 }
-            });
+            };
+
+            _.addEventListener(track, 'StateChange', handleStateChange);
+
+            disposables.add(new disposable.Disposable(function() {
+                _.removeEventListener(track, 'StateChange', handleStateChange);
+            }));
         });
     }
 
@@ -2864,6 +2930,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
+    AdminAPI.prototype.createStreamTokenForPublishingToExternal = function createStreamTokenForPublishingToExternal(sessionId, capabilities, streamId, callback) {
+        this.createStreamTokenForSubscribing(sessionId, capabilities, streamId, null, callback);
+    };
+
     AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
@@ -2914,6 +2984,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disposables.add(new disposable.Disposable(function() {
             clearTimeout(requestTimeoutId);
         }));
+
+        return requestDisposable;
     }
 
     function appendAuthDataTo(data) {
@@ -3176,7 +3248,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (options.mediaConstraints) {
-            throw new Error('Invalid argument, Media Constraints, for publishing remote.');
+            throw new Error('Invalid argument: mediaConstraints, passed on publishRemote. Local media not allowed when publishing remote content.');
         }
 
         if (options.videoElement) {
@@ -3245,6 +3317,65 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
             getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
+        });
+    };
+
+    PCastExpress.prototype.publishStreamToExternal = function publishStreamToExternal(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+        assert.isStringNotEmpty(options.streamId, 'options.streamId');
+        assert.isStringNotEmpty(options.externalUri, 'options.externalUri');
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
+        }
+
+        if (options.connectOptions) {
+            assert.isArray(options.connectOptions, 'options.connectOptions');
+        }
+
+        if (options.mediaConstraints) {
+            throw new Error('Invalid argument: mediaConstraints, passed on publishStreamToExternal. Local media not allowed when publishing remote content.');
+        }
+
+        if (options.videoElement) {
+            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+        }
+
+        if (options.monitor) {
+            assert.isObject(options.monitor, 'options.monitor');
+            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
+
+            if (options.monitor.options) {
+                assert.isObject(options.monitor.options, 'options.monitor.options');
+            }
+        }
+
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
+        var that = this;
+
+        this.waitForOnline(function(error) {
+            if (error) {
+                return callback(error);
+            }
+
+            var remoteOptions = _.assign({
+                connectOptions: [],
+                capabilities: []
+            }, options);
+
+            if (!_.includes(remoteOptions.capabilities, 'egress')) {
+                remoteOptions.capabilities.push('egress');
+            }
+
+            if (!_.includes(remoteOptions.capabilities, 'egress-own-stream')) {
+                remoteOptions.capabilities.push('egress-own-stream');
+            }
+
+            getStreamingTokenAndPublish.call(that, remoteOptions.externalUri, remoteOptions, false, callback);
         });
     };
 
@@ -3593,10 +3724,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
+            var isEgress = _.includes(options.capabilities, 'egress');
+            var generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishing, that._adminAPI, sessionId, options.capabilities);
+
+            if (isEgress) {
+                generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishingToExternal, that._adminAPI, sessionId, options.capabilities, options.streamId);
+            }
 
             that._logger.info('[%s] Creating stream token for publishing', sessionId);
 
-            that._adminAPI.createStreamTokenForPublishing(sessionId, options.capabilities, function(error, response) {
+            generateStreamToken(function(error, response) {
                 if (error) {
                     that._logger.error('[%s] Failed to create stream token for publishing', sessionId, error);
 
@@ -5487,6 +5624,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (!room || room.getRoomId() !== roomId) {
             return;
+        }
+
+        var that = this;
+
+        var memberIsSelf = function(member) {
+            return member.sessionId === that.getSelf().getSessionId();
+        };
+
+        var leftSelf = _.find(members, memberIsSelf);
+        var self = this.getSelf();
+
+        if (self && leftSelf) {
+            self.getObservableLastUpdate().setValue(leftSelf.lastUpdate);
         }
 
         room._removeMembers(members);
@@ -8053,7 +8203,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-21T21:45:58Z';
+    var sdkVersion = '2018-06-27T23:08:05Z';
 
     function PCast(options) {
         options = options || {};
@@ -10261,6 +10411,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             if (!selectedPresenter || !presenterStream) {
                 if (presenters.length === 0) {
+                    memberSelector.reset();
+                    lastMediaStream = null;
+                    lastStreamId = null;
+
                     return subscriberCallback(null, {status: 'no-stream-playing'});
                 }
 
@@ -14112,7 +14266,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14367,7 +14521,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -23548,8 +23702,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-21T21:45:58Z' || '?';
-    var releaseVersion = '2018.2.11';
+    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
+    var releaseVersion = '2018.2.12';
 
     function Logger() {
         this._appenders = [];

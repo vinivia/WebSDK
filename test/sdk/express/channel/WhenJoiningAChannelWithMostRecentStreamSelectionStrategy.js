@@ -146,8 +146,6 @@ define([
                     done();
                 }
             });
-
-            websocketStubber.triggerConnected();
         });
     });
 });

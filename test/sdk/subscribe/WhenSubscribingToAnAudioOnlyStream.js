@@ -31,7 +31,7 @@ define([
             chromeRuntimeStubber.stub();
         });
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             pcast = new PCast({uri: 'wss://mockURI'});
 
             websocketStubber = new WebSocketStubber();
@@ -39,7 +39,11 @@ define([
 
             pcast.start('mockAuthToken', function(){}, function(){}, function(){});
 
-            websocketStubber.triggerConnected();
+            pcast.getObservableStatus().subscribe(function(status) {
+                if (status === 'online') {
+                    done();
+                }
+            });
         });
 
         afterEach(function() {
