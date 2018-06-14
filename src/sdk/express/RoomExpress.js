@@ -50,6 +50,8 @@ define([
         this._activeRoomServices = [];
         this._membersSubscriptions = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
+        this._disposables = new disposable.DisposableList();
+        this._disposed = false;
 
         var that = this;
 
@@ -75,11 +77,15 @@ define([
     }
 
     RoomExpress.prototype.dispose = function dispose() {
+        this._disposed = true;
+
         disposeOfRoomServices.call(this);
 
         if (this._shouldDisposeOfPCastExpress) {
             this._pcastExpress.dispose();
         }
+
+        this._disposables.dispose();
 
         this._logger.info('Disposed Room Express Instance');
     };
@@ -576,7 +582,17 @@ define([
             count++;
 
             if (response.status === 'streaming-not-ready' && count < 3) {
-                return setTimeout(response.retry, count * count * 1000);
+                var retryTimeout = count * count * 1000;
+
+                that._logger.info('Waiting for [%s] ms before retrying after [streaming-not-ready] status.', retryTimeout);
+
+                var timeoutId = setTimeout(response.retry, retryTimeout);
+
+                that._disposables.add(new disposable.Disposable(function() {
+                    clearTimeout(timeoutId);
+                }));
+
+                return;
             } else if (response.status === 'streaming-not-ready' && count >= 3) {
                 return callback(null, {status: response.status});
             }
@@ -602,11 +618,11 @@ define([
     function publishAndUpdateSelf(options, room, callback) {
         var that = this;
         var publisher;
-        var refreshTokenTimeout;
+        var refreshTokenIntervalId;
 
         var handlePublish = function(error, response) {
-            if (refreshTokenTimeout && publisher) {
-                clearInterval(refreshTokenTimeout);
+            if (refreshTokenIntervalId && publisher) {
+                clearInterval(refreshTokenIntervalId);
             }
 
             if (error) {
@@ -625,16 +641,16 @@ define([
             var publisherStop = _.bind(publisher.stop, publisher);
 
             publisher.stop = function() {
-                clearInterval(refreshTokenTimeout);
+                clearInterval(refreshTokenIntervalId);
                 publisherStop.apply(publisher, arguments);
             };
 
             if (options.enableWildcardCapability) {
-                refreshTokenTimeout = setInterval(function() {
+                refreshTokenIntervalId = setInterval(function() {
                     that._logger.debug('Refresh wildcard viewer stream token for [%s] interval of [%s] has expired. Creating new token.',
                         publisher.getStreamId(), defaultStreamWildcardTokenRefreshInterval);
 
-                    var activeRoomService = findActiveRoom.call(that, room.getRoomId());
+                    var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
                     var activeRoom = activeRoomService ? activeRoomService.getObservableActiveRoom().getValue() : room;
 
                     createViewerStreamTokensAndUpdateSelf.call(that, options, publisher, activeRoom, function ignoreSuccess(error, response) {
@@ -643,6 +659,10 @@ define([
                         }
                     });
                 }, defaultStreamWildcardTokenRefreshInterval);
+
+                that._disposables.add(new disposable.Disposable(function() {
+                    clearInterval(refreshTokenIntervalId);
+                }));
             }
 
             createViewerStreamTokensAndUpdateSelf.call(that, options, response.publisher, room, callback);
@@ -699,7 +719,7 @@ define([
             handleJoinRoomCallback = function(error, response) {
                 callback(error, response);
 
-                var roomService = _.get(response, 'roomService', findActiveRoom.call(that, room.getRoomId()));
+                var roomService = _.get(response, 'roomService', findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue()));
 
                 if (error || response.status !== 'ok' || disposable || !roomService) {
                     return;
@@ -842,7 +862,7 @@ define([
 
     function updateSelfAndListenForChanges(options, callback, publisher, room) {
         var that = this;
-        var activeRoomService = findActiveRoom.call(that, room.getRoomId());
+        var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
         var responseObject = {
             publisher: publisher,
             roomService: activeRoomService
@@ -853,7 +873,7 @@ define([
             }
 
             if (response.status === 'ok') {
-                activeRoomService = findActiveRoom.call(that, room.getRoomId());
+                activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
 
                 var selfStreams = activeRoomService.getSelf().getObservableStreams().getValue();
                 var publishedSelfStream = _.find(selfStreams, function(selfStream) {
@@ -873,7 +893,7 @@ define([
                     removePublisher.call(that, publisher, room);
 
                     var streamsAfterStop = mapNewPublisherStreamToMemberStreams.call(that, null, room);
-                    var roomService = findActiveRoom.call(that, room.getRoomId());
+                    var roomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
 
                     publisherStop.apply(publisher, arguments);
 
@@ -881,7 +901,7 @@ define([
                         return;
                     }
 
-                    updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, streamsAfterStop, options.memberRole, roomService, options, function(error) {
+                    updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, streamsAfterStop, options.memberRole, roomService, room, options, function(error) {
                         if (error) {
                             return callback(error);
                         }
@@ -892,11 +912,11 @@ define([
             return callback(null, _.assign({}, responseObject, response));
         };
 
-        updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, options.streams, options.memberRole, activeRoomService, options, handleUpdate);
+        updateSelfStreamsAndRoleAndEnterRoomIfNecessary.call(that, options.streams, options.memberRole, activeRoomService, room, options, handleUpdate);
     }
 
     function mapNewPublisherStreamToMemberStreams(publisherStream, room) {
-        var activeRoomService = findActiveRoom.call(this, room.getRoomId());
+        var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
         var defaultStreams = publisherStream ? [publisherStream] : [];
 
         if (!activeRoomService) {
@@ -956,17 +976,25 @@ define([
         }
     }
 
-    function updateSelfStreamsAndRoleAndEnterRoomIfNecessary(streams, role, roomService, options, callback) {
-        var activeRoomService = findActiveRoom.call(this, options.room.roomId, options.room.alias);
+    function updateSelfStreamsAndRoleAndEnterRoomIfNecessary(streams, role, roomService, room, options, callback) {
+        var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
         var activeRoom = roomService ? roomService.getObservableActiveRoom().getValue() : null;
         var shouldJoinRoom = !activeRoom && !activeRoomService;
         var that = this;
 
+        if (that._disposed) {
+            return that._logger.warn('Unable to update self after express room service disposal.');
+        }
+
         if (streams && activeRoomService) {
+            that._logger.info('Preparing member streams for update in room [%s].', room.getRoomId());
+
             activeRoomService.getSelf().setStreams(streams);
         }
 
         if (role && activeRoomService) {
+            that._logger.info('Preparing member role for update in room [%s].', room.getRoomId());
+
             activeRoomService.getSelf().getObservableRole().setValue(role);
         }
 
@@ -975,6 +1003,8 @@ define([
         }
 
         if (shouldJoinRoom) {
+            that._logger.info('Joining room with member [%s].', room.getRoomId());
+
             var joinRoomAsPresenterOptions = _.assign({
                 role: role,
                 alias: _.get(options, ['room', 'alias']),

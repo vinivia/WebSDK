@@ -60,6 +60,18 @@ define([
             assert.isBoolean(options.disableMultiplePCastInstanceWarning, 'options.disableMultiplePCastInstanceWarning');
         }
 
+        if (!_.isNullOrUndefined(options.disableGlobalErrorListener)) {
+            assert.isBoolean(options.disableGlobalErrorListener, 'options.disableGlobalErrorListener');
+        }
+
+        if (!_.isNullOrUndefined(options.disableBeforeUnload)) {
+            assert.isBoolean(options.disableBeforeUnload, 'options.disableBeforeUnload');
+        }
+
+        if (!_.isNullOrUndefined(options.disableConsoleLogging)) {
+            assert.isBoolean(options.disableConsoleLogging, 'options.disableConsoleLogging');
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -70,7 +82,6 @@ define([
         this._shaka = options.shaka;
         this._videojs = options.videojs || phenixRTC.global.videojs;
         this._rtmpOptions = options.rtmp || {};
-        this._status = 'offline';
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
@@ -78,12 +89,27 @@ define([
         this._h264ProfileIds = [];
 
         var that = this;
+        var logGlobalError = function logGlobalError(event) {
+            that._logger.error('Window Error Event Triggered with pcast in [%s] state', that._observableStatus.getValue(), event ? event.error : 'Unknown Error');
+        };
 
         _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
 
             return that.stop();
         });
+
+        if (!options.disableGlobalErrorListener) {
+            _.addEventListener(phenixRTC.global, 'error', logGlobalError);
+
+            if (phenixRTC.global.__phenixGlobalErrorListenerDisposable) {
+                phenixRTC.global.__phenixGlobalErrorListenerDisposable.dispose();
+            }
+
+            phenixRTC.global.__phenixGlobalErrorListenerDisposable = new disposable.Disposable(function() {
+                _.removeEventListener(phenixRTC.global, 'unload', logGlobalError);
+            });
+        }
 
         if (!options.disableBeforeUnload) {
             _.addEventListener(phenixRTC.global, 'beforeunload', function() {

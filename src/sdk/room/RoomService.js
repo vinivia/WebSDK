@@ -650,7 +650,7 @@ define([
             memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
         }
 
-        this._logger.info('Updating member info for active room');
+        this._logger.info('Updating member info for active room [%s]', roomId);
 
         var that = this;
 
