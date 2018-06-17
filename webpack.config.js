@@ -19,7 +19,6 @@ const path = require('path');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const merge = require('webpack-merge');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const assert = require('phenix-web-assert/dist/phenix-web-assert.min');
 const assertNames = '^' + Object.keys(assert.__proto__).join('$|^') + '$';
 const uglifyManglePropRegex = new RegExp('^_[^_].*' + '|^global$|' + assertNames);
@@ -35,7 +34,7 @@ var baseConfig = {
         umdNamedDefine: true
     },
     plugins: [
-        new webpack.DefinePlugin({'process.env': {'NODE_ENV': JSON.stringify('production')}}),
+        new webpack.DefinePlugin({'process.env': {'NODE_ENV': 'production'}}),
         new CaseSensitivePathsPlugin()
     ],
     resolve: {
@@ -55,7 +54,8 @@ var baseConfig = {
             'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser'),
             'phenix-web-application-activity-detector': path.resolve(__dirname, 'node_modules', 'phenix-web-application-activity-detector')
         }
-    }
+    },
+    performance: {hints: false}
 };
 
 var normalConfig = {entry: path.join(__dirname, 'src', 'web-sdk.js')};
@@ -121,7 +121,5 @@ var lightConfigs = mainConfigs.map(function(config) {
 
     return config;
 });
-
-normalConfigs[0].plugins.push(new CleanWebpackPlugin(distDir, {exclude: ['rtmp-flash-renderer.swf', '.gitignore']}));
 
 module.exports = normalConfigs.concat(lightConfigs);

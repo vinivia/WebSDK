@@ -12,6 +12,6 @@ echo Generating swf file from ../src/flash/RtmpFlashRenderer.as file using flex_
 # https://stackoverflow.com/questions/13302427/mxmlc-in-flex-sdk-4-5-doesnt-work-on-mac-os-10-8
 sed -i '' 's/-d32//g' ${currentPath}/tmp/flex_sdk_4.6/bin/mxmlc
 
-${currentPath}/tmp/flex_sdk_4.6/bin/mxmlc -strict=false -compiler.debug=true -warnings=true ${currentPath}/../src/flash/RtmpFlashRenderer.as -o ${currentPath}/../dist/rtmp-flash-renderer.swf -library-path+=${currentPath}/tmp/flex_sdk_4.6 $libraries -use-network=true -headless-server -static-link-runtime-shared-libraries;
+${currentPath}/tmp/flex_sdk_4.6/bin/mxmlc -strict=false -compiler.debug=true -warnings=true ${currentPath}/../src/flash/RtmpFlashRenderer.as -o ${currentPath}/../generated/rtmp-flash-renderer.swf -library-path+=${currentPath}/tmp/flex_sdk_4.6 $libraries -use-network=true -headless-server -static-link-runtime-shared-libraries;
 
 rm -rf ${currentPath}/tmp;

@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2018.2.11",
+  "version": "2018.2.12",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -55,6 +55,7 @@
     "fingerprintjs2": "1.8.0",
     "grunt": "1.0.2",
     "grunt-cli": "1.2.0",
+    "grunt-contrib-clean": "1.1.0",
     "grunt-contrib-copy": "1.0.0",
     "grunt-sed": "0.1.1",
     "grunt-webpack": "3.1.2",

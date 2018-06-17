@@ -4,4 +4,5 @@
 node_modules/
 coverage/
 npm-debug.log
-dist/workflow-example
+dist/pcast-screen-sharing.zip
+dist/pcast-screen-sharing/

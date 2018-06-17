@@ -23,6 +23,7 @@ const webpackConfigs = require('./webpack.config');
 console.log('Using version', sdkVersion);
 
 module.exports = function(grunt) {
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-sed');
     grunt.loadNpmTasks('grunt-webpack');
@@ -30,10 +31,11 @@ module.exports = function(grunt) {
 
     grunt.registerTask('default', []);
     grunt.registerTask('pack', ['zip']);
-    grunt.registerTask('build', ['default', 'webpack', 'copy:chrome-app', 'sed', 'pack']);
+    grunt.registerTask('build', ['default', 'clean', 'webpack', 'copy:chrome-app', 'copy:flash', 'sed', 'pack']);
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        clean: ['dist'],
         copy: {
             'chrome-app': {
                 files: [
@@ -42,6 +44,16 @@ module.exports = function(grunt) {
                         cwd: 'src/chrome/',
                         src: ['**'],
                         dest: 'dist/pcast-screen-sharing'
+                    }
+                ]
+            },
+            'flash': {
+                files: [
+                    {
+                        expand: true,
+                        cwd: 'generated/',
+                        src: ['rtmp-flash-renderer.swf'],
+                        dest: 'dist'
                     }
                 ]
             }
@@ -66,13 +78,13 @@ module.exports = function(grunt) {
                 path: 'dist'
             }
         },
+        webpack: webpackConfigs,
         zip: {
             'dist/pcast-chrome-app.zip': {
                 cwd: 'dist/pcast-screen-sharing/',
                 src: ['dist/pcast-screen-sharing/**'],
                 dest: 'dist/pcast-screen-sharing.zip'
             }
-        },
-        webpack: webpackConfigs
+        }
     });
 };
