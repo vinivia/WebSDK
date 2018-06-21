@@ -29,9 +29,22 @@ define([
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
     var hasFlashPlugin = detectFlashPlugin();
-    var defaultSwfFileSrc = 'https://phenixrts.com/public/rtmp/rtmp-flash-renderer.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.2.11.swf';
+    var defaultSwfFileSrcs = {
+        local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
+        staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
+        production: 'https://phenixrts.com/public/rtmp/' + mostRecentSwfFile
+    };
 
     function FlashRenderer(streamId, streamsInfo, streamTelemetry, options, logger) {
+        assert.isObject(options, 'options');
+
+        if (options.env) {
+            assert.isStringNotEmpty(options.env, 'options.env');
+        }
+
+        var defaultSwfFileSrc = defaultSwfFileSrcs[options.env || 'production'];
+
         this._logger = logger;
         this._streamId = streamId;
         this._streamsInfo = _.map(streamsInfo, function(info) {

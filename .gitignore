@@ -6,3 +6,4 @@ coverage/
 npm-debug.log
 dist/pcast-screen-sharing.zip
 dist/pcast-screen-sharing/
+dist/workflow-example/

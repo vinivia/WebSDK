@@ -20,6 +20,7 @@ define([
     'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
+    './environment',
     './audio/AudioContext',
     './PCastProtocol',
     './PCastEndPoint',
@@ -37,7 +38,7 @@ define([
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -1551,6 +1552,7 @@ define([
 
         if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
             var rtmpUris = [];
+            var environment = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
             this._logger.info('Selecting flash playback for rtmp.');
 
@@ -1573,7 +1575,7 @@ define([
                 rtmpMatch = offerSdp.match(rtmpQuery);
             }
 
-            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({}, this._rtmpOptions, options));
+            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: environment}, this._rtmpOptions, options));
         } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
             this._logger.info('Selecting dash playback for live stream.');
 
