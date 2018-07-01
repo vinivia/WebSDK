@@ -1040,7 +1040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-06-27T23:08:05Z',
+                version: '2018-07-01T22:44:11Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8201,7 +8201,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-06-27T23:08:05Z';
+    var sdkVersion = '2018-07-01T22:44:11Z';
 
     function PCast(options) {
         options = options || {};
@@ -9000,7 +9000,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var candidate = event.candidate;
 
             if (candidate) {
-                that._logger.debug('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+                that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
             }
@@ -9154,14 +9154,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
 
                 that._h264ProfileIds = h264ProfileIds;
+
+                if (peerConnection.close) {
+                    peerConnection.close();
+                }
             }, function(e) {
                 that._logger.error('Unable to create offer to get local h264 profile level id', e);
+
+                if (peerConnection.close) {
+                    peerConnection.close();
+                }
             }, {
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
             });
         } catch (e) {
             that._logger.error('Failed to set environment defaults. Creating the Offer failed', e);
+
+            if (peerConnection.close) {
+                peerConnection.close();
+            }
         }
     }
 
@@ -14264,7 +14276,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
+    var sdkVersion = '2018-07-01T22:44:11Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14443,7 +14455,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var loggingArguments = args.slice(1);
         var telemetryArguments = [message, this._sessionId, _.now() - this._start].concat(loggingArguments);
 
-        this._logger.debug.apply(this._logger, telemetryArguments);
+        this._logger.info.apply(this._logger, telemetryArguments);
     }
 
     function since() {
@@ -14519,7 +14531,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
+    var sdkVersion = '2018-07-01T22:44:11Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -23700,8 +23712,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-06-27T23:08:05Z' || '?';
-    var releaseVersion = '2018.2.12';
+    var sdkVersion = '2018-07-01T22:44:11Z' || '?';
+    var releaseVersion = '2018.2.13';
 
     function Logger() {
         this._appenders = [];

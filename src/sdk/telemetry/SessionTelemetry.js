@@ -204,7 +204,7 @@ define([
         var loggingArguments = args.slice(1);
         var telemetryArguments = [message, this._sessionId, _.now() - this._start].concat(loggingArguments);
 
-        this._logger.debug.apply(this._logger, telemetryArguments);
+        this._logger.info.apply(this._logger, telemetryArguments);
     }
 
     function since() {

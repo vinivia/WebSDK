@@ -840,7 +840,7 @@ define([
             var candidate = event.candidate;
 
             if (candidate) {
-                that._logger.debug('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+                that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
             }
@@ -994,14 +994,26 @@ define([
                 that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
 
                 that._h264ProfileIds = h264ProfileIds;
+
+                if (peerConnection.close) {
+                    peerConnection.close();
+                }
             }, function(e) {
                 that._logger.error('Unable to create offer to get local h264 profile level id', e);
+
+                if (peerConnection.close) {
+                    peerConnection.close();
+                }
             }, {
                 offerToReceiveAudio: true,
                 offerToReceiveVideo: true
             });
         } catch (e) {
             that._logger.error('Failed to set environment defaults. Creating the Offer failed', e);
+
+            if (peerConnection.close) {
+                peerConnection.close();
+            }
         }
     }
 
