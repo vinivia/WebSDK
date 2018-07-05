@@ -124,7 +124,7 @@ define([
             chromeRuntimeStubber.restore();
         });
 
-        afterEach(function() {
+        function cleanUp() {
             httpStubber.restore();
             websocketStubber.restore();
 
@@ -135,6 +135,10 @@ define([
             pcast.stop();
 
             self.sessionId = 'MockSessionId';
+        }
+
+        afterEach(function() {
+            cleanUp();
         });
 
         it('Has property createRoom that is a function', function() {
@@ -556,6 +560,7 @@ define([
                     });
 
                     it('DISABLED: Ended (room) event handled successfully', function() {
+                        cleanUp();
                         this.skip();
 
                         websocketStubber.stubEvent('chat.RoomEvent', {

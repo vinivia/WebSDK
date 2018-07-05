@@ -681,7 +681,7 @@ define([
                     that._logger.warn('Update of member failed with status [%s]', response.status);
                 }
 
-                if (response.status === 'ok' && isSelfBecomingAudience) {
+                if (response.status === 'ok' && isSelfBecomingAudience && _.isNumber(response.lastUpdate)) {
                     that.getSelf().getObservableLastUpdate().setValue(response.lastUpdate);
                 }
 

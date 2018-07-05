@@ -67,16 +67,12 @@ define([
         });
 
         it('Expect an error to not be thrown when subscribing', function() {
-            websocketStubber.restore();
-
             expect(function() {
                 pcast.subscribe('mockStreamToken', function() {}, {});
             }).to.not.throw();
         });
 
         it('Expect an error to not be thrown when publishing', function() {
-            websocketStubber.restore();
-
             expect(function() {
                 pcast.publish('mockStreamToken', {}, function() {});
             }).to.not.throw();

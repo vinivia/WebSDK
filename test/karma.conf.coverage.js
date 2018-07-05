@@ -43,6 +43,8 @@ module.exports = function(config) {
         preprocessors: {'../test/test-runner.js': ['webpack', 'sourcemap']},
 
         webpack: {
+            mode: 'development',
+            optimization: {minimize: false},
             devtool: 'inline-source-map',
             resolve: {alias: {'sdk': path.resolve(__dirname, '../src/sdk')}}, // Resolve test dependencies to src
             plugins: [

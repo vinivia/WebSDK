@@ -16,17 +16,19 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-proto',
-    'phenix-web-event'
-], function(_, proto, event) {
+    'phenix-web-event',
+    'phenix-web-disposable'
+], function(_, proto, event, disposable) {
     var mqWebSocketClone = proto.MQWebSocket;
 
     function WebSocketStubber() {
-        this._mockMQWebSocket = null;
         this._handlers = {};
         this._defaultResponse = {
             message: {status: 'ok'},
             callback: function() {}
         };
+        this._namedEvents = {};
+        this._websocketCount = 0;
     }
 
     WebSocketStubber.prototype.stub = function(callback) {
@@ -73,13 +75,13 @@ define([
     WebSocketStubber.prototype.stubUpdateMemberResponse = function(callback) {
         var that = this;
 
-        this.stubResponse('chat.UpdateMember', {status: 'ok'}, function(type, message) {
+        this.stubResponse('chat.UpdateMember', {status: 'ok'}, function(type, message, id) {
             if (message.member.role === 'Audience') {
                 that.stubEvent('chat.RoomEvent', {
                     roomId: message.roomId,
                     eventType: 'MemberLeft',
                     members: [message.member]
-                });
+                }, id);
             }
 
             if (message.member.role && message.member.role !== 'Audience') {
@@ -87,7 +89,7 @@ define([
                     roomId: message.roomId,
                     eventType: 'MemberJoined',
                     members: [message.member]
-                });
+                }, id);
             }
 
             if (callback) {
@@ -133,45 +135,66 @@ define([
         };
     };
 
-    WebSocketStubber.prototype.stubEvent = function(type, message) {
+    WebSocketStubber.prototype.stubEvent = function(type, message, id) {
         setupStubIfNoneExist.call(this);
 
-        if (this._namedEvents) {
-            this._namedEvents.fire(type, [message]);
+        id = _.isNumber(id) ? id : (this._websocketCount - 1);
+
+        if (this._namedEvents[id]) {
+            this._namedEvents[id].fire(type, [message]);
         }
     };
 
-    WebSocketStubber.prototype.triggerConnected = function() {
-        if (this._namedEvents) {
-            this._namedEvents.fire('connected');
+    WebSocketStubber.prototype.triggerConnected = function(id) {
+        id = _.isNumber(id) ? id : (this._websocketCount - 1);
+
+        if (this._namedEvents[id]) {
+            this._namedEvents[id].fire('connected');
+        } else {
+            console.warn('No matching connection [%s] to trigger event [%s] on', id, 'connected');
         }
     };
 
-    WebSocketStubber.prototype.triggerReconnected = function() {
-        if (this._namedEvents) {
-            this._namedEvents.fire('reconnected');
+    WebSocketStubber.prototype.triggerReconnected = function(id) {
+        id = _.isNumber(id) ? id : (this._websocketCount - 1);
+
+        if (this._namedEvents[id]) {
+            this._namedEvents[id].fire('reconnected');
+        } else {
+            console.warn('No matching connection [%s] to trigger event [%s] on', id, 'reconnected');
         }
     };
 
-    WebSocketStubber.prototype.triggerDisconnected = function() {
-        if (this._namedEvents) {
-            this._namedEvents.fire('disconnected');
+    WebSocketStubber.prototype.triggerDisconnected = function(id) {
+        id = _.isNumber(id) ? id : (this._websocketCount - 1);
+
+        if (this._namedEvents[id]) {
+            this._namedEvents[id].fire('disconnected');
+        } else {
+            console.warn('No matching connection [%s] to trigger event [%s] on', id, 'disconnected');
         }
     };
 
-    WebSocketStubber.prototype.getNumberOfListeners = function(eventName) {
-        if (this._namedEvents) {
-            return this._namedEvents.size(eventName);
+    WebSocketStubber.prototype.getNumberOfListeners = function(eventName, id) {
+        id = _.isNumber(id) ? id : (this._websocketCount - 1);
+
+        if (this._namedEvents[id]) {
+            return this._namedEvents[id].size(eventName);
         }
+
+        console.warn('No matching connection [%s] to trigger event [%s] on', id, eventName);
 
         return 0;
     };
 
     WebSocketStubber.prototype.restore = function() {
-        if (this._mockMQWebSocket) {
-            this._mockMQWebSocket.disconnect();
-            this._mockMQWebSocket = null;
-        }
+        _.forOwn(this._namedEvents, function(namedEvent) {
+            namedEvent.dispose();
+        });
+
+        this._namedEvents = {};
+        this._websocketCount = 0;
+        this._handlers = {};
 
         proto.MQWebSocket = mqWebSocketClone; // eslint-disable-line no-global-assign
     };
@@ -179,44 +202,50 @@ define([
     function setupStubIfNoneExist() {
         var that = this;
 
-        if (that._mockMQWebSocket) {
+        if (proto.MQWebSocket !== mqWebSocketClone) {
             return;
         }
 
-        that._namedEvents = new event.NamedEvents();
-
-        that._mockMQWebSocket = {
-            disconnect: function() {
-                that._namedEvents.dispose();
-            },
-            sendRequest: function(type, message, callback) {
-                var handler = that._handlers[type] || that._defaultResponse;
-
-                if (_.isFunction(handler.callback)) {
-                    handler.callback(type, message, callback);
-                }
-
-                if (handler.isError) {
-                    return callback(handler.message);
-                }
-
-                callback(null, handler.message);
-            },
-            onEvent: function(eventName, callback) {
-                return that._namedEvents.listen(eventName, callback);
-            },
-            getApiVersion: function() {
-                return 'version';
-            },
-            disposeOfPendingRequests: _.noop
-        };
-
         proto.MQWebSocket = function() { // eslint-disable-line no-global-assign
+            var id = that._websocketCount++;
+
             setTimeout(function() {
-                that.triggerConnected();
+                that.triggerConnected(id);
             }, 0);
 
-            return that._mockMQWebSocket;
+            that._namedEvents[id] = new event.NamedEvents();
+
+            return {
+                disconnect: function() {
+                    if (that._namedEvents[id]) {
+                        that._namedEvents[id].dispose();
+                    }
+                },
+                sendRequest: function(type, message, callback) {
+                    var handler = that._handlers[type] || that._defaultResponse;
+
+                    if (_.isFunction(handler.callback)) {
+                        handler.callback(type, message, callback);
+                    }
+
+                    if (handler.isError) {
+                        return callback(handler.message);
+                    }
+
+                    callback(null, handler.message);
+                },
+                onEvent: function(eventName, callback) {
+                    if (that._namedEvents[id]) {
+                        return that._namedEvents[id].listen(eventName, callback);
+                    }
+
+                    return new disposable.Disposable(_.noop);
+                },
+                getApiVersion: function() {
+                    return 'version';
+                },
+                disposeOfPendingRequests: _.noop
+            };
         };
     }
 
