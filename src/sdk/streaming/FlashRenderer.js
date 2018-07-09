@@ -29,7 +29,7 @@ define([
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
     var hasFlashPlugin = detectFlashPlugin();
-    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.2.11.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
         staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,

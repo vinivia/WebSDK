@@ -76,92 +76,96 @@ public class RtmpFlashRenderer extends Sprite {
      * @constructor
      */
     public function RtmpFlashRenderer() {
-        var flashVars:Object = LoaderInfo(this.root.loaderInfo).parameters;
+        try {
+            var flashVars: Object = LoaderInfo(this.root.loaderInfo).parameters;
 
-        // Use this for CDN
-        if (flashVars.allowScriptAccess == 'always') {
-            Security.allowDomain(['*']);
-            Security.allowInsecureDomain(['*']);
-        }
+            // Use this for CDN
+            if (flashVars.allowScriptAccess == 'always') {
+                Security.allowDomain(['*']);
+                Security.allowInsecureDomain(['*']);
+            }
 
-        _id = flashVars.uid;
-        _setUpSrc = flashVars.src;
-        _autoplay = (flashVars.autoplay == true || flashVars.autoplay === 'true');
-        _preload = flashVars.preload;
-        _streamer = (flashVars.flashstreamer != undefined) ? (String(flashVars.flashstreamer)) : "";
-        _timerRate = (flashVars.timerrate != undefined) ? (parseInt(flashVars.timerrate, 10)) : 250;
-        _bufferSize = (flashVars.bufferSize != undefined) ? (parseFloat(flashVars.bufferSize)) : 0;
-        _bufferSizeMax = (flashVars.bufferSizeMax != undefined) ? (parseFloat(flashVars.bufferSizeMax)) : _bufferSize + .3;
+            _id = flashVars.uid;
+            _setUpSrc = flashVars.src;
+            _autoplay = (flashVars.autoplay == true || flashVars.autoplay === 'true');
+            _preload = flashVars.preload;
+            _streamer = (flashVars.flashstreamer != undefined) ? (String(flashVars.flashstreamer)) : "";
+            _timerRate = (flashVars.timerrate != undefined) ? (parseInt(flashVars.timerrate, 10)) : 250;
+            _bufferSize = (flashVars.bufferSize != undefined) ? (parseFloat(flashVars.bufferSize)) : 0;
+            _bufferSizeMax = (flashVars.bufferSizeMax != undefined) ? (parseFloat(flashVars.bufferSizeMax)) : _bufferSize + .3;
 
-        if (isNaN(_timerRate)) {
-            _timerRate = 250;
-        }
+            if (isNaN(_timerRate)) {
+                _timerRate = 250;
+            }
 
-        _pseudoStreamingEnabled = flashVars.pseudostreamstart != null;
-        _pseudoStreamingStartQueryParam = flashVars.pseudostreamstart != null ? flashVars.pseudostreamstart : 'start';
-        _pseudoStreamingType = flashVars.pseudostreamtype != null ? flashVars.pseudostreamtype : 'time';
-        _proxyType = flashVars.proxytype != null ? flashVars.proxytype : '';
-        _streamDelimiter = flashVars.streamdelimiter != null ? flashVars.streamdelimiter : _streamDelimiter;
+            _pseudoStreamingEnabled = flashVars.pseudostreamstart != null;
+            _pseudoStreamingStartQueryParam = flashVars.pseudostreamstart != null ? flashVars.pseudostreamstart : 'start';
+            _pseudoStreamingType = flashVars.pseudostreamtype != null ? flashVars.pseudostreamtype : 'time';
+            _proxyType = flashVars.proxytype != null ? flashVars.proxytype : '';
+            _streamDelimiter = flashVars.streamdelimiter != null ? flashVars.streamdelimiter : _streamDelimiter;
 
-        // stage setup
-        stage.align = StageAlign.TOP_LEFT;
-        stage.scaleMode = StageScaleMode.NO_SCALE;
-        _stageWidth = stage.stageWidth;
-        _stageHeight = stage.stageHeight;
+            // stage setup
+            stage.align = StageAlign.TOP_LEFT;
+            stage.scaleMode = StageScaleMode.NO_SCALE;
+            _stageWidth = stage.stageWidth;
+            _stageHeight = stage.stageHeight;
 
-        stage.addEventListener(MouseEvent.MOUSE_DOWN, stageClickHandler);
-        stage.addEventListener(MouseEvent.MOUSE_OVER , stageMouseOverHandler);
-        stage.addEventListener(Event.MOUSE_LEAVE, stageMouseLeaveHandler);
-        stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+            stage.addEventListener(MouseEvent.MOUSE_DOWN, stageClickHandler);
+            stage.addEventListener(MouseEvent.MOUSE_OVER, stageMouseOverHandler);
+            stage.addEventListener(Event.MOUSE_LEAVE, stageMouseLeaveHandler);
+            stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 
-        // video setup
-        _display = new Sprite();
-        addChild(_display);
+            // video setup
+            _display = new Sprite();
+            addChild(_display);
 
-        _video = new Video();
-        (_video as Video).smoothing = true;
-        _display.addChild(_video);
-        _timer = new Timer(_timerRate);
-        _timer.addEventListener("timer", timerHandler);
-        _display.addEventListener(MouseEvent.MOUSE_OVER, stageMouseOverHandler);
+            _video = new Video();
+            (_video as Video).smoothing = true;
+            _display.addChild(_video);
+            _timer = new Timer(_timerRate);
+            _timer.addEventListener("timer", timerHandler);
+            _display.addEventListener(MouseEvent.MOUSE_OVER, stageMouseOverHandler);
 
-        _display.x = _video.x = 0;
-        _display.y = _video.y = 0;
-        _display.width = _video.width = _stageWidth;
-        _display.height = _video.height = _stageHeight;
+            _display.x = _video.x = 0;
+            _display.y = _video.y = 0;
+            _display.width = _video.width = _stageWidth;
+            _display.height = _video.height = _stageHeight;
 
-        if (_setUpSrc) {
-            set_src(_setUpSrc);
-            fire_load();
-        }
+            if (_setUpSrc) {
+                set_src(_setUpSrc);
+                fire_load();
+            }
 
-        if (ExternalInterface.available) {
+            if (ExternalInterface.available) {
 
-            // Getters
-            ExternalInterface.addCallback('get_src', get_src);
-            ExternalInterface.addCallback('get_volume',get_volume);
-            ExternalInterface.addCallback('get_currentTime', get_currentTime);
-            ExternalInterface.addCallback('get_muted', get_muted);
-            ExternalInterface.addCallback('get_buffered', get_buffered);
-            ExternalInterface.addCallback('get_duration', get_duration);
-            ExternalInterface.addCallback('get_paused', get_paused);
-            ExternalInterface.addCallback('get_ended', get_ended);
-            ExternalInterface.addCallback('get_readyState', get_readyState);
+                // Getters
+                ExternalInterface.addCallback('get_src', get_src);
+                ExternalInterface.addCallback('get_volume', get_volume);
+                ExternalInterface.addCallback('get_currentTime', get_currentTime);
+                ExternalInterface.addCallback('get_muted', get_muted);
+                ExternalInterface.addCallback('get_buffered', get_buffered);
+                ExternalInterface.addCallback('get_duration', get_duration);
+                ExternalInterface.addCallback('get_paused', get_paused);
+                ExternalInterface.addCallback('get_ended', get_ended);
+                ExternalInterface.addCallback('get_readyState', get_readyState);
 
-            // Setters
-            ExternalInterface.addCallback('set_src', set_src);
-            ExternalInterface.addCallback('set_volume', set_volume);
-            ExternalInterface.addCallback('set_currentTime', set_currentTime);
-            ExternalInterface.addCallback('set_muted', set_muted);
-            ExternalInterface.addCallback('set_size', set_size);
+                // Setters
+                ExternalInterface.addCallback('set_src', set_src);
+                ExternalInterface.addCallback('set_volume', set_volume);
+                ExternalInterface.addCallback('set_currentTime', set_currentTime);
+                ExternalInterface.addCallback('set_muted', set_muted);
+                ExternalInterface.addCallback('set_size', set_size);
 
-            // Methods
-            ExternalInterface.addCallback('fire_load', fire_load);
-            ExternalInterface.addCallback('fire_play', fire_play);
-            ExternalInterface.addCallback('fire_pause', fire_pause);
-            ExternalInterface.addCallback('fire_stop', fire_stop);
+                // Methods
+                ExternalInterface.addCallback('fire_load', fire_load);
+                ExternalInterface.addCallback('fire_play', fire_play);
+                ExternalInterface.addCallback('fire_pause', fire_pause);
+                ExternalInterface.addCallback('fire_stop', fire_stop);
 
-            ExternalInterface.call('(function(){window["__ready__' + _id + '"]()})()', null);
+                ExternalInterface.call('(function(){window["__ready__' + _id + '"]()})()', null);
+            }
+        } catch (error:Error)  {
+            logError('[Flash] Failed to complete initialization', error.message);
         }
     }
 
@@ -169,49 +173,52 @@ public class RtmpFlashRenderer extends Sprite {
     // Javascript bridged methods
     //
     private function fire_load():void {
+        try {
+            if (_currentUrl) {
 
-        if (_currentUrl) {
-
-            // disconnect existing stream and connection
-            if (_isConnected && _stream) {
-                _connection.removeEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-                _connection.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-                try {
-                    _stream.pause();
-                    _stream.close();
-                    _connection.close();
+                // disconnect existing stream and connection
+                if (_isConnected && _stream) {
+                    _connection.removeEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
+                    _connection.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+                    try {
+                        _stream.pause();
+                        _stream.close();
+                        _connection.close();
+                    }
+                    catch (error:Error) {}
+                    _connection = new NetConnection();
                 }
-                catch (error:Error) {}
-                _connection = new NetConnection();
+
+                _isConnected = true;
+                _isPreloading = false;
+                _isPaused = true;
+                _isEnded = false;
+                _bufferEmpty = false;
+
+                if (_proxyType) {
+                    _connection.proxyType = _proxyType;
+                }
+                _connection.client = { onBWDone: function():void{} };
+                _connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
+                _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
+
+                if (_isRTMP) {
+                    _connection.connect(_rtmpInfo.server);
+                } else {
+                    _connection.connect(null);
+                }
+
+                sendEvent('loadstart');
+
+                if (_autoplay) {
+                    setTimeout(function():void {
+                        fire_play();
+                    }, isIE() ? 800 : 300);
+                    return;
+                }
             }
-
-            _isConnected = true;
-            _isPreloading = false;
-            _isPaused = true;
-            _isEnded = false;
-            _bufferEmpty = false;
-
-            if (_proxyType) {
-                _connection.proxyType = _proxyType;
-            }
-            _connection.client = { onBWDone: function():void{} };
-            _connection.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler);
-            _connection.addEventListener(SecurityErrorEvent.SECURITY_ERROR, securityErrorHandler);
-
-            if (_isRTMP) {
-                _connection.connect(_rtmpInfo.server);
-            } else {
-                _connection.connect(null);
-            }
-
-            sendEvent('loadstart');
-
-            if (_autoplay) {
-                setTimeout(function():void {
-                    fire_play();
-                }, 200);
-                return;
-            }
+        } catch (error:Error)  {
+            logError('[Flash] Failed to load', error.message);
         }
     }
     private function fire_play():void {
@@ -534,6 +541,7 @@ public class RtmpFlashRenderer extends Sprite {
         trace("securityErrorHandler: " + event);
     }
     private function asyncErrorHandler(event:AsyncErrorEvent):void {
+        logError('[Flash] Async error on connection');
         // ignore AsyncErrorEvent events.
     }
     private function stageClickHandler(e:MouseEvent):void {
@@ -549,14 +557,6 @@ public class RtmpFlashRenderer extends Sprite {
     private function onEnterFrame(e:Event):void {
         _bytesLoaded = _stream.bytesLoaded;
         _bytesTotal = _stream.bytesTotal;
-
-        // if (_hasStartedPlaying) {
-        //     sendEvent("timeupdate");
-        // }
-        //
-        // if (_bytesLoaded < _bytesTotal) {
-        //     sendEvent("progress");
-        // }
     }
 
     //
@@ -574,45 +574,47 @@ public class RtmpFlashRenderer extends Sprite {
             trace(arguments);
         }
     }
+
+    private function logError(): void {
+        if (ExternalInterface.available) {
+            ExternalInterface.call('console.error', arguments);
+        } else {
+            trace(arguments);
+        }
+    }
+
     private function connectStream():void {
 
-        _stream = new NetStream(_connection);
+        try {
+            _stream = new NetStream(_connection);
 
-        // explicitly set the sound since it could have come before the connection was made
-        _soundTransform = new SoundTransform(_volume);
-        _stream.soundTransform = _soundTransform;
+            // explicitly set the sound since it could have come before the connection was made
+            _soundTransform = new SoundTransform(_volume);
+            _stream.soundTransform = _soundTransform;
 
-        // set the buffer to ensure nice playback
-        _stream.inBufferSeek = true;
-        _stream.bufferTime = _bufferSize;
-        _stream.bufferTimeMax = _bufferSizeMax;
+            // set the buffer to ensure nice playback
+            _stream.inBufferSeek = true;
+            _stream.bufferTime = _bufferSize;
+            _stream.bufferTimeMax = _bufferSizeMax;
 
-        _stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler); // same event as connection
-        _stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
+            _stream.addEventListener(NetStatusEvent.NET_STATUS, netStatusHandler); // same event as connection
+            _stream.addEventListener(AsyncErrorEvent.ASYNC_ERROR, asyncErrorHandler);
 
-        var customClient:Object = new Object();
-        customClient.onMetaData = metaDataHandler;
-        _stream.client = customClient;
+            var customClient:Object = new Object();
+            customClient.onMetaData = metaDataHandler;
+            _stream.client = customClient;
 
-        _video.attachNetStream(_stream);
+            _video.attachNetStream(_stream);
 
-        // start downloading without playing )based on preload and play() hasn't been called)
-        // I wish flash had a load() command to make this less awkward
-        if (_preload != "none" && !_playWhenConnected) {
-            _isPaused = true;
-            _isPreloading = true;
-            stream.bufferTime = 0;
-            _stream.play(getCurrentUrl(0), 0, 0);
-            _stream.pause();
+            _isConnected = true;
+
+            if (_playWhenConnected && !_hasStartedPlaying) {
+                fire_play();
+                _playWhenConnected = false;
+            }
+        } catch (error:Error)  {
+            logError('[Flash] Failed to connect stream', error.message, error.getStackTrace());
         }
-
-        _isConnected = true;
-
-        if (_playWhenConnected && !_hasStartedPlaying) {
-            fire_play();
-            _playWhenConnected = false;
-        }
-
     }
     private function parseRTMP(url:String):Object {
         var match:Array = url.match(/(.*)\/((flv|mp4|mp3):.*)/);
@@ -674,6 +676,20 @@ public class RtmpFlashRenderer extends Sprite {
         }
 
         return 0;
+    }
+
+    private function isIE():Boolean
+    {
+        try
+        {
+            var userAgent:String = ExternalInterface.call("window.navigator.userAgent.toString");
+
+            return userAgent.indexOf("MSIE") !== -1 || userAgent.indexOf("Trident") !== -1;
+        }
+        catch (e:Error)
+        {
+            return false;
+        }
     }
 }
 }

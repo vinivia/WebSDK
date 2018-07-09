@@ -315,7 +315,7 @@ define('app-setup', [
     };
 
     var getSwfFilePath = function() {
-        return './flash/rtmp-flash-renderer-2018.2.11.swf';
+        return './flash/rtmp-flash-renderer-2018.3.2.swf';
     };
 
     return {

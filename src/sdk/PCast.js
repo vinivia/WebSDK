@@ -1564,7 +1564,7 @@ define([
 
         if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
             var rtmpUris = [];
-            var environment = environment.parseEnvFromPcastBaseUri(this._baseUri);
+            var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
             this._logger.info('Selecting flash playback for rtmp.');
 
@@ -1587,7 +1587,7 @@ define([
                 rtmpMatch = offerSdp.match(rtmpQuery);
             }
 
-            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: environment}, this._rtmpOptions, options));
+            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: env}, this._rtmpOptions, options));
         } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
             this._logger.info('Selecting dash playback for live stream.');
 

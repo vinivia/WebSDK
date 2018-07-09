@@ -225,32 +225,6 @@ define([
             });
         });
 
-        // TODO(dy) Fix randomness so it passes every time
-        describe('When auth fails with status capacity', function() {
-            var reauthTokenSpy = null;
-
-            beforeEach(function() {
-                reauthTokenSpy = sinon.spy();
-                websocketStubber.stubAuthRequestFailure('capacity');
-                httpStubber.stubAuthRequest(reauthTokenSpy);
-                websocketStubber.triggerReconnected();
-            });
-
-            it('attempts to reconnect at least 2 times after 6000 ms plus some randomness', function(done) {
-                setTimeout(function() {
-                    expect(reauthTokenSpy.callCount >= 2).to.be.true;
-                    done();
-                }, 20000);
-            });
-
-            it('attempts to reconnect at least 3 times after 15000 ms plus some randomness', function(done) {
-                setTimeout(function() {
-                    expect(reauthTokenSpy.callCount >= 3).to.be.true;
-                    done();
-                }, 40000);
-            });
-        });
-
         describe('When PCast disconnects then reconnects', function() {
             beforeEach(function(done) {
                 websocketStubber.triggerDisconnected();

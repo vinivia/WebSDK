@@ -1042,7 +1042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-05T21:25:40Z',
+                version: '2018-07-10T15:08:16Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8203,7 +8203,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-05T21:25:40Z';
+    var sdkVersion = '2018-07-10T15:08:16Z';
 
     function PCast(options) {
         options = options || {};
@@ -9726,7 +9726,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
             var rtmpUris = [];
-            var environment = environment.parseEnvFromPcastBaseUri(this._baseUri);
+            var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
             this._logger.info('Selecting flash playback for rtmp.');
 
@@ -9749,7 +9749,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 rtmpMatch = offerSdp.match(rtmpQuery);
             }
 
-            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: environment}, this._rtmpOptions, options));
+            return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: env}, this._rtmpOptions, options));
         } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
             this._logger.info('Selecting dash playback for live stream.');
 
@@ -12627,7 +12627,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
     var hasFlashPlugin = detectFlashPlugin();
-    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.2.11.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
         staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -14278,7 +14278,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-05T21:25:40Z' || '?';
+    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14533,7 +14533,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-05T21:25:40Z' || '?';
+    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -23714,8 +23714,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-05T21:25:40Z' || '?';
-    var releaseVersion = '2018.3.1';
+    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
+    var releaseVersion = '2018.3.2';
 
     function Logger() {
         this._appenders = [];
