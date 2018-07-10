@@ -415,6 +415,8 @@ define([
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
+            that._logger.info('[%s] Generating stream token for subscribing to origin [%s]', that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
+
             that._adminAPI.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create stream token for subscribing', error);
@@ -770,10 +772,13 @@ define([
                 delete that._publishers[placeholder];
             };
 
-            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
+            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
 
-                var reAuthOptions = _.assign({isContinuation: true}, options);
+                var reAuthOptions = _.assign({
+                    isContinuation: true,
+                    authFailure: true
+                }, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -785,6 +790,8 @@ define([
 
                 return callback(null, {status: status});
             }
+
+            delete options.authFailure;
 
             that._publishers[publisher.getStreamId()] = publisher;
 
@@ -844,10 +851,13 @@ define([
                 delete that._subscribers[placeholder];
             };
 
-            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
+            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
 
-                var reAuthOptions = _.assign({isContinuation: true}, options);
+                var reAuthOptions = _.assign({
+                    isContinuation: true,
+                    authFailure: true
+                }, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -868,6 +878,8 @@ define([
 
                 return callback(null, {status: status});
             }
+
+            delete options.authFailure;
 
             that._subscribers[subscriber.getStreamId()] = subscriber;
 

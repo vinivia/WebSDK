@@ -147,7 +147,7 @@ define([
             });
         });
 
-        it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function(done) {
+        it('Expect monitor retry with unauthorized status for setupStream to trigger request one time to get new streamToken', function(done) {
             var startClone = PeerConnectionMonitor.prototype.start;
             var subscribeCount = 0;
 

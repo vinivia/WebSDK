@@ -146,17 +146,16 @@ define([
             });
         });
 
-        it('Expect monitor retry with unauthorized status for setupStream to trigger request a single time to get new streamToken', function(done) {
+        it('Expect monitor retry with unauthorized status for setupStream to trigger request one time to get new streamToken', function(done) {
             var startClone = PeerConnectionMonitor.prototype.start;
             var subscribeCount = 0;
+            var reSubscribeCount = 0;
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
                 setTimeout(function() {
-                    if (subscribeCount < 2) {
-                        websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
+                    websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
 
-                        monitorCallback(null, {type: clientFailureReason});
-                    }
+                    monitorCallback(null, {type: clientFailureReason});
                 }, 10);
             };
 
@@ -170,18 +169,20 @@ define([
                             return;
                         }
 
+                        reSubscribeCount++;
                         response.retry();
 
                         PeerConnectionMonitor.prototype.start = startClone;
                     }
                 }
             }, function(error, response) {
-                subscribeCount++;
-
-                if (subscribeCount > 1) {
-                    expect(response.status).to.be.equal('unauthorized');
-                    done();
+                if (response && response.status === 'ok') {
+                    return subscribeCount++;
                 }
+
+                expect(reSubscribeCount).to.be.equal(1);
+                expect(response.status).to.be.equal('unauthorized');
+                done();
             });
         });
     });

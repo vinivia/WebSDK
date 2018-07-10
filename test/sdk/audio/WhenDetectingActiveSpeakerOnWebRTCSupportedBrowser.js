@@ -73,7 +73,7 @@ define([
             expect(meter).to.be.an.instanceof(AudioVolumeMeter);
         });
 
-        it('Expect to have a list containing a single audioVolumeMeter', function() {
+        it('Expect to have a list containing one audioVolumeMeter', function() {
             var meters = audioSpeakerDetector.getAudioVolumeMeters();
 
             expect(meters.length).to.be.equal(1);

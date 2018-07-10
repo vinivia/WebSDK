@@ -798,7 +798,7 @@ define([
             };
 
             var onStop = function destroyMasterMediaStream(reason) {
-                if (state.stopped) {
+                if (state.stopped || !that._protocol) {
                     return;
                 }
 
@@ -1158,7 +1158,7 @@ define([
                             },
 
                             stop: function stop(reason) {
-                                if (state.stopped) {
+                                if (state.stopped || !that._protocol) {
                                     return;
                                 }
 

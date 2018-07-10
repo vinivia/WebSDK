@@ -3028,7 +3028,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-10T15:08:16Z';
+    var sdkVersion = '2018-07-10T23:37:49Z';
 
     function PCast(options) {
         options = options || {};
@@ -3785,7 +3785,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             };
 
             var onStop = function destroyMasterMediaStream(reason) {
-                if (state.stopped) {
+                if (state.stopped || !that._protocol) {
                     return;
                 }
 
@@ -4145,7 +4145,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                             },
 
                             stop: function stop(reason) {
-                                if (state.stopped) {
+                                if (state.stopped || !that._protocol) {
                                     return;
                                 }
 
@@ -5694,6 +5694,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
+            that._logger.info('[%s] Generating stream token for subscribing to origin [%s]', that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
+
             that._adminAPI.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create stream token for subscribing', error);
@@ -6049,10 +6051,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 delete that._publishers[placeholder];
             };
 
-            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
+            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
 
-                var reAuthOptions = _.assign({isContinuation: true}, options);
+                var reAuthOptions = _.assign({
+                    isContinuation: true,
+                    authFailure: true
+                }, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -6064,6 +6069,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 return callback(null, {status: status});
             }
+
+            delete options.authFailure;
 
             that._publishers[publisher.getStreamId()] = publisher;
 
@@ -6123,10 +6130,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 delete that._subscribers[placeholder];
             };
 
-            if ((status === unauthorizedStatus && options.streamToken) || status === 'timeout') {
+            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
 
-                var reAuthOptions = _.assign({isContinuation: true}, options);
+                var reAuthOptions = _.assign({
+                    isContinuation: true,
+                    authFailure: true
+                }, options);
 
                 delete reAuthOptions.streamToken;
 
@@ -6147,6 +6157,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 return callback(null, {status: status});
             }
+
+            delete options.authFailure;
 
             that._subscribers[subscriber.getStreamId()] = subscriber;
 
@@ -8991,7 +9003,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
+    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9246,7 +9258,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
+    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10666,7 +10678,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-10T15:08:16Z',
+                version: '2018-07-10T23:37:49Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16453,7 +16465,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T15:08:16Z' || '?';
+    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
     var releaseVersion = '2018.3.2';
 
     function Logger() {
