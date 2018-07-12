@@ -18,8 +18,8 @@
         "sourceType": "module"
     },
     "plugins": [
-        "requirejs",
-        "mocha"
+        "mocha",
+        "requirejs"
     ],
     "rules" : {
         // Possible Errors - http://eslint.org/docs/rules/#possible-errors
