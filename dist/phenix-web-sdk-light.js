@@ -3028,7 +3028,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-10T23:37:49Z';
+    var sdkVersion = '2018-07-11T23:23:16Z';
 
     function PCast(options) {
         options = options || {};
@@ -3695,6 +3695,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return 'capacity';
         case 'app-background':
             return 'app-background';
+        case 'egress-failed':
+            return 'egress-failed';
+        case 'egress-setup-failed':
+            return 'egress-setup-failed';
         default:
             return 'custom';
         }
@@ -6362,6 +6366,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         switch (reason) {
+        case 'egress-setup-failed': // Bad input params
         case 'ended': // Normal operation
         case 'censored': // Forced to stop
             var endedResponse = {
@@ -6380,6 +6385,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         case 'custom':
             // Client ended publisher, do nothing
             return monitorCallback(null, response);
+        case 'egress-failed':
         case 'capacity':
             // Don't inform the client, attempt to re-publish automatically after backoff
             return setTimeout(function() {
@@ -9003,7 +9009,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
+    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9258,7 +9264,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
+    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10678,7 +10684,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-10T23:37:49Z',
+                version: '2018-07-11T23:23:16Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16465,8 +16471,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-10T23:37:49Z' || '?';
-    var releaseVersion = '2018.3.2';
+    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
+    var releaseVersion = '2018.3.3';
 
     function Logger() {
         this._appenders = [];

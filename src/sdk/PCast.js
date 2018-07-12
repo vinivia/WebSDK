@@ -708,6 +708,10 @@ define([
             return 'capacity';
         case 'app-background':
             return 'app-background';
+        case 'egress-failed':
+            return 'egress-failed';
+        case 'egress-setup-failed':
+            return 'egress-setup-failed';
         default:
             return 'custom';
         }

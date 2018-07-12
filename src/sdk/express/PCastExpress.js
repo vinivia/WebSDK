@@ -1083,6 +1083,7 @@ define([
         };
 
         switch (reason) {
+        case 'egress-setup-failed': // Bad input params
         case 'ended': // Normal operation
         case 'censored': // Forced to stop
             var endedResponse = {
@@ -1101,6 +1102,7 @@ define([
         case 'custom':
             // Client ended publisher, do nothing
             return monitorCallback(null, response);
+        case 'egress-failed':
         case 'capacity':
             // Don't inform the client, attempt to re-publish automatically after backoff
             return setTimeout(function() {

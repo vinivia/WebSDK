@@ -156,6 +156,10 @@ define([
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
                         lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
 
+                    if (lastStreamId && lastMediaStream) {
+                        lastMediaStream.stop();
+                    }
+
                     return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
                 }
 
@@ -176,6 +180,10 @@ define([
                 if (streamErrorStatus) {
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
                         lastStreamId, channelId, streamErrorStatus);
+
+                    if (lastStreamId && lastMediaStream) {
+                        lastMediaStream.stop();
+                    }
 
                     return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
                 }
