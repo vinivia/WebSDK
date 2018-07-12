@@ -101,6 +101,7 @@
     "phenix-web-player": "2018.2.3",
     "phenix-web-proto": "2018.2.2",
     "phenix-web-reconnecting-websocket": "2018.2.1",
+    "puppeteer": "1.6.0",
     "requirejs": "2.3.5",
     "shaka-player": "2.3.7",
     "sinon": "5.0.7",

@@ -16,8 +16,12 @@
 /* global module __dirname process */
 var path = require('path');
 var webpack = require('webpack');
-var browsers = [ 'Chrome' ];
+var puppeteerExecutablePath = require('puppeteer').executablePath();
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+
+console.log('Coverage is using puppeteer chrome [%s]', puppeteerExecutablePath);
+
+process.env.CHROME_BIN = puppeteerExecutablePath;
 
 module.exports = function(config) {
     config.set({
@@ -91,10 +95,21 @@ module.exports = function(config) {
 
         // Start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: browsers,
+        browsers: ['ChromeHeadlessCustom'],
+
+        customLaunchers: {
+            'ChromeHeadlessCustom': {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox']
+            }
+        },
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: true
+        singleRun: true,
+
+        // Calculating the coverage output sometimes takes longer than the default
+        // Default = 10000 ms
+        browserNoActivityTimeout: 20000
     });
 };
