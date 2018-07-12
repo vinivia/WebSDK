@@ -75,6 +75,7 @@ define([
         this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultUserActionOnlineTimeout;
         this._reconnectOptions = options.reconnectOptions || defaultReconnectOptions;
         this._logger = null;
+        this._ignoredStreamEnds = {};
 
         instantiatePCast.call(this);
     }
@@ -761,6 +762,8 @@ define([
 
                 that._logger.warn('Retrying publisher after failure with reason [%s]', reason);
 
+                that._ignoredStreamEnds[publisher.getStreamId()] = true;
+
                 if (reason === 'camera-track-failure') {
                     publisher.stop(reason, false);
                     that.publish(options, callback);
@@ -841,6 +844,7 @@ define([
                 var retryOptions = _.assign({isContinuation: true}, options);
 
                 that._subscribers[placeholder] = true;
+                that._ignoredStreamEnds[subscriber.getStreamId()] = true;
 
                 subscriber.stop(reason);
 
@@ -1081,6 +1085,10 @@ define([
             reason: reason,
             description: description
         };
+
+        if (this._ignoredStreamEnds[publisherOrStream.getStreamId()]) {
+            return this._logger.info('Ignoring stream end due to recovery in progress [%s]', publisherOrStream.getStreamId());
+        }
 
         switch (reason) {
         case 'egress-setup-failed': // Bad input params

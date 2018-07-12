@@ -167,6 +167,8 @@ define([
             }
 
             if (!checkifStreamingIsAvailable(presenterStream.getUri()) && _.includes(options.capabilities, 'streaming')) {
+                that._logger.warn('Streaming is not available for stream [%].', streamId);
+
                 return subscriberCallback(null, {status: 'streaming-not-available'});
             }
 

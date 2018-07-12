@@ -18,10 +18,11 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     function PhenixRealTimeRenderer(streamId, streamSrc, streamTelemetry, options, logger) {
@@ -34,6 +35,7 @@ define([
         this._element = null;
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onEnded = _.bind(ended, this);
@@ -58,10 +60,10 @@ define([
 
         this._element = rtc.attachMediaStream(elementToAttachTo, this._streamSrc);
 
-        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        this._streamTelemetry.recordRebuffering(elementToAttachTo);
-        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-        this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo));
 
         if (this._options.receiveAudio === false) {
             elementToAttachTo.muted = true;
@@ -80,7 +82,7 @@ define([
     PhenixRealTimeRenderer.prototype.stop = function(reason) {
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._element) {
             _.removeEventListener(this._element, 'stalled', this._onStalled, false);
@@ -144,7 +146,7 @@ define([
     };
 
     PhenixRealTimeRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function stalled(event) {

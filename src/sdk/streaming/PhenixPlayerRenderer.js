@@ -19,11 +19,12 @@ define([
     'phenix-web-logging',
     'phenix-web-event',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-web-player',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var bandwidthAt720 = 3000000;
@@ -49,6 +50,7 @@ define([
             lastCurrentTimeOccurenceTimestamp: 0
         };
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onProgress = _.bind(onProgress, this);
@@ -70,10 +72,10 @@ define([
         this._throttledLogger = loggerAtWarningThreshold;
         this._element = elementToAttachTo;
 
-        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        this._streamTelemetry.recordRebuffering(elementToAttachTo);
-        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-        this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo));
 
         setupPlayer.call(that);
 
@@ -105,7 +107,7 @@ define([
 
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._player) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -194,7 +196,7 @@ define([
     };
 
     PhenixPlayerRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function setupPlayer() {

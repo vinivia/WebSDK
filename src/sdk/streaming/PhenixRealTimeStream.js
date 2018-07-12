@@ -34,7 +34,7 @@ define([
         this._streamTelemetry = streamTelemetry;
         this._options = options;
         this._logger = logger;
-        this._renderer = null;
+        this._renderers = [];
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
         this._childrenStreams = [];
@@ -49,16 +49,25 @@ define([
     PhenixRealTimeStream.prototype.createRenderer = function() {
         var that = this;
 
-        this._renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
+        var renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
 
-        this._renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
             that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
         });
-        this._renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
         });
 
-        return this._renderer;
+        this._renderers.push(renderer);
+
+        return renderer;
     };
 
     PhenixRealTimeStream.prototype.select = function select(trackSelectCallback) {
@@ -195,7 +204,7 @@ define([
     };
 
     PhenixRealTimeStream.prototype.getRenderer = function getRenderer() {
-        return this._renderer;
+        return _.get(this._renderers, [0], null);
     };
 
     function isStreamStopped(stream) {

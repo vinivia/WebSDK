@@ -34,7 +34,7 @@ define([
         this._options = options;
         this._shaka = shaka;
         this._logger = logger;
-        this._renderer = null;
+        this._renderers = [];
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
     }
@@ -44,21 +44,23 @@ define([
     };
 
     PhenixLiveStream.prototype.createRenderer = function() {
+        var renderer = null;
+
         switch (this._type) {
         case streamEnums.types.dash.name:
             if (this._shaka) {
-                this._renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
+                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
             } else {
-                this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
             }
 
             break;
         case streamEnums.types.hls.name:
-            this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         case streamEnums.types.rtmp.name:
-            this._renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         default:
@@ -67,14 +69,23 @@ define([
 
         var that = this;
 
-        this._renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
             that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
         });
-        this._renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
         });
 
-        return this._renderer;
+        this._renderers.push(renderer);
+
+        return renderer;
     };
 
     PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
@@ -137,7 +148,7 @@ define([
     };
 
     PhenixLiveStream.prototype.getRenderer = function getRenderer() {
-        return this._renderer;
+        return _.get(this._renderers, [0], null);
     };
 
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {

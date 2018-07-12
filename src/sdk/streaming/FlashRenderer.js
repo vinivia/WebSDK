@@ -19,11 +19,12 @@ define([
     'phenix-web-logging',
     'phenix-web-event',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-web-player',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;
@@ -59,6 +60,7 @@ define([
         this._playerElement = null;
         this._namedEvents = new event.NamedEvents();
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onEnded = _.bind(ended, this);
@@ -88,10 +90,10 @@ define([
 
         this._playerElement = this._phenixVideo.getElement();
 
-        this._streamTelemetry.recordTimeToFirstFrame(this._originElement);
-        this._streamTelemetry.recordRebuffering(this._originElement);
-        this._streamTelemetry.recordVideoResolutionChanges(this, this._originElement);
-        this._streamTelemetry.recordVideoPlayingAndPausing(this._originElement);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(this._originElement));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(this._originElement));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, this._originElement));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(this._originElement));
 
         if (this._playerElement) {
             this._playerElement.play();
@@ -108,7 +110,7 @@ define([
     FlashRenderer.prototype.stop = function(reason) {
         var that = this;
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._phenixVideo) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -183,7 +185,7 @@ define([
     };
 
     FlashRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function handleError(e) {

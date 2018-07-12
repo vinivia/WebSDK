@@ -36,6 +36,10 @@ define([
         this._metricsTransmitter = metricsTransmitter;
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
+        this._dimensionsTrackedVideos = [];
+        this._rebufferingTrackedVideos = [];
+        this._playTrackedVideos = [];
+        this._timeOfFirstFrame = null;
 
         logMetric.call(this, 'Stream initializing');
     }
@@ -110,17 +114,17 @@ define([
     StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
         var startRecordingFirstFrame = _.now();
-        var timeOfFirstFrame;
 
+        // Only record first time to first frame regardless of number of times called
         var listenForFirstFrame = function() {
-            if (timeOfFirstFrame) {
+            if (that._timeOfFirstFrame) {
                 return;
             }
 
-            timeOfFirstFrame = _.now() - startRecordingFirstFrame;
+            that._timeOfFirstFrame = _.now() - startRecordingFirstFrame;
 
-            that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
-            logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
+            that.recordMetric('TimeToFirstFrame', {uint64: that._timeOfFirstFrame});
+            logMetric.call(that, 'First frame [%s]', that._timeOfFirstFrame);
 
             timeToFirstFrameListenerDisposable.dispose();
         };
@@ -135,18 +139,28 @@ define([
 
         // Ensure TTFF is not recorded if stop is called before first frame
         this._disposables.add(timeToFirstFrameListenerDisposable);
+
+        return timeToFirstFrameListenerDisposable;
     };
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
-
     StreamTelemetry.prototype.recordVideoResolutionChanges = function(renderer, video) {
         var that = this;
         var lastResolution = {
             width: video.videoWidth,
             height: video.videoHeight
         };
+        var hasListenedToVideo = _.find(this._dimensionsTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
 
-        renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._dimensionsTrackedVideos.push(video);
+
+        var dimensionChangeDisposable = renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
             if (lastResolution.width === dimensions.width && lastResolution.height === dimensions.height) {
                 return;
             }
@@ -160,12 +174,25 @@ define([
 
             logMetric.call(that, 'Resolution changed: width [%s] height [%s]', dimensions.width, dimensions.height);
         });
+
+        this._disposables.add(dimensionChangeDisposable);
+
+        return dimensionChangeDisposable;
     };
 
     StreamTelemetry.prototype.recordRebuffering = function(video) {
         var that = this;
         var videoStalled;
         var lastProgress;
+        var hasListenedToVideo = _.find(this._rebufferingTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
+
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._rebufferingTrackedVideos.push(video);
 
         var listenForStall = function() {
             if (videoStalled) {
@@ -211,7 +238,7 @@ define([
         _.addEventListener(video, 'progress', listenForContinuation);
         _.addEventListener(video, 'timeupdate', listenForContinuation);
 
-        this._disposables.add(new disposable.Disposable(function() {
+        var rebufferingDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'stalled', listenForStall);
             _.removeEventListener(video, 'pause', listenForStall);
             _.removeEventListener(video, 'suspend', listenForStall);
@@ -219,11 +246,24 @@ define([
             _.removeEventListener(video, 'playing', listenForContinuation);
             _.removeEventListener(video, 'progress', listenForContinuation);
             _.removeEventListener(video, 'timeupdate', listenForContinuation);
-        }));
+        });
+
+        this._disposables.add(rebufferingDisposable);
+
+        return rebufferingDisposable;
     };
 
     StreamTelemetry.prototype.recordVideoPlayingAndPausing = function(video) {
         var that = this;
+        var hasListenedToVideo = _.find(this._playTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
+
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._playTrackedVideos.push(video);
 
         var listenForPlayChange = function() {
             if (video.paused) {
@@ -236,10 +276,14 @@ define([
         _.addEventListener(video, 'pause', listenForPlayChange);
         _.addEventListener(video, 'playing', listenForPlayChange);
 
-        this._disposables.add(new disposable.Disposable(function() {
+        var playingDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'pause', listenForPlayChange);
             _.removeEventListener(video, 'playing', listenForPlayChange);
-        }));
+        });
+
+        this._disposables.add(playingDisposable);
+
+        return playingDisposable;
     };
 
     function logMetric() {

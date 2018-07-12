@@ -3028,7 +3028,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-11T23:23:16Z';
+    var sdkVersion = '2018-07-12T19:09:12Z';
 
     function PCast(options) {
         options = options || {};
@@ -5358,6 +5358,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._onlineTimeout = _.isNumber(options.onlineTimeout) ? options.onlineTimeout : defaultUserActionOnlineTimeout;
         this._reconnectOptions = options.reconnectOptions || defaultReconnectOptions;
         this._logger = null;
+        this._ignoredStreamEnds = {};
 
         instantiatePCast.call(this);
     }
@@ -6044,6 +6045,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 that._logger.warn('Retrying publisher after failure with reason [%s]', reason);
 
+                that._ignoredStreamEnds[publisher.getStreamId()] = true;
+
                 if (reason === 'camera-track-failure') {
                     publisher.stop(reason, false);
                     that.publish(options, callback);
@@ -6124,6 +6127,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var retryOptions = _.assign({isContinuation: true}, options);
 
                 that._subscribers[placeholder] = true;
+                that._ignoredStreamEnds[subscriber.getStreamId()] = true;
 
                 subscriber.stop(reason);
 
@@ -6364,6 +6368,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             reason: reason,
             description: description
         };
+
+        if (this._ignoredStreamEnds[publisherOrStream.getStreamId()]) {
+            return this._logger.info('Ignoring stream end due to recovery in progress [%s]', publisherOrStream.getStreamId())
+        }
 
         switch (reason) {
         case 'egress-setup-failed': // Bad input params
@@ -6890,10 +6898,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(5),
+    __webpack_require__(3),
     __webpack_require__(2),
     __webpack_require__(8),
     __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     function PhenixRealTimeRenderer(streamId, streamSrc, streamTelemetry, options, logger) {
@@ -6906,6 +6915,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._element = null;
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onEnded = _.bind(ended, this);
@@ -6930,10 +6940,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._element = rtc.attachMediaStream(elementToAttachTo, this._streamSrc);
 
-        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        this._streamTelemetry.recordRebuffering(elementToAttachTo);
-        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-        this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo));
 
         if (this._options.receiveAudio === false) {
             elementToAttachTo.muted = true;
@@ -6952,7 +6962,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     PhenixRealTimeRenderer.prototype.stop = function(reason) {
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._element) {
             _.removeEventListener(this._element, 'stalled', this._onStalled, false);
@@ -7016,7 +7026,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixRealTimeRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function stalled(event) {
@@ -7071,7 +7081,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._streamTelemetry = streamTelemetry;
         this._options = options;
         this._logger = logger;
-        this._renderer = null;
+        this._renderers = [];
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
         this._childrenStreams = [];
@@ -7086,16 +7096,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     PhenixRealTimeStream.prototype.createRenderer = function() {
         var that = this;
 
-        this._renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
+        var renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
 
-        this._renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
             that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
         });
-        this._renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
         });
 
-        return this._renderer;
+        this._renderers.push(renderer);
+
+        return renderer;
     };
 
     PhenixRealTimeStream.prototype.select = function select(trackSelectCallback) {
@@ -7232,7 +7251,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixRealTimeStream.prototype.getRenderer = function getRenderer() {
-        return this._renderer;
+        return _.get(this._renderers, [0], null);
     };
 
     function isStreamStopped(stream) {
@@ -7320,11 +7339,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(10),
     __webpack_require__(4),
     __webpack_require__(5),
+    __webpack_require__(3),
     __webpack_require__(11),
     __webpack_require__(2),
     __webpack_require__(8),
     __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;
@@ -7360,6 +7380,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._playerElement = null;
         this._namedEvents = new event.NamedEvents();
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onEnded = _.bind(ended, this);
@@ -7389,10 +7410,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._playerElement = this._phenixVideo.getElement();
 
-        this._streamTelemetry.recordTimeToFirstFrame(this._originElement);
-        this._streamTelemetry.recordRebuffering(this._originElement);
-        this._streamTelemetry.recordVideoResolutionChanges(this, this._originElement);
-        this._streamTelemetry.recordVideoPlayingAndPausing(this._originElement);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(this._originElement));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(this._originElement));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, this._originElement));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(this._originElement));
 
         if (this._playerElement) {
             this._playerElement.play();
@@ -7409,7 +7430,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     FlashRenderer.prototype.stop = function(reason) {
         var that = this;
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._phenixVideo) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -7484,7 +7505,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     FlashRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function handleError(e) {
@@ -7601,11 +7622,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(10),
     __webpack_require__(4),
     __webpack_require__(5),
+    __webpack_require__(3),
     __webpack_require__(11),
     __webpack_require__(2),
     __webpack_require__(8),
     __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var bandwidthAt720 = 3000000;
@@ -7631,6 +7653,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             lastCurrentTimeOccurenceTimestamp: 0
         };
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
 
         this._onStalled = _.bind(stalled, this);
         this._onProgress = _.bind(onProgress, this);
@@ -7652,10 +7675,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._throttledLogger = loggerAtWarningThreshold;
         this._element = elementToAttachTo;
 
-        this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        this._streamTelemetry.recordRebuffering(elementToAttachTo);
-        this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
-        this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoPlayingAndPausing(elementToAttachTo));
 
         setupPlayer.call(that);
 
@@ -7687,7 +7710,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._player) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -7776,7 +7799,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixPlayerRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function setupPlayer() {
@@ -7974,10 +7997,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(5),
+    __webpack_require__(3),
     __webpack_require__(2),
     __webpack_require__(8),
     __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var widevineServiceCertificate = null;
@@ -7999,6 +8023,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             count: 0
         };
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
         this._shaka = shaka;
 
         this._onStalled = _.bind(stalled, this);
@@ -8015,9 +8040,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         that._player = new this._shaka.Player(elementToAttachTo);
 
-        that._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        that._streamTelemetry.recordRebuffering(elementToAttachTo);
-        that._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
 
         var playerConfig = {
             abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
@@ -8099,7 +8124,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._player) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -8188,7 +8213,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     ShakaRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function onProgress() {
@@ -8396,7 +8421,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._options = options;
         this._shaka = shaka;
         this._logger = logger;
-        this._renderer = null;
+        this._renderers = [];
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
     }
@@ -8406,21 +8431,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixLiveStream.prototype.createRenderer = function() {
+        var renderer = null;
+
         switch (this._type) {
         case streamEnums.types.dash.name:
             if (this._shaka) {
-                this._renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
+                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
             } else {
-                this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
             }
 
             break;
         case streamEnums.types.hls.name:
-            this._renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         case streamEnums.types.rtmp.name:
-            this._renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
 
             break;
         default:
@@ -8429,14 +8456,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var that = this;
 
-        this._renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
             that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
         });
-        this._renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
         });
 
-        return this._renderer;
+        this._renderers.push(renderer);
+
+        return renderer;
     };
 
     PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
@@ -8499,7 +8535,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixLiveStream.prototype.getRenderer = function getRenderer() {
-        return this._renderer;
+        return _.get(this._renderers, [0], null);
     };
 
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
@@ -9009,7 +9045,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
+    var sdkVersion = '2018-07-12T19:09:12Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9264,7 +9300,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
+    var sdkVersion = '2018-07-12T19:09:12Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -9277,6 +9313,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._metricsTransmitter = metricsTransmitter;
         this._start = _.now();
         this._disposables = new disposable.DisposableList();
+        this._dimensionsTrackedVideos = [];
+        this._rebufferingTrackedVideos = [];
+        this._playTrackedVideos = [];
+        this._timeOfFirstFrame = null;
 
         logMetric.call(this, 'Stream initializing');
     }
@@ -9351,17 +9391,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     StreamTelemetry.prototype.recordTimeToFirstFrame = function(video) {
         var that = this;
         var startRecordingFirstFrame = _.now();
-        var timeOfFirstFrame;
 
+        // Only record first time to first frame regardless of number of times called
         var listenForFirstFrame = function() {
-            if (timeOfFirstFrame) {
+            if (that._timeOfFirstFrame) {
                 return;
             }
 
-            timeOfFirstFrame = _.now() - startRecordingFirstFrame;
+            that._timeOfFirstFrame = _.now() - startRecordingFirstFrame;
 
-            that.recordMetric('TimeToFirstFrame', {uint64: timeOfFirstFrame});
-            logMetric.call(that, 'First frame [%s]', timeOfFirstFrame);
+            that.recordMetric('TimeToFirstFrame', {uint64: that._timeOfFirstFrame});
+            logMetric.call(that, 'First frame [%s]', that._timeOfFirstFrame);
 
             timeToFirstFrameListenerDisposable.dispose();
         };
@@ -9376,18 +9416,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         // Ensure TTFF is not recorded if stop is called before first frame
         this._disposables.add(timeToFirstFrameListenerDisposable);
+
+        return timeToFirstFrameListenerDisposable;
     };
 
     // TODO(dy) Add logging for bit rate changes using PC.getStats
-
     StreamTelemetry.prototype.recordVideoResolutionChanges = function(renderer, video) {
         var that = this;
         var lastResolution = {
             width: video.videoWidth,
             height: video.videoHeight
         };
+        var hasListenedToVideo = _.find(this._dimensionsTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
 
-        renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._dimensionsTrackedVideos.push(video);
+
+        var dimensionChangeDisposable = renderer.addVideoDisplayDimensionsChangedCallback(function(renderer, dimensions) {
             if (lastResolution.width === dimensions.width && lastResolution.height === dimensions.height) {
                 return;
             }
@@ -9401,12 +9451,25 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             logMetric.call(that, 'Resolution changed: width [%s] height [%s]', dimensions.width, dimensions.height);
         });
+
+        this._disposables.add(dimensionChangeDisposable);
+
+        return dimensionChangeDisposable;
     };
 
     StreamTelemetry.prototype.recordRebuffering = function(video) {
         var that = this;
         var videoStalled;
         var lastProgress;
+        var hasListenedToVideo = _.find(this._rebufferingTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
+
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._rebufferingTrackedVideos.push(video);
 
         var listenForStall = function() {
             if (videoStalled) {
@@ -9452,7 +9515,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         _.addEventListener(video, 'progress', listenForContinuation);
         _.addEventListener(video, 'timeupdate', listenForContinuation);
 
-        this._disposables.add(new disposable.Disposable(function() {
+        var rebufferingDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'stalled', listenForStall);
             _.removeEventListener(video, 'pause', listenForStall);
             _.removeEventListener(video, 'suspend', listenForStall);
@@ -9460,11 +9523,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             _.removeEventListener(video, 'playing', listenForContinuation);
             _.removeEventListener(video, 'progress', listenForContinuation);
             _.removeEventListener(video, 'timeupdate', listenForContinuation);
-        }));
+        });
+
+        this._disposables.add(rebufferingDisposable);
+
+        return rebufferingDisposable;
     };
 
     StreamTelemetry.prototype.recordVideoPlayingAndPausing = function(video) {
         var that = this;
+        var hasListenedToVideo = _.find(this._playTrackedVideos, function(trackedVideo) {
+            return trackedVideo === video;
+        });
+
+        if (hasListenedToVideo) {
+            return new disposable.Disposable(_.noop);
+        }
+
+        this._playTrackedVideos.push(video);
 
         var listenForPlayChange = function() {
             if (video.paused) {
@@ -9477,10 +9553,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         _.addEventListener(video, 'pause', listenForPlayChange);
         _.addEventListener(video, 'playing', listenForPlayChange);
 
-        this._disposables.add(new disposable.Disposable(function() {
+        var playingDisposable = new disposable.Disposable(function() {
             _.removeEventListener(video, 'pause', listenForPlayChange);
             _.removeEventListener(video, 'playing', listenForPlayChange);
-        }));
+        });
+
+        this._disposables.add(playingDisposable);
+
+        return playingDisposable;
     };
 
     function logMetric() {
@@ -10684,7 +10764,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-11T23:23:16Z',
+                version: '2018-07-12T19:09:12Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16471,8 +16551,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-11T23:23:16Z' || '?';
-    var releaseVersion = '2018.3.3';
+    var sdkVersion = '2018-07-12T19:09:12Z' || '?';
+    var releaseVersion = '2018.3.4';
 
     function Logger() {
         this._appenders = [];

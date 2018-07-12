@@ -18,10 +18,11 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-web-http',
+    'phenix-web-disposable',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, event, http, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var widevineServiceCertificate = null;
@@ -43,6 +44,7 @@ define([
             count: 0
         };
         this._namedEvents = new event.NamedEvents();
+        this._disposables = new disposable.DisposableList();
         this._shaka = shaka;
 
         this._onStalled = _.bind(stalled, this);
@@ -59,9 +61,9 @@ define([
 
         that._player = new this._shaka.Player(elementToAttachTo);
 
-        that._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo);
-        that._streamTelemetry.recordRebuffering(elementToAttachTo);
-        that._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo);
+        this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));
+        this._disposables.add(this._streamTelemetry.recordVideoResolutionChanges(this, elementToAttachTo));
 
         var playerConfig = {
             abr: {defaultBandwidthEstimate: defaultBandwidthEstimateForPlayback},
@@ -143,7 +145,7 @@ define([
 
         this._dimensionsChangedMonitor.stop();
 
-        this._streamTelemetry.stop();
+        this._disposables.dispose();
 
         if (this._player) {
             var finalizeStreamEnded = function finalizeStreamEnded() {
@@ -232,7 +234,7 @@ define([
     };
 
     ShakaRenderer.prototype.addVideoDisplayDimensionsChangedCallback = function(callback, options) {
-        this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
+        return this._dimensionsChangedMonitor.addVideoDisplayDimensionsChangedCallback(callback, options);
     };
 
     function onProgress() {
