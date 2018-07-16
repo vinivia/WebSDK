@@ -24,9 +24,7 @@ define([
     var minimumPollFrequency = 15;
 
     function DimensionsChangedMonitor(logger, options) {
-        if (!logger) {
-            throw new Error("'logger' must be specified.");
-        }
+        assert.isObject(logger, 'logger');
 
         this._logger = logger;
         this._dimensionsChangedEvent = new event.Event();

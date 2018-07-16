@@ -14,27 +14,20 @@
  * limitations under the License.
  */
 define([
+    'phenix-web-assert',
     'phenix-web-lodash-light',
     'phenix-web-http',
     'phenix-web-disposable',
     'phenix-web-closest-endpoint-resolver'
-], function(_, http, disposable, ClosestEndPointResolver) {
+], function(assert, _, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
     var maxAttempts = 4;
 
     function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
-        if (typeof version !== 'string') {
-            throw new Error('Must pass a valid "version"');
-        }
-
-        if (typeof baseUri !== 'string') {
-            throw new Error('Must pass a valid "baseUri"');
-        }
-
-        if (typeof logger !== 'object') {
-            throw new Error('Must pass a valid "logger"');
-        }
+        assert.isStringNotEmpty(version, 'version');
+        assert.isStringNotEmpty(baseUri, 'baseUri');
+        assert.isObject(logger, 'logger');
 
         this._version = version;
         this._baseUri = baseUri;

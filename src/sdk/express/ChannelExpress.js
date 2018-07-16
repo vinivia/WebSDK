@@ -124,7 +124,7 @@ define([
 
                 channelResponse.roomService.leaveRoom = function(callback) {
                     if (lastMediaStream) {
-                        lastMediaStream.stop();
+                        lastMediaStream.stop('leave-channel');
                     }
 
                     leaveRoom(callback);
@@ -157,7 +157,7 @@ define([
                         lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
 
                     if (lastStreamId && lastMediaStream) {
-                        lastMediaStream.stop();
+                        lastMediaStream.stop('presenter-failure');
                     }
 
                     return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
@@ -184,7 +184,7 @@ define([
                         lastStreamId, channelId, streamErrorStatus);
 
                     if (lastStreamId && lastMediaStream) {
-                        lastMediaStream.stop();
+                        lastMediaStream.stop('same-presenter-failure');
                     }
 
                     return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
@@ -192,7 +192,7 @@ define([
 
                 return;
             } else if (lastStreamId && lastMediaStream) {
-                lastMediaStream.stop();
+                lastMediaStream.stop('change-presenter');
             }
 
             var tryNextMember = function(streamStatus) {

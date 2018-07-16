@@ -106,7 +106,7 @@ define([
             }
         } else if (phenixRTC.browser === 'Firefox' && phenixRTC.browserVersion >= minimumSupportFirefoxVersionForUnWhiteListedScreenShare) {
             callback(true);
-        } else if (phenixRTC.browser === 'Firefox' && typeof phenixRTC.global.PCastScreenSharing === 'object') {
+        } else if (phenixRTC.browser === 'Firefox' && _.isObject(phenixRTC.global.PCastScreenSharing)) {
             callback(true);
         } else {
             callback(false);
@@ -262,7 +262,7 @@ define([
     function mapNewerConstraints(options, id) {
         var constraints = {video: {}};
 
-        if (typeof options === 'object' && typeof options.screen === 'object') {
+        if (_.isObject(options) && _.isObject(options.screen)) {
             constraints.video = options.screen;
         }
 
@@ -378,7 +378,7 @@ define([
             };
 
             intervalId = setInterval(function() {
-                if (typeof phenixRTC.global.PCastScreenSharing === 'object') {
+                if (_.isObject(phenixRTC.global.PCastScreenSharing)) {
                     return success();
                 }
 

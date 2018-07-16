@@ -90,7 +90,7 @@ define([
             _.removeEventListener(this._element, 'suspend', this._onStalled, false);
             _.removeEventListener(this._element, 'ended', this._onEnded, false);
 
-            if (typeof this._element.pause === 'function') {
+            if (_.isFunction(this._element.pause)) {
                 this._element.pause();
             }
 

@@ -97,7 +97,7 @@ define([
         _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
 
-            return that.stop();
+            return that.stop('window-unload');
         });
 
         if (!options.disableGlobalErrorListener) {
@@ -116,7 +116,7 @@ define([
             _.addEventListener(phenixRTC.global, 'beforeunload', function() {
                 that._logger.info('Window Before Unload Event Triggered');
 
-                return that.stop();
+                return that.stop('window-beforeunload');
             });
         }
 
@@ -161,21 +161,10 @@ define([
     };
 
     PCast.prototype.start = function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
-        if (typeof authToken !== 'string') {
-            throw new Error('"authToken" must be a string');
-        }
-
-        if (typeof authenticationCallback !== 'function') {
-            throw new Error('"authenticationCallback" must be a function');
-        }
-
-        if (typeof onlineCallback !== 'function') {
-            throw new Error('"onlineCallback" must be a function');
-        }
-
-        if (typeof offlineCallback !== 'function') {
-            throw new Error('"offlineCallback" must be a function');
-        }
+        assert.isStringNotEmpty(authToken, 'authToken');
+        assert.isFunction(authenticationCallback, 'authenticationCallback');
+        assert.isFunction(onlineCallback, 'onlineCallback');
+        assert.isFunction(offlineCallback, 'offlineCallback');
 
         if (this._started) {
             throw new Error('"Already started"');
@@ -249,10 +238,16 @@ define([
         });
     };
 
-    PCast.prototype.stop = function() {
+    PCast.prototype.stop = function(reason) {
+        reason = reason || '';
+
+        assert.isString(reason, 'reason');
+
         if (!this._started) {
             return;
         }
+
+        this._logger.info('Stopping pcast instance with reason [%s]', reason);
 
         this._stopped = true;
         this._started = false;
@@ -260,7 +255,6 @@ define([
         delete this._authenticationCallback;
 
         try {
-            var reason = '';
             var that = this;
 
             _.forOwn(this._mediaStreams, function(mediaStream, streamId) {
@@ -331,35 +325,23 @@ define([
             throw new Error('PCast not started. Unable to publish. Please start pcast first.');
         }
 
-        if (typeof streamToken !== 'string') {
-            throw new Error('"streamToken" must be a string');
-        }
-
-        if (typeof streamToPublish !== 'object' && typeof streamToPublish !== 'string') {
-            throw new Error('"streamToPublish" must be an object or URI');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
         tags = tags || [];
-
-        if (!Array.isArray(tags)) {
-            throw new Error('"tags" must be an array');
-        }
-
         options = options || {};
 
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
+        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isFunction(callback, 'callback');
+        assert.isArray(tags, 'tags');
+        assert.isObject(options, 'options');
+
+        if (!_.isObject(streamToPublish) && !_.isString(streamToPublish)) {
+            throw new Error('"streamToPublish" must be an object or URI');
         }
 
         var that = this;
         var streamType = 'upload';
         var setupStreamOptions = _.assign({}, options, {negotiate: true});
 
-        if (typeof streamToPublish === 'string') {
+        if (_.isString(streamToPublish)) {
             setupStreamOptions.negotiate = false;
             setupStreamOptions.connectUri = streamToPublish;
         } else {
@@ -450,19 +432,11 @@ define([
             throw new Error('PCast not started. Unable to subscribe. Please start pcast first.');
         }
 
-        if (typeof streamToken !== 'string') {
-            throw new Error('"streamToken" must be a string');
-        }
-
-        if (typeof callback !== 'function') {
-            throw new Error('"callback" must be a function');
-        }
-
         options = options || {};
 
-        if (typeof options !== 'object') {
-            throw new Error('"options" must be an object');
-        }
+        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isFunction(callback, 'callback');
+        assert.isObject(options, 'options');
 
         var that = this;
 
@@ -595,7 +569,7 @@ define([
 
             transitionToStatus.call(this, 'critical-network-issue');
 
-            return this.stop();
+            return this.stop('critical-network-issue');
         }
 
         var that = this;
@@ -671,7 +645,7 @@ define([
 
             transitionToStatus.call(this, 'critical-network-issue');
 
-            return this.stop();
+            return this.stop('critical-network-issue');
         }
 
         this._connected = false;
@@ -737,7 +711,7 @@ define([
 
         var publisher = this._publishers[streamId];
 
-        if (publisher && typeof publisher.dataQualityChangedCallback === 'function') {
+        if (publisher && _.isFunction(publisher.dataQualityChangedCallback)) {
             publisher.dataQualityChangedCallback(publisher, status, reason);
         }
     }
@@ -755,7 +729,7 @@ define([
 
         var publisher = this._publishers[streamId];
 
-        if (publisher && typeof publisher.publisherEndedCallback === 'function') {
+        if (publisher && _.isFunction(publisher.publisherEndedCallback)) {
             publisher.publisherEndedCallback(publisher, getStreamEndedReason(reason), reason);
         }
 
@@ -806,7 +780,7 @@ define([
                     return;
                 }
 
-                that._logger.info('[%s] stop media stream', streamId);
+                that._logger.info('[%s] media stream has stopped with reason', streamId, reason);
 
                 closePeerConnection.call(that, streamId, peerConnection, 'stop');
 
@@ -920,6 +894,8 @@ define([
                     return;
                 }
 
+                that._logger.info('[%s] stopping publisher with reason [%s]', streamId, reason);
+
                 that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                     if (error) {
                         that._logger.error('[%s] failed to destroy stream [%s]', streamId, error);
@@ -938,17 +914,13 @@ define([
             },
 
             setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
-                if (typeof callback !== 'function') {
-                    throw new Error('"callback" must be a function');
-                }
+                assert.isFunction(callback, 'callback');
 
                 this.publisherEndedCallback = callback;
             },
 
             setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                if (typeof callback !== 'function') {
-                    throw new Error('"callback" must be a function');
-                }
+                assert.isFunction(callback, 'callback');
 
                 this.dataQualityChangedCallback = callback;
             },
@@ -958,13 +930,8 @@ define([
             },
 
             monitor: function monitor(options, callback) {
-                if (typeof options !== 'object') {
-                    throw new Error('"options" must be an object');
-                }
-
-                if (typeof callback !== 'function') {
-                    throw new Error('"callback" must be a function');
-                }
+                assert.isObject(options, 'options');
+                assert.isFunction(callback, 'callback');
             },
 
             getMonitor: function getMonitor() {
@@ -1166,6 +1133,8 @@ define([
                                     return;
                                 }
 
+                                that._logger.info('[%s] stopping publisher with reason [%s]', streamId, reason || 'client-action');
+
                                 closePeerConnection.call(that, streamId, peerConnection, 'closed');
 
                                 that._protocol.destroyStream(streamId, reason || '', function(error, response) {
@@ -1186,17 +1155,13 @@ define([
                             },
 
                             setPublisherEndedCallback: function setPublisherEndedCallback(callback) {
-                                if (typeof callback !== 'function') {
-                                    throw new Error('"callback" must be a function');
-                                }
+                                assert.isFunction(callback, 'callback');
 
                                 this.publisherEndedCallback = callback;
                             },
 
                             setDataQualityChangedCallback: function setDataQualityChangedCallback(callback) {
-                                if (typeof callback !== 'function') {
-                                    throw new Error('"callback" must be a function');
-                                }
+                                assert.isFunction(callback, 'callback');
 
                                 this.dataQualityChangedCallback = callback;
                             },
@@ -1206,9 +1171,7 @@ define([
                                     return that._logger.warn('Limit bandwidth not support on [%s]', phenixRTC.browser);
                                 }
 
-                                if (typeof bandwidthLimit !== 'number') {
-                                    throw new Error('"bandwidthLimit" must be a number');
-                                }
+                                assert.isNumber(bandwidthLimit, 'bandwidthLimit');
 
                                 var newLimit = limit ? Math.min(bandwidthLimit, limit) : bandwidthLimit;
                                 var remoteDescription = peerConnection.remoteDescription;
@@ -1241,13 +1204,8 @@ define([
                             },
 
                             monitor: function monitor(options, callback) {
-                                if (typeof options !== 'object') {
-                                    throw new Error('"options" must be an object');
-                                }
-
-                                if (typeof callback !== 'function') {
-                                    throw new Error('"callback" must be a function');
-                                }
+                                assert.isObject(options, 'options');
+                                assert.isFunction(callback, 'callback');
 
                                 var monitor = new PeerConnectionMonitor(streamId, peerConnection, that._logger);
 
@@ -1284,9 +1242,7 @@ define([
                             },
 
                             setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {
-                                if (typeof callback !== 'function') {
-                                    throw new Error('"callback" must be a function');
-                                }
+                                assert.isFunction(callback, 'callback');
 
                                 this.remoteMediaStreamCallback = callback;
 

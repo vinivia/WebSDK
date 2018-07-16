@@ -111,7 +111,7 @@ define([
             return;
         }
 
-        this._logger.info('[%s] stop media stream', this._streamId);
+        this._logger.info('[%s] stop [live] media stream with reason [%s]', this._streamId, reason);
 
         this._namedEvents.fire(streamEnums.streamEvents.stopped.name, [reason]);
 

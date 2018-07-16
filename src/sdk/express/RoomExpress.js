@@ -67,7 +67,7 @@ define([
 
                 that._pcastExpress.waitForOnline(function() {
                     _.forOwn(roomServicesToCleanUp, function(roomService) {
-                        roomService.stop();
+                        roomService.stop('pcast-change');
                     });
                 }, true);
 
@@ -133,7 +133,7 @@ define([
                 }
 
                 // Don't return room service. Not in room. Room returned is immutable
-                roomService.stop();
+                roomService.stop('create');
 
                 return callback(null, roomResponse);
             });
@@ -381,11 +381,11 @@ define([
         });
         _.forOwn(this._roomServicePublishers, function(publishers) {
             _.forEach(publishers, function(publisher) {
-                publisher.stop();
+                publisher.stop('dispose');
             });
         });
         _.forOwn(this._roomServices, function(roomService) {
-            roomService.stop();
+            roomService.stop('dispose');
         });
 
         this._membersSubscriptions = {};
@@ -438,7 +438,7 @@ define([
         var roomServiceLeaveRoom = roomService.leaveRoom;
 
         roomService.stop = function() {
-            roomServiceStop.call(roomService);
+            roomServiceStop.apply(roomService, arguments);
 
             delete that._roomServices[uniqueId];
         };
@@ -448,7 +448,7 @@ define([
 
             roomServiceLeaveRoom.call(roomService, function(error, response) {
                 if (error) {
-                    roomService.stop();
+                    roomService.stop('leave-room-failure');
 
                     return callback(error);
                 }
@@ -465,7 +465,7 @@ define([
 
                 that._logger.info('Successfully disposed Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
-                roomService.stop();
+                roomService.stop('leave-room');
 
                 return callback(null, response);
             });
@@ -561,19 +561,19 @@ define([
 
             roomService.enterRoom(options.roomId, options.alias, function(error, roomResponse) {
                 if (error) {
-                    roomService.stop();
+                    roomService.stop('enter-room-failure');
 
                     return joinRoomCallback(error);
                 }
 
                 if (roomResponse.status === 'not-found') {
-                    roomService.stop();
+                    roomService.stop('enter-room-failure');
 
                     return joinRoomCallback(null, {status: 'room-not-found'});
                 }
 
                 if (roomResponse.status !== 'ok' && roomResponse.status !== 'already-in-room') {
-                    roomService.stop();
+                    roomService.stop('enter-room-failure');
 
                     return joinRoomCallback(null, roomResponse);
                 }

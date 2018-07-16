@@ -183,23 +183,15 @@ define([
     }
 
     function assertIsValidMemberRole(role) {
-        role = _.getEnumName(memberRoles, role);
+        assert.isValidType(role, memberRoles, 'memberRole');
 
-        if (!role) {
-            throw new Error('"role" must be a valid member role');
-        }
-
-        return role;
+        return _.getEnumName(memberRoles, role);
     }
 
     function assertIsValidMemberState(state) {
-        state = _.getEnumName(memberStates, state);
+        assert.isValidType(state, memberStates, 'memberState');
 
-        if (!state) {
-            throw new Error('"state" must be a valid member state');
-        }
-
-        return state;
+        return _.getEnumName(memberStates, state);
     }
 
     return Member;

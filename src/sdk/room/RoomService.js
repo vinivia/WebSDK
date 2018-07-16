@@ -190,9 +190,11 @@ define([
         return 'RoomService';
     };
 
-    RoomService.prototype.stop = function stop() {
+    RoomService.prototype.stop = function stop(reason) {
         var activeRoom = this._activeRoom.getValue();
         var that = this;
+
+        this._logger.info('Stopping room service with reason [%s]', reason);
 
         if (activeRoom) {
             return this.leaveRoom(function(error, response) {

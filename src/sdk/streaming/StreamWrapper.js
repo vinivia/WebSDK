@@ -84,7 +84,7 @@ define([
             this._stream.streamEndedCallback(this._stream, status, reason);
         }
 
-        this._stream.stop();
+        this._stream.stop(reason);
 
         if (renderer) {
             renderer.stop(reason, waitForPlayerEnd);
@@ -98,7 +98,7 @@ define([
             return;
         }
 
-        if (typeof renderer.dataQualityChangedCallback === 'function') {
+        if (_.isFunction(renderer.dataQualityChangedCallback)) {
             renderer.dataQualityChangedCallback(renderer, status, reason);
         }
     };

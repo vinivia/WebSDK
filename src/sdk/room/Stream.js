@@ -152,23 +152,15 @@ define([
     }
 
     function assertIsValidStreamType(type) {
-        type = _.getEnumName(streamTypes, type);
+        assert.isValidType(type, streamTypes, 'streamType');
 
-        if (!type) {
-            throw new Error('"type" must be a valid stream type');
-        }
-
-        return type;
+        return _.getEnumName(streamTypes, type);
     }
 
     function assertIsValidTrackState(state) {
-        state = _.getEnumName(trackStates, state);
+        assert.isValidType(state, trackStates, 'trackState');
 
-        if (!state) {
-            throw new Error('"state" must be a valid track state');
-        }
-
-        return state;
+        return _.getEnumName(trackStates, state);
     }
 
     return Stream;

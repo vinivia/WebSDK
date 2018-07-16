@@ -553,7 +553,7 @@ define([
         case 'timeout':
         case 'critical-network-issue':
             if (that._pcastObservable.getValue()) {
-                that._pcastObservable.getValue().stop('express-recovery');
+                that._pcastObservable.getValue().stop('recovery');
                 that._pcastObservable.setValue(null);
             }
 
