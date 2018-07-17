@@ -24,6 +24,7 @@
     "ci-test": "node scripts/ci-test.js",
     "ci-bundle": "node scripts/ci-bundle.js",
     "ci-coverage": "node scripts/ci-coverage.js",
+    "ci-deploy": "npm run scripts/ci-deploy.js",
     "start": "node example/httpserver.js",
     "jpm-run": "jpm run --addon-dir src/firefox",
     "jpm-xpi": "jpm xpi --addon-dir src/firefox",
@@ -32,11 +33,12 @@
     "prepack": "npm run webpack-workflow-example && npm run add-copyright",
     "check-copyright": "eslint --no-eslintrc --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:3 --parser-options=sourceType:module --rule 'notice/notice: [2, {mustMatch: Copyright .* PhenixP2P Inc,templateFile: copyright.txt}]' ./",
     "add-copyright": "eslint --no-eslintrc --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:3 --parser-options=sourceType:module --rule 'notice/notice: [2, {mustMatch: Copyright .* PhenixP2P Inc,templateFile: copyright.txt}]' ./ --fix",
-    "deploy-examples:example": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R example/* gs://phenix-assets-us/examples",
-    "deploy-examples:src": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R src/* gs://phenix-assets-us/examples",
-    "deploy-examples:dist": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R dist/* gs://phenix-assets-us/examples",
-    "deploy-examples:deps": "gsutil -h \"Cache-Control:public, max-age=600\" -m cp -R node_modules/phenix-* node_modules/jquery node_modules/lodash node_modules/bootstrap node_modules/bootstrap-notify node_modules/fingerprintjs2 node_modules/shaka-player node_modules/requirejs node_modules/animate.css gs://phenix-assets-us/examples",
-    "deploy-examples": "node scripts/deploy-examples.js"
+    "deploy-examples:example": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R example/* gs://phenix-assets-us/examples",
+    "deploy-examples:src": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R src/* gs://phenix-assets-us/examples",
+    "deploy-examples:dist": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R dist/* gs://phenix-assets-us/examples",
+    "deploy-examples:deps": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R node_modules/phenix-* node_modules/jquery node_modules/lodash node_modules/bootstrap node_modules/bootstrap-notify node_modules/fingerprintjs2 node_modules/shaka-player node_modules/requirejs node_modules/animate.css gs://phenix-assets-us/examples",
+    "deploy-examples": "node scripts/deploy-examples.js",
+    "version": "node scripts/version.js"
   },
   "devDependencies": {
     "animate.css": "3.6.1",
