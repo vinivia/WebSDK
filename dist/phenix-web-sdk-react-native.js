@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 108);
+/******/ 	return __webpack_require__(__webpack_require__.s = 109);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -114,7 +114,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(106)
+    __webpack_require__(107)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(LodashLight) {
     'use strict';
 
@@ -142,7 +142,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(105)
+    __webpack_require__(106)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert) {
     return assert;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -168,8 +168,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(100),
-    __webpack_require__(99)
+    __webpack_require__(102),
+    __webpack_require__(101)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Disposable, DisposableList) {
     return {
         Disposable: Disposable,
@@ -197,7 +197,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(41),__webpack_require__(1),__webpack_require__(2),__webpack_require__(4),__webpack_require__(5));else { var d, c; }}(this,function(a,b,c,d,e,f){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=11)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(10))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b,c){var d,e;d=[c(1),c(6),c(4),c(0),c(12)],e=function(a,b,c,d,e){"use strict";function f(a,d,e,f){var h=this;this._ghost=a,this._stream=d,this._isPhenixPlugin="phenix"===e,this._isFlash="flash"===e,this._options=f||{},this._events={},this._disposables=new b.DisposableList,this._flashPlayer=null;var i=function(a){h._loaded=!0,h._enabled=a===!0,a?l.call(h):q("Failed to create Phenix video element"),h._onReady&&h._onReady(h._enabled)};try{if(this._video=g.call(this),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghostInitStyleCssText=this._ghost.style.cssText,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._disposables.add(new b.Disposable(function(){h._ghost.style.cssText=h._ghostInitStyleCssText})),this._video.onunload=function(){h._loaded=!1},n.call(this),document.body&&document.body.contains||p("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&(this._ghost.parentNode.replaceChild(this._video,this._ghost),this._isFlash&&this._flashPlayer&&(this._video=this._flashPlayer.finishInitializationInDom()),this._disposables.add(new b.Disposable(function(){h._video.parentNode&&h._video.parentNode.replaceChild(h._ghost,h._video)}))),!this._isPhenixPlugin)return i(!0);var j=new c;j.waitForReady(this._video,i)}catch(k){q("Error while loading Phenix RTC"+k),i(!1)}}function g(){var a=document.createElement("video");if(this._isPhenixPlugin&&(a=document.createElement("object"),a.type="application/x-phenix-video"),this._isFlash){this._flashPlayer=new e(this._ghost,this._stream,this._options);var c=this;this._disposables.add(new b.Disposable(function(){c._flashPlayer.destroy()})),a=this._flashPlayer.getElement()}return a}function h(a,b,c){if(this._isFlash)return this._flashPlayer.addEventListener(a,b);if(this._isPhenixPlugin){var d=this._events[a];return d||(d=this._events[a]=[],this._loaded&&j.call(this,a)),d.push(b)}return this._video.addEventListener(a,b,c)}function i(a,b,c){if(this._isFlash)return this._flashPlayer.removeEventListener(a,b);{if(!this._isPhenixPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}}function j(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function k(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function l(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)j.call(this,a[b]);this.hookUpEvents(),m.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghostInitStyleCssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&!this._isFlash&&(this._video.src=this._stream)}function m(){var c=this,e=["style"];if(a.get(d,["MutationObserver"])){var f=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===c._ghost&&e.indexOf(a.attributeName)===-1&&(c._video[a.attributeName]=c._ghost[a.attributeName])})}),g={attributes:!0};f.observe(c._ghost,g),c._disposables.add(new b.Disposable(function(){f.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(a){c._video[a.target.tagName]=c._ghost[a.target.tagName]};c._ghost.addEventListener?(c._ghost.addEventListener("DOMAttrModified",h,!1),c._disposables.add(new b.Disposable(function(){c._ghost.removeEventListener("DOMAttrModified",h,!1)}))):(c._ghost.attachEvent("onpropertychange",h),c._disposables.add(new b.Disposable(function(){c._ghost.detachEvent("DOMAttrModified",h)})))}}function n(){var c=this;if(a.get(d,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var b=0;b<a.addedNodes.length;b++){var d=a.addedNodes[b];a.target!==c._video&&(d===c._ghost?(a.target.replaceChild(c._video,c._ghost),l.call(c)):o(a.target,c._ghost)&&(c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost),l.call(c)))}})}),f={childList:!0,attributes:!1,characterData:!1,subtree:!0};e.observe(document.body,f),c._disposables.add(new b.Disposable(function(){e.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var g=function(){c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost)};c.addEventListener("DOMNodeInserted",g,!1),c._disposables.add(new b.Disposable(function(){c.removeEventListener("DOMNodeInserted",g,!1)}))}}function o(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var p=function(){console.log.apply(console,arguments)}||function(){},q=function(){console.error.apply(console,arguments)}||p;return f.prototype.hookUpEvents=function(){var a=this,c=this._ghost,d=function(){k(c,"error")},e=function(){c.muted=a._video.muted,k(c,"mute")},f=function(){c.muted=a._video.muted,k(c,"unmute")},g=function(){c.ended=a._video.ended,k(c,"ended")},h=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadedmetadata")},i=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadeddata")},j=function(){c.width=a._video.width,c.height=a._video.height,k(c,"resize")};this.addEventListener("error",d),this.addEventListener("mute",e),this.addEventListener("unmute",f),this.addEventListener("ended",g),this.addEventListener("loadedmetadata",h),this.addEventListener("loadeddata",i),this.addEventListener("resize",j);var l=new b.Disposable(function(){a.removeEventListener("error",d),a.removeEventListener("mute",e),a.removeEventListener("unmute",f),a.removeEventListener("ended",g),a.removeEventListener("loadedmetadata",h),a.removeEventListener("loadeddata",i),a.removeEventListener("resize",j)});return this._disposables.add(l),l},f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.getElement=function(){return this._video},f.prototype.addEventListener=function(a,b,c){h.call(this,a,b,c)},f.prototype.removeEventListener=function(a,b,c){i.call(this,a,b,c)},f.prototype.destroy=function(){this._disposables.dispose()},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b){a.exports=e},function(a,b,c){var d,e;d=[c(1),c(5),c(7),c(2),c(0),c(14),c(13)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b,c){"use strict";var d,e;d=[c(8),c(9),c(3)],e=function(a,b,c){return a.PhenixVideo=c,a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(6),c(16),c(4),c(0)],e=function(a,b,c,d,e,f){"use strict";function g(b,e,f){this._disposables=new c.DisposableList,this._events=new d.NamedEvents,this._isVideo="video"===b.tagName,this._swfSrc=f.swfSrc,this._id=b.id||f.streamId,this._width=b.clientWidth,this._height=b.clientHeight,this._ghost=b,this._element=null,this._eventDisposables=[],this._flashVars=["uid="+this._id,"autoplay="+(!!a.isUndefined(b.autoplay)||b.autoplay),"allowScriptAccess=always","preload=true","src="+JSON.stringify(e)];var g=this;this._disposables.add(new c.Disposable(function(){t.call(g,"fire_stop")}));try{C||D?this._element=i.call(this):this._element=j.call(this),m.call(this)}catch(h){y("Error while loading Flash Player"+h)}}function h(b,c){return a.findIndex(this._eventDisposables,function(a){return a.name===b&&a.listener===c})}function i(){return document.createElement("div")}function j(){var a=document.createElement("embed");return a.setAttribute("id","__"+this._id),a.setAttribute("name","__"+this._id),a.setAttribute("play","true"),a.setAttribute("loop","false"),a.setAttribute("quality","high"),a.setAttribute("bgcolor","#000000"),a.setAttribute("wmode","transparent"),a.setAttribute("allowScriptAccess","always"),a.setAttribute("allowFullScreen","true"),a.setAttribute("type","application/x-shockwave-flash"),a.setAttribute("pluginspage","//www.macromedia.com/go/getflashplayer"),a.setAttribute("src",this._swfSrc),a.setAttribute("flashvars",this._flashVars.join("&")),this._isVideo&&(a.setAttribute("width",this._width.toString()),a.setAttribute("height",this._height.toString())),a}function k(){if(!C&&!D)return this._element;var b=(D?"__"+this._id:this._id)+a.uniqueId(),c=document.createElement("object"),d=document.createElement("div"),e=[l("movie",this._swfSrc+"?x="+a.now()),l("flashvars",this._flashVars.join("&")),l("quality",2),l("bgcolor","#000000"),l("wmode","transparent"),l("allowScriptAccess","always"),l("allowFullScreen","true"),d];return d.innerHTML=E,D?(c.setAttribute("type","application/x-shockwave-flash"),c.setAttribute("data",this._swfSrc),c.setAttribute("id",b),c.setAttribute("width","__"+this._width.toString()),c.setAttribute("height","__"+this._height.toString())):(c.setAttribute("classid","clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"),c.setAttribute("codebase","//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab"),c.setAttribute("id",b),c.setAttribute("width",this._width.toString()),c.setAttribute("height",this._height.toString())),c.object?(a.forEach(e,function(b){a.isNullOrUndefined(a.get(c.object,[b.name]))||(c.object[b.name]=b.value)}),c.appendChild(d)):a.forEach(e,function(b){var d=a.find(c.children,function(a){return a.name===b.name});return d?c.replaceChild(b,d):c.appendChild(b)}),this._element.outerHTML=c.outerHTML,f.document.getElementById&&(this._element=f.document.getElementById(b),m.call(this)),this._element}function l(a,b){var c=document.createElement("param");return c.setAttribute("name",a),c.setAttribute("value",b),c}function m(){a.assign(this._element,z,{id:this._id,width:this._width,height:this._height,videoWidth:this._width,videoHeight:this._height}),n.call(this),v.call(this),o.call(this)}function n(){var b=this;f["__event__"+this._id]=function(a,c){var d=u(a,b._element);if(c)try{d.data=JSON.parse(c),d.details.data=d.data}catch(e){d.message=c}switch(a){case"ended":break;case"error":b._element.error=d.data;break;case"loadeddata":case"loadedmetadata":case"loadstart":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"pause":b._element.paused=!0;break;case"play":b._element.paused=!1;break;case"playing":b._element.paused=!1;break;case"progress":case"seeked":case"seeking":case"stalled":case"suspend":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"timeupdate":b._element.currentTime=s.call(b,"currentTime"),b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"volumechange":break;case"waiting":}b._events.fireAsync(a,[d])};var d=this._element.requestFullscreen||this._element.mozRequestFullScreen||this._element.webkitRequestFullScreen||this._element.msRequestFullscreen;this._disposables.add(new c.Disposable(function(){delete f["__event__"+b._id]})),this._element.play=function(){t.call(b,"fire_play")},this._element.load=function(){t.call(b,"fire_load")},this._element.seek=function(){t.call(b,"fire_seek")},this._element.pause=function(){t.call(b,"fire_pause")},this._element.requestFullscreen=function(){if(b._isFullscreen=!0,w.call(b),b._previousHeight=b._element.style.height,b._previousWidth=b._element.style.width,b._previousPosition=b._element.style.position,b._element.style.position="absolute",b._element.style.height="100%",b._element.style.width="100%","undefined"!=typeof f.ActiveXObject){var a=new f("WScript.Shell");null!==a&&a.SendKeys("{F11}")}d.call(b._element)};var e=function(){t.call(b,"set_size",b._isFullscreen?screen.width:b._element.clientWidth,b._isFullscreen?screen.height:b._element.clientHeight)};a.addEventListener(f,"resize",e),this._disposables.add(new c.Disposable(function(){a.removeEventListener(f,"resize",e)}))}function o(){var a=p.call(this),b=q.call(this),d=setInterval(function(){a(),b()},A);this._disposables.add(new c.Disposable(function(){clearInterval(d)}))}function p(){var a=this,b=a._ghost.muted,c=a._element.muted;return function(){var d=a._element.muted,e=a._element.muted;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.muted=e,a._ghost.muted=e,r.call(a,"muted",e))}}function q(){var a=this,b=a._ghost.volume,c=a._element.volume;return function(){var d=a._element.volume,e=a._element.volume;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.volume=e,a._ghost.volume=e,r.call(a,"volume",e))}}function r(b,c){var d=this._element["set_"+b]||a.noop;return d.call(this._element,c)}function s(b){var c=this._element["get_"+b]||a.noop;return c.call(this._element)}function t(a){var b=this._element[a];if([].shift.apply(arguments),b)return b.apply(this._element,arguments)}function u(a,b){var c=a.match(/([a-z]+\.([a-z]+))/i),d={target:b};if(null!==c&&(a=c[1],d.namespace=c[2]),"IE"===B.browser&&B.version>8){var e=f.document.createEvent("CustomEvent");return e.initCustomEvent(a,!1,!1,d),e}return f.CustomEvent?new f.CustomEvent(a,{detail:d}):d}function v(){var b=this,d=["currentTime","paused","error","src"];if(a.get(f,["MutationObserver"])){var e=new MutationObserver(function(c){c.forEach(function(c){"attributes"!==c.type||c.target!==b._element||a.includes(d,c.attributeName)||r.call(b,c.attributeName,b._element[c.attributeName])})}),g={attributes:!0};e.observe(b._element,g),b._disposables.add(new c.Disposable(function(){e.disconnect()}))}else{x("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(c){a.includes(d,c.target.tagName)||r.call(b,c.target.tagName,b._element[c.target.tagName])};b._element.addEventListener?(b._element.addEventListener("DOMAttrModified",h,!1),b._disposables.add(new c.Disposable(function(){b._element.removeEventListener("DOMAttrModified",h,!1)}))):(b._element.attachEvent("onpropertychange",h),b._disposables.add(new c.Disposable(function(){b._element.detachEvent("DOMAttrModified",h)})))}}function w(){function a(){document.webkitIsFullScreen||document.mozFullScreen||document.msFullscreenElement||document.fullscreenElement||(document.removeEventListener("webkitfullscreenchange",a),document.removeEventListener("mozfullscreenchange",a),document.removeEventListener("fullscreenchange",a),document.removeEventListener("MSFullscreenChange",a),document.removeEventListener("keydown",b),c._isFullscreen=!1,c._element.style.position=c._previousPosition,c._element.style.height=c._previousHeight,c._element.style.width=c._previousWidth)}function b(b){var c=b||f.event,d=!1;d="key"in c?"Escape"===c.key||"Esc"===c.key:27===c.keyCode,d&&a()}var c=this;document.addEventListener("webkitfullscreenchange",a,!1),document.addEventListener("mozfullscreenchange",a,!1),document.addEventListener("fullscreenchange",a,!1),document.addEventListener("MSFullscreenChange",a,!1),document.addEventListener("keydown",b,!1)}var x=function(){console.log.apply(console,arguments)}||function(){},y=function(){console.error.apply(console,arguments)}||x,z={width:480,height:360,videoWidth:480,videoHeight:360,muted:!1,volume:1,currentTime:0,duration:1/0,readyState:0,ended:!1,buffered:null,autoplay:!0},A=300,B=new b(navigator.userAgent).detect(),C="IE"===B.browser&&/(trident|microsoft)/i.test(a.get(f.navigator,["appName"],"")),D="Edge"===B.browser&&a.get(f.navigator,"msLaunchUri")&&!a.get(f.document,"documentMode"),E="You are using a browser that does not have Flash player enabled or installed. Please turn on your Flash player plugin or download the latest version from https://get.adobe.com/flashplayer/";return g.prototype.finishInitializationInDom=function(){return k.call(this)},g.prototype.getElement=function(){return this._element},g.prototype.addEventListener=function(a,b){var c=h.call(this,a,b);if(!(c>-1)){var d=this._events.listen(a,b);this._disposables.add(d),this._eventDisposables.push({name:a,listener:b,disposable:d})}},g.prototype.removeEventListener=function(a,b){var c=h.call(this,a,b);if(c>-1){var d=this._eventDisposables.splice(c,1)[0];d.disposable.dispose()}},g.prototype.destroy=function(){this._disposables.dispose()},g}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(5),c(7),c(4),c(3)],e=function(a,b,c,d,e){"use strict";function f(){var a=this;this._root=h(),this._version="?";var b=function(b){a._loaded=!0,a._enabled=b===!0,a._version=a._phenixRTC.phenixVersion||"?.?.?.?",q(b?"Phenix RTC "+a._version:"No Phenix RTC"),a._onReady&&a._onReady(a._enabled)};try{this._phenixRTC=i(this._root),this._phenixRTC.onunload=function(){a._loaded=!1};var c=new d;c.waitForReady(this._phenixRTC,b)}catch(e){r("Error while loading Phenix RTC"+e)}}function g(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function h(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function i(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function j(a,b){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=b,a;var c=new e(a,b,(!0));return c.getElement().phenixPresenter=c,c.getElement()}function k(b){var c=function(){var c=null;switch(arguments.length){case 0:c=new b;break;case 1:c=new b(arguments[0]);break;case 2:c=new b(arguments[0],arguments[1]);break;case 3:c=new b(arguments[0],arguments[1],arguments[2]);break;case 4:c=new b(arguments[0],arguments[1],arguments[2],arguments[3]);break;case 5:c=new b(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4]);break;default:throw new Error("Unsupported number of arguments in Phenix Object Constructor")}return c.phenixAddEventListener=a.bind(l,c),c.phenixRemoveEventListener=a.bind(m,c),c};return a.forOwn(b,function(a,b){c[b]=a}),c}function l(a,c){b.stringNotEmpty(a,"name"),b.isFunction(c,"listener"),n.call(this,a),o.call(this,a,c)}function m(a,b){p.call(this,a,b)}function n(b){if(!this.events||!this.events[b]){this.events||(this.events={});var d=this.events;d[b]={observable:(new c.Observable).extend({timeout:0}),subscription:null,listeners:[]},this.phenixSetEventListener(b,a.bind(d[b].observable.setValue,d[b].observable)),d[b].subscription=d[b].observable.subscribe(function(c){var e=d[b],f=e.listeners;a.forEach(f,function(a){a(c)})})}}function o(a,b){if(!this.events||!this.events[a])throw new Error("No event observable for event: "+name);this.events[a].listeners.push(b)}function p(b,c){this.events&&this.events.events[b]&&(this.events[b].listeners=a.filter(this.events[b].listeners,function(a){return c!==a}))}var q=function(){console.log.apply(console,arguments)}||function(){},r=function(){console.error.apply(console,arguments)}||q;return f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.onLoaded=function(a){this._onLoaded=a},f.prototype.isLoaded=function(){return this._loaded===!0},f.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent&&(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/)))try{return new window.ActiveXObject("PhenixP2P.RTC"),!0}catch(c){return!1}return!1},f.prototype.isEnabled=function(){return g.call(this),this._phenixRTC&&void 0!==this._phenixRTC.phenixVersion},f.prototype.getVersion=function(){return g.call(this),this._version},f.prototype.getRTCPeerConnectionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCPeerConnection)},f.prototype.getRTCSessionDescriptionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCSessionDescription)},f.prototype.getRTCIceCandidateConstructor=function(){return g.call(this),k(this._phenixRTC.RTCIceCandidate)},f.prototype.getSourcesDelegate=function(){var a=this;return function(b){return g.call(a),a._phenixRTC.getSources(b)}},f.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,d){return g.call(a),a._phenixRTC.getUserMedia(b,c,d)}},f.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},f.prototype.attachMediaStream=function(a,b){return g.call(this),j.call(this,a,b)},f.prototype.reattachMediaStream=function(a,b){return g.call(this),this.attachMediaStream(a,b.src)},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(15),c(0),c(3)],e=function(a,b,c,d,e){"use strict";function f(){if(v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(y=a.bind(k,null,"input")),navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(z=a.bind(k,null,"output")),(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia||d.getUserMedia)&&(A=g),!d.RTCPeerConnection)return t("[%s] browser version [%s] does not appear to be WebRTC-capable",u.browser,u.version);switch(u.browser){case"Firefox":t("Firefox detected",u),C=function(a,b){t("Attaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b),a.mozSrcObject=b,a.play(),c===!0&&(a.muted=!0),a},E=function(a,b){t("Reattaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b.srcObject),a.mozSrcObject=b.mozSrcObject,a.play(),c===!0&&(a.muted=!0),a},B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Opera":t("Opera detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Chrome":t("Webkit detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Edge":t("Edge detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Safari":t("Safari detected",u),C=function(b,c){return a.isObject(c)&&(b.__phenixHasPlayedWebRtc=!0),b=l(b,c)},D=function(a,b){return a.__phenixHasPlayedWebRtc?(a=new e(a,b,(!1)).getElement(),a.play(),a):m(a,b)},E=n,B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;case"ReactNative":t("React Native detected",u),C=function(){t("attachMediaStream not supported in React Native environment")},D=function(){t("attachUriStream not supported in React Native environment")},E=function(){t("reattachMediaStream not supported in React Native environment")},B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;default:t("Browser does not appear to be WebRTC-capable",u)}}function g(b,c,e){var f=a.bind(h,this,b,c,e);return navigator&&a.isFunction(navigator.getUserMedia)?navigator.getUserMedia(b,f,e):d&&a.isFunction(d.getUserMedia)?d.getUserMedia(b,f,e):void 0}function h(a,b,c,d){setTimeout(function(){for(var e=d.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){t(a.timeStamp,"Track",g.id,g.label,"ended")},t("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState)return i("User media not available",c,e)}var h=(a.audio?1:0)+(a.video?1:0);return e.length!==h?i("Unable to get all requested user media.",c,e):void b(d)},100)}function i(a,b,c){try{var d=new Error(a);d.code="unavailable",b(d)}finally{j(c)}}function j(a){for(var b=0;b<a.length;b++)a[b].stop()}function k(a,b){if("input"!==a&&"output"!==a)throw new Error("Unsupported device type "+a);navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices().then(function(c){var d=[];c.forEach(function(b){b.kind==="audio"+a?d.push({kind:"audio",id:b.deviceId,label:b.label}):b.kind==="video"+a&&d.push({kind:"video",id:b.deviceId,label:b.label})}),b(d)})}function l(a,b){return"undefined"!=typeof a.srcObject?a.srcObject=b:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=b:"undefined"!=typeof a.src?a.src=URL.createObjectURL(b):t("Error attaching stream to element."),a.play(),a}function m(a,b){return a.src=b,a.play(),a}function n(a,b){return a.src=b.src,a}function o(a,b,c){b(p(a,c))}function p(b,c){switch(u.browser){case"Edge":c.forEach(function(a){a.mediaType=q(b,a.codecId),a.bytesSent=s(a.packetsSent,a.mediaType),a.bytesReceived=s(a.packetsReceived,a.mediaType)});break;case"Safari":c.forEach(function(b){a.includes(b.id.toLowerCase(),"audio")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="audio"),a.includes(b.id.toLowerCase(),"video")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="video")})}return c}function q(b,c){if(c){var d;return r(b,function(b){a.startsWith(b,"video")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="video"),a.startsWith(b,"audio")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="audio")}),d}}function r(b,c){var d=b.localDescription.sdp.split("m="),e=b.remoteDescription.sdp.split("m=");return d.length===e.length&&a.findIndex(d,function(a,b){return c(a,b,e)})}function s(a,b){var c=parseInt(a)||0;return"audio"===b?100*c:"video"===b?1080*c:void 0}var t=function(){console.log.apply(console,arguments)},u=new b(navigator.userAgent).detect(),v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,y=null,z=null,A=null,B=null,C=null,D=null,E=null,F=!1;return function(){f();var a={RTCPeerConnection:v,RTCSessionDescription:w,RTCIceCandidate:x,getSources:y,getDestinations:z,getUserMedia:A,getStats:B,attachMediaStream:C,attachUriStream:D||m,reattachMediaStream:E,webrtcSupported:F};return a.exportGlobal=function(){d.RTCPeerConnection=a.RTCPeerConnection,d.RTCSessionDescription=a.RTCSessionDescription,d.RTCIceCandidate=a.RTCIceCandidate},a}}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(){};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=f}])});
+!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(42),__webpack_require__(1),__webpack_require__(2),__webpack_require__(4),__webpack_require__(5));else { var d, c; }}(this,function(a,b,c,d,e,f){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=11)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(10))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b,c){var d,e;d=[c(1),c(6),c(4),c(0),c(12)],e=function(a,b,c,d,e){"use strict";function f(a,d,e,f){var h=this;this._ghost=a,this._stream=d,this._isPhenixPlugin="phenix"===e,this._isFlash="flash"===e,this._options=f||{},this._events={},this._disposables=new b.DisposableList,this._flashPlayer=null;var i=function(a){h._loaded=!0,h._enabled=a===!0,a?l.call(h):q("Failed to create Phenix video element"),h._onReady&&h._onReady(h._enabled)};try{if(this._video=g.call(this),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghostInitStyleCssText=this._ghost.style.cssText,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._disposables.add(new b.Disposable(function(){h._ghost.style.cssText=h._ghostInitStyleCssText})),this._video.onunload=function(){h._loaded=!1},n.call(this),document.body&&document.body.contains||p("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&(this._ghost.parentNode.replaceChild(this._video,this._ghost),this._isFlash&&this._flashPlayer&&(this._video=this._flashPlayer.finishInitializationInDom()),this._disposables.add(new b.Disposable(function(){h._video.parentNode&&h._video.parentNode.replaceChild(h._ghost,h._video)}))),!this._isPhenixPlugin)return i(!0);var j=new c;j.waitForReady(this._video,i)}catch(k){q("Error while loading Phenix RTC"+k),i(!1)}}function g(){var a=document.createElement("video");if(this._isPhenixPlugin&&(a=document.createElement("object"),a.type="application/x-phenix-video"),this._isFlash){this._flashPlayer=new e(this._ghost,this._stream,this._options);var c=this;this._disposables.add(new b.Disposable(function(){c._flashPlayer.destroy()})),a=this._flashPlayer.getElement()}return a}function h(a,b,c){if(this._isFlash)return this._flashPlayer.addEventListener(a,b);if(this._isPhenixPlugin){var d=this._events[a];return d||(d=this._events[a]=[],this._loaded&&j.call(this,a)),d.push(b)}return this._video.addEventListener(a,b,c)}function i(a,b,c){if(this._isFlash)return this._flashPlayer.removeEventListener(a,b);{if(!this._isPhenixPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}}function j(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function k(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function l(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)j.call(this,a[b]);this.hookUpEvents(),m.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghostInitStyleCssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&!this._isFlash&&(this._video.src=this._stream)}function m(){var c=this,e=["style"];if(a.get(d,["MutationObserver"])){var f=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===c._ghost&&e.indexOf(a.attributeName)===-1&&(c._video[a.attributeName]=c._ghost[a.attributeName])})}),g={attributes:!0};f.observe(c._ghost,g),c._disposables.add(new b.Disposable(function(){f.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(a){c._video[a.target.tagName]=c._ghost[a.target.tagName]};c._ghost.addEventListener?(c._ghost.addEventListener("DOMAttrModified",h,!1),c._disposables.add(new b.Disposable(function(){c._ghost.removeEventListener("DOMAttrModified",h,!1)}))):(c._ghost.attachEvent("onpropertychange",h),c._disposables.add(new b.Disposable(function(){c._ghost.detachEvent("DOMAttrModified",h)})))}}function n(){var c=this;if(a.get(d,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var b=0;b<a.addedNodes.length;b++){var d=a.addedNodes[b];a.target!==c._video&&(d===c._ghost?(a.target.replaceChild(c._video,c._ghost),l.call(c)):o(a.target,c._ghost)&&(c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost),l.call(c)))}})}),f={childList:!0,attributes:!1,characterData:!1,subtree:!0};e.observe(document.body,f),c._disposables.add(new b.Disposable(function(){e.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var g=function(){c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost)};c.addEventListener("DOMNodeInserted",g,!1),c._disposables.add(new b.Disposable(function(){c.removeEventListener("DOMNodeInserted",g,!1)}))}}function o(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var p=function(){console.log.apply(console,arguments)}||function(){},q=function(){console.error.apply(console,arguments)}||p;return f.prototype.hookUpEvents=function(){var a=this,c=this._ghost,d=function(){k(c,"error")},e=function(){c.muted=a._video.muted,k(c,"mute")},f=function(){c.muted=a._video.muted,k(c,"unmute")},g=function(){c.ended=a._video.ended,k(c,"ended")},h=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadedmetadata")},i=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadeddata")},j=function(){c.width=a._video.width,c.height=a._video.height,k(c,"resize")};this.addEventListener("error",d),this.addEventListener("mute",e),this.addEventListener("unmute",f),this.addEventListener("ended",g),this.addEventListener("loadedmetadata",h),this.addEventListener("loadeddata",i),this.addEventListener("resize",j);var l=new b.Disposable(function(){a.removeEventListener("error",d),a.removeEventListener("mute",e),a.removeEventListener("unmute",f),a.removeEventListener("ended",g),a.removeEventListener("loadedmetadata",h),a.removeEventListener("loadeddata",i),a.removeEventListener("resize",j)});return this._disposables.add(l),l},f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.getElement=function(){return this._video},f.prototype.addEventListener=function(a,b,c){h.call(this,a,b,c)},f.prototype.removeEventListener=function(a,b,c){i.call(this,a,b,c)},f.prototype.destroy=function(){this._disposables.dispose()},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b){a.exports=e},function(a,b,c){var d,e;d=[c(1),c(5),c(7),c(2),c(0),c(14),c(13)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b,c){"use strict";var d,e;d=[c(8),c(9),c(3)],e=function(a,b,c){return a.PhenixVideo=c,a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(6),c(16),c(4),c(0)],e=function(a,b,c,d,e,f){"use strict";function g(b,e,f){this._disposables=new c.DisposableList,this._events=new d.NamedEvents,this._isVideo="video"===b.tagName,this._swfSrc=f.swfSrc,this._id=b.id||f.streamId,this._width=b.clientWidth,this._height=b.clientHeight,this._ghost=b,this._element=null,this._eventDisposables=[],this._flashVars=["uid="+this._id,"autoplay="+(!!a.isUndefined(b.autoplay)||b.autoplay),"allowScriptAccess=always","preload=true","src="+JSON.stringify(e)];var g=this;this._disposables.add(new c.Disposable(function(){t.call(g,"fire_stop")}));try{C||D?this._element=i.call(this):this._element=j.call(this),m.call(this)}catch(h){y("Error while loading Flash Player"+h)}}function h(b,c){return a.findIndex(this._eventDisposables,function(a){return a.name===b&&a.listener===c})}function i(){return document.createElement("div")}function j(){var a=document.createElement("embed");return a.setAttribute("id","__"+this._id),a.setAttribute("name","__"+this._id),a.setAttribute("play","true"),a.setAttribute("loop","false"),a.setAttribute("quality","high"),a.setAttribute("bgcolor","#000000"),a.setAttribute("wmode","transparent"),a.setAttribute("allowScriptAccess","always"),a.setAttribute("allowFullScreen","true"),a.setAttribute("type","application/x-shockwave-flash"),a.setAttribute("pluginspage","//www.macromedia.com/go/getflashplayer"),a.setAttribute("src",this._swfSrc),a.setAttribute("flashvars",this._flashVars.join("&")),this._isVideo&&(a.setAttribute("width",this._width.toString()),a.setAttribute("height",this._height.toString())),a}function k(){if(!C&&!D)return this._element;var b=(D?"__"+this._id:this._id)+a.uniqueId(),c=document.createElement("object"),d=document.createElement("div"),e=[l("movie",this._swfSrc+"?x="+a.now()),l("flashvars",this._flashVars.join("&")),l("quality",2),l("bgcolor","#000000"),l("wmode","transparent"),l("allowScriptAccess","always"),l("allowFullScreen","true"),d];return d.innerHTML=E,D?(c.setAttribute("type","application/x-shockwave-flash"),c.setAttribute("data",this._swfSrc),c.setAttribute("id",b),c.setAttribute("width","__"+this._width.toString()),c.setAttribute("height","__"+this._height.toString())):(c.setAttribute("classid","clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"),c.setAttribute("codebase","//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab"),c.setAttribute("id",b),c.setAttribute("width",this._width.toString()),c.setAttribute("height",this._height.toString())),c.object?(a.forEach(e,function(b){a.isNullOrUndefined(a.get(c.object,[b.name]))||(c.object[b.name]=b.value)}),c.appendChild(d)):a.forEach(e,function(b){var d=a.find(c.children,function(a){return a.name===b.name});return d?c.replaceChild(b,d):c.appendChild(b)}),this._element.outerHTML=c.outerHTML,f.document.getElementById&&(this._element=f.document.getElementById(b),m.call(this)),this._element}function l(a,b){var c=document.createElement("param");return c.setAttribute("name",a),c.setAttribute("value",b),c}function m(){a.assign(this._element,z,{id:this._id,width:this._width,height:this._height,videoWidth:this._width,videoHeight:this._height}),n.call(this),v.call(this),o.call(this)}function n(){var b=this;f["__event__"+this._id]=function(a,c){var d=u(a,b._element);if(c)try{d.data=JSON.parse(c),d.details.data=d.data}catch(e){d.message=c}switch(a){case"ended":break;case"error":b._element.error=d.data;break;case"loadeddata":case"loadedmetadata":case"loadstart":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"pause":b._element.paused=!0;break;case"play":b._element.paused=!1;break;case"playing":b._element.paused=!1;break;case"progress":case"seeked":case"seeking":case"stalled":case"suspend":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"timeupdate":b._element.currentTime=s.call(b,"currentTime"),b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"volumechange":break;case"waiting":}b._events.fireAsync(a,[d])};var d=this._element.requestFullscreen||this._element.mozRequestFullScreen||this._element.webkitRequestFullScreen||this._element.msRequestFullscreen;this._disposables.add(new c.Disposable(function(){delete f["__event__"+b._id]})),this._element.play=function(){t.call(b,"fire_play")},this._element.load=function(){t.call(b,"fire_load")},this._element.seek=function(){t.call(b,"fire_seek")},this._element.pause=function(){t.call(b,"fire_pause")},this._element.requestFullscreen=function(){if(b._isFullscreen=!0,w.call(b),b._previousHeight=b._element.style.height,b._previousWidth=b._element.style.width,b._previousPosition=b._element.style.position,b._element.style.position="absolute",b._element.style.height="100%",b._element.style.width="100%","undefined"!=typeof f.ActiveXObject){var a=new f("WScript.Shell");null!==a&&a.SendKeys("{F11}")}d.call(b._element)};var e=function(){t.call(b,"set_size",b._isFullscreen?screen.width:b._element.clientWidth,b._isFullscreen?screen.height:b._element.clientHeight)};a.addEventListener(f,"resize",e),this._disposables.add(new c.Disposable(function(){a.removeEventListener(f,"resize",e)}))}function o(){var a=p.call(this),b=q.call(this),d=setInterval(function(){a(),b()},A);this._disposables.add(new c.Disposable(function(){clearInterval(d)}))}function p(){var a=this,b=a._ghost.muted,c=a._element.muted;return function(){var d=a._element.muted,e=a._element.muted;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.muted=e,a._ghost.muted=e,r.call(a,"muted",e))}}function q(){var a=this,b=a._ghost.volume,c=a._element.volume;return function(){var d=a._element.volume,e=a._element.volume;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.volume=e,a._ghost.volume=e,r.call(a,"volume",e))}}function r(b,c){var d=this._element["set_"+b]||a.noop;return d.call(this._element,c)}function s(b){var c=this._element["get_"+b]||a.noop;return c.call(this._element)}function t(a){var b=this._element[a];if([].shift.apply(arguments),b)return b.apply(this._element,arguments)}function u(a,b){var c=a.match(/([a-z]+\.([a-z]+))/i),d={target:b};if(null!==c&&(a=c[1],d.namespace=c[2]),"IE"===B.browser&&B.version>8){var e=f.document.createEvent("CustomEvent");return e.initCustomEvent(a,!1,!1,d),e}return f.CustomEvent?new f.CustomEvent(a,{detail:d}):d}function v(){var b=this,d=["currentTime","paused","error","src"];if(a.get(f,["MutationObserver"])){var e=new MutationObserver(function(c){c.forEach(function(c){"attributes"!==c.type||c.target!==b._element||a.includes(d,c.attributeName)||r.call(b,c.attributeName,b._element[c.attributeName])})}),g={attributes:!0};e.observe(b._element,g),b._disposables.add(new c.Disposable(function(){e.disconnect()}))}else{x("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(c){a.includes(d,c.target.tagName)||r.call(b,c.target.tagName,b._element[c.target.tagName])};b._element.addEventListener?(b._element.addEventListener("DOMAttrModified",h,!1),b._disposables.add(new c.Disposable(function(){b._element.removeEventListener("DOMAttrModified",h,!1)}))):(b._element.attachEvent("onpropertychange",h),b._disposables.add(new c.Disposable(function(){b._element.detachEvent("DOMAttrModified",h)})))}}function w(){function a(){document.webkitIsFullScreen||document.mozFullScreen||document.msFullscreenElement||document.fullscreenElement||(document.removeEventListener("webkitfullscreenchange",a),document.removeEventListener("mozfullscreenchange",a),document.removeEventListener("fullscreenchange",a),document.removeEventListener("MSFullscreenChange",a),document.removeEventListener("keydown",b),c._isFullscreen=!1,c._element.style.position=c._previousPosition,c._element.style.height=c._previousHeight,c._element.style.width=c._previousWidth)}function b(b){var c=b||f.event,d=!1;d="key"in c?"Escape"===c.key||"Esc"===c.key:27===c.keyCode,d&&a()}var c=this;document.addEventListener("webkitfullscreenchange",a,!1),document.addEventListener("mozfullscreenchange",a,!1),document.addEventListener("fullscreenchange",a,!1),document.addEventListener("MSFullscreenChange",a,!1),document.addEventListener("keydown",b,!1)}var x=function(){console.log.apply(console,arguments)}||function(){},y=function(){console.error.apply(console,arguments)}||x,z={width:480,height:360,videoWidth:480,videoHeight:360,muted:!1,volume:1,currentTime:0,duration:1/0,readyState:0,ended:!1,buffered:null,autoplay:!0},A=300,B=new b(navigator.userAgent).detect(),C="IE"===B.browser&&/(trident|microsoft)/i.test(a.get(f.navigator,["appName"],"")),D="Edge"===B.browser&&a.get(f.navigator,"msLaunchUri")&&!a.get(f.document,"documentMode"),E="You are using a browser that does not have Flash player enabled or installed. Please turn on your Flash player plugin or download the latest version from https://get.adobe.com/flashplayer/";return g.prototype.finishInitializationInDom=function(){return k.call(this)},g.prototype.getElement=function(){return this._element},g.prototype.addEventListener=function(a,b){var c=h.call(this,a,b);if(!(c>-1)){var d=this._events.listen(a,b);this._disposables.add(d),this._eventDisposables.push({name:a,listener:b,disposable:d})}},g.prototype.removeEventListener=function(a,b){var c=h.call(this,a,b);if(c>-1){var d=this._eventDisposables.splice(c,1)[0];d.disposable.dispose()}},g.prototype.destroy=function(){this._disposables.dispose()},g}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(5),c(7),c(4),c(3)],e=function(a,b,c,d,e){"use strict";function f(){var a=this;this._root=h(),this._version="?";var b=function(b){a._loaded=!0,a._enabled=b===!0,a._version=a._phenixRTC.phenixVersion||"?.?.?.?",q(b?"Phenix RTC "+a._version:"No Phenix RTC"),a._onReady&&a._onReady(a._enabled)};try{this._phenixRTC=i(this._root),this._phenixRTC.onunload=function(){a._loaded=!1};var c=new d;c.waitForReady(this._phenixRTC,b)}catch(e){r("Error while loading Phenix RTC"+e)}}function g(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function h(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function i(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function j(a,b){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=b,a;var c=new e(a,b,(!0));return c.getElement().phenixPresenter=c,c.getElement()}function k(b){var c=function(){var c=null;switch(arguments.length){case 0:c=new b;break;case 1:c=new b(arguments[0]);break;case 2:c=new b(arguments[0],arguments[1]);break;case 3:c=new b(arguments[0],arguments[1],arguments[2]);break;case 4:c=new b(arguments[0],arguments[1],arguments[2],arguments[3]);break;case 5:c=new b(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4]);break;default:throw new Error("Unsupported number of arguments in Phenix Object Constructor")}return c.phenixAddEventListener=a.bind(l,c),c.phenixRemoveEventListener=a.bind(m,c),c};return a.forOwn(b,function(a,b){c[b]=a}),c}function l(a,c){b.stringNotEmpty(a,"name"),b.isFunction(c,"listener"),n.call(this,a),o.call(this,a,c)}function m(a,b){p.call(this,a,b)}function n(b){if(!this.events||!this.events[b]){this.events||(this.events={});var d=this.events;d[b]={observable:(new c.Observable).extend({timeout:0}),subscription:null,listeners:[]},this.phenixSetEventListener(b,a.bind(d[b].observable.setValue,d[b].observable)),d[b].subscription=d[b].observable.subscribe(function(c){var e=d[b],f=e.listeners;a.forEach(f,function(a){a(c)})})}}function o(a,b){if(!this.events||!this.events[a])throw new Error("No event observable for event: "+name);this.events[a].listeners.push(b)}function p(b,c){this.events&&this.events.events[b]&&(this.events[b].listeners=a.filter(this.events[b].listeners,function(a){return c!==a}))}var q=function(){console.log.apply(console,arguments)}||function(){},r=function(){console.error.apply(console,arguments)}||q;return f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.onLoaded=function(a){this._onLoaded=a},f.prototype.isLoaded=function(){return this._loaded===!0},f.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent&&(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/)))try{return new window.ActiveXObject("PhenixP2P.RTC"),!0}catch(c){return!1}return!1},f.prototype.isEnabled=function(){return g.call(this),this._phenixRTC&&void 0!==this._phenixRTC.phenixVersion},f.prototype.getVersion=function(){return g.call(this),this._version},f.prototype.getRTCPeerConnectionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCPeerConnection)},f.prototype.getRTCSessionDescriptionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCSessionDescription)},f.prototype.getRTCIceCandidateConstructor=function(){return g.call(this),k(this._phenixRTC.RTCIceCandidate)},f.prototype.getSourcesDelegate=function(){var a=this;return function(b){return g.call(a),a._phenixRTC.getSources(b)}},f.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,d){return g.call(a),a._phenixRTC.getUserMedia(b,c,d)}},f.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},f.prototype.attachMediaStream=function(a,b){return g.call(this),j.call(this,a,b)},f.prototype.reattachMediaStream=function(a,b){return g.call(this),this.attachMediaStream(a,b.src)},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(15),c(0),c(3)],e=function(a,b,c,d,e){"use strict";function f(){if(v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(y=a.bind(k,null,"input")),navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(z=a.bind(k,null,"output")),(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia||d.getUserMedia)&&(A=g),!d.RTCPeerConnection)return t("[%s] browser version [%s] does not appear to be WebRTC-capable",u.browser,u.version);switch(u.browser){case"Firefox":t("Firefox detected",u),C=function(a,b){t("Attaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b),a.mozSrcObject=b,a.play(),c===!0&&(a.muted=!0),a},E=function(a,b){t("Reattaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b.srcObject),a.mozSrcObject=b.mozSrcObject,a.play(),c===!0&&(a.muted=!0),a},B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Opera":t("Opera detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Chrome":t("Webkit detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Edge":t("Edge detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Safari":t("Safari detected",u),C=function(b,c){return a.isObject(c)&&(b.__phenixHasPlayedWebRtc=!0),b=l(b,c)},D=function(a,b){return a.__phenixHasPlayedWebRtc?(a=new e(a,b,(!1)).getElement(),a.play(),a):m(a,b)},E=n,B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;case"ReactNative":t("React Native detected",u),C=function(){t("attachMediaStream not supported in React Native environment")},D=function(){t("attachUriStream not supported in React Native environment")},E=function(){t("reattachMediaStream not supported in React Native environment")},B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;default:t("Browser does not appear to be WebRTC-capable",u)}}function g(b,c,e){var f=a.bind(h,this,b,c,e);return navigator&&a.isFunction(navigator.getUserMedia)?navigator.getUserMedia(b,f,e):d&&a.isFunction(d.getUserMedia)?d.getUserMedia(b,f,e):void 0}function h(a,b,c,d){setTimeout(function(){for(var e=d.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){t(a.timeStamp,"Track",g.id,g.label,"ended")},t("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState)return i("User media not available",c,e)}var h=(a.audio?1:0)+(a.video?1:0);return e.length!==h?i("Unable to get all requested user media.",c,e):void b(d)},100)}function i(a,b,c){try{var d=new Error(a);d.code="unavailable",b(d)}finally{j(c)}}function j(a){for(var b=0;b<a.length;b++)a[b].stop()}function k(a,b){if("input"!==a&&"output"!==a)throw new Error("Unsupported device type "+a);navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices().then(function(c){var d=[];c.forEach(function(b){b.kind==="audio"+a?d.push({kind:"audio",id:b.deviceId,label:b.label}):b.kind==="video"+a&&d.push({kind:"video",id:b.deviceId,label:b.label})}),b(d)})}function l(a,b){return"undefined"!=typeof a.srcObject?a.srcObject=b:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=b:"undefined"!=typeof a.src?a.src=URL.createObjectURL(b):t("Error attaching stream to element."),a.play(),a}function m(a,b){return a.src=b,a.play(),a}function n(a,b){return a.src=b.src,a}function o(a,b,c){b(p(a,c))}function p(b,c){switch(u.browser){case"Edge":c.forEach(function(a){a.mediaType=q(b,a.codecId),a.bytesSent=s(a.packetsSent,a.mediaType),a.bytesReceived=s(a.packetsReceived,a.mediaType)});break;case"Safari":c.forEach(function(b){a.includes(b.id.toLowerCase(),"audio")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="audio"),a.includes(b.id.toLowerCase(),"video")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="video")})}return c}function q(b,c){if(c){var d;return r(b,function(b){a.startsWith(b,"video")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="video"),a.startsWith(b,"audio")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="audio")}),d}}function r(b,c){var d=b.localDescription.sdp.split("m="),e=b.remoteDescription.sdp.split("m=");return d.length===e.length&&a.findIndex(d,function(a,b){return c(a,b,e)})}function s(a,b){var c=parseInt(a)||0;return"audio"===b?100*c:"video"===b?1080*c:void 0}var t=function(){console.log.apply(console,arguments)},u=new b(navigator.userAgent).detect(),v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,y=null,z=null,A=null,B=null,C=null,D=null,E=null,F=!1;return function(){f();var a={RTCPeerConnection:v,RTCSessionDescription:w,RTCIceCandidate:x,getSources:y,getDestinations:z,getUserMedia:A,getStats:B,attachMediaStream:C,attachUriStream:D||m,reattachMediaStream:E,webrtcSupported:F};return a.exportGlobal=function(){d.RTCPeerConnection=a.RTCPeerConnection,d.RTCSessionDescription=a.RTCSessionDescription,d.RTCIceCandidate=a.RTCIceCandidate},a}}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[],e=function(){"use strict";var a=function(){};return a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=f}])});
 
 /***/ }),
 /* 4 */
@@ -219,9 +219,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(40),
-    __webpack_require__(98),
-    __webpack_require__(97)
+    __webpack_require__(43),
+    __webpack_require__(99),
+    __webpack_require__(98)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -253,8 +253,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(39),
-    __webpack_require__(96)
+    __webpack_require__(44),
+    __webpack_require__(100)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Event, NamedEvents) {
     return {
         Event: Event,
@@ -283,7 +283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(79)
+    __webpack_require__(80)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(http) {
     'use strict';
 
@@ -336,7 +336,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         types: {
             realTime: {
                 id: 0,
-                name: 'RealTime'
+                name: 'real-time'
             },
             dash: {
                 id: 1,
@@ -401,8 +401,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(107),
-    __webpack_require__(102),
+    __webpack_require__(108),
+    __webpack_require__(103),
     __webpack_require__(20)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Logger, ConsoleAppender, logging) {
     'use strict';
@@ -561,7 +561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(104)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(105)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
     'use strict';
 
     return getGlobal();
@@ -716,10 +716,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/**
- * Copyright 2018 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
- */
-!function(e,t){if(true)module.exports=t(__webpack_require__(1),__webpack_require__(0),__webpack_require__(8),__webpack_require__(5),__webpack_require__(2),__webpack_require__(3),__webpack_require__(6),__webpack_require__(41),__webpack_require__(33));else { var n, i; }}(this,function(e,t,i,n,r,a,s,o,l){return function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,n){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:n})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=21)}([function(t,i){t.exports=e},function(e,i){e.exports=t},function(e,t){e.exports=i},function(e,t){e.exports=n},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(10),i(7),i(22),i(23),i(13),i(14),i(26),i(5)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d,c){"use strict";function h(e,r){r&&t.isStringNotEmpty(r,"playlistUrl"),this.parsedPlaylist=null,this._logger=e||new i.Logger,this.playlistUrl=r,this.baseUrl=r?r.substring(0,r.lastIndexOf("/")+1):"",this._name=r?r.substring(r.lastIndexOf("/"),r.length):"",this._trackAddedEvent=new n.Event,this._playlistTracksByMimeType={},this._mimeTypes=[],this._deliveryType=g(this.playlistUrl),this._type=null,this._localToServerTimeOffset=0}function f(i,n){t.isInstanceOf(i,a,"track"),n=n||e.noop,t.isFunction(n,"eventCallback");var r=i.getMimeType();this._playlistTracksByMimeType[r]||(this._playlistTracksByMimeType[r]=[]),e.includes(this._playlistTracksByMimeType[r],i)||this._playlistTracksByMimeType[r].push(i),e.includes(this._mimeTypes,r)||this._mimeTypes.push(r),this._trackAddedEvent.fireAsync([i],this,n)}function g(e){return/[.]mpd\??[^\s]*/i.test(e)?"Dash":/[.]m3u8\??[^\s]*/i.test(e)?"Hls":null}function p(t,i,n){if(this._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",this.playlistUrl,t.code,t.message),i&&i.attempts===y){var r="Failed to get playlist with max retries of ["+y+" after ["+e.get(i,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return n(m(c.name.playlistNotFound.name,c.severity.CRITICAL,r))}if(0===t.code){var a="Failed to get playlist with timeout after ["+e.get(i,["stats","totalResponseTimeForAllAttempts"],0)+"]";return n(m(c.name.timeout.name,c.severity.RECOVERABLE,a))}return n(m(c.name.error.name,c.severity.CRITICAL,t))}function m(e,t,i){return{category:c.category.PLAYLIST,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var y=5,_=0;return h.prototype.toString=function(){return"Playlist [playlistUrl="+this.playlistUrl+", baseUrl="+this.baseUrl+", mimeTypes="+this._mimeTypes+", trackAddedEvent(size)="+this._trackAddedEvent.size()+", playlistTracks="+this.getAllPlaylistTracks()+"]"},h.prototype.dispose=function(){e.forOwn(this._playlistTracksByMimeType,function(t){e.forEach(t,function(e){e.dispose()})}),this._playlistTracksByMimeType={},this._trackAddedEvent.dispose()},h.prototype.getPlaylistTracksByMimeType=function(e){return this._playlistTracksByMimeType[e]},h.prototype.fetch=function(t){(function(t){var i=this;r.getWithRetry(i.playlistUrl,{retryOptions:{backoff:1,delay:1e3,maxAttempts:y,additionalRetryErrorCodes:[_]}},function(n,a){if(n)return p.call(i,n,a,t);(function(t,i,n){var a=null,c=[],h=this;switch(h._initTime=e.now(),this._deliveryType){case"Dash":a=new l(h._logger,t);var m=new d(h._logger,a.timeSources,i);h.parsedPlaylist=a,h._playbackDurationSinceAvailable=h.parsedPlaylist.publishTime?h.parsedPlaylist.publishTime.getTime()-h.parsedPlaylist.availabilityStartTime.getTime():null,h._suggestedPresentationDelayTotalMillis=e.get(h.parsedPlaylist,["suggestedPresentationDelay","totalMillis"],null),h._totalMediaTimeInMillis=e.get(h.parsedPlaylist,["mediaPresentationDuration","totalMillis"],1/0),h._minBufferTimeTotalMillis=e.get(h.parsedPlaylist,["minBufferTime","totalMillis"],null),h._type=h.parsedPlaylist.type,c=function(t){var i=this;return e.map(t.representations,function(e){return{chunkDuration:e.duration,dataChunkUrlTemplate:e.media,codec:e.mseCodec,bandwidth:e.bandwidth,height:e.height,trackId:e.id,initUrl:e.initialization,mimeType:e.mimeType,totalNumberOfChunks:Math.ceil(i._totalMediaTimeInMillis/e.duration)}})}.call(h,h.parsedPlaylist),e.forEach(c,function(e){f.call(h,new s(h._logger,e))}),m.calculateOffset(function(e){h._localToServerTimeOffset=e,n()});break;case"Hls":a=new u(h._logger,h._name,t),h.parsedPlaylist=a,h._playbackDurationSinceAvailable=0,h._minBufferTimeTotalMillis=0,h._suggestedPresentationDelayTotalMillis=0,h._totalMediaTimeInMillis=1/0;var _=0;e.forEach(a.streamVariants,function(e){var t=h.baseUrl+e.name,i=new o(h._logger,{mediaSegmentPlaylistUrl:t,codecs:e.codecs.join("|"),bandwidth:e.bandwidth,trackId:e.name,mimeType:"application/octet-stream",height:null});r.getWithRetry(t,{retryOptions:{maxAttempts:y,backoff:1}},function(e,t){if(e)return p.call(h,e,t,n);i.updateMediaSegments(t.data),f.call(h,i),++_===a.streamVariants.length&&(h._type=i.isComplete()?"static":"dynamic","static"===h._type&&(h._totalMediaTimeInMillis=1e3*i.getPlayableDuration()),n())})});break;default:throw h._logger.error("[%s] Unsupported Delivery Type [%s]",h.playlistUrl,g(h.playlistUrl)),new Error("Unsupported Delivery Type "+g(h.playlistUrl))}}).call(i,a.data,a.stats.successResponseTime,function(){t(n,{raw:a,parsed:i.parsedPlaylist})})})}).call(this,t)},h.prototype.getType=function(){return this._type},h.prototype.getDeliveryType=function(){return this._deliveryType},h.prototype.getPlaylistTracksByBandwidthPerMimeType=function(i,n){t.isObject(n,"restrictions");var r=this;return e.map(this._mimeTypes,function(t){var a=function(t,i){return 0===e.keys(i).length?t:e.filter(t,function(t){return function(t,i){var n=t.getHeight()||0,r=t.getBandwidth()||0;return e.reduce(i,function(e,t,i){switch(i){case"maxHeight":return n<=t;case"minHeight":return n>=t;case"maxBandwidth":return r<=t;case"minBandwidth":return r>=t;default:throw new Error("Unknown restriction "+i)}},!1)}(t,i)})}(r.getPlaylistTracksByMimeType(t),n),s=e.reduce(a,function(e,t){return t.getBandwidth()>i?e:e&&e.getBandwidth()>t.getBandwidth()?e:t},null)||r.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(0,t);if(s)return s;var o=e.get(e.filter(a,function(e){return!e.getBandwidth()}),"0");if(o)return r._logger.debug("Unable to get track with bandwidth [%s]. Falling back to track [%s].",o.getTrackId()),o;r._logger.warn("Unable to get track with bandwidth [%s]. No other tracks to fallback on.")})},h.prototype.getPlaylistTrackByBandwidthAndMimeType=function(t,i){return e.find(this.getPlaylistTracksByBandwidthPerMimeType(t,{}),function(e){return e.getMimeType()===i})},h.prototype.getPlaylistTrackByMimeTypeAndNextHighestBandwidth=function(t,i){return e.reduce(this.getPlaylistTracksByMimeType(i),function(e,i){return i.getBandwidth()<=t?e:e?e.getBandwidth()>i.getBandwidth()?i:e:i},null)},h.prototype.getAllPlaylistTracks=function(){return[].concat.apply([],e.values(this._playlistTracksByMimeType))},h.prototype.getMimeTypes=function(){return this._mimeTypes},h.prototype.getPlaybackDurationSinceAvailable=function(){return e.now()-this._initTime+this._playbackDurationSinceAvailable+this._localToServerTimeOffset},h.prototype.getSuggestedPresentationDelayTotalMillis=function(){return this._suggestedPresentationDelayTotalMillis},h.prototype.getTotalMediaTimeInMillis=function(){return this._totalMediaTimeInMillis},h.prototype.getMinBufferTimeTotalMillis=function(){return this._minBufferTimeTotalMillis},h.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},h.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackadded":return this._trackAddedEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},h}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n;void 0!==(n=function(){"use strict";return{name:{chunkNotFound:{id:0,name:"chunk-not-found"},timeout:{id:1,name:"timeout"},error:{id:2,name:"error"},playlistNotFound:{id:3,name:"playlist-not-found"},progressTimeOut:{id:4,name:"progress-timeout"},hlsNativeError:{id:5,name:"hls-native-error"}},category:{PLAYLIST:4,STREAMING:5,DRM:6},severity:{RECOVERABLE:1,CRITICAL:2}}}.apply(t,[]))&&(e.exports=n)},function(e,t){e.exports=r},function(e,t,i){var n,r;n=[i(0),i(3),i(2)],void 0!==(r=function(e,t,i){"use strict";function n(e,t,i){}return n.prototype.toString=function(){throw new Error("Must be implemented")},n.prototype.dispose=function(){throw new Error("Must be implemented")},n.prototype.getMseCodec=function(){throw new Error("Must be implemented")},n.prototype.getTrackId=function(){throw new Error("Must be implemented")},n.prototype.getChunkDuration=function(){throw new Error("Must be implemented")},n.prototype.getBandwidth=function(){throw new Error("Must be implemented")},n.prototype.getHeight=function(){throw new Error("Must be implemented")},n.prototype.getMimeType=function(){throw new Error("Must be implemented")},n.prototype.getTotalNumberOfChunks=function(){throw new Error("Must be implemented")},n.prototype.getCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.setCurrentChunkId=function(e){throw new Error("Must be implemented")},n.prototype.incrementCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.addDataChunk=function(e,t,i){throw new Error("Must be implemented")},n.prototype.getChunks=function(){throw new Error("Must be implemented")},n.prototype.addEventListener=function(e,t){throw new Error("Must be implemented")},n}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=a},function(e,t,i){var n,r;n=[i(1),i(2)],void 0!==(r=function(e,t){"use strict";function i(e,i){this._options=i||{},this._logger=e||new t.Logger,this._rateDataPoints={},this._ewmaPeriods=i.ewmaPeriods||null,this._ewmaMultiplier=this._ewmaPeriods?2/(this._ewmaPeriods+1):null}function n(e,t,i,n,r){var a=(i*(e.length-1)+r(t))/e.length;if(n>0)for(;t.added-e[0].added>n;){var s=e.shift();a=(a*(e.length+1)-r(s))/e.length}return a}return i.prototype.toString=function(){var t=this;return"StatsProvider [rateDataPoints(keys)="+e.keys(this._rateDataPoints)+", rateDataPoints="+e.toString(e.map(this._rateDataPoints,function(e,i){return t.getRateAverages(i)}))+", options="+this._options+"]"},i.prototype.dispose=function(){delete this._rateDataPoints},i.prototype.addRateDataPoint=function(t,i,r,a){if(!e.isNullOrUndefined(this._rateDataPoints)){this._rateDataPoints[t]||(this._rateDataPoints[t]={tenSecDataPoints:[],thirtySecDataPoints:[],oneMinDataPoints:[],twoMinDataPoints:[],ewmaDataPoints:[],tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,smaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0,smaDuration:0});var s={duration:i,amount:r,durationToSecondsFactor:a,rate:r/(i*a),added:e.now()};(function(e,t){var i=function(e){return e.rate},r=function(e){return e.duration};e.tenSecDataPoints.push(t),e.thirtySecDataPoints.push(t),e.oneMinDataPoints.push(t),e.twoMinDataPoints.push(t),e.tenSecAverageRate=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageRate,1e4,i),e.thirtySecAverageRate=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageRate,3e4,i),e.oneMinAverageRate=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageRate,6e4,i),e.twoMinAverageRate=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageRate,12e4,i),e.tenSecAverageDuration=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageDuration,1e4,r),e.thirtySecAverageDuration=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageDuration,3e4,r),e.oneMinAverageDuration=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageDuration,6e4,r),e.twoMinAverageDuration=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageDuration,12e4,r),this._ewmaMultiplier&&(e.ewmaDataPoints.push(t),e.smaRate=n.call(this,e.ewmaDataPoints,t,e.smaRate,-1,i),e.smaDuration=n.call(this,e.ewmaDataPoints,t,e.smaDuration,-1,r),e.ewmaDataPoints.length>=this._ewmaPeriods&&(e.ewmaDataPoints.shift(),e.ewmaDataPoints.length===this._ewmaPeriods?(e.ewmaRate=e.smaRate,e.ewmaDuration=e.smaDuration):(e.ewmaRate=this._ewmaMultiplier*(e.smaRate-e.ewmaRate)+e.ewmaRate,e.ewmaDuration=this._ewmaMultiplier*(e.smaDuration-e.ewmaDuration)+e.ewmaDuration)))}).call(this,this._rateDataPoints[t],s)}},i.prototype.getRateAverages=function(t){if(!e.get(this._rateDataPoints,[t]))return{tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0};var i=this._rateDataPoints[t];return{tenSecAverageRate:i.tenSecAverageRate,thirtySecAverageRate:i.thirtySecAverageRate,oneMinAverageRate:i.oneMinAverageRate,twoMinAverageRate:i.twoMinAverageRate,ewmaRate:i.ewmaRate,tenSecAverageDuration:i.tenSecAverageDuration,thirtySecAverageDuration:i.thirtySecAverageDuration,oneMinAverageDuration:i.oneMinAverageDuration,twoMinAverageDuration:i.twoMinAverageDuration,ewmaDuration:i.ewmaDuration}},i}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=s},function(e,t){e.exports=o},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e,t,i,n){}return e.prototype.toString=function(){throw new Error("Must be implemented")},e.prototype.dispose=function(){throw new Error("Must be implemented")},e.prototype.initialize=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.getStreamDurationBeforeInitialization=function(){throw new Error("Must be implemented")},e.prototype.getLocalToServerTimeOffset=function(){throw new Error("Must be implemented")},e.prototype.setActiveTracks=function(e){throw new Error("Must be implemented")},e.prototype.initializePlaylistTracks=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.startRequestingDataForActiveTracks=function(){throw new Error("Must be implemented")},e.prototype.isFetchingData=function(){throw new Error("Must be implemented")},e.prototype.seekToChunk=function(e){throw new Error("Must be implemented")},e.prototype.stopRequestingAllData=function(){throw new Error("Must be implemented")},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(25)],void 0!==(r=function(e,t,i){"use strict";function n(n,a){t.isStringNotEmpty(a,"mpdXml"),t.isObject(n,"logger"),this._mpdXml=a,this._logger=n,this.minBufferTime=0,this.type=null,this.publishTime=null,this.availabilityStartTime=null,this.timeShiftBufferDepth=0,this.suggestedPresentationDelay=0,this.minimumUpdatePeriod=0,this.maxSegmentDuration=0,this.profiles=null,this.moreInfoUrl=null,this.programInfoTitle=null,this.representations=[],function(){t.isStringNotEmpty(this._mpdXml,"mpdXml");var n,a=i.parseXml(this._mpdXml),u=a.getElementsByTagName("parsererror");if(u&&u.length>0)throw n="Failed to parse MPD Playlist XML: "+u.item(0).innerText+" (source xml: "+this._mpdXml+")",this._logger.error(n),new Error(n);if("MPD"!==a.documentElement.nodeName)throw n='Invalid MPD Playlist XML. Does not start with "MPD": '+this._mpdXml,this._logger.error(n),new Error(n);this.minBufferTime=r(o(a.documentElement,"minBufferTime")),this.type=o(a.documentElement,"type"),this.publishTime=s(o(a.documentElement,"publishTime")),this.availabilityStartTime=s(o(a.documentElement,"availabilityStartTime")),this.timeShiftBufferDepth=r(o(a.documentElement,"timeShiftBufferDepth")),this.suggestedPresentationDelay=r(o(a.documentElement,"suggestedPresentationDelay")),this.minimumUpdatePeriod=r(o(a.documentElement,"minimumUpdatePeriod")),this.maxSegmentDuration=r(o(a.documentElement,"maxSegmentDuration")),this.mediaPresentationDuration=r(o(a.documentElement,"mediaPresentationDuration")),this.profiles=o(a.documentElement,"profiles");var d=a.getElementsByTagName("ProgramInformation"),c=a.getElementsByTagName("UTCTiming");if(d&&d.length>=1){var h=d.item(0);this.programInfoTitle=l(h,"Title").childNodes[0].nodeValue,this.moreInfoUrl=o(h,"moreInformationURL")}var f=a.getElementsByTagName("ContentProtection");if(this.contentProtectionTags=[],f.length>0)for(var g=0;g<f.length;g++){var p=f.item(g),m=e.reduce(p.attributes,function(e,t){return e[t.name]=t.value,e},{});this.contentProtectionTags.push(m)}for(var y=a.getElementsByTagName("Representation"),_=0;_<y.length;_++){var v=function(e){var t={};if(t.id=o(e,"id"),t.mimeType=o(e,"mimeType"),t.codecs=o(e,"codecs"),t.mseCodec=i.getMSECodec(t.mimeType,t.codecs),t.isAudio=t.mimeType.indexOf("audio")>=0,t.isVideo=t.mimeType.indexOf("video")>=0,!i.isCodecSupported(t.mseCodec))return this._logger.debug("MPD representation has unsupported codec. Skipping stream id [%s] (mimeType=[%s], codecs=[%s])",t.id,t.mimeType,t.codecs),null;var n=o(e,"bandwidth");t.bandwidth=n?parseInt(n,10):null;var r=o(e,"height");t.height=r?parseInt(r,10):null;var a=l(e,"SegmentTemplate");a&&(t.timescale=parseInt(o(a,"timescale")),t.media=o(a,"media"),t.startNumber=parseInt(o(a,"startNumber")),t.duration=parseInt(o(a,"duration")),t.initialization=o(a,"initialization"));return t}.call(this,y.item(_));v&&this.representations.push(v)}this.timeSources=[];for(var b=0;b<c.length;b++){var k=c.item(b),w=o(k,"schemeIdUri"),T=o(k,"value"),E=s(T);this.timeSources.push({name:w,value:isNaN(E.getTime())?T:E.getTime()})}}.call(this)}function r(e){if(!e)return null;var t=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/.exec(e);if(t){var i="-"===t[1]?-1:1,n={year:a(t[2],i),month:a(t[3],i),week:a(t[4],i),day:a(t[5],i),hour:a(t[6],i),minute:a(t[7],i),second:a(t[8],i)};return n.totalMillis=1e3*(n.second+60*(n.minute+60*(n.hour+24*n.day))),n}return null}function a(e,t){var i=e&&parseFloat(e.replace(",","."));return(isNaN(i)?0:i)*t}function s(e){if(!e)return null;var t=new Date;return t.setTime(Date.parse(e)),t}function o(e,t){var i=e.attributes.getNamedItem(t);return i?i.value:null}function l(e,t){for(var i=0;i<e.childNodes.length;i++){var n=e.childNodes.item(i);if(n.nodeName===t)return n}return null}return n.prototype.toString=function(){return"Mpd [minBufferTime="+this.minBufferTime+", type="+this.type+", publishTime="+this.publishTime+", availabilityStartTime="+this.availabilityStartTime+", timeShiftBufferDepth="+this.timeShiftBufferDepth+", suggestedPresentationDelay="+this.suggestedPresentationDelay+", minimumUpdatePeriod="+this.minimumUpdatePeriod+", maxSegmentDuration="+this.maxSegmentDuration+", profiles="+this.profiles+", moreInfoUrl="+this.moreInfoUrl+", programInfoTitle="+this.programInfoTitle+", representations="+JSON.stringify(this.representations)+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"M3u8VariantPlaylistString"),t.isStringNotEmpty(r,"name"),t.isObject(i,"logger"),this._rawM3u8VariantPlaylist=a,this._name=r,this._logger=i,function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch(o){case"EXT-X-STREAM-INF":r.streamVariants=r.streamVariants||[];var u=[l,i[a+1]];r.streamVariants.push(function(t){var i=(function(t){var i=e.get(t.match(/(?:CODECS=).*?",/),["0"],""),n=e.get(i.split("="),["1"],"");return n.substring(1,n.length-2)}(t[0])||"").split(","),r=(n(t[0],"FRAME-RATE")||"").trim();return{programId:n(t[0],"PROGRAM-ID"),codecs:i,bandwidth:parseInt(n(t[0],"BANDWIDTH")),averageBandwidth:parseInt(n(t[0],"AVERAGE-BANDWIDTH")),frameRate:parseInt(parseInt(r)||0),name:e.get(t,["1"],"").trim()}}(u));break;case"EXT-X-ALLOW-CACHE":r.allowCache="YES"===l;break;case"#EXT-X-COMBINED":r.combined="YES"===l;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Variant] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3u8VariantPlaylist)}function n(t,i){var n=new RegExp("(?:"+i+"=).*?(?=[,\n\r])"),r=new RegExp("(?:"+i+"=).*?$"),a=e.get(t.match(n)||t.match(r),["0"],"");return e.get(a.split("="),["1"])}return i.prototype.toString=function(){return"M3u8VariantPlaylist[name="+this._name+",numberOfStreamVariants="+this.streamVariants.length+"]"},i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(16),i(12),i(4),i(7),i(9),i(13),i(5)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(a,o,d,c){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isInstanceOf(d,l,"statsProvider"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),c&&c.defaultPresentationDelay&&t.isNumber(c.defaultPresentationDelay,"options.defaultPresentationDelay"),c&&c.targetBufferSizeInMS&&t.isNumber(c.targetBufferSizeInMS,"options.targetBufferSizeInMS"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=d,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._defaultPresentationDelay=e.get(c,"defaultPresentationDelay",w),this._targetBufferSizeInMS=e.get(c,"targetBufferSizeInMS",0),this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0),this._timeOfChunkAvailabilityDelta={average:0,values:[],maxSize:10}}function h(i,n,r,a){r=r||e.noop,t.isArray(i,"tracks"),t.isFunction(r,"done");var s=0,l=this;e.forEach(i,function(e){t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(function(e){var t=Math.max(this._targetBufferSizeInMS?this._targetBufferSizeInMS-e:0,0),i=Math.max(Math.floor((this._streamDurationBeforeInitialization-t)/e),0);return"static"===this._playlist.getType()&&(i=0),this._logger.trace("Getting chunk index to start: [%s], playbackTimePassed=[%s], duration=[%s]",i,this._streamDurationBeforeInitialization,e),i}.call(l,e.getChunkDuration())),function(e,t,i){var n=this;(function(e,t){var i=this;i._logger.trace("Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()),_.call(i,i._baseUrl+e.getInitUrl(),null,500,function(n,r){i._logger.trace("DONE Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()+(n?": FAILED: "+n.code:": data="+r.data.byteLength)),t(n,r.data)})}).call(n,e,function(r,a){if(r){var s=new Error("Failed to fetch init chunk of stream for config [%s]",e);return s.cause=r,n._logger.error("[%s] (Cause: [%s])",s.message,r),i(s)}if(e.setInitChunkData(a),t){var o=Math.min(Math.floor(n._bufferSize/e.getChunkDuration),1);return n._logger.debug("Got init chunk: data chunksToFetch=[%s], initBufferSize=[%s], chunkDuration=[%s]",o,n._bufferSize,e.getChunkDuration()),y.call(n,e,o,null,i)}i()})}.call(l,e,n,function(e){if(e)return a(e);++s===i.length&&r()})})}function f(){var t=this;e.forEach(t._activeTracks,function(e){e.setCurrentChunkId(g.call(t,e.getChunkDuration()))})}function g(e){var t=e/1e3;return Math.floor(this._currentPlaybackTimeInSeconds/t)}function p(t){var i=this,n=i._activeTracks.length;e.forEach(i._activeTracks,function(r,a){!function(r,a){if(e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})===r){var s=g.call(i,r.getChunkDuration()),o=s>=r.getTotalNumberOfChunks();if("static"===i._playlist.getType()&&o)return a===n-1&&(i._keepFetchingData=!1),i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());e.isNullOrUndefined(t)&&"dynamic"===i._playlist.getType()&&(t=m.call(i,r)),y.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),k):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",e),n--),n<=0&&i._keepFetchingData){if("dynamic"===i._playlist.getType()){var t=m.call(i,r);return i._logger.debug("Done fetching chunk with index [%s] for each active track. Waiting for [%s] ms before moving on to next chunk.",s,t),p.call(i,t)}i._logger.debug("Done fetching chunk with index [%s] for each active track. Moving on to next chunk",s),p.call(i,null)}})}}(r,a)})}function m(e){var t=1e3*this._currentPlaybackTimeInSeconds+2*e.getChunkDuration()-this._playlist.getPlaybackDurationSinceAvailable(),i=Math.max(t,0);return Math.min(e.getChunkDuration(),i)+this._timeOfChunkAvailabilityDelta.average}function y(e,t,i,n){var r=this;(function(e,t,i){var n=this,r=function(e,t){return e.replace("$Number%05d$",("00000"+t).substr(-5))}(n._baseUrl+e.getDataChunkUrlTemplate(),e.getCurrentChunkId()),a=e.getCurrentChunkId();n._logger.trace("Fetching data chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),r,e.getCurrentChunkId());var s=e.getMseCodec();_.call(n,r,t,k,function(o,l){if(n._logger.trace("DONE Fetching data chunk for [%s] : [%s], nextChunkId=[%s]",s,r,e.getCurrentChunkId()+(o?": FAILED: "+o.code:": data="+l.data.byteLength)),!o){n._statsProvider.addRateDataPoint(s,l.stats.successResponseTime,l.data.byteLength,.001);var u=l.stats.totalResponseTimeForAllAttempts-l.stats.successResponseTime-Math.max(t,0);if(n._timeOfChunkAvailabilityDelta.values.push(u),n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length-1)+u)/n._timeOfChunkAvailabilityDelta.values.length,n._timeOfChunkAvailabilityDelta.values.length>n._timeOfChunkAvailabilityDelta.maxSize){var d=n._timeOfChunkAvailabilityDelta.values.shift();n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length+1)-d)/n._timeOfChunkAvailabilityDelta.values.length}}if(!o&&a===e.getCurrentChunkId())return e.incrementCurrentChunkId(),n._currentPlaybackTimeInSeconds=e.getChunkDuration()*e.getCurrentChunkId()/1e3,e.addDataChunk(l.data,a,function(){i(o)});o?(o.feederReason=404===o.code?"not yet available":"other",i(o)):i(null,l.data)})}).call(r,e,i,function(a){return a&&r._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',e,a),!a&&t>1&&y.call(r,e,t,i,n),n(a)})}function _(t,i,n,r){var a=this,s={responseType:"arraybuffer",retryOptions:{delay:n,maxAttempts:b},timeout:T};if(e.isNumber(i)&&0!==i)s.delay=i;else if(!e.isNullOrUndefined(i)&&0!==i)throw new Error('"delay" must be a positive number greater than or equal to 0 or null or undefined');return this._httpRequestManager.getWithRetry(t,s,function(i,n){if(i){if(a._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",i.code,i.message,t),n&&n.attempts===b){var s="Failed to get chunk with max retries of ["+b+" after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return a._logger.warn(s),a._feederErrorEvent.fire([v(d.name.chunkNotFound.name,d.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk with timeout after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+T+"]";return a._logger.warn(o),a._feederErrorEvent.fire([v(d.name.timeout.name,d.severity.RECOVERABLE,o)])}return a._feederErrorEvent.fire([v(d.name.error.name,d.severity.CRITICAL,i)])}r(i,n)})}function v(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var b=15,k=150,w=0,T=5e3;return c.prototype=Object.create(a.prototype),c.prototype.constructor=c,c.prototype.toString=function(){return"MpdPlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._feederErrorEvent.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0},c.prototype.initialize=function(i,n,r,a,s){var o=this;r=r||e.noop,t.isFunction(r,"done"),this._initializedAt=e.now(),h.call(o,i,!0,r,function(e){return o._logger.error("Unable to initialize active tracks",e),s(e)}),h.call(o,n,!1,a,function(e){return o._logger.error("Unable to initialize alternate tracks",e),s(e)})},c.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},c.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},c.prototype.setActiveTracks=function(e){this._activeTracks=e},c.prototype.getActiveTracks=function(){return this._activeTracks},c.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),f.call(this),p.call(this,null)},c.prototype.isFetchingData=function(){return this._keepFetchingData},c.prototype.seekToChunk=function(e){this._currentPlaybackTimeInSeconds=Math.floor(e),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds),f.call(this)},c.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(e,t){return t.getChunkDuration()>e?t.getChunkDuration():e},0),i=(Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)-Math.max(this._targetBufferSizeInMS?this._targetBufferSizeInMS-t:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},c.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests())},c}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(10),i(6)],void 0!==(r=function(e,t,i,n){"use strict";function r(e){t.isObject(e,"logger"),this._logger=e,this._requestDisposables=new n.DisposableList}return r.prototype.toString=function(){return"HttpRequestManager"},r.prototype.disposePendingRequests=function(){this._requestDisposables.dispose(),this._requestDisposables=new n.DisposableList},r.prototype.dispose=function(){this.disposePendingRequests()},r.prototype.getWithRetry=function(n,r,a){t.isStringNotEmpty(n,"url"),t.isObject(r,"options"),t.isFunction(a,"callback");var s=this;r.retryOptions=e.assign({delay:0,backoff:1,maxAttempts:1,additionalRetryErrorCodes:[404,0]},r.retryOptions),this._requestDisposables.add(i.getWithRetry(n,r,function(e,t){return e&&4e3===e.code?s._logger.debug("Request handler disposed of before response received for get [%s]",n):(e&&s._logger.debug("Status code: [%s] (status text: [%s]) for get [%s]",e.code,e.message,n),a(e,t))}))},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(16),i(12),i(4),i(7),i(9),i(14),i(5)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(a,o,l,d){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),d&&d.targetLatencyInMS&&t.isNumber(d.targetLatencyInMS,"options.targetLatencyInMS"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=l,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._options=d,this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._targetLatencyInMS=e.get(d,"targetLatencyInMS",0),this._targetBufferSizeInMS=e.get(d,"targetBufferSizeInMS",0),this._bufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._bufferSize,0)}function h(){var t=this;e.isNumber(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=setTimeout(function(){(function(t){var i=this,n=0;e.forEach(this._activeTracks,function(r){var a=r.getMediaSegmentPlaylistUrlInfo(),s=e.assign({version:e.now()},a.queryParameters),o={retryOptions:{delay:v,maxAttempts:b},queryParameters:s};i._httpRequestManager.getWithRetry(a.url,o,function(e,s){if(e)return i._logger.debug("Unable to get media segment playlist [%s]",a.url);s&&r.updateMediaSegments(s),++n===i._activeTracks.length&&t()})},_)}).call(t,function(){e.isNullOrUndefined(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=null,h.call(t))})},_))}function f(t){var i=this,n=i._activeTracks.length;i._waitingForNextSegment=!1;e.forEach(i._activeTracks,function(r,a){!function(r){e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})!==r?i._logger.debug("Wrong track type [%s]. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId()):r.isLastMediaSegment(i._currentPlaybackTimeInSeconds)?("dynamic"===i._playlist.getType()&&(i._waitingForNextSegment=!0),i._logger.debug("No more chunks. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId())):g.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),y):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",JSON.stringify(e)),n--),n<=0){i._logger.debug("Done fetching chunk for timestamp [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",i._currentPlaybackTimeInSeconds,i._keepFetchingData);var t=r.isLastMediaSegment(i._currentPlaybackTimeInSeconds);if("static"===i._playlist.getType()&&t)return i._keepFetchingData=!1,i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());if(t)return i._waitingForNextSegment=!0,i._logger.debug("Waiting for new segment on the Segment Playlist for [dynaimic] track [%s] [%s]",r.getTrackId(),r.getMimeType());i._keepFetchingData&&f.call(i,null)}})}(r)})}function g(t,i,n,r){var a=this;(function(t,i,n){var r=this,a=t.getSegmentByTimestamp(r._currentPlaybackTimeInSeconds),s=r._baseUrl+a.name;r._logger.trace("Fetching data chunk for [%s]: [%s], next segment=[%s]",t.getMseCodec(),s,a.name);var o=t.getMseCodec();(function(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:y,maxAttempts:m},timeout:k};if(e.isNumber(i))a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a number or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(i,a){if(i){if(r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",i.code,i.message,t),a&&a.attempts===m){var s="Failed to get chunk with max retries of ["+m+" after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return r._feederErrorEvent.fire([p(d.name.chunkNotFound.name,d.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk with timeout after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+k+"]";return r._feederErrorEvent.fire([p(d.name.timeout.name,d.severity.RECOVERABLE,o)])}return r._feederErrorEvent.fire([p(d.name.error.name,d.severity.CRITICAL,i)])}n(i,a)})}).call(r,s,i,function(e,i){if(r._logger.trace("DONE Fetching data chunk for [%s] : [%s], next segment=[%s]",o,s,a.name+(e?": FAILED: "+e.code:": data="+i.data.byteLength)),e||r._statsProvider.addRateDataPoint(o,i.stats.successResponseTime,i.data.byteLength,.001),!e)return r._logger.debug("Finished fetching [%s]. Updating timestamp to fetch to [%s]",a.name,a.timestamp+a.duration),r._currentPlaybackTimeInSeconds=a.timestamp+a.duration,t.addDataChunk(i.data,a.name,function(){n(e)});e?(e.feederReason=404===e.code?"not yet available":"other",n(e)):n(null,i.data)})}).call(a,t,n,function(e){return e&&a._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',JSON.stringify(t),e),!e&&i>1&&g.call(a,t,i,n,r),r(e)})}function p(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=15,y=700,_=200,v=10,b=2,k=5e3;return c.prototype=Object.create(a.prototype),c.prototype.constructor=c,c.prototype.toString=function(){return"M3u8PlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0,this._segmentsReadyDisposable&&(this._segmentsReadyDisposable.dispose(),this._segmentsReadyDisposable=null)},c.prototype.initialize=function(i,n,r,a,s){r=r||e.noop,t.isFunction(r,"done"),this.setActiveTracks(i),"dynamic"===this._playlist.getType()&&h.call(this);var o=this,l=0,u=function(t){g.call(o,t,1,null,function(t){if(t)return s(t);++l===i.length&&(o._initializedAt=e.now(),r(),a())})};e.forEach(i,function(e){return o._segmentsReadyDisposable=e.addEventListener("segmentsready",function(){if(o._waitingForNextSegment){if(o._logger.debug("Continuing fetching of track [%s] segments after wait",e.getTrackId()),!o._initializedAt)return o.seekToCurrent(),u(e);f.call(o,null)}}),e.hasSegments()?u(e):o._waitingForNextSegment=!0})},c.prototype.getStreamDurationBeforeInitialization=function(){return this._streamDurationBeforeInitialization},c.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},c.prototype.setActiveTracks=function(t){this._activeTracks=t;var i=e.map(t,function(e){return e.getTrackId()});this._logger.debug("Setting active tracks [%s]",i)},c.prototype.getActiveTracks=function(){return this._activeTracks},c.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),"dynamic"===this._playlist.getType()&&h.call(this),f.call(this,null)},c.prototype.isFetchingData=function(){return this._keepFetchingData},c.prototype.seekToChunk=function(t){var i=e.get(this._activeTracks,["0"]),n=i.getClosestSegmentNotGreaterThanTimestamp(t),r=e.get(n,["timestamp"]);e.isUndefined(r)?i||(this._currentPlaybackTimeInSeconds=t):this._currentPlaybackTimeInSeconds=Math.floor(n.timestamp),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds)},c.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(t,i){var n=e.get(i.getLastSegment(),["duration"],0);return n>t?n:t},0),i=(e.reduce(this._activeTracks,function(e,t){var i=t.getLastSegment().timestamp;return i<e?i:e},0)-Math.max(this._targetBufferSizeInMS?this._targetBufferSizeInMS-t:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},c.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._waitingForNextSegment=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests(),clearTimeout(this._mediaSegmentRequestTimeout),this._mediaSegmentRequestTimeout=null)},c}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(10),i(6),i(11),i(8),i(5)],void 0!==(r=function(e,t,i,n,r,a,s,o,l){"use strict";function u(r,s,u,h){t.isObject(s,"videoElement");var D=this;this._videoElement=s,this._logger=r||new i.Logger,this._mediaKeys=null,this._licenseRequestRetryTimeout=null,this._certificateRequestRetryTimeout=null,this._disposables=new a.DisposableList;var M=e.bind(C,this);"Safari"===m.browser&&(M=e.bind(function(t,i){var n=this;if(i=i||1,!this._fairplayServerCertificate){if(i<=T)return n._logger.debug("Attempt [%s] for checking if the certificate have been set",i),void(n._certificateRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find fairplay certificate after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoCertificate",l.severity.RECOVERABLE,r)])}this._logger.info("Key requested by Webkit browser"),n._fallbackLicenseUri=function(e){return"https://"+function(e){return String.fromCharCode.apply(null,new o.global.Uint16Array(e.buffer))}(e).split("skd://")[1]}(t.initData);var s="phenix-fairplay-"+e.now(),u=function(e,t,i){var n=function(e){for(var t=new o.global.ArrayBuffer(2*e.length),i=new o.global.Uint16Array(t),n=0,r=e.length;n<r;n++)i[n]=e.charCodeAt(n);return i}(t),r=0,a=new o.global.ArrayBuffer(e.byteLength+4+n.byteLength+4+i.byteLength),s=new o.global.DataView(a);new Uint8Array(a,r,e.byteLength).set(e),r+=e.byteLength,s.setUint32(r,n.byteLength,!0),r+=4;var l=new o.global.Uint16Array(a,r,n.length);return l.set(n),r+=l.byteLength,s.setUint32(r,i.byteLength,!0),r+=4,new Uint8Array(a,r,i.byteLength).set(i),new Uint8Array(a,0,a.byteLength)}(t.initData,s,n._fairplayServerCertificate);n._videoElement.webkitKeys||n._videoElement.webkitSetMediaKeys(new o.global.WebKitMediaKeys(b));if(!n._videoElement.webkitKeys)return n._drmErrorEvent.fire([p("webkitKeys",l.severity.RECOVERABLE,new Error("Could not create MediaKeys"))]);var d=n._videoElement.webkitKeys.createSession("video/mp4",u);if(!d)return n._drmErrorEvent.fire([p("webkitKeySession",l.severity.RECOVERABLE,new Error("Could not create key session"))]);var h=e.bind(c,n);d.addEventListener("webkitkeymessage",h,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeymessage",h,!1)}));var f=function(){n._logger.info("Decryption key was added")};d.addEventListener("webkitkeyadded",f,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeyadded",f,!1)}));var g=function(e){n._drmErrorEvent.fire([p("webkitkeyerror",l.severity.RECOVERABLE,e)])};d.addEventListener("webkitkeyerror",g,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeyerror",g,!1)}))},this)),this._videoElement.addEventListener(S,M,!1),this._disposables.add(new a.Disposable(function(){D._videoElement.removeEventListener(S,M,!1)})),this._disposables.add(new a.Disposable(function(){null!==D._licenseRequestRetryTimeout&&o.global.clearTimeout(D._licenseRequestRetryTimeout)})),this._disposables.add(new a.Disposable(function(){null!==D._certificateRequestRetryTimeout&&o.global.clearTimeout(D._certificateRequestRetryTimeout)})),this._defaultMediaKeySystemConfig={initDataTypes:["cenc"],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42c01f"'}],audioCapabilities:[{contentType:'audio/mp4; codecs="mp4a.40.2"'}],persistentState:"optional",distinctiveIdentifier:"optional"},this._config={},"Edge"===m.browser||"IE"===m.browser?this._selectedKeySystem=_:"Safari"===m.browser?this._selectedKeySystem=b:this._selectedKeySystem=y,function(t,i){var n=this,r=function(t){return e.keys(e.reduce(t,function(e,t){return e[t]=1,e},{}))}(e.keys(t).concat(e.keys(i)));e.forEach(r,function(r){e.set(n._config,[r],e.assign({},e.get(t,[r],{}),e.get(i,[r],{}))),e.set(n._config,[r,"mediaKeySystemConfiguration"],e.assign({},n._defaultMediaKeySystemConfig,e.get(t,[r,"mediaKeySystemConfiguration"],{}),e.get(i,[r,"mediaKeySystemConfiguration"],{})))})}.call(this,function(t){return e.reduce(t,function(t,i){var n="com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?y:i.schemeIdUri===v?_:i.schemeIdUri,r="",a="";return"com.phenixp2p.widevine"!==i.schemeIdUri&&"com.phenixrts.widevine"!==i.schemeIdUri||(r=i.widevineLicenseServerUrl||i.licenseServerUrl,a=i.serverCertificateUrl),t[n]={licenseServerUrl:r?d(r):"",serverCertificateUrl:a?d(a):""},e.forOwn(i,function(i,r){e.startsWith(r,"mediaKeySystemConfiguration.")&&e.set(t[n],r,i)}),t},{})}(u),h||{}),function(){t.isObject(this._config,"this._config");var i=this;e.forOwn(this._config,function(e,n){t.isValidType(n,k,n),n===i._selectedKeySystem&&(n!==y&&n!==b||t.isStringNotEmpty(e.serverCertificateUrl,n+"[serverCertificateUrl]"),t.isObject(e.mediaKeySystemConfiguration,n+"[mediaKeySystemConfiguration]"),t.isArrayOfString(e.mediaKeySystemConfiguration.initDataTypes,n+"[mediaKeySystemConfiguration][initDataTypes]"),t.isArray(e.mediaKeySystemConfiguration.videoCapabilities,n+"[mediaKeySystemConfiguration][videoCapabilities]"),t.isArray(e.mediaKeySystemConfiguration.audioCapabilities,n+"[mediaKeySystemConfiguration][audioCapabilities]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.persistentState,n+"[mediaKeySystemConfiguration][persistentState]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.distinctiveIdentifier,n+"[mediaKeySystemConfiguration][distinctiveIdentifier]"))})}.call(this),this._drmErrorEvent=new n.Event,this._drmTrackEventRestrictionsAvailableEvent=new n.Event,this._disposables.add(this._drmErrorEvent),this._disposables.add(this._drmTrackEventRestrictionsAvailableEvent),E&&function(){var t=this;if(!this._videoElement.mediaKeys){var i=e.get(this._config,[this._selectedKeySystem,"mediaKeySystemConfiguration"]);o.global.navigator.requestMediaKeySystemAccess(this._selectedKeySystem,[i]).then(function(i){i.createMediaKeys().catch(function(e){t._drmErrorEvent.fire([p("CreateMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to create MediaKeys",e)}).then(function(e){return t._mediaKeys=e,t._videoElement.setMediaKeys(e)}).catch(function(e){t._drmErrorEvent.fire([p("SetMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to set MediaKeys",e)}).then(function(){return new o.global.Promise(function(i){var n=e.get(t._config,[t._selectedKeySystem,"serverCertificateUrl"]);if(!n)return t._logger.info("Not fetching server certificate because [%s] -> [serverCertificateUrl] is not set",t._selectedKeySystem),i();f(n,function(e,n){if(e)return t._logger.warn("Failed to get service certificate",e),i();var r=g(n.data);return t._mediaKeys.setServerCertificate(r).then(i).catch(function(e){t._logger.warn("Failed to set service certificate",e)})})})})}).catch(function(e){t._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,e)]),t._logger.error("[%s] Unable to request MediaKeySystemAccess with error [%s]",t._selectedKeySystem,e)})}}.call(this),"Safari"===m.browser&&(o.global.WebKitMediaKeys.isTypeSupported("com.apple.fps.1_0","video/mp4")||D._drmErrorEvent.fire([p("isTypeSupported",l.severity.CRITICAL,new Error("com.apple.fps.1_0 Key System not supported"))]),f(e.get(D._config,[D._selectedKeySystem,"serverCertificateUrl"]),function(e,t){e&&(D._drmErrorEvent.fire([p("getServerCertificateFairplay",l.severity.CRITICAL,e)]),D._logger.error("[Fairplay] Failed to get service certificate",e)),D._fairplayServerCertificate=g(t.data)}))}function d(i){t.isStringNotEmpty(i,"xmlSafeUrl");var n=i.split("?"),r=e.get(n,[0]),a=e.get(n,[1],"");return r+(a?"?"+decodeURIComponent(a):"")}function c(t){var i=this,n=t.target;h.call(this,t.message,function(t,r){if(t)return i._drmErrorEvent.fire([p("LicenseRetrieval",l.severity.RECOVERABLE,t)]);try{var a=n.update(r)}catch(e){return i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)])}e.isFunction(e.get(a,["catch"]))&&a.catch(function(e){i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)]),i._logger.error("Update of keySession with license failed [%s]",e)})})}function h(i,n){var a,s=this,l=e.get(this._config,[this._selectedKeySystem,"licenseServerUrl"],this._fallbackLicenseUri),u={};if(t.isStringNotEmpty(l,"licenseServerUrl"),this._selectedKeySystem===_){var d=(new DOMParser).parseFromString(String.fromCharCode.apply(null,new o.global.Uint16Array(i)),"application/xml");if(!d.getElementsByTagName("Challenge")[0])return n(new Error("[Playready] Cannot find `challenge` in key message"));a=atob(d.getElementsByTagName("Challenge")[0].childNodes[0].nodeValue);var c=d.getElementsByTagName("name"),h=d.getElementsByTagName("value");if(c.length!==h.length)return n(new Error("[Playready] Mismatched header name/value pair in key message"));u.headers={};for(var f=0;f<c.length;f++){var g=e.get(c,[f,"childNodes",0,"nodeValue"]),p=e.get(h,[f,"childNodes",0,"nodeValue"]);g&&p&&(u.headers[g]=p)}u.responseType="arraybuffer"}else u.contentType="application/octet-stream",a=i;r.post(l,a,u,function(e,t){if(e)return s._logger.error("Failed to get license with [%s] [%s]",e,t),n(e);if(s._selectedKeySystem===_)return n(null,t.data);var i=t.data,r=null,a=null;try{s._logger.debug("Attempting to unwrap license response"),r=(i=JSON.parse(i)).license||i.ckc,i.trackRestrictions&&s._drmTrackEventRestrictionsAvailableEvent.fire([i.trackRestrictions])}catch(e){if(!(e instanceof SyntaxError))return s._logger.error("Unexpected error [%s]",e),n(e);s._logger.debug("Unwrapping of license failed. Assuming that license response is already unwrapped"),r=i}"<ckc>"===r.substr(0,5)&&"</ckc>"===r.substr(-6)&&(r=r.slice(5,-6));try{a=function(e){for(var t=o.global.atob(e),i=new Uint8Array(t.length),n=0;n<t.length;++n)i[n]=t.charCodeAt(n);return i}(r)}catch(e){s._logger.error("Failed to convert base64 license string [%s] to binary",r),n(e)}n(null,a)})}function f(e,t){r.get(e,{mimeType:"text/plain; charset=x-user-defined"},t)}function g(e){for(var t=e.length,i=new o.global.Uint8Array(t),n=0;n<t;n++)i[n]=e.charCodeAt(n);return i}function p(e,t,i){return{category:l.category.DRM,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=new s(o.global.navigator.userAgent).detect(),y="com.widevine.alpha",_="com.microsoft.playready",v="urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95",b="com.apple.fps.1_0",k=e.freeze([{id:1,name:"org.w3.clearkey"},{id:2,name:y},{id:3,name:_},{id:4,name:v},{id:5,name:b}]),w=200,T=20,E=!!o.global.navigator.requestMediaKeySystemAccess,S="encrypted";E||"Edge"!==m.browser&&"IE"!==m.browser||(S="msneedkey"),"Safari"===m.browser&&(S="webkitneedkey"),u.isSupported=function(){return"IE"===m.browser&&11===m.version||("Safari"===m.browser?!(e.isNullOrUndefined(o.global.WebKitMediaKeys)||e.isNullOrUndefined(o.global.Uint16Array)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.ArrayBuffer)||e.isNullOrUndefined(o.global.DataView)):!(e.isNullOrUndefined(o.global.navigator.requestMediaKeySystemAccess)||e.isNullOrUndefined(o.global.Promise)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.atob)))},u.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackRestrictionsAvailable":return this._drmTrackEventRestrictionsAvailableEvent.listen(i);case"error":return this._drmErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},u.prototype.toString=function(){return"EncryptedMediaHandler [config="+JSON.stringify(this._config)+"]"},u.prototype.dispose=function(){this._disposables.dispose(),delete this._mediaKeys};var C=function(t,i){var n=this;if(i=i||1,!E)try{this._videoElement.msSetMediaKeys(new o.global.MSMediaKeys(this._selectedKeySystem))}catch(r){return n._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,new Error('Unable to create MediaKeys ("'+this._selectedKeySystem+'"). Error: '+r.message))])}if(!this._mediaKeys&&!n._videoElement.msKeys){if(i<=20)return n._logger.debug("Attempt [%s] for checking if the media keys have been set",i),void(n._licenseRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find media keys after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoMediaKeys",l.severity.RECOVERABLE,r)])}if(n._videoElement.msKeys){var s=n._videoElement.msKeys.createSession("video/mp4",t.initData);s||n._drmErrorEvent.fire([p("NoKeySession",l.severity.CRITICAL,new Error("Could not create key session"))]);var u=function(e){h.call(n,e.message.buffer,function(e,t){if(e)return n._drmErrorEvent.fire([p("getLicense",l.severity.RECOVERABLE,e)]);s.update(new Uint8Array(t))})};s.addEventListener("mskeymessage",u,!1),n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeymessage",u,!1)}));var d=function(){n._drmErrorEvent.fire([p("MicrosoftKeyError",l.severity.CRITICAL,new Error("Unexpected `keyerror` event from key session. Code: "+s.error.code+", systemCode: "+s.error.systemCode))])};return s.addEventListener("mskeyerror",d,!1),void n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeyerror",d,!1)}))}var f=n._mediaKeys.createSession(),g=e.bind(c,n);return f.addEventListener("message",g,!1),n._disposables.add(new a.Disposable(function(){f.removeEventListener("message",g,!1)})),f.generateRequest(t.initDataType,t.initData).then(function(){n._logger.info("passing the media data to CDM")}).catch(function(e){n._drmErrorEvent.fire([p("InitKeySessionFailure",l.severity.CRITICAL,e)]),n._logger.error("Unable to create or initialize key session [%s]",e)})};return u}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=l},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(6),i(19),i(4),i(9)],void 0!==(r=function(e,t,i,n,r,a,s){"use strict";function o(o,h,m,y){t.isInstanceOf(h,a,"playlist"),t.isNotUndefined(m,"webPlayer"),t.isInstanceOf(y,s,"statsProvider"),this._playlist=h,this._webPlayer=m,this._statsProvider=y,this._logger=o||new i.Logger,this._bandwidthChangeDetails={nextSwitchCheckTime:e.now()+5e3,oldBandwidth:-1},this._disposables=new n.DisposableList,this._webPlayer.addEventListener("started",e.bind(function(){var t=this;this._bandwidthLimits=e.reduce(this._playlist.getMimeTypes(),function(i,n){var r=t._playlist.getPlaylistTracksByMimeType(n)||[],a=e.filter(r,function(t){return e.isNumber(t.getBandwidth())}),s=e.map(a,function(e){return e.getBandwidth()});return r.length>a.length&&t._logger.info("Excluding [%s] tracks without Bandwidth from ABR switching.",r.length-a.length),i[n]={max:Math.max.apply(null,s),min:Math.min.apply(null,s)},i},{}),this._logger.debug("Listening for bandwidth changes with max and min bandwidths of [%s]",this._bandwidthLimits),this._webPlayer.addEventListener("playbacktimeleft",e.bind(function(t,i){if(this._bandwidthChangeDetails.isInProgress||!r.isForeground())return;var n=this._bandwidthLimits[i.getMimeType()],a=this;if(this._bandwidthChangeDetails.nextSwitchCheckTime>0){if(this._bandwidthChangeDetails.nextSwitchCheckTime>e.now())return;this._bandwidthChangeDetails.nextSwitchCheckTime=0,this._bandwidthChangeDetails.oldBandwidth=-1}var s=e.bind(function(){this._bandwidthChangeDetails.isInProgress=!1},this);if(l.call(a,i,t)&&i.getBandwidth()<n.max){this._bandwidthChangeDetails.isInProgress=!0;var o=this._playlist.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(i.getBandwidth(),i.getMimeType());this._playbackTimeout=setTimeout(function(){l.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to higher quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),d.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+f,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(o.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}else if(u.call(a,i,t)&&i.getBandwidth()>n.min){this._bandwidthChangeDetails.isInProgress=!0;var c=this._playlist.getPlaylistTrackByBandwidthAndMimeType(i.getBandwidth()-1,i.getMimeType());this._playbackTimeout=setTimeout(function(){u.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to lower quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),d.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+g,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(c.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}},this))},this)),this._disposables.add(r.onBackground(e.bind(c,this,!1))),this._disposables.add(r.onForeground(e.bind(c,this,!0))),this._backgroundTimeout=null,this._foregroundBandwidth=null}function l(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t>3.5||i>0&&i<=3*n/4&&t/(n/1e3)>2}function u(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t<.7||i>0&&i>=7*n/8&&t/(n/1e3)<=1.5}function d(e){return this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration}function c(t){null!==this._playbackTimeout&&(clearTimeout(this._playbackTimeout),this._playbackTimeout=null);var i=this._webPlayer.getVideoElement();if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,null===this._foregroundBandwidth)return;var n=this._foregroundBandwidth;return this._foregroundBandwidth=null,n!==this._webPlayer.getBandwidthLimit()&&(this._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+f,this._logger.info("Detected change to [foreground] for tab. Reverting to [%s] previous bandwidth limit from [%s]",n,this._webPlayer.getBandwidthLimit()),this._webPlayer.changeBandwidthLimit(n)),void(h(i)||"dynamic"!==this._playlist.getType()||(this._logger.info("Detecting application [foreground] with muted video. Resuming playback at most recent available chunk."),this._webPlayer.play()))}var a=this;this._backgroundTimeout=setTimeout(function(){r.isForeground()||(a._foregroundBandwidth=a._webPlayer.getBandwidthLimit(),h(i)||"dynamic"!==a._playlist.getType()||(a._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),a._webPlayer.pause()))},m)}function h(t){return!t.muted&&0!==t.volume&&(e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.mozHasAudio||t.hasAudio||t.webkitHasAudio)}var f=15e3,g=5e3,p=500,m=3e3;return o.prototype.dispose=function(){null!==this._playbackTimeout&&clearTimeout(this._playbackTimeout),null!==this._backgroundTimeout&&clearTimeout(this._backgroundTimeout),this._disposables.dispose(),this._backgroundTimeout=null,this._playbackTimeout=null},o}.apply(t,n))&&(e.exports=r)},function(e,t,i){"use strict";var n,r;n=[i(4),i(15),i(17),i(27),i(9),i(20),i(5)],void 0!==(r=function(e,t,i,n,r,a,s){return{Playlist:e,MpdPlaylistChunkFeeder:t,M3u8PlaylistChunkFeeder:i,WebPlayer:n,StatsProvider:r,AdaptiveStreamingManager:a,isSupported:n.isSupported,errors:s}}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2),i(7)],void 0!==(r=function(e,t,i,n){"use strict";function r(n,r,o){if(e.isObject(n,"logger"),e.isObject(r,"playlistTrackConfig"),e.isStringNotEmpty(r.codec,"playlistTrackConfig.codec"),e.isStringNotEmpty(r.mimeType,"playlistTrackConfig.mimeType"),e.isNumber(r.bandwidth,"playlistTrackConfig.bandwidth"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),e.isStringNotEmpty(r.trackId,"playlistTrackConfig.trackId"),e.isStringNotEmpty(r.initUrl,"playlistTrackConfig.initUrl"),e.isStringNotEmpty(r.dataChunkUrlTemplate,"playlistTrackConfig.dataChunkUrlTemplate"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),o=o||{},this._logger=n||new i.Logger,this._mseCodec=r.codec,this._chunkDuration=r.chunkDuration,this._bandwidth=r.bandwidth,this._height=r.height,this._trackId=r.trackId,this._mimeType=r.mimeType,this._initUrl=r.initUrl,this._dataChunkUrlTemplate=r.dataChunkUrlTemplate,this._totalNumberOfChunks=r.totalNumberOfChunks,this._currentChunkId=null,this._maxChunksToCache=o.maxChunksToCache||a,this._lowWaterMaxChunks=o.lowWaterMaxChunks||s,e.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),e.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new t.Event}var a=20,s=15;return r.prototype=Object.create(n.prototype),r.prototype.constructor=r,r.prototype.toString=function(){return"MpdPlaylistTrack [mseCodec="+this._mseCodec+", maxChunksToCache="+this._maxChunksToCache+", lowWaterMaxChunks="+this._lowWaterMaxChunks+", initChunk="+this._initChunk+", dataChunks(size)="+this._dataChunks.length+", chunkAddedEvent(size)="+this._chunkAddedEvent.size()+", trackId="+(this._trackId?this._trackId:"n/a")+", bandwidth="+(this.bandwidth?this.bandwidth:"n/a")+"]"},r.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},r.prototype.getMseCodec=function(){return this._mseCodec},r.prototype.getTrackId=function(){return this._trackId},r.prototype.getChunkDuration=function(){return this._chunkDuration},r.prototype.getBandwidth=function(){return this._bandwidth},r.prototype.getHeight=function(){return this._height},r.prototype.getMimeType=function(){return this._mimeType},r.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},r.prototype.getInitChunkData=function(){return this._initChunk},r.prototype.setInitChunkData=function(e){this._initChunk=e},r.prototype.getCurrentChunkId=function(){return this._currentChunkId},r.prototype.setCurrentChunkId=function(e){this._currentChunkId=e},r.prototype.incrementCurrentChunkId=function(){null===this._currentChunkId&&this._logger.error("[%s] Attempting to increment `CurrentChunkId` that is not initialized",this._trackId),this._currentChunkId++},r.prototype.getInitUrl=function(){return this._initUrl},r.prototype.getDataChunkUrlTemplate=function(){return this._dataChunkUrlTemplate},r.prototype.addDataChunk=function(t,i,n){e.isNotUndefined(t,"dataChunk"),n=n||function(){},e.isFunction(n,"eventCallback");var r={data:t,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},r.prototype.getChunks=function(){return this._dataChunks},r.prototype.addEventListener=function(t,i){if(e.isString(t,"eventName"),e.isFunction(i,"listener"),"chunkadded"!==t)throw new Error('Event "'+t+'" is unknown.');return this._chunkAddedEvent.listen(i)},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(2),i(7),i(24)],void 0!==(r=function(e,t,i,n,r,a){"use strict";function s(r,a,s){if(t.isObject(r,"logger"),t.isObject(a,"playlistTrackConfig"),t.isStringNotEmpty(a.codecs,"playlistTrackConfig.codecs"),t.isNumber(a.bandwidth,"playlistTrackConfig.bandwidth"),t.isStringNotEmpty(a.trackId,"playlistTrackConfig.trackId"),s=s||{},this._logger=r||new n.Logger,this._mseCodec=function(e){if(e.split("|").length>1)return"video/mp4";return"audio/mp4"}(a.codecs),this._bandwidth=a.bandwidth,this._height=a.height,this._trackId=a.trackId,this._mimeType=a.mimeType,this._totalNumberOfChunks=a.totalNumberOfChunks,this._mediaSegments=[],this._isComplete=!1,this._playableDuration=0,this._chunkDuration=0,this._mediaSegmentPlaylistUrlInfo=function(t){var i=t.split("?")[0],n=e.get(t.split("?"),[1],""),r=e.reduce(n.split("&"),function(e,t){var i=t.split("=")[0];return i&&(e[i]=t.split("=")[1]),e},{});return{url:i,queryParameters:r}}(a.mediaSegmentPlaylistUrl),this._currentChunkId=null,this._maxChunksToCache=s.maxChunksToCache||o,this._lowWaterMaxChunks=s.lowWaterMaxChunks||l,t.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),t.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new i.Event,this._segmentsReadyEvent=new i.Event}var o=20,l=15;return s.prototype=Object.create(r.prototype),s.prototype.constructor=s,s.prototype.toString=function(){return"M3u8PlaylistTrack"},s.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},s.prototype.getMseCodec=function(){return this._mseCodec},s.prototype.getTrackId=function(){return this._trackId},s.prototype.getChunkDuration=function(){return this._chunkDuration},s.prototype.getBandwidth=function(){return this._bandwidth},s.prototype.getHeight=function(){return this._height},s.prototype.getMimeType=function(){return this._mimeType},s.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},s.prototype.getPlayableDuration=function(){return this._playableDuration},s.prototype.isComplete=function(){return this._isComplete},s.prototype.hasSegments=function(){return this._mediaSegments.length>0},s.prototype.getSegmentByTimestamp=function(t){return e.find(this._mediaSegments,function(e){return e.timestamp<=t&&t<e.timestamp+e.duration})},s.prototype.getLastSegment=function(){return e.get(this._mediaSegments,[this._mediaSegments.length-1],null)},s.prototype.getMediaSegmentPlaylistUrlInfo=function(){return this._mediaSegmentPlaylistUrlInfo},s.prototype.getClosestSegmentNotGreaterThanTimestamp=function(e){return e>this._playableDuration?this._mediaSegments[this._mediaSegments.length-1]:this.getSegmentByTimestamp(e)},s.prototype.isLastMediaSegment=function(t){var i=this.getSegmentByTimestamp(t),n=!this._isComplete&&e.get(i,["timestamp"],0)+e.get(i,["duration"],0)===this._playableDuration,r=!this._isComplete&&t>this._playableDuration;return this._playableDuration===t||n||r},s.prototype.updateMediaSegments=function(t){var i=new a(this._logger,this._trackId,t),n=this._totalNumberOfChunks||0,r=e.map(this._mediaSegments,function(e){return e.name}),s=this,o=e.get(this._mediaSegments,[this._mediaSegments.length-1]),l=e.get(o,["timestamp"])+e.get(o,["duration"])||void 0;e.forEach(i.mediaSegments,function(t){e.includes(r,t.name)||(t.timestamp=e.isUndefined(l)?0:l,s._mediaSegments.push(t),s._playableDuration+=t.duration,l=t.timestamp+t.duration,t.duration>s._chunkDuration&&(s._chunkDuration=t.duration),s._logger.trace("[%s]:[%s]:[%s] Got new segment from playlist [%s]",(new Date).getHours(),(new Date).getMinutes(),(new Date).getSeconds(),t.name))}),n!==this._mediaSegments.length&&(this._isComplete=i.isComplete,this._totalNumberOfChunks=this._mediaSegments.length,this._segmentsReadyEvent.fireAsync([this._mediaSegments],null,e.noop))},s.prototype.addDataChunk=function(e,i,n){t.isNotUndefined(e,"dataChunk"),n=n||function(){},t.isFunction(n,"eventCallback");var r={data:e,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},s.prototype.getChunks=function(){return this._dataChunks},s.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"chunkadded":return this._chunkAddedEvent.listen(i);case"segmentsready":return this._segmentsReadyEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},s}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"m3u8String"),t.isObject(i,"logger"),this._rawM3U8=a,this._logger=i,this._name=r,this.mediaSegments=[],function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch("#EXT-X-ENDLIST"===t&&(o="EXT-X-ENDLIST"),o){case"EXT-X-VERSION":r.version=parseFloat(l);break;case"EXT-X-PROGRAM-DATE-TIME":r.programDateTime=function(e){return e?new Date(e.trim()):null}(l);break;case"EXT-X-TARGETDURATION":r.targetDuration=1e3*parseFloat(l)||0;break;case"EXT-X-MEDIA-SEQUENCE":r.mediaSequence=parseInt(l);break;case"EXTINF":var u=[l,i[a+1]];r.mediaSegments.push(n(u,r.mediaSegments+1));break;case"EXT-X-ENDLIST":r.isComplete=!0;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Segment] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3U8);var s=0;e.forEach(this.mediaSegments,function(e){e.timestamp=s,s+=e.duration}),this.playableDuration=s,this.isComplete=!!this.isComplete}i.prototype.toString=function(){return"vod"};var n=function(t){var i=e.get(t,["0"],"").split(","),n=e.get(i,["0"],0),r=e.get(i,["1"],"").trim(),a=e.get(t,["1"],"").trim();return{duration:parseFloat(n),title:r,name:a}};return i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(8)],void 0!==(r=function(e,t){"use strict";function i(){}return i.prototype.isCodecSupported=function(i){return e.isStringNotEmpty(i,"codec"),t.global.MediaSource&&"function"==typeof t.global.MediaSource.isTypeSupported&&t.global.MediaSource.isTypeSupported(i)},i.prototype.parseXml=function(i){if(e.isStringNotEmpty(i,"xmlString"),void 0!==t.global.DOMParser)return(new t.global.DOMParser).parseFromString(i,"text/xml");if(void 0!==t.global.ActiveXObject&&new t.global.ActiveXObject("Microsoft.XMLDOM")){var n=new t.global.ActiveXObject("Microsoft.XMLDOM");return n.async="false",n.loadXML(i),n}throw new Error("No XML parser found")},i.prototype.getMSECodec=function(t,i){return e.isStringNotEmpty(t,"mpdMimeType"),e.isStringNotEmpty(i,"mpdCodecs"),t+'; codecs="'+i+'"'},new i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(10)],void 0!==(r=function(e,t,i){"use strict";function n(e,i,n){t.isObject(e,"logger"),this._logger=e,this._timeSources=function(e){return e.sort(function(e,t){return a[e.name]-a[t.name]})}(i),this._directSourceOffset=n}function r(t,n){n=n||0;var a=this,s=e.get(this._timeSources,[n],{});(function(t,n){var r=this;switch(t.name){case"urn:mpeg:dash:utc:http-head:2014":return i.get(t.value,{contentType:"text/plain"},function(i,a){var s=e.get(a,["headers","date"],""),o=new Date(s).getTime();if(i||isNaN(o))return r._logger.warn("Unable to resolve dash timing via [%s]",t.value),n();var l=e.now()-o-a.stats.successResponseTime/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,l),n(l)});case"urn:mpeg:dash:utc:direct:2014":var a=e.now()-t.value-this._directSourceOffset/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,a),n(a);default:return r._logger.info("Unable to resolve mpd Timing Sources. Defaulting to local time"),n(0)}}).call(this,s,function(i){if(!e.isNumber(i))return r.call(a,t,n+1);t(i)})}var a={"urn:mpeg:dash:utc:http-head:2014":0,"urn:mpeg:dash:utc:direct:2014":1};return n.prototype.calculateOffset=function(e){r.call(this,e)},n.prototype.toString=function(){return"MpdTimeSync [Time Source Number: "+this._timeSources.length+", Direct Source Offset: "+this._directSourceOffset+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(6),i(11),i(8),i(28),i(29),i(4),i(9),i(20),i(15),i(17)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d,c,h,f){"use strict";function g(e,o,l){t.isNotUndefined(o,"videoElement"),t.isNotUndefined(o.videoWidth,"videoElement.videoWidth"),this._logger=e||new i.Logger,this._options=l,this._videoElement=o,this._disposables=new r.DisposableList,this._browserDetails=new a(s.global.navigator.userAgent).detect(),this._preferNative=this._options.preferNative||!1,this._player=null,this._playbackStarted=!1,this._isWaiting=!1,this._playbackStarted=!1,this._playbackTimeLeftEvent=new n.Event,this._playerStartedEvent=new n.Event,this._playerErrorEvent=new n.Event,this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerStartedEvent),this._disposables.add(this._playerErrorEvent)}function p(){var e=this;"Edge"===e._browserDetails.browser||"IE"===e._browserDetails.browser?(e._videoElement.play(),e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")):e._videoElement.play().then(function(){e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")}).catch(function(t){e._logger.error("Playback Failed [%s]",t)})}return g.prototype.toString=function(){return e.toString(this)},g.prototype.start=function(e){if(t.isStringNotEmpty(e,"uri"),this._player)return this._logger.warn("Already started Phenix Web Player");var i=this;if(l.isSupported){if(this._preferNative||!o.isSupported)return this._logger.info("HLS native player selected"),this._player=new l(this._logger,this._videoElement,this._options),this._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),this._disposables.add(this._player),this._player.start(e,function(){p.call(i)})}else this._preferNative&&this._logger.warn("HLS native player is not supported");this._logger.info("MSE player selected");var n=new u(this._logger,e);i._disposables.add(n),n.fetch(function(e){if(e)return i._playerErrorEvent.fire([e]);var t,r=new d(i._logger,{ewmaPeriods:30});"Dash"===n.getDeliveryType()?t=new h(i._logger,n,r,i._options):"Hls"===n.getDeliveryType()&&(t=new f(i._logger,n,r,i._options));var a=new o(i._logger,n,i._videoElement,t,i._options),s=new c(i._logger,n,i,r);a.start(),p.call(i),i._player=a,i._player.addEventListener("playbacktimeleft",function(e,t){i._playbackTimeLeftEvent.fire([e,t])}),i._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),i._disposables.add(i._player),i._disposables.add(r),i._disposables.add(s)})},g.prototype.play=function(){p.call(this),this._player&&this._player.play()},g.prototype.pause=function(){this._logger.info("Pausing web player"),this._player&&this._player.pause()},g.prototype.getVideoElement=function(){return this._videoElement},g.prototype.dispose=function(){this._disposables.dispose(),this._videoElement&&(this._videoElement.load(),this._videoElement.src="",this._videoElement.mediaKeys&&this._videoElement.setMediaKeys(null)),this._player=null,this._videoElement=null},g.prototype.getBandwidthLimit=function(){this._player.getBandwidthLimit()},g.prototype.getTimeLeft=function(){return this._videoElement?function(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=function(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}.call(this,this._videoElement).timeBufferedButNotPlayed:0},g.prototype.changeBandwidthLimit=function(e,t){this._player.changeBandwidthLimit(e,t)},g.prototype.addEventListener=function(i,n){switch(t.isString(i,"eventName"),t.isFunction(n,"listener"),i){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(n);case"started":var r=this._playerStartedEvent.listen(n);return this._playbackStarted&&setTimeout(e.bind(n,this),0),r;case"error":return this._playerErrorEvent.listen(n);default:throw new Error('Event "'+i+'" is unknown.')}},g.prototype.getStats=function(){return this._player?this._player.getStats():{}},g.isSupported=l.isSupported||o.isSupported,g.deviceSupportsHlsPlayback=l.isSupported||o.isSupported,g.deviceSupportsDashPlayback=o.isSupported,g}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(6),i(11),i(8),i(4),i(12),i(18)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(d,h,f,g,p){t.isInstanceOf(h,o,"playlist"),t.isNotUndefined(f,"videoElement"),t.isNotUndefined(f.videoWidth,"videoElement.videoWidth"),t.isNotUndefined(g,"playlistChunkFeeder"),t.isInstanceOf(g,l,"playlistChunkFeeder"),e.isUndefined(e.get(p,"bandwidthToStartAt"))||t.isNumber(p.bandwidthToStartAt,"options.bandwidthToStartAt"),e.isUndefined(e.get(p,"trackRestrictions"))||t.isObject(p.trackRestrictions,"options.trackRestrictions"),e.isUndefined(e.get(p,"bufferSizeToPauseFetch"))||t.isNumber(p.bufferSizeToPauseFetch,"options.bufferSizeToPauseFetch"),e.isUndefined(e.get(p,"bufferSizeToResumeFetch"))||t.isNumber(p.bufferSizeToResumeFetch,"options.bufferSizeToResumeFetch"),e.isUndefined(e.get(p,"maximumFrequencyForAlteringPlaybackRate"))||t.isNumber(p.maximumFrequencyForAlteringPlaybackRate,"options.maximumFrequencyForAlteringPlaybackRate"),e.isUndefined(e.get(p,"playbackRateToRecover"))||t.isNumber(p.playbackRateToRecover,"options.playbackRateToRecover"),e.isUndefined(e.get(p,"targetMinBufferSize"))||t.isNumber(p.targetMinBufferSize,"options.targetMinBufferSize");var m=this;this._options=p,this._videoElement=f,this._feeder=g,this._playlist=h,this._disposables=new r.DisposableList,this._logger=d||new i.Logger,this._bandwidthLimit=e.get(p,"bandwidthToStartAt",w),this._trackRestrictions=e.get(p,"trackRestrictions",{}),this._bufferSizeToPauseFetch=e.get(p,"bufferSizeToPauseFetch",T),this._bufferSizeToResumeFetch=e.get(p,"bufferSizeToResumeFetch",E),this._maximumFrequencyForAlteringPlaybackRate=e.get(p,"maximumFrequencyForAlteringPlaybackRate",M),this._targetMinBufferSize=e.get(p,"targetMinBufferSize",A),this._playbackRateToDecreaseBuffer=e.get(p,"playbackRateToDecreaseBuffer",C),this._playbackRateToIncreaseBuffer=e.get(p,"playbackRateToIncreaseBuffer",D),this._targetBufferSizeToStartFastForward=this._targetMinBufferSize+3.5,this._maxBufferSizeWhileRecoveringBufferWithSlowMotion=this._targetMinBufferSize+2,this._playbackStarted=!1,this._isWaiting=!1,this._bufferStats=[],this._browserDetails=new a(s.global.navigator.userAgent).detect(),function(){var t=this,i=e.get(this._playlist,["parsedPlaylist","contentProtectionTags"],[]);if(0===i.length)return this._logger.info("No Content Protection Tags found in the playlist so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,i,e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i,c.call(t),t._videoElement.play())}),this._disposables.add(this._encryptedMediaHandler)}.call(this),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._playbackTimeLeftEvent=new n.Event,this._playerErrorEvent=new n.Event,this._feeder.addEventListener("error",function(e){m._playerErrorEvent.fire([e])}),this._disposables.add(this._feeder),this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerErrorEvent),this._disposables.add(new r.Disposable(function(){null!==m._switchTrackDisposable&&s.global.clearTimeout(m._switchTrackDisposable)}))}function c(){var e=this._playlist.getPlaylistTracksByBandwidthPerMimeType(this._bandwidthLimit,this._trackRestrictions);return this._feeder.setActiveTracks(e),e}function h(e,t,i){this._logger.debug("VIDEO EVENT: [%s]",e),t&&t.call(this,i)}function f(t,i){var n=e.bind(h,this,"durationchange",function(){var r=this;if("dynamic"!==r._playlist.getType())return r._videoElement.removeEventListener("durationchange",n,!1),r._ready=!0;0!==e.get(r._videoElement,["buffered","length"],0)&&function(t,i){var n=this;t=e.isNumber(t)?t:n._playlist.getPlaybackDurationSinceAvailable()/1e3-1,"Firefox"===this._browserDetails.browser&&(t-=1),setTimeout(function(){var e=n._videoElement.buffered.start(n._videoElement.buffered.length-1),r=n._videoElement.buffered.end(n._videoElement.buffered.length-1),a=n._videoElement.currentTime<t||n._videoElement.currentTime>t+1,s=e<=t&&t<=r,o=n._durationChangeCount>=I;s||o||!n._initialized?(!a||n._setTimeoutOnce||!s&&!o&&n._initialized||(n._initialized||s?n._videoElement.currentTime=o?(r-e)/2+e:e:n._videoElement.currentTime=e,n._setTimeoutOnce=!0,n._initialized||(n._initialized=!0)),e<=n._videoElement.currentTime&&n._videoElement.currentTime<=r&&(s||o)&&(n._ready=!0,n._setTimeoutOnce=!1,i())):n._durationChangeCount++},10)}.call(r,t,function(){r._videoElement.removeEventListener("durationchange",n,!1),i&&i()})});return this._durationChangeCount=0,n}function g(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=p(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}function p(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}function m(){var t=!0,i=!1;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var n=g.call(this,e.buffer),r=parseFloat(n.timeBufferedButNotPlayed);r<this._bufferSizeToPauseFetch&&(t=!1),r<this._bufferSizeToResumeFetch&&(i=!0)},this)),t&&this._feeder.isFetchingData()&&(this._logger.debug("Pausing feeder due to excess buffer"),L.call(this)),!i||this._feeder.isFetchingData()||this._pausedAt||(this._logger.debug("Starting feeder due to limited buffer"),x.call(this))}function y(t,i){var n=this._mediaSourceBuffers[b(t)],r=this._bufferDetails[k(t)];if(!r)return this._logger.warn("Unable to add chunk for non existent buffer");if("dynamic"===this._playlist.getType()&&this._pausedAt&&!this._reset&&n.buffer.buffered.length>0)n.buffer.remove(0,n.buffer.buffered.end(n.buffer.buffered.length-1)),n.cleared=!0,e.reduce(this._mediaSourceBuffers,function(e,t){return e?t.cleared:e},!0)&&(this._initialized=!1,this._ready=!1,this._setTimeoutOnce=!1,this._reset=!0);else if(r.chunks.length>0){if(this._videoElement.error)return this._logger.error("Unable to continue appending to buffer. Video element error code [%s] and message [%s]",this._videoElement.error.code,this._videoElement.error.message),L.call(this),this._playerErrorEvent.fire([this._videoElement.error]);var a=r.chunks.shift();n.cleared=!1,this._logger.debug("Appending chunk to buffer for track [%s]",t.getTrackId()),n.buffer.appendBuffer(new Uint8Array(a))}else i&&(m.call(this),r.chunkAddRequested=!0)}function _(t){var i=this._mediaSourceBuffers[b(t)],n=e.bind(function(e){this._logger.warn("Buffer Error [%s]",e)},this),r=!!i.track;if(i.track!==t){var a=this._bufferDetails[k(t)];if(i.track&&i.track!==t&&r&&(i.buffer.removeEventListener("updateend",i.updateEndListener),i.buffer.removeEventListener("error",n),a&&(a.addInitChunkFirst=!0,a.chunkAddRequested=!0,a.chunks=[])),i.track=t,i.updateEndListener=e.bind(i.updateEnd,this,t),i.buffer.addEventListener("updateend",i.updateEndListener),i.buffer.addEventListener("error",n),i.buffer.onerror=n,!r){var s="Dash"===this._playlist.getDeliveryType()?[t.getInitChunkData()]:[];a.chunks=[].concat(s,e.map(t.getChunks(),function(e){return e.data})),"static"===this._playlist.getType()&&"Edge"!==this._browserDetails.browser&&"IE"!==this._browserDetails.browser&&this._mediaSource.setLiveSeekableRange(0,this._playlist.getTotalMediaTimeInMillis()/1e3),y.call(this,t,!1)}}}function v(t){this._logger.debug("Creating MSE buffers for all tracks."),e.forEach(t,e.bind(function(t){(function(t){var i=this,n={track:t,chunks:[],chunkAddRequested:!1},a=b(t),s=!e.includes(e.keys(i._mediaSourceBuffers),a),o=s?i._mediaSource.addSourceBuffer(t.getMseCodec()):i._mediaSourceBuffers[a].buffer,l=k(t);i._bufferDetails[l]=n,s&&(o.mode="segments","static"===i._playlist.getType()&&(o.appendWindowEnd=i._playlist.getTotalMediaTimeInMillis()/1e3),i._logger.debug("Creating MSE Buffer for [%s] with mode [%s]",i._playlist.getType(),o.mode),i._mediaSourceBuffers[a]={buffer:o,updateEnd:function(e){o.updating||y.call(this,e,!0)}},i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceBuffer [%s]",a),i._mediaSource.removeSourceBuffer(o)})));var u=t.addEventListener("chunkadded",e.bind(function(t,r){n.addInitChunkFirst&&"Dash"===i._playlist.getDeliveryType()&&(n.addInitChunkFirst=!1,this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),"Init"),n.chunks.push(t.getInitChunkData())),this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),r.chunkId),n.chunks.push(r.data),n.chunkAddRequested&&(n.chunkAddRequested=!1,o.updating||y.call(this,t,!1));var a=e.now()-this._lastUpdate>=S,s=e.now()-this._lastPlayAttempt>=500;this._isWaiting&&a&&s&&!this._videoElement.paused&&!this._pausedAt&&(this._logger.trace("Starting after wait [%s]",e.now()-this._lastUpdate),this._lastPlayAttempt=e.now(),this._videoElement.play())},i,t));i._disposables.add(u)}).call(this,t)},this))}function b(e){return e.getMseCodec().indexOf("video")>=0?"video":e.getMseCodec().indexOf("audio")>=0?"audio":"other"}function k(e){return e.getTrackId()+"_"+e.getMseCodec()}var w=2e6,T=60,E=30,S=1e3,C=1.03,D=.97,M=300,P=300,A=2,R=3e5,I=2;d.prototype.toString=function(){return e.toString(this)},d.prototype.play=function(){if("dynamic"===this._playlist.getType()){var e=this._feeder.seekToCurrent();x.call(this);var t=this,i=f.call(this,e,function(){t._pausedAt=0,t._videoElement&&t._videoElement.play()});return setTimeout(function(){t._videoElement.addEventListener("durationchange",i,!1)},300),this._disposables.add(new r.Disposable(function(){t._videoElement.removeEventListener("durationchange",i,!1)}))}x.call(this),this._videoElement&&this._videoElement.play()},d.prototype.pause=function(){this._logger.info("Pausing web player"),L.call(this);var t=this;this._videoElement&&(this._videoElement.pause(),this._pausedAt=e.now(),this._reset=!1,e.forOwn(this._feeder.getActiveTracks(),function(e){t._mediaSourceBuffers[b(e)].buffer.updating||y.call(t,e,!1)}))},d.prototype.dispose=function(){this._disposables.dispose(),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._bufferStats=[],this._mediaSource=null,this._playlist=null,this._videoElement=null},d.prototype.start=function(t){(function(t){var i=this;i._mediaSource=new MediaSource;var n=function(){(function(t){var i=this,n=c.call(this),a=i._playlist.getAllPlaylistTracks().sort(function(e,t){return-1*(e.getBandwidth()-t.getBandwidth())}),s=e.filter(a,function(t){return!e.includes(n,t)});if(this._logger.info("Initializing feeder with [%s] [%s] playlist of duration [%s]",i._playlist.getType(),i._playlist.getDeliveryType(),i._playlist.getTotalMediaTimeInMillis()/1e3),"static"===i._playlist.getType())i._mediaSource.duration=i._playlist.getTotalMediaTimeInMillis()/1e3;else if("Hls"===i._playlist.getDeliveryType()){i._mediaSource.duration=1/0;var o=e.reduce(n,function(t,i){var n=e.get(i.getLastSegment(),["timestamp"],0);return e.isNullOrUndefined(t)?n:n<t?n:t})||0;i._feeder.seekToChunk(o)}this._logger.debug("Loading tracks: numberOfTracksToInitialize=[%s], all tracks: [%s]",n.length,a),this._feeder.initialize(n,s,function(){v.call(i,n);var a=c.call(i);e.forEach(a,function(e){_.call(i,e)}),function(t){var i=this,n=e.bind(function(){this._isWaiting=!1,this._lastUpdate=e.now();var t;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var i=g.call(this,e.buffer);(!t||t>i.timeBufferedButNotPlayed)&&(t=i.timeBufferedButNotPlayed),this._playbackTimeLeftEvent.fire([i.timeBufferedButNotPlayed,e.track],this)},this)),m.call(this),function(t){this._bufferStats.push({size:t,timestamp:e.now()});for(var i=e.get(this._bufferStats,[0,"timestamp"],e.now());e.now()-i>R;)this._bufferStats.shift(),i=e.get(this._bufferStats,[0,"timestamp"],e.now());this._bufferStatsMin=Math.min.apply(null,e.map(this._bufferStats,function(e){return e.size}))}.call(this,t),function(t){if("Dash"===this._playlist.getDeliveryType()||"dynamic"===this._playlist.getType()){var i=this._targetBufferSizeToStartFastForward,n=this._lastPlaybackRateChange,r=e.now()-this._startTime>P,a=!n||e.now()-n>1e3*this._maximumFrequencyForAlteringPlaybackRate,s=this._bufferStatsMin>this._targetMinBufferSize,o=this._bufferStatsMin<=this._targetMinBufferSize+.1&&this._bufferStatsMin>=this._targetMinBufferSize-.1,l=t>=this._maxBufferSizeWhileRecoveringBufferWithSlowMotion&&this._videoElement.playbackRate===this._playbackRateToIncreaseBuffer;t>=i&&s&&this._videoElement.playbackRate<=1&&r&&a?(this._logger.info("Adjusting playback rate to [%s] to reduce buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToDecreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToDecreaseBuffer):!s&&!o&&this._videoElement.playbackRate>=1&&a?(this._logger.info("Adjusting playback rate to [%s] to increase buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToIncreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToIncreaseBuffer):(l||o)&&1!==this._videoElement.playbackRate&&(this._logger.info("Resuming normal playback rate with buffer size of [%s] and minimum buffer size of [%s]",t,this._bufferStatsMin),this._videoElement.playbackRate=1,this._lastPlaybackRateChange=e.now())}}.call(this,t||0)},i),a=e.bind(h,i,"stalled",null),s=e.bind(h,i,"suspend",null),o=e.bind(h,i,"ended",null),l=e.bind(h,i,"error",null),u=e.bind(h,i,"pause",null),d=e.bind(h,i,"play",function(){this._pausedAt&&this._videoElement.pause()}),c=e.bind(h,i,"waiting",function(){this._playbackStarted&&(this._logger.debug("Waiting for new chunk or end of track"),this._isWaiting=!0)}),y=e.bind(h,i,"seeking",function(t){var i=e.keys(this._mediaSourceBuffers),n=e.get(i,"0",null),r=this._mediaSourceBuffers[n],a=this;if(r&&this._ready&&"Hls"!==this._playlist.getDeliveryType()){var s=p(r.buffer,t.timeStamp/1e3),o=p(r.buffer,this._videoElement.currentTime),l=e.reduce(this._mediaSourceBuffers,function(t,i){var n=p(i.buffer,a._videoElement.currentTime),r=e.isNumber(n)?i.buffer.buffered.end(n):0;return t?r<t?r:t:r})||this._videoElement.currentTime;if(this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed."),this._feeder.seekToChunk("dynamic"===this._playlist.getType()?this._videoElement.currentTime:l),s!==o||e.isNullOrUndefined(o)){if(this._feeder.isFetchingData())return;this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit)}}}),_=f.call(i);i._videoElement.addEventListener("timeupdate",n,!1),i._videoElement.addEventListener("ended",o,!1),i._videoElement.addEventListener("error",l,!1),i._videoElement.addEventListener("pause",u,!1),i._videoElement.addEventListener("stalled",a,!1),i._videoElement.addEventListener("suspend",s,!1),i._videoElement.addEventListener("play",d,!1),i._videoElement.addEventListener("waiting",c,!1),i._videoElement.addEventListener("seeking",y,!1),i._videoElement.addEventListener("durationchange",_,!1),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up videoElement listeners"),i._videoElement.removeEventListener("timeupdate",n,!1),i._videoElement.removeEventListener("ended",o,!1),i._videoElement.removeEventListener("error",l,!1),i._videoElement.removeEventListener("pause",u,!1),i._videoElement.removeEventListener("stalled",a,!1),i._videoElement.removeEventListener("suspend",s,!1),i._videoElement.removeEventListener("play",d,!1),i._videoElement.removeEventListener("waiting",c,!1),i._videoElement.removeEventListener("seeking",y,!1),i._videoElement.removeEventListener("durationchange",_,!1)})),x.call(i),i._lastPlayAttempt=e.now(),e.isFunction(t)&&t()}.call(i,t)},function(){"Hls"!==i._playlist.getDeliveryType()&&v.call(i,s)},function(e){return i._logger.error("Unable to initialize playlist chunk feeder",e),i._playerErrorEvent.fire([e])})}).call(i,t)};i._mediaSource.addEventListener("sourceopen",n),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceopen listener"),i._mediaSource.removeEventListener("sourceopen",n)})),i._videoElement.src=s.global.URL.createObjectURL(i._mediaSource)}).call(this,t),this._startTime=e.now()},d.prototype.getBandwidthLimit=function(){return this._bandwidthLimit},d.prototype.changeBandwidthLimit=function(t,i){this._logger.debug("Changing playback bandwidth limit: [%s], current limit: [%s]",t,this._bandwidthLimit),this._bandwidthLimit=t,this._switchTrackDisposable=setTimeout(e.bind(function(t){var i=this,n=this._feeder.getActiveTracks(),r=c.call(this),a=e.filter(r,function(t){return!e.find(n,function(e){return e.getTrackId()===t.getTrackId()})});e.forEach(a,function(e){_.call(i,e),i._logger.info("Switched [%s] to track [%s] with [%s] bandwidth limit",b(e),e.getTrackId(),i._bandwidthLimit)});var s=e.reduce(r,function(t,n){var r=i._mediaSourceBuffers[b(n)],a=p(r.buffer,i._videoElement.currentTime),s=n.getChunkDuration()/1e3;if(!e.isNumber(a))return!e.isNumber(t)||t>i._videoElement.currentTime?i._videoElement.currentTime:t;var o=Math.round(r.buffer.buffered.end(a)/s)*s;return!e.isNumber(t)||t>o?o:t});e.isNumber(s)||(s=i._videoElement.currentTime),this._feeder.stopRequestingAllData(),this._feeder.seekToChunk(s),this._logger.debug("Pausing of feeder completed."),this._feeder.isFetchingData()||(this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit),t())},this,i||e.noop),250)},d.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(i);case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},d.prototype.getStats=function(){return{currentTime:e.get(this._element,["currentTime"],0),width:e.get(this._element,["videoWidth"],0)||e.get(this._element,["width"],0),height:e.get(this._element,["videoHeight"],0)||e.get(this._element,["height"],0),lag:0,deliveryType:this._playlist.getDeliveryType(),isNative:!1}},d.isSupported=!!s.global.MediaSource;var L=function(){this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed.")},x=function(){if(this._feeder.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._feeder.startRequestingDataForActiveTracks()};return d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(6),i(11),i(19),i(8),i(4),i(18),i(5)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(s,c,m){t.isNotUndefined(c,"videoElement"),t.isNotUndefined(c.videoWidth,"videoElement.videoWidth"),this._options=m,this._videoElement=c,this._disposables=new r.DisposableList,this._logger=s||new i.Logger,this._browserDetails=new a(o.global.navigator.userAgent).detect(),this._playerErrorEvent=new n.Event,this._disposables.add(this._playerErrorEvent),this._onStalled=e.bind(function(){var e=this,t=this._element.currentTime,i=function(){return 1.5*this._lastProgress.averageLength<4e3?4e3:1.5*this._lastProgress.averageLength}.call(e);if(e._element.paused)return;setTimeout(function(){if(0===e._lastProgress.count&&!e._element.paused&&e._element.currentTime===t){var n="Stream has not started within ["+i/1e3+"] seconds";e._logger.warn(n),g.call(e,d.name.progressTimeOut.name,n)}},i),setTimeout(function(){if(e._element&&e._element.currentTime===t&&!e._element.paused&&h.call(e)){var i="Stream has been stalled for ["+_/1e3+"] seconds";e._logger.warn(i),f.call(e,d.name.progressTimeOut.name,i)}},_)},this),this._onProgress=e.bind(function(){if(this._lastProgress.time=e.now(),0===this._element.buffered.length)return this._logger.debug("[%s] Hls stream progress event fired without any buffered content",this._uri);var t=this._element.buffered.end(this._element.buffered.length-1);if(this._lastProgress.buffered===t)return;if(null!==this._lastProgress.buffered){var i=this._lastProgress.averageLength*this._lastProgress.count+(t-this._lastProgress.buffered);if(this._lastProgress.count+=1,this._lastProgress.averageLength=i/this._lastProgress.count,this._lastProgress.lastCurrentTime!==this._element.currentTime&&(this._lastProgress.lastCurrentTimeOccurrenceTimestamp=e.now()),this._lastProgress.lastCurrentTimeOccurrenceTimestamp&&e.now()-this._lastProgress.lastCurrentTimeOccurrenceTimestamp>_&&this._element&&!this._element.paused&&h.call(this)){var n="Reloading stream after current time has not changed for ["+_/1e3+"] seconds due to unregistered stall.";this._logger.warn(n),f.call(this,d.name.progressTimeOut.name,n)}}this._lastProgress.buffered=t,this._lastProgress.lastCurrentTime=this._element.currentTime},this),this._onEnded=e.bind(function(){this._logger.info("[%s] Hls stream ended",this._streamId),this.stop("ended")},this),this._onError=e.bind(function(t){var i=this,n=0===i._lastProgress.count;4===e.get(this._element,["error","code"])&&n&&g.call(i,d.name.hlsNativeError.name,t);p.call(this,d.name.hlsNativeError.name,t)},this),this._lastProgress={time:0,buffered:null,averageLength:0,count:0,lastCurrentTime:0,lastCurrentTimeOccurrenceTimestamp:0},this._bufferSizeHistory=[],function(){var t=this,i=e.get(this._options,["drm","com.apple.fps.1_0"],{});if(0===e.keys(i).length)return this._logger.info("DRM config is empty so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,[],e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i)}),this._disposables.add(this._encryptedMediaHandler)}.call(this),setTimeout(e.bind(function(){this._playlist=new l(this._logger,this._uri),this._disposables.add(this._playlist),this._playlist.fetch(e.noop)},this),b)}function h(){return this._element&&0!==this._element.buffered.length}function f(e,t){if(!h.call(this))return p.call(this,e,t);g.call(this,e,t)}function g(e,t){this._playerErrorEvent.fire([y(e,d.severity.RECOVERABLE,t)])}function p(e,t){this._playerErrorEvent.fire([y(e,d.severity.CRITICAL,t)])}function m(t){if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,!this._backgroundThrottled)return;return this._backgroundThrottled=!1,void this.start(this._element)}var i=this;this._backgroundTimeout=setTimeout(function(){s.isForeground()||function(t){if(t.muted)return!1;return e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.webkitHasAudio}(i._element)||(i._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),i._element.pause(),i._backgroundThrottled=!0)},v)}function y(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var _=6e3,v=3e3,b=2e3;return c.prototype.toString=function(){return e.toString(this)},c.prototype.play=function(){this._videoElement.play()},c.prototype.pause=function(){this._videoElement.pause()},c.prototype.dispose=function(){this._disposables.dispose()},c.prototype.start=function(t){if(this._uri)return this._logger.warn("Already started player");this._uri=t,this._disposables.add(s.onBackground(e.bind(m,this,!1))),this._disposables.add(s.onForeground(e.bind(m,this,!0))),function(t){o.attachUriStream(t,this._uri),!1===this._options.receiveAudio&&(t.muted=!0),e.addEventListener(t,"error",this._onError,!0),e.addEventListener(t,"stalled",this._onStalled,!1),e.addEventListener(t,"pause",this._onStalled,!1),e.addEventListener(t,"suspend",this._onStalled,!1),e.addEventListener(t,"progress",this._onProgress,!1),e.addEventListener(t,"ended",this._onEnded,!1),this._element=t}.call(this,this._videoElement)},c.prototype.getBandwidthLimit=function(){return this._logger.warn("getBandwidthLimit not supported for HLS Native")},c.prototype.changeBandwidthLimit=function(){return this._logger.warn("changeBandwidthLimit not supported for HLS Native")},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.getStats=function(){if(!this._videoElement)return{width:0,height:0,currentTime:0,lag:0,deliveryType:"Hls",isNative:!0};var t=e.get(this._element,["currentTime"],0),i=this._element&&this._element.buffered&&this._element.buffered.length>0?this._element.buffered.end(this._element.buffered.length-1):0,n=Math.max(0,i-t);this._bufferSizeHistory.push(n),this._bufferSizeHistory.length>15&&this._bufferSizeHistory.shift();for(var r=0,a=0,s=this._bufferSizeHistory.length;a<s;a++)r=Math.max(r,this._bufferSizeHistory[a]);var o=2;this._playlist&&this._playlist.getAllPlaylistTracks().length>0&&(o=this._playlist.getAllPlaylistTracks()[0].getChunkDuration());var l=2*o+r;return{width:this._element.videoWidth||this._element.width,height:this._element.videoHeight||this._element.height,currentTime:t,lag:l,deliveryType:"Hls",isNative:!0}},c.isSupported="object"==typeof document&&"maybe"===document.createElement("video").canPlayType("application/vnd.apple.mpegURL"),c}.apply(t,n))&&(e.exports=r)}])});
+!function(e,t){if(true)module.exports=t(__webpack_require__(1),__webpack_require__(0),__webpack_require__(8),__webpack_require__(5),__webpack_require__(2),__webpack_require__(3),__webpack_require__(6),__webpack_require__(42),__webpack_require__(35));else { var n, i; }}(this,function(e,t,i,n,r,a,s,o,l){return function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,n){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:n})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=21)}([function(t,i){t.exports=e},function(e,i){e.exports=t},function(e,t){e.exports=i},function(e,t){e.exports=n},function(e,t){e.exports=r},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(10),i(7),i(22),i(23),i(13),i(14),i(26),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d,c,h){"use strict";function g(e,a){a&&t.isStringNotEmpty(a,"playlistUrl"),this.parsedPlaylist=null,this._logger=e||new i.Logger,this.playlistUrl=a,this.baseUrl=a?a.substring(0,a.lastIndexOf("/")+1):"",this._name=a?a.substring(a.lastIndexOf("/"),a.length):"",this._trackAddedEvent=new n.Event,this._playlistTracksByMimeType={},this._mimeTypes=[],this._deliveryType=p(this.playlistUrl),this._type=null,this._localToServerTimeOffset=0,this._disposables=new r.DisposableList,this._disposables.add(this._trackAddedEvent)}function f(i,n){t.isInstanceOf(i,s,"track"),n=n||e.noop,t.isFunction(n,"eventCallback");var a=i.getMimeType();this._playlistTracksByMimeType[a]||(this._playlistTracksByMimeType[a]=[]),e.includes(this._playlistTracksByMimeType[a],i)||this._playlistTracksByMimeType[a].push(i),e.includes(this._mimeTypes,a)||this._mimeTypes.push(a),this._disposables.add(new r.Disposable(function(){i.dispose()})),this._trackAddedEvent.fireAsync([i],this,n)}function p(e){return/[.]mpd\??[^\s]*/i.test(e)?"Dash":/[.]m3u8\??[^\s]*/i.test(e)?"Hls":null}function m(t,i,n){if(this._logger.error("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",this.playlistUrl,t.code,t.message),i&&i.attempts===_){var r="Failed to get playlist with max retries of ["+_+" after ["+e.get(i,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return n(y(h.name.playlistNotFound.name,h.severity.CRITICAL,r))}if(0===t.code){var a="Failed to get playlist with timeout after ["+e.get(i,["stats","totalResponseTimeForAllAttempts"],0)+"]";return n(y(h.name.timeout.name,h.severity.RECOVERABLE,a))}return n(y(h.name.error.name,h.severity.CRITICAL,t))}function y(e,t,i){return{category:h.category.PLAYLIST,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var _=5,v=0;return g.prototype.toString=function(){return"Playlist [playlistUrl="+this.playlistUrl+", baseUrl="+this.baseUrl+", mimeTypes="+this._mimeTypes+", trackAddedEvent(size)="+this._trackAddedEvent.size()+", playlistTracks="+this.getAllPlaylistTracks()+"]"},g.prototype.dispose=function(){this._playlistTracksByMimeType={},this._disposables.dispose()},g.prototype.getPlaylistTracksByMimeType=function(e){return this._playlistTracksByMimeType[e]},g.prototype.fetch=function(t){(function(t){var i=this;a.getWithRetry(i.playlistUrl,{retryOptions:{backoff:1,delay:1e3,maxAttempts:_,additionalRetryErrorCodes:[v]}},function(n,r){if(n)return m.call(i,n,r,t);(function(t,i,n){var r=null,s=[],h=this;switch(this._deliveryType){case"Dash":r=new u(h._logger,t);var g=new c(h._logger,r.timeSources,i);h._disposables.add(g),h.parsedPlaylist=r,h._availabilityStartTime=h.parsedPlaylist.availabilityStartTime?h.parsedPlaylist.availabilityStartTime.getTime():null,h._publishTime=h.parsedPlaylist.publishTime?h.parsedPlaylist.publishTime.getTime():null,h._suggestedPresentationDelayTotalMillis=e.get(h.parsedPlaylist,["suggestedPresentationDelay","totalMillis"],null),h._totalMediaTimeInMillis=e.get(h.parsedPlaylist,["mediaPresentationDuration","totalMillis"],1/0),h._minBufferTimeTotalMillis=e.get(h.parsedPlaylist,["minBufferTime","totalMillis"],null),h._type=h.parsedPlaylist.type,s=function(t){var i=this;return e.map(t.representations,function(e){return{chunkDuration:e.duration,dataChunkUrlTemplate:e.media,codec:e.mseCodec,bandwidth:e.bandwidth,height:e.height,trackId:e.id,initUrl:e.initialization,mimeType:e.mimeType,totalNumberOfChunks:Math.ceil(i._totalMediaTimeInMillis/e.duration)}})}.call(h,h.parsedPlaylist),e.forEach(s,function(e){f.call(h,new o(h._logger,e))}),g.calculateOffset(function(e,t){h._localToServerTimeOffset=t,n()}),g.setInterval(function e(t,i){if(t)return h._warn("Unable to get server local time offset",t),g.setInterval(e);h._localToServerTimeOffset=i});break;case"Hls":r=new d(h._logger,h._name,t),h.parsedPlaylist=r,h._availabilityStartTime=null,h._minBufferTimeTotalMillis=0,h._suggestedPresentationDelayTotalMillis=0,h._totalMediaTimeInMillis=1/0;var y=0;e.forEach(r.streamVariants,function(e){var t=h.baseUrl+e.name,i=new l(h._logger,{mediaSegmentPlaylistUrl:t,codecs:e.codecs.join(","),bandwidth:e.bandwidth,trackId:e.name,mimeType:"application/octet-stream",height:null});a.getWithRetry(t,{retryOptions:{maxAttempts:_,backoff:1}},function(e,t){if(e)return m.call(h,e,t,n);i.updateMediaSegments(t.data),f.call(h,i),++y===r.streamVariants.length&&(h._type=i.isComplete()?"static":"dynamic","static"===h._type&&(h._totalMediaTimeInMillis=1e3*i.getPlayableDuration()),n())})});break;default:throw h._logger.error("[%s] Unsupported Delivery Type [%s]",h.playlistUrl,p(h.playlistUrl)),new Error("Unsupported Delivery Type "+p(h.playlistUrl))}}).call(i,r.data,r.stats.successResponseTime,function(){t(n,{raw:r,parsed:i.parsedPlaylist})})})}).call(this,t)},g.prototype.getType=function(){return this._type},g.prototype.getDeliveryType=function(){return this._deliveryType},g.prototype.getPlaylistTracksByBandwidthPerMimeType=function(i,n){t.isObject(n,"restrictions");var r=this;return e.map(this._mimeTypes,function(t){var a=function(t,i){return 0===e.keys(i).length?t:e.filter(t,function(t){return function(t,i){var n=t.getHeight()||0,r=t.getBandwidth()||0;return e.reduce(i,function(e,t,i){switch(i){case"maxHeight":return n<=t;case"minHeight":return n>=t;case"maxBandwidth":return r<=t;case"minBandwidth":return r>=t;default:throw new Error("Unknown restriction "+i)}},!1)}(t,i)})}(r.getPlaylistTracksByMimeType(t),n),s=e.reduce(a,function(e,t){return t.getBandwidth()>i?e:e&&e.getBandwidth()>t.getBandwidth()?e:t},null)||r.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(0,t);if(s)return s;var o=e.get(e.filter(a,function(e){return!e.getBandwidth()}),"0");if(o)return r._logger.debug("Unable to get track with bandwidth [%s]. Falling back to track [%s].",o.getTrackId()),o;r._logger.warn("Unable to get track with bandwidth [%s]. No other tracks to fallback on.")})},g.prototype.getPlaylistTrackByBandwidthAndMimeType=function(t,i){return e.find(this.getPlaylistTracksByBandwidthPerMimeType(t,{}),function(e){return e.getMimeType()===i})},g.prototype.getPlaylistTrackByMimeTypeAndNextHighestBandwidth=function(t,i){return e.reduce(this.getPlaylistTracksByMimeType(i),function(e,i){return i.getBandwidth()<=t?e:e?e.getBandwidth()>i.getBandwidth()?i:e:i},null)},g.prototype.getAllPlaylistTracks=function(){return[].concat.apply([],e.values(this._playlistTracksByMimeType))},g.prototype.getMimeTypes=function(){return this._mimeTypes},g.prototype.getPlaybackDurationSinceAvailable=function(){return this.currentServerTime()-this._availabilityStartTime},g.prototype.getPlaybackDurationSincePublish=function(){return this.currentServerTime()-this._publishTime},g.prototype.getSuggestedPresentationDelayTotalMillis=function(){return this._suggestedPresentationDelayTotalMillis},g.prototype.getTotalMediaTimeInMillis=function(){return this._totalMediaTimeInMillis},g.prototype.getMinBufferTimeTotalMillis=function(){return this._minBufferTimeTotalMillis},g.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},g.prototype.currentServerTime=function(){return e.now()-this._localToServerTimeOffset},g.prototype.getMaxChunkDuration=function(){return e.reduce(this.getAllPlaylistTracks(),function(e,t){return Math.max(t.getChunkDuration(),e)},0)},g.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackadded":return this._trackAddedEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},g}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n;void 0!==(n=function(){"use strict";return{name:{chunkNotFound:{id:0,name:"chunk-not-found"},timeout:{id:1,name:"timeout"},error:{id:2,name:"error"},playlistNotFound:{id:3,name:"playlist-not-found"},progressTimeOut:{id:4,name:"progress-timeout"},hlsNativeError:{id:5,name:"hls-native-error"}},category:{PLAYLIST:4,STREAMING:5,DRM:6},severity:{RECOVERABLE:1,CRITICAL:2}}}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(0),i(3),i(2)],void 0!==(r=function(e,t,i){"use strict";function n(e,t,i){}return n.prototype.toString=function(){throw new Error("Must be implemented")},n.prototype.dispose=function(){throw new Error("Must be implemented")},n.prototype.getMseCodec=function(){throw new Error("Must be implemented")},n.prototype.getTrackId=function(){throw new Error("Must be implemented")},n.prototype.getChunkDuration=function(){throw new Error("Must be implemented")},n.prototype.getBandwidth=function(){throw new Error("Must be implemented")},n.prototype.getHeight=function(){throw new Error("Must be implemented")},n.prototype.getMimeType=function(){throw new Error("Must be implemented")},n.prototype.getTotalNumberOfChunks=function(){throw new Error("Must be implemented")},n.prototype.getCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.setCurrentChunkId=function(e){throw new Error("Must be implemented")},n.prototype.incrementCurrentChunkId=function(){throw new Error("Must be implemented")},n.prototype.addDataChunk=function(e,t,i){throw new Error("Must be implemented")},n.prototype.getChunks=function(){throw new Error("Must be implemented")},n.prototype.addEventListener=function(e,t){throw new Error("Must be implemented")},n}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=a},function(e,t,i){var n,r;n=[i(1),i(2)],void 0!==(r=function(e,t){"use strict";function i(e,i){this._options=i||{},this._logger=e||new t.Logger,this._rateDataPoints={},this._ewmaPeriods=i.ewmaPeriods||null,this._ewmaMultiplier=this._ewmaPeriods?2/(this._ewmaPeriods+1):null}function n(e,t,i,n,r){var a=(i*(e.length-1)+r(t))/e.length;if(n>0)for(;t.added-e[0].added>n;){var s=e.shift();a=(a*(e.length+1)-r(s))/e.length}return a}return i.prototype.toString=function(){var t=this;return"StatsProvider [rateDataPoints(keys)="+e.keys(this._rateDataPoints)+", rateDataPoints="+e.toString(e.map(this._rateDataPoints,function(e,i){return t.getRateAverages(i)}))+", options="+this._options+"]"},i.prototype.dispose=function(){delete this._rateDataPoints},i.prototype.addRateDataPoint=function(t,i,r,a){if(!e.isNullOrUndefined(this._rateDataPoints)){this._rateDataPoints[t]||(this._rateDataPoints[t]={tenSecDataPoints:[],thirtySecDataPoints:[],oneMinDataPoints:[],twoMinDataPoints:[],ewmaDataPoints:[],tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,smaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0,smaDuration:0});var s={duration:i,amount:r,durationToSecondsFactor:a,rate:r/(i*a),added:e.now()};(function(e,t){var i=function(e){return e.rate},r=function(e){return e.duration};e.tenSecDataPoints.push(t),e.thirtySecDataPoints.push(t),e.oneMinDataPoints.push(t),e.twoMinDataPoints.push(t),e.tenSecAverageRate=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageRate,1e4,i),e.thirtySecAverageRate=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageRate,3e4,i),e.oneMinAverageRate=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageRate,6e4,i),e.twoMinAverageRate=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageRate,12e4,i),e.tenSecAverageDuration=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageDuration,1e4,r),e.thirtySecAverageDuration=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageDuration,3e4,r),e.oneMinAverageDuration=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageDuration,6e4,r),e.twoMinAverageDuration=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageDuration,12e4,r),this._ewmaMultiplier&&(e.ewmaDataPoints.push(t),e.smaRate=n.call(this,e.ewmaDataPoints,t,e.smaRate,-1,i),e.smaDuration=n.call(this,e.ewmaDataPoints,t,e.smaDuration,-1,r),e.ewmaDataPoints.length>=this._ewmaPeriods&&(e.ewmaDataPoints.shift(),e.ewmaDataPoints.length===this._ewmaPeriods?(e.ewmaRate=e.smaRate,e.ewmaDuration=e.smaDuration):(e.ewmaRate=this._ewmaMultiplier*(e.smaRate-e.ewmaRate)+e.ewmaRate,e.ewmaDuration=this._ewmaMultiplier*(e.smaDuration-e.ewmaDuration)+e.ewmaDuration)))}).call(this,this._rateDataPoints[t],s)}},i.prototype.getRateAverages=function(t){if(!e.get(this._rateDataPoints,[t]))return{tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0};var i=this._rateDataPoints[t];return{tenSecAverageRate:i.tenSecAverageRate,thirtySecAverageRate:i.thirtySecAverageRate,oneMinAverageRate:i.oneMinAverageRate,twoMinAverageRate:i.twoMinAverageRate,ewmaRate:i.ewmaRate,tenSecAverageDuration:i.tenSecAverageDuration,thirtySecAverageDuration:i.thirtySecAverageDuration,oneMinAverageDuration:i.oneMinAverageDuration,twoMinAverageDuration:i.twoMinAverageDuration,ewmaDuration:i.ewmaDuration}},i}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=s},function(e,t){e.exports=o},function(e,t,i){var n;void 0!==(n=function(){"use strict";function e(e,t,i,n){}return e.prototype.toString=function(){throw new Error("Must be implemented")},e.prototype.dispose=function(){throw new Error("Must be implemented")},e.prototype.initialize=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.setActiveTracks=function(e){throw new Error("Must be implemented")},e.prototype.initializePlaylistTracks=function(e,t,i,n){throw new Error("Must be implemented")},e.prototype.startRequestingDataForActiveTracks=function(){throw new Error("Must be implemented")},e.prototype.isFetchingData=function(){throw new Error("Must be implemented")},e.prototype.seekToChunk=function(e){throw new Error("Must be implemented")},e.prototype.stopRequestingAllData=function(){throw new Error("Must be implemented")},e}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(1),i(0),i(25)],void 0!==(r=function(e,t,i){"use strict";function n(n,a){t.isStringNotEmpty(a,"mpdXml"),t.isObject(n,"logger"),this._mpdXml=a,this._logger=n,this.minBufferTime=0,this.type=null,this.publishTime=null,this.availabilityStartTime=null,this.timeShiftBufferDepth=0,this.suggestedPresentationDelay=0,this.minimumUpdatePeriod=0,this.maxSegmentDuration=0,this.profiles=null,this.moreInfoUrl=null,this.programInfoTitle=null,this.representations=[],function(){t.isStringNotEmpty(this._mpdXml,"mpdXml");var n,a=i.parseXml(this._mpdXml),u=a.getElementsByTagName("parsererror");if(u&&u.length>0)throw n="Failed to parse MPD Playlist XML: "+u.item(0).innerText+" (source xml: "+this._mpdXml+")",this._logger.error(n),new Error(n);if("MPD"!==a.documentElement.nodeName)throw n='Invalid MPD Playlist XML. Does not start with "MPD": '+this._mpdXml,this._logger.error(n),new Error(n);this.minBufferTime=r(o(a.documentElement,"minBufferTime")),this.type=o(a.documentElement,"type"),this.publishTime=s(o(a.documentElement,"publishTime")),this.availabilityStartTime=s(o(a.documentElement,"availabilityStartTime")),this.timeShiftBufferDepth=r(o(a.documentElement,"timeShiftBufferDepth")),this.suggestedPresentationDelay=r(o(a.documentElement,"suggestedPresentationDelay")),this.minimumUpdatePeriod=r(o(a.documentElement,"minimumUpdatePeriod")),this.maxSegmentDuration=r(o(a.documentElement,"maxSegmentDuration")),this.mediaPresentationDuration=r(o(a.documentElement,"mediaPresentationDuration")),this.profiles=o(a.documentElement,"profiles");var d=a.getElementsByTagName("ProgramInformation"),c=a.getElementsByTagName("UTCTiming");if(d&&d.length>=1){var h=d.item(0);this.programInfoTitle=l(h,"Title").childNodes[0].nodeValue,this.moreInfoUrl=o(h,"moreInformationURL")}var g=a.getElementsByTagName("ContentProtection");if(this.contentProtectionTags=[],g.length>0)for(var f=0;f<g.length;f++){var p=g.item(f),m=e.reduce(p.attributes,function(e,t){return e[t.name]=t.value,e},{});this.contentProtectionTags.push(m)}for(var y=a.getElementsByTagName("Representation"),_=0;_<y.length;_++){var v=function(e){var t={};if(t.id=o(e,"id"),t.mimeType=o(e,"mimeType"),t.codecs=o(e,"codecs"),t.mseCodec=i.getMSECodec(t.mimeType,t.codecs),t.isAudio=t.mimeType.indexOf("audio")>=0,t.isVideo=t.mimeType.indexOf("video")>=0,!i.isCodecSupported(t.mseCodec))return this._logger.debug("MPD representation has unsupported codec. Skipping stream id [%s] (mimeType=[%s], codecs=[%s])",t.id,t.mimeType,t.codecs),null;var n=o(e,"bandwidth");t.bandwidth=n?parseInt(n,10):null;var r=o(e,"height");t.height=r?parseInt(r,10):null;var a=l(e,"SegmentTemplate");a&&(t.timescale=parseInt(o(a,"timescale")),t.media=o(a,"media"),t.startNumber=parseInt(o(a,"startNumber")),t.duration=parseInt(o(a,"duration")),t.initialization=o(a,"initialization"));return t}.call(this,y.item(_));v&&this.representations.push(v)}this.timeSources=[];for(var b=0;b<c.length;b++){var k=c.item(b),w=o(k,"schemeIdUri"),T=o(k,"value"),E=s(T);this.timeSources.push({name:w,value:isNaN(E.getTime())?T:E.getTime()})}}.call(this)}function r(e){if(!e)return null;var t=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/.exec(e);if(t){var i="-"===t[1]?-1:1,n={year:a(t[2],i),month:a(t[3],i),week:a(t[4],i),day:a(t[5],i),hour:a(t[6],i),minute:a(t[7],i),second:a(t[8],i)};return n.totalMillis=1e3*(n.second+60*(n.minute+60*(n.hour+24*n.day))),n}return null}function a(e,t){var i=e&&parseFloat(e.replace(",","."));return(isNaN(i)?0:i)*t}function s(e){if(!e)return null;var t=new Date;return t.setTime(Date.parse(e)),t}function o(e,t){var i=e.attributes.getNamedItem(t);return i?i.value:null}function l(e,t){for(var i=0;i<e.childNodes.length;i++){var n=e.childNodes.item(i);if(n.nodeName===t)return n}return null}return n.prototype.toString=function(){return"Mpd [minBufferTime="+this.minBufferTime+", type="+this.type+", publishTime="+this.publishTime+", availabilityStartTime="+this.availabilityStartTime+", timeShiftBufferDepth="+this.timeShiftBufferDepth+", suggestedPresentationDelay="+this.suggestedPresentationDelay+", minimumUpdatePeriod="+this.minimumUpdatePeriod+", maxSegmentDuration="+this.maxSegmentDuration+", profiles="+this.profiles+", moreInfoUrl="+this.moreInfoUrl+", programInfoTitle="+this.programInfoTitle+", representations="+JSON.stringify(this.representations)+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"M3u8VariantPlaylistString"),t.isStringNotEmpty(r,"name"),t.isObject(i,"logger"),this._rawM3u8VariantPlaylist=a,this._name=r,this._logger=i,function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch(o){case"EXT-X-STREAM-INF":r.streamVariants=r.streamVariants||[];var u=[l,i[a+1]];r.streamVariants.push(function(t){var i=(function(t){var i=e.get(t.match(/(?:CODECS=).*?",/),["0"],""),n=e.get(i.split("="),["1"],"");return n.substring(1,n.length-2)}(t[0])||"").split(","),r=(n(t[0],"FRAME-RATE")||"").trim();return{programId:n(t[0],"PROGRAM-ID"),codecs:i,bandwidth:parseInt(n(t[0],"BANDWIDTH")),averageBandwidth:parseInt(n(t[0],"AVERAGE-BANDWIDTH")),frameRate:parseInt(parseInt(r)||0),name:e.get(t,["1"],"").trim()}}(u));break;case"EXT-X-ALLOW-CACHE":r.allowCache="YES"===l;break;case"#EXT-X-COMBINED":r.combined="YES"===l;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Variant] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3u8VariantPlaylist)}function n(t,i){var n=new RegExp("(?:"+i+"=).*?(?=[,\n\r])"),r=new RegExp("(?:"+i+"=).*?$"),a=e.get(t.match(n)||t.match(r),["0"],"");return e.get(a.split("="),["1"])}return i.prototype.toString=function(){return"M3u8VariantPlaylist[name="+this._name+",numberOfStreamVariants="+this.streamVariants.length+"]"},i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(16),i(12),i(5),i(7),i(9),i(13),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(a,o,d,c){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isInstanceOf(d,l,"statsProvider"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),t.isNumber(c.targetLatency,"options.targetLatency"),c&&c.defaultPresentationDelay&&t.isNumber(c.defaultPresentationDelay,"options.defaultPresentationDelay"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=d,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._defaultPresentationDelay=e.get(c,"defaultPresentationDelay",w),this._targetLatencyInMilliseconds=1e3*c.targetLatency,this._timeOfChunkAvailabilityDelta={average:0,values:[],maxSize:10}}function h(e){var t=Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds:0,0),i=this._playlist.getPlaybackDurationSinceAvailable(),n=Math.max(Math.ceil((i-t)/e),0);return"static"===this._playlist.getType()&&(n=0),this._logger.trace("Getting chunk index to start: [%s], playbackTimePassed=[%s], duration=[%s]",n,i,e),n}function g(){var t=this;e.forEach(t._activeTracks,function(e){e.setCurrentChunkId(f.call(t,e.getChunkDuration()))})}function f(e){var t=e/1e3;return Math.floor(this._currentPlaybackTimeInSeconds/t)}function p(t){var i=this,n=i._activeTracks.length;e.forEach(i._activeTracks,function(r,a){!function(r,a){if(e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})===r){var s=f.call(i,r.getChunkDuration()),o=s>=r.getTotalNumberOfChunks();if("static"===i._playlist.getType()&&o)return a===n-1&&(i._keepFetchingData=!1),i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());e.isNullOrUndefined(t)&&"dynamic"===i._playlist.getType()&&(t=m.call(i,r)),y.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),k):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",e),n--),n<=0&&i._keepFetchingData){if("dynamic"===i._playlist.getType()){var t=m.call(i,r);return i._logger.debug("Done fetching chunk with index [%s] for each active track. Waiting for [%s] ms before moving on to next chunk.",s,t),p.call(i,t)}i._logger.debug("Done fetching chunk with index [%s] for each active track. Moving on to next chunk",s),p.call(i,null)}})}}(r,a)})}function m(e){var t=1e3*this._currentPlaybackTimeInSeconds+2*e.getChunkDuration()-this._playlist.getPlaybackDurationSinceAvailable(),i=Math.max(t,0);return Math.min(e.getChunkDuration(),i)+this._timeOfChunkAvailabilityDelta.average}function y(e,t,i,n){var r=this;(function(e,t,i){var n=this,r=function(e,t){return e.replace("$Number%05d$",("00000"+t).substr(-5))}(n._baseUrl+e.getDataChunkUrlTemplate(),e.getCurrentChunkId()),a=e.getCurrentChunkId();n._logger.trace("Fetching data chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),r,e.getCurrentChunkId());var s=e.getMseCodec();_.call(n,r,t,k,function(o,l){if(n._logger.trace("DONE Fetching data chunk for [%s] : [%s], nextChunkId=[%s]",s,r,e.getCurrentChunkId()+(o?": FAILED: "+o.code:": data="+l.data.byteLength)),!o){n._statsProvider.addRateDataPoint(s,l.stats.successResponseTime,l.data.byteLength,.001);var u=l.stats.totalResponseTimeForAllAttempts-l.stats.successResponseTime-Math.max(t,0);if(n._timeOfChunkAvailabilityDelta.values.push(u),n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length-1)+u)/n._timeOfChunkAvailabilityDelta.values.length,n._timeOfChunkAvailabilityDelta.values.length>n._timeOfChunkAvailabilityDelta.maxSize){var d=n._timeOfChunkAvailabilityDelta.values.shift();n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length+1)-d)/n._timeOfChunkAvailabilityDelta.values.length}}if(!o&&a===e.getCurrentChunkId())return e.incrementCurrentChunkId(),n._currentPlaybackTimeInSeconds=e.getChunkDuration()*e.getCurrentChunkId()/1e3,e.addDataChunk(l.data,a,function(){i(o)});o?(o.feederReason=404===o.code?"not yet available":"other",i(o)):i(null,l.data)})}).call(r,e,i,function(a){return a&&r._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',e,a),!a&&t>1&&y.call(r,e,t-1,i,n),n(a)})}function _(t,i,n,r){var a=this,s={responseType:"arraybuffer",retryOptions:{delay:n,maxAttempts:b},timeout:T};if(e.isNumber(i)&&0!==i)s.delay=i;else if(!e.isNullOrUndefined(i)&&0!==i)throw new Error('"delay" must be a positive number greater than or equal to 0 or null or undefined');return this._httpRequestManager.getWithRetry(t,s,function(i,n){if(i){if(a._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",i.code,i.message,t),n&&n.attempts===b){var s="Failed to get chunk with max retries of ["+b+" after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return a._logger.warn(s),a._feederErrorEvent.fire([v(d.name.chunkNotFound.name,d.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk with timeout after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+T+"]";return a._logger.warn(o),a._feederErrorEvent.fire([v(d.name.timeout.name,d.severity.RECOVERABLE,o)])}return a._feederErrorEvent.fire([v(d.name.error.name,d.severity.CRITICAL,i)])}r(i,n)})}function v(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var b=15,k=150,w=0,T=5e3;return c.prototype=Object.create(a.prototype),c.prototype.constructor=c,c.prototype.toString=function(){return"MpdPlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._feederErrorEvent.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0},c.prototype.initializeActiveTracks=function(i){var n=this;t.isFunction(i,"callback");var r=e.filter(this._activeTracks,function(e){return!e.getInitChunkData()});if(0===r.length)return i();(function(i,n){t.isArray(i,"tracks"),t.isFunction(n,"callback");var r=0,a=this;e.forEach(i,function(e){t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(h.call(a,e.getChunkDuration())),function(e,t){var i=this;(function(e,t){var i=this;i._logger.trace("Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()),_.call(i,i._baseUrl+e.getInitUrl(),null,500,function(n,r){i._logger.trace("DONE Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()+(n?": FAILED: "+n.code:": data="+r.data.byteLength)),t(n,r.data)})}).call(i,e,function(n,r){if(n){var a=new Error("Failed to fetch init chunk of stream for config [%s]",e);return a.cause=n,i._logger.error("[%s] (Cause: [%s])",a.message,n),t(a)}e.setInitChunkData(r),i._logger.debug("Got init chunk for track [%s]",e.getTrackId()),t()})}.call(a,e,function(e){if(e)return n(e);++r===i.length&&n()})})}).call(n,r,i,function(e){return n._logger.error("Unable to initialize active tracks",e),i(e)})},c.prototype.fetchNChunks=function(i,n){if(t.isNumber(i,"chunksToFetch"),t.isFunction(n,"done"),this.isFetchingData())return this._logger.debug("Unable to fetch requesting data. Feeder is already fetching data.");var r=this,a=0;r._logger.debug("Fetching [%s] chunks for [%s] active tracks",i,this._activeTracks.length),e.forEach(this._activeTracks,function(e){t.isInstanceOf(e,o,"track");var i=Math.min(Math.floor(r._bufferSize/e.getChunkDuration),1);return e.setCurrentChunkId(h.call(r,e.getChunkDuration())),y.call(r,e,i,null,function(t){return t?(r._logger.warn("Failed to get [%s] chunks for track [%s]",i,e.getTrackId(),t),n(t)):++a===r._activeTracks.length?(r._logger.info("Got [%s] chunks for [%s] active tracks",i,r._activeTracks.length),n()):void 0})})},c.prototype.setActiveTracks=function(e){this._activeTracks=e},c.prototype.getActiveTracks=function(){return this._activeTracks},c.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),g.call(this),p.call(this,null)},c.prototype.isFetchingData=function(){return this._keepFetchingData},c.prototype.seekToChunk=function(e){this._currentPlaybackTimeInSeconds=Math.floor(e),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds),g.call(this)},c.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(e,t){return t.getChunkDuration()>e?t.getChunkDuration():e},0),i=(Math.max(this._playlist.getPlaybackDurationSinceAvailable(),0)-Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},c.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests())},c}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(10),i(4)],void 0!==(r=function(e,t,i,n){"use strict";function r(e){t.isObject(e,"logger"),this._logger=e,this._requestDisposables=new n.DisposableList}return r.prototype.toString=function(){return"HttpRequestManager"},r.prototype.disposePendingRequests=function(){this._requestDisposables.dispose(),this._requestDisposables=new n.DisposableList},r.prototype.dispose=function(){this.disposePendingRequests()},r.prototype.getWithRetry=function(n,r,a){t.isStringNotEmpty(n,"url"),t.isObject(r,"options"),t.isFunction(a,"callback");var s=this;r.retryOptions=e.assign({delay:0,backoff:1,maxAttempts:1,additionalRetryErrorCodes:[404,0]},r.retryOptions),this._requestDisposables.add(i.getWithRetry(n,r,function(e,t){return e&&4e3===e.code?s._logger.debug("Request handler disposed of before response received for get [%s]",n):(e&&s._logger.debug("Status code: [%s] (status text: [%s]) for get [%s]",e.code,e.message,n),a(e,t))}))},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(16),i(12),i(5),i(7),i(9),i(14),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(a,o,l,d){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),d&&d.targetLatencyInMilliseconds&&t.isNumber(d.targetLatencyInMilliseconds,"options.targetLatencyInMilliseconds"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=l,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._options=d,this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._targetLatencyInMilliseconds=e.get(d,"targetLatencyInMS",0),this._minBufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._minBufferSize,0)}function h(){var t=this;e.isNumber(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=setTimeout(function(){(function(t){var i=this,n=0;e.forEach(this._activeTracks,function(r){var a=r.getMediaSegmentPlaylistUrlInfo(),s=e.assign({version:e.now()},a.queryParameters),o={retryOptions:{delay:v,maxAttempts:b},queryParameters:s};i._httpRequestManager.getWithRetry(a.url,o,function(e,s){if(e)return i._logger.debug("Unable to get media segment playlist [%s]",a.url);s&&r.updateMediaSegments(s.data),++n===i._activeTracks.length&&t()})},_)}).call(t,function(){e.isNullOrUndefined(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=null,h.call(t))})},_))}function g(t){var i=this,n=i._activeTracks.length;i._waitingForNextSegment=!1;e.forEach(i._activeTracks,function(r,a){!function(r){e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})!==r?i._logger.debug("Wrong track type [%s]. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId()):r.isLastMediaSegment(i._currentPlaybackTimeInSeconds)?("dynamic"===i._playlist.getType()&&(i._waitingForNextSegment=!0),i._logger.debug("No more chunks. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId())):f.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),y):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",JSON.stringify(e)),n--),n<=0){i._logger.debug("Done fetching chunk for timestamp [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",i._currentPlaybackTimeInSeconds,i._keepFetchingData);var t=r.isLastMediaSegment(i._currentPlaybackTimeInSeconds);if("static"===i._playlist.getType()&&t)return i._keepFetchingData=!1,i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());if(t)return i._waitingForNextSegment=!0,i._logger.debug("Waiting for new segment on the Segment Playlist for [dynaimic] track [%s] [%s]",r.getTrackId(),r.getMimeType());i._keepFetchingData&&g.call(i,null)}})}(r)})}function f(t,i,n,r){var a=this;(function(t,i,n){var r=this,a=t.getSegmentByTimestamp(r._currentPlaybackTimeInSeconds),s=r._baseUrl+a.name;r._logger.trace("Fetching data chunk for [%s]: [%s], next segment=[%s]",t.getMseCodec(),s,a.name);var o=t.getMseCodec();(function(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:y,maxAttempts:m},timeout:k};if(e.isNumber(i))a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a number or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(i,a){if(i){if(r._logger.debug("Failed to load next stream data chunk. Status code: [%s] (status text: [%s]) for [%s]",i.code,i.message,t),a&&a.attempts===m){var s="Failed to get chunk with max retries of ["+m+" after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return r._feederErrorEvent.fire([p(d.name.chunkNotFound.name,d.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk with timeout after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+k+"]";return r._feederErrorEvent.fire([p(d.name.timeout.name,d.severity.RECOVERABLE,o)])}return r._feederErrorEvent.fire([p(d.name.error.name,d.severity.CRITICAL,i)])}n(i,a)})}).call(r,s,i,function(e,i){if(r._logger.trace("DONE Fetching data chunk for [%s] : [%s], next segment=[%s]",o,s,a.name+(e?": FAILED: "+e.code:": data="+i.data.byteLength)),e||r._statsProvider.addRateDataPoint(o,i.stats.successResponseTime,i.data.byteLength,.001),!e)return r._logger.debug("Finished fetching [%s]. Updating timestamp to fetch to [%s]",a.name,a.timestamp+a.duration),r._currentPlaybackTimeInSeconds=a.timestamp+a.duration,t.addDataChunk(i.data,a.name,function(){n(e)});e?(e.feederReason=404===e.code?"not yet available":"other",n(e)):n(null,i.data)})}).call(a,t,n,function(e){return e&&a._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',JSON.stringify(t),e),!e&&i>1&&f.call(a,t,i,n,r),r(e)})}function p(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=15,y=700,_=500,v=10,b=2,k=5e3;return c.prototype=Object.create(a.prototype),c.prototype.constructor=c,c.prototype.toString=function(){return"M3u8PlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0,this._segmentsReadyDisposable&&(this._segmentsReadyDisposable.dispose(),this._segmentsReadyDisposable=null)},c.prototype.initializeActiveTracks=function(i,n){t.isFunction(n,"callback"),"dynamic"===this._playlist.getType()&&h.call(this),this._waitingForNextSegment=!1;var r=this;if(1!==this._activeTracks.length)throw new Error("Unable to support multiple active tracks");e.forEach(this._activeTracks,function(e){r._segmentsReadyDisposable=e.addEventListener("segmentsready",function(){r._waitingForNextSegment&&(r._logger.debug("Continuing fetching of track [%s] segments after wait",e.getTrackId()),g.call(r,null))})}),n()},c.prototype.fetchNChunks=function(i,n){if(t.isNumber(i,"chunksToFetch"),t.isFunction(n,"callback"),this.isFetchingData())return this._logger.debug("Unable to fetch requesting data. Feeder is already fetching data.");var r=this,a=0;r._logger.debug("Fetching [%s] chunks for [%s] active tracks",i,this._activeTracks.length),e.forEach(this._activeTracks,function(t){f.call(r,t,1,null,function(t){if(t)return n(t);++a===r._activeTracks.length&&(r._initializedAt=e.now(),n())})})},c.prototype.setActiveTracks=function(t){this._activeTracks=t;var i=e.map(t,function(e){return e.getTrackId()});this._logger.debug("Setting active tracks [%s]",i)},c.prototype.getActiveTracks=function(){return this._activeTracks},c.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),"dynamic"===this._playlist.getType()&&h.call(this),g.call(this,null)},c.prototype.isFetchingData=function(){return this._keepFetchingData},c.prototype.seekToChunk=function(t){var i=e.get(this._activeTracks,["0"]),n=i.getClosestSegmentNotGreaterThanTimestamp(t),r=e.get(n,["timestamp"]);e.isUndefined(r)?i||(this._currentPlaybackTimeInSeconds=t):this._currentPlaybackTimeInSeconds=Math.floor(n.timestamp),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds)},c.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(t,i){var n=e.get(i.getLastSegment(),["duration"],0);return n>t?n:t},0),i=(e.reduce(this._activeTracks,function(e,t){var i=t.getLastSegment().timestamp;return i<e?i:e},0)-Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds-t:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},c.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._waitingForNextSegment=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests(),clearTimeout(this._mediaSegmentRequestTimeout),this._mediaSegmentRequestTimeout=null)},c}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(10),i(4),i(11),i(8),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l){"use strict";function u(r,s,u,h){t.isObject(s,"videoElement");var D=this;this._videoElement=s,this._logger=r||new i.Logger,this._mediaKeys=null,this._licenseRequestRetryTimeout=null,this._certificateRequestRetryTimeout=null,this._disposables=new a.DisposableList;var M=e.bind(C,this);"Safari"===m.browser&&(M=e.bind(function(t,i){var n=this;if(i=i||1,!this._fairplayServerCertificate){if(i<=T)return n._logger.debug("Attempt [%s] for checking if the certificate have been set",i),void(n._certificateRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find fairplay certificate after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoCertificate",l.severity.RECOVERABLE,r)])}this._logger.info("Key requested by Webkit browser"),n._fallbackLicenseUri=function(e){return"https://"+function(e){return String.fromCharCode.apply(null,new o.global.Uint16Array(e.buffer))}(e).split("skd://")[1]}(t.initData);var s="phenix-fairplay-"+e.now(),u=function(e,t,i){var n=function(e){for(var t=new o.global.ArrayBuffer(2*e.length),i=new o.global.Uint16Array(t),n=0,r=e.length;n<r;n++)i[n]=e.charCodeAt(n);return i}(t),r=0,a=new o.global.ArrayBuffer(e.byteLength+4+n.byteLength+4+i.byteLength),s=new o.global.DataView(a);new Uint8Array(a,r,e.byteLength).set(e),r+=e.byteLength,s.setUint32(r,n.byteLength,!0),r+=4;var l=new o.global.Uint16Array(a,r,n.length);return l.set(n),r+=l.byteLength,s.setUint32(r,i.byteLength,!0),r+=4,new Uint8Array(a,r,i.byteLength).set(i),new Uint8Array(a,0,a.byteLength)}(t.initData,s,n._fairplayServerCertificate);n._videoElement.webkitKeys||n._videoElement.webkitSetMediaKeys(new o.global.WebKitMediaKeys(b));if(!n._videoElement.webkitKeys)return n._drmErrorEvent.fire([p("webkitKeys",l.severity.RECOVERABLE,new Error("Could not create MediaKeys"))]);var d=n._videoElement.webkitKeys.createSession("video/mp4",u);if(!d)return n._drmErrorEvent.fire([p("webkitKeySession",l.severity.RECOVERABLE,new Error("Could not create key session"))]);var h=e.bind(c,n);d.addEventListener("webkitkeymessage",h,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeymessage",h,!1)}));var g=function(){n._logger.info("Decryption key was added")};d.addEventListener("webkitkeyadded",g,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeyadded",g,!1)}));var f=function(e){n._drmErrorEvent.fire([p("webkitkeyerror",l.severity.RECOVERABLE,e)])};d.addEventListener("webkitkeyerror",f,!1),n._disposables.add(new a.Disposable(function(){d.removeEventListener("webkitkeyerror",f,!1)}))},this)),this._videoElement.addEventListener(S,M,!1),this._disposables.add(new a.Disposable(function(){D._videoElement.removeEventListener(S,M,!1)})),this._disposables.add(new a.Disposable(function(){null!==D._licenseRequestRetryTimeout&&o.global.clearTimeout(D._licenseRequestRetryTimeout)})),this._disposables.add(new a.Disposable(function(){null!==D._certificateRequestRetryTimeout&&o.global.clearTimeout(D._certificateRequestRetryTimeout)})),this._defaultMediaKeySystemConfig={initDataTypes:["cenc"],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42c01f"'}],audioCapabilities:[{contentType:'audio/mp4; codecs="mp4a.40.2"'}],persistentState:"optional",distinctiveIdentifier:"optional"},this._config={},"Edge"===m.browser||"IE"===m.browser?this._selectedKeySystem=_:"Safari"===m.browser?this._selectedKeySystem=b:this._selectedKeySystem=y,function(t,i){var n=this,r=function(t){return e.keys(e.reduce(t,function(e,t){return e[t]=1,e},{}))}(e.keys(t).concat(e.keys(i)));e.forEach(r,function(r){e.set(n._config,[r],e.assign({},e.get(t,[r],{}),e.get(i,[r],{}))),e.set(n._config,[r,"mediaKeySystemConfiguration"],e.assign({},n._defaultMediaKeySystemConfig,e.get(t,[r,"mediaKeySystemConfiguration"],{}),e.get(i,[r,"mediaKeySystemConfiguration"],{})))})}.call(this,function(t){return e.reduce(t,function(t,i){var n="com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?y:i.schemeIdUri===v?_:i.schemeIdUri,r="",a="";return"com.phenixp2p.widevine"!==i.schemeIdUri&&"com.phenixrts.widevine"!==i.schemeIdUri||(r=i.widevineLicenseServerUrl||i.licenseServerUrl,a=i.serverCertificateUrl),t[n]={licenseServerUrl:r?d(r):"",serverCertificateUrl:a?d(a):""},e.forOwn(i,function(i,r){e.startsWith(r,"mediaKeySystemConfiguration.")&&e.set(t[n],r,i)}),t},{})}(u),h||{}),function(){t.isObject(this._config,"this._config");var i=this;e.forOwn(this._config,function(e,n){t.isValidType(n,k,n),n===i._selectedKeySystem&&(n!==y&&n!==b||t.isStringNotEmpty(e.serverCertificateUrl,n+"[serverCertificateUrl]"),t.isObject(e.mediaKeySystemConfiguration,n+"[mediaKeySystemConfiguration]"),t.isArrayOfString(e.mediaKeySystemConfiguration.initDataTypes,n+"[mediaKeySystemConfiguration][initDataTypes]"),t.isArray(e.mediaKeySystemConfiguration.videoCapabilities,n+"[mediaKeySystemConfiguration][videoCapabilities]"),t.isArray(e.mediaKeySystemConfiguration.audioCapabilities,n+"[mediaKeySystemConfiguration][audioCapabilities]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.persistentState,n+"[mediaKeySystemConfiguration][persistentState]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.distinctiveIdentifier,n+"[mediaKeySystemConfiguration][distinctiveIdentifier]"))})}.call(this),this._drmErrorEvent=new n.Event,this._drmTrackEventRestrictionsAvailableEvent=new n.Event,this._disposables.add(this._drmErrorEvent),this._disposables.add(this._drmTrackEventRestrictionsAvailableEvent),E&&function(){var t=this;if(!this._videoElement.mediaKeys){var i=e.get(this._config,[this._selectedKeySystem,"mediaKeySystemConfiguration"]);o.global.navigator.requestMediaKeySystemAccess(this._selectedKeySystem,[i]).then(function(i){i.createMediaKeys().catch(function(e){t._drmErrorEvent.fire([p("CreateMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to create MediaKeys",e)}).then(function(e){return t._mediaKeys=e,t._videoElement.setMediaKeys(e)}).catch(function(e){t._drmErrorEvent.fire([p("SetMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to set MediaKeys",e)}).then(function(){return new o.global.Promise(function(i){var n=e.get(t._config,[t._selectedKeySystem,"serverCertificateUrl"]);if(!n)return t._logger.info("Not fetching server certificate because [%s] -> [serverCertificateUrl] is not set",t._selectedKeySystem),i();g(n,function(e,n){if(e)return t._logger.warn("Failed to get service certificate",e),i();var r=f(n.data);return t._mediaKeys.setServerCertificate(r).then(i).catch(function(e){t._logger.warn("Failed to set service certificate",e)})})})})}).catch(function(e){t._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,e)]),t._logger.error("[%s] Unable to request MediaKeySystemAccess with error [%s]",t._selectedKeySystem,e)})}}.call(this),"Safari"===m.browser&&(o.global.WebKitMediaKeys.isTypeSupported("com.apple.fps.1_0","video/mp4")||D._drmErrorEvent.fire([p("isTypeSupported",l.severity.CRITICAL,new Error("com.apple.fps.1_0 Key System not supported"))]),g(e.get(D._config,[D._selectedKeySystem,"serverCertificateUrl"]),function(e,t){e&&(D._drmErrorEvent.fire([p("getServerCertificateFairplay",l.severity.CRITICAL,e)]),D._logger.error("[Fairplay] Failed to get service certificate",e)),D._fairplayServerCertificate=f(t.data)}))}function d(i){t.isStringNotEmpty(i,"xmlSafeUrl");var n=i.split("?"),r=e.get(n,[0]),a=e.get(n,[1],"");return r+(a?"?"+decodeURIComponent(a):"")}function c(t){var i=this,n=t.target;h.call(this,t.message,function(t,r){if(t)return i._drmErrorEvent.fire([p("LicenseRetrieval",l.severity.RECOVERABLE,t)]);try{var a=n.update(r)}catch(e){return i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)])}e.isFunction(e.get(a,["catch"]))&&a.catch(function(e){i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)]),i._logger.error("Update of keySession with license failed [%s]",e)})})}function h(i,n){var a,s=this,l=e.get(this._config,[this._selectedKeySystem,"licenseServerUrl"],this._fallbackLicenseUri),u={};if(t.isStringNotEmpty(l,"licenseServerUrl"),this._selectedKeySystem===_){var d=(new DOMParser).parseFromString(String.fromCharCode.apply(null,new o.global.Uint16Array(i)),"application/xml");if(!d.getElementsByTagName("Challenge")[0])return n(new Error("[Playready] Cannot find `challenge` in key message"));a=atob(d.getElementsByTagName("Challenge")[0].childNodes[0].nodeValue);var c=d.getElementsByTagName("name"),h=d.getElementsByTagName("value");if(c.length!==h.length)return n(new Error("[Playready] Mismatched header name/value pair in key message"));u.headers={};for(var g=0;g<c.length;g++){var f=e.get(c,[g,"childNodes",0,"nodeValue"]),p=e.get(h,[g,"childNodes",0,"nodeValue"]);f&&p&&(u.headers[f]=p)}u.responseType="arraybuffer"}else u.contentType="application/octet-stream",a=i;r.post(l,a,u,function(e,t){if(e)return s._logger.error("Failed to get license with [%s] [%s]",e,t),n(e);if(s._selectedKeySystem===_)return n(null,t.data);var i=t.data,r=null,a=null;try{s._logger.debug("Attempting to unwrap license response"),r=(i=JSON.parse(i)).license||i.ckc,i.trackRestrictions&&s._drmTrackEventRestrictionsAvailableEvent.fire([i.trackRestrictions])}catch(e){if(!(e instanceof SyntaxError))return s._logger.error("Unexpected error [%s]",e),n(e);s._logger.debug("Unwrapping of license failed. Assuming that license response is already unwrapped"),r=i}"<ckc>"===r.substr(0,5)&&"</ckc>"===r.substr(-6)&&(r=r.slice(5,-6));try{a=function(e){for(var t=o.global.atob(e),i=new Uint8Array(t.length),n=0;n<t.length;++n)i[n]=t.charCodeAt(n);return i}(r)}catch(e){s._logger.error("Failed to convert base64 license string [%s] to binary",r),n(e)}n(null,a)})}function g(e,t){r.get(e,{mimeType:"text/plain; charset=x-user-defined"},t)}function f(e){for(var t=e.length,i=new o.global.Uint8Array(t),n=0;n<t;n++)i[n]=e.charCodeAt(n);return i}function p(e,t,i){return{category:l.category.DRM,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=new s(o.global.navigator.userAgent).detect(),y="com.widevine.alpha",_="com.microsoft.playready",v="urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95",b="com.apple.fps.1_0",k=e.freeze([{id:1,name:"org.w3.clearkey"},{id:2,name:y},{id:3,name:_},{id:4,name:v},{id:5,name:b}]),w=200,T=20,E=!!o.global.navigator.requestMediaKeySystemAccess,S="encrypted";E||"Edge"!==m.browser&&"IE"!==m.browser||(S="msneedkey"),"Safari"===m.browser&&(S="webkitneedkey"),u.isSupported=function(){return"IE"===m.browser&&11===m.version||("Safari"===m.browser?!(e.isNullOrUndefined(o.global.WebKitMediaKeys)||e.isNullOrUndefined(o.global.Uint16Array)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.ArrayBuffer)||e.isNullOrUndefined(o.global.DataView)):!(e.isNullOrUndefined(o.global.navigator.requestMediaKeySystemAccess)||e.isNullOrUndefined(o.global.Promise)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.atob)))},u.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackRestrictionsAvailable":return this._drmTrackEventRestrictionsAvailableEvent.listen(i);case"error":return this._drmErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},u.prototype.toString=function(){return"EncryptedMediaHandler [config="+JSON.stringify(this._config)+"]"},u.prototype.dispose=function(){this._disposables.dispose(),delete this._mediaKeys};var C=function(t,i){var n=this;if(i=i||1,!E)try{this._videoElement.msSetMediaKeys(new o.global.MSMediaKeys(this._selectedKeySystem))}catch(r){return n._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,new Error('Unable to create MediaKeys ("'+this._selectedKeySystem+'"). Error: '+r.message))])}if(!this._mediaKeys&&!n._videoElement.msKeys){if(i<=20)return n._logger.debug("Attempt [%s] for checking if the media keys have been set",i),void(n._licenseRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find media keys after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoMediaKeys",l.severity.RECOVERABLE,r)])}if(n._videoElement.msKeys){var s=n._videoElement.msKeys.createSession("video/mp4",t.initData);s||n._drmErrorEvent.fire([p("NoKeySession",l.severity.CRITICAL,new Error("Could not create key session"))]);var u=function(e){h.call(n,e.message.buffer,function(e,t){if(e)return n._drmErrorEvent.fire([p("getLicense",l.severity.RECOVERABLE,e)]);s.update(new Uint8Array(t))})};s.addEventListener("mskeymessage",u,!1),n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeymessage",u,!1)}));var d=function(){n._drmErrorEvent.fire([p("MicrosoftKeyError",l.severity.CRITICAL,new Error("Unexpected `keyerror` event from key session. Code: "+s.error.code+", systemCode: "+s.error.systemCode))])};return s.addEventListener("mskeyerror",d,!1),void n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeyerror",d,!1)}))}var g=n._mediaKeys.createSession(),f=e.bind(c,n);return g.addEventListener("message",f,!1),n._disposables.add(new a.Disposable(function(){g.removeEventListener("message",f,!1)})),g.generateRequest(t.initDataType,t.initData).then(function(){n._logger.info("passing the media data to CDM")}).catch(function(e){n._drmErrorEvent.fire([p("InitKeySessionFailure",l.severity.CRITICAL,e)]),n._logger.error("Unable to create or initialize key session [%s]",e)})};return u}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=l},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(4),i(19),i(5),i(9)],void 0!==(r=function(e,t,i,n,r,a,s){"use strict";function o(o,h,m,y){t.isInstanceOf(h,a,"playlist"),t.isNotUndefined(m,"webPlayer"),t.isInstanceOf(y,s,"statsProvider"),this._playlist=h,this._webPlayer=m,this._statsProvider=y,this._logger=o||new i.Logger,this._bandwidthChangeDetails={nextSwitchCheckTime:e.now()+5e3,oldBandwidth:-1},this._disposables=new n.DisposableList,this._webPlayer.addEventListener("started",e.bind(function(){var t=this;this._bandwidthLimits=e.reduce(this._playlist.getMimeTypes(),function(i,n){var r=t._playlist.getPlaylistTracksByMimeType(n)||[],a=e.filter(r,function(t){return e.isNumber(t.getBandwidth())}),s=e.map(a,function(e){return e.getBandwidth()});return r.length>a.length&&t._logger.info("Excluding [%s] tracks without Bandwidth from ABR switching.",r.length-a.length),i[n]={max:Math.max.apply(null,s),min:Math.min.apply(null,s)},i},{}),this._logger.debug("Listening for bandwidth changes with max and min bandwidths of [%s]",this._bandwidthLimits),this._webPlayer.addEventListener("playbacktimeleft",e.bind(function(t,i){if(this._bandwidthChangeDetails.isInProgress||!r.isForeground())return;var n=this._bandwidthLimits[i.getMimeType()],a=this;if(this._bandwidthChangeDetails.nextSwitchCheckTime>0){if(this._bandwidthChangeDetails.nextSwitchCheckTime>e.now())return;this._bandwidthChangeDetails.nextSwitchCheckTime=0,this._bandwidthChangeDetails.oldBandwidth=-1}var s=e.bind(function(){this._bandwidthChangeDetails.isInProgress=!1},this);if(l.call(a,i,t)&&i.getBandwidth()<n.max){this._bandwidthChangeDetails.isInProgress=!0;var o=this._playlist.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(i.getBandwidth(),i.getMimeType());this._playbackTimeout=setTimeout(function(){l.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to higher quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),d.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+g,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(o.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}else if(u.call(a,i,t)&&i.getBandwidth()>n.min){this._bandwidthChangeDetails.isInProgress=!0;var c=this._playlist.getPlaylistTrackByBandwidthAndMimeType(i.getBandwidth()-1,i.getMimeType());this._playbackTimeout=setTimeout(function(){u.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to lower quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),d.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+f,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(c.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}},this))},this)),this._disposables.add(r.onBackground(e.bind(c,this,!1))),this._disposables.add(r.onForeground(e.bind(c,this,!0))),this._backgroundTimeout=null,this._foregroundBandwidth=null}function l(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t>3.5||i>0&&i<=3*n/4&&t/(n/1e3)>2}function u(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t<.7||i>0&&i>=7*n/8&&t/(n/1e3)<=1.5}function d(e){return this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration}function c(t){null!==this._playbackTimeout&&(clearTimeout(this._playbackTimeout),this._playbackTimeout=null);var i=this._webPlayer.getVideoElement();if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,null===this._foregroundBandwidth)return;var n=this._foregroundBandwidth;return this._foregroundBandwidth=null,n!==this._webPlayer.getBandwidthLimit()&&(this._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+g,this._logger.info("Detected change to [foreground] for tab. Reverting to [%s] previous bandwidth limit from [%s]",n,this._webPlayer.getBandwidthLimit()),this._webPlayer.changeBandwidthLimit(n)),void(h(i)||"dynamic"!==this._playlist.getType()||(this._logger.info("Detecting application [foreground] with muted video. Resuming playback at most recent available chunk."),this._webPlayer.play()))}var a=this;this._backgroundTimeout=setTimeout(function(){r.isForeground()||(a._foregroundBandwidth=a._webPlayer.getBandwidthLimit(),h(i)||"dynamic"!==a._playlist.getType()||(a._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),a._webPlayer.pause()))},m)}function h(t){return!t.muted&&0!==t.volume&&(e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.mozHasAudio||t.hasAudio||t.webkitHasAudio)}var g=15e3,f=5e3,p=500,m=3e3;return o.prototype.dispose=function(){null!==this._playbackTimeout&&clearTimeout(this._playbackTimeout),null!==this._backgroundTimeout&&clearTimeout(this._backgroundTimeout),this._disposables.dispose(),this._backgroundTimeout=null,this._playbackTimeout=null},o}.apply(t,n))&&(e.exports=r)},function(e,t,i){"use strict";var n,r;n=[i(5),i(15),i(17),i(27),i(9),i(20),i(6)],void 0!==(r=function(e,t,i,n,r,a,s){return{Playlist:e,MpdPlaylistChunkFeeder:t,M3u8PlaylistChunkFeeder:i,WebPlayer:n,StatsProvider:r,AdaptiveStreamingManager:a,isSupported:n.isSupported,errors:s}}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2),i(7)],void 0!==(r=function(e,t,i,n){"use strict";function r(n,r,o){if(e.isObject(n,"logger"),e.isObject(r,"playlistTrackConfig"),e.isStringNotEmpty(r.codec,"playlistTrackConfig.codec"),e.isStringNotEmpty(r.mimeType,"playlistTrackConfig.mimeType"),e.isNumber(r.bandwidth,"playlistTrackConfig.bandwidth"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),e.isStringNotEmpty(r.trackId,"playlistTrackConfig.trackId"),e.isStringNotEmpty(r.initUrl,"playlistTrackConfig.initUrl"),e.isStringNotEmpty(r.dataChunkUrlTemplate,"playlistTrackConfig.dataChunkUrlTemplate"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),o=o||{},this._logger=n||new i.Logger,this._mseCodec=r.codec,this._chunkDuration=r.chunkDuration,this._bandwidth=r.bandwidth,this._height=r.height,this._trackId=r.trackId,this._mimeType=r.mimeType,this._initUrl=r.initUrl,this._dataChunkUrlTemplate=r.dataChunkUrlTemplate,this._totalNumberOfChunks=r.totalNumberOfChunks,this._currentChunkId=null,this._maxChunksToCache=o.maxChunksToCache||a,this._lowWaterMaxChunks=o.lowWaterMaxChunks||s,e.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),e.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new t.Event}var a=20,s=15;return r.prototype=Object.create(n.prototype),r.prototype.constructor=r,r.prototype.toString=function(){return"MpdPlaylistTrack [mseCodec="+this._mseCodec+", maxChunksToCache="+this._maxChunksToCache+", lowWaterMaxChunks="+this._lowWaterMaxChunks+", initChunk="+this._initChunk+", dataChunks(size)="+this._dataChunks.length+", chunkAddedEvent(size)="+this._chunkAddedEvent.size()+", trackId="+(this._trackId?this._trackId:"n/a")+", bandwidth="+(this.bandwidth?this.bandwidth:"n/a")+"]"},r.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},r.prototype.getMseCodec=function(){return this._mseCodec},r.prototype.getTrackId=function(){return this._trackId},r.prototype.getChunkDuration=function(){return this._chunkDuration},r.prototype.getBandwidth=function(){return this._bandwidth},r.prototype.getHeight=function(){return this._height},r.prototype.getMimeType=function(){return this._mimeType},r.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},r.prototype.getInitChunkData=function(){return this._initChunk},r.prototype.setInitChunkData=function(e){this._initChunk=e},r.prototype.getCurrentChunkId=function(){return this._currentChunkId},r.prototype.setCurrentChunkId=function(e){this._currentChunkId=e},r.prototype.incrementCurrentChunkId=function(){null===this._currentChunkId&&this._logger.error("[%s] Attempting to increment `CurrentChunkId` that is not initialized",this._trackId),this._currentChunkId++},r.prototype.getInitUrl=function(){return this._initUrl},r.prototype.getDataChunkUrlTemplate=function(){return this._dataChunkUrlTemplate},r.prototype.addDataChunk=function(t,i,n){e.isNotUndefined(t,"dataChunk"),n=n||function(){},e.isFunction(n,"eventCallback");var r={data:t,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},r.prototype.getChunks=function(){return this._dataChunks},r.prototype.addEventListener=function(t,i){if(e.isString(t,"eventName"),e.isFunction(i,"listener"),"chunkadded"!==t)throw new Error('Event "'+t+'" is unknown.');return this._chunkAddedEvent.listen(i)},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(2),i(7),i(24)],void 0!==(r=function(e,t,i,n,r,a){"use strict";function s(r,a,s){if(t.isObject(r,"logger"),t.isObject(a,"playlistTrackConfig"),t.isStringNotEmpty(a.codecs,"playlistTrackConfig.codecs"),t.isNumber(a.bandwidth,"playlistTrackConfig.bandwidth"),t.isStringNotEmpty(a.trackId,"playlistTrackConfig.trackId"),s=s||{},this._logger=r||new n.Logger,this._mseCodec=function(e){if(e.split(",").length>1)return"video/mp4; codecs="+e;return"audio/mp4; codecs="+e}(a.codecs),this._bandwidth=a.bandwidth,this._height=a.height,this._trackId=a.trackId,this._mimeType=a.mimeType,this._totalNumberOfChunks=a.totalNumberOfChunks,this._mediaSegments=[],this._isComplete=!1,this._playableDuration=0,this._chunkDuration=0,this._mediaSegmentPlaylistUrlInfo=function(t){var i=t.split("?")[0],n=e.get(t.split("?"),[1],""),r=e.reduce(n.split("&"),function(e,t){var i=t.split("=")[0];return i&&(e[i]=t.split("=")[1]),e},{});return{url:i,queryParameters:r}}(a.mediaSegmentPlaylistUrl),this._currentChunkId=null,this._maxChunksToCache=s.maxChunksToCache||o,this._lowWaterMaxChunks=s.lowWaterMaxChunks||l,t.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),t.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new i.Event,this._segmentsReadyEvent=new i.Event}var o=20,l=15;return s.prototype=Object.create(r.prototype),s.prototype.constructor=s,s.prototype.toString=function(){return"M3u8PlaylistTrack"},s.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},s.prototype.getMseCodec=function(){return this._mseCodec},s.prototype.getTrackId=function(){return this._trackId},s.prototype.getChunkDuration=function(){return this._chunkDuration},s.prototype.getBandwidth=function(){return this._bandwidth},s.prototype.getHeight=function(){return this._height},s.prototype.getMimeType=function(){return this._mimeType},s.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},s.prototype.getPlayableDuration=function(){return this._playableDuration},s.prototype.isComplete=function(){return this._isComplete},s.prototype.hasSegments=function(){return this._mediaSegments.length>0},s.prototype.getSegmentByTimestamp=function(t){return e.find(this._mediaSegments,function(e){return e.timestamp<=t&&t<e.timestamp+e.duration})},s.prototype.getLastSegment=function(){return e.get(this._mediaSegments,[this._mediaSegments.length-1],null)},s.prototype.getMediaSegmentPlaylistUrlInfo=function(){return this._mediaSegmentPlaylistUrlInfo},s.prototype.getClosestSegmentNotGreaterThanTimestamp=function(e){return e>this._playableDuration?this._mediaSegments[this._mediaSegments.length-1]:this.getSegmentByTimestamp(e)},s.prototype.isLastMediaSegment=function(t){var i=this.getSegmentByTimestamp(t),n=!this._isComplete&&e.get(i,["timestamp"],0)+e.get(i,["duration"],0)===this._playableDuration,r=!this._isComplete&&t>this._playableDuration;return this._playableDuration===t||n||r},s.prototype.updateMediaSegments=function(t){var i=new a(this._logger,this._trackId,t),n=this._totalNumberOfChunks||0,r=e.map(this._mediaSegments,function(e){return e.name}),s=this,o=e.get(this._mediaSegments,[this._mediaSegments.length-1]),l=e.get(o,["timestamp"])+e.get(o,["duration"])||void 0;e.forEach(i.mediaSegments,function(t){e.includes(r,t.name)||(t.timestamp=e.isUndefined(l)?0:l,s._mediaSegments.push(t),s._playableDuration+=t.duration,l=t.timestamp+t.duration,t.duration>s._chunkDuration&&(s._chunkDuration=t.duration),s._logger.trace("[%s]:[%s]:[%s] Got new segment from playlist [%s]",(new Date).getHours(),(new Date).getMinutes(),(new Date).getSeconds(),t.name))}),n!==this._mediaSegments.length&&(this._isComplete=i.isComplete,this._totalNumberOfChunks=this._mediaSegments.length,this._segmentsReadyEvent.fireAsync([this._mediaSegments],null,e.noop))},s.prototype.addDataChunk=function(e,i,n){t.isNotUndefined(e,"dataChunk"),n=n||function(){},t.isFunction(n,"eventCallback");var r={data:e,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},s.prototype.getChunks=function(){return this._dataChunks},s.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"chunkadded":return this._chunkAddedEvent.listen(i);case"segmentsready":return this._segmentsReadyEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},s}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"m3u8String"),t.isObject(i,"logger"),this._rawM3U8=a,this._logger=i,this._name=r,this.mediaSegments=[],function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch("#EXT-X-ENDLIST"===t&&(o="EXT-X-ENDLIST"),o){case"EXT-X-VERSION":r.version=parseFloat(l);break;case"EXT-X-PROGRAM-DATE-TIME":r.programDateTime=function(e){return e?new Date(e.trim()):null}(l);break;case"EXT-X-TARGETDURATION":r.targetDuration=1e3*parseFloat(l)||0;break;case"EXT-X-MEDIA-SEQUENCE":r.mediaSequence=parseInt(l);break;case"EXTINF":var u=[l,i[a+1]];r.mediaSegments.push(n(u,r.mediaSegments+1));break;case"EXT-X-ENDLIST":r.isComplete=!0;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Segment] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3U8);var s=0;e.forEach(this.mediaSegments,function(e){e.timestamp=s,s+=e.duration}),this.playableDuration=s,this.isComplete=!!this.isComplete}i.prototype.toString=function(){return"vod"};var n=function(t){var i=e.get(t,["0"],"").split(","),n=e.get(i,["0"],0),r=e.get(i,["1"],"").trim(),a=e.get(t,["1"],"").trim();return{duration:parseFloat(n),title:r,name:a}};return i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(8)],void 0!==(r=function(e,t){"use strict";function i(){}return i.prototype.isCodecSupported=function(i){return e.isStringNotEmpty(i,"codec"),t.global.MediaSource&&"function"==typeof t.global.MediaSource.isTypeSupported&&t.global.MediaSource.isTypeSupported(i)},i.prototype.parseXml=function(i){if(e.isStringNotEmpty(i,"xmlString"),void 0!==t.global.DOMParser)return(new t.global.DOMParser).parseFromString(i,"text/xml");if(void 0!==t.global.ActiveXObject&&new t.global.ActiveXObject("Microsoft.XMLDOM")){var n=new t.global.ActiveXObject("Microsoft.XMLDOM");return n.async="false",n.loadXML(i),n}throw new Error("No XML parser found")},i.prototype.getMSECodec=function(t,i){return e.isStringNotEmpty(t,"mpdMimeType"),e.isStringNotEmpty(i,"mpdCodecs"),t+'; codecs="'+i+'"'},new i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(4),i(10)],void 0!==(r=function(e,t,i,n){"use strict";function r(e,n,r){t.isObject(e,"logger"),this._logger=e,this._timeSources=function(e){return e.sort(function(e,t){return o[e.name]-o[t.name]})}(n),this._directSourceOffset=r,this._disposables=new i.DisposableList}function a(e){return(Math.random()-.5)*(e/20)+e}function s(t,i){i=i||0;var r=this,a=e.get(this._timeSources,[i],{});(function(t,i){var r=this;switch(t.name){case"urn:mpeg:dash:utc:http-head:2014":var a=n.getWithRetry(t.value,e.assign({contentType:"text/plain"},l),function(n,a){var s=e.get(a,["headers","date"],""),o=new Date(s).getTime();if(n||isNaN(o))return r._logger.warn("Unable to resolve dash timing via [%s]",t.value,n),i(n||new Error("invalid-server-time"));var l=e.now()-o-a.stats.successResponseTime/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,l),i(null,l)});return this._disposables.add(a),a;case"urn:mpeg:dash:utc:direct:2014":var s=e.now()-t.value-this._directSourceOffset/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,s),i(null,s);default:return r._logger.info("Unable to resolve mpd Timing Sources. Defaulting to local time"),i(null,0)}}).call(this,a,function(n,a){if(!e.isNumber(a))return s.call(r,t,i+1);t(n,a)})}var o={"urn:mpeg:dash:utc:http-head:2014":0,"urn:mpeg:dash:utc:direct:2014":1},l={retryOptions:{backoff:2,delay:2e3,maxAttempts:3,additionalRetryErrorCodes:[0]}};return r.prototype.calculateOffset=function(e){s.call(this,e)},r.prototype.setInterval=function(n,r){t.isFunction(n,"callback"),e.isUndefined(r)||t.isNumber(r,"interval");var o=this,l=a(r||3e5),u=setTimeout(function e(){o._logger.debug("Syncing local to server time"),s.call(o,function(t,i){if(t)return n(t);l=a(r||3e5),n(t,i),o._logger.debug("Waiting [%s] ms before next time sync",l),u=setTimeout(e,l)})},l),d=new i.Disposable(function(){clearTimeout(u)});return this._logger.debug("Waiting [%s] ms before next time sync",l),this._disposables.add(d),d},r.prototype.dispose=function(){return this._logger.debug("Disposing of mdp time sync"),this._disposables.dispose()},r.prototype.toString=function(){return"MpdTimeSync [Time Source Number: "+this._timeSources.length+", Direct Source Offset: "+this._directSourceOffset+"]"},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(8),i(28),i(29),i(5),i(9),i(20),i(15),i(17)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d,c,h,g){"use strict";function f(o,l,u){t.isNotUndefined(l,"videoElement"),t.isNotUndefined(l.videoWidth,"videoElement.videoWidth"),this._logger=o||new i.Logger,this._options=e.assign({targetLatency:m},u),this._videoElement=l,this._disposables=new r.DisposableList,this._browserDetails=new a(s.global.navigator.userAgent).detect(),this._preferNative=this._options.preferNative||!1,this._player=null,this._playbackStarted=!1,this._isWaiting=!1,this._playbackStarted=!1,this._playbackTimeLeftEvent=new n.Event,this._playerStartedEvent=new n.Event,this._playerErrorEvent=new n.Event,this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerStartedEvent),this._disposables.add(this._playerErrorEvent)}function p(){var e=this;"Edge"===e._browserDetails.browser||"IE"===e._browserDetails.browser?(e._videoElement.play(),e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")):e._videoElement.play().then(function(){e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")}).catch(function(t){e._logger.error("Playback Failed [%s]",t)})}var m=8;return f.prototype.toString=function(){return e.toString(this)},f.prototype.start=function(e){if(t.isStringNotEmpty(e,"uri"),this._player)return this._logger.warn("Already started Phenix Web Player");var i=this;if(l.isSupported){if(this._preferNative||!o.isSupported)return this._logger.info("HLS native player selected"),this._player=new l(this._logger,this._videoElement,this._options),this._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),this._disposables.add(this._player),this._player.start(e,function(){p.call(i)})}else this._preferNative&&this._logger.warn("HLS native player is not supported");this._logger.info("MSE player selected");var n=new u(this._logger,e);i._disposables.add(n),n.fetch(function(e){if(e)return i._playerErrorEvent.fire([e]);var t,r=new d(i._logger,{ewmaPeriods:30});"Dash"===n.getDeliveryType()?t=new h(i._logger,n,r,i._options):"Hls"===n.getDeliveryType()&&(t=new g(i._logger,n,r,i._options));var a=new o(i._logger,n,i._videoElement,t,i._options),s=new c(i._logger,n,i,r);a.start(),p.call(i),i._player=a,i._player.addEventListener("playbacktimeleft",function(e,t){i._playbackTimeLeftEvent.fire([e,t])}),i._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),i._disposables.add(i._player),i._disposables.add(r),i._disposables.add(s)})},f.prototype.play=function(){p.call(this),this._player&&this._player.play()},f.prototype.pause=function(){this._logger.info("Pausing web player"),this._player&&this._player.pause()},f.prototype.getVideoElement=function(){return this._videoElement},f.prototype.dispose=function(){this._disposables.dispose(),this._videoElement&&(this._videoElement.load(),this._videoElement.src="",this._videoElement.mediaKeys&&this._videoElement.setMediaKeys(null)),this._player=null,this._videoElement=null},f.prototype.getBandwidthLimit=function(){this._player.getBandwidthLimit()},f.prototype.getTimeLeft=function(){return this._videoElement?function(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=function(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}.call(this,this._videoElement).timeBufferedButNotPlayed:0},f.prototype.changeBandwidthLimit=function(e,t){this._player.changeBandwidthLimit(e,t)},f.prototype.addEventListener=function(i,n){switch(t.isString(i,"eventName"),t.isFunction(n,"listener"),i){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(n);case"started":var r=this._playerStartedEvent.listen(n);return this._playbackStarted&&setTimeout(e.bind(n,this),0),r;case"error":return this._playerErrorEvent.listen(n);default:throw new Error('Event "'+i+'" is unknown.')}},f.prototype.getStats=function(){return this._player?this._player.getStats():{}},f.isSupported=l.isSupported||o.isSupported,f.deviceSupportsHlsPlayback=l.isSupported||o.isSupported,f.deviceSupportsDashPlayback=o.isSupported,f}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(8),i(5),i(12),i(18)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u){"use strict";function d(d,h,g,f,p){t.isInstanceOf(h,o,"playlist"),t.isNotUndefined(g,"videoElement"),t.isNotUndefined(g.videoWidth,"videoElement.videoWidth"),t.isNotUndefined(f,"playlistChunkFeeder"),t.isInstanceOf(f,l,"playlistChunkFeeder"),t.isNumber(p.targetLatency,"options.targetLatency"),e.isUndefined(e.get(p,"bandwidthToStartAt"))||t.isNumber(p.bandwidthToStartAt,"options.bandwidthToStartAt"),e.isUndefined(e.get(p,"trackRestrictions"))||t.isObject(p.trackRestrictions,"options.trackRestrictions"),e.isUndefined(e.get(p,"bufferSizeToPauseFetch"))||t.isNumber(p.bufferSizeToPauseFetch,"options.bufferSizeToPauseFetch"),e.isUndefined(e.get(p,"bufferSizeToResumeFetch"))||t.isNumber(p.bufferSizeToResumeFetch,"options.bufferSizeToResumeFetch"),e.isUndefined(e.get(p,"maximumFrequencyForAlteringPlaybackRate"))||t.isNumber(p.maximumFrequencyForAlteringPlaybackRate,"options.maximumFrequencyForAlteringPlaybackRate"),e.isUndefined(e.get(p,"playbackRateToRecover"))||t.isNumber(p.playbackRateToRecover,"options.playbackRateToRecover");var m=this;this._options=p,this._videoElement=g,this._feeder=f,this._playlist=h,this._disposables=new r.DisposableList,this._logger=d||new i.Logger,this._bandwidthLimit=e.get(p,"bandwidthToStartAt",k),this._trackRestrictions=e.get(p,"trackRestrictions",{}),this._playbackMode=e.get(p,"playbackMode",R.strict.name),this._bufferSizeToPauseFetch=e.get(p,"bufferSizeToPauseFetch",w),this._bufferSizeToResumeFetch=e.get(p,"bufferSizeToResumeFetch",T),this._targetLatencyInMilliseconds=1e3*p.targetLatency,this._playbackStarted=!1,this._isWaiting=!1,this._bufferStats=[],this._browserDetails=new a(s.global.navigator.userAgent).detect();var y=(this._targetLatencyInMilliseconds-(this._playlist.getMaxChunkDuration()||1e3)-.5)/this._targetLatencyInMilliseconds;this._playbackRateToDecreaseBuffer=e.get(p,"playbackRateToDecreaseBuffer",S),this._playbackRateToIncreaseBuffer=e.get(p,"playbackRateToIncreaseBuffer",C),this._maximumFrequencyForAlteringPlaybackRate=e.get(p,"maximumFrequencyForAlteringPlaybackRate",D),this._targetBufferSizeToIncreasePlaybackSpeed=this._targetLatencyInMilliseconds/1e3*y,this._targetBufferSizeToReducePlaybackSpeed=this._targetLatencyInMilliseconds/1e3/4,this._maxBufferSizeWhileRecoveringBuffer=this._targetLatencyInMilliseconds/1e3/2,function(){var t=this,i=e.get(this._playlist,["parsedPlaylist","contentProtectionTags"],[]);if(0===i.length)return this._logger.info("No Content Protection Tags found in the playlist so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,i,e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i,c.call(t),t._videoElement.play())}),this._disposables.add(this._encryptedMediaHandler)}.call(this),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._playbackTimeLeftEvent=new n.Event,this._playerErrorEvent=new n.Event,this._feeder.addEventListener("error",function(e){m._playerErrorEvent.fire([e])}),this._disposables.add(this._feeder),this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerErrorEvent),this._disposables.add(new r.Disposable(function(){null!==m._switchTrackDisposable&&s.global.clearTimeout(m._switchTrackDisposable)}))}function c(){var e=this._playlist.getPlaylistTracksByBandwidthPerMimeType(this._bandwidthLimit,this._trackRestrictions);return this._feeder.setActiveTracks(e),e}function h(e,t,i){this._logger.debug("VIDEO EVENT: [%s]",e,i),t&&t.call(this,i)}function g(t,i){var n=e.bind(h,this,"durationchange",function(){var r=this;if("dynamic"!==r._playlist.getType())return r._videoElement.removeEventListener("durationchange",n,!1),r._readyAt=null;0!==e.get(r._videoElement,["buffered","length"],0)&&function(t,i){var n=this;t=e.isNumber(t)?t:(n._playlist.getPlaybackDurationSinceAvailable()-n._targetLatencyInMilliseconds)/1e3,this._playbackMode===R.strict.name&&(t=(n._playlist.getPlaybackDurationSinceAvailable()-n._targetLatencyInMilliseconds)/1e3),"Firefox"===this._browserDetails.browser&&(t-=1),setTimeout(function(){var r=n._videoElement.buffered.start(n._videoElement.buffered.length-1),a=n._videoElement.buffered.end(n._videoElement.buffered.length-1),s=n._videoElement.currentTime<t||n._videoElement.currentTime>t+1,o=r<=t&&t<=a,l=n._durationChangeCount>=A;if(n._readyAt||!o&&!l&&n._initialized)n._durationChangeCount++;else{if(s&&!n._setTimeoutOnce&&(o||l||!n._initialized)){var u=l?(a-r)/2+r:r;n._initialized||o||(u=r),n._logger.debug("Setting video current time to [%s], attempt [%s]",u,n._durationChangeCount),n._videoElement.currentTime=u,n._setTimeoutOnce=!0,n._initialized||(n._initialized=!0)}r<=n._videoElement.currentTime&&n._videoElement.currentTime<=a&&(o||l)&&(n._readyAt=e.now(),n._setTimeoutOnce=!1,n._logger.debug("Successfully updated video current time [%s] after [%s] attempts",n._videoElement.currentTime,n._durationChangeCount),i())}},10)}.call(r,t,function(){r._videoElement.removeEventListener("durationchange",n,!1),i&&i()})});return this._durationChangeCount=0,n}function f(t){var i=this,n=this._feeder.getActiveTracks(),a=c.call(this);(function(t){if("static"===this._playlist.getType()&&this._mediaSource.duration!==this._playlist.getTotalMediaTimeInMillis()/1e3)this._mediaSource.duration=this._playlist.getTotalMediaTimeInMillis()/1e3;else if("Hls"===this._playlist.getDeliveryType()&&this._mediaSource.duration!==1/0){this._mediaSource.duration=1/0;var i=e.reduce(t,function(t,i){var n=e.get(i.getLastSegment(),["timestamp"],0);return e.isNullOrUndefined(t)?n:n<t?n:t})||0;this._feeder.seekToChunk(i)}}).call(this,a),this._feeder.initializeActiveTracks(function(s){if(s)return i._logger.error("Unable to initialize playlist tracks",s),i._playerErrorEvent.fire([s]),t(s);var o=e.filter(a,function(e){return!i._bufferDetails[b(e)]});if(o.length>0){var l=e.map(o,function(e){return e.getTrackId()});i._logger.info("Initializing source buffers for [%s] tracks [%s]",o.length,l),function(t){this._logger.debug("Creating MSE buffers for all tracks."),e.forEach(t,e.bind(function(t){(function(t){var i=this,n={track:t,chunks:[],chunkAddRequested:!1},a=v(t),s=!e.includes(e.keys(i._mediaSourceBuffers),a),o=s?i._mediaSource.addSourceBuffer(t.getMseCodec()):i._mediaSourceBuffers[a].buffer,l=b(t);i._bufferDetails[l]=n,s&&(o.mode="segments","static"===i._playlist.getType()&&(o.appendWindowEnd=i._playlist.getTotalMediaTimeInMillis()/1e3),i._logger.debug("Creating MSE Buffer for [%s] with mode [%s]",i._playlist.getType(),o.mode),i._mediaSourceBuffers[a]={buffer:o,updateEnd:function(e){o.updating||_.call(this,e,!0)}},i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceBuffer [%s]",a),i._mediaSource.removeSourceBuffer(o)})));var u=t.addEventListener("chunkadded",e.bind(function(t,r){n.addInitChunkFirst&&"Dash"===i._playlist.getDeliveryType()&&(n.addInitChunkFirst=!1,this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),"Init"),n.chunks.push(t.getInitChunkData())),this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),r.chunkId),n.chunks.push(r.data),n.chunkAddRequested&&(n.chunkAddRequested=!1,o.updating||_.call(this,t,!1));var a=e.now()-this._lastUpdate>=E,s=e.now()-this._lastPlayAttempt>=500;this._isWaiting&&a&&s&&!this._videoElement.paused&&!this._pausedAt&&(this._logger.trace("Starting after wait [%s]",e.now()-this._lastUpdate),this._lastPlayAttempt=e.now(),this._videoElement.play())},i,t));i._disposables.add(u)}).call(this,t)},this))}.call(i,o)}var u=e.filter(a,function(t){return!e.find(n,function(e){return e.getTrackId()===t.getTrackId()})});e.forEach(u,function(t){(function(t){var i=this._mediaSourceBuffers[v(t)],n=e.bind(function(e){this._logger.warn("Buffer Error [%s]",e)},this),r=!!i.track;if(i.track===t)return;var a=this._bufferDetails[b(t)];i.track&&i.track!==t&&r&&(i.buffer.removeEventListener("updateend",i.updateEndListener),i.buffer.removeEventListener("error",n),a&&(a.addInitChunkFirst=!0,a.chunkAddRequested=!0,a.chunks=[]));if(i.track=t,i.updateEndListener=e.bind(i.updateEnd,this,t),i.buffer.addEventListener("updateend",i.updateEndListener),i.buffer.addEventListener("error",n),i.buffer.onerror=n,!r){var s="Dash"===this._playlist.getDeliveryType()?[t.getInitChunkData()]:[];a.chunks=[].concat(s,e.map(t.getChunks(),function(e){return e.data})),"static"===this._playlist.getType()&&"Edge"!==this._browserDetails.browser&&"IE"!==this._browserDetails.browser&&this._mediaSource.setLiveSeekableRange(0,this._playlist.getTotalMediaTimeInMillis()/1e3),_.call(this,t,!1)}}).call(i,t),i._logger.info("Switched [%s] to track [%s] with [%s] bandwidth limit",v(t),t.getTrackId(),i._bandwidthLimit)}),t()})}function p(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=m(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}function m(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}function y(){var t=!0,i=!1;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var n=p.call(this,e.buffer),r=parseFloat(n.timeBufferedButNotPlayed);r<this._bufferSizeToPauseFetch&&(t=!1),r<this._bufferSizeToResumeFetch&&(i=!0)},this)),t&&this._feeder.isFetchingData()&&(this._logger.debug("Pausing feeder due to excess buffer"),L.call(this)),!i||this._feeder.isFetchingData()||this._pausedAt||(this._logger.debug("Starting feeder due to limited buffer"),x.call(this))}function _(t,i){var n=this._mediaSourceBuffers[v(t)],r=this._bufferDetails[b(t)];if(!r)return this._logger.warn("Unable to add chunk for non existent buffer");if("dynamic"===this._playlist.getType()&&this._pausedAt&&!this._reset&&n.buffer.buffered.length>0)n.buffer.remove(0,n.buffer.buffered.end(n.buffer.buffered.length-1)),n.cleared=!0,e.reduce(this._mediaSourceBuffers,function(e,t){return e?t.cleared:e},!0)&&(this._initialized=!1,this._readyAt=null,this._setTimeoutOnce=!1,this._reset=!0);else if(r.chunks.length>0){if(this._videoElement.error)return this._logger.error("Unable to continue appending to buffer. Video element error code [%s] and message [%s]",this._videoElement.error.code,this._videoElement.error.message),L.call(this),this._playerErrorEvent.fire([this._videoElement.error]);var a=r.chunks.shift();n.cleared=!1,this._logger.debug("Appending chunk to buffer for track [%s]",t.getTrackId()),n.buffer.appendBuffer(new Uint8Array(a))}else i&&(this._lastPlayAttempt&&y.call(this),r.chunkAddRequested=!0)}function v(e){return e.getMseCodec().indexOf("video")>=0?"video":e.getMseCodec().indexOf("audio")>=0?"audio":"other"}function b(e){return e.getTrackId()+"_"+e.getMseCodec()}var k=2e6,w=60,T=30,E=1e3,S=1.03,C=.97,D=300,M=4e3,P=3e5,A=2,I=500,R={loose:{id:0,name:"loose"},strict:{id:1,name:"strict"}};d.prototype.toString=function(){return e.toString(this)},d.prototype.play=function(){if("dynamic"===this._playlist.getType()){var e=this._feeder.seekToCurrent();x.call(this);var t=this,i=g.call(this,e,function(){t._pausedAt=0,t._videoElement&&t._videoElement.play()});return setTimeout(function(){t._videoElement.addEventListener("durationchange",i,!1)},300),this._disposables.add(new r.Disposable(function(){t._videoElement.removeEventListener("durationchange",i,!1)}))}x.call(this),this._videoElement&&this._videoElement.play()},d.prototype.pause=function(){this._logger.info("Pausing web player"),L.call(this);var t=this;this._videoElement&&(this._videoElement.pause(),this._pausedAt=e.now(),this._reset=!1,e.forOwn(this._feeder.getActiveTracks(),function(e){t._mediaSourceBuffers[v(e)].buffer.updating||_.call(t,e,!1)}))},d.prototype.dispose=function(){this._disposables.dispose(),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._bufferStats=[],this._mediaSource=null,this._playlist=null,this._videoElement=null},d.prototype.start=function(t){(function(t){var i=this;i._mediaSource=new MediaSource;var n=function(){(function(t){var i=this;f.call(i,function n(a){if(a)return t(a);var s=i._feeder.getActiveTracks(),o=e.map(s,function(e){return e.getTrackId()});i._logger.debug("Initializing tracks [%s]",o);var l=setTimeout(function(){return i._feeder.stopRequestingAllData(),i._bandwidthLimit=i._bandwidthLimit/2,f.call(i,n)},i._playlist.getMaxChunkDuration());i._feeder.fetchNChunks(1,function(n){if("timeout"!==e.get(n,["message"])){if(clearTimeout(l),n)return t(n);"Hls"===i._playlist.getDeliveryType()&&e.forEach(i._feeder.getActiveTracks(),function(e){i._bufferDetails[b(e)].chunkAddRequested=!0}),i._logger.info("Initializing feeder with [%s] [%s] playlist of duration [%s]",i._playlist.getType(),i._playlist.getDeliveryType(),i._playlist.getTotalMediaTimeInMillis()/1e3),function(t){var i=this,n=e.bind(function(){this._isWaiting=!1,this._lastUpdate=e.now();var t,i=e.now()-this._startTime>M;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var i=p.call(this,e.buffer);(!t||t>i.timeBufferedButNotPlayed)&&(t=i.timeBufferedButNotPlayed),this._playbackTimeLeftEvent.fire([i.timeBufferedButNotPlayed,e.track],this)},this)),y.call(this),i&&(function(t){this._bufferStats.push({size:t,timestamp:e.now()});for(var i=e.get(this._bufferStats,[0,"timestamp"],e.now());e.now()-i>P;)this._bufferStats.shift(),i=e.get(this._bufferStats,[0,"timestamp"],e.now());this._bufferStatsMin=Math.min.apply(null,e.map(this._bufferStats,function(e){return e.size}))}.call(this,t),function(t){if("Dash"===this._playlist.getDeliveryType()||"dynamic"===this._playlist.getType()){var i=this._targetBufferSizeToIncreasePlaybackSpeed,n=this._lastPlaybackRateChange,r=e.now()-this._startTime>M,a=!n||e.now()-n>1e3*this._maximumFrequencyForAlteringPlaybackRate,s=this._targetLatencyInMilliseconds/1e3,o=this._bufferStatsMin>this._targetBufferSizeToReducePlaybackSpeed,l=this._bufferStatsMin<=s+.1&&this._bufferStatsMin>=s-.1,u=t>=this._maxBufferSizeWhileRecoveringBuffer&&this._videoElement.playbackRate===this._playbackRateToIncreaseBuffer;t>=i&&o&&this._videoElement.playbackRate<=1&&r&&a?(this._logger.info("Adjusting playback rate to [%s] to reduce buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToDecreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToDecreaseBuffer):!o&&!l&&this._videoElement.playbackRate>=1&&a?(this._logger.info("Adjusting playback rate to [%s] to increase buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToIncreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToIncreaseBuffer):(u||l)&&1!==this._videoElement.playbackRate&&(this._logger.info("Resuming normal playback rate with buffer size of [%s] and minimum buffer size of [%s]",t,this._bufferStatsMin),this._videoElement.playbackRate=1,this._lastPlaybackRateChange=e.now())}}.call(this,t||0))},i),a=e.bind(h,i,"stalled",null),s=e.bind(h,i,"suspend",null),o=e.bind(h,i,"ended",null),l=e.bind(h,i,"error",null),u=e.bind(h,i,"pause",null),d=e.bind(h,i,"play",function(){this._pausedAt&&this._videoElement.pause()}),c=e.bind(h,i,"waiting",function(){this._playbackStarted&&(this._logger.debug("Waiting for new chunk or end of track"),this._isWaiting=!0)}),f=e.bind(h,i,"seeking",function(t){var i=e.keys(this._mediaSourceBuffers),n=e.get(i,"0",null),r=this._mediaSourceBuffers[n],a=e.now()-this._readyAt>I,s=this;if(!r||!a||"Hls"===this._playlist.getDeliveryType())return this._logger.debug("Ignoring video seek event during initialization");var o=m(r.buffer,t.timeStamp/1e3),l=m(r.buffer,this._videoElement.currentTime),u=e.reduce(this._mediaSourceBuffers,function(t,i){var n=m(i.buffer,s._videoElement.currentTime),r=e.isNumber(n)?i.buffer.buffered.end(n):0;return t?r<t?r:t:r})||this._videoElement.currentTime;if(this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed."),this._feeder.seekToChunk("dynamic"===this._playlist.getType()?this._videoElement.currentTime:u),o!==l||e.isNullOrUndefined(l)){if(this._feeder.isFetchingData())return;this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit)}}),_=g.call(i);i._videoElement.addEventListener("timeupdate",n,!1),i._videoElement.addEventListener("ended",o,!1),i._videoElement.addEventListener("error",l,!1),i._videoElement.addEventListener("pause",u,!1),i._videoElement.addEventListener("stalled",a,!1),i._videoElement.addEventListener("suspend",s,!1),i._videoElement.addEventListener("play",d,!1),i._videoElement.addEventListener("waiting",c,!1),i._videoElement.addEventListener("seeking",f,!1),i._videoElement.addEventListener("durationchange",_,!1),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up videoElement listeners"),i._videoElement.removeEventListener("timeupdate",n,!1),i._videoElement.removeEventListener("ended",o,!1),i._videoElement.removeEventListener("error",l,!1),i._videoElement.removeEventListener("pause",u,!1),i._videoElement.removeEventListener("stalled",a,!1),i._videoElement.removeEventListener("suspend",s,!1),i._videoElement.removeEventListener("play",d,!1),i._videoElement.removeEventListener("waiting",c,!1),i._videoElement.removeEventListener("seeking",f,!1),i._videoElement.removeEventListener("durationchange",_,!1)})),x.call(i),i._lastPlayAttempt=e.now(),e.isFunction(t)&&t()}.call(i,t)}})})}).call(i,t)};i._mediaSource.addEventListener("sourceopen",n),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceopen listener"),i._mediaSource.removeEventListener("sourceopen",n)})),i._videoElement.src=s.global.URL.createObjectURL(i._mediaSource)}).call(this,t),this._startTime=e.now()},d.prototype.getBandwidthLimit=function(){return this._bandwidthLimit},d.prototype.changeBandwidthLimit=function(t,i){this._logger.debug("Changing playback bandwidth limit: [%s], current limit: [%s]",t,this._bandwidthLimit),this._bandwidthLimit=t,this._switchTrackDisposable=setTimeout(e.bind(function(t){var i=this;f.call(this,function(n){if(n)return t(n);var r=i._feeder.getActiveTracks(),a=e.reduce(r,function(t,n){var r=i._mediaSourceBuffers[v(n)],a=m(r.buffer,i._videoElement.currentTime),s=n.getChunkDuration()/1e3;if(!e.isNumber(a))return!e.isNumber(t)||t>i._videoElement.currentTime?i._videoElement.currentTime:t;var o=Math.round(r.buffer.buffered.end(a)/s)*s;return!e.isNumber(t)||t>o?o:t});return e.isNumber(a)||(a=i._videoElement.currentTime),i._feeder.stopRequestingAllData(),i._feeder.seekToChunk(a),i._logger.debug("Pausing of feeder completed."),i._feeder.isFetchingData()?t():(i._feeder.startRequestingDataForActiveTracks(i._bandwidthLimit),t())})},this,i||e.noop),250)},d.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(i);case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},d.prototype.getStats=function(){return{currentTime:e.get(this._element,["currentTime"],0),width:e.get(this._element,["videoWidth"],0)||e.get(this._element,["width"],0),height:e.get(this._element,["videoHeight"],0)||e.get(this._element,["height"],0),lag:0,deliveryType:this._playlist.getDeliveryType(),isNative:!1}},d.isSupported=!!s.global.MediaSource;var L=function(){this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed.")},x=function(){if(this._feeder.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._feeder.startRequestingDataForActiveTracks()};return d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(19),i(8),i(5),i(18),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,d){"use strict";function c(s,c,m){t.isNotUndefined(c,"videoElement"),t.isNotUndefined(c.videoWidth,"videoElement.videoWidth"),this._options=m,this._videoElement=c,this._disposables=new r.DisposableList,this._logger=s||new i.Logger,this._browserDetails=new a(o.global.navigator.userAgent).detect(),this._playerErrorEvent=new n.Event,this._disposables.add(this._playerErrorEvent),this._onStalled=e.bind(function(){var e=this,t=this._element.currentTime,i=function(){return 1.5*this._lastProgress.averageLength<4e3?4e3:1.5*this._lastProgress.averageLength}.call(e);if(e._element.paused)return;setTimeout(function(){if(0===e._lastProgress.count&&!e._element.paused&&e._element.currentTime===t){var n="Stream has not started within ["+i/1e3+"] seconds";e._logger.warn(n),f.call(e,d.name.progressTimeOut.name,n)}},i),setTimeout(function(){if(e._element&&e._element.currentTime===t&&!e._element.paused&&h.call(e)){var i="Stream has been stalled for ["+_/1e3+"] seconds";e._logger.warn(i),g.call(e,d.name.progressTimeOut.name,i)}},_)},this),this._onProgress=e.bind(function(){if(this._lastProgress.time=e.now(),0===this._element.buffered.length)return this._logger.debug("[%s] Hls stream progress event fired without any buffered content",this._uri);var t=this._element.buffered.end(this._element.buffered.length-1);if(this._lastProgress.buffered===t)return;if(null!==this._lastProgress.buffered){var i=this._lastProgress.averageLength*this._lastProgress.count+(t-this._lastProgress.buffered);if(this._lastProgress.count+=1,this._lastProgress.averageLength=i/this._lastProgress.count,this._lastProgress.lastCurrentTime!==this._element.currentTime&&(this._lastProgress.lastCurrentTimeOccurrenceTimestamp=e.now()),this._lastProgress.lastCurrentTimeOccurrenceTimestamp&&e.now()-this._lastProgress.lastCurrentTimeOccurrenceTimestamp>_&&this._element&&!this._element.paused&&h.call(this)){var n="Reloading stream after current time has not changed for ["+_/1e3+"] seconds due to unregistered stall.";this._logger.warn(n),g.call(this,d.name.progressTimeOut.name,n)}}this._lastProgress.buffered=t,this._lastProgress.lastCurrentTime=this._element.currentTime},this),this._onEnded=e.bind(function(){this._logger.info("[%s] Hls stream ended",this._streamId),this.stop("ended")},this),this._onError=e.bind(function(t){var i=this,n=0===i._lastProgress.count;4===e.get(this._element,["error","code"])&&n&&f.call(i,d.name.hlsNativeError.name,t);p.call(this,d.name.hlsNativeError.name,t)},this),this._lastProgress={time:0,buffered:null,averageLength:0,count:0,lastCurrentTime:0,lastCurrentTimeOccurrenceTimestamp:0},this._bufferSizeHistory=[],function(){var t=this,i=e.get(this._options,["drm","com.apple.fps.1_0"],{});if(0===e.keys(i).length)return this._logger.info("DRM config is empty so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,[],e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i)}),this._disposables.add(this._encryptedMediaHandler)}.call(this),setTimeout(e.bind(function(){this._playlist=new l(this._logger,this._uri),this._disposables.add(this._playlist),this._playlist.fetch(e.noop)},this),b)}function h(){return this._element&&0!==this._element.buffered.length}function g(e,t){if(!h.call(this))return p.call(this,e,t);f.call(this,e,t)}function f(e,t){this._playerErrorEvent.fire([y(e,d.severity.RECOVERABLE,t)])}function p(e,t){this._playerErrorEvent.fire([y(e,d.severity.CRITICAL,t)])}function m(t){if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,!this._backgroundThrottled)return;return this._backgroundThrottled=!1,void this.start(this._element)}var i=this;this._backgroundTimeout=setTimeout(function(){s.isForeground()||function(t){if(t.muted)return!1;return e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.webkitHasAudio}(i._element)||(i._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),i._element.pause(),i._backgroundThrottled=!0)},v)}function y(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var _=6e3,v=3e3,b=2e3;return c.prototype.toString=function(){return e.toString(this)},c.prototype.play=function(){this._videoElement.play()},c.prototype.pause=function(){this._videoElement.pause()},c.prototype.dispose=function(){this._disposables.dispose()},c.prototype.start=function(t){if(this._uri)return this._logger.warn("Already started player");this._uri=t,this._disposables.add(s.onBackground(e.bind(m,this,!1))),this._disposables.add(s.onForeground(e.bind(m,this,!0))),function(t){o.attachUriStream(t,this._uri),!1===this._options.receiveAudio&&(t.muted=!0),e.addEventListener(t,"error",this._onError,!0),e.addEventListener(t,"stalled",this._onStalled,!1),e.addEventListener(t,"pause",this._onStalled,!1),e.addEventListener(t,"suspend",this._onStalled,!1),e.addEventListener(t,"progress",this._onProgress,!1),e.addEventListener(t,"ended",this._onEnded,!1),this._element=t}.call(this,this._videoElement)},c.prototype.getBandwidthLimit=function(){return this._logger.warn("getBandwidthLimit not supported for HLS Native")},c.prototype.changeBandwidthLimit=function(){return this._logger.warn("changeBandwidthLimit not supported for HLS Native")},c.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},c.prototype.getStats=function(){if(!this._videoElement)return{width:0,height:0,currentTime:0,lag:0,deliveryType:"Hls",isNative:!0};var t=e.get(this._element,["currentTime"],0),i=this._element&&this._element.buffered&&this._element.buffered.length>0?this._element.buffered.end(this._element.buffered.length-1):0,n=Math.max(0,i-t);this._bufferSizeHistory.push(n),this._bufferSizeHistory.length>15&&this._bufferSizeHistory.shift();for(var r=0,a=0,s=this._bufferSizeHistory.length;a<s;a++)r=Math.max(r,this._bufferSizeHistory[a]);var o=2;this._playlist&&this._playlist.getAllPlaylistTracks().length>0&&(o=this._playlist.getAllPlaylistTracks()[0].getChunkDuration());var l=2*o+r;return{width:this._element.videoWidth||this._element.width,height:this._element.videoHeight||this._element.height,currentTime:t,lag:l,deliveryType:"Hls",isNative:!0}},c.isSupported="object"==typeof document&&"maybe"===document.createElement("video").canPlayType("application/vnd.apple.mpegURL"),c}.apply(t,n))&&(e.exports=r)}])});
 
 /***/ }),
 /* 14 */
@@ -917,6 +914,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var key = parsedParams[0];
 
             parsedUriInfo[key] = parsedParams[1];
+
+            if (key === 'capabilities') {
+                parsedUriInfo[key] = parsedParams[1] ? (parsedParams[1].split(',') || []) : [];
+            }
         });
 
         return parsedUriInfo;
@@ -962,7 +963,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(6),
     __webpack_require__(2),
-    __webpack_require__(74)
+    __webpack_require__(75)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert, _, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
@@ -1041,7 +1042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-20T21:53:51Z',
+                version: '2018-07-26T20:35:00Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1086,9 +1087,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(93),
-    __webpack_require__(82),
-    __webpack_require__(37)
+    __webpack_require__(94),
+    __webpack_require__(83),
+    __webpack_require__(40)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(MQWebSocket, BatchHttpProto, MQService) {
     return {
         MQWebSocket: MQWebSocket,
@@ -1163,7 +1164,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(8),
-    __webpack_require__(95)
+    __webpack_require__(97)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -1599,12 +1600,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(11),
     __webpack_require__(12),
     __webpack_require__(14),
-    __webpack_require__(28)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
+    __webpack_require__(28),
+    __webpack_require__(32)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
     var defaultWildcardEnabled = true;
+    var streamingTypeCapabilities = ['streaming', 'rtmp'];
 
     function RoomExpress(options) {
         assert.isObject(options, 'options');
@@ -1627,6 +1630,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
         this._disposed = false;
+        this._featureDetector = new FeatureDetector(options.features);
 
         var that = this;
 
@@ -1811,7 +1815,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             options.enableWildcardCapability = defaultWildcardEnabled;
         }
 
-        assert.isValidType(options.streamType, streamEnums.types, 'options.streamType');
+        assert.isValidType(options.streamType, memberStreamEnums.types, 'options.streamType');
         assert.isValidType(options.memberRole, memberEnums.roles, 'options.memberRole');
         assert.isBoolean(options.enableWildcardCapability, 'options.enableWildcardCapability');
 
@@ -1899,10 +1903,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
+        if (options.capabilities) {
+            throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
+        }
+
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
-        var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
-        var isScreen = _.get(memberStream.getInfo(), ['isScreen'], false);
+        var streamInfo = memberStream.getInfo();
+        var isScreen = _.get(streamInfo, ['isScreen'], false);
+        var streamToken = null;
+        var publisherCapabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
+        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
+        var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -1910,9 +1922,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             throw new Error('Invalid Member Stream. Unable to parse streamId from uri');
         }
 
+        // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+        if (!_.hasIndexOrKey(streamInfo, 'capabilities')) {
+            var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+
+            if (!streamInfo.streamTokenForLiveStream && preferredFeatureCapability === 'streaming') {
+                this._logger.warn('Streaming is not available for stream [%].', streamId);
+
+                return callback(null, {status: 'streaming-not-available'});
+            }
+
+            streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+        } else {
+            if (!preferredFeature) {
+                this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, this._featureDetector.getFeaturePCastCapabilities());
+
+                return callback(null, {status: 'unsupported-features'});
+            }
+
+            streamToken = getStreamTokenForFeature(streamUri, preferredFeature);
+        }
+
+        this._logger.info('Subscribing to member stream with feature [%s] and pre-generated token [%s]', preferredFeature, !!streamToken);
+
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
-            streamToken: streamToken
+            streamToken: streamToken,
+            capabilities: [preferredFeatureCapability]
         }, options);
         var disposables = new disposable.DisposableList();
 
@@ -2342,6 +2378,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var streamInfo = options.streamInfo;
         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
 
+        publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+
         if (!options.enableWildcardCapability) {
             var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
             var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(this, publisherStream, room)});
@@ -2362,6 +2400,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var sessionId = protocol ? protocol.getSessionId() : '';
         var disposables = that._publisherDisposables[publisherStreamId];
         var disposable;
+
+        if (!_.includes(publisherStream, 'capabilities')) {
+            publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+        }
 
         if (composeWithAdditionalStreams) {
             var membersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, sessionId, room.getObservableMembers().getValue());
@@ -2472,10 +2514,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, [], streamId, additionalStreamIds, stream, 'streamToken', completedRequestsCallback));
         generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['broadcast'], streamId, additionalStreamIds, stream, 'streamTokenForBroadcastStream', completedRequestsCallback));
 
-        if (_.includes(publisherCapabilities, 'streaming')) {
-            this._logger.debug('Creating [streaming] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamId, additionalStreamIds.length);
+        var streamingTypePublisherCapabilities = _.filter(publisherCapabilities, _.bind(_.includes, null, streamingTypeCapabilities));
 
-            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['streaming'], streamId, additionalStreamIds, stream, 'streamTokenForLiveStream', completedRequestsCallback));
+        if (streamingTypePublisherCapabilities.length > 0) {
+            this._logger.debug('Creating [%s] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamingTypePublisherCapabilities, streamId, additionalStreamIds.length);
+
+            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, streamingTypePublisherCapabilities, streamId, additionalStreamIds, stream, 'streamTokenForLiveStream', completedRequestsCallback));
         }
 
         if (_.includes(publisherCapabilities, 'drm')) {
@@ -2500,12 +2544,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(null, response);
             }
 
-            var prefix = _.includes(stream.uri, '?') ? '&' : '?';
-
-            stream.uri = stream.uri + prefix + tokenName + '=' + response.streamToken;
+            stream = addStreamInfo(stream, tokenName, response.streamToken);
 
             callback(null, response);
         });
+    }
+
+    function addStreamInfo(stream, name, value) {
+        var indexOfQueryParam = stream.uri.indexOf('?');
+        var prefix = indexOfQueryParam > -1 ? '&' : '?';
+        var indexOfHashAfterQueryParam = stream.uri.indexOf('#', indexOfQueryParam === -1 ? stream.uri.length : indexOfQueryParam);
+        var uriBeforeHashIfQueryParamPresent = indexOfHashAfterQueryParam === -1 ? stream.uri : stream.uri.substring(0, indexOfHashAfterQueryParam);
+        var uriHash = indexOfHashAfterQueryParam === -1 ? '' : stream.uri.substring(indexOfHashAfterQueryParam);
+
+        stream.uri = uriBeforeHashIfQueryParamPresent + prefix + name + '=' + value + uriHash;
+
+        return stream;
     }
 
     function getValidStreamIds(members) {
@@ -2702,10 +2756,38 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
+    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+    function buildCapabilitiesFromPublisherWildcardTokens(uri) {
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
+        var capabilities = [];
+
+        if (streamInfo.streamTokenForLiveStream) {
+            capabilities.push('streaming');
+        }
+
+        return capabilities;
+    }
+
+    function getStreamTokenForFeature(uri, feature) {
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
+
+        switch(feature) {
+        case 'rtmp':
+        case 'hls':
+        case 'dash':
+            return streamInfo.streamTokenForLiveStream;
+        case 'real-time':
+            return streamInfo.streamToken;
+        default:
+            return;
+        }
+    }
+
+    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
     function parseStreamTokenFromStreamUri(uri, capabilities) {
         var streamInfo = Stream.getInfoFromStreamUri(uri);
-        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        var isStreaming = (streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming) && _.includes(capabilities, 'streaming');
+        var isStreaming = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'streaming');
+        var isRtmp = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'rtmp');
 
         // Token for both not generated.
         if (_.includes(capabilities, 'drm-open-access') && _.includes(capabilities, 'drm-hollywood')) {
@@ -2720,15 +2802,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return streamInfo.streamTokenForLiveStreamWithDrmHollywood;
         }
 
-        if (isStreaming && !_.includes(capabilities, 'drm-open-access') && !_.includes(capabilities, 'drm-hollywood')) {
-            return streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming;
+        if (isStreaming || isRtmp) {
+            return streamInfo.streamTokenForLiveStream;
         }
 
         if (streamInfo.streamTokenForBroadcastStream && _.includes(capabilities, 'broadcast')) {
             return streamInfo.streamTokenForBroadcastStream;
         }
 
-        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast')) {
+        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast') && !_.includes(capabilities, 'rtmp')) {
             return streamInfo.streamToken;
         }
     }
@@ -3035,9 +3117,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(13),
     __webpack_require__(24),
     __webpack_require__(26),
-    __webpack_require__(43),
+    __webpack_require__(45),
     __webpack_require__(3),
-    __webpack_require__(48)
+    __webpack_require__(50)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
@@ -4171,7 +4253,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(49)
+    __webpack_require__(51)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
@@ -5320,9 +5402,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(2),
     __webpack_require__(27),
     __webpack_require__(30),
-    __webpack_require__(56),
+    __webpack_require__(58),
     __webpack_require__(29),
-    __webpack_require__(55),
+    __webpack_require__(57),
     __webpack_require__(11),
     __webpack_require__(12)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
@@ -6095,6 +6177,336 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3),
+    __webpack_require__(33),
+    __webpack_require__(7)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, PhenixLiveStream, streamEnums) {
+    'use strict';
+
+    var defaultFeatures = [
+        streamEnums.types.realTime.name,
+        streamEnums.types.rtmp.name,
+        streamEnums.types.dash.name,
+        streamEnums.types.hls.name
+    ];
+
+    function FeatureDetector(features) {
+        features = features || defaultFeatures;
+
+        assert.isArray(features, 'features');
+
+        _.forEach(features, function(feature) {
+            assert.isValidType(feature, streamEnums.types, 'streamType');
+        });
+
+        this._features = features;
+    }
+
+    FeatureDetector.isFeatureSupported = function(feature) {
+        if (feature) {
+            assert.isStringNotEmpty(feature, 'feature');
+        }
+
+        switch (feature) {
+        case streamEnums.types.realTime.name:
+            return rtc.webrtcSupported;
+        case streamEnums.types.dash.name:
+        case streamEnums.types.hls.name:
+        case streamEnums.types.rtmp.name:
+            return PhenixLiveStream.canPlaybackType(feature);
+        default:
+            return false;
+        }
+    };
+
+    FeatureDetector.mapFeatureToPCastCapability = function(feature) {
+        if (feature) {
+            assert.isStringNotEmpty(feature, 'feature');
+        }
+
+        switch (feature) {
+        case streamEnums.types.realTime.name:
+            return 'real-time';
+        case streamEnums.types.dash.name:
+        case streamEnums.types.hls.name:
+            return 'streaming';
+        case streamEnums.types.rtmp.name:
+            return 'rtmp';
+        default:
+            return '';
+        }
+    };
+
+    FeatureDetector.mapPCastCapabilitiesToFeatures = function(capabilities) {
+        assert.isArray(capabilities, 'capabilities');
+
+        return _.reduce(capabilities, function(features, capability) {
+            return features.concat(FeatureDetector.mapPCastCapabilityToFeatures(capability));
+        }, []);
+    };
+
+    FeatureDetector.mapPCastCapabilityToFeatures = function(capability) {
+        if (capability) {
+            assert.isStringNotEmpty(capability, 'capability');
+        }
+
+        if (capability === 'real-time') {
+            return [streamEnums.types.realTime.name];
+        }
+
+        if (capability === 'streaming') {
+            return [streamEnums.types.dash.name, streamEnums.types.dash.name];
+        }
+
+        if (capability === 'rtmp') {
+            return [streamEnums.types.rtmp.name];
+        }
+
+        return [];
+    };
+
+    FeatureDetector.prototype.getFeaturePCastCapabilities = function() {
+        var capabilities = _.map(this._features, FeatureDetector.mapFeatureToPCastCapability);
+
+        return _.reduce(capabilities, removeDuplicates, []);
+    };
+
+    FeatureDetector.prototype.getPreferredFeatureFromPublisherCapabilities = function(capabilities, excludeRealTime) {
+        assert.isArray(capabilities, 'capabilities');
+
+        var preferredFeature = _.reduce(this._features, function(candidateFeature, feature) {
+            var featureCapability = FeatureDetector.mapFeatureToPCastCapability(feature);
+            var isFeatureAvailableAndCanPlayBack = FeatureDetector.isFeatureSupported(feature) && (_.includes(capabilities, featureCapability) || (feature === 'real-time' && !excludeRealTime));
+            var nextFeature = isFeatureAvailableAndCanPlayBack ? feature : null;
+
+            return candidateFeature || nextFeature;
+        }, null);
+
+        if (preferredFeature === streamEnums.types.dash.name && FeatureDetector.shouldUseNativeHls && _.includes(capabilities, FeatureDetector.mapFeatureToPCastCapability(streamEnums.types.hls.name)) && _.includes(this._features, streamEnums.types.hls.name)) {
+            preferredFeature = streamEnums.types.hls.name;
+        } else if (preferredFeature === streamEnums.types.hls.name && !FeatureDetector.shouldUseNativeHls && _.includes(capabilities, FeatureDetector.mapFeatureToPCastCapability(streamEnums.types.dash.name)) && _.includes(this._features, streamEnums.types.dash.name)) {
+            preferredFeature = streamEnums.types.dash.name;
+        }
+
+        return preferredFeature;
+    };
+
+    FeatureDetector.shouldUseNativeHls = isIOS() || rtc.browser === 'Safari';
+
+    function isIOS() {
+        var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
+
+        return /iPad|iPhone|iPod/.test(userAgent) && !rtc.global.MSStream;
+    }
+
+    function removeDuplicates(list, item) {
+        if (!_.includes(list, item)) {
+            list.push(item);
+        }
+
+        return list;
+    }
+
+    return FeatureDetector;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(5),
+    __webpack_require__(3),
+    __webpack_require__(13),
+    __webpack_require__(64),
+    __webpack_require__(63),
+    __webpack_require__(62),
+    __webpack_require__(7)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
+    'use strict';
+
+    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
+        this._type = type;
+        this._streamId = streamId;
+        this._uri = uri;
+        this._streamTelemetry = streamTelemetry;
+        this._options = options;
+        this._shaka = shaka;
+        this._logger = logger;
+        this._renderers = [];
+        this._dimensionsChangedMonitor = null;
+        this._namedEvents = new event.NamedEvents();
+    }
+
+    PhenixLiveStream.prototype.on = function(name, callback) {
+        this._namedEvents.listen(name, callback);
+    };
+
+    PhenixLiveStream.prototype.createRenderer = function() {
+        var renderer = null;
+
+        switch (this._type) {
+        case streamEnums.types.dash.name:
+            if (this._shaka) {
+                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
+            } else {
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            }
+
+            break;
+        case streamEnums.types.hls.name:
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+
+            break;
+        case streamEnums.types.rtmp.name:
+            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+
+            break;
+        default:
+            throw new Error('Unsupported Live stream Type ' + this._type);
+        }
+
+        var that = this;
+
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+            that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
+        });
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
+        });
+
+        this._renderers.push(renderer);
+
+        return renderer;
+    };
+
+    PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
+        this._logger.warn('[%s] selection of tracks not supported for [%s] live streams', this._streamId, this._type);
+
+        return this;
+    };
+
+    PhenixLiveStream.prototype.setStreamEndedCallback = function setStreamEndedCallback(callback) {
+        assert.isFunction(callback, 'callback');
+
+        this.streamEndedCallback = callback;
+    };
+
+    PhenixLiveStream.prototype.setStreamErrorCallback = function setStreamErrorCallback(callback) {
+        assert.isFunction(callback, 'callback');
+
+        this.streamErrorCallback = callback;
+    };
+
+    PhenixLiveStream.prototype.stop = function stop(reason) {
+        if (!this.isActive()) {
+            return;
+        }
+
+        this._logger.info('[%s] stop [live] media stream with reason [%s]', this._streamId, reason);
+
+        this._namedEvents.fire(streamEnums.streamEvents.stopped.name, [reason]);
+
+        this._isStopped = true;
+    };
+
+    PhenixLiveStream.prototype.monitor = function monitor(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+    };
+
+    PhenixLiveStream.prototype.getMonitor = function getMonitor() {
+        return null;
+    };
+
+    PhenixLiveStream.prototype.getStream = function getStream() {
+        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
+
+        return null;
+    };
+
+    PhenixLiveStream.prototype.isActive = function isActive() {
+        return !this._isStopped;
+    };
+
+    PhenixLiveStream.prototype.getStreamId = function getStreamId() {
+        return this._streamId;
+    };
+
+    PhenixLiveStream.prototype.getStats = function getStats() {
+        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
+
+        return null;
+    };
+
+    PhenixLiveStream.prototype.getRenderer = function getRenderer() {
+        return _.get(this._renderers, [0], null);
+    };
+
+    PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
+        switch (type) {
+        case streamEnums.types.dash.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+        case streamEnums.types.hls.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
+        case streamEnums.types.rtmp.name:
+            return FlashRenderer.isSupported();
+        default:
+            return false;
+        }
+    };
+
+    return PhenixLiveStream;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
     'use strict';
 
@@ -6207,7 +6619,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6226,7 +6638,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(66)
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
     'use strict';
 
@@ -6235,7 +6647,618 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 34 */
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC) {
+    'use strict';
+
+    var defaultMonitoringInterval = 4000;
+    var defaultConditionMonitoringInterval = 1500;
+    var defaultFrameRateThreshold = 2;
+    var defaultAudioBitRateThreshold = 5000;
+    var defaultVideoBitRateThreshold = 6000;
+    var defaultConditionCountForNotificationThreshold = 3;
+    var defaultTimeoutForNoData = 5000;
+    var minEdgeMonitoringInterval = 6000;
+    var minEdgeConditionCountForNotification = 2;
+
+    function PeerConnectionMonitor(name, peerConnection, logger) {
+        assert.isString(name, 'name');
+        assert.isObject(peerConnection, 'peerConnection');
+        assert.isObject(logger, 'logger');
+
+        this._name = name;
+        this._peerConnection = peerConnection;
+        this._logger = logger;
+    }
+
+    PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(activeCallback, 'activeCallback');
+        assert.isFunction(monitorCallback, 'monitorCallback');
+
+        if (options.direction !== 'inbound' && options.direction !== 'outbound') {
+            throw new Error('Invalid monitoring direction');
+        }
+
+        this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
+        this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
+        this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
+        this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
+        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
+        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
+        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
+        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
+        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        this._pausedTracks = [];
+
+        if (phenixRTC.browser === 'Edge') {
+            var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
+
+            this._monitoringInterval = Math.max(this._monitoringInterval, minEdgeMonitoringInterval);
+            this._conditionMonitoringInterval = Math.max(this._conditionMonitoringInterval, minEdgeMonitoringInterval);
+            this._conditionCountForNotificationThreshold = Math.max(Math.ceil(conditionMaxDuration / this._monitoringInterval), minEdgeConditionCountForNotification);
+
+            this._logger.info('Using modified options for optimal monitoring of PeerConnection on [Edge]. Monitor Interval [%s], Condition Monitor Interval [%s], Condition Count For Notification [%s]',
+                this._monitoringInterval, this._conditionMonitoringInterval, this._conditionCountForNotificationThreshold);
+        }
+
+        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
+    };
+
+    PeerConnectionMonitor.prototype.setMonitorTrackState = function(track, state) {
+        assert.isObject(track, 'track');
+        assert.isBoolean(state, 'state');
+
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
+            return pcTrack.id === track.id;
+        });
+
+        if (!foundTrack) {
+            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+        }
+
+        if (!state) {
+            this._logger.info('[%s] Pausing monitoring of track [%s] [%s]', this._name, track.kind, track.id);
+
+            return this._pausedTracks.push(track);
+        }
+
+        var pausedTrackLength = this._pausedTracks.length;
+
+        this._pausedTracks = _.filter(this._pausedTracks, function(pausedTrack) {
+            return pausedTrack.id !== track.id;
+        });
+
+        if (pausedTrackLength !== this._pausedTracks.length) {
+            this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
+        }
+    };
+
+    PeerConnectionMonitor.prototype.toString = function() {
+        return 'PeerConnectionMonitor[' + this._name + ']';
+    };
+
+    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
+        var that = this;
+        var conditionCount = 0;
+        var frameRate = undefined;
+        var videoBitRate = undefined;
+        var audioBitRate = undefined;
+        var lastAudioBytes = {};
+        var lastVideoBytes = {};
+        var lastFramesEncoded = {};
+        var checkForNoDataTimeout = null;
+
+        function nextCheck(checkForNoData) {
+            var selector = null;
+
+            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
+                var hasFrameRate = false;
+                var hasVideoBitRate = false;
+                var hasAudioBitRate = false;
+                var readable = false;
+                var writable = false;
+
+                if (!activeCallback()) {
+                    return that._logger.info('[%s] Finished monitoring of peer connection', name);
+                }
+
+                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
+                    var trackId = stats.id || stats.ssrc;
+                    var currentBytes = null;
+
+                    if (stats.framesEncoded) {
+                        var framesEncoded = new Stats(stats.framesEncoded);
+
+                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
+                        lastFramesEncoded[trackId] = framesEncoded;
+                    }
+
+                    switch (phenixRTC.browser) {
+                    case 'Safari':
+                    case 'Firefox':
+                    case 'Edge':
+                    case 'IE':
+                        writable = readable |= stats.selected &&
+                            stats.state === 'succeeded' ||
+                            phenixRTC.browser === 'IE' ||
+                            phenixRTC.browser === 'Edge' ||
+                            phenixRTC.browser === 'Safari';
+
+                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
+                            currentBytes = new Stats(stats.bytesSent);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+                                hasFrameRate = true;
+                                frameRate = stats.framerateMean || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                if (phenixRTC.browser === 'Edge') {
+                                    hasFrameRate = false;
+                                }
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Outbound [%s] [%s]',
+                                    name, stats.mediaType, stats.ssrc);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
+                            currentBytes = new Stats(stats.bytesReceived);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+
+                                // Inbound frame rate is not calculated correctly
+                                // hasFrameRate = true;
+                                // frameRate = stats.framerateMean || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.jitter);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        break;
+                    case 'Chrome':
+                    default:
+                        if (stats.googWritable === 'true') {
+                            writable = true;
+                        }
+
+                        if (stats.googReadable === 'true') {
+                            readable = true;
+                        }
+
+                        if (stats.type !== 'ssrc') {
+                            return;
+                        }
+
+                        if (options.direction === 'outbound') {
+                            currentBytes = new Stats(stats.bytesSent);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateSent || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        } else if (options.direction === 'inbound') {
+                            currentBytes = new Stats(stats.bytesReceived);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateReceived || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!report) {
+                    throw new Error('Report must be a valid PeerConnection.getStats Report');
+                }
+
+                if (report.forEach) {
+                    report.forEach(eachStats);
+                } else {
+                    _.forOwn(report, function(stats, reportId) {
+                        eachStats(stats, reportId);
+                    });
+                }
+
+                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
+                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
+
+                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
+                    hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
+                    hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
+                    hasFrameRate = hasFrameRate && hasActiveVideo;
+
+                    readable = readable || !(hasActiveVideo || hasActiveAudio);
+                    writable = writable || !(hasActiveVideo || hasActiveAudio);
+                }
+
+                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
+                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
+                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
+                }
+
+                if (that._monitorState
+                    && (peerConnection.connectionState === 'closed'
+                    || peerConnection.connectionState === 'failed'
+                    || peerConnection.iceConnectionState === 'failed')) {
+                    var active = hasActiveAudio && hasActiveVideo;
+                    var tracks = getAllTracks.call(that, peerConnection);
+
+                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
+                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
+
+                        return;
+                    }
+
+                    conditionCount++;
+                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                    conditionCount++;
+                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
+                    conditionCount++;
+                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                    conditionCount++;
+                } else if (!readable || !writable) {
+                    conditionCount++;
+                } else {
+                    conditionCount = 0;
+                }
+
+                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
+
+                if (isNoData && !checkForNoDataTimeout) {
+                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
+                } else if (!isNoData) {
+                    clearTimeout(checkForNoDataTimeout);
+
+                    checkForNoDataTimeout = null;
+                }
+
+                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+                var acknowledgeFailure = function acknowledgeFailure() {
+                    that._logger.info('[%s] Failure has been acknowledged', name);
+
+                    conditionCount = Number.MIN_VALUE;
+
+                    setTimeout(nextCheck, that._monitoringInterval);
+                };
+
+                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
+                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
+                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
+                    var monitorEvent = {
+                        type: 'condition',
+                        message: failureMessage,
+                        report: report,
+                        frameRate: frameRate,
+                        videoBitRate: videoBitRate,
+                        audioBitRate: audioBitRate,
+                        acknowledgeFailure: acknowledgeFailure
+                    };
+
+                    if (!monitorCallback(null, monitorEvent)) {
+                        that._logger.error(failureMessage + ': [%s]', report);
+                    } else {
+                        acknowledgeFailure();
+                    }
+                } else {
+                    setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
+                }
+            }, function errorCallback(error) {
+                monitorCallback(error, {
+                    type: 'error',
+                    message: 'Unable to get Connection statistics. Connection may have failed.'
+                });
+            });
+        }
+
+        setTimeout(nextCheck, that._monitoringInterval);
+    }
+
+    function Stats(value) {
+        this.time = _.now();
+        this.value = value || 0;
+    }
+
+    function normalizeStatsReport(response) {
+        var normalizedReport = {};
+
+        switch (phenixRTC.browser) {
+        case 'Firefox':
+            return response;
+        case 'IE':
+            _.forOwn(response, function(value, key) {
+                if (!_.startsWith(key, 'ssrc')) {
+                    return;
+                }
+
+                normalizedReport[value.id] = value;
+            });
+
+            return normalizedReport;
+        case 'Safari':
+        case 'Edge':
+            response.forEach(function(report) {
+                normalizedReport[report.id] = report;
+            });
+
+            return normalizedReport;
+        case 'ReactNative':
+            var stats = _.isString(response) ? JSON.parse(response) : response;
+
+            stats.forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.values.forEach(function(value) {
+                    _.keys(value).forEach(function(key) {
+                        normalizedStatistics[key] = value[key];
+                    });
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        case 'Chrome':
+        default:
+            response.result().forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.names().forEach(function(name) {
+                    normalizedStatistics[name] = report.stat(name);
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        }
+    }
+
+    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
+        if (!activeCallback()) {
+            return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
+        }
+
+        phenixRTC.getStats(peerConnection, null, function(response) {
+            var report = normalizeStatsReport(response);
+
+            successCallback(report);
+        }, function(error) {
+            errorCallback(error);
+        });
+    }
+
+    function getAllTracks(peerConnection) {
+        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
+        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
+        var localTracks = [];
+        var remoteTracks = [];
+
+        _.forEach(localStreams, function(stream) {
+            localTracks = localTracks.concat(stream.getTracks());
+        });
+
+        _.forEach(remoteStreams, function(stream) {
+            remoteTracks = remoteTracks.concat(stream.getTracks());
+        });
+
+        if (localTracks.length !== 0 && remoteTracks.length !== 0) {
+            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
+
+            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+        } else if (localTracks.length !== 0) {
+            return localTracks;
+        } else if (remoteTracks.length !== 0) {
+            return remoteTracks;
+        }
+
+        return [];
+    }
+
+    function hasMediaSectionsInSdp(peerConnection) {
+        var indexOfSection = findInSdpSections(peerConnection, function(section) {
+            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
+        });
+
+        return _.isNumber(indexOfSection);
+    }
+
+    function hasActiveAudioInSdp(peerConnection) {
+        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'audio')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    }
+
+    function hasActiveVideoInSdp(peerConnection) {
+        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'video')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    }
+
+    function findInSdpSections(peerConnection, callback) {
+        var localSections = peerConnection.localDescription.sdp.split('m=');
+        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
+
+        if (localSections.length !== remoteSections.length) {
+            return false;
+        }
+
+        return _.findIndex(localSections, function(section, index) {
+            return callback(section, index, remoteSections);
+        });
+    }
+
+    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
+        if (!lastFramesEncoded) {
+            return defaultFrameRate;
+        }
+
+        return (currentFramesEncoded.value - lastFramesEncoded.value)
+            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
+    }
+
+    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
+        if (!lastBytes) {
+            return defaultBitRate;
+        }
+
+        return (8 * (currentBytes.value - lastBytes.value))
+            / ((currentBytes.time - lastBytes.time) / 1000.0);
+    }
+
+    function areAllTracksPaused() {
+        var that = this;
+
+        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
+    }
+
+    function areAllTracksOfTypePaused(kind) {
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
+            return track.kind === kind;
+        });
+        var pausedTracksOfType = _.filter(this._pausedTracks, function(track) {
+            return track.kind === kind;
+        });
+
+        return _.reduce(pcTracksOfType, function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(pausedTracksOfType, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
+    }
+
+    return PeerConnectionMonitor;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6283,7 +7306,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6741,7 +7764,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6761,9 +7784,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(89),
-    __webpack_require__(87),
-    __webpack_require__(86)
+    __webpack_require__(90),
+    __webpack_require__(88),
+    __webpack_require__(87)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, Pbf, Schema, mqProto) {
     'use strict';
 
@@ -6825,7 +7848,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6848,8 +7871,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(2),
-    __webpack_require__(36),
-    __webpack_require__(85)
+    __webpack_require__(39),
+    __webpack_require__(86)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, disposable, MQProtocol, Base64) {
     'use strict';
 
@@ -7224,7 +8247,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7243,7 +8266,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(90)
+    __webpack_require__(91)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(networkConnectionMonitor) {
     'use strict';
 
@@ -7252,7 +8275,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7271,81 +8294,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable) {
-    'use strict';
-
-    function Event() {
-        this._listeners = [];
-    }
-
-    Event.prototype.fire = function(args, context) {
-        fireEvent.call(this, args, context);
-    };
-
-    Event.prototype.fireAsync = function(args, context, callback) {
-        fireEvent.call(this, args, context, callback || function() {});
-    };
-
-    Event.prototype.listen = function(listener) {
-        var that = this;
-
-        assert.isFunction(listener, 'listener');
-
-        that._listeners.push(listener);
-
-        return new disposable.Disposable(function() {
-            that._listeners = _.remove(that._listeners, function(item) {
-                return item === listener;
-            });
-        });
-    };
-
-    Event.prototype.size = function() {
-        return this._listeners.length;
-    };
-
-    Event.prototype.dispose = function() {
-        this._listeners = [];
-    };
-
-    Event.prototype.toString = function() {
-        return 'Event|' + this.size();
-    };
-
-    function fireEvent(args, context, asyncCallback) {
-        var that = this;
-
-        if (_.isNullOrUndefined(args)) {
-            args = [];
-        }
-
-        assert.isArray(args, 'args');
-
-        var notifyListeners = function notifyListeners() {
-            _.forEach(that._listeners, function(listener) {
-                listener.apply(context, args);
-            });
-        };
-
-        if (asyncCallback) {
-            setTimeout(function() {
-                notifyListeners();
-                asyncCallback();
-            }, 0);
-        } else {
-            notifyListeners();
-        }
-    }
-
-    return Event;
+    __webpack_require__(95)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
+    return detectBrowser;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7535,7 +8491,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7554,625 +8510,81 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(101)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
-    return detectBrowser;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 42 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(3)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC) {
+    __webpack_require__(2)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable) {
     'use strict';
 
-    var defaultMonitoringInterval = 4000;
-    var defaultConditionMonitoringInterval = 1500;
-    var defaultFrameRateThreshold = 2;
-    var defaultAudioBitRateThreshold = 5000;
-    var defaultVideoBitRateThreshold = 6000;
-    var defaultConditionCountForNotificationThreshold = 3;
-    var defaultTimeoutForNoData = 5000;
-    var minEdgeMonitoringInterval = 6000;
-    var minEdgeConditionCountForNotification = 2;
-
-    function PeerConnectionMonitor(name, peerConnection, logger) {
-        assert.isString(name, 'name');
-        assert.isObject(peerConnection, 'peerConnection');
-        assert.isObject(logger, 'logger');
-
-        this._name = name;
-        this._peerConnection = peerConnection;
-        this._logger = logger;
+    function Event() {
+        this._listeners = [];
     }
 
-    PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(activeCallback, 'activeCallback');
-        assert.isFunction(monitorCallback, 'monitorCallback');
-
-        if (options.direction !== 'inbound' && options.direction !== 'outbound') {
-            throw new Error('Invalid monitoring direction');
-        }
-
-        this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
-        this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
-        this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
-        this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
-        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
-        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
-        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
-        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
-        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
-        this._pausedTracks = [];
-
-        if (phenixRTC.browser === 'Edge') {
-            var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
-
-            this._monitoringInterval = Math.max(this._monitoringInterval, minEdgeMonitoringInterval);
-            this._conditionMonitoringInterval = Math.max(this._conditionMonitoringInterval, minEdgeMonitoringInterval);
-            this._conditionCountForNotificationThreshold = Math.max(Math.ceil(conditionMaxDuration / this._monitoringInterval), minEdgeConditionCountForNotification);
-
-            this._logger.info('Using modified options for optimal monitoring of PeerConnection on [Edge]. Monitor Interval [%s], Condition Monitor Interval [%s], Condition Count For Notification [%s]',
-                this._monitoringInterval, this._conditionMonitoringInterval, this._conditionCountForNotificationThreshold);
-        }
-
-        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
+    Event.prototype.fire = function(args, context) {
+        fireEvent.call(this, args, context);
     };
 
-    PeerConnectionMonitor.prototype.setMonitorTrackState = function(track, state) {
-        assert.isObject(track, 'track');
-        assert.isBoolean(state, 'state');
-
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
-        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
-            return pcTrack.id === track.id;
-        });
-
-        if (!foundTrack) {
-            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
-        }
-
-        if (!state) {
-            this._logger.info('[%s] Pausing monitoring of track [%s] [%s]', this._name, track.kind, track.id);
-
-            return this._pausedTracks.push(track);
-        }
-
-        var pausedTrackLength = this._pausedTracks.length;
-
-        this._pausedTracks = _.filter(this._pausedTracks, function(pausedTrack) {
-            return pausedTrack.id !== track.id;
-        });
-
-        if (pausedTrackLength !== this._pausedTracks.length) {
-            this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
-        }
+    Event.prototype.fireAsync = function(args, context, callback) {
+        fireEvent.call(this, args, context, callback || function() {});
     };
 
-    PeerConnectionMonitor.prototype.toString = function() {
-        return 'PeerConnectionMonitor[' + this._name + ']';
-    };
-
-    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
-        var that = this;
-        var conditionCount = 0;
-        var frameRate = undefined;
-        var videoBitRate = undefined;
-        var audioBitRate = undefined;
-        var lastAudioBytes = {};
-        var lastVideoBytes = {};
-        var lastFramesEncoded = {};
-        var checkForNoDataTimeout = null;
-
-        function nextCheck(checkForNoData) {
-            var selector = null;
-
-            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
-                var hasFrameRate = false;
-                var hasVideoBitRate = false;
-                var hasAudioBitRate = false;
-                var readable = false;
-                var writable = false;
-
-                if (!activeCallback()) {
-                    return that._logger.info('[%s] Finished monitoring of peer connection', name);
-                }
-
-                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
-                    var trackId = stats.id || stats.ssrc;
-                    var currentBytes = null;
-
-                    if (stats.framesEncoded) {
-                        var framesEncoded = new Stats(stats.framesEncoded);
-
-                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
-                        lastFramesEncoded[trackId] = framesEncoded;
-                    }
-
-                    switch (phenixRTC.browser) {
-                    case 'Safari':
-                    case 'Firefox':
-                    case 'Edge':
-                    case 'IE':
-                        writable = readable |= stats.selected &&
-                            stats.state === 'succeeded' ||
-                            phenixRTC.browser === 'IE' ||
-                            phenixRTC.browser === 'Edge' ||
-                            phenixRTC.browser === 'Safari';
-
-                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
-                                hasFrameRate = true;
-                                frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                if (phenixRTC.browser === 'Edge') {
-                                    hasFrameRate = false;
-                                }
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s]',
-                                    name, stats.mediaType, stats.ssrc);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
-
-                                // Inbound frame rate is not calculated correctly
-                                // hasFrameRate = true;
-                                // frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.jitter);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        break;
-                    case 'Chrome':
-                    default:
-                        if (stats.googWritable === 'true') {
-                            writable = true;
-                        }
-
-                        if (stats.googReadable === 'true') {
-                            readable = true;
-                        }
-
-                        if (stats.type !== 'ssrc') {
-                            return;
-                        }
-
-                        if (options.direction === 'outbound') {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        } else if (options.direction === 'inbound') {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-
-                if (!report) {
-                    throw new Error('Report must be a valid PeerConnection.getStats Report');
-                }
-
-                if (report.forEach) {
-                    report.forEach(eachStats);
-                } else {
-                    _.forOwn(report, function(stats, reportId) {
-                        eachStats(stats, reportId);
-                    });
-                }
-
-                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
-                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
-
-                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
-                    hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
-                    hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
-                    hasFrameRate = hasFrameRate && hasActiveVideo;
-
-                    readable = readable || !(hasActiveVideo || hasActiveAudio);
-                    writable = writable || !(hasActiveVideo || hasActiveAudio);
-                }
-
-                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
-                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
-                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
-                }
-
-                if (that._monitorState
-                    && (peerConnection.connectionState === 'closed'
-                    || peerConnection.connectionState === 'failed'
-                    || peerConnection.iceConnectionState === 'failed')) {
-                    var active = hasActiveAudio && hasActiveVideo;
-                    var tracks = getAllTracks.call(that, peerConnection);
-
-                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
-                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
-
-                        return;
-                    }
-
-                    conditionCount++;
-                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
-                    conditionCount++;
-                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (!readable || !writable) {
-                    conditionCount++;
-                } else {
-                    conditionCount = 0;
-                }
-
-                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
-
-                if (isNoData && !checkForNoDataTimeout) {
-                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
-                } else if (!isNoData) {
-                    clearTimeout(checkForNoDataTimeout);
-
-                    checkForNoDataTimeout = null;
-                }
-
-                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
-                var acknowledgeFailure = function acknowledgeFailure() {
-                    that._logger.info('[%s] Failure has been acknowledged', name);
-
-                    conditionCount = Number.MIN_VALUE;
-
-                    setTimeout(nextCheck, that._monitoringInterval);
-                };
-
-                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, and video bit rate [' + videoBitRate + '] bps';
-                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
-                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
-                    var monitorEvent = {
-                        type: 'condition',
-                        message: failureMessage,
-                        report: report,
-                        frameRate: frameRate,
-                        videoBitRate: videoBitRate,
-                        audioBitRate: audioBitRate,
-                        acknowledgeFailure: acknowledgeFailure
-                    };
-
-                    if (!monitorCallback(null, monitorEvent)) {
-                        that._logger.error(failureMessage + ': [%s]', report);
-                    } else {
-                        acknowledgeFailure();
-                    }
-                } else {
-                    setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
-                }
-            }, function errorCallback(error) {
-                monitorCallback(error, {
-                    type: 'error',
-                    message: 'Unable to get Connection statistics. Connection may have failed.'
-                });
-            });
-        }
-
-        setTimeout(nextCheck, that._monitoringInterval);
-    }
-
-    function Stats(value) {
-        this.time = _.now();
-        this.value = value || 0;
-    }
-
-    function normalizeStatsReport(response) {
-        var normalizedReport = {};
-
-        switch (phenixRTC.browser) {
-        case 'Firefox':
-            return response;
-        case 'IE':
-            _.forOwn(response, function(value, key) {
-                if (!_.startsWith(key, 'ssrc')) {
-                    return;
-                }
-
-                normalizedReport[value.id] = value;
-            });
-
-            return normalizedReport;
-        case 'Safari':
-        case 'Edge':
-            response.forEach(function(report) {
-                normalizedReport[report.id] = report;
-            });
-
-            return normalizedReport;
-        case 'ReactNative':
-            var stats = _.isString(response) ? JSON.parse(response) : response;
-
-            stats.forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.values.forEach(function(value) {
-                    _.keys(value).forEach(function(key) {
-                        normalizedStatistics[key] = value[key];
-                    });
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        case 'Chrome':
-        default:
-            response.result().forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.names().forEach(function(name) {
-                    normalizedStatistics[name] = report.stat(name);
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        }
-    }
-
-    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
-        if (!activeCallback()) {
-            return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
-        }
-
-        phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response);
-
-            successCallback(report);
-        }, function(error) {
-            errorCallback(error);
-        });
-    }
-
-    function getAllTracks(peerConnection) {
-        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
-        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
-        var localTracks = [];
-        var remoteTracks = [];
-
-        _.forEach(localStreams, function(stream) {
-            localTracks = localTracks.concat(stream.getTracks());
-        });
-
-        _.forEach(remoteStreams, function(stream) {
-            remoteTracks = remoteTracks.concat(stream.getTracks());
-        });
-
-        if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
-
-            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
-        } else if (localTracks.length !== 0) {
-            return localTracks;
-        } else if (remoteTracks.length !== 0) {
-            return remoteTracks;
-        }
-
-        return [];
-    }
-
-    function hasMediaSectionsInSdp(peerConnection) {
-        var indexOfSection = findInSdpSections(peerConnection, function(section) {
-            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
-        });
-
-        return _.isNumber(indexOfSection);
-    }
-
-    function hasActiveAudioInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'audio')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function hasActiveVideoInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'video')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function findInSdpSections(peerConnection, callback) {
-        var localSections = peerConnection.localDescription.sdp.split('m=');
-        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
-
-        if (localSections.length !== remoteSections.length) {
-            return false;
-        }
-
-        return _.findIndex(localSections, function(section, index) {
-            return callback(section, index, remoteSections);
-        });
-    }
-
-    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
-        if (!lastFramesEncoded) {
-            return defaultFrameRate;
-        }
-
-        return (currentFramesEncoded.value - lastFramesEncoded.value)
-            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
-    }
-
-    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
-        if (!lastBytes) {
-            return defaultBitRate;
-        }
-
-        return (8 * (currentBytes.value - lastBytes.value))
-            / ((currentBytes.time - lastBytes.time) / 1000.0);
-    }
-
-    function areAllTracksPaused() {
+    Event.prototype.listen = function(listener) {
         var that = this;
 
-        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
-            if (!areAllPaused) {
-                return areAllPaused;
-            }
+        assert.isFunction(listener, 'listener');
 
-            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
-                return pcTrack.id === track.id;
+        that._listeners.push(listener);
+
+        return new disposable.Disposable(function() {
+            that._listeners = _.remove(that._listeners, function(item) {
+                return item === listener;
             });
+        });
+    };
 
-            return !track.enabled || isTrackPaused;
-        }, true);
+    Event.prototype.size = function() {
+        return this._listeners.length;
+    };
+
+    Event.prototype.dispose = function() {
+        this._listeners = [];
+    };
+
+    Event.prototype.toString = function() {
+        return 'Event|' + this.size();
+    };
+
+    function fireEvent(args, context, asyncCallback) {
+        var that = this;
+
+        if (_.isNullOrUndefined(args)) {
+            args = [];
+        }
+
+        assert.isArray(args, 'args');
+
+        var notifyListeners = function notifyListeners() {
+            _.forEach(that._listeners, function(listener) {
+                listener.apply(context, args);
+            });
+        };
+
+        if (asyncCallback) {
+            setTimeout(function() {
+                notifyListeners();
+                asyncCallback();
+            }, 0);
+        } else {
+            notifyListeners();
+        }
     }
 
-    function areAllTracksOfTypePaused(kind) {
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
-        var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
-            return track.kind === kind;
-        });
-        var pausedTracksOfType = _.filter(this._pausedTracks, function(track) {
-            return track.kind === kind;
-        });
-
-        return _.reduce(pcTracksOfType, function(areAllPaused, track) {
-            if (!areAllPaused) {
-                return areAllPaused;
-            }
-
-            var isTrackPaused = !!_.find(pausedTracksOfType, function(pcTrack) {
-                return pcTrack.id === track.id;
-            });
-
-            return !track.enabled || isTrackPaused;
-        }, true);
-    }
-
-    return PeerConnectionMonitor;
+    return Event;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8198,27 +8610,28 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(19),
     __webpack_require__(6),
     __webpack_require__(18),
-    __webpack_require__(34),
-    __webpack_require__(77),
+    __webpack_require__(37),
+    __webpack_require__(78),
     __webpack_require__(16),
+    __webpack_require__(73),
     __webpack_require__(72),
-    __webpack_require__(71),
-    __webpack_require__(42),
+    __webpack_require__(36),
     __webpack_require__(9),
-    __webpack_require__(70),
+    __webpack_require__(71),
+    __webpack_require__(69),
     __webpack_require__(68),
-    __webpack_require__(67),
+    __webpack_require__(34),
+    __webpack_require__(65),
+    __webpack_require__(33),
+    __webpack_require__(61),
     __webpack_require__(32),
-    __webpack_require__(64),
-    __webpack_require__(63),
-    __webpack_require__(59),
     __webpack_require__(7),
     __webpack_require__(3),
-    __webpack_require__(57)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+    __webpack_require__(59)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-20T21:53:51Z';
+    var sdkVersion = '2018-07-26T20:35:00Z';
 
     function PCast(options) {
         options = options || {};
@@ -8265,6 +8678,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
+        this._featureDetector = new FeatureDetector(options.features);
 
         var that = this;
         var logGlobalError = function logGlobalError(event) {
@@ -8657,10 +9071,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                     var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-                    var isLive = offerSdp.match(/a=x-playlist:/);
+                    var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
 
-                    if (isLive) {
-                        create = createLiveViewer;
+                    if (isNotRealTime) {
+                        create = createChunkedOrRtmpViewer;
                     }
 
                     streamTelemetry.setStreamId(streamId);
@@ -8673,7 +9087,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (!isLive && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -9679,7 +10093,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
+    function createChunkedOrRtmpViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
         var rtmpQuery = /a=x-rtmp:(rtmp:\/\/[^\n]*)/m;
@@ -9690,16 +10104,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var playlistUrl = _.get(hlsMatch, [1], '');
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
-        var preferHls = isIOS() || phenixRTC.browser === 'Safari';
-        var canPlaybackDash = PhenixLiveStream.canPlaybackType(streamEnums.types.dash.name);
-        var canPlaybackHls = PhenixLiveStream.canPlaybackType(streamEnums.types.hls.name);
+        var rtmpOffered = !!rtmpMatch;
+        var publisherCapabilities = [];
+
+        if (dashManifestOffered || hlsPlaylistOffered) {
+            publisherCapabilities.push('streaming');
+        }
+
+        if (rtmpOffered) {
+            publisherCapabilities.push('rtmp');
+        }
+
+        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities, true);
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
+        switch (preferredFeature) {
+        case streamEnums.types.rtmp.name:
             var rtmpUris = [];
             var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
@@ -9725,7 +10149,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: env}, this._rtmpOptions, options));
-        } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
+        case streamEnums.types.dash.name:
             this._logger.info('Selecting dash playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
@@ -9742,7 +10166,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsPlaylistOffered && canPlaybackHls) {
+        case streamEnums.types.hls.name:
             this._logger.info('Selecting hls playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
@@ -9753,18 +10177,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: preferHls}, options));
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: FeatureDetector.shouldUseNativeHls}, options));
+        default:
+            break;
         }
 
-        if (!dashManifestOffered && !hlsPlaylistOffered) {
-            that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
-        } else if (!canPlaybackDash && !canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackDash) {
-            that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
-        }
+        that._logger.warn('[%s] Device does not support [%s] playback. Creating live viewer stream failed.', streamId, FeatureDetector.mapPCastCapabilitiesToFeatures(publisherCapabilities));
 
         return callback.call(that, undefined, 'failed');
     }
@@ -9949,7 +10367,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10047,7 +10465,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10070,7 +10488,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(19),
     __webpack_require__(16),
-    __webpack_require__(44)
+    __webpack_require__(46)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
@@ -10116,7 +10534,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10248,7 +10666,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10272,7 +10690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(2),
     __webpack_require__(23),
-    __webpack_require__(46),
+    __webpack_require__(48),
     __webpack_require__(21),
     __webpack_require__(22),
     __webpack_require__(15),
@@ -10419,12 +10837,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
-            if (!checkifStreamingIsAvailable(presenterStream.getUri()) && _.includes(options.capabilities, 'streaming')) {
-                that._logger.warn('Streaming is not available for stream [%].', streamId);
-
-                return subscriberCallback(null, {status: 'streaming-not-available'});
-            }
-
             if (!streamId) {
                 that._logger.info('Channel [%s] presenter has no stream', channelId);
 
@@ -10556,18 +10968,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._roomExpress.publishScreenToRoom(channelOptions, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
     };
 
-    function checkifStreamingIsAvailable(uri) {
-        var deferToCreateToken = true;
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-
-        if (_.values(streamInfo).length === 0) {
-            return deferToCreateToken;
-        }
-
-        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        return !!streamInfo.streamTokenForLiveStream || !!streamInfo.streamTokenStreaming;
-    }
-
     function wrapResponseWithChannelPrefixesAndContinue(callback, error, response) {
         if (response && response.roomService) {
             response.channelService = new ChannelService(response.roomService);
@@ -10589,7 +10989,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10629,7 +11029,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10971,7 +11371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 50 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11091,7 +11491,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11233,7 +11633,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11254,7 +11654,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(51)
+    __webpack_require__(53)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -11295,7 +11695,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11318,9 +11718,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(19),
     __webpack_require__(16),
-    __webpack_require__(34),
-    __webpack_require__(52),
-    __webpack_require__(50)
+    __webpack_require__(37),
+    __webpack_require__(54),
+    __webpack_require__(52)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
@@ -11413,7 +11813,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11747,7 +12147,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11770,7 +12170,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(54)
+    __webpack_require__(56)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, ChatService) {
     'use strict';
 
@@ -11908,7 +12308,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12033,7 +12433,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12149,7 +12549,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12316,7 +12716,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12339,9 +12739,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(3),
-    __webpack_require__(32),
-    __webpack_require__(42),
-    __webpack_require__(58),
+    __webpack_require__(34),
+    __webpack_require__(36),
+    __webpack_require__(60),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, PhenixRealTimeRenderer, streamEnums) {
     'use strict';
@@ -12589,7 +12989,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12623,7 +13023,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var hasFlashPlugin = detectFlashPlugin();
     var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -12663,7 +13062,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     FlashRenderer.isSupported = function() {
-        return hasFlashPlugin;
+        return detectFlashPlugin();
     };
 
     FlashRenderer.prototype.on = function(name, callback) {
@@ -12830,12 +13229,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('[%s] Flash player ended.', this._streamId);
     }
 
+    var hasFlashPlugin = null;
+
     function detectFlashPlugin() {
         var defaultVersion = [10, 0, 0];
         var pluginName = 'Shockwave Flash';
         var mimeType = 'application/x-shockwave-flash';
         var activeX = 'ShockwaveFlash.ShockwaveFlash';
         var version = [0, 0, 0];
+
+        if (_.isBoolean(hasFlashPlugin)) {
+            return hasFlashPlugin;
+        }
 
         // Firefox, Webkit, Opera
         if (_.get(rtc.global.navigator, ['plugins', pluginName])) {
@@ -12864,7 +13269,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
         }
 
-        return (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+        hasFlashPlugin = (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+
+        return hasFlashPlugin;
     }
 
     return FlashRenderer;
@@ -12872,7 +13279,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13248,7 +13655,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13656,181 +14063,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(5),
-    __webpack_require__(3),
-    __webpack_require__(13),
-    __webpack_require__(62),
-    __webpack_require__(61),
-    __webpack_require__(60),
-    __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
-    'use strict';
-
-    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
-        this._type = type;
-        this._streamId = streamId;
-        this._uri = uri;
-        this._streamTelemetry = streamTelemetry;
-        this._options = options;
-        this._shaka = shaka;
-        this._logger = logger;
-        this._renderers = [];
-        this._dimensionsChangedMonitor = null;
-        this._namedEvents = new event.NamedEvents();
-    }
-
-    PhenixLiveStream.prototype.on = function(name, callback) {
-        this._namedEvents.listen(name, callback);
-    };
-
-    PhenixLiveStream.prototype.createRenderer = function() {
-        var renderer = null;
-
-        switch (this._type) {
-        case streamEnums.types.dash.name:
-            if (this._shaka) {
-                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
-            } else {
-                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            }
-
-            break;
-        case streamEnums.types.hls.name:
-            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-
-            break;
-        case streamEnums.types.rtmp.name:
-            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-
-            break;
-        default:
-            throw new Error('Unsupported Live stream Type ' + this._type);
-        }
-
-        var that = this;
-
-        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
-        });
-        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._renderers = _.filter(that._renderers, function(storedRenderer) {
-                return storedRenderer !== renderer;
-            });
-
-            if (that._renderers.length === 0) {
-                that._streamTelemetry.stop();
-                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
-            }
-        });
-
-        this._renderers.push(renderer);
-
-        return renderer;
-    };
-
-    PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
-        this._logger.warn('[%s] selection of tracks not supported for [%s] live streams', this._streamId, this._type);
-
-        return this;
-    };
-
-    PhenixLiveStream.prototype.setStreamEndedCallback = function setStreamEndedCallback(callback) {
-        assert.isFunction(callback, 'callback');
-
-        this.streamEndedCallback = callback;
-    };
-
-    PhenixLiveStream.prototype.setStreamErrorCallback = function setStreamErrorCallback(callback) {
-        assert.isFunction(callback, 'callback');
-
-        this.streamErrorCallback = callback;
-    };
-
-    PhenixLiveStream.prototype.stop = function stop(reason) {
-        if (!this.isActive()) {
-            return;
-        }
-
-        this._logger.info('[%s] stop [live] media stream with reason [%s]', this._streamId, reason);
-
-        this._namedEvents.fire(streamEnums.streamEvents.stopped.name, [reason]);
-
-        this._isStopped = true;
-    };
-
-    PhenixLiveStream.prototype.monitor = function monitor(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-    };
-
-    PhenixLiveStream.prototype.getMonitor = function getMonitor() {
-        return null;
-    };
-
-    PhenixLiveStream.prototype.getStream = function getStream() {
-        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
-
-        return null;
-    };
-
-    PhenixLiveStream.prototype.isActive = function isActive() {
-        return !this._isStopped;
-    };
-
-    PhenixLiveStream.prototype.getStreamId = function getStreamId() {
-        return this._streamId;
-    };
-
-    PhenixLiveStream.prototype.getStats = function getStats() {
-        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
-
-        return null;
-    };
-
-    PhenixLiveStream.prototype.getRenderer = function getRenderer() {
-        return _.get(this._renderers, [0], null);
-    };
-
-    PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
-        switch (type) {
-        case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
-        case streamEnums.types.hls.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
-        case streamEnums.types.rtmp.name:
-            return FlashRenderer.isSupported();
-        default:
-            return false;
-        }
-    };
-
-    return PhenixLiveStream;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13972,7 +14205,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14080,7 +14313,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14261,7 +14494,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14283,15 +14516,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(33),
-    __webpack_require__(65),
+    __webpack_require__(35),
+    __webpack_require__(66),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14518,7 +14751,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14546,7 +14779,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -14843,7 +15076,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14866,7 +15099,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(17),
     __webpack_require__(3),
-    __webpack_require__(35)
+    __webpack_require__(38)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, proto, rtc, telemetryProto) {
     function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
@@ -14947,7 +15180,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14969,7 +15202,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(18),
-    __webpack_require__(69)
+    __webpack_require__(70)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -15010,7 +15243,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15277,7 +15510,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15719,7 +15952,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15875,7 +16108,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15894,14 +16127,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(73)
+    __webpack_require__(74)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ClosestEndPointResolver) {
     return ClosestEndPointResolver;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16815,7 +17048,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18871,7 +19104,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18895,8 +19128,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(4),
     __webpack_require__(17),
     __webpack_require__(3),
-    __webpack_require__(76),
-    __webpack_require__(75)
+    __webpack_require__(77),
+    __webpack_require__(76)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -19266,7 +19499,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19337,7 +19570,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19706,7 +19939,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19729,7 +19962,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(10),
-    __webpack_require__(38),
+    __webpack_require__(41),
     __webpack_require__(6),
     __webpack_require__(4),
     __webpack_require__(2)
@@ -19980,7 +20213,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -19999,7 +20232,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(80)
+    __webpack_require__(81)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(BatchHttp) {
     'use strict';
 
@@ -20008,7 +20241,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20029,9 +20262,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(81),
-    __webpack_require__(36),
-    __webpack_require__(78)
+    __webpack_require__(82),
+    __webpack_require__(39),
+    __webpack_require__(79)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, BatchHttp, MQProtocol, Binary) {
     'use strict';
 
@@ -20060,7 +20293,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -20202,7 +20435,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -20221,11 +20454,11 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
  limitations under the License.
  */
 
-module.exports = __webpack_require__(83);
+module.exports = __webpack_require__(84);
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20247,7 +20480,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(10),
-    __webpack_require__(84)
+    __webpack_require__(85)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, lxiv) {
     'use strict';
 
@@ -20306,7 +20539,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20434,7 +20667,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20754,7 +20987,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -20844,7 +21077,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20852,7 +21085,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 module.exports = Pbf;
 
-var ieee754 = __webpack_require__(88);
+var ieee754 = __webpack_require__(89);
 
 function Pbf(buf) {
     this.buf = ArrayBuffer.isView && ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf || 0);
@@ -21469,7 +21702,7 @@ function writeUtf8(buf, str, pos) {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21557,7 +21790,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21578,7 +21811,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(38)
+    __webpack_require__(41)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, networkConnectionMonitor) {
     'use strict';
 
@@ -21938,7 +22171,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21957,7 +22190,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(91)
+    __webpack_require__(92)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ReconnectingWebSocket) {
     'use strict';
 
@@ -21966,7 +22199,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -21988,8 +22221,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(5),
-    __webpack_require__(92),
-    __webpack_require__(37)
+    __webpack_require__(93),
+    __webpack_require__(40)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
 
@@ -22098,540 +22331,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 94 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(3),
-    __webpack_require__(8),
-    __webpack_require__(17),
-    __webpack_require__(35)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
-    function TelemetryAppender(uri) {
-        assert.isString(uri, 'uri');
-
-        this._loggingUrl = '/telemetry/logs';
-        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
-        this._minLevel = logging.level.TRACE;
-        this._isEnabled = true;
-        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._mostRecentRuntime = 0;
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
-            maxAttempts: 3,
-            maxBufferedRecords: 1000,
-            maxBatchSize: 512
-        });
-
-        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
-    }
-
-    TelemetryAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level, 'level');
-
-        this._minLevel = level;
-    };
-
-    TelemetryAppender.prototype.getThreshold = function getThreshold() {
-        return this._minLevel;
-    };
-
-    TelemetryAppender.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
-
-    TelemetryAppender.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled, 'enabled');
-
-        this._isEnabled = enabled;
-    };
-
-    TelemetryAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel || !this._isEnabled) {
-            return;
-        }
-
-        assert.isArray(messages, 'messages');
-
-        this._mostRecentRuntime = since;
-        this._mostRecentSessionId = sessionId;
-        this._mostRecentUserId = userId;
-        this._mostRecentEnvironment = environment;
-        this._mostRecentVersion = version;
-
-        addMessagesToRecords.call(this, level, category, messages);
-    };
-
-    function addMessagesToRecords(level, category, messages) {
-        this._batchHttpProtocol.addRecord({
-            level: level,
-            timestamp: _.isoString(),
-            category: category,
-            message: messages.join(' '),
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    function onCapacity(deleteRecords) {
-        this._batchHttpProtocol.addRecordToBeginning({
-            level: 'Warn',
-            timestamp: _.isoString(),
-            category: 'websdk/telemetryLogger',
-            message: 'Deleted ' + deleteRecords + ' records',
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    return TelemetryAppender;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
 /* 95 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(18),
-    __webpack_require__(94)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
-    var config = {
-        urls: {
-            local: '',
-            staging: 'https://telemetry-stg.phenixrts.com',
-            production: 'https://telemetry.phenixrts.com'
-        }
-    };
-
-    function TelemetryAppenderFactory() {
-        this._telemetryAppenders = {};
-    }
-
-    TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
-        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
-
-        var telemetryServerUrl = config.urls[env];
-
-        if (!this._telemetryAppenders[env]) {
-            this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);
-        }
-
-        return this._telemetryAppenders[env];
-    };
-
-    function createNewAppender(uri) {
-        var appender = new TelemetryAppender(uri);
-
-        if (!uri) {
-            appender.setEnabled(false);
-        }
-
-        return appender;
-    }
-
-    return new TelemetryAppenderFactory();
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(39)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
-    'use strict';
-
-    function NamedEvents() {
-        this._events = {};
-    }
-
-    NamedEvents.prototype.fire = function(name, args, context) {
-        assert.isStringNotEmpty(name, 'name');
-
-        if (_.includes(_.keys(this._events), name)) {
-            this._events[name].fire(args, context);
-        }
-    };
-
-    NamedEvents.prototype.fireAsync = function(name, args, context) {
-        assert.isStringNotEmpty(name, 'name');
-
-        if (_.includes(_.keys(this._events), name)) {
-            this._events[name].fireAsync(args, context);
-        }
-    };
-
-    NamedEvents.prototype.listen = function listen(name, listener) {
-        assert.isStringNotEmpty(name, 'name');
-
-        var event = _.includes(_.keys(this._events), name) ? this._events[name] : (this._events[name] = new Event());
-
-        return event.listen(listener);
-    };
-
-    NamedEvents.prototype.size = function size(name) {
-        if (_.includes(_.keys(this._events), name)) {
-            return this._events[name].size();
-        }
-
-        return 0;
-    };
-
-    NamedEvents.prototype.dispose = function dispose() {
-        _.forOwn(this._events, function(event) {
-            event.dispose();
-        });
-
-        this._events = {};
-    };
-
-    NamedEvents.prototype.toString = function toString() {
-        return 'NamedEvents|' + _.keys(this._events).length;
-    };
-
-    return NamedEvents;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 97 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert) {
-    'use strict';
-
-    function ObservableMonitor(observable) {
-        assert.isObject(observable, 'observable');
-
-        this._observable = observable;
-        this._listenerSubscription = null;
-        this._isEnabled = false;
-    }
-
-    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
-        this._isEnabled = true;
-
-        this._listenerSubscription = this._observable.subscribe(_.noop, {
-            listenForChanges: {
-                callback: checkForChanges,
-                timeout: timeout || 500
-            }
-        });
-    };
-
-    ObservableMonitor.prototype.stop = function stop() {
-        this._isEnabled = false;
-
-        if (this._listenerSubscription) {
-            this._listenerSubscription.dispose();
-        }
-
-        this._listenerSubscription = null;
-    };
-
-    ObservableMonitor.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
-
-    return ObservableMonitor;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 98 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(40)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Observable) {
-    'use strict';
-
-    function ObservableArray(initialValues, beforeChange) {
-        var valuesToSet = initialValues;
-
-        if (valuesToSet === undefined || valuesToSet === null) {
-            valuesToSet = [];
-        }
-
-        assert.isArray(valuesToSet, 'valuesToSet');
-
-        this.observableArray = new Observable(valuesToSet, beforeChange);
-    }
-
-    ObservableArray.prototype.getValue = function getValue() {
-        return this.observableArray.getValue();
-    };
-
-    ObservableArray.prototype.setValue = function setValue(values) {
-        if (values === undefined || values === null) {
-            values = [];
-        }
-
-        if (values !== undefined) {
-            assert.isArray(values, 'values');
-        }
-
-        return this.observableArray.setValue(values);
-    };
-
-    ObservableArray.prototype.subscribe = function subscribe(callback, options) {
-        return this.observableArray.subscribe(callback, options);
-    };
-
-    ObservableArray.prototype.push = function push(value) {
-        var array = this.observableArray.getValue();
-        array.push(value);
-
-        this.observableArray.setValue(array);
-    };
-
-    ObservableArray.prototype.pop = function pop() {
-        var array = this.observableArray.getValue();
-        var value = array.pop();
-
-        this.observableArray.setValue(array);
-
-        return value;
-    };
-
-    ObservableArray.prototype.remove = function remove(valueOrFunction) {
-        var array = this.observableArray.getValue();
-
-        var filterFunction = function(value) {
-            return _.isFunction(valueOrFunction) ? valueOrFunction(value) : value === valueOrFunction;
-        };
-
-        var valuesToRemove = _.filter(array, filterFunction);
-
-        if (valuesToRemove.length > 0) {
-            this.observableArray.setValue(_.remove(array, filterFunction));
-        }
-
-        return valuesToRemove;
-    };
-
-    ObservableArray.prototype.removeAll = function removeAll() {
-        var array = this.observableArray.getValue();
-
-        this.observableArray.setValue([]);
-
-        return array;
-    };
-
-    ObservableArray.prototype.extend = function extend(options) {
-        this.observableArray.extend(options);
-
-        return this;
-    };
-
-    return ObservableArray;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 99 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
-    'use strict';
-
-    function DisposableList() {
-        this._list = [];
-    }
-
-    DisposableList.prototype.add = function(disposable) {
-        if (!disposable || !_.isFunction(disposable.dispose)) {
-            throw new Error('"disposable" must be a disposable or implement dispose');
-        }
-
-        this._list.push(disposable);
-    };
-
-    DisposableList.prototype.dispose = function() {
-        var results = [];
-
-        _.forEach(this._list, function(disposable) {
-            results.push(disposable.dispose());
-        });
-
-        this._list = [];
-
-        return results;
-    };
-
-    DisposableList.prototype.toString = function() {
-        return _.toString(this);
-    };
-
-    return DisposableList;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 100 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert) {
-    'use strict';
-
-    /**
-     * Create a new disposable object.
-     *
-     * @param cleanup The callback to perform whatever cleanup is required when this object is disposed.
-     * @constructor
-     */
-    function Disposable(cleanup) {
-        assert.isFunction(cleanup, 'cleanup');
-
-        this._cleanup = cleanup;
-    }
-
-    Disposable.prototype.dispose = function() {
-        return this._cleanup.call();
-    };
-
-    Disposable.prototype.toString = function() {
-        return _.toString(this);
-    };
-
-    return Disposable;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22729,7 +22429,540 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(3),
+    __webpack_require__(8),
+    __webpack_require__(17),
+    __webpack_require__(38)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
+    function TelemetryAppender(uri) {
+        assert.isString(uri, 'uri');
+
+        this._loggingUrl = '/telemetry/logs';
+        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
+        this._minLevel = logging.level.TRACE;
+        this._isEnabled = true;
+        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+        this._mostRecentRuntime = 0;
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
+            maxAttempts: 3,
+            maxBufferedRecords: 1000,
+            maxBatchSize: 512
+        });
+
+        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+    }
+
+    TelemetryAppender.prototype.setThreshold = function setThreshold(level) {
+        assert.isNumber(level, 'level');
+
+        this._minLevel = level;
+    };
+
+    TelemetryAppender.prototype.getThreshold = function getThreshold() {
+        return this._minLevel;
+    };
+
+    TelemetryAppender.prototype.isEnabled = function isEnabled() {
+        return this._isEnabled;
+    };
+
+    TelemetryAppender.prototype.setEnabled = function setEnabled(enabled) {
+        assert.isBoolean(enabled, 'enabled');
+
+        this._isEnabled = enabled;
+    };
+
+    TelemetryAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
+        if (context.level < this._minLevel || !this._isEnabled) {
+            return;
+        }
+
+        assert.isArray(messages, 'messages');
+
+        this._mostRecentRuntime = since;
+        this._mostRecentSessionId = sessionId;
+        this._mostRecentUserId = userId;
+        this._mostRecentEnvironment = environment;
+        this._mostRecentVersion = version;
+
+        addMessagesToRecords.call(this, level, category, messages);
+    };
+
+    function addMessagesToRecords(level, category, messages) {
+        this._batchHttpProtocol.addRecord({
+            level: level,
+            timestamp: _.isoString(),
+            category: category,
+            message: messages.join(' '),
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+    }
+
+    function onCapacity(deleteRecords) {
+        this._batchHttpProtocol.addRecordToBeginning({
+            level: 'Warn',
+            timestamp: _.isoString(),
+            category: 'websdk/telemetryLogger',
+            message: 'Deleted ' + deleteRecords + ' records',
+            source: this._browser,
+            fullQualifiedName: this._domain,
+            sessionId: this._mostRecentSessionId,
+            userId: this._mostRecentUserId,
+            environment: this._mostRecentEnvironment,
+            version: this._mostRecentVersion,
+            runtime: this._mostRecentRuntime
+        });
+    }
+
+    return TelemetryAppender;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(18),
+    __webpack_require__(96)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
+    var config = {
+        urls: {
+            local: '',
+            staging: 'https://telemetry-stg.phenixrts.com',
+            production: 'https://telemetry.phenixrts.com'
+        }
+    };
+
+    function TelemetryAppenderFactory() {
+        this._telemetryAppenders = {};
+    }
+
+    TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
+        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
+
+        var telemetryServerUrl = config.urls[env];
+
+        if (!this._telemetryAppenders[env]) {
+            this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);
+        }
+
+        return this._telemetryAppenders[env];
+    };
+
+    function createNewAppender(uri) {
+        var appender = new TelemetryAppender(uri);
+
+        if (!uri) {
+            appender.setEnabled(false);
+        }
+
+        return appender;
+    }
+
+    return new TelemetryAppenderFactory();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert) {
+    'use strict';
+
+    function ObservableMonitor(observable) {
+        assert.isObject(observable, 'observable');
+
+        this._observable = observable;
+        this._listenerSubscription = null;
+        this._isEnabled = false;
+    }
+
+    ObservableMonitor.prototype.start = function start(checkForChanges, timeout) {
+        this._isEnabled = true;
+
+        this._listenerSubscription = this._observable.subscribe(_.noop, {
+            listenForChanges: {
+                callback: checkForChanges,
+                timeout: timeout || 500
+            }
+        });
+    };
+
+    ObservableMonitor.prototype.stop = function stop() {
+        this._isEnabled = false;
+
+        if (this._listenerSubscription) {
+            this._listenerSubscription.dispose();
+        }
+
+        this._listenerSubscription = null;
+    };
+
+    ObservableMonitor.prototype.isEnabled = function isEnabled() {
+        return this._isEnabled;
+    };
+
+    return ObservableMonitor;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(43)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Observable) {
+    'use strict';
+
+    function ObservableArray(initialValues, beforeChange) {
+        var valuesToSet = initialValues;
+
+        if (valuesToSet === undefined || valuesToSet === null) {
+            valuesToSet = [];
+        }
+
+        assert.isArray(valuesToSet, 'valuesToSet');
+
+        this.observableArray = new Observable(valuesToSet, beforeChange);
+    }
+
+    ObservableArray.prototype.getValue = function getValue() {
+        return this.observableArray.getValue();
+    };
+
+    ObservableArray.prototype.setValue = function setValue(values) {
+        if (values === undefined || values === null) {
+            values = [];
+        }
+
+        if (values !== undefined) {
+            assert.isArray(values, 'values');
+        }
+
+        return this.observableArray.setValue(values);
+    };
+
+    ObservableArray.prototype.subscribe = function subscribe(callback, options) {
+        return this.observableArray.subscribe(callback, options);
+    };
+
+    ObservableArray.prototype.push = function push(value) {
+        var array = this.observableArray.getValue();
+        array.push(value);
+
+        this.observableArray.setValue(array);
+    };
+
+    ObservableArray.prototype.pop = function pop() {
+        var array = this.observableArray.getValue();
+        var value = array.pop();
+
+        this.observableArray.setValue(array);
+
+        return value;
+    };
+
+    ObservableArray.prototype.remove = function remove(valueOrFunction) {
+        var array = this.observableArray.getValue();
+
+        var filterFunction = function(value) {
+            return _.isFunction(valueOrFunction) ? valueOrFunction(value) : value === valueOrFunction;
+        };
+
+        var valuesToRemove = _.filter(array, filterFunction);
+
+        if (valuesToRemove.length > 0) {
+            this.observableArray.setValue(_.remove(array, filterFunction));
+        }
+
+        return valuesToRemove;
+    };
+
+    ObservableArray.prototype.removeAll = function removeAll() {
+        var array = this.observableArray.getValue();
+
+        this.observableArray.setValue([]);
+
+        return array;
+    };
+
+    ObservableArray.prototype.extend = function extend(options) {
+        this.observableArray.extend(options);
+
+        return this;
+    };
+
+    return ObservableArray;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(44)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
+    'use strict';
+
+    function NamedEvents() {
+        this._events = {};
+    }
+
+    NamedEvents.prototype.fire = function(name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fire(args, context);
+        }
+    };
+
+    NamedEvents.prototype.fireAsync = function(name, args, context) {
+        assert.isStringNotEmpty(name, 'name');
+
+        if (_.includes(_.keys(this._events), name)) {
+            this._events[name].fireAsync(args, context);
+        }
+    };
+
+    NamedEvents.prototype.listen = function listen(name, listener) {
+        assert.isStringNotEmpty(name, 'name');
+
+        var event = _.includes(_.keys(this._events), name) ? this._events[name] : (this._events[name] = new Event());
+
+        return event.listen(listener);
+    };
+
+    NamedEvents.prototype.size = function size(name) {
+        if (_.includes(_.keys(this._events), name)) {
+            return this._events[name].size();
+        }
+
+        return 0;
+    };
+
+    NamedEvents.prototype.dispose = function dispose() {
+        _.forOwn(this._events, function(event) {
+            event.dispose();
+        });
+
+        this._events = {};
+    };
+
+    NamedEvents.prototype.toString = function toString() {
+        return 'NamedEvents|' + _.keys(this._events).length;
+    };
+
+    return NamedEvents;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
+    'use strict';
+
+    function DisposableList() {
+        this._list = [];
+    }
+
+    DisposableList.prototype.add = function(disposable) {
+        if (!disposable || !_.isFunction(disposable.dispose)) {
+            throw new Error('"disposable" must be a disposable or implement dispose');
+        }
+
+        this._list.push(disposable);
+    };
+
+    DisposableList.prototype.dispose = function() {
+        var results = [];
+
+        _.forEach(this._list, function(disposable) {
+            results.push(disposable.dispose());
+        });
+
+        this._list = [];
+
+        return results;
+    };
+
+    DisposableList.prototype.toString = function() {
+        return _.toString(this);
+    };
+
+    return DisposableList;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
 /* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert) {
+    'use strict';
+
+    /**
+     * Create a new disposable object.
+     *
+     * @param cleanup The callback to perform whatever cleanup is required when this object is disposed.
+     * @constructor
+     */
+    function Disposable(cleanup) {
+        assert.isFunction(cleanup, 'cleanup');
+
+        this._cleanup = cleanup;
+    }
+
+    Disposable.prototype.dispose = function() {
+        return this._cleanup.call();
+    };
+
+    Disposable.prototype.toString = function() {
+        return _.toString(this);
+    };
+
+    return Disposable;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22795,7 +23028,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports) {
 
 var g;
@@ -22821,7 +23054,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -22861,10 +23094,10 @@ module.exports = g;
     return getGlobal;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(103)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(104)))
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23014,7 +23247,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23742,7 +23975,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23771,8 +24004,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
-    var releaseVersion = '2018.3.5';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
+    var releaseVersion = '2018.3.6';
 
     function Logger() {
         this._appenders = [];
@@ -23959,7 +24192,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23983,14 +24216,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(3),
     __webpack_require__(8),
-    __webpack_require__(43),
-    __webpack_require__(31),
-    __webpack_require__(53),
     __webpack_require__(45),
+    __webpack_require__(31),
+    __webpack_require__(55),
+    __webpack_require__(47),
     __webpack_require__(26),
     __webpack_require__(25),
     __webpack_require__(23),
-    __webpack_require__(47)
+    __webpack_require__(49)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
     rtc.global.PhenixPCast = PCast;
 

@@ -26,12 +26,14 @@ define([
     '../room/room.json',
     '../room/member.json',
     '../room/stream.json',
-    '../room/track.json'
-], function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, streamEnums, trackEnums) {
+    '../room/track.json',
+    '../streaming/FeatureDetector'
+], function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
     var defaultWildcardEnabled = true;
+    var streamingTypeCapabilities = ['streaming', 'rtmp'];
 
     function RoomExpress(options) {
         assert.isObject(options, 'options');
@@ -54,6 +56,7 @@ define([
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
         this._disposed = false;
+        this._featureDetector = new FeatureDetector(options.features);
 
         var that = this;
 
@@ -238,7 +241,7 @@ define([
             options.enableWildcardCapability = defaultWildcardEnabled;
         }
 
-        assert.isValidType(options.streamType, streamEnums.types, 'options.streamType');
+        assert.isValidType(options.streamType, memberStreamEnums.types, 'options.streamType');
         assert.isValidType(options.memberRole, memberEnums.roles, 'options.memberRole');
         assert.isBoolean(options.enableWildcardCapability, 'options.enableWildcardCapability');
 
@@ -326,10 +329,18 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
+        if (options.capabilities) {
+            throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
+        }
+
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
-        var streamToken = parseStreamTokenFromStreamUri(streamUri, options.capabilities);
-        var isScreen = _.get(memberStream.getInfo(), ['isScreen'], false);
+        var streamInfo = memberStream.getInfo();
+        var isScreen = _.get(streamInfo, ['isScreen'], false);
+        var streamToken = null;
+        var publisherCapabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
+        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
+        var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -337,9 +348,33 @@ define([
             throw new Error('Invalid Member Stream. Unable to parse streamId from uri');
         }
 
+        // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+        if (!_.hasIndexOrKey(streamInfo, 'capabilities')) {
+            var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+
+            if (!streamInfo.streamTokenForLiveStream && preferredFeatureCapability === 'streaming') {
+                this._logger.warn('Streaming is not available for stream [%].', streamId);
+
+                return callback(null, {status: 'streaming-not-available'});
+            }
+
+            streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+        } else {
+            if (!preferredFeature) {
+                this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, this._featureDetector.getFeaturePCastCapabilities());
+
+                return callback(null, {status: 'unsupported-features'});
+            }
+
+            streamToken = getStreamTokenForFeature(streamUri, preferredFeature);
+        }
+
+        this._logger.info('Subscribing to member stream with feature [%s] and pre-generated token [%s]', preferredFeature, !!streamToken);
+
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
-            streamToken: streamToken
+            streamToken: streamToken,
+            capabilities: [preferredFeatureCapability]
         }, options);
         var disposables = new disposable.DisposableList();
 
@@ -769,6 +804,8 @@ define([
         var streamInfo = options.streamInfo;
         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
 
+        publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+
         if (!options.enableWildcardCapability) {
             var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
             var updateSelfOptions = _.assign({}, options, {streams: mapNewPublisherStreamToMemberStreams.call(this, publisherStream, room)});
@@ -789,6 +826,10 @@ define([
         var sessionId = protocol ? protocol.getSessionId() : '';
         var disposables = that._publisherDisposables[publisherStreamId];
         var disposable;
+
+        if (!_.includes(publisherStream, 'capabilities')) {
+            publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+        }
 
         if (composeWithAdditionalStreams) {
             var membersWithSameContent = MemberSelector.getSimilarMembers(options.screenName, sessionId, room.getObservableMembers().getValue());
@@ -899,10 +940,12 @@ define([
         generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, [], streamId, additionalStreamIds, stream, 'streamToken', completedRequestsCallback));
         generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['broadcast'], streamId, additionalStreamIds, stream, 'streamTokenForBroadcastStream', completedRequestsCallback));
 
-        if (_.includes(publisherCapabilities, 'streaming')) {
-            this._logger.debug('Creating [streaming] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamId, additionalStreamIds.length);
+        var streamingTypePublisherCapabilities = _.filter(publisherCapabilities, _.bind(_.includes, null, streamingTypeCapabilities));
 
-            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, ['streaming'], streamId, additionalStreamIds, stream, 'streamTokenForLiveStream', completedRequestsCallback));
+        if (streamingTypePublisherCapabilities.length > 0) {
+            this._logger.debug('Creating [%s] viewer wildcard stream token for published stream [%s] with [%s] additional streams', streamingTypePublisherCapabilities, streamId, additionalStreamIds.length);
+
+            generateStreamTokenRequests.push(generateWildcardStreamTokenAndAppendToStream.call(this, streamingTypePublisherCapabilities, streamId, additionalStreamIds, stream, 'streamTokenForLiveStream', completedRequestsCallback));
         }
 
         if (_.includes(publisherCapabilities, 'drm')) {
@@ -927,12 +970,22 @@ define([
                 return callback(null, response);
             }
 
-            var prefix = _.includes(stream.uri, '?') ? '&' : '?';
-
-            stream.uri = stream.uri + prefix + tokenName + '=' + response.streamToken;
+            stream = addStreamInfo(stream, tokenName, response.streamToken);
 
             callback(null, response);
         });
+    }
+
+    function addStreamInfo(stream, name, value) {
+        var indexOfQueryParam = stream.uri.indexOf('?');
+        var prefix = indexOfQueryParam > -1 ? '&' : '?';
+        var indexOfHashAfterQueryParam = stream.uri.indexOf('#', indexOfQueryParam === -1 ? stream.uri.length : indexOfQueryParam);
+        var uriBeforeHashIfQueryParamPresent = indexOfHashAfterQueryParam === -1 ? stream.uri : stream.uri.substring(0, indexOfHashAfterQueryParam);
+        var uriHash = indexOfHashAfterQueryParam === -1 ? '' : stream.uri.substring(indexOfHashAfterQueryParam);
+
+        stream.uri = uriBeforeHashIfQueryParamPresent + prefix + name + '=' + value + uriHash;
+
+        return stream;
     }
 
     function getValidStreamIds(members) {
@@ -1129,10 +1182,38 @@ define([
         }
     }
 
+    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+    function buildCapabilitiesFromPublisherWildcardTokens(uri) {
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
+        var capabilities = [];
+
+        if (streamInfo.streamTokenForLiveStream) {
+            capabilities.push('streaming');
+        }
+
+        return capabilities;
+    }
+
+    function getStreamTokenForFeature(uri, feature) {
+        var streamInfo = Stream.getInfoFromStreamUri(uri);
+
+        switch(feature) {
+        case 'rtmp':
+        case 'hls':
+        case 'dash':
+            return streamInfo.streamTokenForLiveStream;
+        case 'real-time':
+            return streamInfo.streamToken;
+        default:
+            return;
+        }
+    }
+
+    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
     function parseStreamTokenFromStreamUri(uri, capabilities) {
         var streamInfo = Stream.getInfoFromStreamUri(uri);
-        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        var isStreaming = (streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming) && _.includes(capabilities, 'streaming');
+        var isStreaming = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'streaming');
+        var isRtmp = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'rtmp');
 
         // Token for both not generated.
         if (_.includes(capabilities, 'drm-open-access') && _.includes(capabilities, 'drm-hollywood')) {
@@ -1147,15 +1228,15 @@ define([
             return streamInfo.streamTokenForLiveStreamWithDrmHollywood;
         }
 
-        if (isStreaming && !_.includes(capabilities, 'drm-open-access') && !_.includes(capabilities, 'drm-hollywood')) {
-            return streamInfo.streamTokenForLiveStream || streamInfo.streamTokenStreaming;
+        if (isStreaming || isRtmp) {
+            return streamInfo.streamTokenForLiveStream;
         }
 
         if (streamInfo.streamTokenForBroadcastStream && _.includes(capabilities, 'broadcast')) {
             return streamInfo.streamTokenForBroadcastStream;
         }
 
-        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast')) {
+        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast') && !_.includes(capabilities, 'rtmp')) {
             return streamInfo.streamToken;
         }
     }

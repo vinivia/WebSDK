@@ -29,7 +29,6 @@ define([
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var hasFlashPlugin = detectFlashPlugin();
     var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -69,7 +68,7 @@ define([
     }
 
     FlashRenderer.isSupported = function() {
-        return hasFlashPlugin;
+        return detectFlashPlugin();
     };
 
     FlashRenderer.prototype.on = function(name, callback) {
@@ -236,12 +235,18 @@ define([
         this._logger.info('[%s] Flash player ended.', this._streamId);
     }
 
+    var hasFlashPlugin = null;
+
     function detectFlashPlugin() {
         var defaultVersion = [10, 0, 0];
         var pluginName = 'Shockwave Flash';
         var mimeType = 'application/x-shockwave-flash';
         var activeX = 'ShockwaveFlash.ShockwaveFlash';
         var version = [0, 0, 0];
+
+        if (_.isBoolean(hasFlashPlugin)) {
+            return hasFlashPlugin;
+        }
 
         // Firefox, Webkit, Opera
         if (_.get(rtc.global.navigator, ['plugins', pluginName])) {
@@ -270,7 +275,9 @@ define([
             }
         }
 
-        return (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+        hasFlashPlugin = (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+
+        return hasFlashPlugin;
     }
 
     return FlashRenderer;

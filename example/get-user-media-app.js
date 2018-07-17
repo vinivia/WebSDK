@@ -530,7 +530,9 @@ requirejs([
             var originStreamId = $('#originStreamId').val();
             var capabilities = [];
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             $('#subscriber-drm-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());

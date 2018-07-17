@@ -146,6 +146,10 @@ define([
             var key = parsedParams[0];
 
             parsedUriInfo[key] = parsedParams[1];
+
+            if (key === 'capabilities') {
+                parsedUriInfo[key] = parsedParams[1] ? (parsedParams[1].split(',') || []) : [];
+            }
         });
 
         return parsedUriInfo;

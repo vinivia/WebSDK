@@ -39,7 +39,7 @@ define([
         types: {
             realTime: {
                 id: 0,
-                name: 'RealTime'
+                name: 'real-time'
             },
             dash: {
                 id: 1,

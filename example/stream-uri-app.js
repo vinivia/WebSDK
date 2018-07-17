@@ -352,7 +352,9 @@ requirejs([
             var originStreamId = $('#originStreamId').val();
             var capabilities = [];
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
                 app.activateStep('step-10');

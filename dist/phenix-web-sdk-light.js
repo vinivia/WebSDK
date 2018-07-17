@@ -91,7 +91,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 85);
+/******/ 	return __webpack_require__(__webpack_require__.s = 86);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -114,7 +114,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(84)
+    __webpack_require__(85)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(LodashLight) {
     'use strict';
 
@@ -142,7 +142,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(81)
+    __webpack_require__(82)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert) {
     return assert;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -167,7 +167,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(83),__webpack_require__(1),__webpack_require__(3),__webpack_require__(7),__webpack_require__(4));else { var d, c; }}(this,function(a,b,c,d,e,f){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=12)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(5))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b,c){var d,e;d=[c(1),c(7),c(4),c(0),c(13)],e=function(a,b,c,d,e){"use strict";function f(a,d,e,f){var h=this;this._ghost=a,this._stream=d,this._isPhenixPlugin="phenix"===e,this._isFlash="flash"===e,this._options=f||{},this._events={},this._disposables=new b.DisposableList,this._flashPlayer=null;var i=function(a){h._loaded=!0,h._enabled=a===!0,a?l.call(h):q("Failed to create Phenix video element"),h._onReady&&h._onReady(h._enabled)};try{if(this._video=g.call(this),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghostInitStyleCssText=this._ghost.style.cssText,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._disposables.add(new b.Disposable(function(){h._ghost.style.cssText=h._ghostInitStyleCssText})),this._video.onunload=function(){h._loaded=!1},n.call(this),document.body&&document.body.contains||p("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&(this._ghost.parentNode.replaceChild(this._video,this._ghost),this._isFlash&&this._flashPlayer&&(this._video=this._flashPlayer.finishInitializationInDom()),this._disposables.add(new b.Disposable(function(){h._video.parentNode&&h._video.parentNode.replaceChild(h._ghost,h._video)}))),!this._isPhenixPlugin)return i(!0);var j=new c;j.waitForReady(this._video,i)}catch(k){q("Error while loading Phenix RTC"+k),i(!1)}}function g(){var a=document.createElement("video");if(this._isPhenixPlugin&&(a=document.createElement("object"),a.type="application/x-phenix-video"),this._isFlash){this._flashPlayer=new e(this._ghost,this._stream,this._options);var c=this;this._disposables.add(new b.Disposable(function(){c._flashPlayer.destroy()})),a=this._flashPlayer.getElement()}return a}function h(a,b,c){if(this._isFlash)return this._flashPlayer.addEventListener(a,b);if(this._isPhenixPlugin){var d=this._events[a];return d||(d=this._events[a]=[],this._loaded&&j.call(this,a)),d.push(b)}return this._video.addEventListener(a,b,c)}function i(a,b,c){if(this._isFlash)return this._flashPlayer.removeEventListener(a,b);{if(!this._isPhenixPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}}function j(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function k(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function l(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)j.call(this,a[b]);this.hookUpEvents(),m.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghostInitStyleCssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&!this._isFlash&&(this._video.src=this._stream)}function m(){var c=this,e=["style"];if(a.get(d,["MutationObserver"])){var f=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===c._ghost&&e.indexOf(a.attributeName)===-1&&(c._video[a.attributeName]=c._ghost[a.attributeName])})}),g={attributes:!0};f.observe(c._ghost,g),c._disposables.add(new b.Disposable(function(){f.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(a){c._video[a.target.tagName]=c._ghost[a.target.tagName]};c._ghost.addEventListener?(c._ghost.addEventListener("DOMAttrModified",h,!1),c._disposables.add(new b.Disposable(function(){c._ghost.removeEventListener("DOMAttrModified",h,!1)}))):(c._ghost.attachEvent("onpropertychange",h),c._disposables.add(new b.Disposable(function(){c._ghost.detachEvent("DOMAttrModified",h)})))}}function n(){var c=this;if(a.get(d,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var b=0;b<a.addedNodes.length;b++){var d=a.addedNodes[b];a.target!==c._video&&(d===c._ghost?(a.target.replaceChild(c._video,c._ghost),l.call(c)):o(a.target,c._ghost)&&(c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost),l.call(c)))}})}),f={childList:!0,attributes:!1,characterData:!1,subtree:!0};e.observe(document.body,f),c._disposables.add(new b.Disposable(function(){e.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var g=function(){c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost)};c.addEventListener("DOMNodeInserted",g,!1),c._disposables.add(new b.Disposable(function(){c.removeEventListener("DOMNodeInserted",g,!1)}))}}function o(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var p=function(){console.log.apply(console,arguments)}||function(){},q=function(){console.error.apply(console,arguments)}||p;return f.prototype.hookUpEvents=function(){var a=this,c=this._ghost,d=function(){k(c,"error")},e=function(){c.muted=a._video.muted,k(c,"mute")},f=function(){c.muted=a._video.muted,k(c,"unmute")},g=function(){c.ended=a._video.ended,k(c,"ended")},h=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadedmetadata")},i=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadeddata")},j=function(){c.width=a._video.width,c.height=a._video.height,k(c,"resize")};this.addEventListener("error",d),this.addEventListener("mute",e),this.addEventListener("unmute",f),this.addEventListener("ended",g),this.addEventListener("loadedmetadata",h),this.addEventListener("loadeddata",i),this.addEventListener("resize",j);var l=new b.Disposable(function(){a.removeEventListener("error",d),a.removeEventListener("mute",e),a.removeEventListener("unmute",f),a.removeEventListener("ended",g),a.removeEventListener("loadedmetadata",h),a.removeEventListener("loadeddata",i),a.removeEventListener("resize",j)});return this._disposables.add(l),l},f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.getElement=function(){return this._video},f.prototype.addEventListener=function(a,b,c){h.call(this,a,b,c)},f.prototype.removeEventListener=function(a,b,c){i.call(this,a,b,c)},f.prototype.destroy=function(){this._disposables.dispose()},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b){a.exports=e},function(a,b,c){var d,e;d=[c(1),c(6),c(8),c(2),c(0),c(15),c(14)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){(function(b){var c,c;!function(b){a.exports=b()}(function(){return function a(b,d,e){function f(h,i){if(!d[h]){if(!b[h]){var j="function"==typeof c&&c;if(!i&&j)return c(h,!0);if(g)return c(h,!0);var k=new Error("Cannot find module '"+h+"'");throw k.code="MODULE_NOT_FOUND",k}var l=d[h]={exports:{}};b[h][0].call(l.exports,function(a){var c=b[h][1][a];return f(c?c:a)},l,l.exports,a,b,d,e)}return d[h].exports}for(var g="function"==typeof c&&c,h=0;h<e.length;h++)f(e[h]);return f}({1:[function(a,b,c){},{}],2:[function(a,c,d){(function(b){"use strict";var d=a("./adapter_factory.js");c.exports=d({window:b.window})}).call(this,"undefined"!=typeof b?b:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./adapter_factory.js":3}],3:[function(a,b,c){"use strict";b.exports=function(b,c){var d=b&&b.window,e={shimChrome:!0,shimFirefox:!0,shimEdge:!0,shimSafari:!0};for(var f in c)hasOwnProperty.call(c,f)&&(e[f]=c[f]);var g=a("./utils"),h=g.log,i=g.detectBrowser(d),j={browserDetails:i,extractVersion:g.extractVersion,disableLog:g.disableLog,disableWarnings:g.disableWarnings},k=a("./chrome/chrome_shim")||null,l=a("./edge/edge_shim")||null,m=a("./firefox/firefox_shim")||null,n=a("./safari/safari_shim")||null;switch(i.browser){case"chrome":if(!k||!k.shimPeerConnection||!e.shimChrome)return h("Chrome shim is not included in this adapter release."),j;h("adapter.js shimming chrome."),j.browserShim=k,k.shimGetUserMedia(d),k.shimMediaStream(d),g.shimCreateObjectURL(d),k.shimSourceObject(d),k.shimPeerConnection(d),k.shimOnTrack(d),k.shimAddTrackRemoveTrack(d),k.shimGetSendersWithDtmf(d);break;case"firefox":if(!m||!m.shimPeerConnection||!e.shimFirefox)return h("Firefox shim is not included in this adapter release."),j;h("adapter.js shimming firefox."),j.browserShim=m,m.shimGetUserMedia(d),g.shimCreateObjectURL(d),m.shimSourceObject(d),m.shimPeerConnection(d),m.shimOnTrack(d);break;case"edge":if(!l||!l.shimPeerConnection||!e.shimEdge)return h("MS edge shim is not included in this adapter release."),j;h("adapter.js shimming edge."),j.browserShim=l,l.shimGetUserMedia(d),g.shimCreateObjectURL(d),l.shimPeerConnection(d),l.shimReplaceTrack(d);break;case"safari":if(!n||!e.shimSafari)return h("Safari shim is not included in this adapter release."),j;h("adapter.js shimming safari."),j.browserShim=n,g.shimCreateObjectURL(d),n.shimRTCIceServerUrls(d),n.shimCallbacksAPI(d),n.shimLocalStreamsAPI(d),n.shimRemoteStreamsAPI(d),n.shimGetUserMedia(d);break;default:h("Unsupported browser!")}return j}},{"./chrome/chrome_shim":4,"./edge/edge_shim":1,"./firefox/firefox_shim":6,"./safari/safari_shim":8,"./utils":9}],4:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log,f={shimMediaStream:function(a){a.MediaStream=a.MediaStream||a.webkitMediaStream},shimOnTrack:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("ontrack"in a.RTCPeerConnection.prototype)){Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&this.removeEventListener("track",this._ontrack),this.addEventListener("track",this._ontrack=a)}});var b=a.RTCPeerConnection.prototype.setRemoteDescription;a.RTCPeerConnection.prototype.setRemoteDescription=function(){var c=this;return c._ontrackpoly||(c._ontrackpoly=function(b){b.stream.addEventListener("addtrack",function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.track.id}):{track:d.track};var f=new Event("track");f.track=d.track,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)}),b.stream.getTracks().forEach(function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.id}):{track:d};var f=new Event("track");f.track=d,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)})},c.addEventListener("addstream",c._ontrackpoly)),b.apply(c,arguments)}}},shimGetSendersWithDtmf:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("getSenders"in a.RTCPeerConnection.prototype)&&"createDTMFSender"in a.RTCPeerConnection.prototype){var b=function(a,b){return{track:b,get dtmf(){return void 0===this._dtmf&&("audio"===b.kind?this._dtmf=a.createDTMFSender(b):this._dtmf=null),this._dtmf},_pc:a}};if(!a.RTCPeerConnection.prototype.getSenders){a.RTCPeerConnection.prototype.getSenders=function(){return this._senders=this._senders||[],this._senders.slice()};var c=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addTrack=function(a,d){var e=this,f=c.apply(e,arguments);return f||(f=b(e,a),e._senders.push(f)),f};var d=a.RTCPeerConnection.prototype.removeTrack;a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;d.apply(b,arguments);var c=b._senders.indexOf(a);c!==-1&&b._senders.splice(c,1)}}var e=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(a){var c=this;c._senders=c._senders||[],e.apply(c,[a]),a.getTracks().forEach(function(a){c._senders.push(b(c,a))})};var f=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._senders=b._senders||[],f.apply(b,[b._streams[a.id]||a]),a.getTracks().forEach(function(a){var c=b._senders.find(function(b){return b.track===a});c&&b._senders.splice(b._senders.indexOf(c),1)})}}else if("object"==typeof a&&a.RTCPeerConnection&&"getSenders"in a.RTCPeerConnection.prototype&&"createDTMFSender"in a.RTCPeerConnection.prototype&&a.RTCRtpSender&&!("dtmf"in a.RTCRtpSender.prototype)){var g=a.RTCPeerConnection.prototype.getSenders;a.RTCPeerConnection.prototype.getSenders=function(){var a=this,b=g.apply(a,[]);return b.forEach(function(b){b._pc=a}),b},Object.defineProperty(a.RTCRtpSender.prototype,"dtmf",{get:function(){return void 0===this._dtmf&&("audio"===this.track.kind?this._dtmf=this._pc.createDTMFSender(this.track):this._dtmf=null),this._dtmf}})}},shimSourceObject:function(a){var b=a&&a.URL;"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this._srcObject},set:function(a){var c=this;return this._srcObject=a,this.src&&b.revokeObjectURL(this.src),a?(this.src=b.createObjectURL(a),a.addEventListener("addtrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)}),void a.addEventListener("removetrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)})):void(this.src="")}}))},shimAddTrackRemoveTrack:function(a){if(!a.RTCPeerConnection.prototype.addTrack){var b=a.RTCPeerConnection.prototype.getLocalStreams;a.RTCPeerConnection.prototype.getLocalStreams=function(){var a=this,c=b.apply(this);return a._reverseStreams=a._reverseStreams||{},c.map(function(b){return a._reverseStreams[b.id]})};var c=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(b){var d=this;if(d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{},b.getTracks().forEach(function(a){var b=d.getSenders().find(function(b){return b.track===a});if(b)throw new DOMException("Track already exists.","InvalidAccessError")}),!d._reverseStreams[b.id]){var e=new a.MediaStream(b.getTracks());d._streams[b.id]=e,d._reverseStreams[e.id]=b,b=e}c.apply(d,[b])};var d=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._streams=b._streams||{},b._reverseStreams=b._reverseStreams||{},d.apply(b,[b._streams[a.id]||a]),delete b._reverseStreams[b._streams[a.id]?b._streams[a.id].id:a.id],delete b._streams[a.id]},a.RTCPeerConnection.prototype.addTrack=function(b,c){var d=this;if("closed"===d.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");var e=[].slice.call(arguments,1);if(1!==e.length||!e[0].getTracks().find(function(a){return a===b}))throw new DOMException("The adapter.js addTrack polyfill only supports a single  stream which is associated with the specified track.","NotSupportedError");var f=d.getSenders().find(function(a){return a.track===b});if(f)throw new DOMException("Track already exists.","InvalidAccessError");d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{};var g=d._streams[c.id];if(g)g.addTrack(b),d.dispatchEvent(new Event("negotiationneeded"));else{var h=new a.MediaStream([b]);d._streams[c.id]=h,d._reverseStreams[h.id]=c,d.addStream(h)}return d.getSenders().find(function(a){return a.track===b})},a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;if("closed"===b.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");if(!a._pc)throw new DOMException("Argument 1 of RTCPeerConnection.removeTrack does not implement interface RTCRtpSender.","TypeError");var c=a._pc===b;if(!c)throw new DOMException("Sender was not created by this connection.","InvalidAccessError");b._streams=b._streams||{};var d;Object.keys(b._streams).forEach(function(c){var e=b._streams[c].getTracks().find(function(b){return a.track===b});e&&(d=b._streams[c])}),d&&(1===d.getTracks().length?b.removeStream(d):d.removeTrack(a.track),b.dispatchEvent(new Event("negotiationneeded")))}}},shimPeerConnection:function(a){var b=d.detectBrowser(a);if(a.RTCPeerConnection){var c=a.RTCPeerConnection;a.RTCPeerConnection=function(a,b){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new c(a,b)},a.RTCPeerConnection.prototype=c.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return c.generateCertificate}})}else a.RTCPeerConnection=function(b,c){return e("PeerConnection"),b&&b.iceTransportPolicy&&(b.iceTransports=b.iceTransportPolicy),new a.webkitRTCPeerConnection(b,c)},a.RTCPeerConnection.prototype=a.webkitRTCPeerConnection.prototype,a.webkitRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.webkitRTCPeerConnection.generateCertificate}});var f=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,b,c){var d=this,e=arguments;if(arguments.length>0&&"function"==typeof a)return f.apply(this,arguments);if(0===f.length&&(0===arguments.length||"function"!=typeof arguments[0]))return f.apply(this,[]);var g=function(a){var b={},c=a.result();return c.forEach(function(a){var c={id:a.id,timestamp:a.timestamp,type:{localcandidate:"local-candidate",remotecandidate:"remote-candidate"}[a.type]||a.type};a.names().forEach(function(b){c[b]=a.stat(b)}),b[c.id]=c}),b},h=function(a){return new Map(Object.keys(a).map(function(b){return[b,a[b]]}))};if(arguments.length>=2){var i=function(a){e[1](h(g(a)))};return f.apply(this,[i,arguments[0]])}return new Promise(function(a,b){f.apply(d,[function(b){a(h(g(b)))},b])}).then(b,c)},b.version<51&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=arguments,b=this,d=new Promise(function(d,e){c.apply(b,[a[0],d,e])});return a.length<2?d:d.then(function(){a[1].apply(null,[])},function(b){a.length>=3&&a[2].apply(null,[b])})}}),b.version<52&&["createOffer","createAnswer"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=this;if(arguments.length<1||1===arguments.length&&"object"==typeof arguments[0]){var b=1===arguments.length?arguments[0]:void 0;return new Promise(function(d,e){c.apply(a,[d,e,b])})}return c.apply(this,arguments)}}),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var g=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?g.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())}}};b.exports={shimMediaStream:f.shimMediaStream,shimOnTrack:f.shimOnTrack,shimAddTrackRemoveTrack:f.shimAddTrackRemoveTrack,shimGetSendersWithDtmf:f.shimGetSendersWithDtmf,shimSourceObject:f.shimSourceObject,shimPeerConnection:f.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils.js":9,"./getusermedia":5}],5:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=function(a){if("object"!=typeof a||a.mandatory||a.optional)return a;var b={};return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d="object"==typeof a[c]?a[c]:{ideal:a[c]};void 0!==d.exact&&"number"==typeof d.exact&&(d.min=d.max=d.exact);var e=function(a,b){return a?a+b.charAt(0).toUpperCase()+b.slice(1):"deviceId"===b?"sourceId":b};if(void 0!==d.ideal){b.optional=b.optional||[];var f={};"number"==typeof d.ideal?(f[e("min",c)]=d.ideal,b.optional.push(f),f={},f[e("max",c)]=d.ideal,b.optional.push(f)):(f[e("",c)]=d.ideal,b.optional.push(f))}void 0!==d.exact&&"number"!=typeof d.exact?(b.mandatory=b.mandatory||{},b.mandatory[e("",c)]=d.exact):["min","max"].forEach(function(a){void 0!==d[a]&&(b.mandatory=b.mandatory||{},b.mandatory[e(a,c)]=d[a])})}}),a.advanced&&(b.optional=(b.optional||[]).concat(a.advanced)),b},g=function(a,d){if(a=JSON.parse(JSON.stringify(a)),a&&"object"==typeof a.audio){var g=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],delete a[b])};a=JSON.parse(JSON.stringify(a)),g(a.audio,"autoGainControl","googAutoGainControl"),g(a.audio,"noiseSuppression","googNoiseSuppression"),a.audio=f(a.audio)}if(a&&"object"==typeof a.video){var h=a.video.facingMode;h=h&&("object"==typeof h?h:{ideal:h});var i=b.version<61;if(h&&("user"===h.exact||"environment"===h.exact||"user"===h.ideal||"environment"===h.ideal)&&(!c.mediaDevices.getSupportedConstraints||!c.mediaDevices.getSupportedConstraints().facingMode||i)){delete a.video.facingMode;var j;if("environment"===h.exact||"environment"===h.ideal?j=["back","rear"]:"user"!==h.exact&&"user"!==h.ideal||(j=["front"]),j)return c.mediaDevices.enumerateDevices().then(function(b){b=b.filter(function(a){return"videoinput"===a.kind});var c=b.find(function(a){return j.some(function(b){return a.label.toLowerCase().indexOf(b)!==-1})});return!c&&b.length&&j.indexOf("back")!==-1&&(c=b[b.length-1]),c&&(a.video.deviceId=h.exact?{exact:c.deviceId}:{ideal:c.deviceId}),a.video=f(a.video),e("chrome: "+JSON.stringify(a)),d(a)})}a.video=f(a.video)}return e("chrome: "+JSON.stringify(a)),d(a)},h=function(a){return{name:{PermissionDeniedError:"NotAllowedError",InvalidStateError:"NotReadableError",DevicesNotFoundError:"NotFoundError",ConstraintNotSatisfiedError:"OverconstrainedError",TrackStartError:"NotReadableError",MediaDeviceFailedDueToShutdown:"NotReadableError",MediaDeviceKillSwitchOn:"NotReadableError"}[a.name]||a.name,message:a.message,constraint:a.constraintName,toString:function(){return this.name+(this.message&&": ")+this.message}}},i=function(a,b,d){g(a,function(a){c.webkitGetUserMedia(a,b,function(a){d(h(a))})})};c.getUserMedia=i;var j=function(a){return new Promise(function(b,d){c.getUserMedia(a,b,d)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:j,enumerateDevices:function(){return new Promise(function(b){var c={audio:"audioinput",video:"videoinput"};return a.MediaStreamTrack.getSources(function(a){b(a.map(function(a){return{label:a.label,kind:c[a.kind],deviceId:a.id,groupId:""}}))})})},getSupportedConstraints:function(){return{deviceId:!0,echoCancellation:!0,facingMode:!0,frameRate:!0,height:!0,width:!0}}}),c.mediaDevices.getUserMedia){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return g(a,function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("","NotFoundError");return b},function(a){return Promise.reject(h(a))})})}}else c.mediaDevices.getUserMedia=function(a){return j(a)};"undefined"==typeof c.mediaDevices.addEventListener&&(c.mediaDevices.addEventListener=function(){e("Dummy mediaDevices.addEventListener called.")}),"undefined"==typeof c.mediaDevices.removeEventListener&&(c.mediaDevices.removeEventListener=function(){e("Dummy mediaDevices.removeEventListener called.")})}},{"../utils.js":9}],6:[function(a,b,c){"use strict";var d=a("../utils"),e={shimOnTrack:function(a){"object"!=typeof a||!a.RTCPeerConnection||"ontrack"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&(this.removeEventListener("track",this._ontrack),this.removeEventListener("addstream",this._ontrackpoly)),this.addEventListener("track",this._ontrack=a),this.addEventListener("addstream",this._ontrackpoly=function(a){a.stream.getTracks().forEach(function(b){var c=new Event("track");c.track=b,c.receiver={track:b},c.streams=[a.stream],this.dispatchEvent(c)}.bind(this))}.bind(this))}})},shimSourceObject:function(a){"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this.mozSrcObject},set:function(a){this.mozSrcObject=a}}))},shimPeerConnection:function(a){var b=d.detectBrowser(a);if("object"==typeof a&&(a.RTCPeerConnection||a.mozRTCPeerConnection)){a.RTCPeerConnection||(a.RTCPeerConnection=function(c,d){if(b.version<38&&c&&c.iceServers){for(var e=[],f=0;f<c.iceServers.length;f++){var g=c.iceServers[f];if(g.hasOwnProperty("urls"))for(var h=0;h<g.urls.length;h++){var i={url:g.urls[h]};0===g.urls[h].indexOf("turn")&&(i.username=g.username,i.credential=g.credential),e.push(i)}else e.push(c.iceServers[f])}c.iceServers=e}return new a.mozRTCPeerConnection(c,d)},a.RTCPeerConnection.prototype=a.mozRTCPeerConnection.prototype,a.mozRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.mozRTCPeerConnection.generateCertificate}}),a.RTCSessionDescription=a.mozRTCSessionDescription,a.RTCIceCandidate=a.mozRTCIceCandidate),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var c=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?c.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())};var e=function(a){var b=new Map;return Object.keys(a).forEach(function(c){b.set(c,a[c]),b[c]=a[c]}),b},f={inboundrtp:"inbound-rtp",outboundrtp:"outbound-rtp",candidatepair:"candidate-pair",localcandidate:"local-candidate",remotecandidate:"remote-candidate"},g=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,c,d){return g.apply(this,[a||null]).then(function(a){if(b.version<48&&(a=e(a)),b.version<53&&!c)try{a.forEach(function(a){a.type=f[a.type]||a.type})}catch(d){if("TypeError"!==d.name)throw d;a.forEach(function(b,c){a.set(c,Object.assign({},b,{type:f[b.type]||b.type}))})}return a}).then(c,d)}}}};b.exports={shimOnTrack:e.shimOnTrack,shimSourceObject:e.shimSourceObject,shimPeerConnection:e.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils":9,"./getusermedia":7}],7:[function(a,b,c){"use strict";var d=a("../utils"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=a&&a.MediaStreamTrack,g=function(a){return{name:{InternalError:"NotReadableError",NotSupportedError:"TypeError",PermissionDeniedError:"NotAllowedError",SecurityError:"NotAllowedError"}[a.name]||a.name,message:{"The operation is insecure.":"The request is not allowed by the user agent or the platform in the current context."}[a.message]||a.message,constraint:a.constraint,toString:function(){return this.name+(this.message&&": ")+this.message;
+!function(a,b){if(true)module.exports=b(__webpack_require__(0),__webpack_require__(84),__webpack_require__(1),__webpack_require__(3),__webpack_require__(7),__webpack_require__(4));else { var d, c; }}(this,function(a,b,c,d,e,f){return function(a){function b(d){if(c[d])return c[d].exports;var e=c[d]={i:d,l:!1,exports:{}};return a[d].call(e.exports,e,e.exports,b),e.l=!0,e.exports}var c={};return b.m=a,b.c=c,b.i=function(a){return a},b.d=function(a,c,d){b.o(a,c)||Object.defineProperty(a,c,{configurable:!1,enumerable:!0,get:d})},b.n=function(a){var c=a&&a.__esModule?function(){return a["default"]}:function(){return a};return b.d(c,"a",c),c},b.o=function(a,b){return Object.prototype.hasOwnProperty.call(a,b)},b.p="",b(b.s=12)}([function(a,b,c){(function(c){var d,e;d=[],e=function(){"use strict";var a=function(){return"object"==typeof window?window:"object"==typeof c?c:{}};return a()}.apply(b,d),!(void 0!==e&&(a.exports=e))}).call(b,c(5))},function(b,c){b.exports=a},function(a,c){a.exports=b},function(a,b,c){var d,e;d=[c(1),c(7),c(4),c(0),c(13)],e=function(a,b,c,d,e){"use strict";function f(a,d,e,f){var h=this;this._ghost=a,this._stream=d,this._isPhenixPlugin="phenix"===e,this._isFlash="flash"===e,this._options=f||{},this._events={},this._disposables=new b.DisposableList,this._flashPlayer=null;var i=function(a){h._loaded=!0,h._enabled=a===!0,a?l.call(h):q("Failed to create Phenix video element"),h._onReady&&h._onReady(h._enabled)};try{if(this._video=g.call(this),this._video.className=this._ghost.className,this._video.height=this._ghost.height,this._video.width=this._ghost.width,this._ghostInitStyleCssText=this._ghost.style.cssText,this._ghost.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",this._disposables.add(new b.Disposable(function(){h._ghost.style.cssText=h._ghostInitStyleCssText})),this._video.onunload=function(){h._loaded=!1},n.call(this),document.body&&document.body.contains||p("document.body.contains is not supported"),document.body&&document.body.contains&&document.body.contains(this._ghost)&&(this._ghost.parentNode.replaceChild(this._video,this._ghost),this._isFlash&&this._flashPlayer&&(this._video=this._flashPlayer.finishInitializationInDom()),this._disposables.add(new b.Disposable(function(){h._video.parentNode&&h._video.parentNode.replaceChild(h._ghost,h._video)}))),!this._isPhenixPlugin)return i(!0);var j=new c;j.waitForReady(this._video,i)}catch(k){q("Error while loading Phenix RTC"+k),i(!1)}}function g(){var a=document.createElement("video");if(this._isPhenixPlugin&&(a=document.createElement("object"),a.type="application/x-phenix-video"),this._isFlash){this._flashPlayer=new e(this._ghost,this._stream,this._options);var c=this;this._disposables.add(new b.Disposable(function(){c._flashPlayer.destroy()})),a=this._flashPlayer.getElement()}return a}function h(a,b,c){if(this._isFlash)return this._flashPlayer.addEventListener(a,b);if(this._isPhenixPlugin){var d=this._events[a];return d||(d=this._events[a]=[],this._loaded&&j.call(this,a)),d.push(b)}return this._video.addEventListener(a,b,c)}function i(a,b,c){if(this._isFlash)return this._flashPlayer.removeEventListener(a,b);{if(!this._isPhenixPlugin)return this._video.removeEventListener(a,b,c);var d=this._events[a];if(d){var e=d.indexOf(b);e>=0&&(d=d.splice(e,1),d.length>0?this._events[a]=d:delete this._events[a])}}}function j(a){function b(){var b=c._events[a];if(b)for(var d=0;d<b.length;d++)b[d].apply(c,arguments)}var c=this;c._video.phenixSetEventListener(a,b)}function k(a,b){var c;document.createEvent?(c=document.createEvent("HTMLEvents"),c.initEvent(b,!0,!0)):(c=document.createEventObject(),c.eventType=b),c.eventName=b,setTimeout(function(){document.createEvent?a.dispatchEvent(c):a.fireEvent("on"+c.eventType,c)})}function l(){for(var a=Object.keys(this._events),b=0;b<a.length;b++)j.call(this,a[b]);this.hookUpEvents(),m.call(this),this._video.id=this._ghost.id,this._video.style.cssText=this._ghostInitStyleCssText,this._video.className=this._ghost.className,this._video.innerHtml=this._ghost.innerHtml,this._video.width=this._ghost.width,this._video.height=this._ghost.height,this._video.autoplay=this._ghost.autoplay,this._video.muted=this._ghost.muted,this._video.defaultMuted=this._ghost.defaultMuted,this._video.volume=this._ghost.volume,this._stream&&!this._isFlash&&(this._video.src=this._stream)}function m(){var c=this,e=["style"];if(a.get(d,["MutationObserver"])){var f=new MutationObserver(function(a){a.forEach(function(a){"attributes"===a.type&&a.target===c._ghost&&e.indexOf(a.attributeName)===-1&&(c._video[a.attributeName]=c._ghost[a.attributeName])})}),g={attributes:!0};f.observe(c._ghost,g),c._disposables.add(new b.Disposable(function(){f.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(a){c._video[a.target.tagName]=c._ghost[a.target.tagName]};c._ghost.addEventListener?(c._ghost.addEventListener("DOMAttrModified",h,!1),c._disposables.add(new b.Disposable(function(){c._ghost.removeEventListener("DOMAttrModified",h,!1)}))):(c._ghost.attachEvent("onpropertychange",h),c._disposables.add(new b.Disposable(function(){c._ghost.detachEvent("DOMAttrModified",h)})))}}function n(){var c=this;if(a.get(d,["MutationObserver"])){var e=new MutationObserver(function(a){a.forEach(function(a){if("childList"===a.type)for(var b=0;b<a.addedNodes.length;b++){var d=a.addedNodes[b];a.target!==c._video&&(d===c._ghost?(a.target.replaceChild(c._video,c._ghost),l.call(c)):o(a.target,c._ghost)&&(c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost),l.call(c)))}})}),f={childList:!0,attributes:!1,characterData:!1,subtree:!0};e.observe(document.body,f),c._disposables.add(new b.Disposable(function(){e.disconnect()}))}else{p("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var g=function(){c._ghost.parentNode&&c._ghost.parentNode.replaceChild(c._video,c._ghost)};c.addEventListener("DOMNodeInserted",g,!1),c._disposables.add(new b.Disposable(function(){c.removeEventListener("DOMNodeInserted",g,!1)}))}}function o(a,b){for(var c=b.parentNode;null!==c;){if(c===a)return!0;c=c.parentNode}return!1}var p=function(){console.log.apply(console,arguments)}||function(){},q=function(){console.error.apply(console,arguments)}||p;return f.prototype.hookUpEvents=function(){var a=this,c=this._ghost,d=function(){k(c,"error")},e=function(){c.muted=a._video.muted,k(c,"mute")},f=function(){c.muted=a._video.muted,k(c,"unmute")},g=function(){c.ended=a._video.ended,k(c,"ended")},h=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadedmetadata")},i=function(){c.width=a._video.width,c.height=a._video.height,k(c,"loadeddata")},j=function(){c.width=a._video.width,c.height=a._video.height,k(c,"resize")};this.addEventListener("error",d),this.addEventListener("mute",e),this.addEventListener("unmute",f),this.addEventListener("ended",g),this.addEventListener("loadedmetadata",h),this.addEventListener("loadeddata",i),this.addEventListener("resize",j);var l=new b.Disposable(function(){a.removeEventListener("error",d),a.removeEventListener("mute",e),a.removeEventListener("unmute",f),a.removeEventListener("ended",g),a.removeEventListener("loadedmetadata",h),a.removeEventListener("loadeddata",i),a.removeEventListener("resize",j)});return this._disposables.add(l),l},f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.getElement=function(){return this._video},f.prototype.addEventListener=function(a,b,c){h.call(this,a,b,c)},f.prototype.removeEventListener=function(a,b,c){i.call(this,a,b,c)},f.prototype.destroy=function(){this._disposables.dispose()},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(2)],e=function(a){"use strict";function b(a){this._timeout=a||15e3}var c=new a(navigator.userAgent).detect(),d=4,e=function(){console.error.apply(console,arguments)}||console.log;return b.prototype.waitForReadyWithTimeout=function(a,b,f){var g=!1,h=1,i=h,j=function(a){g||(g=!0,b(a))},k=function l(){a.readyState===d?j(!0):a.phenixVersion?j(!0):(h=Math.min(h+1e3,2*h),i+=h,i>f?(e("Timed out while waiting for <object> to load"),j(!1)):setTimeout(l,h))};a.hasOwnProperty&&a.hasOwnProperty("onload")||"IE"!==c.browser&&e("No means of detecting when <object> is loaded"),a.onload=function(){j(!0)},k()},b.prototype.waitForReady=function(a,b){a.phenixVersion?b(!0):this.waitForReadyWithTimeout(a,b,this._timeout)},b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){var c;c=function(){return this}();try{c=c||Function("return this")()||(0,eval)("this")}catch(d){"object"==typeof window&&(c=window)}a.exports=c},function(a,b){a.exports=c},function(a,b){a.exports=d},function(a,b){a.exports=e},function(a,b,c){var d,e;d=[c(1),c(6),c(8),c(2),c(0),c(15),c(14)],e=function(a,b,c,d,e,f,g){"use strict";function h(){if(a.assign(j,f()),g.isSupported()){j.phenixSupported=!0;var b=new g,c=function(){j.RTCPeerConnection=b.getRTCPeerConnectionConstructor(),j.RTCSessionDescription=b.getRTCSessionDescriptionConstructor(),j.RTCIceCandidate=b.getRTCIceCandidateConstructor(),j.getSources=b.getSourcesDelegate(),j.getUserMedia=b.getUserMediaDelegate(),j.getStats=b.getStatsDelegate(),Function.prototype.bind?(j.attachMediaStream=b.attachMediaStream.bind(b),j.reattachMediaStream=b.reattachMediaStream.bind(b),j.isPhenixEnabled=b.isEnabled.bind(b)):(j.attachMediaStream=function(){b.attachMediaStream.apply(b,arguments)},j.reattachMediaStream=function(){b.reattachMediaStream.apply(b,arguments)},j.isPhenixEnabled=function(){return b.isEnabled()}),j.webrtcSupported=!0,j.phenixSupported=!0,j.phenixVersion=b.getVersion(),j.onLoaded&&j.onLoaded.call()};b.isEnabled()?c():b.onReady(function(a){a&&(c(),j.onload&&"function"==typeof j.onload&&j.onload())}),b.onLoaded(function(){c()})}else j.phenixSupported=!1;return j}var i=new d(navigator.userAgent).detect(),j={browser:i.browser,browserVersion:i.version,phenixSupported:!1,isPhenixEnabled:function(){return!1},onLoaded:void 0,global:e};return a.assign(h(),{shim:h})}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(0)],e=function(a){"use strict";var b=function(b){a.RTCPeerConnection=b.RTCPeerConnection,a.RTCSessionDescription=b.RTCSessionDescription,a.RTCIceCandidate=b.RTCIceCandidate};return b}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){(function(b){var c,c;!function(b){a.exports=b()}(function(){return function a(b,d,e){function f(h,i){if(!d[h]){if(!b[h]){var j="function"==typeof c&&c;if(!i&&j)return c(h,!0);if(g)return c(h,!0);var k=new Error("Cannot find module '"+h+"'");throw k.code="MODULE_NOT_FOUND",k}var l=d[h]={exports:{}};b[h][0].call(l.exports,function(a){var c=b[h][1][a];return f(c?c:a)},l,l.exports,a,b,d,e)}return d[h].exports}for(var g="function"==typeof c&&c,h=0;h<e.length;h++)f(e[h]);return f}({1:[function(a,b,c){},{}],2:[function(a,c,d){(function(b){"use strict";var d=a("./adapter_factory.js");c.exports=d({window:b.window})}).call(this,"undefined"!=typeof b?b:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./adapter_factory.js":3}],3:[function(a,b,c){"use strict";b.exports=function(b,c){var d=b&&b.window,e={shimChrome:!0,shimFirefox:!0,shimEdge:!0,shimSafari:!0};for(var f in c)hasOwnProperty.call(c,f)&&(e[f]=c[f]);var g=a("./utils"),h=g.log,i=g.detectBrowser(d),j={browserDetails:i,extractVersion:g.extractVersion,disableLog:g.disableLog,disableWarnings:g.disableWarnings},k=a("./chrome/chrome_shim")||null,l=a("./edge/edge_shim")||null,m=a("./firefox/firefox_shim")||null,n=a("./safari/safari_shim")||null;switch(i.browser){case"chrome":if(!k||!k.shimPeerConnection||!e.shimChrome)return h("Chrome shim is not included in this adapter release."),j;h("adapter.js shimming chrome."),j.browserShim=k,k.shimGetUserMedia(d),k.shimMediaStream(d),g.shimCreateObjectURL(d),k.shimSourceObject(d),k.shimPeerConnection(d),k.shimOnTrack(d),k.shimAddTrackRemoveTrack(d),k.shimGetSendersWithDtmf(d);break;case"firefox":if(!m||!m.shimPeerConnection||!e.shimFirefox)return h("Firefox shim is not included in this adapter release."),j;h("adapter.js shimming firefox."),j.browserShim=m,m.shimGetUserMedia(d),g.shimCreateObjectURL(d),m.shimSourceObject(d),m.shimPeerConnection(d),m.shimOnTrack(d);break;case"edge":if(!l||!l.shimPeerConnection||!e.shimEdge)return h("MS edge shim is not included in this adapter release."),j;h("adapter.js shimming edge."),j.browserShim=l,l.shimGetUserMedia(d),g.shimCreateObjectURL(d),l.shimPeerConnection(d),l.shimReplaceTrack(d);break;case"safari":if(!n||!e.shimSafari)return h("Safari shim is not included in this adapter release."),j;h("adapter.js shimming safari."),j.browserShim=n,g.shimCreateObjectURL(d),n.shimRTCIceServerUrls(d),n.shimCallbacksAPI(d),n.shimLocalStreamsAPI(d),n.shimRemoteStreamsAPI(d),n.shimGetUserMedia(d);break;default:h("Unsupported browser!")}return j}},{"./chrome/chrome_shim":4,"./edge/edge_shim":1,"./firefox/firefox_shim":6,"./safari/safari_shim":8,"./utils":9}],4:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log,f={shimMediaStream:function(a){a.MediaStream=a.MediaStream||a.webkitMediaStream},shimOnTrack:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("ontrack"in a.RTCPeerConnection.prototype)){Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&this.removeEventListener("track",this._ontrack),this.addEventListener("track",this._ontrack=a)}});var b=a.RTCPeerConnection.prototype.setRemoteDescription;a.RTCPeerConnection.prototype.setRemoteDescription=function(){var c=this;return c._ontrackpoly||(c._ontrackpoly=function(b){b.stream.addEventListener("addtrack",function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.track.id}):{track:d.track};var f=new Event("track");f.track=d.track,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)}),b.stream.getTracks().forEach(function(d){var e;e=a.RTCPeerConnection.prototype.getReceivers?c.getReceivers().find(function(a){return a.track.id===d.id}):{track:d};var f=new Event("track");f.track=d,f.receiver=e,f.streams=[b.stream],c.dispatchEvent(f)})},c.addEventListener("addstream",c._ontrackpoly)),b.apply(c,arguments)}}},shimGetSendersWithDtmf:function(a){if("object"==typeof a&&a.RTCPeerConnection&&!("getSenders"in a.RTCPeerConnection.prototype)&&"createDTMFSender"in a.RTCPeerConnection.prototype){var b=function(a,b){return{track:b,get dtmf(){return void 0===this._dtmf&&("audio"===b.kind?this._dtmf=a.createDTMFSender(b):this._dtmf=null),this._dtmf},_pc:a}};if(!a.RTCPeerConnection.prototype.getSenders){a.RTCPeerConnection.prototype.getSenders=function(){return this._senders=this._senders||[],this._senders.slice()};var c=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addTrack=function(a,d){var e=this,f=c.apply(e,arguments);return f||(f=b(e,a),e._senders.push(f)),f};var d=a.RTCPeerConnection.prototype.removeTrack;a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;d.apply(b,arguments);var c=b._senders.indexOf(a);c!==-1&&b._senders.splice(c,1)}}var e=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(a){var c=this;c._senders=c._senders||[],e.apply(c,[a]),a.getTracks().forEach(function(a){c._senders.push(b(c,a))})};var f=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._senders=b._senders||[],f.apply(b,[b._streams[a.id]||a]),a.getTracks().forEach(function(a){var c=b._senders.find(function(b){return b.track===a});c&&b._senders.splice(b._senders.indexOf(c),1)})}}else if("object"==typeof a&&a.RTCPeerConnection&&"getSenders"in a.RTCPeerConnection.prototype&&"createDTMFSender"in a.RTCPeerConnection.prototype&&a.RTCRtpSender&&!("dtmf"in a.RTCRtpSender.prototype)){var g=a.RTCPeerConnection.prototype.getSenders;a.RTCPeerConnection.prototype.getSenders=function(){var a=this,b=g.apply(a,[]);return b.forEach(function(b){b._pc=a}),b},Object.defineProperty(a.RTCRtpSender.prototype,"dtmf",{get:function(){return void 0===this._dtmf&&("audio"===this.track.kind?this._dtmf=this._pc.createDTMFSender(this.track):this._dtmf=null),this._dtmf}})}},shimSourceObject:function(a){var b=a&&a.URL;"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this._srcObject},set:function(a){var c=this;return this._srcObject=a,this.src&&b.revokeObjectURL(this.src),a?(this.src=b.createObjectURL(a),a.addEventListener("addtrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)}),void a.addEventListener("removetrack",function(){c.src&&b.revokeObjectURL(c.src),c.src=b.createObjectURL(a)})):void(this.src="")}}))},shimAddTrackRemoveTrack:function(a){if(!a.RTCPeerConnection.prototype.addTrack){var b=a.RTCPeerConnection.prototype.getLocalStreams;a.RTCPeerConnection.prototype.getLocalStreams=function(){var a=this,c=b.apply(this);return a._reverseStreams=a._reverseStreams||{},c.map(function(b){return a._reverseStreams[b.id]})};var c=a.RTCPeerConnection.prototype.addStream;a.RTCPeerConnection.prototype.addStream=function(b){var d=this;if(d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{},b.getTracks().forEach(function(a){var b=d.getSenders().find(function(b){return b.track===a});if(b)throw new DOMException("Track already exists.","InvalidAccessError")}),!d._reverseStreams[b.id]){var e=new a.MediaStream(b.getTracks());d._streams[b.id]=e,d._reverseStreams[e.id]=b,b=e}c.apply(d,[b])};var d=a.RTCPeerConnection.prototype.removeStream;a.RTCPeerConnection.prototype.removeStream=function(a){var b=this;b._streams=b._streams||{},b._reverseStreams=b._reverseStreams||{},d.apply(b,[b._streams[a.id]||a]),delete b._reverseStreams[b._streams[a.id]?b._streams[a.id].id:a.id],delete b._streams[a.id]},a.RTCPeerConnection.prototype.addTrack=function(b,c){var d=this;if("closed"===d.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");var e=[].slice.call(arguments,1);if(1!==e.length||!e[0].getTracks().find(function(a){return a===b}))throw new DOMException("The adapter.js addTrack polyfill only supports a single  stream which is associated with the specified track.","NotSupportedError");var f=d.getSenders().find(function(a){return a.track===b});if(f)throw new DOMException("Track already exists.","InvalidAccessError");d._streams=d._streams||{},d._reverseStreams=d._reverseStreams||{};var g=d._streams[c.id];if(g)g.addTrack(b),d.dispatchEvent(new Event("negotiationneeded"));else{var h=new a.MediaStream([b]);d._streams[c.id]=h,d._reverseStreams[h.id]=c,d.addStream(h)}return d.getSenders().find(function(a){return a.track===b})},a.RTCPeerConnection.prototype.removeTrack=function(a){var b=this;if("closed"===b.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");if(!a._pc)throw new DOMException("Argument 1 of RTCPeerConnection.removeTrack does not implement interface RTCRtpSender.","TypeError");var c=a._pc===b;if(!c)throw new DOMException("Sender was not created by this connection.","InvalidAccessError");b._streams=b._streams||{};var d;Object.keys(b._streams).forEach(function(c){var e=b._streams[c].getTracks().find(function(b){return a.track===b});e&&(d=b._streams[c])}),d&&(1===d.getTracks().length?b.removeStream(d):d.removeTrack(a.track),b.dispatchEvent(new Event("negotiationneeded")))}}},shimPeerConnection:function(a){var b=d.detectBrowser(a);if(a.RTCPeerConnection){var c=a.RTCPeerConnection;a.RTCPeerConnection=function(a,b){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new c(a,b)},a.RTCPeerConnection.prototype=c.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return c.generateCertificate}})}else a.RTCPeerConnection=function(b,c){return e("PeerConnection"),b&&b.iceTransportPolicy&&(b.iceTransports=b.iceTransportPolicy),new a.webkitRTCPeerConnection(b,c)},a.RTCPeerConnection.prototype=a.webkitRTCPeerConnection.prototype,a.webkitRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.webkitRTCPeerConnection.generateCertificate}});var f=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,b,c){var d=this,e=arguments;if(arguments.length>0&&"function"==typeof a)return f.apply(this,arguments);if(0===f.length&&(0===arguments.length||"function"!=typeof arguments[0]))return f.apply(this,[]);var g=function(a){var b={},c=a.result();return c.forEach(function(a){var c={id:a.id,timestamp:a.timestamp,type:{localcandidate:"local-candidate",remotecandidate:"remote-candidate"}[a.type]||a.type};a.names().forEach(function(b){c[b]=a.stat(b)}),b[c.id]=c}),b},h=function(a){return new Map(Object.keys(a).map(function(b){return[b,a[b]]}))};if(arguments.length>=2){var i=function(a){e[1](h(g(a)))};return f.apply(this,[i,arguments[0]])}return new Promise(function(a,b){f.apply(d,[function(b){a(h(g(b)))},b])}).then(b,c)},b.version<51&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=arguments,b=this,d=new Promise(function(d,e){c.apply(b,[a[0],d,e])});return a.length<2?d:d.then(function(){a[1].apply(null,[])},function(b){a.length>=3&&a[2].apply(null,[b])})}}),b.version<52&&["createOffer","createAnswer"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){var a=this;if(arguments.length<1||1===arguments.length&&"object"==typeof arguments[0]){var b=1===arguments.length?arguments[0]:void 0;return new Promise(function(d,e){c.apply(a,[d,e,b])})}return c.apply(this,arguments)}}),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var g=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?g.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())}}};b.exports={shimMediaStream:f.shimMediaStream,shimOnTrack:f.shimOnTrack,shimAddTrackRemoveTrack:f.shimAddTrackRemoveTrack,shimGetSendersWithDtmf:f.shimGetSendersWithDtmf,shimSourceObject:f.shimSourceObject,shimPeerConnection:f.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils.js":9,"./getusermedia":5}],5:[function(a,b,c){"use strict";var d=a("../utils.js"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=function(a){if("object"!=typeof a||a.mandatory||a.optional)return a;var b={};return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d="object"==typeof a[c]?a[c]:{ideal:a[c]};void 0!==d.exact&&"number"==typeof d.exact&&(d.min=d.max=d.exact);var e=function(a,b){return a?a+b.charAt(0).toUpperCase()+b.slice(1):"deviceId"===b?"sourceId":b};if(void 0!==d.ideal){b.optional=b.optional||[];var f={};"number"==typeof d.ideal?(f[e("min",c)]=d.ideal,b.optional.push(f),f={},f[e("max",c)]=d.ideal,b.optional.push(f)):(f[e("",c)]=d.ideal,b.optional.push(f))}void 0!==d.exact&&"number"!=typeof d.exact?(b.mandatory=b.mandatory||{},b.mandatory[e("",c)]=d.exact):["min","max"].forEach(function(a){void 0!==d[a]&&(b.mandatory=b.mandatory||{},b.mandatory[e(a,c)]=d[a])})}}),a.advanced&&(b.optional=(b.optional||[]).concat(a.advanced)),b},g=function(a,d){if(a=JSON.parse(JSON.stringify(a)),a&&"object"==typeof a.audio){var g=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],delete a[b])};a=JSON.parse(JSON.stringify(a)),g(a.audio,"autoGainControl","googAutoGainControl"),g(a.audio,"noiseSuppression","googNoiseSuppression"),a.audio=f(a.audio)}if(a&&"object"==typeof a.video){var h=a.video.facingMode;h=h&&("object"==typeof h?h:{ideal:h});var i=b.version<61;if(h&&("user"===h.exact||"environment"===h.exact||"user"===h.ideal||"environment"===h.ideal)&&(!c.mediaDevices.getSupportedConstraints||!c.mediaDevices.getSupportedConstraints().facingMode||i)){delete a.video.facingMode;var j;if("environment"===h.exact||"environment"===h.ideal?j=["back","rear"]:"user"!==h.exact&&"user"!==h.ideal||(j=["front"]),j)return c.mediaDevices.enumerateDevices().then(function(b){b=b.filter(function(a){return"videoinput"===a.kind});var c=b.find(function(a){return j.some(function(b){return a.label.toLowerCase().indexOf(b)!==-1})});return!c&&b.length&&j.indexOf("back")!==-1&&(c=b[b.length-1]),c&&(a.video.deviceId=h.exact?{exact:c.deviceId}:{ideal:c.deviceId}),a.video=f(a.video),e("chrome: "+JSON.stringify(a)),d(a)})}a.video=f(a.video)}return e("chrome: "+JSON.stringify(a)),d(a)},h=function(a){return{name:{PermissionDeniedError:"NotAllowedError",InvalidStateError:"NotReadableError",DevicesNotFoundError:"NotFoundError",ConstraintNotSatisfiedError:"OverconstrainedError",TrackStartError:"NotReadableError",MediaDeviceFailedDueToShutdown:"NotReadableError",MediaDeviceKillSwitchOn:"NotReadableError"}[a.name]||a.name,message:a.message,constraint:a.constraintName,toString:function(){return this.name+(this.message&&": ")+this.message}}},i=function(a,b,d){g(a,function(a){c.webkitGetUserMedia(a,b,function(a){d(h(a))})})};c.getUserMedia=i;var j=function(a){return new Promise(function(b,d){c.getUserMedia(a,b,d)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:j,enumerateDevices:function(){return new Promise(function(b){var c={audio:"audioinput",video:"videoinput"};return a.MediaStreamTrack.getSources(function(a){b(a.map(function(a){return{label:a.label,kind:c[a.kind],deviceId:a.id,groupId:""}}))})})},getSupportedConstraints:function(){return{deviceId:!0,echoCancellation:!0,facingMode:!0,frameRate:!0,height:!0,width:!0}}}),c.mediaDevices.getUserMedia){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return g(a,function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("","NotFoundError");return b},function(a){return Promise.reject(h(a))})})}}else c.mediaDevices.getUserMedia=function(a){return j(a)};"undefined"==typeof c.mediaDevices.addEventListener&&(c.mediaDevices.addEventListener=function(){e("Dummy mediaDevices.addEventListener called.")}),"undefined"==typeof c.mediaDevices.removeEventListener&&(c.mediaDevices.removeEventListener=function(){e("Dummy mediaDevices.removeEventListener called.")})}},{"../utils.js":9}],6:[function(a,b,c){"use strict";var d=a("../utils"),e={shimOnTrack:function(a){"object"!=typeof a||!a.RTCPeerConnection||"ontrack"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"ontrack",{get:function(){return this._ontrack},set:function(a){this._ontrack&&(this.removeEventListener("track",this._ontrack),this.removeEventListener("addstream",this._ontrackpoly)),this.addEventListener("track",this._ontrack=a),this.addEventListener("addstream",this._ontrackpoly=function(a){a.stream.getTracks().forEach(function(b){var c=new Event("track");c.track=b,c.receiver={track:b},c.streams=[a.stream],this.dispatchEvent(c)}.bind(this))}.bind(this))}})},shimSourceObject:function(a){"object"==typeof a&&(!a.HTMLMediaElement||"srcObject"in a.HTMLMediaElement.prototype||Object.defineProperty(a.HTMLMediaElement.prototype,"srcObject",{get:function(){return this.mozSrcObject},set:function(a){this.mozSrcObject=a}}))},shimPeerConnection:function(a){var b=d.detectBrowser(a);if("object"==typeof a&&(a.RTCPeerConnection||a.mozRTCPeerConnection)){a.RTCPeerConnection||(a.RTCPeerConnection=function(c,d){if(b.version<38&&c&&c.iceServers){for(var e=[],f=0;f<c.iceServers.length;f++){var g=c.iceServers[f];if(g.hasOwnProperty("urls"))for(var h=0;h<g.urls.length;h++){var i={url:g.urls[h]};0===g.urls[h].indexOf("turn")&&(i.username=g.username,i.credential=g.credential),e.push(i)}else e.push(c.iceServers[f])}c.iceServers=e}return new a.mozRTCPeerConnection(c,d)},a.RTCPeerConnection.prototype=a.mozRTCPeerConnection.prototype,a.mozRTCPeerConnection.generateCertificate&&Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return a.mozRTCPeerConnection.generateCertificate}}),a.RTCSessionDescription=a.mozRTCSessionDescription,a.RTCIceCandidate=a.mozRTCIceCandidate),["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(b){var c=a.RTCPeerConnection.prototype[b];a.RTCPeerConnection.prototype[b]=function(){return arguments[0]=new("addIceCandidate"===b?a.RTCIceCandidate:a.RTCSessionDescription)(arguments[0]),c.apply(this,arguments)}});var c=a.RTCPeerConnection.prototype.addIceCandidate;a.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?c.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())};var e=function(a){var b=new Map;return Object.keys(a).forEach(function(c){b.set(c,a[c]),b[c]=a[c]}),b},f={inboundrtp:"inbound-rtp",outboundrtp:"outbound-rtp",candidatepair:"candidate-pair",localcandidate:"local-candidate",remotecandidate:"remote-candidate"},g=a.RTCPeerConnection.prototype.getStats;a.RTCPeerConnection.prototype.getStats=function(a,c,d){return g.apply(this,[a||null]).then(function(a){if(b.version<48&&(a=e(a)),b.version<53&&!c)try{a.forEach(function(a){a.type=f[a.type]||a.type})}catch(d){if("TypeError"!==d.name)throw d;a.forEach(function(b,c){a.set(c,Object.assign({},b,{type:f[b.type]||b.type}))})}return a}).then(c,d)}}}};b.exports={shimOnTrack:e.shimOnTrack,shimSourceObject:e.shimSourceObject,shimPeerConnection:e.shimPeerConnection,shimGetUserMedia:a("./getusermedia")}},{"../utils":9,"./getusermedia":7}],7:[function(a,b,c){"use strict";var d=a("../utils"),e=d.log;b.exports=function(a){var b=d.detectBrowser(a),c=a&&a.navigator,f=a&&a.MediaStreamTrack,g=function(a){return{name:{InternalError:"NotReadableError",NotSupportedError:"TypeError",PermissionDeniedError:"NotAllowedError",SecurityError:"NotAllowedError"}[a.name]||a.name,message:{"The operation is insecure.":"The request is not allowed by the user agent or the platform in the current context."}[a.message]||a.message,constraint:a.constraint,toString:function(){return this.name+(this.message&&": ")+this.message;
 }}},h=function(a,d,f){var h=function(a){if("object"!=typeof a||a.require)return a;var b=[];return Object.keys(a).forEach(function(c){if("require"!==c&&"advanced"!==c&&"mediaSource"!==c){var d=a[c]="object"==typeof a[c]?a[c]:{ideal:a[c]};if(void 0===d.min&&void 0===d.max&&void 0===d.exact||b.push(c),void 0!==d.exact&&("number"==typeof d.exact?d.min=d.max=d.exact:a[c]=d.exact,delete d.exact),void 0!==d.ideal){a.advanced=a.advanced||[];var e={};"number"==typeof d.ideal?e[c]={min:d.ideal,max:d.ideal}:e[c]=d.ideal,a.advanced.push(e),delete d.ideal,Object.keys(d).length||delete a[c]}}}),b.length&&(a.require=b),a};return a=JSON.parse(JSON.stringify(a)),b.version<38&&(e("spec: "+JSON.stringify(a)),a.audio&&(a.audio=h(a.audio)),a.video&&(a.video=h(a.video)),e("ff37: "+JSON.stringify(a))),c.mozGetUserMedia(a,d,function(a){f(g(a))})},i=function(a){return new Promise(function(b,c){h(a,b,c)})};if(c.mediaDevices||(c.mediaDevices={getUserMedia:i,addEventListener:function(){},removeEventListener:function(){}}),c.mediaDevices.enumerateDevices=c.mediaDevices.enumerateDevices||function(){return new Promise(function(a){var b=[{kind:"audioinput",deviceId:"default",label:"",groupId:""},{kind:"videoinput",deviceId:"default",label:"",groupId:""}];a(b)})},b.version<41){var j=c.mediaDevices.enumerateDevices.bind(c.mediaDevices);c.mediaDevices.enumerateDevices=function(){return j().then(void 0,function(a){if("NotFoundError"===a.name)return[];throw a})}}if(b.version<49){var k=c.mediaDevices.getUserMedia.bind(c.mediaDevices);c.mediaDevices.getUserMedia=function(a){return k(a).then(function(b){if(a.audio&&!b.getAudioTracks().length||a.video&&!b.getVideoTracks().length)throw b.getTracks().forEach(function(a){a.stop()}),new DOMException("The object can not be found here.","NotFoundError");return b},function(a){return Promise.reject(g(a))})}}if(!(b.version>55&&"autoGainControl"in c.mediaDevices.getSupportedConstraints())){var l=function(a,b,c){b in a&&!(c in a)&&(a[c]=a[b],delete a[b])},m=c.mediaDevices.getUserMedia.bind(c.mediaDevices);if(c.mediaDevices.getUserMedia=function(a){return"object"==typeof a&&"object"==typeof a.audio&&(a=JSON.parse(JSON.stringify(a)),l(a.audio,"autoGainControl","mozAutoGainControl"),l(a.audio,"noiseSuppression","mozNoiseSuppression")),m(a)},f&&f.prototype.getSettings){var n=f.prototype.getSettings;f.prototype.getSettings=function(){var a=n.apply(this,arguments);return l(a,"mozAutoGainControl","autoGainControl"),l(a,"mozNoiseSuppression","noiseSuppression"),a}}if(f&&f.prototype.applyConstraints){var o=f.prototype.applyConstraints;f.prototype.applyConstraints=function(a){return"audio"===this.kind&&"object"==typeof a&&(a=JSON.parse(JSON.stringify(a)),l(a,"autoGainControl","mozAutoGainControl"),l(a,"noiseSuppression","mozNoiseSuppression")),o.apply(this,[a])}}}c.getUserMedia=function(a,e,f){return b.version<44?h(a,e,f):(d.deprecated("navigator.getUserMedia","navigator.mediaDevices.getUserMedia"),void c.mediaDevices.getUserMedia(a).then(e,f))}}},{"../utils":9}],8:[function(a,b,c){"use strict";var d=a("../utils"),e={shimLocalStreamsAPI:function(a){if("object"==typeof a&&a.RTCPeerConnection){if("getLocalStreams"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getLocalStreams=function(){return this._localStreams||(this._localStreams=[]),this._localStreams}),"getStreamById"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getStreamById=function(a){var b=null;return this._localStreams&&this._localStreams.forEach(function(c){c.id===a&&(b=c)}),this._remoteStreams&&this._remoteStreams.forEach(function(c){c.id===a&&(b=c)}),b}),!("addStream"in a.RTCPeerConnection.prototype)){var b=a.RTCPeerConnection.prototype.addTrack;a.RTCPeerConnection.prototype.addStream=function(a){this._localStreams||(this._localStreams=[]),this._localStreams.indexOf(a)===-1&&this._localStreams.push(a);var c=this;a.getTracks().forEach(function(d){b.call(c,d,a)})},a.RTCPeerConnection.prototype.addTrack=function(a,c){c&&(this._localStreams?this._localStreams.indexOf(c)===-1&&this._localStreams.push(c):this._localStreams=[c]),b.call(this,a,c)}}"removeStream"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.removeStream=function(a){this._localStreams||(this._localStreams=[]);var b=this._localStreams.indexOf(a);if(b!==-1){this._localStreams.splice(b,1);var c=this,d=a.getTracks();this.getSenders().forEach(function(a){d.indexOf(a.track)!==-1&&c.removeTrack(a)})}})}},shimRemoteStreamsAPI:function(a){"object"==typeof a&&a.RTCPeerConnection&&("getRemoteStreams"in a.RTCPeerConnection.prototype||(a.RTCPeerConnection.prototype.getRemoteStreams=function(){return this._remoteStreams?this._remoteStreams:[]}),"onaddstream"in a.RTCPeerConnection.prototype||Object.defineProperty(a.RTCPeerConnection.prototype,"onaddstream",{get:function(){return this._onaddstream},set:function(a){this._onaddstream&&(this.removeEventListener("addstream",this._onaddstream),this.removeEventListener("track",this._onaddstreampoly)),this.addEventListener("addstream",this._onaddstream=a),this.addEventListener("track",this._onaddstreampoly=function(a){var b=a.streams[0];if(this._remoteStreams||(this._remoteStreams=[]),!(this._remoteStreams.indexOf(b)>=0)){this._remoteStreams.push(b);var c=new Event("addstream");c.stream=a.streams[0],this.dispatchEvent(c)}}.bind(this))}}))},shimCallbacksAPI:function(a){if("object"==typeof a&&a.RTCPeerConnection){var b=a.RTCPeerConnection.prototype,c=b.createOffer,d=b.createAnswer,e=b.setLocalDescription,f=b.setRemoteDescription,g=b.addIceCandidate;b.createOffer=function(a,b){var d=arguments.length>=2?arguments[2]:arguments[0],e=c.apply(this,[d]);return b?(e.then(a,b),Promise.resolve()):e},b.createAnswer=function(a,b){var c=arguments.length>=2?arguments[2]:arguments[0],e=d.apply(this,[c]);return b?(e.then(a,b),Promise.resolve()):e};var h=function(a,b,c){var d=e.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d};b.setLocalDescription=h,h=function(a,b,c){var d=f.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d},b.setRemoteDescription=h,h=function(a,b,c){var d=g.apply(this,[a]);return c?(d.then(b,c),Promise.resolve()):d},b.addIceCandidate=h}},shimGetUserMedia:function(a){var b=a&&a.navigator;b.getUserMedia||(b.webkitGetUserMedia?b.getUserMedia=b.webkitGetUserMedia.bind(b):b.mediaDevices&&b.mediaDevices.getUserMedia&&(b.getUserMedia=function(a,c,d){b.mediaDevices.getUserMedia(a).then(c,d)}.bind(b)))},shimRTCIceServerUrls:function(a){var b=a.RTCPeerConnection;a.RTCPeerConnection=function(a,c){if(a&&a.iceServers){for(var e=[],f=0;f<a.iceServers.length;f++){var g=a.iceServers[f];!g.hasOwnProperty("urls")&&g.hasOwnProperty("url")?(d.deprecated("RTCIceServer.url","RTCIceServer.urls"),g=JSON.parse(JSON.stringify(g)),g.urls=g.url,delete g.url,e.push(g)):e.push(a.iceServers[f])}a.iceServers=e}return new b(a,c)},a.RTCPeerConnection.prototype=b.prototype,Object.defineProperty(a.RTCPeerConnection,"generateCertificate",{get:function(){return b.generateCertificate}})}};b.exports={shimCallbacksAPI:e.shimCallbacksAPI,shimLocalStreamsAPI:e.shimLocalStreamsAPI,shimRemoteStreamsAPI:e.shimRemoteStreamsAPI,shimGetUserMedia:e.shimGetUserMedia,shimRTCIceServerUrls:e.shimRTCIceServerUrls}},{"../utils":9}],9:[function(a,b,c){"use strict";var d=!0,e=!0,f={disableLog:function(a){return"boolean"!=typeof a?new Error("Argument type: "+typeof a+". Please use a boolean."):(d=a,a?"adapter.js logging disabled":"adapter.js logging enabled")},disableWarnings:function(a){return"boolean"!=typeof a?new Error("Argument type: "+typeof a+". Please use a boolean."):(e=!a,"adapter.js deprecation warnings "+(a?"disabled":"enabled"))},log:function(){if("object"==typeof window){if(d)return;"undefined"!=typeof console&&"function"==typeof console.log&&console.log.apply(console,arguments)}},deprecated:function(a,b){e&&console.warn(a+" is deprecated, please use "+b+" instead.")},extractVersion:function(a,b,c){var d=a.match(b);return d&&d.length>=c&&parseInt(d[c],10)},detectBrowser:function(a){var b=a&&a.navigator,c={};if(c.browser=null,c.version=null,"undefined"==typeof a||!a.navigator)return c.browser="Not a browser.",c;if(b.mozGetUserMedia)c.browser="firefox",c.version=this.extractVersion(b.userAgent,/Firefox\/(\d+)\./,1);else if(b.webkitGetUserMedia)if(a.webkitRTCPeerConnection)c.browser="chrome",c.version=this.extractVersion(b.userAgent,/Chrom(e|ium)\/(\d+)\./,2);else{if(!b.userAgent.match(/Version\/(\d+).(\d+)/))return c.browser="Unsupported webkit-based browser with GUM support but no WebRTC support.",c;c.browser="safari",c.version=this.extractVersion(b.userAgent,/AppleWebKit\/(\d+)\./,1)}else if(b.mediaDevices&&b.userAgent.match(/Edge\/(\d+).(\d+)$/))c.browser="edge",c.version=this.extractVersion(b.userAgent,/Edge\/(\d+).(\d+)$/,2);else{if(!b.mediaDevices||!b.userAgent.match(/AppleWebKit\/(\d+)\./))return c.browser="Not a supported browser.",c;c.browser="safari",c.version=this.extractVersion(b.userAgent,/AppleWebKit\/(\d+)\./,1)}return c},shimCreateObjectURL:function(a){var b=a&&a.URL;if("object"==typeof a&&a.HTMLMediaElement&&"srcObject"in a.HTMLMediaElement.prototype){var c=b.createObjectURL.bind(b),d=b.revokeObjectURL.bind(b),e=new Map,g=0;b.createObjectURL=function(a){if("getTracks"in a){var b="polyblob:"+ ++g;return e.set(b,a),f.deprecated("URL.createObjectURL(stream)","elem.srcObject = stream"),b}return c(a)},b.revokeObjectURL=function(a){d(a),e["delete"](a)};var h=Object.getOwnPropertyDescriptor(a.HTMLMediaElement.prototype,"src");Object.defineProperty(a.HTMLMediaElement.prototype,"src",{get:function(){return h.get.apply(this)},set:function(a){return this.srcObject=e.get(a)||null,h.set.apply(this,[a])}});var i=a.HTMLMediaElement.prototype.setAttribute;a.HTMLMediaElement.prototype.setAttribute=function(){return 2===arguments.length&&"src"===(""+arguments[0]).toLowerCase()&&(this.srcObject=e.get(arguments[1])||null),i.apply(this,arguments)}}}};b.exports={log:f.log,deprecated:f.deprecated,disableLog:f.disableLog,disableWarnings:f.disableWarnings,extractVersion:f.extractVersion,shimCreateObjectURL:f.shimCreateObjectURL,detectBrowser:f.detectBrowser.bind(f)}},{}]},{},[2])(2)})}).call(b,c(5))},function(a,b,c){"use strict";var d,e;d=[c(9),c(10),c(3)],e=function(a,b,c){return a.PhenixVideo=c,a.onLoaded=function(){b(a)},a.onLoaded(),a}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(7),c(16),c(4),c(0)],e=function(a,b,c,d,e,f){"use strict";function g(b,e,f){this._disposables=new c.DisposableList,this._events=new d.NamedEvents,this._isVideo="video"===b.tagName,this._swfSrc=f.swfSrc,this._id=b.id||f.streamId,this._width=b.clientWidth,this._height=b.clientHeight,this._ghost=b,this._element=null,this._eventDisposables=[],this._flashVars=["uid="+this._id,"autoplay="+(!!a.isUndefined(b.autoplay)||b.autoplay),"allowScriptAccess=always","preload=true","src="+JSON.stringify(e)];var g=this;this._disposables.add(new c.Disposable(function(){t.call(g,"fire_stop")}));try{C||D?this._element=i.call(this):this._element=j.call(this),m.call(this)}catch(h){y("Error while loading Flash Player"+h)}}function h(b,c){return a.findIndex(this._eventDisposables,function(a){return a.name===b&&a.listener===c})}function i(){return document.createElement("div")}function j(){var a=document.createElement("embed");return a.setAttribute("id","__"+this._id),a.setAttribute("name","__"+this._id),a.setAttribute("play","true"),a.setAttribute("loop","false"),a.setAttribute("quality","high"),a.setAttribute("bgcolor","#000000"),a.setAttribute("wmode","transparent"),a.setAttribute("allowScriptAccess","always"),a.setAttribute("allowFullScreen","true"),a.setAttribute("type","application/x-shockwave-flash"),a.setAttribute("pluginspage","//www.macromedia.com/go/getflashplayer"),a.setAttribute("src",this._swfSrc),a.setAttribute("flashvars",this._flashVars.join("&")),this._isVideo&&(a.setAttribute("width",this._width.toString()),a.setAttribute("height",this._height.toString())),a}function k(){if(!C&&!D)return this._element;var b=(D?"__"+this._id:this._id)+a.uniqueId(),c=document.createElement("object"),d=document.createElement("div"),e=[l("movie",this._swfSrc+"?x="+a.now()),l("flashvars",this._flashVars.join("&")),l("quality",2),l("bgcolor","#000000"),l("wmode","transparent"),l("allowScriptAccess","always"),l("allowFullScreen","true"),d];return d.innerHTML=E,D?(c.setAttribute("type","application/x-shockwave-flash"),c.setAttribute("data",this._swfSrc),c.setAttribute("id",b),c.setAttribute("width","__"+this._width.toString()),c.setAttribute("height","__"+this._height.toString())):(c.setAttribute("classid","clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"),c.setAttribute("codebase","//download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab"),c.setAttribute("id",b),c.setAttribute("width",this._width.toString()),c.setAttribute("height",this._height.toString())),c.object?(a.forEach(e,function(b){a.isNullOrUndefined(a.get(c.object,[b.name]))||(c.object[b.name]=b.value)}),c.appendChild(d)):a.forEach(e,function(b){var d=a.find(c.children,function(a){return a.name===b.name});return d?c.replaceChild(b,d):c.appendChild(b)}),this._element.outerHTML=c.outerHTML,f.document.getElementById&&(this._element=f.document.getElementById(b),m.call(this)),this._element}function l(a,b){var c=document.createElement("param");return c.setAttribute("name",a),c.setAttribute("value",b),c}function m(){a.assign(this._element,z,{id:this._id,width:this._width,height:this._height,videoWidth:this._width,videoHeight:this._height}),n.call(this),v.call(this),o.call(this)}function n(){var b=this;f["__event__"+this._id]=function(a,c){var d=u(a,b._element);if(c)try{d.data=JSON.parse(c),d.details.data=d.data}catch(e){d.message=c}switch(a){case"ended":break;case"error":b._element.error=d.data;break;case"loadeddata":case"loadedmetadata":case"loadstart":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"pause":b._element.paused=!0;break;case"play":b._element.paused=!1;break;case"playing":b._element.paused=!1;break;case"progress":case"seeked":case"seeking":case"stalled":case"suspend":b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"timeupdate":b._element.currentTime=s.call(b,"currentTime"),b._element.dispatchEvent&&b._element.dispatchEvent(d);break;case"volumechange":break;case"waiting":}b._events.fireAsync(a,[d])};var d=this._element.requestFullscreen||this._element.mozRequestFullScreen||this._element.webkitRequestFullScreen||this._element.msRequestFullscreen;this._disposables.add(new c.Disposable(function(){delete f["__event__"+b._id]})),this._element.play=function(){t.call(b,"fire_play")},this._element.load=function(){t.call(b,"fire_load")},this._element.seek=function(){t.call(b,"fire_seek")},this._element.pause=function(){t.call(b,"fire_pause")},this._element.requestFullscreen=function(){if(b._isFullscreen=!0,w.call(b),b._previousHeight=b._element.style.height,b._previousWidth=b._element.style.width,b._previousPosition=b._element.style.position,b._element.style.position="absolute",b._element.style.height="100%",b._element.style.width="100%","undefined"!=typeof f.ActiveXObject){var a=new f("WScript.Shell");null!==a&&a.SendKeys("{F11}")}d.call(b._element)};var e=function(){t.call(b,"set_size",b._isFullscreen?screen.width:b._element.clientWidth,b._isFullscreen?screen.height:b._element.clientHeight)};a.addEventListener(f,"resize",e),this._disposables.add(new c.Disposable(function(){a.removeEventListener(f,"resize",e)}))}function o(){var a=p.call(this),b=q.call(this),d=setInterval(function(){a(),b()},A);this._disposables.add(new c.Disposable(function(){clearInterval(d)}))}function p(){var a=this,b=a._ghost.muted,c=a._element.muted;return function(){var d=a._element.muted,e=a._element.muted;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.muted=e,a._ghost.muted=e,r.call(a,"muted",e))}}function q(){var a=this,b=a._ghost.volume,c=a._element.volume;return function(){var d=a._element.volume,e=a._element.volume;d===b&&e===c||(d!==b&&(b=d,c=d,e=d),e!==c&&(b=d,c=d),a._element.volume=e,a._ghost.volume=e,r.call(a,"volume",e))}}function r(b,c){var d=this._element["set_"+b]||a.noop;return d.call(this._element,c)}function s(b){var c=this._element["get_"+b]||a.noop;return c.call(this._element)}function t(a){var b=this._element[a];if([].shift.apply(arguments),b)return b.apply(this._element,arguments)}function u(a,b){var c=a.match(/([a-z]+\.([a-z]+))/i),d={target:b};if(null!==c&&(a=c[1],d.namespace=c[2]),"IE"===B.browser&&B.version>8){var e=f.document.createEvent("CustomEvent");return e.initCustomEvent(a,!1,!1,d),e}return f.CustomEvent?new f.CustomEvent(a,{detail:d}):d}function v(){var b=this,d=["currentTime","paused","error","src"];if(a.get(f,["MutationObserver"])){var e=new MutationObserver(function(c){c.forEach(function(c){"attributes"!==c.type||c.target!==b._element||a.includes(d,c.attributeName)||r.call(b,c.attributeName,b._element[c.attributeName])})}),g={attributes:!0};e.observe(b._element,g),b._disposables.add(new c.Disposable(function(){e.disconnect()}))}else{x("Falling back to use of DOM event listeners. This results in degraded performance for further DOM modifications and does not work for IE prior to version 9. See https://developer.mozilla.org/en-US/docs/Web/Guide/Events/Mutation_events for details.");var h=function(c){a.includes(d,c.target.tagName)||r.call(b,c.target.tagName,b._element[c.target.tagName])};b._element.addEventListener?(b._element.addEventListener("DOMAttrModified",h,!1),b._disposables.add(new c.Disposable(function(){b._element.removeEventListener("DOMAttrModified",h,!1)}))):(b._element.attachEvent("onpropertychange",h),b._disposables.add(new c.Disposable(function(){b._element.detachEvent("DOMAttrModified",h)})))}}function w(){function a(){document.webkitIsFullScreen||document.mozFullScreen||document.msFullscreenElement||document.fullscreenElement||(document.removeEventListener("webkitfullscreenchange",a),document.removeEventListener("mozfullscreenchange",a),document.removeEventListener("fullscreenchange",a),document.removeEventListener("MSFullscreenChange",a),document.removeEventListener("keydown",b),c._isFullscreen=!1,c._element.style.position=c._previousPosition,c._element.style.height=c._previousHeight,c._element.style.width=c._previousWidth)}function b(b){var c=b||f.event,d=!1;d="key"in c?"Escape"===c.key||"Esc"===c.key:27===c.keyCode,d&&a()}var c=this;document.addEventListener("webkitfullscreenchange",a,!1),document.addEventListener("mozfullscreenchange",a,!1),document.addEventListener("fullscreenchange",a,!1),document.addEventListener("MSFullscreenChange",a,!1),document.addEventListener("keydown",b,!1)}var x=function(){console.log.apply(console,arguments)}||function(){},y=function(){console.error.apply(console,arguments)}||x,z={width:480,height:360,videoWidth:480,videoHeight:360,muted:!1,volume:1,currentTime:0,duration:1/0,readyState:0,ended:!1,buffered:null,autoplay:!0},A=300,B=new b(navigator.userAgent).detect(),C="IE"===B.browser&&/(trident|microsoft)/i.test(a.get(f.navigator,["appName"],"")),D="Edge"===B.browser&&a.get(f.navigator,"msLaunchUri")&&!a.get(f.document,"documentMode"),E="You are using a browser that does not have Flash player enabled or installed. Please turn on your Flash player plugin or download the latest version from https://get.adobe.com/flashplayer/";return g.prototype.finishInitializationInDom=function(){return k.call(this)},g.prototype.getElement=function(){return this._element},g.prototype.addEventListener=function(a,b){var c=h.call(this,a,b);if(!(c>-1)){var d=this._events.listen(a,b);this._disposables.add(d),this._eventDisposables.push({name:a,listener:b,disposable:d})}},g.prototype.removeEventListener=function(a,b){var c=h.call(this,a,b);if(c>-1){var d=this._eventDisposables.splice(c,1)[0];d.disposable.dispose()}},g.prototype.destroy=function(){this._disposables.dispose()},g}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(6),c(8),c(4),c(3)],e=function(a,b,c,d,e){"use strict";function f(){var a=this;this._root=h(),this._version="?";var b=function(b){a._loaded=!0,a._enabled=b===!0,a._version=a._phenixRTC.phenixVersion||"?.?.?.?",q(b?"Phenix RTC "+a._version:"No Phenix RTC"),a._onReady&&a._onReady(a._enabled)};try{this._phenixRTC=i(this._root),this._phenixRTC.onunload=function(){a._loaded=!1};var c=new d;c.waitForReady(this._phenixRTC,b)}catch(e){r("Error while loading Phenix RTC"+e)}}function g(){this._root&&document.getElementById("phenixRTC")!==this._root&&(document.body.appendChild(this._root),this._onLoaded&&this._onLoaded.call(this))}function h(){var a=document.createElement("div");return a.id="phenixRTC",a.style.cssText="visibility:hidden !important;width:0px !important;height:0px !important;margin:0px !important;padding:0px !important;border-style:none !important;border-width:0px !important;max-width:0px !important;max-height:0px !important;outline:none !important",document.body.appendChild(a),a}function i(a){var b=document.createElement("object");return b.type="application/x-phenix-rtc",a.appendChild(b),b}function j(a,b){if(!a)throw new Error("Can not attach a stream to a undefined element");if(a.phenixVersion)return a.src=b,a;var c=new e(a,b,(!0));return c.getElement().phenixPresenter=c,c.getElement()}function k(b){var c=function(){var c=null;switch(arguments.length){case 0:c=new b;break;case 1:c=new b(arguments[0]);break;case 2:c=new b(arguments[0],arguments[1]);break;case 3:c=new b(arguments[0],arguments[1],arguments[2]);break;case 4:c=new b(arguments[0],arguments[1],arguments[2],arguments[3]);break;case 5:c=new b(arguments[0],arguments[1],arguments[2],arguments[3],arguments[4]);break;default:throw new Error("Unsupported number of arguments in Phenix Object Constructor")}return c.phenixAddEventListener=a.bind(l,c),c.phenixRemoveEventListener=a.bind(m,c),c};return a.forOwn(b,function(a,b){c[b]=a}),c}function l(a,c){b.stringNotEmpty(a,"name"),b.isFunction(c,"listener"),n.call(this,a),o.call(this,a,c)}function m(a,b){p.call(this,a,b)}function n(b){if(!this.events||!this.events[b]){this.events||(this.events={});var d=this.events;d[b]={observable:(new c.Observable).extend({timeout:0}),subscription:null,listeners:[]},this.phenixSetEventListener(b,a.bind(d[b].observable.setValue,d[b].observable)),d[b].subscription=d[b].observable.subscribe(function(c){var e=d[b],f=e.listeners;a.forEach(f,function(a){a(c)})})}}function o(a,b){if(!this.events||!this.events[a])throw new Error("No event observable for event: "+name);this.events[a].listeners.push(b)}function p(b,c){this.events&&this.events.events[b]&&(this.events[b].listeners=a.filter(this.events[b].listeners,function(a){return c!==a}))}var q=function(){console.log.apply(console,arguments)}||function(){},r=function(){console.error.apply(console,arguments)}||q;return f.prototype.onReady=function(a){var b=this;this._loaded?setTimeout(function(){a(b._enabled)},1):this._onReady=a},f.prototype.onLoaded=function(a){this._onLoaded=a},f.prototype.isLoaded=function(){return this._loaded===!0},f.isSupported=function(){if(navigator.plugins)for(var a=navigator.plugins,b=0;b<a.length;b++)if(a[b].name.indexOf("PhenixRTC")>=0)return!0;if(navigator.userAgent&&(navigator.userAgent.match(/MSIE/)||navigator.userAgent.match(/Trident/)))try{return new window.ActiveXObject("PhenixP2P.RTC"),!0}catch(c){return!1}return!1},f.prototype.isEnabled=function(){return g.call(this),this._phenixRTC&&void 0!==this._phenixRTC.phenixVersion},f.prototype.getVersion=function(){return g.call(this),this._version},f.prototype.getRTCPeerConnectionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCPeerConnection)},f.prototype.getRTCSessionDescriptionConstructor=function(){return g.call(this),k(this._phenixRTC.RTCSessionDescription)},f.prototype.getRTCIceCandidateConstructor=function(){return g.call(this),k(this._phenixRTC.RTCIceCandidate)},f.prototype.getSourcesDelegate=function(){var a=this;return function(b){return g.call(a),a._phenixRTC.getSources(b)}},f.prototype.getUserMediaDelegate=function(){var a=this;return function(b,c,d){return g.call(a),a._phenixRTC.getUserMedia(b,c,d)}},f.prototype.getStatsDelegate=function(){return function(a,b,c,d){return a.getStats(b,c,d)}},f.prototype.attachMediaStream=function(a,b){return g.call(this),j.call(this,a,b)},f.prototype.reattachMediaStream=function(a,b){return g.call(this),this.attachMediaStream(a,b.src)},f}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b,c){var d,e;d=[c(1),c(2),c(11),c(0),c(3)],e=function(a,b,c,d,e){"use strict";function f(){if(v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(y=a.bind(k,null,"input")),navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices&&(z=a.bind(k,null,"output")),(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia||d.getUserMedia)&&(A=g),!d.RTCPeerConnection)return t("[%s] browser version [%s] does not appear to be WebRTC-capable",u.browser,u.version);switch(u.browser){case"Firefox":t("Firefox detected",u),C=function(a,b){t("Attaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b),a.mozSrcObject=b,a.play(),c===!0&&(a.muted=!0),a},E=function(a,b){t("Reattaching media stream");var c=a.muted;return u.version>57&&(a.srcObject=b.srcObject),a.mozSrcObject=b.mozSrcObject,a.play(),c===!0&&(a.muted=!0),a},B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Opera":t("Opera detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Chrome":t("Webkit detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(a.bind(o,this,b,d),c,e)},F=!0;break;case"Edge":t("Edge detected",u),C=l,E=n,B=function(b,c,d,e){b.getStats(c,a.bind(o,this,b,d),e)},F=!0;break;case"Safari":t("Safari detected",u),C=function(b,c){return a.isObject(c)&&(b.__phenixHasPlayedWebRtc=!0),b=l(b,c)},D=function(a,b){return a.__phenixHasPlayedWebRtc?(a=new e(a,b,(!1)).getElement(),a.play(),a):m(a,b)},E=n,B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;case"ReactNative":t("React Native detected",u),C=function(){t("attachMediaStream not supported in React Native environment")},D=function(){t("attachUriStream not supported in React Native environment")},E=function(){t("reattachMediaStream not supported in React Native environment")},B=function(b,c,d,e){b.getStats(c).then(a.bind(o,this,b,d),e)},F=!0;break;default:t("Browser does not appear to be WebRTC-capable",u)}}function g(b,c,e){var f=a.bind(h,this,b,c,e);return navigator&&a.isFunction(navigator.getUserMedia)?navigator.getUserMedia(b,f,e):d&&a.isFunction(d.getUserMedia)?d.getUserMedia(b,f,e):void 0}function h(a,b,c,d){setTimeout(function(){for(var e=d.getTracks(),f=0;f<e.length;f++){var g=e[f];if(g.onended=function(a){t(a.timeStamp,"Track",g.id,g.label,"ended")},t("Track",g.id,g.label,e[f].kind,"readyState=",e[f].readyState),"ended"===g.readyState)return i("User media not available",c,e)}var h=(a.audio?1:0)+(a.video?1:0);return e.length!==h?i("Unable to get all requested user media.",c,e):void b(d)},100)}function i(a,b,c){try{var d=new Error(a);d.code="unavailable",b(d)}finally{j(c)}}function j(a){for(var b=0;b<a.length;b++)a[b].stop()}function k(a,b){if("input"!==a&&"output"!==a)throw new Error("Unsupported device type "+a);navigator.mediaDevices&&navigator.mediaDevices.enumerateDevices().then(function(c){var d=[];c.forEach(function(b){b.kind==="audio"+a?d.push({kind:"audio",id:b.deviceId,label:b.label}):b.kind==="video"+a&&d.push({kind:"video",id:b.deviceId,label:b.label})}),b(d)})}function l(a,b){return"undefined"!=typeof a.srcObject?a.srcObject=b:"undefined"!=typeof a.mozSrcObject?a.mozSrcObject=b:"undefined"!=typeof a.src?a.src=URL.createObjectURL(b):t("Error attaching stream to element."),a.play(),a}function m(a,b){return a.src=b,a.play(),a}function n(a,b){return a.src=b.src,a}function o(a,b,c){b(p(a,c))}function p(b,c){switch(u.browser){case"Edge":c.forEach(function(a){a.mediaType=q(b,a.codecId),a.bytesSent=s(a.packetsSent,a.mediaType),a.bytesReceived=s(a.packetsReceived,a.mediaType)});break;case"Safari":c.forEach(function(b){a.includes(b.id.toLowerCase(),"audio")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="audio"),a.includes(b.id.toLowerCase(),"video")&&a.includes(b.id.toLowerCase(),"rtp")&&(b.mediaType="video")})}return c}function q(b,c){if(c){var d;return r(b,function(b){a.startsWith(b,"video")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="video"),a.startsWith(b,"audio")&&a.includes(b.toLowerCase(),c.toLowerCase())&&(d="audio")}),d}}function r(b,c){var d=b.localDescription.sdp.split("m="),e=b.remoteDescription.sdp.split("m=");return d.length===e.length&&a.findIndex(d,function(a,b){return c(a,b,e)})}function s(a,b){var c=parseInt(a)||0;return"audio"===b?100*c:"video"===b?1080*c:void 0}var t=function(){console.log.apply(console,arguments)},u=new b(navigator.userAgent).detect(),v=d.RTCPeerConnection,w=d.RTCSessionDescription,x=d.RTCIceCandidate,y=null,z=null,A=null,B=null,C=null,D=null,E=null,F=!1;return function(){f();var a={RTCPeerConnection:v,RTCSessionDescription:w,RTCIceCandidate:x,getSources:y,getDestinations:z,getUserMedia:A,getStats:B,attachMediaStream:C,attachUriStream:D||m,reattachMediaStream:E,webrtcSupported:F};return a.exportGlobal=function(){d.RTCPeerConnection=a.RTCPeerConnection,d.RTCSessionDescription=a.RTCSessionDescription,d.RTCIceCandidate=a.RTCIceCandidate},a}}.apply(b,d),!(void 0!==e&&(a.exports=e))},function(a,b){a.exports=f}])});
 
 /***/ }),
@@ -190,8 +190,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(80),
-    __webpack_require__(79)
+    __webpack_require__(81),
+    __webpack_require__(80)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Disposable, DisposableList) {
     return {
         Disposable: Disposable,
@@ -220,8 +220,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(23),
-    __webpack_require__(76)
+    __webpack_require__(24),
+    __webpack_require__(77)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Event, NamedEvents) {
     return {
         Event: Event,
@@ -232,34 +232,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(54)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(http) {
-    'use strict';
-
-    return http;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -303,7 +275,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         types: {
             realTime: {
                 id: 0,
-                name: 'RealTime'
+                name: 'real-time'
             },
             dash: {
                 id: 1,
@@ -349,6 +321,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(55)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(http) {
+    'use strict';
+
+    return http;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -368,9 +368,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(24),
-    __webpack_require__(78),
-    __webpack_require__(77)
+    __webpack_require__(25),
+    __webpack_require__(79),
+    __webpack_require__(78)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -525,7 +525,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(74)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(75)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
     'use strict';
 
     return getGlobal();
@@ -552,8 +552,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(75),
-    __webpack_require__(72),
+    __webpack_require__(76),
+    __webpack_require__(73),
     __webpack_require__(14)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Logger, ConsoleAppender, logging) {
     'use strict';
@@ -616,9 +616,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(68),
-    __webpack_require__(57),
-    __webpack_require__(19)
+    __webpack_require__(69),
+    __webpack_require__(58),
+    __webpack_require__(21)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(MQWebSocket, BatchHttpProto, MQService) {
     return {
         MQWebSocket: MQWebSocket,
@@ -731,7 +731,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(28)
+    __webpack_require__(29)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
@@ -1303,6 +1303,180 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(4),
+    __webpack_require__(2),
+    __webpack_require__(11),
+    __webpack_require__(36),
+    __webpack_require__(35),
+    __webpack_require__(34),
+    __webpack_require__(5)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
+    'use strict';
+
+    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
+        this._type = type;
+        this._streamId = streamId;
+        this._uri = uri;
+        this._streamTelemetry = streamTelemetry;
+        this._options = options;
+        this._shaka = shaka;
+        this._logger = logger;
+        this._renderers = [];
+        this._dimensionsChangedMonitor = null;
+        this._namedEvents = new event.NamedEvents();
+    }
+
+    PhenixLiveStream.prototype.on = function(name, callback) {
+        this._namedEvents.listen(name, callback);
+    };
+
+    PhenixLiveStream.prototype.createRenderer = function() {
+        var renderer = null;
+
+        switch (this._type) {
+        case streamEnums.types.dash.name:
+            if (this._shaka) {
+                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
+            } else {
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            }
+
+            break;
+        case streamEnums.types.hls.name:
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+
+            break;
+        case streamEnums.types.rtmp.name:
+            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+
+            break;
+        default:
+            throw new Error('Unsupported Live stream Type ' + this._type);
+        }
+
+        var that = this;
+
+        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
+            that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
+        });
+        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
+            that._renderers = _.filter(that._renderers, function(storedRenderer) {
+                return storedRenderer !== renderer;
+            });
+
+            if (that._renderers.length === 0) {
+                that._streamTelemetry.stop();
+                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
+            }
+        });
+
+        this._renderers.push(renderer);
+
+        return renderer;
+    };
+
+    PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
+        this._logger.warn('[%s] selection of tracks not supported for [%s] live streams', this._streamId, this._type);
+
+        return this;
+    };
+
+    PhenixLiveStream.prototype.setStreamEndedCallback = function setStreamEndedCallback(callback) {
+        assert.isFunction(callback, 'callback');
+
+        this.streamEndedCallback = callback;
+    };
+
+    PhenixLiveStream.prototype.setStreamErrorCallback = function setStreamErrorCallback(callback) {
+        assert.isFunction(callback, 'callback');
+
+        this.streamErrorCallback = callback;
+    };
+
+    PhenixLiveStream.prototype.stop = function stop(reason) {
+        if (!this.isActive()) {
+            return;
+        }
+
+        this._logger.info('[%s] stop [live] media stream with reason [%s]', this._streamId, reason);
+
+        this._namedEvents.fire(streamEnums.streamEvents.stopped.name, [reason]);
+
+        this._isStopped = true;
+    };
+
+    PhenixLiveStream.prototype.monitor = function monitor(options, callback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(callback, 'callback');
+    };
+
+    PhenixLiveStream.prototype.getMonitor = function getMonitor() {
+        return null;
+    };
+
+    PhenixLiveStream.prototype.getStream = function getStream() {
+        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
+
+        return null;
+    };
+
+    PhenixLiveStream.prototype.isActive = function isActive() {
+        return !this._isStopped;
+    };
+
+    PhenixLiveStream.prototype.getStreamId = function getStreamId() {
+        return this._streamId;
+    };
+
+    PhenixLiveStream.prototype.getStats = function getStats() {
+        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
+
+        return null;
+    };
+
+    PhenixLiveStream.prototype.getRenderer = function getRenderer() {
+        return _.get(this._renderers, [0], null);
+    };
+
+    PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
+        switch (type) {
+        case streamEnums.types.dash.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+        case streamEnums.types.hls.name:
+            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
+        case streamEnums.types.rtmp.name:
+            return FlashRenderer.isSupported();
+        default:
+            return false;
+        }
+    };
+
+    return PhenixLiveStream;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
     'use strict';
 
@@ -1415,7 +1589,618 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 17 */
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(2)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC) {
+    'use strict';
+
+    var defaultMonitoringInterval = 4000;
+    var defaultConditionMonitoringInterval = 1500;
+    var defaultFrameRateThreshold = 2;
+    var defaultAudioBitRateThreshold = 5000;
+    var defaultVideoBitRateThreshold = 6000;
+    var defaultConditionCountForNotificationThreshold = 3;
+    var defaultTimeoutForNoData = 5000;
+    var minEdgeMonitoringInterval = 6000;
+    var minEdgeConditionCountForNotification = 2;
+
+    function PeerConnectionMonitor(name, peerConnection, logger) {
+        assert.isString(name, 'name');
+        assert.isObject(peerConnection, 'peerConnection');
+        assert.isObject(logger, 'logger');
+
+        this._name = name;
+        this._peerConnection = peerConnection;
+        this._logger = logger;
+    }
+
+    PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
+        assert.isObject(options, 'options');
+        assert.isFunction(activeCallback, 'activeCallback');
+        assert.isFunction(monitorCallback, 'monitorCallback');
+
+        if (options.direction !== 'inbound' && options.direction !== 'outbound') {
+            throw new Error('Invalid monitoring direction');
+        }
+
+        this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
+        this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
+        this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
+        this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
+        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
+        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
+        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
+        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
+        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        this._pausedTracks = [];
+
+        if (phenixRTC.browser === 'Edge') {
+            var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
+
+            this._monitoringInterval = Math.max(this._monitoringInterval, minEdgeMonitoringInterval);
+            this._conditionMonitoringInterval = Math.max(this._conditionMonitoringInterval, minEdgeMonitoringInterval);
+            this._conditionCountForNotificationThreshold = Math.max(Math.ceil(conditionMaxDuration / this._monitoringInterval), minEdgeConditionCountForNotification);
+
+            this._logger.info('Using modified options for optimal monitoring of PeerConnection on [Edge]. Monitor Interval [%s], Condition Monitor Interval [%s], Condition Count For Notification [%s]',
+                this._monitoringInterval, this._conditionMonitoringInterval, this._conditionCountForNotificationThreshold);
+        }
+
+        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
+    };
+
+    PeerConnectionMonitor.prototype.setMonitorTrackState = function(track, state) {
+        assert.isObject(track, 'track');
+        assert.isBoolean(state, 'state');
+
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
+            return pcTrack.id === track.id;
+        });
+
+        if (!foundTrack) {
+            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+        }
+
+        if (!state) {
+            this._logger.info('[%s] Pausing monitoring of track [%s] [%s]', this._name, track.kind, track.id);
+
+            return this._pausedTracks.push(track);
+        }
+
+        var pausedTrackLength = this._pausedTracks.length;
+
+        this._pausedTracks = _.filter(this._pausedTracks, function(pausedTrack) {
+            return pausedTrack.id !== track.id;
+        });
+
+        if (pausedTrackLength !== this._pausedTracks.length) {
+            this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
+        }
+    };
+
+    PeerConnectionMonitor.prototype.toString = function() {
+        return 'PeerConnectionMonitor[' + this._name + ']';
+    };
+
+    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
+        var that = this;
+        var conditionCount = 0;
+        var frameRate = undefined;
+        var videoBitRate = undefined;
+        var audioBitRate = undefined;
+        var lastAudioBytes = {};
+        var lastVideoBytes = {};
+        var lastFramesEncoded = {};
+        var checkForNoDataTimeout = null;
+
+        function nextCheck(checkForNoData) {
+            var selector = null;
+
+            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
+                var hasFrameRate = false;
+                var hasVideoBitRate = false;
+                var hasAudioBitRate = false;
+                var readable = false;
+                var writable = false;
+
+                if (!activeCallback()) {
+                    return that._logger.info('[%s] Finished monitoring of peer connection', name);
+                }
+
+                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
+                    var trackId = stats.id || stats.ssrc;
+                    var currentBytes = null;
+
+                    if (stats.framesEncoded) {
+                        var framesEncoded = new Stats(stats.framesEncoded);
+
+                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
+                        lastFramesEncoded[trackId] = framesEncoded;
+                    }
+
+                    switch (phenixRTC.browser) {
+                    case 'Safari':
+                    case 'Firefox':
+                    case 'Edge':
+                    case 'IE':
+                        writable = readable |= stats.selected &&
+                            stats.state === 'succeeded' ||
+                            phenixRTC.browser === 'IE' ||
+                            phenixRTC.browser === 'Edge' ||
+                            phenixRTC.browser === 'Safari';
+
+                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
+                            currentBytes = new Stats(stats.bytesSent);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+                                hasFrameRate = true;
+                                frameRate = stats.framerateMean || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                if (phenixRTC.browser === 'Edge') {
+                                    hasFrameRate = false;
+                                }
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Outbound [%s] [%s]',
+                                    name, stats.mediaType, stats.ssrc);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
+                            currentBytes = new Stats(stats.bytesReceived);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+
+                                // Inbound frame rate is not calculated correctly
+                                // hasFrameRate = true;
+                                // frameRate = stats.framerateMean || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.jitter);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        break;
+                    case 'Chrome':
+                    default:
+                        if (stats.googWritable === 'true') {
+                            writable = true;
+                        }
+
+                        if (stats.googReadable === 'true') {
+                            readable = true;
+                        }
+
+                        if (stats.type !== 'ssrc') {
+                            return;
+                        }
+
+                        if (options.direction === 'outbound') {
+                            currentBytes = new Stats(stats.bytesSent);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateSent || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        } else if (options.direction === 'inbound') {
+                            currentBytes = new Stats(stats.bytesReceived);
+
+                            switch (stats.mediaType) {
+                            case 'video':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+                                hasFrameRate = true;
+                                frameRate = stats.googFrameRateReceived || 0;
+                                hasVideoBitRate = true;
+                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
+                                lastVideoBytes[trackId] = currentBytes;
+
+                                break;
+                            case 'audio':
+                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+                                hasAudioBitRate = true;
+                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
+                                lastAudioBytes[trackId] = currentBytes;
+
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!report) {
+                    throw new Error('Report must be a valid PeerConnection.getStats Report');
+                }
+
+                if (report.forEach) {
+                    report.forEach(eachStats);
+                } else {
+                    _.forOwn(report, function(stats, reportId) {
+                        eachStats(stats, reportId);
+                    });
+                }
+
+                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
+                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
+
+                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
+                    hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
+                    hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
+                    hasFrameRate = hasFrameRate && hasActiveVideo;
+
+                    readable = readable || !(hasActiveVideo || hasActiveAudio);
+                    writable = writable || !(hasActiveVideo || hasActiveAudio);
+                }
+
+                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
+                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
+                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
+                }
+
+                if (that._monitorState
+                    && (peerConnection.connectionState === 'closed'
+                    || peerConnection.connectionState === 'failed'
+                    || peerConnection.iceConnectionState === 'failed')) {
+                    var active = hasActiveAudio && hasActiveVideo;
+                    var tracks = getAllTracks.call(that, peerConnection);
+
+                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
+                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
+
+                        return;
+                    }
+
+                    conditionCount++;
+                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                    conditionCount++;
+                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
+                    conditionCount++;
+                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                    conditionCount++;
+                } else if (!readable || !writable) {
+                    conditionCount++;
+                } else {
+                    conditionCount = 0;
+                }
+
+                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
+
+                if (isNoData && !checkForNoDataTimeout) {
+                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
+                } else if (!isNoData) {
+                    clearTimeout(checkForNoDataTimeout);
+
+                    checkForNoDataTimeout = null;
+                }
+
+                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+                var acknowledgeFailure = function acknowledgeFailure() {
+                    that._logger.info('[%s] Failure has been acknowledged', name);
+
+                    conditionCount = Number.MIN_VALUE;
+
+                    setTimeout(nextCheck, that._monitoringInterval);
+                };
+
+                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
+                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
+                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
+                    var monitorEvent = {
+                        type: 'condition',
+                        message: failureMessage,
+                        report: report,
+                        frameRate: frameRate,
+                        videoBitRate: videoBitRate,
+                        audioBitRate: audioBitRate,
+                        acknowledgeFailure: acknowledgeFailure
+                    };
+
+                    if (!monitorCallback(null, monitorEvent)) {
+                        that._logger.error(failureMessage + ': [%s]', report);
+                    } else {
+                        acknowledgeFailure();
+                    }
+                } else {
+                    setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
+                }
+            }, function errorCallback(error) {
+                monitorCallback(error, {
+                    type: 'error',
+                    message: 'Unable to get Connection statistics. Connection may have failed.'
+                });
+            });
+        }
+
+        setTimeout(nextCheck, that._monitoringInterval);
+    }
+
+    function Stats(value) {
+        this.time = _.now();
+        this.value = value || 0;
+    }
+
+    function normalizeStatsReport(response) {
+        var normalizedReport = {};
+
+        switch (phenixRTC.browser) {
+        case 'Firefox':
+            return response;
+        case 'IE':
+            _.forOwn(response, function(value, key) {
+                if (!_.startsWith(key, 'ssrc')) {
+                    return;
+                }
+
+                normalizedReport[value.id] = value;
+            });
+
+            return normalizedReport;
+        case 'Safari':
+        case 'Edge':
+            response.forEach(function(report) {
+                normalizedReport[report.id] = report;
+            });
+
+            return normalizedReport;
+        case 'ReactNative':
+            var stats = _.isString(response) ? JSON.parse(response) : response;
+
+            stats.forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.values.forEach(function(value) {
+                    _.keys(value).forEach(function(key) {
+                        normalizedStatistics[key] = value[key];
+                    });
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        case 'Chrome':
+        default:
+            response.result().forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.names().forEach(function(name) {
+                    normalizedStatistics[name] = report.stat(name);
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        }
+    }
+
+    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
+        if (!activeCallback()) {
+            return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
+        }
+
+        phenixRTC.getStats(peerConnection, null, function(response) {
+            var report = normalizeStatsReport(response);
+
+            successCallback(report);
+        }, function(error) {
+            errorCallback(error);
+        });
+    }
+
+    function getAllTracks(peerConnection) {
+        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
+        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
+        var localTracks = [];
+        var remoteTracks = [];
+
+        _.forEach(localStreams, function(stream) {
+            localTracks = localTracks.concat(stream.getTracks());
+        });
+
+        _.forEach(remoteStreams, function(stream) {
+            remoteTracks = remoteTracks.concat(stream.getTracks());
+        });
+
+        if (localTracks.length !== 0 && remoteTracks.length !== 0) {
+            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
+
+            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+        } else if (localTracks.length !== 0) {
+            return localTracks;
+        } else if (remoteTracks.length !== 0) {
+            return remoteTracks;
+        }
+
+        return [];
+    }
+
+    function hasMediaSectionsInSdp(peerConnection) {
+        var indexOfSection = findInSdpSections(peerConnection, function(section) {
+            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
+        });
+
+        return _.isNumber(indexOfSection);
+    }
+
+    function hasActiveAudioInSdp(peerConnection) {
+        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'audio')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    }
+
+    function hasActiveVideoInSdp(peerConnection) {
+        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'video')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    }
+
+    function findInSdpSections(peerConnection, callback) {
+        var localSections = peerConnection.localDescription.sdp.split('m=');
+        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
+
+        if (localSections.length !== remoteSections.length) {
+            return false;
+        }
+
+        return _.findIndex(localSections, function(section, index) {
+            return callback(section, index, remoteSections);
+        });
+    }
+
+    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
+        if (!lastFramesEncoded) {
+            return defaultFrameRate;
+        }
+
+        return (currentFramesEncoded.value - lastFramesEncoded.value)
+            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
+    }
+
+    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
+        if (!lastBytes) {
+            return defaultBitRate;
+        }
+
+        return (8 * (currentBytes.value - lastBytes.value))
+            / ((currentBytes.time - lastBytes.time) / 1000.0);
+    }
+
+    function areAllTracksPaused() {
+        var that = this;
+
+        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
+    }
+
+    function areAllTracksOfTypePaused(kind) {
+        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
+            return track.kind === kind;
+        });
+        var pausedTracksOfType = _.filter(this._pausedTracks, function(track) {
+            return track.kind === kind;
+        });
+
+        return _.reduce(pcTracksOfType, function(areAllPaused, track) {
+            if (!areAllPaused) {
+                return areAllPaused;
+            }
+
+            var isTrackPaused = !!_.find(pausedTracksOfType, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
+
+            return !track.enabled || isTrackPaused;
+        }, true);
+    }
+
+    return PeerConnectionMonitor;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1873,7 +2658,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1893,9 +2678,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(64),
-    __webpack_require__(62),
-    __webpack_require__(61)
+    __webpack_require__(65),
+    __webpack_require__(63),
+    __webpack_require__(62)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, Pbf, Schema, mqProto) {
     'use strict';
 
@@ -1957,7 +2742,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1980,8 +2765,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(3),
-    __webpack_require__(18),
-    __webpack_require__(60)
+    __webpack_require__(20),
+    __webpack_require__(61)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, disposable, MQProtocol, Base64) {
     'use strict';
 
@@ -2356,7 +3141,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -2375,7 +3160,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(65)
+    __webpack_require__(66)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(networkConnectionMonitor) {
     'use strict';
 
@@ -2384,618 +3169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(2)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC) {
-    'use strict';
-
-    var defaultMonitoringInterval = 4000;
-    var defaultConditionMonitoringInterval = 1500;
-    var defaultFrameRateThreshold = 2;
-    var defaultAudioBitRateThreshold = 5000;
-    var defaultVideoBitRateThreshold = 6000;
-    var defaultConditionCountForNotificationThreshold = 3;
-    var defaultTimeoutForNoData = 5000;
-    var minEdgeMonitoringInterval = 6000;
-    var minEdgeConditionCountForNotification = 2;
-
-    function PeerConnectionMonitor(name, peerConnection, logger) {
-        assert.isString(name, 'name');
-        assert.isObject(peerConnection, 'peerConnection');
-        assert.isObject(logger, 'logger');
-
-        this._name = name;
-        this._peerConnection = peerConnection;
-        this._logger = logger;
-    }
-
-    PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(activeCallback, 'activeCallback');
-        assert.isFunction(monitorCallback, 'monitorCallback');
-
-        if (options.direction !== 'inbound' && options.direction !== 'outbound') {
-            throw new Error('Invalid monitoring direction');
-        }
-
-        this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
-        this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
-        this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
-        this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
-        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
-        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
-        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
-        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
-        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
-        this._pausedTracks = [];
-
-        if (phenixRTC.browser === 'Edge') {
-            var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
-
-            this._monitoringInterval = Math.max(this._monitoringInterval, minEdgeMonitoringInterval);
-            this._conditionMonitoringInterval = Math.max(this._conditionMonitoringInterval, minEdgeMonitoringInterval);
-            this._conditionCountForNotificationThreshold = Math.max(Math.ceil(conditionMaxDuration / this._monitoringInterval), minEdgeConditionCountForNotification);
-
-            this._logger.info('Using modified options for optimal monitoring of PeerConnection on [Edge]. Monitor Interval [%s], Condition Monitor Interval [%s], Condition Count For Notification [%s]',
-                this._monitoringInterval, this._conditionMonitoringInterval, this._conditionCountForNotificationThreshold);
-        }
-
-        return monitorPeerConnection.call(this, this._name, this._peerConnection, options, activeCallback, monitorCallback);
-    };
-
-    PeerConnectionMonitor.prototype.setMonitorTrackState = function(track, state) {
-        assert.isObject(track, 'track');
-        assert.isBoolean(state, 'state');
-
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
-        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
-            return pcTrack.id === track.id;
-        });
-
-        if (!foundTrack) {
-            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
-        }
-
-        if (!state) {
-            this._logger.info('[%s] Pausing monitoring of track [%s] [%s]', this._name, track.kind, track.id);
-
-            return this._pausedTracks.push(track);
-        }
-
-        var pausedTrackLength = this._pausedTracks.length;
-
-        this._pausedTracks = _.filter(this._pausedTracks, function(pausedTrack) {
-            return pausedTrack.id !== track.id;
-        });
-
-        if (pausedTrackLength !== this._pausedTracks.length) {
-            this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
-        }
-    };
-
-    PeerConnectionMonitor.prototype.toString = function() {
-        return 'PeerConnectionMonitor[' + this._name + ']';
-    };
-
-    function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
-        var that = this;
-        var conditionCount = 0;
-        var frameRate = undefined;
-        var videoBitRate = undefined;
-        var audioBitRate = undefined;
-        var lastAudioBytes = {};
-        var lastVideoBytes = {};
-        var lastFramesEncoded = {};
-        var checkForNoDataTimeout = null;
-
-        function nextCheck(checkForNoData) {
-            var selector = null;
-
-            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
-                var hasFrameRate = false;
-                var hasVideoBitRate = false;
-                var hasAudioBitRate = false;
-                var readable = false;
-                var writable = false;
-
-                if (!activeCallback()) {
-                    return that._logger.info('[%s] Finished monitoring of peer connection', name);
-                }
-
-                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
-                    var trackId = stats.id || stats.ssrc;
-                    var currentBytes = null;
-
-                    if (stats.framesEncoded) {
-                        var framesEncoded = new Stats(stats.framesEncoded);
-
-                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
-                        lastFramesEncoded[trackId] = framesEncoded;
-                    }
-
-                    switch (phenixRTC.browser) {
-                    case 'Safari':
-                    case 'Firefox':
-                    case 'Edge':
-                    case 'IE':
-                        writable = readable |= stats.selected &&
-                            stats.state === 'succeeded' ||
-                            phenixRTC.browser === 'IE' ||
-                            phenixRTC.browser === 'Edge' ||
-                            phenixRTC.browser === 'Safari';
-
-                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
-                                hasFrameRate = true;
-                                frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                if (phenixRTC.browser === 'Edge') {
-                                    hasFrameRate = false;
-                                }
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s]',
-                                    name, stats.mediaType, stats.ssrc);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
-
-                                // Inbound frame rate is not calculated correctly
-                                // hasFrameRate = true;
-                                // frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.jitter);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        break;
-                    case 'Chrome':
-                    default:
-                        if (stats.googWritable === 'true') {
-                            writable = true;
-                        }
-
-                        if (stats.googReadable === 'true') {
-                            readable = true;
-                        }
-
-                        if (stats.type !== 'ssrc') {
-                            return;
-                        }
-
-                        if (options.direction === 'outbound') {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        } else if (options.direction === 'inbound') {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-
-                if (!report) {
-                    throw new Error('Report must be a valid PeerConnection.getStats Report');
-                }
-
-                if (report.forEach) {
-                    report.forEach(eachStats);
-                } else {
-                    _.forOwn(report, function(stats, reportId) {
-                        eachStats(stats, reportId);
-                    });
-                }
-
-                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
-                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
-
-                if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
-                    hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
-                    hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
-                    hasFrameRate = hasFrameRate && hasActiveVideo;
-
-                    readable = readable || !(hasActiveVideo || hasActiveAudio);
-                    writable = writable || !(hasActiveVideo || hasActiveAudio);
-                }
-
-                if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
-                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
-                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
-                }
-
-                if (that._monitorState
-                    && (peerConnection.connectionState === 'closed'
-                    || peerConnection.connectionState === 'failed'
-                    || peerConnection.iceConnectionState === 'failed')) {
-                    var active = hasActiveAudio && hasActiveVideo;
-                    var tracks = getAllTracks.call(that, peerConnection);
-
-                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
-                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
-
-                        return;
-                    }
-
-                    conditionCount++;
-                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
-                    conditionCount++;
-                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (!readable || !writable) {
-                    conditionCount++;
-                } else {
-                    conditionCount = 0;
-                }
-
-                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
-
-                if (isNoData && !checkForNoDataTimeout) {
-                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
-                } else if (!isNoData) {
-                    clearTimeout(checkForNoDataTimeout);
-
-                    checkForNoDataTimeout = null;
-                }
-
-                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
-                var acknowledgeFailure = function acknowledgeFailure() {
-                    that._logger.info('[%s] Failure has been acknowledged', name);
-
-                    conditionCount = Number.MIN_VALUE;
-
-                    setTimeout(nextCheck, that._monitoringInterval);
-                };
-
-                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, and video bit rate [' + videoBitRate + '] bps';
-                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
-                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
-                    var monitorEvent = {
-                        type: 'condition',
-                        message: failureMessage,
-                        report: report,
-                        frameRate: frameRate,
-                        videoBitRate: videoBitRate,
-                        audioBitRate: audioBitRate,
-                        acknowledgeFailure: acknowledgeFailure
-                    };
-
-                    if (!monitorCallback(null, monitorEvent)) {
-                        that._logger.error(failureMessage + ': [%s]', report);
-                    } else {
-                        acknowledgeFailure();
-                    }
-                } else {
-                    setTimeout(nextCheck, conditionCount > 0 ? that._conditionMonitoringInterval : that._monitoringInterval);
-                }
-            }, function errorCallback(error) {
-                monitorCallback(error, {
-                    type: 'error',
-                    message: 'Unable to get Connection statistics. Connection may have failed.'
-                });
-            });
-        }
-
-        setTimeout(nextCheck, that._monitoringInterval);
-    }
-
-    function Stats(value) {
-        this.time = _.now();
-        this.value = value || 0;
-    }
-
-    function normalizeStatsReport(response) {
-        var normalizedReport = {};
-
-        switch (phenixRTC.browser) {
-        case 'Firefox':
-            return response;
-        case 'IE':
-            _.forOwn(response, function(value, key) {
-                if (!_.startsWith(key, 'ssrc')) {
-                    return;
-                }
-
-                normalizedReport[value.id] = value;
-            });
-
-            return normalizedReport;
-        case 'Safari':
-        case 'Edge':
-            response.forEach(function(report) {
-                normalizedReport[report.id] = report;
-            });
-
-            return normalizedReport;
-        case 'ReactNative':
-            var stats = _.isString(response) ? JSON.parse(response) : response;
-
-            stats.forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.values.forEach(function(value) {
-                    _.keys(value).forEach(function(key) {
-                        normalizedStatistics[key] = value[key];
-                    });
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        case 'Chrome':
-        default:
-            response.result().forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.names().forEach(function(name) {
-                    normalizedStatistics[name] = report.stat(name);
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        }
-    }
-
-    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
-        if (!activeCallback()) {
-            return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
-        }
-
-        phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response);
-
-            successCallback(report);
-        }, function(error) {
-            errorCallback(error);
-        });
-    }
-
-    function getAllTracks(peerConnection) {
-        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
-        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
-        var localTracks = [];
-        var remoteTracks = [];
-
-        _.forEach(localStreams, function(stream) {
-            localTracks = localTracks.concat(stream.getTracks());
-        });
-
-        _.forEach(remoteStreams, function(stream) {
-            remoteTracks = remoteTracks.concat(stream.getTracks());
-        });
-
-        if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
-
-            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
-        } else if (localTracks.length !== 0) {
-            return localTracks;
-        } else if (remoteTracks.length !== 0) {
-            return remoteTracks;
-        }
-
-        return [];
-    }
-
-    function hasMediaSectionsInSdp(peerConnection) {
-        var indexOfSection = findInSdpSections(peerConnection, function(section) {
-            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
-        });
-
-        return _.isNumber(indexOfSection);
-    }
-
-    function hasActiveAudioInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'audio')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function hasActiveVideoInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'video')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function findInSdpSections(peerConnection, callback) {
-        var localSections = peerConnection.localDescription.sdp.split('m=');
-        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
-
-        if (localSections.length !== remoteSections.length) {
-            return false;
-        }
-
-        return _.findIndex(localSections, function(section, index) {
-            return callback(section, index, remoteSections);
-        });
-    }
-
-    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
-        if (!lastFramesEncoded) {
-            return defaultFrameRate;
-        }
-
-        return (currentFramesEncoded.value - lastFramesEncoded.value)
-            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
-    }
-
-    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
-        if (!lastBytes) {
-            return defaultBitRate;
-        }
-
-        return (8 * (currentBytes.value - lastBytes.value))
-            / ((currentBytes.time - lastBytes.time) / 1000.0);
-    }
-
-    function areAllTracksPaused() {
-        var that = this;
-
-        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
-            if (!areAllPaused) {
-                return areAllPaused;
-            }
-
-            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
-                return pcTrack.id === track.id;
-            });
-
-            return !track.enabled || isTrackPaused;
-        }, true);
-    }
-
-    function areAllTracksOfTypePaused(kind) {
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
-        var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
-            return track.kind === kind;
-        });
-        var pausedTracksOfType = _.filter(this._pausedTracks, function(track) {
-            return track.kind === kind;
-        });
-
-        return _.reduce(pcTracksOfType, function(areAllPaused, track) {
-            if (!areAllPaused) {
-                return areAllPaused;
-            }
-
-            var isTrackPaused = !!_.find(pausedTracksOfType, function(pcTrack) {
-                return pcTrack.id === track.id;
-            });
-
-            return !track.enabled || isTrackPaused;
-        }, true);
-    }
-
-    return PeerConnectionMonitor;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3018,30 +3192,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(7),
     __webpack_require__(3),
-    __webpack_require__(71),
-    __webpack_require__(5),
-    __webpack_require__(13),
-    __webpack_require__(52),
-    __webpack_require__(51),
-    __webpack_require__(48),
-    __webpack_require__(45),
-    __webpack_require__(44),
-    __webpack_require__(21),
-    __webpack_require__(8),
-    __webpack_require__(43),
-    __webpack_require__(41),
-    __webpack_require__(40),
-    __webpack_require__(16),
-    __webpack_require__(36),
-    __webpack_require__(35),
-    __webpack_require__(31),
+    __webpack_require__(72),
     __webpack_require__(6),
+    __webpack_require__(13),
+    __webpack_require__(53),
+    __webpack_require__(52),
+    __webpack_require__(49),
+    __webpack_require__(46),
+    __webpack_require__(45),
+    __webpack_require__(18),
+    __webpack_require__(8),
+    __webpack_require__(44),
+    __webpack_require__(42),
+    __webpack_require__(41),
+    __webpack_require__(17),
+    __webpack_require__(37),
+    __webpack_require__(16),
+    __webpack_require__(33),
+    __webpack_require__(31),
+    __webpack_require__(5),
     __webpack_require__(2),
-    __webpack_require__(29)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+    __webpack_require__(30)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-20T21:53:51Z';
+    var sdkVersion = '2018-07-26T20:35:00Z';
 
     function PCast(options) {
         options = options || {};
@@ -3088,6 +3263,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
+        this._featureDetector = new FeatureDetector(options.features);
 
         var that = this;
         var logGlobalError = function logGlobalError(event) {
@@ -3480,10 +3656,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                     var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-                    var isLive = offerSdp.match(/a=x-playlist:/);
+                    var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
 
-                    if (isLive) {
-                        create = createLiveViewer;
+                    if (isNotRealTime) {
+                        create = createChunkedOrRtmpViewer;
                     }
 
                     streamTelemetry.setStreamId(streamId);
@@ -3496,7 +3672,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (!isLive && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -4502,7 +4678,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
+    function createChunkedOrRtmpViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
         var rtmpQuery = /a=x-rtmp:(rtmp:\/\/[^\n]*)/m;
@@ -4513,16 +4689,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var playlistUrl = _.get(hlsMatch, [1], '');
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
-        var preferHls = isIOS() || phenixRTC.browser === 'Safari';
-        var canPlaybackDash = PhenixLiveStream.canPlaybackType(streamEnums.types.dash.name);
-        var canPlaybackHls = PhenixLiveStream.canPlaybackType(streamEnums.types.hls.name);
+        var rtmpOffered = !!rtmpMatch;
+        var publisherCapabilities = [];
+
+        if (dashManifestOffered || hlsPlaylistOffered) {
+            publisherCapabilities.push('streaming');
+        }
+
+        if (rtmpOffered) {
+            publisherCapabilities.push('rtmp');
+        }
+
+        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities, true);
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
+        switch (preferredFeature) {
+        case streamEnums.types.rtmp.name:
             var rtmpUris = [];
             var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
@@ -4548,7 +4734,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: env}, this._rtmpOptions, options));
-        } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
+        case streamEnums.types.dash.name:
             this._logger.info('Selecting dash playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
@@ -4565,7 +4751,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsPlaylistOffered && canPlaybackHls) {
+        case streamEnums.types.hls.name:
             this._logger.info('Selecting hls playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
@@ -4576,18 +4762,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: preferHls}, options));
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: FeatureDetector.shouldUseNativeHls}, options));
+        default:
+            break;
         }
 
-        if (!dashManifestOffered && !hlsPlaylistOffered) {
-            that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
-        } else if (!canPlaybackDash && !canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackDash) {
-            that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
-        }
+        that._logger.warn('[%s] Device does not support [%s] playback. Creating live viewer stream failed.', streamId, FeatureDetector.mapPCastCapabilitiesToFeatures(publisherCapabilities));
 
         return callback.call(that, undefined, 'failed');
     }
@@ -4772,7 +4952,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -4865,7 +5045,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5055,7 +5235,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5095,7 +5275,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5116,7 +5296,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, http, disposable) {
     'use strict';
@@ -5247,7 +5427,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5270,11 +5450,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(7),
     __webpack_require__(11),
-    __webpack_require__(26),
+    __webpack_require__(27),
     __webpack_require__(15),
-    __webpack_require__(22),
+    __webpack_require__(23),
     __webpack_require__(2),
-    __webpack_require__(25)
+    __webpack_require__(26)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
@@ -6386,7 +6566,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6728,7 +6908,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6844,7 +7024,163 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 30 */
+/* 31 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(1),
+    __webpack_require__(2),
+    __webpack_require__(16),
+    __webpack_require__(5)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, PhenixLiveStream, streamEnums) {
+    'use strict';
+
+    var defaultFeatures = [
+        streamEnums.types.realTime.name,
+        streamEnums.types.rtmp.name,
+        streamEnums.types.dash.name,
+        streamEnums.types.hls.name
+    ];
+
+    function FeatureDetector(features) {
+        features = features || defaultFeatures;
+
+        assert.isArray(features, 'features');
+
+        _.forEach(features, function(feature) {
+            assert.isValidType(feature, streamEnums.types, 'streamType');
+        });
+
+        this._features = features;
+    }
+
+    FeatureDetector.isFeatureSupported = function(feature) {
+        if (feature) {
+            assert.isStringNotEmpty(feature, 'feature');
+        }
+
+        switch (feature) {
+        case streamEnums.types.realTime.name:
+            return rtc.webrtcSupported;
+        case streamEnums.types.dash.name:
+        case streamEnums.types.hls.name:
+        case streamEnums.types.rtmp.name:
+            return PhenixLiveStream.canPlaybackType(feature);
+        default:
+            return false;
+        }
+    };
+
+    FeatureDetector.mapFeatureToPCastCapability = function(feature) {
+        if (feature) {
+            assert.isStringNotEmpty(feature, 'feature');
+        }
+
+        switch (feature) {
+        case streamEnums.types.realTime.name:
+            return 'real-time';
+        case streamEnums.types.dash.name:
+        case streamEnums.types.hls.name:
+            return 'streaming';
+        case streamEnums.types.rtmp.name:
+            return 'rtmp';
+        default:
+            return '';
+        }
+    };
+
+    FeatureDetector.mapPCastCapabilitiesToFeatures = function(capabilities) {
+        assert.isArray(capabilities, 'capabilities');
+
+        return _.reduce(capabilities, function(features, capability) {
+            return features.concat(FeatureDetector.mapPCastCapabilityToFeatures(capability));
+        }, []);
+    };
+
+    FeatureDetector.mapPCastCapabilityToFeatures = function(capability) {
+        if (capability) {
+            assert.isStringNotEmpty(capability, 'capability');
+        }
+
+        if (capability === 'real-time') {
+            return [streamEnums.types.realTime.name];
+        }
+
+        if (capability === 'streaming') {
+            return [streamEnums.types.dash.name, streamEnums.types.dash.name];
+        }
+
+        if (capability === 'rtmp') {
+            return [streamEnums.types.rtmp.name];
+        }
+
+        return [];
+    };
+
+    FeatureDetector.prototype.getFeaturePCastCapabilities = function() {
+        var capabilities = _.map(this._features, FeatureDetector.mapFeatureToPCastCapability);
+
+        return _.reduce(capabilities, removeDuplicates, []);
+    };
+
+    FeatureDetector.prototype.getPreferredFeatureFromPublisherCapabilities = function(capabilities, excludeRealTime) {
+        assert.isArray(capabilities, 'capabilities');
+
+        var preferredFeature = _.reduce(this._features, function(candidateFeature, feature) {
+            var featureCapability = FeatureDetector.mapFeatureToPCastCapability(feature);
+            var isFeatureAvailableAndCanPlayBack = FeatureDetector.isFeatureSupported(feature) && (_.includes(capabilities, featureCapability) || (feature === 'real-time' && !excludeRealTime));
+            var nextFeature = isFeatureAvailableAndCanPlayBack ? feature : null;
+
+            return candidateFeature || nextFeature;
+        }, null);
+
+        if (preferredFeature === streamEnums.types.dash.name && FeatureDetector.shouldUseNativeHls && _.includes(capabilities, FeatureDetector.mapFeatureToPCastCapability(streamEnums.types.hls.name)) && _.includes(this._features, streamEnums.types.hls.name)) {
+            preferredFeature = streamEnums.types.hls.name;
+        } else if (preferredFeature === streamEnums.types.hls.name && !FeatureDetector.shouldUseNativeHls && _.includes(capabilities, FeatureDetector.mapFeatureToPCastCapability(streamEnums.types.dash.name)) && _.includes(this._features, streamEnums.types.dash.name)) {
+            preferredFeature = streamEnums.types.dash.name;
+        }
+
+        return preferredFeature;
+    };
+
+    FeatureDetector.shouldUseNativeHls = isIOS() || rtc.browser === 'Safari';
+
+    function isIOS() {
+        var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
+
+        return /iPad|iPhone|iPod/.test(userAgent) && !rtc.global.MSStream;
+    }
+
+    function removeDuplicates(list, item) {
+        if (!_.includes(list, item)) {
+            list.push(item);
+        }
+
+        return list;
+    }
+
+    return FeatureDetector;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6866,11 +7202,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3),
     __webpack_require__(2),
     __webpack_require__(8),
-    __webpack_require__(6)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
@@ -7011,7 +7347,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7034,10 +7370,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(16),
-    __webpack_require__(21),
-    __webpack_require__(30),
-    __webpack_require__(6)
+    __webpack_require__(17),
+    __webpack_require__(18),
+    __webpack_require__(32),
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, PhenixRealTimeRenderer, streamEnums) {
     'use strict';
 
@@ -7284,7 +7620,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7307,18 +7643,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(10),
     __webpack_require__(4),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3),
     __webpack_require__(11),
     __webpack_require__(2),
     __webpack_require__(8),
-    __webpack_require__(6)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var hasFlashPlugin = detectFlashPlugin();
     var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -7358,7 +7693,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     FlashRenderer.isSupported = function() {
-        return hasFlashPlugin;
+        return detectFlashPlugin();
     };
 
     FlashRenderer.prototype.on = function(name, callback) {
@@ -7525,12 +7860,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('[%s] Flash player ended.', this._streamId);
     }
 
+    var hasFlashPlugin = null;
+
     function detectFlashPlugin() {
         var defaultVersion = [10, 0, 0];
         var pluginName = 'Shockwave Flash';
         var mimeType = 'application/x-shockwave-flash';
         var activeX = 'ShockwaveFlash.ShockwaveFlash';
         var version = [0, 0, 0];
+
+        if (_.isBoolean(hasFlashPlugin)) {
+            return hasFlashPlugin;
+        }
 
         // Firefox, Webkit, Opera
         if (_.get(rtc.global.navigator, ['plugins', pluginName])) {
@@ -7559,7 +7900,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
         }
 
-        return (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+        hasFlashPlugin = (version[0] > defaultVersion[0] || (version[0] === defaultVersion[0] && version[1] > 0) || (version[0] === defaultVersion[0] && version[1] === 0 && version[2] >= 0));
+
+        return hasFlashPlugin;
     }
 
     return FlashRenderer;
@@ -7567,7 +7910,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7590,12 +7933,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(10),
     __webpack_require__(4),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3),
     __webpack_require__(11),
     __webpack_require__(2),
     __webpack_require__(8),
-    __webpack_require__(6)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
@@ -7943,7 +8286,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7965,11 +8308,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3),
     __webpack_require__(2),
     __webpack_require__(8),
-    __webpack_require__(6)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
@@ -8351,7 +8694,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8372,181 +8715,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(4),
-    __webpack_require__(2),
-    __webpack_require__(11),
-    __webpack_require__(34),
-    __webpack_require__(33),
-    __webpack_require__(32),
-    __webpack_require__(6)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
-    'use strict';
-
-    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
-        this._type = type;
-        this._streamId = streamId;
-        this._uri = uri;
-        this._streamTelemetry = streamTelemetry;
-        this._options = options;
-        this._shaka = shaka;
-        this._logger = logger;
-        this._renderers = [];
-        this._dimensionsChangedMonitor = null;
-        this._namedEvents = new event.NamedEvents();
-    }
-
-    PhenixLiveStream.prototype.on = function(name, callback) {
-        this._namedEvents.listen(name, callback);
-    };
-
-    PhenixLiveStream.prototype.createRenderer = function() {
-        var renderer = null;
-
-        switch (this._type) {
-        case streamEnums.types.dash.name:
-            if (this._shaka) {
-                renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
-            } else {
-                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-            }
-
-            break;
-        case streamEnums.types.hls.name:
-            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-
-            break;
-        case streamEnums.types.rtmp.name:
-            renderer = new FlashRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
-
-            break;
-        default:
-            throw new Error('Unsupported Live stream Type ' + this._type);
-        }
-
-        var that = this;
-
-        renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
-            that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);
-        });
-        renderer.on(streamEnums.rendererEvents.ended.name, function(reason) {
-            that._renderers = _.filter(that._renderers, function(storedRenderer) {
-                return storedRenderer !== renderer;
-            });
-
-            if (that._renderers.length === 0) {
-                that._streamTelemetry.stop();
-                that._namedEvents.fire(streamEnums.streamEvents.playerEnded.name, [reason]);
-            }
-        });
-
-        this._renderers.push(renderer);
-
-        return renderer;
-    };
-
-    PhenixLiveStream.prototype.select = function select(trackSelectCallback) { // eslint-disable-line no-unused-vars
-        this._logger.warn('[%s] selection of tracks not supported for [%s] live streams', this._streamId, this._type);
-
-        return this;
-    };
-
-    PhenixLiveStream.prototype.setStreamEndedCallback = function setStreamEndedCallback(callback) {
-        assert.isFunction(callback, 'callback');
-
-        this.streamEndedCallback = callback;
-    };
-
-    PhenixLiveStream.prototype.setStreamErrorCallback = function setStreamErrorCallback(callback) {
-        assert.isFunction(callback, 'callback');
-
-        this.streamErrorCallback = callback;
-    };
-
-    PhenixLiveStream.prototype.stop = function stop(reason) {
-        if (!this.isActive()) {
-            return;
-        }
-
-        this._logger.info('[%s] stop [live] media stream with reason [%s]', this._streamId, reason);
-
-        this._namedEvents.fire(streamEnums.streamEvents.stopped.name, [reason]);
-
-        this._isStopped = true;
-    };
-
-    PhenixLiveStream.prototype.monitor = function monitor(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-    };
-
-    PhenixLiveStream.prototype.getMonitor = function getMonitor() {
-        return null;
-    };
-
-    PhenixLiveStream.prototype.getStream = function getStream() {
-        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
-
-        return null;
-    };
-
-    PhenixLiveStream.prototype.isActive = function isActive() {
-        return !this._isStopped;
-    };
-
-    PhenixLiveStream.prototype.getStreamId = function getStreamId() {
-        return this._streamId;
-    };
-
-    PhenixLiveStream.prototype.getStats = function getStats() {
-        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
-
-        return null;
-    };
-
-    PhenixLiveStream.prototype.getRenderer = function getRenderer() {
-        return _.get(this._renderers, [0], null);
-    };
-
-    PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
-        switch (type) {
-        case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
-        case streamEnums.types.hls.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
-        case streamEnums.types.rtmp.name:
-            return FlashRenderer.isSupported();
-        default:
-            return false;
-        }
-    };
-
-    return PhenixLiveStream;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(0),
-    __webpack_require__(1),
-    __webpack_require__(6)
+    __webpack_require__(5)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, streamEnums) {
     'use strict';
 
@@ -8667,7 +8836,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8775,7 +8944,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8956,7 +9125,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8975,7 +9144,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(38)
+    __webpack_require__(39)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
     'use strict';
 
@@ -8984,7 +9153,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9006,15 +9175,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(39),
-    __webpack_require__(37),
+    __webpack_require__(40),
+    __webpack_require__(38),
     __webpack_require__(2)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9241,7 +9410,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9269,7 +9438,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -9566,7 +9735,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9589,7 +9758,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(12),
     __webpack_require__(2),
-    __webpack_require__(17)
+    __webpack_require__(19)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, proto, rtc, telemetryProto) {
     function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
@@ -9670,7 +9839,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -9692,7 +9861,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(13),
-    __webpack_require__(42)
+    __webpack_require__(43)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -9733,7 +9902,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10000,7 +10169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10442,7 +10611,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10463,7 +10632,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, http, disposable) {
     'use strict';
@@ -10598,7 +10767,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10617,14 +10786,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(46)
+    __webpack_require__(47)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ClosestEndPointResolver) {
     return ClosestEndPointResolver;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10645,9 +10814,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(1),
     __webpack_require__(0),
-    __webpack_require__(5),
+    __webpack_require__(6),
     __webpack_require__(3),
-    __webpack_require__(47)
+    __webpack_require__(48)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert, _, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
@@ -10726,7 +10895,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-20T21:53:51Z',
+                version: '2018-07-26T20:35:00Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -10752,7 +10921,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -10782,7 +10951,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12838,7 +13007,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -12862,8 +13031,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(7),
     __webpack_require__(12),
     __webpack_require__(2),
-    __webpack_require__(50),
-    __webpack_require__(49)
+    __webpack_require__(51),
+    __webpack_require__(50)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -13233,7 +13402,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13281,7 +13450,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13352,7 +13521,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13721,7 +13890,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13744,8 +13913,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(9),
-    __webpack_require__(20),
-    __webpack_require__(5),
+    __webpack_require__(22),
+    __webpack_require__(6),
     __webpack_require__(7),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, global, networkConnectionMonitor, http, observable, disposable) {
@@ -13995,7 +14164,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14014,7 +14183,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(55)
+    __webpack_require__(56)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(BatchHttp) {
     'use strict';
 
@@ -14023,7 +14192,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14044,9 +14213,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(56),
-    __webpack_require__(18),
-    __webpack_require__(53)
+    __webpack_require__(57),
+    __webpack_require__(20),
+    __webpack_require__(54)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, BatchHttp, MQProtocol, Binary) {
     'use strict';
 
@@ -14075,7 +14244,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -14217,7 +14386,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -14236,11 +14405,11 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
  limitations under the License.
  */
 
-module.exports = __webpack_require__(58);
+module.exports = __webpack_require__(59);
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14262,7 +14431,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(9),
-    __webpack_require__(59)
+    __webpack_require__(60)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, lxiv) {
     'use strict';
 
@@ -14321,7 +14490,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14449,7 +14618,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14769,7 +14938,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -14859,7 +15028,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14867,7 +15036,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 module.exports = Pbf;
 
-var ieee754 = __webpack_require__(63);
+var ieee754 = __webpack_require__(64);
 
 function Pbf(buf) {
     this.buf = ArrayBuffer.isView && ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf || 0);
@@ -15484,7 +15653,7 @@ function writeUtf8(buf, str, pos) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15572,7 +15741,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15593,7 +15762,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(20)
+    __webpack_require__(22)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, networkConnectionMonitor) {
     'use strict';
 
@@ -15953,7 +16122,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15972,7 +16141,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(66)
+    __webpack_require__(67)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ReconnectingWebSocket) {
     'use strict';
 
@@ -15981,7 +16150,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16003,8 +16172,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(67),
-    __webpack_require__(19)
+    __webpack_require__(68),
+    __webpack_require__(21)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
 
@@ -16113,7 +16282,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16137,7 +16306,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(2),
     __webpack_require__(10),
     __webpack_require__(12),
-    __webpack_require__(17)
+    __webpack_require__(19)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
     function TelemetryAppender(uri) {
         assert.isString(uri, 'uri');
@@ -16230,7 +16399,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16252,7 +16421,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(13),
-    __webpack_require__(69)
+    __webpack_require__(70)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
@@ -16293,7 +16462,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16315,7 +16484,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(10),
-    __webpack_require__(70)
+    __webpack_require__(71)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -16349,7 +16518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16415,7 +16584,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports) {
 
 var g;
@@ -16441,7 +16610,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16481,10 +16650,10 @@ module.exports = g;
     return getGlobal;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(73)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(74)))
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16513,8 +16682,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-20T21:53:51Z' || '?';
-    var releaseVersion = '2018.3.5';
+    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
+    var releaseVersion = '2018.3.6';
 
     function Logger() {
         this._appenders = [];
@@ -16701,7 +16870,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16722,7 +16891,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(23)
+    __webpack_require__(24)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
     'use strict';
 
@@ -16779,7 +16948,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16841,7 +17010,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16862,7 +17031,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(24)
+    __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Observable) {
     'use strict';
 
@@ -16949,7 +17118,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17005,7 +17174,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17054,7 +17223,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17204,7 +17373,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17302,7 +17471,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17321,14 +17490,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(82)
+    __webpack_require__(83)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
     return detectBrowser;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18056,7 +18225,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18080,9 +18249,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(2),
     __webpack_require__(10),
-    __webpack_require__(22),
+    __webpack_require__(23),
     __webpack_require__(15),
-    __webpack_require__(27)
+    __webpack_require__(28)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, UserMediaResolver, PCastExpress) {
     rtc.global.PhenixPCast = PCast;
 

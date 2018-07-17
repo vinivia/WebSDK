@@ -81,6 +81,14 @@ requirejs([
                 };
             }
 
+            if (app.getUrlParameter('features')) {
+                expressOptions.features = app.getUrlParameter('features').split(',');
+            }
+
+            if (app.getUrlParameter('features')) {
+                expressOptions.features = app.getUrlParameter('features').split(',');
+            }
+
             channelExpress = new sdk.express.ChannelExpress(expressOptions);
         };
 
@@ -107,7 +115,9 @@ requirejs([
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             $('#subscriber-drm-capabilities option:selected').each(function() {
                 capabilities.push($(this).val());
@@ -115,7 +125,6 @@ requirejs([
 
             channelExpress.joinChannel({
                 alias: channelAlias,
-                capabilities: capabilities,
                 videoElement: channelVideoEl,
                 streamSelectionStrategy: streamSelectionStrategy,
                 subscriberOptions: subscriberOptions

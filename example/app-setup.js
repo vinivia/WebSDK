@@ -99,6 +99,12 @@ define('app-setup', [
             });
         }
 
+        if (document.getElementById('features')) {
+            _.forOwn(getFeatures(), function(title, feature) {
+                $('#subscriber-mode').append($('<option></option>').attr('value', feature).text(title));
+            });
+        }
+
         if (document.getElementById('publish-quality')) {
             _.forOwn(getPublisherQualities(), function(title, capability) {
                 $('#publish-quality').append($('<option></option>').attr('value', capability).text(title));
@@ -329,7 +335,17 @@ define('app-setup', [
             'single-bitrate': 'Real-time SBR',
             'broadcast': 'Broadcast',
             'streaming': 'Live',
-            'on-demand': 'On Demand'
+            'on-demand': 'On Demand',
+            'rtmp': 'Rtmp'
+        };
+    };
+
+    var getFeatures = function() {
+        return {
+            'real-time': 'Real-time',
+            'rtmp': 'rtmp',
+            'dash': 'Dash',
+            'hls': 'HLS'
         };
     };
 

@@ -202,7 +202,9 @@ requirejs([
             var remoteVideoEl = $('#remoteVideo')[0];
             var capabilities = [];
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             pcastExpress.subscribe({
                 streamId: streamId,

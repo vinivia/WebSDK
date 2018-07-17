@@ -166,12 +166,6 @@ define([
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
-            if (!checkifStreamingIsAvailable(presenterStream.getUri()) && _.includes(options.capabilities, 'streaming')) {
-                that._logger.warn('Streaming is not available for stream [%].', streamId);
-
-                return subscriberCallback(null, {status: 'streaming-not-available'});
-            }
-
             if (!streamId) {
                 that._logger.info('Channel [%s] presenter has no stream', channelId);
 
@@ -302,18 +296,6 @@ define([
 
         this._roomExpress.publishScreenToRoom(channelOptions, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
     };
-
-    function checkifStreamingIsAvailable(uri) {
-        var deferToCreateToken = true;
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-
-        if (_.values(streamInfo).length === 0) {
-            return deferToCreateToken;
-        }
-
-        // TODO(DY) Remove streamTokenStreaming once apps updated in prod
-        return !!streamInfo.streamTokenForLiveStream || !!streamInfo.streamTokenStreaming;
-    }
 
     function wrapResponseWithChannelPrefixesAndContinue(callback, error, response) {
         if (response && response.roomService) {

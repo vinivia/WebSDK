@@ -35,10 +35,11 @@ define([
     './streaming/StreamWrapper',
     './streaming/PhenixLiveStream',
     './streaming/PhenixRealTimeStream',
+    './streaming/FeatureDetector',
     './streaming/stream.json',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -88,6 +89,7 @@ define([
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
+        this._featureDetector = new FeatureDetector(options.features);
 
         var that = this;
         var logGlobalError = function logGlobalError(event) {
@@ -480,10 +482,10 @@ define([
                     var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                     var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                     var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-                    var isLive = offerSdp.match(/a=x-playlist:/);
+                    var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
 
-                    if (isLive) {
-                        create = createLiveViewer;
+                    if (isNotRealTime) {
+                        create = createChunkedOrRtmpViewer;
                     }
 
                     streamTelemetry.setStreamId(streamId);
@@ -496,7 +498,7 @@ define([
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (!isLive && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -1502,7 +1504,7 @@ define([
         peerConnection.setRemoteDescription(offerSessionDescription, onSetRemoteDescriptionSuccess, onFailure);
     }
 
-    function createLiveViewer(streamId, offerSdp, streamTelemetry, callback, options) {
+    function createChunkedOrRtmpViewer(streamId, offerSdp, streamTelemetry, callback, options) {
         var that = this;
 
         var rtmpQuery = /a=x-rtmp:(rtmp:\/\/[^\n]*)/m;
@@ -1513,16 +1515,26 @@ define([
         var playlistUrl = _.get(hlsMatch, [1], '');
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
-        var preferHls = isIOS() || phenixRTC.browser === 'Safari';
-        var canPlaybackDash = PhenixLiveStream.canPlaybackType(streamEnums.types.dash.name);
-        var canPlaybackHls = PhenixLiveStream.canPlaybackType(streamEnums.types.hls.name);
+        var rtmpOffered = !!rtmpMatch;
+        var publisherCapabilities = [];
+
+        if (dashManifestOffered || hlsPlaylistOffered) {
+            publisherCapabilities.push('streaming');
+        }
+
+        if (rtmpOffered) {
+            publisherCapabilities.push('rtmp');
+        }
+
+        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities, true);
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        if (rtmpMatch && PhenixLiveStream.canPlaybackType(streamEnums.types.rtmp.name)) {
+        switch (preferredFeature) {
+        case streamEnums.types.rtmp.name:
             var rtmpUris = [];
             var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
 
@@ -1548,7 +1560,7 @@ define([
             }
 
             return createLiveViewerOfKind.call(that, streamId, rtmpUris, streamEnums.types.rtmp.name, streamTelemetry, callback, _.assign({env: env}, this._rtmpOptions, options));
-        } else if (dashManifestOffered && canPlaybackDash && !preferHls) {
+        case streamEnums.types.dash.name:
             this._logger.info('Selecting dash playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(manifestUrl) || /x-widevine-service-certificate/.test(offerSdp);
@@ -1565,7 +1577,7 @@ define([
             }
 
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
-        } else if (hlsPlaylistOffered && canPlaybackHls) {
+        case streamEnums.types.hls.name:
             this._logger.info('Selecting hls playback for live stream.');
 
             options.isDrmProtectedContent = /[?&]drmToken=([^&]*)/.test(playlistUrl);
@@ -1576,18 +1588,12 @@ define([
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: preferHls}, options));
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: FeatureDetector.shouldUseNativeHls}, options));
+        default:
+            break;
         }
 
-        if (!dashManifestOffered && !hlsPlaylistOffered) {
-            that._logger.warn('[%s] Offer does not contain a supported manifest [%s]. Creating live viewer stream failed.', streamId, offerSdp);
-        } else if (!canPlaybackDash && !canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support either Dash or Hls playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackDash) {
-            that._logger.warn('[%s] Device does not support Dash playback. Creating live viewer stream failed.', streamId);
-        } else if (!canPlaybackHls) {
-            that._logger.warn('[%s] Device does not support Hls playback. Creating live viewer stream failed.', streamId);
-        }
+        that._logger.warn('[%s] Device does not support [%s] playback. Creating live viewer stream failed.', streamId, FeatureDetector.mapPCastCapabilitiesToFeatures(publisherCapabilities));
 
         return callback.call(that, undefined, 'failed');
     }

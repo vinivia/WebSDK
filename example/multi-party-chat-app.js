@@ -300,7 +300,6 @@ requirejs([
 
             var subscribeOptions = {
                 videoElement: videoElement,
-                capabilities: [],
                 monitor: {callback: onMonitorEvent}
             };
             var handleSubscribe = function(error, response) {

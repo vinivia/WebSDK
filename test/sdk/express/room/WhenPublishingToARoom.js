@@ -256,7 +256,9 @@ define([
 
                 var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
 
-                expect(_.values(memberStreamInfo).length).to.be.equal(0);
+                expect(memberStreamInfo.capabilities).to.be.a('array');
+                expect(memberStreamInfo.capabilities).to.be.deep.equal(['streaming']);
+                expect(_.values(memberStreamInfo).length).to.be.equal(1);
                 done();
             });
         });

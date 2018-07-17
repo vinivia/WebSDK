@@ -128,7 +128,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'most-recent'
             }, function() {}, function() {

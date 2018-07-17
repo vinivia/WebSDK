@@ -135,11 +135,7 @@ requirejs([
             var externalUri = $('#externalUri').val();
             var capabilities = [];
 
-            $('#subscriber-drm-capabilities option:selected').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            capabilities.push($('#subscriber-mode option:selected').val());
+            capabilities.push($('#publish-capabilities option:selected').val());
 
             pcastExpress.publishStreamToExternal({
                 externalUri: externalUri,
@@ -195,7 +191,9 @@ requirejs([
                 capabilities.push($(this).val());
             });
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             if (app.getUrlParameter('preferNative')) {
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';

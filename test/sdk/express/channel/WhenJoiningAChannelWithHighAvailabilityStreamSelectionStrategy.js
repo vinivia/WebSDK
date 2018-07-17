@@ -133,7 +133,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
             }, function() {}, function() {
@@ -175,7 +174,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
             }, function() {}, function() {
@@ -217,7 +215,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
             }, function() {}, function() {
@@ -254,7 +251,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
             }, function() {}, function(error, response) {
@@ -299,7 +295,6 @@ define([
             httpStubber.stubStreamRequest();
 
             channelExpress.joinChannel({
-                capabilities: [],
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability'
             }, function() {}, function(error, response) {

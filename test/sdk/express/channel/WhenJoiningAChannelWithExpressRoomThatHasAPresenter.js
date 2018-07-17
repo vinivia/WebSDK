@@ -105,10 +105,7 @@ define([
                 }, 3);
             };
 
-            channelExpress.joinChannel({
-                capabilities: [],
-                alias: 'ChannelAlias'
-            }, function() {}, function(error, response) {
+            channelExpress.joinChannel({alias: 'ChannelAlias'}, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
                 }
@@ -125,10 +122,7 @@ define([
         it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
             var subscribeCount = 0;
 
-            channelExpress.joinChannel({
-                capabilities: [],
-                alias: 'ChannelAlias'
-            }, function() {}, function(error, response) {
+            channelExpress.joinChannel({alias: 'ChannelAlias'}, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
 

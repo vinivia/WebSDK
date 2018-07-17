@@ -196,7 +196,9 @@ requirejs([
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
 
-            capabilities.push($('#subscriber-mode option:selected').val());
+            $('#subscriber-mode option:selected').each(function() {
+                capabilities.push($(this).val());
+            });
 
             subscribeMethod({
                 streamId: streamId,
