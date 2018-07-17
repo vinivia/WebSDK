@@ -56,6 +56,12 @@ define('app-setup', [
             shaka.polyfill.installAll();
         }
 
+        if (document.getElementById('environment')) {
+            _.forOwn(getPCastEndpoints(), function(name, endpoint) {
+                $('#environment').append($('<option></option>').attr('value', endpoint).text(name));
+            });
+        }
+
         if (getUrlParameter('url')) {
             $('#environment').append($('<option></option>').attr('value', getUrlParameter('url')).attr('selected', 'selected').text(getUrlParameter('url')));
         }
@@ -81,19 +87,19 @@ define('app-setup', [
             $('#alias').val(getUrlParameter('alias'));
         }
 
-        if ($('#publish-capabilities')) {
+        if (document.getElementById('publish-capabilities')) {
             _.forOwn(getPublisherCapabilities(), function(title, capability) {
                 $('#publish-capabilities').append($('<option></option>').attr('value', capability).text(title));
             });
         }
 
-        if ($('#subscriber-mode')) {
+        if (document.getElementById('subscriber-mode')) {
             _.forOwn(getSubscriberCapabilities(), function(title, capability) {
                 $('#subscriber-mode').append($('<option></option>').attr('value', capability).text(title));
             });
         }
 
-        if ($('#publish-quality')) {
+        if (document.getElementById('publish-quality')) {
             _.forOwn(getPublisherQualities(), function(title, capability) {
                 $('#publish-quality').append($('<option></option>').attr('value', capability).text(title));
             });
@@ -269,6 +275,32 @@ define('app-setup', [
         }
 
         return 'https://phenixrts.com/video';
+    };
+
+    var getPCastEndpoints = function() {
+        return {
+            'https://pcast.phenixrts.com': 'Anycast (Closest Data Center)',
+            'https://pcast-primary.phenixrts.com': 'Anycast (Closest Data Center - Primary)',
+            'https://pcast-secondary.phenixrts.com': 'Anycast (Closest Data Center - Secondary)',
+            'wss://pcast-asia-southeast.phenixrts.com': 'APAC South East',
+            'wss://pcast-asia-east.phenixrts.com': 'APAC East',
+            'wss://pcast-asia-northeast.phenixrts.com': 'APAC North East',
+            'wss://pcast-asia-south.phenixrts.com': 'APAC South',
+            'wss://pcast-australia-southeast.phenixrts.com': 'Australia South East',
+            'wss://pcast-us-west.phenixrts.com': 'US West',
+            'wss://pcast-us-central.phenixrts.com': 'US Central',
+            'wss://pcast-us-east.phenixrts.com': 'US East',
+            'wss://pcast-us-northeast.phenixrts.com': 'US North East',
+            'wss://pcast-uk-southeast.phenixrts.com': 'UK South East',
+            'wss://pcast-europe-west.phenixrts.com': 'EU West',
+            'wss://pcast-europe-central.phenixrts.com': 'EU Central',
+            'wss://pcast-southamerica-east.phenixrts.com': 'South America East',
+            'https://pcast-stg.phenixrts.com': 'Anycast - Staging',
+            'wss://pcast-stg-us-central.phenixrts.com': 'US Central - Staging',
+            'wss://pcast-stg-europe-west.phenixrts.com': 'EU West - Staging',
+            'https://local.phenixrts.com:8443': 'Anycast - Local',
+            'wss://local.phenixrts.com:8443': 'Local'
+        };
     };
 
     var getPublisherCapabilities = function() {
