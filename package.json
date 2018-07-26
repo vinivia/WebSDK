@@ -103,7 +103,7 @@
     "phenix-web-logging": "2018.2.1",
     "phenix-web-network-connection-monitor": "2018.2.1",
     "phenix-web-observable": "2018.2.1",
-    "phenix-web-player": "2018.2.3",
+    "phenix-web-player": "2018.3.0",
     "phenix-web-proto": "2018.2.2",
     "phenix-web-reconnecting-websocket": "2018.2.1",
     "puppeteer": "1.6.0",

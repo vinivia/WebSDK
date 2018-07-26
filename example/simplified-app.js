@@ -196,6 +196,10 @@ requirejs([
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
 
+            if (app.getUrlParameter('targetLatency')) {
+                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
+            }
+
             $('#subscriber-mode option:selected').each(function() {
                 capabilities.push($(this).val());
             });
@@ -206,7 +210,7 @@ requirejs([
                 videoElement: remoteVideoEl,
                 monitor: {callback: onMonitorEvent},
                 streamToken: 'dud',
-                resolution: parseInt(quality),
+                resolution: parseInt(quality, 10),
                 subscriberOptions: subscriberOptions
             }, function subscribeCallback(error, response) {
                 if (error) {

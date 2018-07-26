@@ -271,8 +271,8 @@ requirejs([
                 var aspectRatio = $('#gum-aspect-ratio option:selected').val();
                 var userMediaResolver = new sdk.UserMediaResolver(pcast, {
                     aspectRatio: aspectRatio,
-                    resolutionHeight: parseInt(quality),
-                    frameRate: parseInt(framerate)
+                    resolutionHeight: parseInt(quality, 10),
+                    frameRate: parseInt(framerate, 10)
                 });
                 var deviceOptions = {
                     screen: _.includes(source.toLowerCase(), 'screen'),
@@ -552,8 +552,12 @@ requirejs([
             var streamToken = $('#streamTokenForViewing').val();
             var subscriberOptions = {};
 
+            if (app.getUrlParameter('targetLatency')) {
+                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
+            }
+
             if (app.getUrlParameter('targetDuration')) {
-                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
+                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'), 10);
             }
 
             if (app.getUrlParameter('preferNative')) {

@@ -147,6 +147,10 @@ requirejs([
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
 
+            if (app.getUrlParameter('targetLatency')) {
+                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
+            }
+
             pcastExpress.subscribe({
                 streamId: streamId,
                 capabilities: capabilities,

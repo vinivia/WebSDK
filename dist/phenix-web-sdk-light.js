@@ -3216,7 +3216,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-26T20:35:00Z';
+    var sdkVersion = '2018-07-27T17:31:26Z';
 
     function PCast(options) {
         options = options || {};
@@ -8118,11 +8118,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
         var playerOptions = _.assign({bandwidthToStartAt: bandwidthAt720}, that._options);
 
-        if (_.isNumber(that._options.targetMinBufferSize)) {
-            playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
-            playerOptions.targetBufferSizeInMS = that._options.targetMinBufferSize * 1000;
-        }
-
         if (_.includes(this._manifestUri, '.mpd')) {
             if (that._options.isDrmProtectedContent) {
                 playerOptions.drm = {
@@ -9183,7 +9178,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
+    var sdkVersion = '2018-07-27T17:31:26Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9438,7 +9433,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
+    var sdkVersion = '2018-07-27T17:31:26Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10895,7 +10890,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-26T20:35:00Z',
+                version: '2018-07-27T17:31:26Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16682,7 +16677,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-26T20:35:00Z' || '?';
+    var sdkVersion = '2018-07-27T17:31:26Z' || '?';
     var releaseVersion = '2018.3.6';
 
     function Logger() {

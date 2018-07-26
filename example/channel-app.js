@@ -103,12 +103,12 @@ requirejs([
                 return;
             }
 
-            if (app.getUrlParameter('minBuffer')) {
-                subscriberOptions.targetMinBufferSize = parseFloat(app.getUrlParameter('minBuffer'));
+            if (app.getUrlParameter('targetLatency')) {
+                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
             }
 
             if (app.getUrlParameter('targetDuration')) {
-                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'));
+                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'), 10);
             }
 
             if (app.getUrlParameter('preferNative')) {

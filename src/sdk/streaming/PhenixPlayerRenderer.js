@@ -203,11 +203,6 @@ define([
         var that = this;
         var playerOptions = _.assign({bandwidthToStartAt: bandwidthAt720}, that._options);
 
-        if (_.isNumber(that._options.targetMinBufferSize)) {
-            playerOptions.targetMinBufferSize = that._options.targetMinBufferSize;
-            playerOptions.targetBufferSizeInMS = that._options.targetMinBufferSize * 1000;
-        }
-
         if (_.includes(this._manifestUri, '.mpd')) {
             if (that._options.isDrmProtectedContent) {
                 playerOptions.drm = {
