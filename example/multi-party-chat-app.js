@@ -82,7 +82,7 @@ requirejs([
             });
         };
 
-        sdk.RTC.getSources(function(sources) {
+        sdk.utils.rtc.getSources(function(sources) {
             videoSources = sources.filter(function(source) {
                 return source.kind === 'video';
             });
@@ -499,8 +499,8 @@ requirejs([
         init();
 
         // Plugin might load with delay
-        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
+            sdk.utils.rtc.onload = function() {
                 app.init();
                 init();
             };

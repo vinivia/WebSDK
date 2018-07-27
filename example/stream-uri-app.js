@@ -78,7 +78,7 @@ requirejs([
             adminBaseUri = app.getBaseUri();
 
             fingerprint.get(function(fingerprint) {
-                pcast = new sdk.PCast({
+                pcast = new sdk.lowLevel.PCast({
                     uri: uri,
                     deviceId: fingerprint,
                     shaka: app.getUrlParameter('shaka') ? shaka : null
@@ -508,8 +508,8 @@ requirejs([
         init();
 
         // Plugin might load with delay
-        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
+            sdk.utils.rtc.onload = function() {
                 app.init();
                 init();
             };

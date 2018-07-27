@@ -68,8 +68,8 @@ define('video-player', [
             });
 
             renderer.start(this.video);
-        } else if (!renderer && sdk.RTC.attachMediaStream) {
-            sdk.RTC.attachMediaStream(this.video, this.stream);
+        } else if (!renderer && sdk.utils.rtc.attachMediaStream) {
+            sdk.utils.rtc.attachMediaStream(this.video, this.stream);
         }
 
         if (renderer) {

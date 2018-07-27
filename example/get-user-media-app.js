@@ -125,11 +125,11 @@ requirejs([
 
             fingerprint.get(function(fingerprint) {
                 pcastOptions.deviceId = fingerprint;
-                pcast = new sdk.PCast(pcastOptions);
+                pcast = new sdk.lowLevel.PCast(pcastOptions);
 
                 pcast.getLogger().addAppender({
                     log: function() {
-                        if (sdk.RTC.browser !== 'Safari') {
+                        if (sdk.utils.rtc.browser !== 'Safari') {
                             return;
                         }
 
@@ -269,7 +269,7 @@ requirejs([
                 var quality = $('#gum-quality option:selected').val();
                 var framerate = $('#gum-framerate option:selected').val();
                 var aspectRatio = $('#gum-aspect-ratio option:selected').val();
-                var userMediaResolver = new sdk.UserMediaResolver(pcast, {
+                var userMediaResolver = new sdk.media.UserMediaResolver(pcast, {
                     aspectRatio: aspectRatio,
                     resolutionHeight: parseInt(quality, 10),
                     frameRate: parseInt(framerate, 10)
@@ -716,8 +716,8 @@ requirejs([
         init();
 
         // Plugin might load with delay
-        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
+            sdk.utils.rtc.onload = function() {
                 app.init();
                 init();
             };

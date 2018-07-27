@@ -18,7 +18,6 @@ define([
     'phenix-web-assert',
     'phenix-web-observable',
     'phenix-web-disposable',
-    '../AdminAPI',
     './PCastExpress',
     '../room/RoomService',
     './MemberSelector',
@@ -28,7 +27,7 @@ define([
     '../room/stream.json',
     '../room/track.json',
     '../streaming/FeatureDetector'
-], function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
+], function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;

@@ -1047,7 +1047,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-30T23:12:48Z',
+                version: '2018-08-02T23:12:32Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1597,7 +1597,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(24),
     __webpack_require__(25),
     __webpack_require__(31),
     __webpack_require__(22),
@@ -1607,7 +1606,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(14),
     __webpack_require__(28),
     __webpack_require__(32)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AdminAPI, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -2982,45 +2981,160 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             additionalRetryErrorCodes: [networkUnavailableCode]
         }
     };
+    var authenticationDataLocations = {
+        body: {
+            id: 1,
+            name: 'body'
+        },
+        header: {
+            id: 2,
+            name: 'header'
+        }
+    };
+    var defaultEndpointPaths = {
+        createStreamTokenPath: '/stream',
+        createAuthTokenPath: '/auth'
+    };
+    var requestTypes = {
+        auth: {
+            id: 1,
+            name: 'auth'
+        },
+        stream: {
+            id: 2,
+            name: 'stream'
+        }
+    };
 
-    function AdminAPI(backendUri, authenticationData) {
-        assert.isStringNotEmpty(backendUri, 'backendUri');
-        assert.isObject(authenticationData, 'authenticationData');
-
-        this._backendUri = backendUri;
-        this._authenticationData = authenticationData;
+    function AdminApiProxyClient() {
+        this._requestHandler = null;
+        this._backendUri = '';
+        this._endpointPaths = defaultEndpointPaths;
+        this._authenticationData = {};
+        this._authenticationDataLocationInPayload = authenticationDataLocations.body.name;
         this._disposables = new disposable.DisposableList();
     }
 
-    AdminAPI.prototype.dispose = function() {
+    AdminApiProxyClient.prototype.dispose = function() {
         return this._disposables.dispose();
     };
 
-    AdminAPI.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
-        var data = appendAuthDataTo.call(this, {});
-        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/auth', JSON.stringify(data), defaultRequestOptions);
+    AdminApiProxyClient.prototype.toString = function() {
+        return 'AdminApiProxyClient[' +
+            'customRequestHandler=' + (!!this._requestHandler).toString() +
+            ',backendUri=' + this._backendUri +
+            ',authenticationDataLocationInPayload=' + this._authenticationDataLocationInPayload +
+            ',customEndpointPaths=' + (this._endpointPaths === defaultEndpointPaths).toString() +
+            ',customAuthenticationData=' + (_.keys(this._authenticationData).length > 0).toString() + ']';
+    };
+
+    AdminApiProxyClient.prototype.getBackendUri = function() {
+        return this._backendUri;
+    };
+
+    AdminApiProxyClient.prototype.setBackendUri = function(backendUri) {
+        assert.isString(backendUri, 'backendUri');
+
+        this._backendUri = backendUri;
+    };
+
+    AdminApiProxyClient.prototype.getEndpointPaths = function() {
+        return _.assign({}, this._endpointPaths);
+    };
+
+    AdminApiProxyClient.prototype.setEndpointPaths = function(endpointPaths) {
+        assert.isObject(endpointPaths, 'endpointPaths');
+
+        if (endpointPaths.createStreamTokenPath) {
+            assert.isStringNotEmpty(endpointPaths.createStreamTokenPath, 'endpointPaths.createStreamTokenPath');
+        }
+
+        if (endpointPaths.createAuthTokenPath) {
+            assert.isStringNotEmpty(endpointPaths.createAuthTokenPath, 'endpointPaths.createAuthTokenPath');
+        }
+
+        this._endpointPaths = _.assign({}, defaultEndpointPaths, endpointPaths);
+    };
+
+    AdminApiProxyClient.prototype.getAuthenticationData = function() {
+        return _.assign({}, this._authenticationData);
+    };
+
+    AdminApiProxyClient.prototype.setAuthenticationData = function(authenticationData) {
+        assert.isObject(authenticationData, 'authenticationData');
+
+        this._authenticationData = authenticationData;
+    };
+
+    AdminApiProxyClient.prototype.getAuthenticationDataLocationInPayload = function() {
+        return this._authenticationDataLocationInPayload;
+    };
+
+    AdminApiProxyClient.prototype.setAuthenticationDataLocationInPayload = function(authenticationDataLocationInPayload) {
+        assert.isValidType(authenticationDataLocationInPayload, authenticationDataLocations, 'authenticationDataLocationInPayload');
+
+        this._authenticationDataLocationInPayload = authenticationDataLocationInPayload;
+    };
+
+    AdminApiProxyClient.prototype.getRequestHandler = function() {
+        return this._requestHandler;
+    };
+
+    AdminApiProxyClient.prototype.setRequestHandler = function(callback) {
+        assert.isFunction(callback, 'callback');
+
+        if (this._backendUri) {
+            throw new Error('Conflicting parameter [backendUri]');
+        }
+
+        if (_.keys(this._authenticationData).length > 0) {
+            throw new Error('Conflicting parameter [authenticationData]');
+        }
+
+        if (this._authenticationDataLocationInPayload !== authenticationDataLocations.body.name) {
+            throw new Error('Conflicting parameter [authenticationDataLocationInPayload]');
+        }
+
+        if (this._endpointPaths !== defaultEndpointPaths) {
+            throw new Error('Conflicting parameter [endpointPaths]');
+        }
+
+        this._requestHandler = callback;
+    };
+
+    AdminApiProxyClient.prototype.createAuthenticationToken = function createAuthenticationToken(callback) {
+        if (this._requestHandler) {
+            return this._requestHandler(requestTypes.auth.name, {}, _.bind(handleOverrideRequestResponse, this, requestTypes.auth.name, callback));
+        }
+
+        var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createAuthTokenPath, {}, defaultRequestOptions);
 
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
-    AdminAPI.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
+    AdminApiProxyClient.prototype.createStreamTokenForPublishing = function createStreamTokenForPublishing(sessionId, capabilities, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
-        var data = appendAuthDataTo.call(this, {
+        var data = {
             sessionId: sessionId,
             capabilities: capabilities
-        });
-        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
+        };
+
+        if (this._requestHandler) {
+            return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
+
+        var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
 
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
 
-    AdminAPI.prototype.createStreamTokenForPublishingToExternal = function createStreamTokenForPublishingToExternal(sessionId, capabilities, streamId, callback) {
+    AdminApiProxyClient.prototype.createStreamTokenForPublishingToExternal = function createStreamTokenForPublishingToExternal(sessionId, capabilities, streamId, callback) {
         this.createStreamTokenForSubscribing(sessionId, capabilities, streamId, null, callback);
     };
 
-    AdminAPI.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
+    AdminApiProxyClient.prototype.createStreamTokenForSubscribing = function createStreamTokenForSubscribing(sessionId, capabilities, streamId, alternateStreamIds, callback) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
         assert.isObject(capabilities, 'capabilities');
 
@@ -3032,23 +3146,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             });
         }
 
-        var data = appendAuthDataTo.call(this, {
+        var data = {
             sessionId: sessionId,
             capabilities: capabilities,
             originStreamId: streamId
-        });
+        };
 
         if (alternateStreamIds && alternateStreamIds.length > 0) {
             data.alternateOriginStreamIds = alternateStreamIds;
         }
 
-        var requestWithoutCallback = _.bind(http.postWithRetry, http, this._backendUri + '/stream', JSON.stringify(data), defaultRequestOptions);
+        if (this._requestHandler) {
+            return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
 
-        return requestWithTimeout.call(this, requestWithoutCallback, callback);
-    };
-
-    AdminAPI.prototype.getStreams = function getStreams(callback) {
-        var requestWithoutCallback = _.bind(http.getWithRetry, http, this._backendUri + '/streams', defaultRequestOptions);
+        var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
 
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
     };
@@ -3074,8 +3186,35 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return requestDisposable;
     }
 
+    function bindAuthDataAndPrepareRequest(method, scope, uri, data, options) {
+        switch (this._authenticationDataLocationInPayload) {
+        case authenticationDataLocations.body.name:
+            data = appendAuthDataTo.call(this, data);
+
+            break;
+        case authenticationDataLocations.header.name:
+            options = appendAuthHeaders.call(this, options);
+
+            break;
+        default:
+            throw new Error('Unsupported Authentication Mode ' + this._authenticationDataLocationInPayload);
+        }
+
+        return _.bind(method, scope, uri, JSON.stringify(data), options);
+    }
+
     function appendAuthDataTo(data) {
         return _.assign({}, data, this._authenticationData);
+    }
+
+    function appendAuthHeaders(options) {
+        if (options.headers) {
+            options.headers = _.assign({}, this._authenticationData, options.headers);
+
+            return options;
+        }
+
+        return _.assign({}, {headers: this._authenticationData}, options);
     }
 
     function handleResponse(callback, error, response) {
@@ -3092,7 +3231,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return callback(null, res);
     }
 
-    return AdminAPI;
+    function handleOverrideRequestResponse(type, callback, error, token) {
+        if (!token || error) {
+            return callback(error, {status: 'failed'});
+        }
+
+        var response = {status: 'ok'};
+
+        switch(type) {
+        case requestTypes.auth.name:
+            response.authenticationToken = token;
+
+            break;
+        case requestTypes.stream.name:
+            response.streamToken = token;
+
+            break;
+        default:
+            throw new Error('Unsupported request type ' + type);
+        }
+
+        return callback(error, response);
+    }
+
+    return AdminApiProxyClient;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -3125,7 +3287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(45),
     __webpack_require__(3),
     __webpack_require__(50)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminAPI, UserMediaResolver, PCast, rtc, shakaEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var unauthorizedStatus = 'unauthorized';
@@ -3164,10 +3326,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isNumber(options.reconnectOptions.maxReconnectFrequency, 'options.reconnectOptions.maxReconnectFrequency');
         }
 
+        if (options.adminApiProxyClient) {
+            assert.isObject(options.adminApiProxyClient, 'options.adminApiProxyClient');
+            assert.isFunction(options.adminApiProxyClient.createAuthenticationToken, 'options.adminApiProxyClient.createAuthenticationToken');
+        }
+
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._subscribers = {};
         this._publishers = {};
-        this._adminAPI = new AdminAPI(options.backendUri, options.authenticationData);
+        this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
         this._isInstantiated = false;
         this._reauthCount = 0;
         this._reconnectCount = 0;
@@ -3179,7 +3346,26 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = null;
         this._ignoredStreamEnds = {};
 
+        if (!options.adminApiProxyClient) {
+            this._adminApiProxyClient.setBackendUri(options.backendUri);
+            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
+        }
+
         instantiatePCast.call(this);
+
+        // After logger is instantiated
+        if (!options.adminApiProxyClient) {
+            this._adminApiProxyClient.setBackendUri(options.backendUri);
+            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
+
+            if (options.backendUri) {
+                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
+            }
+
+            if (options.authenticationData) {
+                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the AdminAPI and pass that instead');
+            }
+        }
     }
 
     PCastExpress.prototype.dispose = function dispose() {
@@ -3198,7 +3384,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             this._instantiatePCastTimeout = null;
         }
 
-        this._adminAPI.dispose();
+        this._adminApiProxyClient.dispose();
 
         this._reconnectCount = 0;
         this._reauthCount = 0;
@@ -3215,7 +3401,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PCastExpress.prototype.getAdminAPI = function getAdminAPI() {
-        return this._adminAPI;
+        return this._adminApiProxyClient;
     };
 
     PCastExpress.prototype.getUserMedia = function(options, callback) {
@@ -3520,7 +3706,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             that._logger.info('[%s] Generating stream token for subscribing to origin [%s]', that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
 
-            that._adminAPI.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
+            that._adminApiProxyClient.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create stream token for subscribing', error);
 
@@ -3627,7 +3813,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return this._pcastObservable.getValue().start(this._authToken, _.noop, _.noop, _.noop);
         }
 
-        this._adminAPI.createAuthenticationToken(function(error, response) {
+        this._adminApiProxyClient.createAuthenticationToken(function(error, response) {
             if (error && error.message === 'timeout') {
                 return onPCastStatusChange.call(that, error.message);
             }
@@ -3729,7 +3915,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function getAuthTokenAndReAuthenticate() {
         var that = this;
 
-        this._adminAPI.createAuthenticationToken(function(error, response) {
+        this._adminApiProxyClient.createAuthenticationToken(function(error, response) {
             if (error && error.message === 'timeout') {
                 return onPCastStatusChange.call(that, error.message);
             }
@@ -3814,10 +4000,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
             var isEgress = _.includes(options.capabilities, 'egress');
-            var generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishing, that._adminAPI, sessionId, options.capabilities);
+            var generateStreamToken = _.bind(that._adminApiProxyClient.createStreamTokenForPublishing, that._adminApiProxyClient, sessionId, options.capabilities);
 
             if (isEgress) {
-                generateStreamToken = _.bind(that._adminAPI.createStreamTokenForPublishingToExternal, that._adminAPI, sessionId, options.capabilities, options.streamId);
+                generateStreamToken = _.bind(that._adminApiProxyClient.createStreamTokenForPublishingToExternal, that._adminApiProxyClient, sessionId, options.capabilities, options.streamId);
             }
 
             that._logger.info('[%s] Creating stream token for publishing', sessionId);
@@ -8650,7 +8836,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-30T23:12:48Z';
+    var sdkVersion = '2018-08-02T23:12:32Z';
 
     function PCast(options) {
         options = options || {};
@@ -14540,7 +14726,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
+    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14795,7 +14981,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
+    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24015,8 +24201,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
-    var releaseVersion = '2018.3.7';
+    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var releaseVersion = '2018.3.8';
 
     function Logger() {
         this._appenders = [];
@@ -24234,23 +24420,40 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(26),
     __webpack_require__(25),
     __webpack_require__(23),
-    __webpack_require__(49)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
+    __webpack_require__(49),
+    __webpack_require__(24)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
     rtc.global.PhenixPCast = PCast;
 
     return {
-        PCast: PCast,
-        RoomService: RoomService,
-        AudioSpeakerDetector: AudioSpeakerDetector,
-        BandwidthMonitor: BandwidthMonitor,
-        UserMediaResolver: UserMediaResolver,
-        logging: logging,
-        RTC: rtc,
         express: {
             PCastExpress: PCastExpress,
             RoomExpress: RoomExpress,
             ChannelExpress: ChannelExpress
-        }
+        },
+        lowLevel: {
+            PCast: PCast,
+            RoomService: RoomService
+        },
+        media: {
+            AudioSpeakerDetector: AudioSpeakerDetector,
+            UserMediaResolver: UserMediaResolver
+        },
+        net: {AdminApiProxyClient: AdminApiProxyClient},
+        utils: {
+            BandwidthMonitor: BandwidthMonitor,
+            logging: logging,
+            rtc: rtc
+        },
+
+        // TODO(dy) remove deprecated. Use above
+        AudioSpeakerDetector: AudioSpeakerDetector,
+        BandwidthMonitor: BandwidthMonitor,
+        logging: logging,
+        PCast: PCast,
+        RoomService: RoomService,
+        RTC: rtc,
+        UserMediaResolver: UserMediaResolver
     };
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));

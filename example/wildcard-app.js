@@ -390,8 +390,8 @@ requirejs([
         init();
 
         // Plugin might load with delay
-        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
+            sdk.utils.rtc.onload = function() {
                 app.init();
                 init();
             };

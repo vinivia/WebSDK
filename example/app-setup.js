@@ -28,11 +28,11 @@ define('app-setup', [
     var defaultPublisherQuality = 'hd';
 
     var init = function init() {
-        $('#phenixRTCVersion').text(sdk.RTC.phenixVersion);
-        $('#browserName').text(sdk.RTC.browser);
-        $('#browserVersion').text(sdk.RTC.browserVersion);
+        $('#phenixRTCVersion').text(sdk.utils.rtc.phenixVersion);
+        $('#browserName').text(sdk.utils.rtc.browser);
+        $('#browserVersion').text(sdk.utils.rtc.browserVersion);
 
-        if (sdk.RTC.webrtcSupported) {
+        if (sdk.utils.rtc.webrtcSupported) {
             $('#webrtc').addClass('success');
             $('#webrtc .support').removeClass('glyphicon-remove');
             $('#webrtc .support').addClass('glyphicon-ok');
@@ -42,9 +42,9 @@ define('app-setup', [
             $('#webrtc .support').addClass('glyphicon-remove');
         }
 
-        if (sdk.RTC.isPhenixEnabled()) {
+        if (sdk.utils.rtc.isPhenixEnabled()) {
             $('#phenix').addClass('success');
-        } else if (sdk.RTC.phenixSupported) {
+        } else if (sdk.utils.rtc.phenixSupported) {
             $('#phenix').addClass('warning');
         } else {
             $('#phenix').addClass('danger');

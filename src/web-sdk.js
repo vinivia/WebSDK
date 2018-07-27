@@ -25,22 +25,39 @@ define('phenix-web-sdk', [
     './sdk/userMedia/UserMediaResolver',
     './sdk/express/PCastExpress',
     './sdk/express/RoomExpress',
-    './sdk/express/ChannelExpress'
-], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
+    './sdk/express/ChannelExpress',
+    './sdk/AdminApiProxyClient'
+], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
     rtc.global.PhenixPCast = PCast;
 
     return {
-        PCast: PCast,
-        RoomService: RoomService,
-        AudioSpeakerDetector: AudioSpeakerDetector,
-        BandwidthMonitor: BandwidthMonitor,
-        UserMediaResolver: UserMediaResolver,
-        logging: logging,
-        RTC: rtc,
         express: {
             PCastExpress: PCastExpress,
             RoomExpress: RoomExpress,
             ChannelExpress: ChannelExpress
-        }
+        },
+        lowLevel: {
+            PCast: PCast,
+            RoomService: RoomService
+        },
+        media: {
+            AudioSpeakerDetector: AudioSpeakerDetector,
+            UserMediaResolver: UserMediaResolver
+        },
+        net: {AdminApiProxyClient: AdminApiProxyClient},
+        utils: {
+            BandwidthMonitor: BandwidthMonitor,
+            logging: logging,
+            rtc: rtc
+        },
+
+        // TODO(dy) remove deprecated. Use above
+        AudioSpeakerDetector: AudioSpeakerDetector,
+        BandwidthMonitor: BandwidthMonitor,
+        logging: logging,
+        PCast: PCast,
+        RoomService: RoomService,
+        RTC: rtc,
+        UserMediaResolver: UserMediaResolver
     };
 });

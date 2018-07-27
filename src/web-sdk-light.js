@@ -20,15 +20,25 @@ define('phenix-web-sdk', [
     'phenix-web-logging',
     './sdk/PCast',
     './sdk/userMedia/UserMediaResolver',
-    './sdk/express/PCastExpress'
-], function(rtc, logging, PCast, UserMediaResolver, PCastExpress) {
+    './sdk/express/PCastExpress',
+    './sdk/AdminApiProxyClient'
+], function(rtc, logging, PCast, UserMediaResolver, PCastExpress, AdminApiProxyClient) {
     rtc.global.PhenixPCast = PCast;
 
     return {
-        PCast: PCast,
-        UserMediaResolver: UserMediaResolver,
+        express: {PCastExpress: PCastExpress},
+        lowLevel: {PCast: PCast},
+        media: {UserMediaResolver: UserMediaResolver},
+        net: {AdminApiProxyClient: AdminApiProxyClient},
+        utils: {
+            logging: logging,
+            rtc: rtc
+        },
+
+        // TODO(dy) remove deprecated. Use above
         logging: logging,
+        PCast: PCast,
         RTC: rtc,
-        express: {PCastExpress: PCastExpress}
+        UserMediaResolver: UserMediaResolver
     };
 });

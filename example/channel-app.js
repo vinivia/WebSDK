@@ -107,7 +107,7 @@ requirejs([
             app.setLoggerEnvironment(channelExpress.getPCastExpress().getPCast());
             app.setLoggerVersion(channelExpress.getPCastExpress().getPCast());
 
-            channelExpress.getPCastExpress().getPCast().getLogger().info('BROWSER', sdk.RTC.browser, sdk.RTC.browserVersion);
+            channelExpress.getPCastExpress().getPCast().getLogger().info('BROWSER', sdk.utils.rtc.browser, sdk.utils.rtc.browserVersion);
         };
 
         var joinChannel = function joinChannel() {
@@ -268,8 +268,8 @@ requirejs([
         init();
 
         // Plugin might load with delay
-        if (sdk.RTC.phenixSupported && !sdk.RTC.isPhenixEnabled()) {
-            sdk.RTC.onload = function() {
+        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
+            sdk.utils.rtc.onload = function() {
                 app.init();
                 init();
             };
