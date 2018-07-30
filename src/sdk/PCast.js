@@ -91,6 +91,8 @@ define([
         this._h264ProfileIds = [];
         this._featureDetector = new FeatureDetector(options.features);
 
+        this._logger.info('Selected features [%s]', this._featureDetector.getFeatures());
+
         var that = this;
         var logGlobalError = function logGlobalError(event) {
             that._logger.error('Window Error Event Triggered with pcast in [%s] state', that._observableStatus.getValue(), event ? event.error : 'Unknown Error');

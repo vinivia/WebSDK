@@ -3216,7 +3216,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-07-30T19:12:02Z';
+    var sdkVersion = '2018-07-30T23:12:48Z';
 
     function PCast(options) {
         options = options || {};
@@ -3264,6 +3264,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._featureDetector = new FeatureDetector(options.features);
+
+        this._logger.info('Selected features [%s]', this._featureDetector.getFeatures());
 
         var that = this;
         var logGlobalError = function logGlobalError(event) {
@@ -7063,11 +7065,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         assert.isArray(features, 'features');
 
-        _.forEach(features, function(feature) {
-            assert.isValidType(feature, streamEnums.types, 'streamType');
+        _.forEach(features, function(feature, index) {
+            assert.isValidType(feature, streamEnums.types, 'FeatureType[' + index + ']');
         });
 
-        this._features = features;
+        this._features = _.map(features, _.bind(_.getEnumName, _, streamEnums.types));
     }
 
     FeatureDetector.isFeatureSupported = function(feature) {
@@ -7075,7 +7077,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isStringNotEmpty(feature, 'feature');
         }
 
-        switch (feature) {
+        var featureName = _.getEnumName(streamEnums.types, feature);
+
+        switch (featureName) {
         case streamEnums.types.realTime.name:
             return rtc.webrtcSupported;
         case streamEnums.types.dash.name:
@@ -7092,7 +7096,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             assert.isStringNotEmpty(feature, 'feature');
         }
 
-        switch (feature) {
+        var featureName = _.getEnumName(streamEnums.types, feature);
+
+        switch (featureName) {
         case streamEnums.types.realTime.name:
             return 'real-time';
         case streamEnums.types.dash.name:
@@ -7131,6 +7137,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         return [];
+    };
+
+    FeatureDetector.prototype.getFeatures = function() {
+        return this._features;
     };
 
     FeatureDetector.prototype.getFeaturePCastCapabilities = function() {
@@ -9184,7 +9194,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T19:12:02Z' || '?';
+    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9439,7 +9449,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T19:12:02Z' || '?';
+    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -10896,7 +10906,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-07-30T19:12:02Z',
+                version: '2018-07-30T23:12:48Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16683,7 +16693,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-07-30T19:12:02Z' || '?';
+    var sdkVersion = '2018-07-30T23:12:48Z' || '?';
     var releaseVersion = '2018.3.7';
 
     function Logger() {
@@ -17252,62 +17262,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     Assert.prototype.isObject = function isObject(obj, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be an object';
-
         if (!_.isObject(obj)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be an object. Received [' + typeof obj + ']');
         }
     };
 
     Assert.prototype.isArray = function isArray(array, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be an array';
-
         if (!_.isArray(array)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be an array. Received [' + typeof array + ']');
         }
     };
 
     Assert.prototype.isString = function isString(string, name) {
-        var error = '"' + name + '" must be a string';
-
         if (!_.isString(name)) {
-            throw new Error('"name" must be a string');
+            throw new Error('"name" must be a string. Received [' + typeof name + ']');
         }
 
         if (!_.isString(string)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be a string. Received [' + typeof string + ']');
         }
     };
 
     Assert.prototype.isBoolean = function isBoolean(bool, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be a boolean';
-
         if (!_.isBoolean(bool)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be a boolean. Received [' + typeof bool + ']');
         }
     };
 
     Assert.prototype.isNumber = function isNumber(number, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be a number';
-
         if (!_.isNumber(number)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be a number. Received [' + typeof number + ']');
         }
     };
 
     Assert.prototype.isFunction = function isFunction(callback, name) {
         Assert.prototype.isString('name', name);
 
-        var error = '"' + name + '" must be a function';
-
         if (!_.isFunction(callback)) {
-            throw new Error(error);
+            throw new Error('"' + name + '" must be a function. Received [' + typeof callback + ']');
         }
     };
 
@@ -17318,13 +17316,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     Assert.prototype.isStringNotEmpty = function stringNotEmpty(string, name) {
         Assert.prototype.isString('name', name);
-
-        var error = '"' + name + '" must not be empty';
-
         Assert.prototype.isString(string, name);
 
         if (string === '') {
-            throw new Error(error);
+            throw new Error('"' + name + '" must not be empty');
         }
     };
 
@@ -17332,11 +17327,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         Assert.prototype.isString('name', name);
 
         if (!_.isObject(object)) {
-            throw new Error('"' + name + '" must be an instance');
+            throw new Error('"' + name + '" must be an instance. Received [' + typeof object + ']');
         }
 
         if (!(object instanceof clazz)) {
-            throw new Error('"' + name + '" must be a valid instance of class');
+            throw new Error('"' + name + '" must be a valid instance of class ' + _.get(clazz, ['name'], 'undefined'));
         }
     };
 
@@ -17351,13 +17346,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     Assert.prototype.isValidType = function(type, types, name) {
         Assert.prototype.isStringNotEmpty(name, 'name');
 
-        type = _.getEnumName(types, type);
+        var typeName = _.getEnumName(types, type);
 
-        if (_.isNullOrUndefined(type)) {
-            throw new Error('"' + name + '" must be a valid type');
+        if (_.isNullOrUndefined(typeName)) {
+            throw new Error('"' + name + '" must be a valid type. Unable to locate type [' + type + ']');
         }
 
-        return type;
+        return typeName;
     };
 
     Assert.prototype.isArrayOfString = function(value, name) {
@@ -17372,6 +17367,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     return new Assert();
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }),
 /* 83 */
@@ -17592,7 +17588,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         return function boundFunction() {
             if (!_.isFunction(callback)) {
-                throw new TypeError('_.bind - callback must be a function');
+                throw new TypeError('_.bind - callback must be a function. Received [' + typeof callback + ']');
             }
 
             var combinedArguments = argsAfterContext.concat(Array.prototype.slice.call(arguments));
@@ -17658,7 +17654,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     _.values = function(collection) {
         if (!_.isObject(collection) || _.isArray(collection)) {
-            throw new Error('Collection must be an object.');
+            throw new Error('_.values argument, Collection, must be an object. Received [' + typeof collection + ']');
         }
 
         return _.map(collection, function(value) {
@@ -17668,7 +17664,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     _.keys = function(collection) {
         if (!_.isObject(collection) || _.isArray(collection)) {
-            throw new Error('Collection must be an object.');
+            throw new Error('_.keys argument, Collection, must be an object. Received [' + typeof collection + ']');
         }
 
         return _.map(collection, function(value, key) {
@@ -17678,7 +17674,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     _.forEach = function forEach(collection, callback) {
         if (!_.isFunction(callback)) {
-            throw new Error('Callback must be a function');
+            throw new Error('_.forEach argument, Callback, must be a function. Received [' + typeof callback + ']');
         }
 
         assertIsArray(collection, 'collection');
@@ -17694,7 +17690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     _.forOwn = function forOwn(objectWithProperties, callback) {
         if (!_.isFunction(callback)) {
-            throw new Error('Callback must be a function');
+            throw new Error('Callback must be a function. Received [' + typeof callback + ']');
         }
 
         assertIsObject(objectWithProperties, 'objectWithProperties');
@@ -17712,7 +17708,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     _.argumentsToArray = function(args) {
         if (!_.isObject(args) || !args.length) {
-            throw new Error('Collection must be arguments');
+            throw new Error('Collection must be arguments. Received [' + typeof args + ']');
         }
 
         var collection = [];
@@ -17725,6 +17721,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     _.assign = function assign(target) {
+        if (_.isNullOrUndefined(target)) {
+            target = {};
+        }
+
         assertIsObject(target, 'target');
 
         var sources = _.argumentsToArray(arguments);
@@ -17732,7 +17732,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         sources.shift();
 
         _.forEach(sources, function(source, index) {
-            assertIsObject(source, 'source ' + index);
+            if (_.isNullOrUndefined(source)) {
+                return;
+            }
+
+            assertIsObject(source, '_.assign(sources[' + index + '])');
 
             _.forOwn(source, function(value, key) {
                 target[key] = value;
@@ -18105,7 +18109,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var assertIsArray = function assertIsArray(collection) {
         if (!_.isArray(collection)) {
-            throw new Error('Input must be an array.');
+            throw new Error('Input must be an array. Received [' + typeof collection + ']');
         }
     };
 
@@ -18113,7 +18117,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsString(name, 'name');
 
         if (!_.isNumber(number)) {
-            throw new Error(name + ' must be a number.');
+            throw new Error(name + ' must be a number. Received [' + typeof number + ']');
         }
     };
 
@@ -18121,7 +18125,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsString(name, 'name');
 
         if (!_.isObject(collection)) {
-            throw new Error('collection type not supported - ' + name + ' must be an array or object.');
+            throw new Error('collection type not supported - ' + name + ' must be an array or object. Received [' + typeof collection + ']');
         }
     };
 
@@ -18129,17 +18133,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsString(name, 'name');
 
         if (!_.isFunction(callback)) {
-            throw new Error(name + ' must be a function.');
+            throw new Error(name + ' must be a function. Received [' + typeof callback + ']');
         }
     };
 
     var assertIsString = function assertIsString(value, name) {
         if (!_.isString(name)) {
-            throw new Error('Name must be a string.');
+            throw new Error('Name must be a string. Received [' + typeof name + ']');
         }
 
         if (!_.isString(value)) {
-            throw new Error(name + ' must be a string.');
+            throw new Error(name + ' must be a string. Received [' + typeof value + ']');
         }
     };
 
@@ -18224,6 +18228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     return _;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ }),
 /* 86 */

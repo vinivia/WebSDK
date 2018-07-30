@@ -374,7 +374,7 @@ define([
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
             streamToken: streamToken,
-            capabilities: [preferredFeatureCapability]
+            capabilities: preferredFeatureCapability ? [preferredFeatureCapability] : []
         }, options);
         var disposables = new disposable.DisposableList();
 

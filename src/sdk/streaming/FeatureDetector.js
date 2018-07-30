@@ -34,11 +34,11 @@ define([
 
         assert.isArray(features, 'features');
 
-        _.forEach(features, function(feature) {
-            assert.isValidType(feature, streamEnums.types, 'streamType');
+        _.forEach(features, function(feature, index) {
+            assert.isValidType(feature, streamEnums.types, 'FeatureType[' + index + ']');
         });
 
-        this._features = features;
+        this._features = _.map(features, _.bind(_.getEnumName, _, streamEnums.types));
     }
 
     FeatureDetector.isFeatureSupported = function(feature) {
@@ -46,7 +46,9 @@ define([
             assert.isStringNotEmpty(feature, 'feature');
         }
 
-        switch (feature) {
+        var featureName = _.getEnumName(streamEnums.types, feature);
+
+        switch (featureName) {
         case streamEnums.types.realTime.name:
             return rtc.webrtcSupported;
         case streamEnums.types.dash.name:
@@ -63,7 +65,9 @@ define([
             assert.isStringNotEmpty(feature, 'feature');
         }
 
-        switch (feature) {
+        var featureName = _.getEnumName(streamEnums.types, feature);
+
+        switch (featureName) {
         case streamEnums.types.realTime.name:
             return 'real-time';
         case streamEnums.types.dash.name:
@@ -102,6 +106,10 @@ define([
         }
 
         return [];
+    };
+
+    FeatureDetector.prototype.getFeatures = function() {
+        return this._features;
     };
 
     FeatureDetector.prototype.getFeaturePCastCapabilities = function() {
