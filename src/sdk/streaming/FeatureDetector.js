@@ -130,12 +130,18 @@ define([
         return preferredFeature;
     };
 
-    FeatureDetector.shouldUseNativeHls = isIOS() || rtc.browser === 'Safari';
+    FeatureDetector.shouldUseNativeHls = isIOS() || rtc.browser === 'Safari' || isSamsungBrowser();
 
     function isIOS() {
         var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
 
         return /iPad|iPhone|iPod/.test(userAgent) && !rtc.global.MSStream;
+    }
+
+    function isSamsungBrowser() {
+        var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
+
+        return /SamsungBrowser/.test(userAgent);
     }
 
     function removeDuplicates(list, item) {
