@@ -1067,6 +1067,7 @@ define([
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._publishers[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -1400,6 +1401,7 @@ define([
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._mediaStreams[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -1612,6 +1614,10 @@ define([
         };
 
         var onStop = function onStop(reason) {
+            if (!that._protocol) {
+                return that._logger.warn('Unable to destroy stream [%s]', streamId);
+            }
+
             that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                 if (error) {
                     that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);

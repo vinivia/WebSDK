@@ -1045,7 +1045,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-08-02T23:12:32Z',
+                version: '2018-08-02T23:37:45Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1616,9 +1616,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (options.pcastExpress) {
             assert.isObject(options.pcastExpress, 'options.pcastExpress');
-        } else {
-            assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-            assert.isObject(options.authenticationData, 'options.authenticationData');
         }
 
         this._pcastExpress = options.pcastExpress || new PCastExpress(options);
@@ -1900,15 +1897,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this.publishToRoom(publishScreenOptions, callback);
     };
 
-    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
+    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback, defaultFeatureIndex) {
         assert.isObject(memberStream, 'memberStream');
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
+
+        defaultFeatureIndex = _.isNumber(defaultFeatureIndex) ? defaultFeatureIndex : 0;
 
         if (options.capabilities) {
             throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
         }
 
+        var that = this;
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
         var streamInfo = memberStream.getInfo();
@@ -1917,6 +1917,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var publisherCapabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
         var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
         var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
+        var subscriberCapabilities = preferredFeatureCapability ? [preferredFeatureCapability] : [];
+        var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+        var isUsingDeprecatedSdk = false;
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -1926,7 +1929,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
         if (!_.hasIndexOrKey(streamInfo, 'capabilities')) {
-            var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+            if (!preferredFeature) {
+                var capability = _.get(featureCapabilities, [defaultFeatureIndex]);
+
+                if (!capability && defaultFeatureIndex >= featureCapabilities.length) {
+                    return callback(null, {status: 'no-supported-features'});
+                }
+
+                subscriberCapabilities = capability ? [capability] : [];
+                preferredFeature = capability ? _.get(FeatureDetector.mapPCastCapabilityToFeatures(capability), [0]) : null;
+            }
 
             if (!streamInfo.streamTokenForLiveStream && preferredFeatureCapability === 'streaming') {
                 this._logger.warn('Streaming is not available for stream [%].', streamId);
@@ -1935,6 +1947,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+            isUsingDeprecatedSdk = true;
         } else {
             if (!preferredFeature) {
                 this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, this._featureDetector.getFeaturePCastCapabilities());
@@ -1950,7 +1963,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
             streamToken: streamToken,
-            capabilities: preferredFeatureCapability ? [preferredFeatureCapability] : []
+            capabilities: subscriberCapabilities
         }, options);
         var disposables = new disposable.DisposableList();
 
@@ -1978,6 +1991,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             if (error && parseInt(error.category) === 6) {
                 return callback(error, {status: 'device-insecure'});
+            }
+
+            // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+            if (response && (response.status === 'failed' || response.status === 'streaming-not-available') && isUsingDeprecatedSdk && defaultFeatureIndex < featureCapabilities.length) {
+                that._logger.info('Attempting to subscribe to member stream with next available feature after failure');
+
+                return that.subscribeToMemberStream(memberStream, options, callback, defaultFeatureIndex + 1);
             }
 
             var responseWithOriginStreamId = _.assign({originStreamId: streamId}, response);
@@ -3299,8 +3319,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-        assert.isObject(options.authenticationData, 'options.authenticationData');
 
         if (options.authToken) {
             assert.isStringNotEmpty(options.authToken, 'options.authToken');
@@ -3353,9 +3371,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
-            this._adminApiProxyClient.setBackendUri(options.backendUri);
-            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
-
             if (options.backendUri) {
                 this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
             }
@@ -4027,6 +4042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
         var hasAlreadyAttachedMedia = false;
+        var cachedPublisher = null;
 
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
@@ -4077,12 +4093,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (status !== 'ok') {
                 that._logger.warn('Failure to publish with status [%s]', status);
 
+                if (cachedPublisher) {
+                    that._ignoredStreamEnds[cachedPublisher.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
             delete options.authFailure;
 
             that._publishers[publisher.getStreamId()] = publisher;
+
+            cachedPublisher = publisher;
 
             if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
@@ -4123,6 +4145,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function subscribeToStream(streamToken, options, callback) {
         var that = this;
+        var cachedSubsciber = null;
 
         var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
@@ -4166,6 +4189,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (status !== 'ok') {
                 that._logger.warn('Failure to subscribe with status [%s]', status);
 
+                if (cachedSubsciber) {
+                    that._ignoredStreamEnds[cachedSubsciber.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
@@ -4174,6 +4201,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             that._subscribers[subscriber.getStreamId()] = subscriber;
 
             var renderer;
+
+            cachedSubsciber = subscriber;
 
             if (options.videoElement) {
                 renderer = subscriber.createRenderer();
@@ -4292,7 +4321,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         subscriber.stop = function(reason) {
             if (renderer) {
-                renderer.stop();
+                renderer.stop(reason);
             }
 
             subscriberStop(reason);
@@ -8834,7 +8863,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-08-02T23:12:32Z';
+    var sdkVersion = '2018-08-02T23:37:45Z';
 
     function PCast(options) {
         options = options || {};
@@ -9859,6 +9888,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._publishers[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -10192,6 +10222,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._mediaStreams[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -10404,6 +10435,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         var onStop = function onStop(reason) {
+            if (!that._protocol) {
+                return that._logger.warn('Unable to destroy stream [%s]', streamId);
+            }
+
             that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                 if (error) {
                     that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
@@ -10915,9 +10950,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (options.roomExpress) {
             assert.isObject(options.roomExpress, 'options.roomExpress');
-        } else {
-            assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-            assert.isObject(options.authenticationData, 'options.authenticationData');
         }
 
         var channelExpressOptions = _.assign({reconnectOptions: defaultReconnectOptions}, options);
@@ -11032,7 +11064,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
                         lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
 
-                    if (lastStreamId && lastMediaStream) {
+                    if (lastStreamId && lastMediaStream && lastMediaStream.isActive()) {
                         lastMediaStream.stop('presenter-failure');
                     }
 
@@ -11095,6 +11127,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 if (response.status !== 'ok') {
+                    if (response.reason === 'custom' && response.description !== 'client-side-failure') {
+                        return subscriberCallback(error, response);
+                    }
+
                     return tryNextMember(response.status);
                 }
             }
@@ -14724,7 +14760,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -14979,7 +15015,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24199,7 +24235,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
     var releaseVersion = '2018.3.8';
 
     function Logger() {

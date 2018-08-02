@@ -3531,7 +3531,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-08-02T23:12:32Z';
+    var sdkVersion = '2018-08-02T23:37:45Z';
 
     function PCast(options) {
         options = options || {};
@@ -4556,6 +4556,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._publishers[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -4889,6 +4890,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             state.stopped = true;
 
             delete that._peerConnections[streamId];
+            delete that._mediaStreams[streamId];
 
             closePeerConnection.call(that, streamId, peerConnection, 'failure');
 
@@ -5101,6 +5103,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         var onStop = function onStop(reason) {
+            if (!that._protocol) {
+                return that._logger.warn('Unable to destroy stream [%s]', streamId);
+            }
+
             that._protocol.destroyStream(streamId, reason || '', function(error, response) {
                 if (error) {
                     that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
@@ -5634,8 +5640,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-        assert.isObject(options.authenticationData, 'options.authenticationData');
 
         if (options.authToken) {
             assert.isStringNotEmpty(options.authToken, 'options.authToken');
@@ -5688,9 +5692,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
-            this._adminApiProxyClient.setBackendUri(options.backendUri);
-            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
-
             if (options.backendUri) {
                 this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
             }
@@ -6362,6 +6363,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
         var hasAlreadyAttachedMedia = false;
+        var cachedPublisher = null;
 
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
@@ -6412,12 +6414,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (status !== 'ok') {
                 that._logger.warn('Failure to publish with status [%s]', status);
 
+                if (cachedPublisher) {
+                    that._ignoredStreamEnds[cachedPublisher.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
             delete options.authFailure;
 
             that._publishers[publisher.getStreamId()] = publisher;
+
+            cachedPublisher = publisher;
 
             if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
@@ -6458,6 +6466,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function subscribeToStream(streamToken, options, callback) {
         var that = this;
+        var cachedSubsciber = null;
 
         var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
@@ -6501,6 +6510,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             if (status !== 'ok') {
                 that._logger.warn('Failure to subscribe with status [%s]', status);
 
+                if (cachedSubsciber) {
+                    that._ignoredStreamEnds[cachedSubsciber.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
@@ -6509,6 +6522,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             that._subscribers[subscriber.getStreamId()] = subscriber;
 
             var renderer;
+
+            cachedSubsciber = subscriber;
 
             if (options.videoElement) {
                 renderer = subscriber.createRenderer();
@@ -6627,7 +6642,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         subscriber.stop = function(reason) {
             if (renderer) {
-                renderer.stop();
+                renderer.stop(reason);
             }
 
             subscriberStop(reason);
@@ -9381,7 +9396,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9636,7 +9651,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11093,7 +11108,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-08-02T23:12:32Z',
+                version: '2018-08-02T23:37:45Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16880,7 +16895,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:12:32Z' || '?';
+    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
     var releaseVersion = '2018.3.8';
 
     function Logger() {

@@ -39,9 +39,6 @@ define([
 
         if (options.roomExpress) {
             assert.isObject(options.roomExpress, 'options.roomExpress');
-        } else {
-            assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-            assert.isObject(options.authenticationData, 'options.authenticationData');
         }
 
         var channelExpressOptions = _.assign({reconnectOptions: defaultReconnectOptions}, options);
@@ -156,7 +153,7 @@ define([
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
                         lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
 
-                    if (lastStreamId && lastMediaStream) {
+                    if (lastStreamId && lastMediaStream && lastMediaStream.isActive()) {
                         lastMediaStream.stop('presenter-failure');
                     }
 
@@ -219,6 +216,10 @@ define([
                 }
 
                 if (response.status !== 'ok') {
+                    if (response.reason === 'custom' && response.description !== 'client-side-failure') {
+                        return subscriberCallback(error, response);
+                    }
+
                     return tryNextMember(response.status);
                 }
             }

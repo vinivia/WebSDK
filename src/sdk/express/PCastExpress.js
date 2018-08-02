@@ -37,8 +37,6 @@ define([
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-        assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-        assert.isObject(options.authenticationData, 'options.authenticationData');
 
         if (options.authToken) {
             assert.isStringNotEmpty(options.authToken, 'options.authToken');
@@ -91,9 +89,6 @@ define([
 
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
-            this._adminApiProxyClient.setBackendUri(options.backendUri);
-            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
-
             if (options.backendUri) {
                 this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
             }
@@ -765,6 +760,7 @@ define([
     function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
         var hasAlreadyAttachedMedia = false;
+        var cachedPublisher = null;
 
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
@@ -815,12 +811,18 @@ define([
             if (status !== 'ok') {
                 that._logger.warn('Failure to publish with status [%s]', status);
 
+                if (cachedPublisher) {
+                    that._ignoredStreamEnds[cachedPublisher.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
             delete options.authFailure;
 
             that._publishers[publisher.getStreamId()] = publisher;
+
+            cachedPublisher = publisher;
 
             if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri);
@@ -861,6 +863,7 @@ define([
 
     function subscribeToStream(streamToken, options, callback) {
         var that = this;
+        var cachedSubsciber = null;
 
         var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
@@ -904,6 +907,10 @@ define([
             if (status !== 'ok') {
                 that._logger.warn('Failure to subscribe with status [%s]', status);
 
+                if (cachedSubsciber) {
+                    that._ignoredStreamEnds[cachedSubsciber.getStreamId()] = true;
+                }
+
                 return callback(null, {status: status});
             }
 
@@ -912,6 +919,8 @@ define([
             that._subscribers[subscriber.getStreamId()] = subscriber;
 
             var renderer;
+
+            cachedSubsciber = subscriber;
 
             if (options.videoElement) {
                 renderer = subscriber.createRenderer();
@@ -1030,7 +1039,7 @@ define([
 
         subscriber.stop = function(reason) {
             if (renderer) {
-                renderer.stop();
+                renderer.stop(reason);
             }
 
             subscriberStop(reason);

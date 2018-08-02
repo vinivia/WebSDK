@@ -39,9 +39,6 @@ define([
 
         if (options.pcastExpress) {
             assert.isObject(options.pcastExpress, 'options.pcastExpress');
-        } else {
-            assert.isStringNotEmpty(options.backendUri, 'options.backendUri');
-            assert.isObject(options.authenticationData, 'options.authenticationData');
         }
 
         this._pcastExpress = options.pcastExpress || new PCastExpress(options);
@@ -323,15 +320,18 @@ define([
         this.publishToRoom(publishScreenOptions, callback);
     };
 
-    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
+    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback, defaultFeatureIndex) {
         assert.isObject(memberStream, 'memberStream');
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
+
+        defaultFeatureIndex = _.isNumber(defaultFeatureIndex) ? defaultFeatureIndex : 0;
 
         if (options.capabilities) {
             throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
         }
 
+        var that = this;
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
         var streamInfo = memberStream.getInfo();
@@ -340,6 +340,9 @@ define([
         var publisherCapabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
         var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
         var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
+        var subscriberCapabilities = preferredFeatureCapability ? [preferredFeatureCapability] : [];
+        var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+        var isUsingDeprecatedSdk = false;
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -349,7 +352,16 @@ define([
 
         // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
         if (!_.hasIndexOrKey(streamInfo, 'capabilities')) {
-            var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
+            if (!preferredFeature) {
+                var capability = _.get(featureCapabilities, [defaultFeatureIndex]);
+
+                if (!capability && defaultFeatureIndex >= featureCapabilities.length) {
+                    return callback(null, {status: 'no-supported-features'});
+                }
+
+                subscriberCapabilities = capability ? [capability] : [];
+                preferredFeature = capability ? _.get(FeatureDetector.mapPCastCapabilityToFeatures(capability), [0]) : null;
+            }
 
             if (!streamInfo.streamTokenForLiveStream && preferredFeatureCapability === 'streaming') {
                 this._logger.warn('Streaming is not available for stream [%].', streamId);
@@ -358,6 +370,7 @@ define([
             }
 
             streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+            isUsingDeprecatedSdk = true;
         } else {
             if (!preferredFeature) {
                 this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, this._featureDetector.getFeaturePCastCapabilities());
@@ -373,7 +386,7 @@ define([
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
             streamToken: streamToken,
-            capabilities: preferredFeatureCapability ? [preferredFeatureCapability] : []
+            capabilities: subscriberCapabilities
         }, options);
         var disposables = new disposable.DisposableList();
 
@@ -401,6 +414,13 @@ define([
 
             if (error && parseInt(error.category) === 6) {
                 return callback(error, {status: 'device-insecure'});
+            }
+
+            // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
+            if (response && (response.status === 'failed' || response.status === 'streaming-not-available') && isUsingDeprecatedSdk && defaultFeatureIndex < featureCapabilities.length) {
+                that._logger.info('Attempting to subscribe to member stream with next available feature after failure');
+
+                return that.subscribeToMemberStream(memberStream, options, callback, defaultFeatureIndex + 1);
             }
 
             var responseWithOriginStreamId = _.assign({originStreamId: streamId}, response);
