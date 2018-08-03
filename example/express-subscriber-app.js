@@ -57,9 +57,13 @@ requirejs([
         var pcastExpress;
 
         var createPCastExpress = function createPCastExpress() {
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
+            adminApiProxyClient.setAuthenticationData(app.getAuthData());
+
             pcastExpress = new sdk.express.PCastExpress({
-                backendUri: app.getBaseUri() + '/pcast',
-                authenticationData: app.getAuthData(),
+                adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
                 rtmp: {swfSrc: app.getSwfFilePath()}

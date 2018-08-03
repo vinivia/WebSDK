@@ -60,9 +60,13 @@ requirejs([
 
     var init = function init() {
         var createPCastExpress = function createPCastExpress() {
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
+            adminApiProxyClient.setAuthenticationData(app.getAuthData());
+
             var pcastOptions = {
-                backendUri: app.getBaseUri() + '/pcast',
-                authenticationData: app.getAuthData(),
+                adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
                 authToken: 'dud',

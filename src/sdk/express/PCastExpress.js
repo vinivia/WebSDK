@@ -90,11 +90,11 @@ define([
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
             if (options.backendUri) {
-                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
+                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
 
             if (options.authenticationData) {
-                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the AdminAPI and pass that instead');
+                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
         }
     }

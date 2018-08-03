@@ -369,7 +369,7 @@ define([
                 return callback(null, {status: 'streaming-not-available'});
             }
 
-            streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+            streamToken = parseStreamTokenFromStreamUri(streamUri, subscriberCapabilities);
             isUsingDeprecatedSdk = true;
         } else {
             if (!preferredFeature) {

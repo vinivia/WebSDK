@@ -61,10 +61,11 @@
         requirejs([
             'phenix-web-sdk'
         ], function (sdk) {
-            var expressRoom = new sdk.express.RoomExpress({
-                backendUri: 'https://phenixrts.com/demo',
-                authenticationData: {}
-            });
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri('https://phenixrts.com/demo');
+
+            var expressRoom = new sdk.express.RoomExpress({adminApiProxyClient: adminApiProxyClient});
             var defaultPCastStreamPrefix = 'pcast://phenixrts.com/';
             var joinRoomButton = document.getElementById('joinRoomButton');
             var stopButton = document.getElementById('stopButton');

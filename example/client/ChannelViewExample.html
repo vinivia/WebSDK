@@ -34,10 +34,11 @@
         requirejs([
             'phenix-web-sdk',
         ], function (sdk) {
-            var expressRoom = new sdk.express.RoomExpress({
-                backendUri: 'https://phenixrts.com/demo',
-                authenticationData: {}
-            });
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri('https://phenixrts.com/demo');
+
+            var expressChannel = new sdk.express.ChannelExpress({adminApiProxyClient: adminApiProxyClient});
             var videoElement = document.getElementById('myVideoId');
             var isMobileAppleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             var isOtherMobile = /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(navigator.userAgent);
@@ -51,7 +52,7 @@
                 // show button to unmute
             }
 
-            expressRoom.joinChannel({
+            expressChannel.joinChannel({
                 alias: channelAlias,
                 videoElement: videoElement,
                 capabilities: [sdk.utils.rtc.webrtcSupported ? 'real-time' : 'streaming'] // If WebRTC is not supported then fall back to streaming (~10 second latency)

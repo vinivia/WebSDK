@@ -46,10 +46,11 @@
             'phenix-web-sdk',
             'phenix-gum-configuration'
         ], function (sdk, GumConf) {
-            var expressRoom = new sdk.express.RoomExpress({
-                backendUri: 'https://phenixrts.com/demo',
-                authenticationData: {}
-            });
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri('https://phenixrts.com/demo');
+
+            var expressChannel = new sdk.express.ChannelExpress({adminApiProxyClient: adminApiProxyClient});
             var videoElement = document.getElementById('myVideoId');
             var stopButton = document.getElementById('stopButton');
             var publisher = null;
@@ -117,7 +118,7 @@
 
                 localUserMediaStream = userMediaStream;
 
-                expressRoom.publishToChannel(publishOptions, function subscriberCallback(error, response) {
+                expressChannel.publishToChannel(publishOptions, function subscriberCallback(error, response) {
                     if (error) {
                         setUserMessage('Unable to publish to Channel: ' + error.message);
                         prepareGetUserMedia();

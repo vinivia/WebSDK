@@ -1045,7 +1045,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-08-02T23:37:45Z',
+                version: '2018-08-03T14:28:12Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1946,7 +1946,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(null, {status: 'streaming-not-available'});
             }
 
-            streamToken = parseStreamTokenFromStreamUri(streamUri, featureCapabilities);
+            streamToken = parseStreamTokenFromStreamUri(streamUri, subscriberCapabilities);
             isUsingDeprecatedSdk = true;
         } else {
             if (!preferredFeature) {
@@ -3372,11 +3372,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
             if (options.backendUri) {
-                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the AdminAPI and pass that instead');
+                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
 
             if (options.authenticationData) {
-                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the AdminAPI and pass that instead');
+                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
         }
     }
@@ -8863,7 +8863,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-08-02T23:37:45Z';
+    var sdkVersion = '2018-08-03T14:28:12Z';
 
     function PCast(options) {
         options = options || {};
@@ -14760,7 +14760,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
+    var sdkVersion = '2018-08-03T14:28:12Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15015,7 +15015,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
+    var sdkVersion = '2018-08-03T14:28:12Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24235,8 +24235,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-02T23:37:45Z' || '?';
-    var releaseVersion = '2018.3.8';
+    var sdkVersion = '2018-08-03T14:28:12Z' || '?';
+    var releaseVersion = '2018.3.9';
 
     function Logger() {
         this._appenders = [];

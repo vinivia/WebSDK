@@ -38,10 +38,11 @@
         requirejs([
             'phenix-web-sdk'
         ], function (sdk) {
-            var expressRoom = new sdk.express.RoomExpress({
-                backendUri: 'https://phenixrts.com/demo',
-                authenticationData: {}
-            });
+            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri('https://phenixrts.com/demo');
+
+            var expressChannel = new sdk.express.ChannelExpress({adminApiProxyClient: adminApiProxyClient});
             var videoElement = document.getElementById('myVideoId');
             var publishButton = document.getElementById('publishButton');
             var stopButton = document.getElementById('stopButton');
@@ -81,7 +82,7 @@
                 hideElement(publishButton);
                 displayElement(stopButton);
 
-                expressRoom.publishToChannel(publishOptions, function subscriberCallback(error, response) {
+                expressChannel.publishToChannel(publishOptions, function subscriberCallback(error, response) {
                     if (error) {
                         setUserMessage('Unable to publish to Channel: ' + error.message);
                         stopPublisher();
