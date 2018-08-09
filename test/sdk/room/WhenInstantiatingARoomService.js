@@ -163,7 +163,7 @@ define([
             it('Returns no roomChatService', function() {
                 var roomChatService = roomService.getChatService();
 
-                expect(roomChatService).to.be.equal(null);
+                expect(roomChatService).to.be.null;
             });
 
             it('Expect getRoomInfo to return a status other than "ok" and no room object', function() {

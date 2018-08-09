@@ -20,8 +20,11 @@ define([
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
-    'sdk/room/room.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room) {
+    '../../../../test/mock/UserMediaStubber',
+    'sdk/room/room.json',
+    'sdk/room/member.json',
+    'sdk/room/stream.json'
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
     describe('When Publishing to a Channel With Express Room', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -78,6 +81,66 @@ define([
             channelExpress.dispose();
         });
 
+        it('returns a publisher and no channelService when publishing remotely', function(done) {
+            channelExpress.publishToChannel({
+                capabilities: [],
+                room: {
+                    alias: 'ChannelAlias',
+                    name: 'Channel'
+                },
+                streamUri: 'StreamUri'
+            }, function(error, response) {
+                if (response.status !== 'ok') {
+                    return;
+                }
+
+                expect(response.publisher, 'publisher').to.be.an('object');
+                expect(response.channelService, 'channelService').to.be.null;
+                done();
+            });
+        });
+
+        it('returns a publisher and a channelService when publishing locally', function(done) {
+            var mockRoom = {
+                roomId: 'TestRoom123',
+                alias: 'ChannelAlias',
+                name: 'Channel',
+                description: 'My Test Room',
+                bridgeId: '',
+                pin: '',
+                type: room.types.channel.name,
+                members: []
+            };
+            var response = {
+                status: 'ok',
+                room: mockRoom,
+                members: []
+            };
+
+            websocketStubber.stubJoinRoomResponse(response.room, response.members);
+
+            channelExpress.publishToChannel({
+                capabilities: [],
+                userMediaStream: UserMediaStubber.getMockMediaStream(),
+                streamType: stream.types.user.name,
+                memberRole: member.roles.participant.name,
+                room: {
+                    alias: 'ChannelAlias',
+                    name: 'Channel'
+                }
+            }, function(error, response) {
+                if (response.status !== 'ok') {
+                    return;
+                }
+
+                expect(error).to.not.exist;
+                expect(response.status).to.be.equal('ok');
+                expect(response.publisher, 'publisher').to.be.an('object');
+                expect(response.channelService, 'channelService').to.be.an('object');
+                done();
+            });
+        });
+
         it('Expect stream ended reason of censored to trigger a callback and not re-publish', function(done) {
             var publishCount = 0;
 
@@ -90,6 +153,8 @@ define([
                 streamUri: 'StreamUri'
             }, function(error, response) {
                 if (response.status === 'ok') {
+                    expect(response.publisher).to.be.an('object');
+
                     publishCount++;
 
                     if (publishCount === 1) {

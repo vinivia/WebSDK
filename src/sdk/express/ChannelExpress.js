@@ -299,14 +299,14 @@ define([
     };
 
     function wrapResponseWithChannelPrefixesAndContinue(callback, error, response) {
-        if (response && response.roomService) {
-            response.channelService = new ChannelService(response.roomService);
+        if (response && _.hasIndexOrKey(response, 'roomService')) {
+            response.channelService = response.roomService ? new ChannelService(response.roomService) : null;
 
             delete response.roomService;
         }
 
-        if (response && response.room) {
-            response.channel = new Channel(response.room);
+        if (response && _.hasIndexOrKey(response, 'room')) {
+            response.channel = response.room ? new Channel(response.room) : null;
 
             delete response.room;
         }

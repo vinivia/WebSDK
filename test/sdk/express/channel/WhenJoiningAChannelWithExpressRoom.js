@@ -184,11 +184,14 @@ define([
                 role: member.roles.participant.name,
                 alias: mockRoom.alias
             }, function(error, response) {
+                expect(response.channelService).to.be.an('object');
+
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
 
                 response.channelService.getObservableActiveChannel().getValue().getObservableMembers().setValue([presenter]);
             }, function(error, response){
-                expect(response.mediaStream).to.exist;
+                expect(response.mediaStream).to.be.an('object');
+                expect(response.originStreamId).to.be.a('string');
 
                 done();
             });

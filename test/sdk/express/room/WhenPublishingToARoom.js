@@ -111,7 +111,34 @@ define([
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function(error, response) {
+                if (response.status !== 'ok') {
+                    return;
+                }
+
                 expect(response.publisher).to.be.a('object');
+                expect(response.roomService).to.be.a('object');
+                done();
+            });
+        });
+
+        it('returns remote publisher from publishToRoom callback', function(done) {
+            roomExpress.publishToRoom({
+                capabilities: [],
+                streamUri: 'streamUri',
+                room: {
+                    alias: roomAlias,
+                    type: roomType,
+                    name: roomName
+                },
+                streamType: stream.types.user.name,
+                memberRole: member.roles.participant.name
+            }, function(error, response) {
+                if (response.status !== 'ok') {
+                    return;
+                }
+
+                expect(response.publisher).to.be.a('object');
+                expect(response.roomService).to.be.null;
                 done();
             });
         });

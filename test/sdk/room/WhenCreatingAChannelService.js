@@ -163,7 +163,7 @@ define([
             it('Returns no chatService', function() {
                 var chatService = channelService.getChatService();
 
-                expect(chatService).to.be.equal(null);
+                expect(chatService).to.be.null;
             });
 
             it('Expect getRoomInfo to return a status other than "ok" and no room object', function() {

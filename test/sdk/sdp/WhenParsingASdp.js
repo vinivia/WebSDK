@@ -43,7 +43,7 @@ define([
                 });
 
                 it('returns no profile id when no profile id has the same profile', function() {
-                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['4d0032', '640032'], defaultH264Value)).to.be.equal(null);
+                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['4d0032', '640032'], defaultH264Value)).to.be.null;
                 });
             });
 
@@ -77,7 +77,7 @@ define([
                 });
 
                 it('returns no profile id when no profile id has the same profile and equal to or higher level', function() {
-                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['42e01f', '42e01f'], '420032')).to.be.equal(null);
+                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['42e01f', '42e01f'], '420032')).to.be.null;
                 });
             });
         });
@@ -101,7 +101,7 @@ define([
                 });
 
                 it('returns no profile id when no profile id has the same profile and equal to or higher level', function() {
-                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['42001f'], '420032')).to.be.equal(null);
+                    expect(sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(['42001f'], '420032')).to.be.null;
                 });
             });
         });

@@ -290,7 +290,11 @@ define([
                     ]);
                 }
 
-                return that._pcastExpress.publishRemote(remoteOptions, callback);
+                var callbackWithRoomService = function(error, response) {
+                    callback(error, response ? _.assign({roomService: null}, response) : response);
+                };
+
+                return that._pcastExpress.publishRemote(remoteOptions, callbackWithRoomService);
             }
 
             var joinRoomAsAudienceOptions = _.assign({}, options, {
@@ -298,18 +302,21 @@ define([
                 roomId: room.getRoomId()
             });
 
-            joinRoomWithOptions.call(that, joinRoomAsAudienceOptions, function(error, response) {
+            joinRoomWithOptions.call(that, joinRoomAsAudienceOptions, function(error, joinRoomResponse) {
                 if (error) {
                     return callback(error);
                 }
 
-                if (response.status !== 'ok' && response.status !== 'already-in-room') {
+                if (joinRoomResponse.status !== 'ok' && joinRoomResponse.status !== 'already-in-room') {
                     return callback(null, createRoomResponse);
                 }
 
-                var activeRoom = response.roomService.getObservableActiveRoom().getValue();
+                var activeRoom = joinRoomResponse.roomService.getObservableActiveRoom().getValue();
+                var callbackWithRoomService = function(error, response) {
+                    callback(error, response ? _.assign({roomService: joinRoomResponse.roomService}, response) : response);
+                };
 
-                publishAndUpdateSelf.call(that, publishOptions, activeRoom, callback);
+                publishAndUpdateSelf.call(that, publishOptions, activeRoom, callbackWithRoomService);
             });
         });
     };
