@@ -294,7 +294,7 @@ define('app-setup', [
             'wss://pcast-asia-south.phenixrts.com': 'APAC South',
             'wss://pcast-australia-southeast.phenixrts.com': 'Australia South East',
             'wss://pcast-us-west.phenixrts.com': 'US West',
-            'wss://pcast-us-southwest.phenixrts.com': 'US SouthWest',
+            'wss://pcast-us-southwest.phenixrts.com': 'US South West',
             'wss://pcast-us-central.phenixrts.com': 'US Central',
             'wss://pcast-us-east.phenixrts.com': 'US East',
             'wss://pcast-us-northeast.phenixrts.com': 'US North East',
