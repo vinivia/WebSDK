@@ -323,6 +323,7 @@ define('app-setup', [
             'multi-bitrate': 'Multi Bitrate (MBR)',
             'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
             'multi-bitrate-codec=h264': 'H264 MBR Codec',
+            'constant-gop-size': 'Constant GOP',
             'origin-shield': 'Origin Shield',
             'rtmp': 'RTMP'
         };
