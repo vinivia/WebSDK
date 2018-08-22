@@ -19,8 +19,9 @@ define([
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
-    '../../../test/mock/PeerConnectionStubber'
-], function(PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber) {
+    '../../../test/mock/PeerConnectionStubber',
+    '../../../test/mock/UserMediaStubber'
+], function(PCast, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Disabling Console Logging with PCast', function() {
         var httpStubber = new HttpStubber();
         var websocketStubber;
@@ -74,7 +75,7 @@ define([
 
         it('Expect an error to not be thrown when publishing', function() {
             expect(function() {
-                pcast.publish('mockStreamToken', {}, function() {});
+                pcast.publish('mockStreamToken', UserMediaStubber.getMockMediaStream(), function() {});
             }).to.not.throw();
         });
     });
