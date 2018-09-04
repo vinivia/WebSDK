@@ -474,21 +474,11 @@ define([
     }
 
     function getAllTracks(peerConnection) {
-        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
-        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
-        var localTracks = [];
-        var remoteTracks = [];
-
-        _.forEach(localStreams, function(stream) {
-            localTracks = localTracks.concat(stream.getTracks());
-        });
-
-        _.forEach(remoteStreams, function(stream) {
-            remoteTracks = remoteTracks.concat(stream.getTracks());
-        });
+        var localTracks = getLocalTracks(peerConnection);
+        var remoteTracks = getRemoteTracks(peerConnection);
 
         if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
+            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote tracks.', localTracks.length, remoteTracks.length);
 
             throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
         } else if (localTracks.length !== 0) {
@@ -498,6 +488,38 @@ define([
         }
 
         return [];
+    }
+
+    function getLocalTracks(peerConnection) {
+        var tracks = peerConnection.getSenders ? _.map(peerConnection.getSenders(), function(receiver) {
+            return receiver.track;
+        }) : [];
+
+        if (tracks.length === 0) {
+            var streams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
+
+            return _.reduce(streams, function(tracks, stream) {
+                return tracks.concat(stream.getTracks());
+            }, []);
+        }
+
+        return tracks;
+    }
+
+    function getRemoteTracks(peerConnection) {
+        var tracks = peerConnection.getReceivers ? _.map(peerConnection.getReceivers(), function(sender) {
+            return sender.track;
+        }) : [];
+
+        if (tracks.length === 0) {
+            var streams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
+
+            return _.reduce(streams, function(tracks, stream) {
+                return tracks.concat(stream.getTracks());
+            }, []);
+        }
+
+        return tracks;
     }
 
     function hasMediaSectionsInSdp(peerConnection) {

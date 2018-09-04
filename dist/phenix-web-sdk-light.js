@@ -2383,21 +2383,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function getAllTracks(peerConnection) {
-        var localStreams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
-        var remoteStreams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
-        var localTracks = [];
-        var remoteTracks = [];
-
-        _.forEach(localStreams, function(stream) {
-            localTracks = localTracks.concat(stream.getTracks());
-        });
-
-        _.forEach(remoteStreams, function(stream) {
-            remoteTracks = remoteTracks.concat(stream.getTracks());
-        });
+        var localTracks = getLocalTracks(peerConnection);
+        var remoteTracks = getRemoteTracks(peerConnection);
 
         if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote streams.', localStreams.length, remoteStreams.length);
+            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote tracks.', localTracks.length, remoteTracks.length);
 
             throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
         } else if (localTracks.length !== 0) {
@@ -2407,6 +2397,38 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         return [];
+    }
+
+    function getLocalTracks(peerConnection) {
+        var tracks = peerConnection.getSenders ? _.map(peerConnection.getSenders(), function(receiver) {
+            return receiver.track;
+        }) : [];
+
+        if (tracks.length === 0) {
+            var streams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
+
+            return _.reduce(streams, function(tracks, stream) {
+                return tracks.concat(stream.getTracks());
+            }, []);
+        }
+
+        return tracks;
+    }
+
+    function getRemoteTracks(peerConnection) {
+        var tracks = peerConnection.getReceivers ? _.map(peerConnection.getReceivers(), function(sender) {
+            return sender.track;
+        }) : [];
+
+        if (tracks.length === 0) {
+            var streams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
+
+            return _.reduce(streams, function(tracks, stream) {
+                return tracks.concat(stream.getTracks());
+            }, []);
+        }
+
+        return tracks;
     }
 
     function hasMediaSectionsInSdp(peerConnection) {
@@ -3531,7 +3553,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-08-22T22:10:25Z';
+    var sdkVersion = '2018-09-04T23:10:39Z';
 
     function PCast(options) {
         options = options || {};
@@ -9457,7 +9479,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-22T22:10:25Z' || '?';
+    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9712,7 +9734,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-22T22:10:25Z' || '?';
+    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11169,7 +11191,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-08-22T22:10:25Z',
+                version: '2018-09-04T23:10:39Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -16956,7 +16978,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-08-22T22:10:25Z' || '?';
+    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
     var releaseVersion = '2018.3.11';
 
     function Logger() {
