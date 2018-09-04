@@ -32,8 +32,8 @@ define([
         this._version = sdkVersion;
         this._sessionId = null;
         this._properties = {
-            resource: 'Session',
-            kind: 'Event'
+            resource: 'session',
+            kind: 'event'
         };
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
@@ -169,7 +169,7 @@ define([
         var newCapacity = newValue || this._networkMonitor.getDownlinkThroughputCapacity();
         var oldCapacity = oldValue || -1;
 
-        this.recordMetric('DownlinkThroughputCapacity', {uint64: newCapacity}, {uint64: oldCapacity}, {resource: phenixRTC.browser});
+        this.recordMetric('DownlinkThroughputCapacity', {float: newCapacity}, {float: oldCapacity}, {resource: phenixRTC.browser});
 
         if (_.isNullOrUndefined(oldValue)) {
             return logMetric.call(this, 'Network downlink throughput capacity [%s]', newCapacity);

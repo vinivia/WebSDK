@@ -2031,7 +2031,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         function nextCheck(checkForNoData) {
             var selector = null;
 
-            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
+            getStats.call(that, peerConnection, options, selector, activeCallback, function successCallback(report) {
                 var hasFrameRate = false;
                 var hasVideoBitRate = false;
                 var hasAudioBitRate = false;
@@ -2069,8 +2069,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
                                 hasFrameRate = true;
                                 frameRate = stats.framerateMean || 0;
                                 hasVideoBitRate = true;
@@ -2083,8 +2083,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s]',
-                                    name, stats.mediaType, stats.ssrc);
+                                that._logger.debug('[%s] [%s] [%s] [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -2100,8 +2100,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s] and jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
 
                                 // Inbound frame rate is not calculated correctly
                                 // hasFrameRate = true;
@@ -2112,8 +2112,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.jitter);
+                                that._logger.debug('[%s] [%s] [%s] with jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.jitter);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -2144,8 +2144,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateSent || 0;
                                 hasVideoBitRate = true;
@@ -2154,8 +2154,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -2169,8 +2169,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateReceived || 0;
                                 hasVideoBitRate = true;
@@ -2179,8 +2179,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -2220,8 +2220,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
-                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
-                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
+                    that._logger.debug('[%s] [%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
+                        name, options.direction, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
                 }
 
                 if (that._monitorState
@@ -2232,7 +2232,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var tracks = getAllTracks.call(that, peerConnection);
 
                     if (!active && hasMediaSectionsInSdp(peerConnection)) {
-                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
+                        that._logger.info('[%s] [%s] Finished monitoring of peer connection with [%s] inactive tracks', name, options.direction, tracks.length);
 
                         return;
                     }
@@ -2262,7 +2262,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
                 var acknowledgeFailure = function acknowledgeFailure() {
-                    that._logger.info('[%s] Failure has been acknowledged', name);
+                    that._logger.info('[%s] [%s] Failure has been acknowledged', name, options.direction);
 
                     conditionCount = Number.MIN_VALUE;
 
@@ -2270,8 +2270,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 };
 
                 if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
-                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
+                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var streamDeadFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
                         type: 'condition',
@@ -2307,7 +2307,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this.value = value || 0;
     }
 
-    function normalizeStatsReport(response) {
+    function normalizeStatsReport(response, options) {
         var normalizedReport = {};
 
         switch (phenixRTC.browser) {
@@ -2356,10 +2356,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     id: report.id,
                     type: report.type
                 };
+                var isWrongDirection = (options.direction === 'outbound' && _.includes(report.id, 'recv')) || (options.direction === 'inbound' && _.includes(report.id, 'send'));
+
+                if (isWrongDirection) {
+                    return;
+                }
 
                 report.names().forEach(function(name) {
                     normalizedStatistics[name] = report.stat(name);
                 });
+
+                normalizedStatistics.googReadable = 'true';
 
                 normalizedReport[normalizedStatistics.id] = normalizedStatistics;
             });
@@ -2368,13 +2375,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
     }
 
-    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
+    function getStats(peerConnection, options, selector, activeCallback, successCallback, errorCallback) {
         if (!activeCallback()) {
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
 
         phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response);
+            var report = normalizeStatsReport(response, options);
 
             successCallback(report);
         }, function(error) {
@@ -3553,7 +3560,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-04T23:10:39Z';
+    var sdkVersion = '2018-09-05T20:07:50Z';
 
     function PCast(options) {
         options = options || {};
@@ -9479,15 +9486,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
+    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
         this._version = sdkVersion;
         this._sessionId = null;
         this._properties = {
-            resource: 'Session',
-            kind: 'Event'
+            resource: 'session',
+            kind: 'event'
         };
         this._logger = logger;
         this._metricsTransmitter = metricsTransmitter;
@@ -9623,7 +9630,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var newCapacity = newValue || this._networkMonitor.getDownlinkThroughputCapacity();
         var oldCapacity = oldValue || -1;
 
-        this.recordMetric('DownlinkThroughputCapacity', {uint64: newCapacity}, {uint64: oldCapacity}, {resource: phenixRTC.browser});
+        this.recordMetric('DownlinkThroughputCapacity', {float: newCapacity}, {float: oldCapacity}, {resource: phenixRTC.browser});
 
         if (_.isNullOrUndefined(oldValue)) {
             return logMetric.call(this, 'Network downlink throughput capacity [%s]', newCapacity);
@@ -9734,7 +9741,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
+    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11191,7 +11198,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-04T23:10:39Z',
+                version: '2018-09-05T20:07:50Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -14336,7 +14343,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function sendMessagesIfAble() {
-        if (!this._canSendRequestObservable.getValue() || this._records.length === 0) {
+        if (!this._canSendRequestObservable.getValue() || this._records.length === 0 || this._records.length !== this._maxBatchSize) {
             return;
         }
 
@@ -16978,8 +16985,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-04T23:10:39Z' || '?';
-    var releaseVersion = '2018.3.11';
+    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
+    var releaseVersion = '2018.3.12';
 
     function Logger() {
         this._appenders = [];

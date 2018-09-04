@@ -122,7 +122,7 @@ define([
         function nextCheck(checkForNoData) {
             var selector = null;
 
-            getStats.call(that, peerConnection, selector, activeCallback, function successCallback(report) {
+            getStats.call(that, peerConnection, options, selector, activeCallback, function successCallback(report) {
                 var hasFrameRate = false;
                 var hasVideoBitRate = false;
                 var hasAudioBitRate = false;
@@ -160,8 +160,8 @@ define([
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
                                 hasFrameRate = true;
                                 frameRate = stats.framerateMean || 0;
                                 hasVideoBitRate = true;
@@ -174,8 +174,8 @@ define([
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s]',
-                                    name, stats.mediaType, stats.ssrc);
+                                that._logger.debug('[%s] [%s] [%s] [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -191,8 +191,8 @@ define([
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s] and jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
 
                                 // Inbound frame rate is not calculated correctly
                                 // hasFrameRate = true;
@@ -203,8 +203,8 @@ define([
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.jitter);
+                                that._logger.debug('[%s] [%s] [%s] with jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.jitter);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -235,8 +235,8 @@ define([
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateSent || 0;
                                 hasVideoBitRate = true;
@@ -245,8 +245,8 @@ define([
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Outbound [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -260,8 +260,8 @@ define([
 
                             switch (stats.mediaType) {
                             case 'video':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
                                 hasFrameRate = true;
                                 frameRate = stats.googFrameRateReceived || 0;
                                 hasVideoBitRate = true;
@@ -270,8 +270,8 @@ define([
 
                                 break;
                             case 'audio':
-                                that._logger.debug('[%s] Inbound [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
+                                that._logger.debug('[%s] [%s] [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
+                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
                                 hasAudioBitRate = true;
                                 audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
                                 lastAudioBytes[trackId] = currentBytes;
@@ -311,8 +311,8 @@ define([
                 }
 
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
-                    that._logger.debug('[%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
-                        name, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
+                    that._logger.debug('[%s] [%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
+                        name, options.direction, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
                 }
 
                 if (that._monitorState
@@ -323,7 +323,7 @@ define([
                     var tracks = getAllTracks.call(that, peerConnection);
 
                     if (!active && hasMediaSectionsInSdp(peerConnection)) {
-                        that._logger.info('[%s] Finished monitoring of peer connection with [%s] inactive tracks', name, tracks.length);
+                        that._logger.info('[%s] [%s] Finished monitoring of peer connection with [%s] inactive tracks', name, options.direction, tracks.length);
 
                         return;
                     }
@@ -353,7 +353,7 @@ define([
 
                 var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
                 var acknowledgeFailure = function acknowledgeFailure() {
-                    that._logger.info('[%s] Failure has been acknowledged', name);
+                    that._logger.info('[%s] [%s] Failure has been acknowledged', name, options.direction);
 
                     conditionCount = Number.MIN_VALUE;
 
@@ -361,8 +361,8 @@ define([
                 };
 
                 if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
-                    var streamDeadFailureMessage = '[' + name + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
+                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var streamDeadFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
                         type: 'condition',
@@ -398,7 +398,7 @@ define([
         this.value = value || 0;
     }
 
-    function normalizeStatsReport(response) {
+    function normalizeStatsReport(response, options) {
         var normalizedReport = {};
 
         switch (phenixRTC.browser) {
@@ -447,10 +447,17 @@ define([
                     id: report.id,
                     type: report.type
                 };
+                var isWrongDirection = (options.direction === 'outbound' && _.includes(report.id, 'recv')) || (options.direction === 'inbound' && _.includes(report.id, 'send'));
+
+                if (isWrongDirection) {
+                    return;
+                }
 
                 report.names().forEach(function(name) {
                     normalizedStatistics[name] = report.stat(name);
                 });
+
+                normalizedStatistics.googReadable = 'true';
 
                 normalizedReport[normalizedStatistics.id] = normalizedStatistics;
             });
@@ -459,13 +466,13 @@ define([
         }
     }
 
-    function getStats(peerConnection, selector, activeCallback, successCallback, errorCallback) {
+    function getStats(peerConnection, options, selector, activeCallback, successCallback, errorCallback) {
         if (!activeCallback()) {
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
 
         phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response);
+            var report = normalizeStatsReport(response, options);
 
             successCallback(report);
         }, function(error) {
