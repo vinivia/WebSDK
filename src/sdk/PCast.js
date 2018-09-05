@@ -89,14 +89,16 @@ define([
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
+        this._supportedWebrtcCodecs = [];
         this._featureDetector = new FeatureDetector(options.features);
 
-        this._logger.info('Selected features [%s]', this._featureDetector.getFeatures());
-
         var that = this;
+        var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
         var logGlobalError = function logGlobalError(event) {
             that._logger.error('Window Error Event Triggered with pcast in [%s] state', that._observableStatus.getValue(), event ? event.error : 'Unknown Error');
         };
+
+        this._logger.info('Device supports features [%s], user selected [%s]', supportedFeatures, this._featureDetector.getFeatures());
 
         _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
@@ -967,8 +969,12 @@ define([
             var handleOffer = function handleOffer(offer) {
                 var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
 
+                that._supportedWebrtcCodecs = sdpUtil.getSupportedCodecs(offer.sdp);
+
+                that._logger.info('Supported WebRTC video codecs [%s]', that._supportedWebrtcCodecs);
+
                 if (h264ProfileIds.length === 0) {
-                    return that._logger.info('Unable to find local h264 profile level id');
+                    return that._logger.info('Unable to find local h264 profile level id', offer.sdp);
                 }
 
                 that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);

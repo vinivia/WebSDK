@@ -1047,7 +1047,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-05T20:07:50Z',
+                version: '2018-09-05T22:30:48Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -6415,7 +6415,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var defaultFeatures = [
         streamEnums.types.realTime.name,
-        streamEnums.types.rtmp.name,
         streamEnums.types.dash.name,
         streamEnums.types.hls.name
     ];
@@ -8901,7 +8900,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-05T20:07:50Z';
+    var sdkVersion = '2018-09-05T22:30:48Z';
 
     function PCast(options) {
         options = options || {};
@@ -8948,14 +8947,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
+        this._supportedWebrtcCodecs = [];
         this._featureDetector = new FeatureDetector(options.features);
 
-        this._logger.info('Selected features [%s]', this._featureDetector.getFeatures());
-
         var that = this;
+        var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
         var logGlobalError = function logGlobalError(event) {
             that._logger.error('Window Error Event Triggered with pcast in [%s] state', that._observableStatus.getValue(), event ? event.error : 'Unknown Error');
         };
+
+        this._logger.info('Device supports features [%s], user selected [%s]', supportedFeatures, this._featureDetector.getFeatures());
 
         _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
@@ -9826,8 +9827,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var handleOffer = function handleOffer(offer) {
                 var h264ProfileIds = sdpUtil.getH264ProfileIds(offer.sdp);
 
+                that._supportedWebrtcCodecs = sdpUtil.getSupportedCodecs(offer.sdp);
+
+                that._logger.info('Supported WebRTC video codecs [%s]', that._supportedWebrtcCodecs);
+
                 if (h264ProfileIds.length === 0) {
-                    return that._logger.info('Unable to find local h264 profile level id');
+                    return that._logger.info('Unable to find local h264 profile level id', offer.sdp);
                 }
 
                 that._logger.info('Found local h264 profile level ids [%s]', h264ProfileIds, offer.sdp);
@@ -12799,6 +12804,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     var h264ProfileIdRegex = /profile-level-id=[^;\n]*/;
+    var vp8Regex = /vp8/i;
+    var vp9Regex = /vp9/i;
+    var h264Regex = /h264/i;
+    var h265Regex = /h265/i;
 
     function sdpUtil() {
 
@@ -12882,6 +12891,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }, replaceProfileId);
 
         return nextProfileId === replaceProfileId ? null : nextProfileId;
+    };
+
+    sdpUtil.prototype.getSupportedCodecs = function getSupportedCodecs(offerSdp) {
+        assert.isStringNotEmpty(offerSdp, 'offerSdp');
+
+        var codecs = [];
+
+        if (vp8Regex.test(offerSdp)) {
+            codecs.push('VP8');
+        }
+
+        if (vp9Regex.test(offerSdp)) {
+            codecs.push('VP9');
+        }
+
+        if (h264Regex.test(offerSdp)) {
+            codecs.push('H264');
+        }
+
+        if (h265Regex.test(offerSdp)) {
+            codecs.push('H265');
+        }
+
+        return codecs;
     };
 
     return new sdpUtil();
@@ -14859,7 +14892,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
+    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15114,7 +15147,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
+    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24334,7 +24367,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T20:07:50Z' || '?';
+    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
     var releaseVersion = '2018.3.12';
 
     function Logger() {

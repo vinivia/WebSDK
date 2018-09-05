@@ -21,6 +21,10 @@ define([
     'use strict';
 
     var h264ProfileIdRegex = /profile-level-id=[^;\n]*/;
+    var vp8Regex = /vp8/i;
+    var vp9Regex = /vp9/i;
+    var h264Regex = /h264/i;
+    var h265Regex = /h265/i;
 
     function sdpUtil() {
 
@@ -104,6 +108,30 @@ define([
         }, replaceProfileId);
 
         return nextProfileId === replaceProfileId ? null : nextProfileId;
+    };
+
+    sdpUtil.prototype.getSupportedCodecs = function getSupportedCodecs(offerSdp) {
+        assert.isStringNotEmpty(offerSdp, 'offerSdp');
+
+        var codecs = [];
+
+        if (vp8Regex.test(offerSdp)) {
+            codecs.push('VP8');
+        }
+
+        if (vp9Regex.test(offerSdp)) {
+            codecs.push('VP9');
+        }
+
+        if (h264Regex.test(offerSdp)) {
+            codecs.push('H264');
+        }
+
+        if (h265Regex.test(offerSdp)) {
+            codecs.push('H265');
+        }
+
+        return codecs;
     };
 
     return new sdpUtil();

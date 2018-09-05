@@ -24,7 +24,6 @@ define([
 
     var defaultFeatures = [
         streamEnums.types.realTime.name,
-        streamEnums.types.rtmp.name,
         streamEnums.types.dash.name,
         streamEnums.types.hls.name
     ];
