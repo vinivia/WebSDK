@@ -403,7 +403,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(108),
     __webpack_require__(103),
-    __webpack_require__(20)
+    __webpack_require__(21)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Logger, ConsoleAppender, logging) {
     'use strict';
 
@@ -789,7 +789,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(14),
-    __webpack_require__(28)
+    __webpack_require__(29)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, stream, track) {
     'use strict';
 
@@ -962,6 +962,284 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(0),
+    __webpack_require__(3)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, rtc) {
+    'use strict';
+
+    // TODO(dy) wrap PC in this class
+    function PeerConnection() {
+
+    }
+
+    PeerConnection.convertPeerConnectionStats = function(stats, lastStats) {
+        return convertPeerConnectionStats(stats, lastStats);
+    };
+
+    function convertPeerConnectionStats(stats, lastStats) {
+        if (!stats) {
+            return null;
+        }
+
+        var newStats = [];
+        var normalizedStats = normalizeStatsReport(stats);
+
+        _.forOwn(normalizedStats, function convertStats(statsReport) {
+            if (!_.hasIndexOrKey(statsReport, 'ssrc') || !statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
+                return;
+            }
+
+            var id = statsReport.id || statsReport.ssrc;
+
+            if (!_.hasIndexOrKey(lastStats, id)) {
+                lastStats[id] = {timestamp: _.now()};
+            }
+
+            var direction = '?';
+            var timeDelta = parseFloat(statsReport.timestamp) - lastStats[id].timestamp;
+            var up = calculateUploadRate(parseFloat(statsReport.bytesSent), lastStats[id].bytesSent, timeDelta);
+            var down = calculateDownloadRate(parseFloat(statsReport.bytesReceived), lastStats[id].bytesReceived, timeDelta);
+            var framerateMean = calculateFrameRate(parseFloat(statsReport.framesEncoded || statsReport.framesDecoded), lastStats[id].framesEncoded || lastStats[id].framesDecoded, timeDelta);
+
+            if (isOutbound(statsReport)) {
+                direction = 'upload';
+            }
+
+            if (isInbound(statsReport)) {
+                direction = 'download';
+            }
+
+            var stat = {
+                uploadRate: up,
+                downloadRate: down,
+                mediaType: statsReport.mediaType,
+                ssrc: statsReport.ssrc,
+                direction: direction,
+                nativeReport: statsReport,
+                rtt: statsReport.rtt || statsReport.googRtt || statsReport.roundTripTime || statsReport.currentRoundTripTime || '?',
+                bitrateMean: parseInt(statsReport.bitrateMean, 10) || (isOutbound(statsReport) ? up : down) * 1000 || undefined,
+                targetDelay: parseInt(statsReport.targetDelay || statsReport.googTargetDelayMs, 10) || undefined,
+                currentDelay: parseInt(statsReport.currentDelay || statsReport.currentDelayMs || statsReport.googCurrentDelayMs, 10) || undefined
+            };
+
+            _.assign(lastStats[id], statsReport);
+
+            if (statsReport.mediaType === 'video') {
+                stat = _.assign(stat, {
+                    droppedFrames: parseInt(statsReport.droppedFrames, 10) || 0,
+                    framerateMean: parseInt(statsReport.framerateMean || framerateMean, 10) || statsReport.framesPerSecond || 0,
+                    cpuLimitedResolution: statsReport.cpuLimitedResolution || statsReport.googCpuLimitedResolution,
+                    avgEncode: parseInt(statsReport.avgEncode || statsReport.avgEncodeMs || statsReport.googAvgEncodeMs, 10)
+                });
+            }
+
+            if (statsReport.mediaType === 'audio') {
+                stat = _.assign(stat, {
+                    audioInputLevel: statsReport.audioInputLevel || statsReport.googAudioInputLevel,
+                    audioOutputLevel: statsReport.audioOutputLevel || statsReport.googAudioOutputLevel,
+                    jitter: parseInt(statsReport.jitter || statsReport.jitterReceived || statsReport.googJitterReceived, 10) || undefined,
+                    jitterBuffer: parseInt(statsReport.jitterBuffer || statsReport.jitterBufferMs || statsReport.googJitterBufferMs, 10) || undefined
+                });
+            }
+
+            newStats.push(stat);
+        });
+
+        return newStats;
+    }
+
+    function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
+        if (_.isUndefined(prevBytesSent)) {
+            return;
+        }
+
+        if (bytesSent) {
+            var bytesSentBefore = prevBytesSent || 0;
+
+            return 8 * (bytesSent - bytesSentBefore) / timeDelta;
+        }
+
+        return 0;
+    }
+
+    function calculateDownloadRate(bytesReceived, prevBytesReceived, timeDelta) {
+        if (_.isUndefined(prevBytesReceived)) {
+            return;
+        }
+
+        if (bytesReceived) {
+            var bytesReceivedBefore = prevBytesReceived || 0;
+
+            return 8 * (bytesReceived - bytesReceivedBefore) / timeDelta;
+        }
+
+        return 0;
+    }
+
+    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, timeDelta) {
+        if (_.isUndefined(lastFramesEncoded)) {
+            return;
+        }
+
+        return (currentFramesEncoded - lastFramesEncoded)
+            / (timeDelta / 1000.0);
+    }
+
+    function normalizeStatsReport(stats) {
+        var normalizedReport = {};
+
+        switch (rtc.browser) {
+        case 'Firefox':
+            _.forOwn(stats, function(report, key) {
+                if (_.includes(key, 'rtcp')) {
+                    _.forOwn(stats, function(reportToUpdate, key) {
+                        if (_.includes(key, 'rtp') && report.mediaType === reportToUpdate.mediaType) {
+                            reportToUpdate.jitter = (report.jitter || reportToUpdate.jitter) * 1000;
+                            reportToUpdate.roundTripTime = report.roundTripTime;
+                        }
+                    });
+                }
+            });
+
+            return stats;
+        case 'IE':
+            _.forOwn(stats, function(value, key) {
+                if (!_.startsWith(key, 'ssrc')) {
+                    return;
+                }
+
+                normalizedReport[value.id] = value;
+            });
+
+            return normalizedReport;
+        case 'Edge':
+            stats.forEach(function(report) {
+                normalizedReport[report.id] = report;
+
+                if (_.hasIndexOrKey(report, 'jitter')) {
+                    report.jitter *= 1000;
+                }
+            });
+
+            _.forOwn(normalizedReport, function(report) {
+                if (report.type === 'track' && _.hasIndexOrKey(report, 'framesPerSecond')) {
+                    _.forOwn(normalizedReport, function(reportToUpdate) {
+                        if (reportToUpdate.mediaType === 'video') {
+                            reportToUpdate.framesPerSecond = parseInt(report.framesPerSecond, 10);
+                        }
+                    });
+                }
+            });
+
+            return normalizedReport;
+        case 'Safari':
+            stats.forEach(function(report) {
+                normalizedReport[report.id] = report;
+            });
+
+            _.forOwn(normalizedReport, function(report) {
+                if (_.hasIndexOrKey(report, 'id') && isInbound(report)) {
+                    var candidateSsrc = parseInt(_.get(report.id.split('_'), [1]), 10);
+
+                    report.ssrc = candidateSsrc || report.ssrc; // Ssrc is inaccurate for inbound reports
+                }
+
+                if (_.hasIndexOrKey(report, 'jitter')) {
+                    report.jitter *= 1000;
+                }
+
+                if (report.type === 'candidate-pair') {
+                    _.forOwn(normalizedReport, function(reportToUpdate) {
+                        if (reportToUpdate.mediaType === 'audio' || reportToUpdate.mediaType === 'video') {
+                            reportToUpdate.currentRoundTripTime = report.currentRoundTripTime * 1000;
+                        }
+                    });
+                }
+
+                if (report.type === 'track') {
+                    _.forOwn(normalizedReport, function(reportToUpdate) {
+                        if (reportToUpdate.mediaType === 'audio' && isInbound(reportToUpdate)) {
+                            reportToUpdate.audioOutputLevel = report.audioLevel * 100000;
+                        } else if (reportToUpdate.mediaType === 'audio' && isOutbound(reportToUpdate)) {
+                            reportToUpdate.audioInputLevel = report.audioLevel * 100000;
+                        }
+                    });
+                }
+            });
+
+            return normalizedReport;
+        case 'ReactNative':
+            var parsedStats = _.isString(stats) ? JSON.parse(stats) : stats;
+
+            parsedStats.forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.values.forEach(function(value) {
+                    _.keys(value).forEach(function(key) {
+                        normalizedStatistics[key] = value[key];
+                    });
+                });
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        case 'Chrome':
+        default:
+            stats.result().forEach(function(report) {
+                var normalizedStatistics = {
+                    id: report.id,
+                    type: report.type
+                };
+
+                report.names().forEach(function(name) {
+                    normalizedStatistics[name] = report.stat(name);
+                });
+
+                normalizedStatistics.timestamp = report.timestamp.getTime();
+
+                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
+            });
+
+            return normalizedReport;
+        }
+    }
+
+    function isOutbound(statsReport) {
+        return _.includes(statsReport.id, 'send') || _.includes(statsReport.id, 'outbound') || statsReport.type === 'outboundrtp' || statsReport.type === 'outbound-rtp' || statsReport.type === 'kOutboundRtp';
+    }
+
+    function isInbound(statsReport) {
+        return _.includes(statsReport.id, 'recv') || statsReport.type === 'inboundrtp' || statsReport.type === 'inbound-rtp' || statsReport.type === 'kInboundRtp';
+    }
+
+    return PeerConnection;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(1),
     __webpack_require__(0),
     __webpack_require__(6),
@@ -1045,7 +1323,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-06T23:30:28Z',
+                version: '2018-09-07T17:34:29Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1071,7 +1349,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1103,7 +1381,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1145,7 +1423,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1201,7 +1479,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1239,7 +1517,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1346,7 +1624,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1572,7 +1850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -1595,15 +1873,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(25),
-    __webpack_require__(31),
-    __webpack_require__(22),
+    __webpack_require__(26),
+    __webpack_require__(32),
+    __webpack_require__(23),
     __webpack_require__(15),
     __webpack_require__(11),
     __webpack_require__(12),
     __webpack_require__(14),
-    __webpack_require__(28),
-    __webpack_require__(32)
+    __webpack_require__(29),
+    __webpack_require__(33)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
@@ -2969,7 +3247,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3284,7 +3562,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -3307,8 +3585,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(13),
-    __webpack_require__(24),
-    __webpack_require__(26),
+    __webpack_require__(25),
+    __webpack_require__(27),
     __webpack_require__(46),
     __webpack_require__(3),
     __webpack_require__(51)
@@ -4456,7 +4734,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5032,7 +5310,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5118,7 +5396,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5162,7 +5440,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5366,7 +5644,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5388,7 +5666,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(29),
+    __webpack_require__(30),
     __webpack_require__(11)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, Member, room) {
     'use strict';
@@ -5602,7 +5880,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -5625,10 +5903,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(27),
-    __webpack_require__(30),
+    __webpack_require__(28),
+    __webpack_require__(31),
     __webpack_require__(59),
-    __webpack_require__(29),
+    __webpack_require__(30),
     __webpack_require__(58),
     __webpack_require__(11),
     __webpack_require__(12)
@@ -6384,7 +6662,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6406,7 +6684,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(33),
+    __webpack_require__(34),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, PhenixLiveStream, streamEnums) {
     'use strict';
@@ -6553,7 +6831,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6723,136 +7001,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     return PhenixLiveStream;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 PhenixP2P Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_) {
-    'use strict';
-
-    // TODO(dy) wrap PC in this class
-    function PeerConnection() {
-
-    }
-
-    PeerConnection.convertPeerConnectionStats = function(stats, lastStats) {
-        return convertPeerConnectionStats(stats, lastStats);
-    };
-
-    function convertPeerConnectionStats(stats, lastStats) {
-        if (!stats) {
-            return null;
-        }
-
-        var newStats = [];
-
-        var convertStats = function convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction) {
-            if (ssrc) {
-                if (!_.hasIndexOrKey(lastStats, ssrc)) {
-                    lastStats[ssrc] = {timestamp: 0};
-                }
-
-                var timeDelta = parseFloat(timestamp) - lastStats[ssrc].timestamp;
-                var up = calculateUploadRate(parseFloat(bytesSent), lastStats[ssrc].bytesSent, timeDelta);
-                var down = calculateDownloadRate(parseFloat(bytesReceived), lastStats[ssrc].bytesReceived, timeDelta);
-
-                lastStats[ssrc].bytesSent = parseFloat(bytesSent);
-                lastStats[ssrc].bytesReceived = parseFloat(bytesReceived);
-                lastStats[ssrc].timestamp = parseFloat(timestamp);
-
-                newStats.push({
-                    uploadRate: up,
-                    downloadRate: down,
-                    mediaType: mediaType,
-                    ssrc: ssrc,
-                    direction: direction
-                });
-            }
-        };
-
-        if (_.isFunction(stats.result)) {
-            _.forEach(stats.result(), function(statsReport) {
-                if (statsReport.type === 'ssrc') {
-                    var ssrc = statsReport.stat('ssrc');
-                    var bytesSent = statsReport.stat('bytesSent');
-                    var bytesReceived = statsReport.stat('bytesReceived');
-                    var mediaType = statsReport.stat('mediaType');
-                    var timestamp = statsReport.timestamp.getTime();
-                    var direction = statsReport.id.indexOf('send') > -1 ? 'upload' : 'download';
-
-                    convertStats(ssrc, mediaType, timestamp, bytesSent, bytesReceived, direction);
-                }
-            });
-        } else if (_.isFunction(stats.values)) {
-            _.forEach(Array.from(stats.values()), function(statsReport) {
-                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
-                        return;
-                    }
-
-                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
-
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
-                }
-            });
-        } else {
-            _.forEach(stats, function(statsReport) {
-                if (_.hasIndexOrKey(statsReport, 'ssrc')) {
-                    if (!statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
-                        return;
-                    }
-
-                    var direction = statsReport.type.indexOf('outbound') > -1 ? 'upload' : 'download';
-
-                    convertStats(statsReport.ssrc, statsReport.mediaType, statsReport.timestamp, statsReport.bytesSent, statsReport.bytesReceived, direction);
-                }
-            });
-        }
-
-        return newStats;
-    }
-
-    function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
-        if (bytesSent) {
-            var bytesSentBefore = prevBytesSent || 0;
-            var bps = 8 * 1000 * (bytesSent - bytesSentBefore) / timeDelta;
-
-            return Math.round(bps / 1000);
-        }
-
-        return 0;
-    }
-
-    function calculateDownloadRate(bytesReceived, prevBytesReceived, timeDelta) {
-        if (bytesReceived) {
-            var bytesReceivedBefore = prevBytesReceived || 0;
-            var bps = 8 * 1000 * (bytesReceived - bytesReceivedBefore) / timeDelta;
-
-            return Math.round(bps / 1000);
-        }
-
-        return 0;
-    }
-
-    return PeerConnection;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -7112,8 +7260,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(36)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC, sdpUtil) {
+    __webpack_require__(36),
+    __webpack_require__(16)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, phenixRTC, sdpUtil, PeerConnection) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -7134,6 +7283,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._name = name;
         this._peerConnection = peerConnection;
         this._logger = logger;
+        this._lastStats = {};
     }
 
     PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
@@ -7210,9 +7360,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
-        var lastAudioBytes = {};
-        var lastVideoBytes = {};
-        var lastFramesEncoded = {};
         var checkForNoDataTimeout = null;
 
         function nextCheck(checkForNoData) {
@@ -7222,163 +7369,89 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var hasFrameRate = false;
                 var hasVideoBitRate = false;
                 var hasAudioBitRate = false;
-                var readable = false;
-                var writable = false;
 
                 if (!activeCallback()) {
                     return that._logger.info('[%s] Finished monitoring of peer connection', name);
                 }
 
-                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
-                    var trackId = stats.id || stats.ssrc;
-                    var currentBytes = null;
+                function eachStats(stats) {
+                    var additionalMessage = '';
 
-                    if (stats.framesEncoded) {
-                        var framesEncoded = new Stats(stats.framesEncoded);
+                    if (options.direction === 'outbound' && stats.direction === 'upload') {
+                        switch (stats.mediaType) {
+                        case 'video':
+                            if (stats.avgEncode) {
+                                additionalMessage += ' with average encoding time [' + stats.avgEncode + '] ms';
+                            }
 
-                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
-                        lastFramesEncoded[trackId] = framesEncoded;
+                            if (stats.cpuLimitedResolution) {
+                                additionalMessage += ' (CPU limited=[' + stats.cpuLimitedResolution + '])';
+                            }
+
+                            that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s] and RTT [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.rtt);
+
+                            frameRate = stats.framerateMean;
+                            videoBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
+                            hasFrameRate = true;
+                            hasVideoBitRate = true;
+
+                            if (phenixRTC.browser === 'Edge') {
+                                hasFrameRate = false;
+                            }
+
+                            break;
+                        case 'audio':
+                            that._logger.debug('[%s] [%s] [%s] [%s] and RTT [%s] and jitter [%s] and audio input level [%s]',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.jitter, stats.audioInputLevel);
+                            hasAudioBitRate = true;
+                            audioBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
+
+                            break;
+                        default:
+                            break;
+                        }
                     }
 
-                    switch (phenixRTC.browser) {
-                    case 'Safari':
-                    case 'Firefox':
-                    case 'Edge':
-                    case 'IE':
-                        writable = readable |= stats.selected &&
-                            stats.state === 'succeeded' ||
-                            phenixRTC.browser === 'IE' ||
-                            phenixRTC.browser === 'Edge' ||
-                            phenixRTC.browser === 'Safari';
-
-                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
-                                hasFrameRate = true;
-                                frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                if (phenixRTC.browser === 'Edge') {
-                                    hasFrameRate = false;
-                                }
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                    if (options.direction === 'inbound' && stats.direction === 'download') {
+                        switch (stats.mediaType) {
+                        case 'video':
+                            if (stats.currentDelay) {
+                                additionalMessage += ' with current delay [' + stats.currentDelay + '] ms';
                             }
-                        }
 
-                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
-
-                                // Inbound frame rate is not calculated correctly
-                                // hasFrameRate = true;
-                                // frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] with jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.jitter);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            if (stats.targetDelay) {
+                                additionalMessage += ' and target delay [' + stats.targetDelay + '] ms';
                             }
-                        }
 
-                        break;
-                    case 'Chrome':
-                    default:
-                        if (stats.googWritable === 'true') {
-                            writable = true;
-                        }
+                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean);
 
-                        if (stats.googReadable === 'true') {
-                            readable = true;
-                        }
+                            // Inbound frame rate is not calculated correctly
+                            hasFrameRate = true;
+                            frameRate = stats.framerateMean || 0;
+                            hasVideoBitRate = true;
+                            videoBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
 
-                        if (stats.type !== 'ssrc') {
-                            return;
-                        }
-
-                        if (options.direction === 'outbound') {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            if (phenixRTC.browser === 'Edge') {
+                                hasFrameRate = false;
                             }
-                        } else if (options.direction === 'inbound') {
-                            currentBytes = new Stats(stats.bytesReceived);
 
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            break;
+                        case 'audio':
+                            if (stats.jitterBuffer) {
+                                additionalMessage += ' with jitter buffer [' + stats.jitterBuffer + '] ms';
                             }
-                        }
 
-                        break;
+                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s]  with output level [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.audioOutputLevel);
+                            hasAudioBitRate = true;
+                            audioBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
+
+                            break;
+                        default:
+                            break;
+                        }
                     }
                 }
 
@@ -7386,12 +7459,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     throw new Error('Report must be a valid PeerConnection.getStats Report');
                 }
 
-                if (report.forEach) {
-                    report.forEach(eachStats);
-                } else {
-                    _.forOwn(report, function(stats, reportId) {
-                        eachStats(stats, reportId);
-                    });
+                _.forEach(report, eachStats);
+
+                if (_.isUndefined(audioBitRate) && _.isUndefined(videoBitRate)) {
+                    return setTimeout(nextCheck, that._monitoringInterval); // First measurement
                 }
 
                 var hasActiveAudio = sdpUtil.hasActiveAudio(peerConnection);
@@ -7401,9 +7472,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
                     hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
                     hasFrameRate = hasFrameRate && hasActiveVideo;
-
-                    readable = readable || !(hasActiveVideo || hasActiveAudio);
-                    writable = writable || !(hasActiveVideo || hasActiveAudio);
                 }
 
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
@@ -7430,8 +7498,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     conditionCount++;
                 } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (!readable || !writable) {
                     conditionCount++;
                 } else {
                     conditionCount = 0;
@@ -7489,86 +7555,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         setTimeout(nextCheck, that._monitoringInterval);
     }
 
-    function Stats(value) {
-        this.time = _.now();
-        this.value = value || 0;
-    }
-
-    function normalizeStatsReport(response, options) {
-        var normalizedReport = {};
-
-        switch (phenixRTC.browser) {
-        case 'Firefox':
-            return response;
-        case 'IE':
-            _.forOwn(response, function(value, key) {
-                if (!_.startsWith(key, 'ssrc')) {
-                    return;
-                }
-
-                normalizedReport[value.id] = value;
-            });
-
-            return normalizedReport;
-        case 'Safari':
-        case 'Edge':
-            response.forEach(function(report) {
-                normalizedReport[report.id] = report;
-            });
-
-            return normalizedReport;
-        case 'ReactNative':
-            var stats = _.isString(response) ? JSON.parse(response) : response;
-
-            stats.forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.values.forEach(function(value) {
-                    _.keys(value).forEach(function(key) {
-                        normalizedStatistics[key] = value[key];
-                    });
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        case 'Chrome':
-        default:
-            response.result().forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-                var isWrongDirection = (options.direction === 'outbound' && _.includes(report.id, 'recv')) || (options.direction === 'inbound' && _.includes(report.id, 'send'));
-
-                if (isWrongDirection) {
-                    return;
-                }
-
-                report.names().forEach(function(name) {
-                    normalizedStatistics[name] = report.stat(name);
-                });
-
-                normalizedStatistics.googReadable = 'true';
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        }
-    }
-
     function getStats(peerConnection, options, selector, activeCallback, successCallback, errorCallback) {
         if (!activeCallback()) {
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
 
+        var that = this;
+
         phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response, options);
+            var report = PeerConnection.convertPeerConnectionStats(response, that._lastStats);
+
+            report = _.filter(report, function(stats) {
+                return options.direction === 'inbound' && stats.direction === 'download' || options.direction === 'outbound' && stats.direction === 'upload';
+            });
 
             successCallback(report);
         }, function(error) {
@@ -7631,24 +7630,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         return tracks;
-    }
-
-    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
-        if (!lastFramesEncoded) {
-            return defaultFrameRate;
-        }
-
-        return (currentFramesEncoded.value - lastFramesEncoded.value)
-            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
-    }
-
-    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
-        if (!lastBytes) {
-            return defaultBitRate;
-        }
-
-        return (8 * (currentBytes.value - lastBytes.value))
-            / ((currentBytes.time - lastBytes.time) / 1000.0);
     }
 
     function areAllTracksPaused() {
@@ -9043,12 +9024,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(19),
+    __webpack_require__(20),
     __webpack_require__(6),
-    __webpack_require__(18),
+    __webpack_require__(19),
     __webpack_require__(38),
     __webpack_require__(78),
-    __webpack_require__(16),
+    __webpack_require__(17),
     __webpack_require__(73),
     __webpack_require__(72),
     __webpack_require__(37),
@@ -9056,18 +9037,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(71),
     __webpack_require__(69),
     __webpack_require__(68),
-    __webpack_require__(34),
+    __webpack_require__(16),
     __webpack_require__(65),
-    __webpack_require__(33),
+    __webpack_require__(34),
     __webpack_require__(61),
-    __webpack_require__(32),
+    __webpack_require__(33),
     __webpack_require__(7),
     __webpack_require__(3),
     __webpack_require__(36)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-06T23:30:28Z';
+    var sdkVersion = '2018-09-07T17:34:29Z';
 
     function PCast(options) {
         options = options || {};
@@ -11015,8 +10996,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(19),
-    __webpack_require__(16),
+    __webpack_require__(20),
+    __webpack_require__(17),
     __webpack_require__(47)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
@@ -11084,7 +11065,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(21)
+    __webpack_require__(22)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Channel) {
     'use strict';
 
@@ -11218,10 +11199,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(23),
+    __webpack_require__(24),
     __webpack_require__(49),
-    __webpack_require__(21),
     __webpack_require__(22),
+    __webpack_require__(23),
     __webpack_require__(15),
     __webpack_require__(11),
     __webpack_require__(12),
@@ -12246,8 +12227,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(19),
-    __webpack_require__(16),
+    __webpack_require__(20),
+    __webpack_require__(17),
     __webpack_require__(38),
     __webpack_require__(55),
     __webpack_require__(53)
@@ -12366,7 +12347,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(27)
+    __webpack_require__(28)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AuthenticationService) {
     'use strict';
 
@@ -12860,7 +12841,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(30)
+    __webpack_require__(31)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, Room) {
     'use strict';
 
@@ -13153,7 +13134,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(3),
-    __webpack_require__(34),
+    __webpack_require__(16),
     __webpack_require__(37),
     __webpack_require__(60),
     __webpack_require__(7)
@@ -14933,7 +14914,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-06T23:30:28Z' || '?';
+    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15188,7 +15169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-06T23:30:28Z' || '?';
+    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -15506,7 +15487,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(17),
+    __webpack_require__(18),
     __webpack_require__(3),
     __webpack_require__(39)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, proto, rtc, telemetryProto) {
@@ -15610,7 +15591,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(18),
+    __webpack_require__(19),
     __webpack_require__(70)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, MetricsTransmitter) {
     var config = {
@@ -19535,7 +19516,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(17),
+    __webpack_require__(18),
     __webpack_require__(3),
     __webpack_require__(77),
     __webpack_require__(76)
@@ -22861,7 +22842,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(3),
     __webpack_require__(8),
-    __webpack_require__(17),
+    __webpack_require__(18),
     __webpack_require__(39)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
     function TelemetryAppender(uri) {
@@ -22976,7 +22957,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(18),
+    __webpack_require__(19),
     __webpack_require__(96)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
     var config = {
@@ -23392,7 +23373,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(20)
+    __webpack_require__(21)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging) {
     'use strict';
 
@@ -24401,14 +24382,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(10),
-    __webpack_require__(20)
+    __webpack_require__(21)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, logging) {
     'use strict';
 
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-06T23:30:28Z' || '?';
+    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
     var releaseVersion = '2018.3.12';
 
     function Logger() {
@@ -24621,14 +24602,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(3),
     __webpack_require__(8),
     __webpack_require__(46),
-    __webpack_require__(31),
+    __webpack_require__(32),
     __webpack_require__(56),
     __webpack_require__(48),
+    __webpack_require__(27),
     __webpack_require__(26),
-    __webpack_require__(25),
-    __webpack_require__(23),
+    __webpack_require__(24),
     __webpack_require__(50),
-    __webpack_require__(24)
+    __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
     rtc.global.PhenixPCast = PCast;
 

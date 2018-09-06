@@ -17,8 +17,9 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc',
-    '../sdpUtil'
-], function(_, assert, phenixRTC, sdpUtil) {
+    '../sdpUtil',
+    './PeerConnection'
+], function(_, assert, phenixRTC, sdpUtil, PeerConnection) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -39,6 +40,7 @@ define([
         this._name = name;
         this._peerConnection = peerConnection;
         this._logger = logger;
+        this._lastStats = {};
     }
 
     PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
@@ -115,9 +117,6 @@ define([
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
-        var lastAudioBytes = {};
-        var lastVideoBytes = {};
-        var lastFramesEncoded = {};
         var checkForNoDataTimeout = null;
 
         function nextCheck(checkForNoData) {
@@ -127,163 +126,89 @@ define([
                 var hasFrameRate = false;
                 var hasVideoBitRate = false;
                 var hasAudioBitRate = false;
-                var readable = false;
-                var writable = false;
 
                 if (!activeCallback()) {
                     return that._logger.info('[%s] Finished monitoring of peer connection', name);
                 }
 
-                function eachStats(stats, reportId) { // eslint-disable-line no-unused-vars
-                    var trackId = stats.id || stats.ssrc;
-                    var currentBytes = null;
+                function eachStats(stats) {
+                    var additionalMessage = '';
 
-                    if (stats.framesEncoded) {
-                        var framesEncoded = new Stats(stats.framesEncoded);
+                    if (options.direction === 'outbound' && stats.direction === 'upload') {
+                        switch (stats.mediaType) {
+                        case 'video':
+                            if (stats.avgEncode) {
+                                additionalMessage += ' with average encoding time [' + stats.avgEncode + '] ms';
+                            }
 
-                        stats.framerateMean = calculateFrameRate(framesEncoded, lastFramesEncoded[trackId], that._frameRateFailureThreshold * 2);
-                        lastFramesEncoded[trackId] = framesEncoded;
+                            if (stats.cpuLimitedResolution) {
+                                additionalMessage += ' (CPU limited=[' + stats.cpuLimitedResolution + '])';
+                            }
+
+                            that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s] and RTT [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.rtt);
+
+                            frameRate = stats.framerateMean;
+                            videoBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
+                            hasFrameRate = true;
+                            hasVideoBitRate = true;
+
+                            if (phenixRTC.browser === 'Edge') {
+                                hasFrameRate = false;
+                            }
+
+                            break;
+                        case 'audio':
+                            that._logger.debug('[%s] [%s] [%s] [%s] and RTT [%s] and jitter [%s] and audio input level [%s]',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.jitter, stats.audioInputLevel);
+                            hasAudioBitRate = true;
+                            audioBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
+
+                            break;
+                        default:
+                            break;
+                        }
                     }
 
-                    switch (phenixRTC.browser) {
-                    case 'Safari':
-                    case 'Firefox':
-                    case 'Edge':
-                    case 'IE':
-                        writable = readable |= stats.selected &&
-                            stats.state === 'succeeded' ||
-                            phenixRTC.browser === 'IE' ||
-                            phenixRTC.browser === 'Edge' ||
-                            phenixRTC.browser === 'Safari';
-
-                        if (options.direction === 'outbound' && (stats.type === 'outboundrtp' || stats.type === 'outbound-rtp' || stats.type === 'kOutboundRtp')) {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean);
-                                hasFrameRate = true;
-                                frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                if (phenixRTC.browser === 'Edge') {
-                                    hasFrameRate = false;
-                                }
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                    if (options.direction === 'inbound' && stats.direction === 'download') {
+                        switch (stats.mediaType) {
+                        case 'video':
+                            if (stats.currentDelay) {
+                                additionalMessage += ' with current delay [' + stats.currentDelay + '] ms';
                             }
-                        }
 
-                        if (options.direction === 'inbound' && (stats.type === 'inboundrtp' || stats.type === 'inbound-rtp' || stats.type === 'kInboundRtp')) {
-                            currentBytes = new Stats(stats.bytesReceived);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s] and jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.jitter);
-
-                                // Inbound frame rate is not calculated correctly
-                                // hasFrameRate = true;
-                                // frameRate = stats.framerateMean || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] with jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.jitter);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            if (stats.targetDelay) {
+                                additionalMessage += ' and target delay [' + stats.targetDelay + '] ms';
                             }
-                        }
 
-                        break;
-                    case 'Chrome':
-                    default:
-                        if (stats.googWritable === 'true') {
-                            writable = true;
-                        }
+                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean);
 
-                        if (stats.googReadable === 'true') {
-                            readable = true;
-                        }
+                            // Inbound frame rate is not calculated correctly
+                            hasFrameRate = true;
+                            frameRate = stats.framerateMean || 0;
+                            hasVideoBitRate = true;
+                            videoBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
 
-                        if (stats.type !== 'ssrc') {
-                            return;
-                        }
-
-                        if (options.direction === 'outbound') {
-                            currentBytes = new Stats(stats.bytesSent);
-
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with average encoding time [%s] ms (CPU limited=[%s]) and RTT [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googAvgEncodeMs, stats.googCpuLimitedResolution, stats.googRtt);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateSent || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with audio input level [%s] and RTT [%s] and jitter [%s]',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioInputLevel, stats.googRtt, stats.googJitterReceived);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            if (phenixRTC.browser === 'Edge') {
+                                hasFrameRate = false;
                             }
-                        } else if (options.direction === 'inbound') {
-                            currentBytes = new Stats(stats.bytesReceived);
 
-                            switch (stats.mediaType) {
-                            case 'video':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with current delay [%s] ms and target delay [%s] ms',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.googCurrentDelayMs, stats.googTargetDelayMs);
-                                hasFrameRate = true;
-                                frameRate = stats.googFrameRateReceived || 0;
-                                hasVideoBitRate = true;
-                                videoBitRate = calculateBitRate(currentBytes, lastVideoBytes[trackId], that._videoBitRateFailureThreshold * 2);
-                                lastVideoBytes[trackId] = currentBytes;
-
-                                break;
-                            case 'audio':
-                                that._logger.debug('[%s] [%s] [%s] [%s] with output level [%s] and jitter [%s] and jitter buffer [%s] ms',
-                                    name, options.direction, stats.mediaType, stats.ssrc, stats.audioOutputLevel, stats.googJitterReceived, stats.googJitterBufferMs);
-                                hasAudioBitRate = true;
-                                audioBitRate = calculateBitRate(currentBytes, lastAudioBytes[trackId], that._audioBitRateFailureThreshold * 2);
-                                lastAudioBytes[trackId] = currentBytes;
-
-                                break;
-                            default:
-                                break;
+                            break;
+                        case 'audio':
+                            if (stats.jitterBuffer) {
+                                additionalMessage += ' with jitter buffer [' + stats.jitterBuffer + '] ms';
                             }
-                        }
 
-                        break;
+                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s]  with output level [%s]' + additionalMessage,
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.audioOutputLevel);
+                            hasAudioBitRate = true;
+                            audioBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
+
+                            break;
+                        default:
+                            break;
+                        }
                     }
                 }
 
@@ -291,12 +216,10 @@ define([
                     throw new Error('Report must be a valid PeerConnection.getStats Report');
                 }
 
-                if (report.forEach) {
-                    report.forEach(eachStats);
-                } else {
-                    _.forOwn(report, function(stats, reportId) {
-                        eachStats(stats, reportId);
-                    });
+                _.forEach(report, eachStats);
+
+                if (_.isUndefined(audioBitRate) && _.isUndefined(videoBitRate)) {
+                    return setTimeout(nextCheck, that._monitoringInterval); // First measurement
                 }
 
                 var hasActiveAudio = sdpUtil.hasActiveAudio(peerConnection);
@@ -306,9 +229,6 @@ define([
                     hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
                     hasAudioBitRate = hasAudioBitRate && hasActiveAudio;
                     hasFrameRate = hasFrameRate && hasActiveVideo;
-
-                    readable = readable || !(hasActiveVideo || hasActiveAudio);
-                    writable = writable || !(hasActiveVideo || hasActiveAudio);
                 }
 
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
@@ -335,8 +255,6 @@ define([
                 } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     conditionCount++;
                 } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
-                } else if (!readable || !writable) {
                     conditionCount++;
                 } else {
                     conditionCount = 0;
@@ -394,86 +312,19 @@ define([
         setTimeout(nextCheck, that._monitoringInterval);
     }
 
-    function Stats(value) {
-        this.time = _.now();
-        this.value = value || 0;
-    }
-
-    function normalizeStatsReport(response, options) {
-        var normalizedReport = {};
-
-        switch (phenixRTC.browser) {
-        case 'Firefox':
-            return response;
-        case 'IE':
-            _.forOwn(response, function(value, key) {
-                if (!_.startsWith(key, 'ssrc')) {
-                    return;
-                }
-
-                normalizedReport[value.id] = value;
-            });
-
-            return normalizedReport;
-        case 'Safari':
-        case 'Edge':
-            response.forEach(function(report) {
-                normalizedReport[report.id] = report;
-            });
-
-            return normalizedReport;
-        case 'ReactNative':
-            var stats = _.isString(response) ? JSON.parse(response) : response;
-
-            stats.forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-
-                report.values.forEach(function(value) {
-                    _.keys(value).forEach(function(key) {
-                        normalizedStatistics[key] = value[key];
-                    });
-                });
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        case 'Chrome':
-        default:
-            response.result().forEach(function(report) {
-                var normalizedStatistics = {
-                    id: report.id,
-                    type: report.type
-                };
-                var isWrongDirection = (options.direction === 'outbound' && _.includes(report.id, 'recv')) || (options.direction === 'inbound' && _.includes(report.id, 'send'));
-
-                if (isWrongDirection) {
-                    return;
-                }
-
-                report.names().forEach(function(name) {
-                    normalizedStatistics[name] = report.stat(name);
-                });
-
-                normalizedStatistics.googReadable = 'true';
-
-                normalizedReport[normalizedStatistics.id] = normalizedStatistics;
-            });
-
-            return normalizedReport;
-        }
-    }
-
     function getStats(peerConnection, options, selector, activeCallback, successCallback, errorCallback) {
         if (!activeCallback()) {
             return this._logger.info('[%s] Finished monitoring of peer connection', this._name);
         }
 
+        var that = this;
+
         phenixRTC.getStats(peerConnection, null, function(response) {
-            var report = normalizeStatsReport(response, options);
+            var report = PeerConnection.convertPeerConnectionStats(response, that._lastStats);
+
+            report = _.filter(report, function(stats) {
+                return options.direction === 'inbound' && stats.direction === 'download' || options.direction === 'outbound' && stats.direction === 'upload';
+            });
 
             successCallback(report);
         }, function(error) {
@@ -536,24 +387,6 @@ define([
         }
 
         return tracks;
-    }
-
-    function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
-        if (!lastFramesEncoded) {
-            return defaultFrameRate;
-        }
-
-        return (currentFramesEncoded.value - lastFramesEncoded.value)
-            / ((currentFramesEncoded.time - lastFramesEncoded.time) / 1000.0);
-    }
-
-    function calculateBitRate(currentBytes, lastBytes, defaultBitRate) {
-        if (!lastBytes) {
-            return defaultBitRate;
-        }
-
-        return (8 * (currentBytes.value - lastBytes.value))
-            / ((currentBytes.time - lastBytes.time) / 1000.0);
     }
 
     function areAllTracksPaused() {
