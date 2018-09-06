@@ -1045,7 +1045,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-05T22:30:48Z',
+                version: '2018-09-06T15:28:08Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -2354,7 +2354,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             if (options.enableWildcardCapability) {
                 refreshTokenIntervalId = setInterval(function() {
-                    that._logger.debug('Refresh wildcard viewer stream token for [%s] interval of [%s] has expired. Creating new token.',
+                    that._logger.info('Refresh wildcard viewer stream token for [%s] interval of [%s] has expired. Creating new token.',
                         publisher.getStreamId(), defaultStreamWildcardTokenRefreshInterval);
 
                     var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
@@ -2680,13 +2680,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (streams && activeRoomService) {
-            that._logger.info('Preparing member streams for update in room [%s].', room.getRoomId());
+            that._logger.debug('Preparing member streams for update in room [%s].', room.getRoomId());
 
             activeRoomService.getSelf().setStreams(streams);
         }
 
-        if (role && activeRoomService) {
-            that._logger.info('Preparing member role for update in room [%s].', room.getRoomId());
+        if (role && activeRoomService && activeRoomService.getSelf().getObservableRole().getValue() !== role) {
+            that._logger.debug('Preparing member role for update in room [%s].', room.getRoomId());
 
             activeRoomService.getSelf().getObservableRole().setValue(role);
         }
@@ -8898,7 +8898,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-05T22:30:48Z';
+    var sdkVersion = '2018-09-06T15:28:08Z';
 
     function PCast(options) {
         options = options || {};
@@ -14890,7 +14890,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
+    var sdkVersion = '2018-09-06T15:28:08Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15145,7 +15145,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
+    var sdkVersion = '2018-09-06T15:28:08Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24365,7 +24365,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-05T22:30:48Z' || '?';
+    var sdkVersion = '2018-09-06T15:28:08Z' || '?';
     var releaseVersion = '2018.3.12';
 
     function Logger() {

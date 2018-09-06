@@ -777,7 +777,7 @@ define([
 
             if (options.enableWildcardCapability) {
                 refreshTokenIntervalId = setInterval(function() {
-                    that._logger.debug('Refresh wildcard viewer stream token for [%s] interval of [%s] has expired. Creating new token.',
+                    that._logger.info('Refresh wildcard viewer stream token for [%s] interval of [%s] has expired. Creating new token.',
                         publisher.getStreamId(), defaultStreamWildcardTokenRefreshInterval);
 
                     var activeRoomService = findActiveRoom.call(that, room.getRoomId(), room.getObservableAlias().getValue());
@@ -1103,13 +1103,13 @@ define([
         }
 
         if (streams && activeRoomService) {
-            that._logger.info('Preparing member streams for update in room [%s].', room.getRoomId());
+            that._logger.debug('Preparing member streams for update in room [%s].', room.getRoomId());
 
             activeRoomService.getSelf().setStreams(streams);
         }
 
-        if (role && activeRoomService) {
-            that._logger.info('Preparing member role for update in room [%s].', room.getRoomId());
+        if (role && activeRoomService && activeRoomService.getSelf().getObservableRole().getValue() !== role) {
+            that._logger.debug('Preparing member role for update in room [%s].', room.getRoomId());
 
             activeRoomService.getSelf().getObservableRole().setValue(role);
         }
