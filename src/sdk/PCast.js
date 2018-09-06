@@ -754,13 +754,14 @@ define([
     function setupStreamAddedListener(streamId, state, peerConnection, streamTelemetry, callback, options) {
         var that = this;
         var added = false;
+        var setupTimeoutId;
+        var streamSetupInterval = 3000;
         var onAddStream = function onAddStream(event) {
             if (state.failed || added) {
                 return;
             }
 
-            added = true;
-
+            var numberOfActiveTracks = sdpUtil.getNumberOfActiveSections(peerConnection);
             var masterStream = event.stream || _.get(event, ['streams', 0]);
             var kind = 'real-time';
 
@@ -770,6 +771,23 @@ define([
 
                 return callback.call(that, undefined, 'failed');
             }
+
+            if (setupTimeoutId) {
+                clearTimeout(setupTimeoutId);
+            }
+
+            if (numberOfActiveTracks !== masterStream.getTracks().length) {
+                setupTimeoutId = setTimeout(function() {
+                    state.failed = true;
+                    that._logger.warn('[%s] Did not receive all tracks within [%s] ms', streamId, streamSetupInterval);
+
+                    return callback.call(that, undefined, 'failed');
+                }, streamSetupInterval);
+
+                return;
+            }
+
+            added = true;
 
             that._logger.info('[%s] Got remote stream', streamId);
 
@@ -1814,7 +1832,7 @@ define([
 
     // Shim required. Webrtc adapter successfully shims but breaks Edge.
     var shimPeerConnectionGetStreams = function(peerConnection) {
-        if (peerConnection.onaddstream) {
+        if (!_.isUndefined(peerConnection.onaddstream)) {
             return;
         }
 

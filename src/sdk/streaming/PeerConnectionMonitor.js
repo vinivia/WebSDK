@@ -16,8 +16,9 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc'
-], function(_, assert, phenixRTC) {
+    'phenix-rtc',
+    '../sdpUtil'
+], function(_, assert, phenixRTC, sdpUtil) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -78,7 +79,7 @@ define([
         assert.isObject(track, 'track');
         assert.isBoolean(state, 'state');
 
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
         var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
             return pcTrack.id === track.id;
         });
@@ -298,8 +299,8 @@ define([
                     });
                 }
 
-                var hasActiveAudio = hasActiveAudioInSdp(peerConnection);
-                var hasActiveVideo = hasActiveVideoInSdp(peerConnection);
+                var hasActiveAudio = sdpUtil.hasActiveAudio(peerConnection);
+                var hasActiveVideo = sdpUtil.hasActiveVideo(peerConnection);
 
                 if (hasVideoBitRate && videoBitRate === 0 || hasAudioBitRate && audioBitRate === 0 || hasFrameRate && frameRate === 0) {
                     hasVideoBitRate = hasVideoBitRate && hasActiveVideo;
@@ -322,7 +323,7 @@ define([
                     var active = hasActiveAudio && hasActiveVideo;
                     var tracks = getAllTracks.call(that, peerConnection);
 
-                    if (!active && hasMediaSectionsInSdp(peerConnection)) {
+                    if (!active && sdpUtil.hasMediaSectionsInLocalSdp(peerConnection)) {
                         that._logger.info('[%s] [%s] Finished monitoring of peer connection with [%s] inactive tracks', name, options.direction, tracks.length);
 
                         return;
@@ -502,6 +503,10 @@ define([
             return receiver.track;
         }) : [];
 
+        tracks = _.filter(tracks, function(track) {
+            return !_.isNullOrUndefined(track);
+        });
+
         if (tracks.length === 0) {
             var streams = peerConnection.getLocalStreams ? peerConnection.getLocalStreams() : [];
 
@@ -518,6 +523,10 @@ define([
             return sender.track;
         }) : [];
 
+        tracks = _.filter(tracks, function(track) {
+            return !_.isNullOrUndefined(track);
+        });
+
         if (tracks.length === 0) {
             var streams = peerConnection.getRemoteStreams ? peerConnection.getRemoteStreams() : [];
 
@@ -527,51 +536,6 @@ define([
         }
 
         return tracks;
-    }
-
-    function hasMediaSectionsInSdp(peerConnection) {
-        var indexOfSection = findInSdpSections(peerConnection, function(section) {
-            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
-        });
-
-        return _.isNumber(indexOfSection);
-    }
-
-    function hasActiveAudioInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'audio')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function hasActiveVideoInSdp(peerConnection) {
-        var indexOfActiveVideo = findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'video')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return _.isNumber(indexOfActiveVideo);
-    }
-
-    function findInSdpSections(peerConnection, callback) {
-        var localSections = peerConnection.localDescription.sdp.split('m=');
-        var remoteSections = peerConnection.remoteDescription.sdp.split('m=');
-
-        if (localSections.length !== remoteSections.length) {
-            return false;
-        }
-
-        return _.findIndex(localSections, function(section, index) {
-            return callback(section, index, remoteSections);
-        });
     }
 
     function calculateFrameRate(currentFramesEncoded, lastFramesEncoded, defaultFrameRate) {
@@ -595,7 +559,7 @@ define([
     function areAllTracksPaused() {
         var that = this;
 
-        return _.reduce(getAllTracks(this._peerConnection), function(areAllPaused, track) {
+        return _.reduce(getAllTracks.call(this, this._peerConnection), function(areAllPaused, track) {
             if (!areAllPaused) {
                 return areAllPaused;
             }
@@ -609,7 +573,7 @@ define([
     }
 
     function areAllTracksOfTypePaused(kind) {
-        var peerConnectionTracks = getAllTracks(this._peerConnection);
+        var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
         var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
             return track.kind === kind;
         });

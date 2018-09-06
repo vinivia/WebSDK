@@ -15,8 +15,7 @@
  */
 define([
     'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-rtc'
+    'phenix-web-assert'
 ], function(_, assert) {
     'use strict';
 
@@ -132,6 +131,68 @@ define([
         }
 
         return codecs;
+    };
+
+    sdpUtil.prototype.hasMediaSectionsInLocalSdp = function hasMediaSectionsInLocalSdp(peerConnection) {
+        var indexOfSection = this.findInSdpSections(peerConnection, function(section) {
+            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
+        });
+
+        return _.isNumber(indexOfSection);
+    };
+
+    sdpUtil.prototype.hasActiveAudio = function hasActiveAudio(peerConnection) {
+        var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'audio')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    };
+
+    sdpUtil.prototype.hasActiveVideo = function hasActiveVideo(peerConnection) {
+        var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
+            if (_.startsWith(section, 'video')) {
+                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
+            }
+
+            return false;
+        });
+
+        return _.isNumber(indexOfActiveVideo);
+    };
+
+    sdpUtil.prototype.findInSdpSections = function findInSdpSections(peerConnection, callback) {
+        var localSections = this.getLocalSdp(peerConnection).split('m=');
+        var remoteSections = this.getRemoteSdp(peerConnection).split('m=');
+
+        if (localSections.length !== remoteSections.length) {
+            return false;
+        }
+
+        return _.findIndex(localSections, function(section, index) {
+            return callback(section, index, remoteSections);
+        });
+    };
+
+    sdpUtil.prototype.getNumberOfActiveSections = function getNumberOfActiveSections(peerConnection) {
+        var sdp = this.getLocalSdp(peerConnection) || this.getRemoteSdp(peerConnection);
+        var sections = sdp.split('m=');
+
+        return _.filter(sections, function(section) {
+            return !_.includes(section, 'a=inactive') && (_.startsWith(section, 'audio') || _.startsWith(section, 'video'));
+        }).length;
+    };
+
+    sdpUtil.prototype.getLocalSdp = function getLocalSdp(peerConnection) {
+        return _.get(peerConnection, ['localDescription', 'sdp'], '');
+    };
+
+    sdpUtil.prototype.getRemoteSdp = function getLocalSdp(peerConnection) {
+        return _.get(peerConnection, ['remoteDescription', 'sdp'], '');
     };
 
     return new sdpUtil();
