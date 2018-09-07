@@ -84,6 +84,10 @@ requirejs([
                 uri: app.getUri(),
                 shaka: shaka
             });
+
+            if (app.getUrlParameter('debug') === 'true') {
+                app.addDebugAppender(roomExpress.getPCastExpress().getPCast());
+            }
         };
 
         sdk.utils.rtc.getSources(function(sources) {

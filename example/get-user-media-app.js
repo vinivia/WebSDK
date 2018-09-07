@@ -131,21 +131,9 @@ requirejs([
                 pcastOptions.deviceId = fingerprint;
                 pcast = new sdk.lowLevel.PCast(pcastOptions);
 
-                pcast.getLogger().addAppender({
-                    log: function() {
-                        if (sdk.utils.rtc.browser !== 'Safari') {
-                            return;
-                        }
-
-                        $.ajax({
-                            url: '/log',
-                            accepts: 'application/json',
-                            contentType: 'application/json',
-                            method: 'POST',
-                            data: JSON.stringify({messages: arguments})
-                        });
-                    }
-                });
+                if (app.getUrlParameter('debug') === 'true') {
+                    app.addDebugAppender(pcast);
+                }
 
                 app.setLoggerUserId(pcast);
                 app.setLoggerEnvironment(pcast);

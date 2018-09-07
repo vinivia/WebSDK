@@ -91,17 +91,9 @@ requirejs([
 
             channelExpress = new sdk.express.ChannelExpress(expressOptions);
 
-            channelExpress.getPCastExpress().getPCast().getLogger().addAppender({
-                log: function() {
-                    $.ajax({
-                        url: '/log',
-                        accepts: 'application/json',
-                        contentType: 'application/json',
-                        method: 'POST',
-                        data: JSON.stringify({messages: arguments})
-                    });
-                }
-            });
+            if (app.getUrlParameter('debug') === 'true') {
+                app.addDebugAppender(channelExpress.getPCastExpress().getPCast());
+            }
 
             app.setLoggerUserId(channelExpress.getPCastExpress().getPCast());
             app.setLoggerEnvironment(channelExpress.getPCastExpress().getPCast());

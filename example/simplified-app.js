@@ -86,6 +86,10 @@ requirejs([
             }
 
             pcastExpress = new sdk.express.PCastExpress(pcastOptions);
+
+            if (app.getUrlParameter('debug') === 'true') {
+                app.addDebugAppender(pcastExpress.getPCast());
+            }
         };
 
         var publish = function publish() {

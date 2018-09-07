@@ -71,6 +71,10 @@ requirejs([
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
                 rtmp: {swfSrc: app.getSwfFilePath()}
             });
+
+            if (app.getUrlParameter('debug') === 'true') {
+                app.addDebugAppender(channelExpress.getPCastExpress().getPCast());
+            }
         };
 
         var publishLocalMediaToChannel = function publishToChannel() {

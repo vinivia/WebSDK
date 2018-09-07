@@ -153,16 +153,24 @@ define('app-setup', [
         return adminBaseUri;
     };
 
-    var getUrlParameter = function getUrlParameter(parameterName) {
-        var queryParameters = window.location.search.substring(1).split('&');
+    var getUrlParameter = function getUrlParameter(parameterName, defaultValue) {
+        const queryParameters = window.location.search.substring(1).split('&');
+        const queryParameter = queryParameters.find(function(queryParameter) {
+            const equalsIndex = queryParameter.indexOf('=');
+            const parameter = queryParameter.substring(0, equalsIndex);
 
-        for (var i = 0; i < queryParameters.length; i++) {
-            var parameter = queryParameters[i].split('=');
+            return parameter === parameterName || queryParameter === parameterName;
+        }) || '';
 
-            if (parameter[0] === parameterName) {
-                return parameter.length > 0 ? decodeURIComponent(parameter[1]) : null;
-            }
+        if (!queryParameter) {
+            return defaultValue || '';
         }
+
+        if (queryParameter.indexOf('=') === -1) {
+            return 'true';
+        }
+
+        return queryParameter.substring(queryParameter.indexOf('=') + 1, queryParameter.length);
     };
 
     var getAuthData = function getAuthData() {
@@ -353,6 +361,20 @@ define('app-setup', [
         return './flash/rtmp-flash-renderer-2018.3.2.swf';
     };
 
+    var addDebugAppender = function(pcast) {
+        pcast.getLogger().addAppender({
+            log: function() {
+                $.ajax({
+                    url: '/log',
+                    accepts: 'application/json',
+                    contentType: 'application/json',
+                    method: 'POST',
+                    data: JSON.stringify({messages: arguments})
+                });
+            }
+        });
+    };
+
     return {
         init: init,
         getUri: getUri,
@@ -371,6 +393,7 @@ define('app-setup', [
         getModeFromAbbreviation: getModeFromAbbreviation,
         isMobile: isMobile,
         getDefaultReplaceUrl: getDefaultReplaceUrl,
-        getSwfFilePath: getSwfFilePath
+        getSwfFilePath: getSwfFilePath,
+        addDebugAppender: addDebugAppender
     };
 });

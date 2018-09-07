@@ -84,6 +84,10 @@ requirejs([
                     shaka: app.getUrlParameter('shaka') ? shaka : null
                 });
 
+                if (app.getUrlParameter('debug') === 'true') {
+                    app.addDebugAppender(pcast);
+                }
+
                 app.setLoggerUserId(pcast);
                 app.setLoggerEnvironment(pcast);
                 app.setLoggerVersion(pcast);

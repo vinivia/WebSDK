@@ -73,6 +73,10 @@ requirejs([
             }
 
             pcastExpress = new sdk.express.PCastExpress(expressOptions);
+
+            if (app.getUrlParameter('debug') === 'true') {
+                app.addDebugAppender(pcastExpress.getPCast());
+            }
         };
 
         var subscriberMediaStream = null;
