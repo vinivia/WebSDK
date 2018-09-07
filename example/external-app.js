@@ -73,6 +73,10 @@ requirejs([
                 rtmp: {swfSrc: './rtmp-flash-renderer.swf'}
             };
 
+            if (app.getUrlParameter('features')) {
+                pcastOptions.features = app.getUrlParameter('features').split(',');
+            }
+
             if (app.getUrlParameter('ssmr')) {
                 pcastOptions.streamingSourceMapping = {
                     patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),

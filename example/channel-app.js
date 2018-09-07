@@ -89,10 +89,6 @@ requirejs([
                 expressOptions.features = app.getUrlParameter('features').split(',');
             }
 
-            if (app.getUrlParameter('features')) {
-                expressOptions.features = app.getUrlParameter('features').split(',');
-            }
-
             channelExpress = new sdk.express.ChannelExpress(expressOptions);
 
             channelExpress.getPCastExpress().getPCast().getLogger().addAppender({

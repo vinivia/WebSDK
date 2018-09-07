@@ -58,16 +58,21 @@ requirejs([
 
         var createPCastExpress = function createPCastExpress() {
             var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
-            adminApiProxyClient.setAuthenticationData(app.getAuthData());
-
-            pcastExpress = new sdk.express.PCastExpress({
+            var expressOptions = {
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
                 rtmp: {swfSrc: app.getSwfFilePath()}
-            });
+            };
+
+            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
+            adminApiProxyClient.setAuthenticationData(app.getAuthData());
+
+            if (app.getUrlParameter('features')) {
+                expressOptions.features = app.getUrlParameter('features').split(',');
+            }
+
+            pcastExpress = new sdk.express.PCastExpress(expressOptions);
         };
 
         var subscriberMediaStream = null;

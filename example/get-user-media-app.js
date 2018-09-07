@@ -123,6 +123,10 @@ requirejs([
                 };
             }
 
+            if (app.getUrlParameter('features')) {
+                pcastOptions.features = app.getUrlParameter('features').split(',');
+            }
+
             fingerprint.get(function(fingerprint) {
                 pcastOptions.deviceId = fingerprint;
                 pcast = new sdk.lowLevel.PCast(pcastOptions);

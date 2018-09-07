@@ -79,6 +79,10 @@ requirejs([
                 };
             }
 
+            if (app.getUrlParameter('features')) {
+                pcastOptions.features = app.getUrlParameter('features').split(',');
+            }
+
             pcastExpress = new sdk.express.PCastExpress(pcastOptions);
         };
 
