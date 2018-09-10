@@ -104,7 +104,7 @@
     "phenix-web-network-connection-monitor": "2018.3.0",
     "phenix-web-observable": "2018.3.0",
     "phenix-web-player": "2018.3.0",
-    "phenix-web-proto": "2018.3.0",
+    "phenix-web-proto": "2018.3.1",
     "phenix-web-reconnecting-websocket": "2018.3.0",
     "puppeteer": "1.6.0",
     "requirejs": "2.3.5",

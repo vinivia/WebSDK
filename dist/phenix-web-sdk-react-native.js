@@ -1323,7 +1323,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-07T17:34:29Z',
+                version: '2018-09-10T18:54:07Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9048,7 +9048,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-07T17:34:29Z';
+    var sdkVersion = '2018-09-10T18:54:07Z';
 
     function PCast(options) {
         options = options || {};
@@ -14914,7 +14914,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
+    var sdkVersion = '2018-09-10T18:54:07Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15169,7 +15169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
+    var sdkVersion = '2018-09-10T18:54:07Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -21113,6 +21113,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var response = buildDefaultObject(parent.messages[type]);
 
         return pbf.readFields(function(fieldId, result, pbfResult) {
+            if (!parent.messages[type].fieldIds[fieldId]) {
+                return;
+            }
+
             var field = parent.messages[type].fields[fieldId];
 
             if (field.rule === 'repeated') {
@@ -21236,9 +21240,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
+            var fieldIds = _.reduce(message.fields, function(candidateIds, field) {
+                candidateIds[field.id] = true;
+
+                return candidateIds;
+            }, {});
+
             parsedMessages[message.name] = {
                 parent: parent,
-                type: message.name
+                type: message.name,
+                fieldIds: fieldIds
             };
 
             mapProto.call(that, message, parsedMessages[message.name]);
@@ -21299,8 +21310,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return readFieldWithParent.call(this, field.schema.parent, field.type, pbf, pbf.readVarint() + pbf.pos);
             }
 
+            var enumId = pbf.readVarint(signed);
+            var enumName = _.getEnumName(field.schema, enumId);
+
+            if (_.isNullOrUndefined(enumName)) {
+                throw new Error('Unsupported enum id [' + enumId + '] for field [' + field.name + '] on message [' + message.type + ']');
+            }
+
             // Field schema is an Enum
-            return _.getEnumName(field.schema, pbf.readVarint(signed));
+            return enumName;
         }
 
         switch (field.type) {
@@ -24389,7 +24407,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-07T17:34:29Z' || '?';
+    var sdkVersion = '2018-09-10T18:54:07Z' || '?';
     var releaseVersion = '2018.3.12';
 
     function Logger() {
