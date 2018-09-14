@@ -29,7 +29,7 @@ define([
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.2.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.13.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
         staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -102,6 +102,7 @@ define([
         _.addEventListener(this._originElement, 'pause', that._onStalled, false);
         _.addEventListener(this._originElement, 'suspend', that._onStalled, false);
         _.addEventListener(this._originElement, 'ended', that._onEnded, false);
+        _.addEventListener(this._originElement, 'error', that._onError, false);
 
         return elementToAttachTo;
     };
@@ -118,6 +119,7 @@ define([
                     _.removeEventListener(that._originElement, 'pause', that._onStalled, false);
                     _.removeEventListener(that._originElement, 'suspend', that._onStalled, false);
                     _.removeEventListener(that._originElement, 'ended', that._onEnded, false);
+                    _.removeEventListener(that._originElement, 'error', that._onError, false);
                 }
 
                 that._playerElement = null;

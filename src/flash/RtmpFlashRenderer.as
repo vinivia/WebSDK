@@ -71,6 +71,7 @@ public class RtmpFlashRenderer extends Sprite {
     private var _stageHeight:Number;
 
     private var _setUpSrc:String;
+    private var _maxPlayAttemtps:Number = 10;
 
     /**
      * @constructor
@@ -166,6 +167,7 @@ public class RtmpFlashRenderer extends Sprite {
             }
         } catch (error:Error)  {
             logError('[Flash] Failed to complete initialization', error.message);
+            emit_error('Failed to complete initialization. ' + error.message);
         }
     }
 
@@ -211,16 +213,45 @@ public class RtmpFlashRenderer extends Sprite {
                 sendEvent('loadstart');
 
                 if (_autoplay) {
-                    setTimeout(function():void {
-                        fire_play();
-                    }, isIE() ? 800 : 300);
-                    return;
+                    fire_play_until_ready();
                 }
             }
         } catch (error:Error)  {
             logError('[Flash] Failed to load', error.message);
+            emit_error('Failed to load. ' + error.message);
         }
     }
+
+    private function fire_play_until_ready(attempt: Number = 0): void {
+        if (attempt >= _maxPlayAttemtps) {
+            logError('[Flash] Unable to start playback of rtmp stream after attempts', attempt);
+            emit_error('[Flash] Unable to start playback of rtmp stream');
+            return;
+        }
+
+        var timeout:Number = 300 + (attempt * 100);
+
+        setTimeout(function():void {
+            if (_readyState === 4) {
+                return;
+            }
+
+            setTimeout(function():void {
+                if (_readyState === 4) {
+                    return;
+                }
+
+                fire_play_until_ready(attempt + 1);
+                return;
+            }, 50);
+
+            fire_play();
+
+            return;
+        }, timeout);
+        return;
+    }
+
     private function fire_play():void {
         if (!_hasStartedPlaying && !_isConnected) {
             _playWhenConnected = true;
@@ -262,6 +293,9 @@ public class RtmpFlashRenderer extends Sprite {
         _stream.close();
         _timer.stop();
         sendEvent("stop");
+    }
+    private function emit_error(message:String):void {
+        sendEvent("error", message);
     }
     private function set_size(stageWidth:Number, stageHeight:Number): void {
         if (stageWidth) {
@@ -613,7 +647,8 @@ public class RtmpFlashRenderer extends Sprite {
                 _playWhenConnected = false;
             }
         } catch (error:Error)  {
-            logError('[Flash] Failed to connect stream', error.message, error.getStackTrace());
+            logError('[Flash] Failed to connect stream.', error.message, error.getStackTrace());
+            emit_error('Failed to connect stream. ' + error.message);
         }
     }
     private function parseRTMP(url:String):Object {

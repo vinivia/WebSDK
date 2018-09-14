@@ -155,7 +155,7 @@ define('app-setup', [
 
     var getUrlParameter = function getUrlParameter(parameterName, defaultValue) {
         const queryParameters = window.location.search.substring(1).split('&');
-        const queryParameter = queryParameters.find(function(queryParameter) {
+        const queryParameter = _.find(queryParameters, function(queryParameter) {
             const equalsIndex = queryParameter.indexOf('=');
             const parameter = queryParameter.substring(0, equalsIndex);
 
@@ -358,7 +358,7 @@ define('app-setup', [
     };
 
     var getSwfFilePath = function() {
-        return './flash/rtmp-flash-renderer-2018.3.2.swf';
+        return './rtmp-flash-renderer-2018.3.13.swf';
     };
 
     var addDebugAppender = function(pcast) {

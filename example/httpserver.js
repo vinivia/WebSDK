@@ -26,6 +26,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(process.cwd(), 'example')));
 app.use(express.static(path.join(process.cwd(), 'dist')));
+app.use(express.static(path.join(process.cwd(), 'generated')));
 app.use(express.static(path.join(process.cwd(), 'src')));
 app.use(express.static(path.join(process.cwd(), 'node_modules')));
 
