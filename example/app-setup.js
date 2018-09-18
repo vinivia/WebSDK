@@ -326,6 +326,7 @@ define('app-setup', [
             'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
             'multi-bitrate-codec=h264': 'H264 MBR Codec',
             'constant-gop-size': 'Constant GOP',
+            'constant-resolution': 'Constant Resolution',
             'origin-shield': 'Origin Shield',
             'rtmp': 'RTMP'
         };
@@ -346,6 +347,7 @@ define('app-setup', [
 
     var getPublisherQualities = function() {
         return {
+            'uld': 'ULD',
             'vvld': 'VVLD',
             'vld': 'VLD',
             'ld': 'LD',
