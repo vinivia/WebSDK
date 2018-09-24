@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2018.3.14",
+  "version": "2018.3.15",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -103,7 +103,7 @@
     "phenix-web-logging": "2018.3.0",
     "phenix-web-network-connection-monitor": "2018.3.0",
     "phenix-web-observable": "2018.3.0",
-    "phenix-web-player": "2018.3.0",
+    "phenix-web-player": "2018.3.2",
     "phenix-web-proto": "2018.3.1",
     "phenix-web-reconnecting-websocket": "2018.3.0",
     "puppeteer": "1.6.0",
