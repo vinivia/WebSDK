@@ -18,12 +18,15 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-rtc',
+    'phenix-web-disposable',
+    'phenix-web-application-activity-detector',
     './PeerConnection',
     './PeerConnectionMonitor',
     './BitRateMonitor',
     './PhenixRealTimeRenderer',
+    './FeatureDetector',
     './stream.json'
-], function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, streamEnums) {
+], function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
     var iceConnectionTimeout = 5000;
@@ -40,6 +43,10 @@ define([
         this._namedEvents = new event.NamedEvents();
         this._childrenStreams = [];
         this._limit = 0;
+        this._backgroundMonitorEventCallback = null;
+        this._disposables = new disposable.DisposableList();
+
+        this._disposables.add(applicationActivityDetector.onForeground(_.bind(emitPendingBackgroundEvent, this)));
 
         var bandwidthAttribute = /(b=AS:([0-9]*)[\n\r]*)/gi;
         var bandwithAttribute = bandwidthAttribute.exec(peerConnection.remoteDescription);
@@ -147,6 +154,8 @@ define([
             return;
         }
 
+        this._disposables.dispose();
+
         stopWebRTCStream(this._streamSrc);
 
         this._logger.info('[%s] stop [real-time] media stream with reason [%s]', this._streamId, reason);
@@ -169,7 +178,13 @@ define([
             return that.isActive();
         }, function monitorCallback(error, monitorEvent) {
             if (error) {
-                that._logger.warn('[%s] Media stream monitor triggered unrecoverable error [%s]', error);
+                that._logger.warn('[%s] Media stream monitor triggered unrecoverable error [%s]', that._streamId, error);
+            }
+
+            if (FeatureDetector.isIOS() && !applicationActivityDetector.isForeground()) {
+                that._logger.info('[%s] Media stream monitor triggered event while app is in the background. Waiting until foreground to trigger event.', that._streamId);
+
+                return that._backgroundMonitorEventCallback = monitorCallback.bind(null, error, monitorEvent);
             }
 
             that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.type);
@@ -224,6 +239,18 @@ define([
     PhenixRealTimeStream.prototype.getRenderer = function getRenderer() {
         return _.get(this._renderers, [0], null);
     };
+
+    function emitPendingBackgroundEvent() {
+        if (!this._backgroundMonitorEventCallback) {
+            return;
+        }
+
+        var eventCallback = this._backgroundMonitorEventCallback;
+
+        this._backgroundMonitorEventCallback = null;
+
+        eventCallback();
+    }
 
     function isStreamStopped(stream) {
         return _.reduce(stream.getTracks(), function(isStopped, track) {

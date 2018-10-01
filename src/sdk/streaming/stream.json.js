@@ -76,6 +76,10 @@ define([
             error: {
                 id: 1,
                 name: 'error'
+            },
+            userActionRequired: {
+                id: 2,
+                name: 'userActionRequired'
             }
         }
     };

@@ -1246,7 +1246,7 @@ define([
             return;
         }
 
-        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmOpenAccess && (_.includes(capabilities, 'drm-open-access') || isAndroid())) {
+        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmOpenAccess && (_.includes(capabilities, 'drm-open-access') || FeatureDetector.isAndroid())) {
             return streamInfo.streamTokenForLiveStreamWithDrmOpenAccess;
         }
 
@@ -1381,10 +1381,6 @@ define([
         });
 
         return roomService ? roomService.getSelf() : null;
-    }
-
-    function isAndroid() {
-        return /(android)/i.test(navigator.userAgent);
     }
 
     return RoomExpress;

@@ -504,7 +504,7 @@ define([
 
                     createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                         var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -1523,8 +1523,8 @@ define([
 
             var localSdp = response.sessionDescription.sdp;
 
-            if (isIOS()) {
-                var version = _.get(getIOSVersion(), ['major']);
+            if (FeatureDetector.isIOS()) {
+                var version = _.get(FeatureDetector.getIOSVersion(), ['major']);
 
                 that._logger.info('iOS Version is [%s]', version);
 
@@ -1795,32 +1795,6 @@ define([
         });
 
         return config;
-    }
-
-    var isMobile = function() {
-        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
-
-        return isIOS() || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
-    };
-
-    var isIOS = function() {
-        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
-
-        return /iPad|iPhone|iPod/.test(userAgent) && !phenixRTC.global.MSStream;
-    };
-
-    function getIOSVersion() {
-        var userAgent = _.get(phenixRTC, ['global', 'navigator', 'userAgent'], '');
-
-        if (/iP(hone|od|ad)/.test(userAgent)) {
-            var version = userAgent.match(/.*OS (\d+)_(\d+)_?(\d+)? like Mac OS X/);
-
-            return {
-                major: parseInt(_.get(version, [1], 0), 10),
-                minor: parseInt(_.get(version, [2], 0), 10),
-                patch: parseInt(_.get(version, [3], 0), 10)
-            };
-        }
     }
 
     var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {

@@ -17,9 +17,10 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-rtc',
+    'phenix-web-global',
     './PhenixLiveStream',
     './stream.json'
-], function(_, assert, rtc, PhenixLiveStream, streamEnums) {
+], function(_, assert, rtc, global, PhenixLiveStream, streamEnums) {
     'use strict';
 
     var defaultFeatures = [
@@ -138,17 +139,48 @@ define([
     };
 
     FeatureDetector.shouldUseNativeHls = isIOS() || rtc.browser === 'Safari' || isSamsungBrowser();
+    FeatureDetector.isIOS = isIOS;
+    FeatureDetector.isSamsungBrowser = isSamsungBrowser;
+    FeatureDetector.isAndroid = isAndroid;
+    FeatureDetector.isMobile = isMobile;
+    FeatureDetector.getIOSVersion = getIOSVersion;
 
     function isIOS() {
-        var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
+        var userAgent = _.get(global, ['navigator', 'userAgent'], '');
 
-        return /iPad|iPhone|iPod/.test(userAgent) && !rtc.global.MSStream;
+        return /iPad|iPhone|iPod/.test(userAgent) && !global.MSStream;
     }
 
     function isSamsungBrowser() {
-        var userAgent = _.get(rtc, ['global', 'navigator', 'userAgent'], '');
+        var userAgent = _.get(global, ['navigator', 'userAgent'], '');
 
         return /SamsungBrowser/.test(userAgent);
+    }
+
+    function isAndroid() {
+        var userAgent = _.get(global, ['navigator', 'userAgent'], '');
+
+        return /(android)/i.test(userAgent);
+    }
+
+    function isMobile() {
+        var userAgent = _.get(global, ['navigator', 'userAgent'], '');
+
+        return isIOS() || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
+    }
+
+    function getIOSVersion() {
+        var userAgent = _.get(global, ['navigator', 'userAgent'], '');
+
+        if (/iP(hone|od|ad)/.test(userAgent)) {
+            var version = userAgent.match(/.*OS (\d+)_(\d+)_?(\d+)? like Mac OS X/);
+
+            return {
+                major: parseInt(_.get(version, [1], 0), 10),
+                minor: parseInt(_.get(version, [2], 0), 10),
+                patch: parseInt(_.get(version, [3], 0), 10)
+            };
+        }
     }
 
     function removeDuplicates(list, item) {

@@ -154,10 +154,10 @@ define('app-setup', [
     };
 
     var getUrlParameter = function getUrlParameter(parameterName, defaultValue) {
-        const queryParameters = window.location.search.substring(1).split('&');
-        const queryParameter = _.find(queryParameters, function(queryParameter) {
-            const equalsIndex = queryParameter.indexOf('=');
-            const parameter = queryParameter.substring(0, equalsIndex);
+        var queryParameters = window.location.search.substring(1).split('&');
+        var queryParameter = _.find(queryParameters, function(queryParameter) {
+            var equalsIndex = queryParameter.indexOf('=');
+            var parameter = queryParameter.substring(0, equalsIndex);
 
             return parameter === parameterName || queryParameter === parameterName;
         }) || '';
