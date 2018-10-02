@@ -224,8 +224,8 @@ public class RtmpFlashRenderer extends Sprite {
 
     private function fire_play_until_ready(attempt: Number = 0): void {
         if (attempt >= _maxPlayAttemtps) {
-            logError('[Flash] Unable to start playback of rtmp stream after attempts', attempt);
-            emit_error('[Flash] Unable to start playback of rtmp stream');
+            logError('[Flash] Unable to start playback of rtmp stream after attempts', attempt, _maxPlayAttemtps);
+            emit_error('[Flash] Unable to start playback of rtmp stream after' + attempt + ' attempts and max of ' + _maxPlayAttemtps);
             return;
         }
 

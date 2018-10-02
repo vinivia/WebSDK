@@ -3710,7 +3710,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-09-24T17:00:13Z';
+    var sdkVersion = '2018-10-02T15:28:51Z';
 
     function PCast(options) {
         options = options || {};
@@ -8019,7 +8019,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.13.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2018.3.16.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
         staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
@@ -9545,7 +9545,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-24T17:00:13Z' || '?';
+    var sdkVersion = '2018-10-02T15:28:51Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -9800,7 +9800,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-24T17:00:13Z' || '?';
+    var sdkVersion = '2018-10-02T15:28:51Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11257,7 +11257,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-09-24T17:00:13Z',
+                version: '2018-10-02T15:28:51Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -14402,7 +14402,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function sendMessagesIfAble() {
-        if (!this._canSendRequestObservable.getValue() || this._records.length === 0) {
+        if (!this._canSendRequestObservable.getValue() || this._records.length === 0 || this._records.length !== this._maxBatchSize) {
             return;
         }
 
@@ -17062,8 +17062,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-09-24T17:00:13Z' || '?';
-    var releaseVersion = '2018.3.15';
+    var sdkVersion = '2018-10-02T15:28:51Z' || '?';
+    var releaseVersion = '2018.3.16';
 
     function Logger() {
         this._appenders = [];
