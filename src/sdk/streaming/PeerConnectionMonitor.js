@@ -16,10 +16,11 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
+    'phenix-web-event',
     'phenix-rtc',
     '../sdpUtil',
     './PeerConnection'
-], function(_, assert, phenixRTC, sdpUtil, PeerConnection) {
+], function(_, assert, event, phenixRTC, sdpUtil, PeerConnection) {
     'use strict';
 
     var defaultMonitoringInterval = 4000;
@@ -62,6 +63,7 @@ define([
         this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
         this._pausedTracks = [];
+        this._calculatedMetricsEvent = new event.Event();
 
         if (phenixRTC.browser === 'Edge') {
             var conditionMaxDuration = this._conditionMonitoringInterval * this._conditionCountForNotificationThreshold;
@@ -104,6 +106,18 @@ define([
 
         if (pausedTrackLength !== this._pausedTracks.length) {
             this._logger.info('[%s] Starting monitoring of track [%s] [%s] after it was paused', this._name, track.kind, track.id);
+        }
+    };
+
+    PeerConnectionMonitor.prototype.on = function(eventName, listener) {
+        assert.isStringNotEmpty(eventName, 'eventName');
+        assert.isFunction(listener, 'listener');
+
+        switch (eventName) {
+        case 'calculatedmetrics':
+            return this._calculatedMetricsEvent.listen(listener);
+        default:
+            throw new Error('Unsupported event ' + eventName);
         }
     };
 
@@ -234,6 +248,14 @@ define([
                 if (hasAudioBitRate || hasVideoBitRate || hasFrameRate) {
                     that._logger.debug('[%s] [%s] Current bit rate is [%s] bps for audio and [%s] bps for video with [%s] FPS',
                         name, options.direction, Math.ceil(audioBitRate || 0), Math.ceil(videoBitRate || 0), frameRate || '?');
+
+                    if (_.values(that._lastStats).length > 0) {
+                        that._calculatedMetricsEvent.fire([{
+                            videoBitRate: videoBitRate,
+                            audioBitRate: audioBitRate,
+                            frameRate: frameRate
+                        }]);
+                    }
                 }
 
                 if (that._monitorState

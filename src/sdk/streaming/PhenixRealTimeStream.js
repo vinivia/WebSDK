@@ -20,9 +20,10 @@ define([
     'phenix-rtc',
     './PeerConnection',
     './PeerConnectionMonitor',
+    './BitRateMonitor',
     './PhenixRealTimeRenderer',
     './stream.json'
-], function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, PhenixRealTimeRenderer, streamEnums) {
+], function(_, assert, event, rtc, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, streamEnums) {
     'use strict';
 
     var iceConnectionTimeout = 5000;
@@ -38,6 +39,14 @@ define([
         this._dimensionsChangedMonitor = null;
         this._namedEvents = new event.NamedEvents();
         this._childrenStreams = [];
+        this._limit = 0;
+
+        var bandwidthAttribute = /(b=AS:([0-9]*)[\n\r]*)/gi;
+        var bandwithAttribute = bandwidthAttribute.exec(peerConnection.remoteDescription);
+
+        if (bandwithAttribute && bandwithAttribute.length >= 3) {
+            this._limit = bandwithAttribute[2] * 1000;
+        }
 
         _.addEventListener(peerConnection, 'iceconnectionstatechange', _.bind(onIceConnectionChange, this));
     }
@@ -175,6 +184,15 @@ define([
 
     PhenixRealTimeStream.prototype.getMonitor = function getMonitor() {
         return this._monitor;
+    };
+
+    PhenixRealTimeStream.prototype.addBitRateThreshold = function addBitRateThreshold(threshold, callback) {
+        var that = this;
+        var bitRateMonitor = new BitRateMonitor('Media Stream', this._monitor, function getLimit() {
+            return that._limit;
+        });
+
+        return bitRateMonitor.addThreshold(threshold, callback);
     };
 
     PhenixRealTimeStream.prototype.getStream = function getStream() {

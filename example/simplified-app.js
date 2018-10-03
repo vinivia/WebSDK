@@ -172,6 +172,14 @@ requirejs([
 
                 window.publisher = publisher;
 
+                publisher.addBitRateThreshold({levels: 5}, function(event) {
+                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publisher BitRate</strong>',
+                        message: event.message
+                    });
+                });
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Publish</strong>',
@@ -261,6 +269,14 @@ requirejs([
 
                 subscriberMediaStream = response.mediaStream;
                 subscriberPlayer = new Player('remoteVideo');
+
+                subscriberMediaStream.addBitRateThreshold([0, .2, .4, .6, .8], function(event) {
+                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscriber BitRate</strong>',
+                        message: event.message
+                    });
+                });
 
                 subscriberPlayer.start(subscriberMediaStream, response.renderer);
 

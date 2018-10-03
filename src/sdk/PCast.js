@@ -37,9 +37,10 @@ define([
     './streaming/PhenixRealTimeStream',
     './streaming/FeatureDetector',
     './streaming/stream.json',
+    './streaming/BitRateMonitor',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -1267,6 +1268,14 @@ define([
                     publisherMonitor = monitor;
 
                     return monitor;
+                },
+
+                addBitRateThreshold: function addBitRateThreshold(threshold, callback) {
+                    var bitRateMonitor = new BitRateMonitor('Publisher', publisherMonitor, function getLimit() {
+                        return limit;
+                    });
+
+                    return bitRateMonitor.addThreshold(threshold, callback);
                 },
 
                 setRemoteMediaStreamCallback: function setRemoteMediaStreamCallback(callback) {

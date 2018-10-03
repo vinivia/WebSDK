@@ -127,6 +127,12 @@ define([
         return null;
     };
 
+    PhenixLiveStream.prototype.addBitRateThreshold = function addBitRateThreshold(threshold, callback) {
+        assert.isFunction(callback, 'callback');
+
+        return;
+    };
+
     PhenixLiveStream.prototype.getStream = function getStream() {
         this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
 

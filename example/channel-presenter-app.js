@@ -146,6 +146,14 @@ requirejs([
                 channelPublisher = response.publisher;
                 publisherPlayer = new Player('channelVideo');
 
+                channelPublisher.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
+                    app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Bitrate change</strong>',
+                        message: 'Bitrate changed (' + event.message + ')'
+                    });
+                });
+
                 publisherPlayer.start(channelPublisher);
 
                 $('#stopPublisher').removeClass('disabled');

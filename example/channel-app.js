@@ -209,6 +209,14 @@ requirejs([
 
                 channelPlayer.start(channelSubscriber, response.renderer);
 
+                channelSubscriber.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
+                    app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Bitrate change</strong>',
+                        message: 'Bitrate changed (' + event.message + ')'
+                    });
+                });
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Viewing Channel</strong>',
