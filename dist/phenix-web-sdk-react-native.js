@@ -1556,7 +1556,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-10-11T22:18:12Z',
+                version: '2018-10-15T15:21:04Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -7568,6 +7568,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
         var that = this;
         var conditionCount = 0;
+        var reasons = [];
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
@@ -7712,14 +7713,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     }
 
                     conditionCount++;
+                    reasons.push('connection');
                 } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
+                    reasons.push('frameRate');
                 } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     conditionCount++;
+                    reasons.push('audioBitRate');
                 } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
+                    reasons.push('videoBitRate');
                 } else {
                     conditionCount = 0;
+                    reasons = [];
                 }
 
                 var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
@@ -7737,6 +7743,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     that._logger.info('[%s] [%s] Failure has been acknowledged', name, options.direction);
 
                     conditionCount = Number.MIN_VALUE;
+                    reasons = [];
 
                     setTimeout(nextCheck, that._monitoringInterval);
                 };
@@ -7747,6 +7754,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
                         type: 'condition',
+                        reasons: reasons,
                         message: failureMessage,
                         report: report,
                         frameRate: frameRate,
@@ -9242,7 +9250,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-10-11T22:18:12Z';
+    var sdkVersion = '2018-10-15T15:21:04Z';
 
     function PCast(options) {
         options = options || {};
@@ -10446,7 +10454,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                             that._logger.warn('[%s] Publisher monitor triggered unrecoverable error [%s]', error);
                         }
 
-                        that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, monitorEvent.type);
+                        that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, monitorEvent.reasons);
 
                         return callback(publisher, 'client-side-failure', monitorEvent);
                     });
@@ -13559,7 +13567,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return that._backgroundMonitorEventCallback = monitorCallback.bind(null, error, monitorEvent);
             }
 
-            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.type);
+            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.reasons);
 
             return callback(that, 'client-side-failure', monitorEvent);
         });
@@ -15217,7 +15225,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-11T22:18:12Z' || '?';
+    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15472,7 +15480,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-11T22:18:12Z' || '?';
+    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -20782,7 +20790,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function sendMessagesIfAble() {
-        if (!this._canSendRequestObservable.getValue() || this._records.length === 0 || this._records.length !== this._maxBatchSize) {
+        if (!this._canSendRequestObservable.getValue() || this._records.length === 0) {
             return;
         }
 
@@ -24710,7 +24718,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-11T22:18:12Z' || '?';
+    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
     var releaseVersion = '2018.4.0';
 
     function Logger() {

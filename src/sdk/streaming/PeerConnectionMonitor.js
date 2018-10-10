@@ -128,6 +128,7 @@ define([
     function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
         var that = this;
         var conditionCount = 0;
+        var reasons = [];
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
@@ -272,14 +273,19 @@ define([
                     }
 
                     conditionCount++;
+                    reasons.push('connection');
                 } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
+                    reasons.push('frameRate');
                 } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     conditionCount++;
+                    reasons.push('audioBitRate');
                 } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     conditionCount++;
+                    reasons.push('videoBitRate');
                 } else {
                     conditionCount = 0;
+                    reasons = [];
                 }
 
                 var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
@@ -297,6 +303,7 @@ define([
                     that._logger.info('[%s] [%s] Failure has been acknowledged', name, options.direction);
 
                     conditionCount = Number.MIN_VALUE;
+                    reasons = [];
 
                     setTimeout(nextCheck, that._monitoringInterval);
                 };
@@ -307,6 +314,7 @@ define([
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
                         type: 'condition',
+                        reasons: reasons,
                         message: failureMessage,
                         report: report,
                         frameRate: frameRate,

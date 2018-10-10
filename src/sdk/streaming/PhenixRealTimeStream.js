@@ -187,7 +187,7 @@ define([
                 return that._backgroundMonitorEventCallback = monitorCallback.bind(null, error, monitorEvent);
             }
 
-            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.type);
+            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.reasons);
 
             return callback(that, 'client-side-failure', monitorEvent);
         });

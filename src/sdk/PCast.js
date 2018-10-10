@@ -1247,7 +1247,7 @@ define([
                             that._logger.warn('[%s] Publisher monitor triggered unrecoverable error [%s]', error);
                         }
 
-                        that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, monitorEvent.type);
+                        that._logger.warn('[%s] Publisher triggered monitor condition for [%s]', streamId, monitorEvent.reasons);
 
                         return callback(publisher, 'client-side-failure', monitorEvent);
                     });
