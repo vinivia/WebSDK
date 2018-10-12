@@ -4113,7 +4113,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-10-15T15:21:04Z';
+    var sdkVersion = '2018-10-15T16:17:53Z';
 
     function PCast(options) {
         options = options || {};
@@ -9884,7 +9884,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
+    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10139,7 +10139,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
+    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11596,7 +11596,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-10-15T15:21:04Z',
+                version: '2018-10-15T16:17:53Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -14474,7 +14474,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 callback(null, response);
             } else {
-                var err = new Error(xhr.status === 0 ? 'timeout' : xhr.statusText);
+                var err = new Error(xhr.status === 0 ? 'timeout' : 'Status=[' + xhr.status + ']');
                 var additionalRetryErrorCodes = _.get(options, ['retryOptions', 'additionalRetryErrorCodes'], []);
 
                 _.forEach(additionalRetryErrorCodes, function(code) {
@@ -17401,7 +17401,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T15:21:04Z' || '?';
+    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
     var releaseVersion = '2018.4.0';
 
     function Logger() {
