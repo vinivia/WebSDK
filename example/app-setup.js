@@ -89,24 +89,30 @@ define('app-setup', [
 
         if (document.getElementById('publish-capabilities')) {
             _.forOwn(getPublisherCapabilities(), function(title, capability) {
-                $('#publish-capabilities').append($('<option></option>').attr('value', capability).text(title));
+                $('#publish-capabilities').append($('<button>' + title + '</button>').attr('value', capability));
             });
         }
 
         if (document.getElementById('subscriber-mode')) {
             _.forOwn(getSubscriberCapabilities(), function(title, capability) {
-                $('#subscriber-mode').append($('<option></option>').attr('value', capability).text(title));
+                $('#subscriber-mode').append($('<button>' + title + '</button>').attr('value', capability));
             });
         }
 
         if (document.getElementById('publish-quality')) {
             _.forOwn(getPublisherQualities(), function(title, capability) {
-                $('#publish-quality').append($('<option></option>').attr('value', capability).text(title));
+                $('#publish-quality').append($('<button>' + title + '</button>').attr('value', capability));
             });
 
             if ($('#publish-quality [value=' + defaultPublisherQuality + ']')) {
-                $('#publish-quality [value=' + defaultPublisherQuality + ']').attr('selected', 'selected');
+                $('#publish-quality [value=' + defaultPublisherQuality + ']').addClass('clicked');
             }
+        }
+
+        if (document.getElementById('subscriber-drm-capabilities')) {
+            _.forOwn(getDrmModifiers(), function(title, capability) {
+                $('#subscriber-drm-capabilities').append($('<button>' + title + '</button>').attr('value', capability));
+            });
         }
 
         var updateOptions = function updateOptions() {
@@ -120,6 +126,15 @@ define('app-setup', [
 
             $('.' + option).removeClass('option-disabled');
         };
+
+        $('.form-multi-button-control button').click(function(){
+            $(this).toggleClass('clicked');
+        });
+
+        $('.form-single-button-control button').click(function(){
+            $('.form-single-button-control button').removeClass('clicked');
+            $(this).addClass('clicked');
+        });
 
         $('#environment').change(function() {
             if (onStepsReset) {
@@ -357,6 +372,13 @@ define('app-setup', [
             'fhd': 'FHD',
             'xhd': 'XHD',
             'uhd': 'UHD'
+        };
+    };
+
+    var getDrmModifiers = function() {
+        return {
+            'drm-open-access': 'DRM - Open Access',
+            'drm-hollywood': 'DRM - Hollywood'
         };
     };
 

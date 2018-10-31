@@ -85,11 +85,11 @@ requirejs([
             var capabilities = [];
             var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
 
-            $('#publish-capabilities option:selected').each(function() {
+            $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
-            capabilities.push($('#publish-quality option:selected').val());
+            capabilities.push($('#publish-quality button.clicked').val());
 
             channelExpress.publishToChannel({
                 mediaConstraints: getConstraints(),

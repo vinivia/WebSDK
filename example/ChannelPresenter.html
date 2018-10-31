@@ -111,6 +111,20 @@
         .toggle-off.glyphicon-facetime-video:before {
             opacity: .4;
         }
+
+        .form-select-control {
+            margin-bottom: 10px;
+        }
+
+        .form-select-control button {
+            border-radius: 5px;
+            margin: 2px 2px 2px 2px;
+        }
+
+        .form-select-control button.clicked{
+            background-color: black;
+            color: white;
+        }
     </style>
 
     <script>
@@ -175,8 +189,11 @@
                         <option value="cameraMicrophoneAndScreen">Camera & Microphone & Screen</option>
                         <option value="screenAndMicrophone">Screen & Microphone</option>
                     </select>
-                    <select class="form-control" id="publish-capabilities" multiple></select>
-                    <select class="form-control" id="publish-quality"></select>
+                    </br>
+                    <p>Choose <strong>Capabilities</strong></p>
+                    <div class="form-multi-button-control form-select-control" id="publish-capabilities"></div>
+                    <p>Choose <strong>Quality</strong></p>
+                    <div class="form-single-button-control form-select-control" id="publish-quality"></div>
                     <input id="publish" type="button" value="Publish Local User Media"/>
                     <input id="stopPublisher" class="disabled" type="button" value="Stop Publisher"/>
                 </div>

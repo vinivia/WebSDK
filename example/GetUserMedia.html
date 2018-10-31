@@ -196,8 +196,9 @@
         </div>
         <div class="col-md-4 text-center server">
             <p>Create a publish <strong>streamToken</strong> using the <strong>sessionId</strong>.</p>
-            <select class="form-control" id="publish-capabilities" multiple></select>
-            <select class="form-control" id="publish-quality"></select>
+            <div class="form-multi-button-control form-select-control" id="publish-capabilities"></div>
+            <p>Choose <strong>Quality</strong></p>
+            <div class="form-single-button-control form-select-control" id="publish-quality"></div>
             <input id="sessionIdForPublishing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="createStreamTokenForPublishing" type="button" value="Create Publish Stream Token"/>
         </div>
@@ -259,13 +260,10 @@
         <div class="col-md-4 text-center server">
             <p>Create a viewing <strong>streamToken</strong> using the <strong>sessionId</strong> and
                 <strong>originStreamId</strong>.</p>
-            <select class="form-control" id="subscriber-mode" multiple></select>
+            <div class="form-multi-button-control form-select-control" id="subscriber-mode"></div>
             <br/>
             <p>Choose <strong>DRM modifiers</strong></p>
-            <select class="form-control" id="subscriber-drm-capabilities" size="2" multiple>
-                <option value="drm-open-access" title="By default access is restricted to a single device">DRM - Open Access</option>
-                <option value="drm-hollywood">DRM - Hollywood</option>
-            </select>
+            <div class="form-multi-button-control form-select-control" id="subscriber-drm-capabilities"></div>
             <br/>
             <input id="sessionIdForViewing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="originStreamId" type="text" placeholder="originStreamId"/>

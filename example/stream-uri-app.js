@@ -337,11 +337,11 @@ requirejs([
             var originStreamId = $('#originStreamIdForPublishing').val() || '';
             var capabilities = [];
 
-            $('#publish-capabilities option:selected').each(function() {
+            $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
-            capabilities.push($('#publish-quality option:selected').val());
+            capabilities.push($('#publish-quality button.clicked').val());
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
                 app.activateStep('step-6');
@@ -358,7 +358,11 @@ requirejs([
             var originStreamId = $('#originStreamId').val();
             var capabilities = [];
 
-            $('#subscriber-mode option:selected').each(function() {
+            $('#subscriber-mode button.clicked').each(function() {
+                capabilities.push($(this).val());
+            });
+
+            $('#subscriber-drm-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 

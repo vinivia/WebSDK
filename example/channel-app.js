@@ -107,7 +107,6 @@ requirejs([
         var joinChannel = function joinChannel() {
             var channelAlias = $('#alias').val();
             var channelVideoEl = $('#channelVideo')[0];
-            var capabilities = [];
             var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
             var subscriberOptions = {};
 
@@ -126,14 +125,6 @@ requirejs([
             if (app.getUrlParameter('preferNative')) {
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
-
-            $('#subscriber-mode option:selected').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            $('#subscriber-drm-capabilities option:selected').each(function() {
-                capabilities.push($(this).val());
-            });
 
             channelExpress.joinChannel({
                 alias: channelAlias,

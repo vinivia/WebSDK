@@ -115,7 +115,11 @@ requirejs([
                 });
             }
 
-            $('#subscriber-mode option:selected').each(function() {
+            $('#subscriber-mode button.clicked').each(function() {
+                capabilities.push($(this).val());
+            });
+
+            $('#subscriber-drm-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 

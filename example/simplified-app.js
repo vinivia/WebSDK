@@ -100,11 +100,11 @@ requirejs([
             var constraints = getConstraints();
             var publishMethod = _.bind(pcastExpress.publish, pcastExpress);
 
-            $('#publish-capabilities option:selected').each(function() {
+            $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
-            capabilities.push($('#publish-quality option:selected').val());
+            capabilities.push($('#publish-quality button.clicked').val());
 
             if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
                 publishMethod = _.bind(pcastExpress.publishScreen, pcastExpress);
@@ -210,7 +210,11 @@ requirejs([
                 subscribeMethod = _.bind(pcastExpress.subscribeToScreen, pcastExpress);
             }
 
-            $('#subscriber-drm-capabilities option:selected').each(function() {
+            $('#subscriber-mode button.clicked').each(function() {
+                capabilities.push($(this).val());
+            });
+
+            $('#subscriber-drm-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
@@ -221,10 +225,6 @@ requirejs([
             if (app.getUrlParameter('targetLatency')) {
                 subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
             }
-
-            $('#subscriber-mode option:selected').each(function() {
-                capabilities.push($(this).val());
-            });
 
             subscribeMethod({
                 streamId: streamId,

@@ -111,6 +111,20 @@
         .toggle-off.glyphicon-facetime-video:before {
             opacity: .4;
         }
+
+        .form-select-control {
+            margin-bottom: 10px;
+        }
+
+        .form-select-control button {
+            border-radius: 5px;
+            margin: 2px 2px 2px 2px;
+        }
+
+        .form-select-control button.clicked{
+            background-color: black;
+            color: white;
+        }
     </style>
 
     <script>
@@ -227,8 +241,9 @@
         </div>
         <div class="col-md-4 text-center server">
             <p>Create a publish <strong>streamToken</strong> using the <strong>sessionId</strong>.</p>
-            <select class="form-control" id="publish-capabilities" multiple></select>
-            <select class="form-control" id="publish-quality"></select>
+            <div class="form-multi-button-control form-select-control" id="publish-capabilities"></div>
+            <p>Choose <strong>Quality</strong></p>
+            <div class="form-single-button-control form-select-control" id="publish-quality"></div>
             <input id="sessionIdForPublishing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="originStreamIdForPublishing" class="originStreamId" type="text" placeholder="originStreamId"/>
             <input id="createStreamTokenForPublishing" type="button" value="Create Publish Stream Token"/>
@@ -293,7 +308,9 @@
         <div class="col-md-4 text-center server">
             <p>Create a viewing <strong>streamToken</strong> using the <strong>sessionId</strong> and
                 <strong>originStreamId</strong>.</p>
-            <select class="form-control" id="subscriber-mode" multiple></select>
+            <div class="form-multi-button-control form-select-control" id="subscriber-mode"></div>
+            <p>Choose <strong>DRM modifiers</strong></p>
+            <div class="form-multi-button-control form-select-control" id="subscriber-drm-capabilities"></div>
             <input id="sessionIdForViewing" class="sessionId" type="text" placeholder="sessionId"/>
             <input id="originStreamId" type="text" placeholder="originStreamId"/>
             <input id="createStreamTokenForViewing" type="button" value="Create Viewing Stream Token"/>

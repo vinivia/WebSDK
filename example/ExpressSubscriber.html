@@ -122,6 +122,20 @@
         .required-field-input{
             width: 100%;
         }
+
+        .form-select-control {
+            margin-bottom: 10px;
+        }
+
+        .form-select-control button {
+            border-radius: 5px;
+            margin: 2px 2px 2px 2px;
+        }
+
+        .form-select-control button.clicked{
+            background-color: black;
+            color: white;
+        }
     </style>
 
     <script>
@@ -193,7 +207,9 @@
 <div class="row step step-1">
     <div class="col-md-4 col-md-offset-4 text-center client">
         <p>Subscribe to a stream.</p>
-        <select class="form-control" id="subscriber-mode" multiple></select>
+        <div class="form-multi-button-control form-select-control" id="subscriber-mode"></div>
+        <p>Choose <strong>DRM modifiers</strong></p>
+        <div class="form-multi-button-control form-select-control" id="subscriber-drm-capabilities"></div>
         <input id="subscribe" type="button" value="Subscribe To Stream"/>
         <input id="stopSubscriber" class="disabled" type="button" value="Stop Subscriber"/>
     </div>

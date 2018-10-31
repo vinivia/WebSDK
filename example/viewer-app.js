@@ -149,11 +149,11 @@ requirejs([
             var capabilities = [];
             var subscriberOptions = {disableAudioIfNoOutputFound: true};
 
-            $('#subscriber-drm-capabilities option:selected').each(function() {
+            $('#subscriber-mode button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
-            $('#subscriber-mode option:selected').each(function() {
+            $('#subscriber-drm-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 

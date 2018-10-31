@@ -99,3 +99,16 @@ input[name="option"] {
 .hidden {
     display: none;
 }
+
+.form-select-control {
+    margin-bottom: 10px;
+}
+.form-select-control button {
+    border-radius: 5px;
+    margin: 2px 2px 2px 2px;
+}
+
+.form-select-control button.clicked{
+    background-color: black;
+    color: white;
+}
