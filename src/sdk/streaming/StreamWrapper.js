@@ -41,7 +41,7 @@ define([
                 return that._onPlayerEnd();
             }
 
-            that.streamEndedCallback(getStreamEndedStatus(reason), reason);
+            that.streamEndedCallback(StreamWrapper.getStreamEndedStatus(reason), reason);
         });
     }
 
@@ -107,7 +107,7 @@ define([
         return this._stream;
     };
 
-    function getStreamEndedStatus(value) {
+    StreamWrapper.getStreamEndedStatus = function getStreamEndedStatus(value) {
         switch (value) {
         case '':
         case 'none':
@@ -127,10 +127,16 @@ define([
             return 'capacity';
         case 'app-background':
             return 'app-background';
+        case 'egress-failed':
+            return 'egress-failed';
+        case 'egress-setup-failed':
+            return 'egress-setup-failed';
+        case 'overload':
+            return 'overload';
         default:
             return 'custom';
         }
-    }
+    };
 
     return StreamWrapper;
 });

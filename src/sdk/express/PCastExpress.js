@@ -1151,6 +1151,7 @@ define([
             }, capacityBackoffTimeout);
         case 'failed':
         case 'maintenance':
+        case 'overload':
             // Don't inform the client, attempt to re-publish automatically
             return retry(reason);
         case 'app-background':

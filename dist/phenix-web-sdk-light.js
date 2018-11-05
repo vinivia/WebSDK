@@ -4113,7 +4113,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-10-15T16:17:53Z';
+    var sdkVersion = '2018-11-05T19:18:14Z';
 
     function PCast(options) {
         options = options || {};
@@ -4740,35 +4740,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }, true);
     }
 
-    function getStreamEndedReason(value) {
-        switch (value) {
-        case '':
-        case 'none':
-        case 'ended':
-            return 'ended';
-        case 'server-error':
-        case 'session-error':
-        case 'not-ready':
-        case 'error':
-        case 'died':
-            return 'failed';
-        case 'censored':
-            return 'censored';
-        case 'maintenance':
-            return 'maintenance';
-        case 'capacity':
-            return 'capacity';
-        case 'app-background':
-            return 'app-background';
-        case 'egress-failed':
-            return 'egress-failed';
-        case 'egress-setup-failed':
-            return 'egress-setup-failed';
-        default:
-            return 'custom';
-        }
-    }
-
     function streamEnded(event) {
         var streamId = event.streamId;
         var reason = event.reason;
@@ -4800,7 +4771,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var internalMediaStream = this._mediaStreams[streamId];
 
         if (internalMediaStream) {
-            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason, true);
+            internalMediaStream.streamEndedCallback(StreamWrapper.getStreamEndedStatus(reason), reason, true);
         }
 
         delete this._mediaStreams[streamId];
@@ -4808,7 +4779,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var publisher = this._publishers[streamId];
 
         if (publisher && _.isFunction(publisher.publisherEndedCallback)) {
-            publisher.publisherEndedCallback(publisher, getStreamEndedReason(reason), reason);
+            publisher.publisherEndedCallback(publisher, StreamWrapper.getStreamEndedStatus(reason), reason);
         }
 
         delete this._publishers[streamId];
@@ -7429,6 +7400,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }, capacityBackoffTimeout);
         case 'failed':
         case 'maintenance':
+        case 'overload':
             // Don't inform the client, attempt to re-publish automatically
             return retry(reason);
         case 'app-background':
@@ -9469,7 +9441,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return that._onPlayerEnd();
             }
 
-            that.streamEndedCallback(getStreamEndedStatus(reason), reason);
+            that.streamEndedCallback(StreamWrapper.getStreamEndedStatus(reason), reason);
         });
     }
 
@@ -9535,7 +9507,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._stream;
     };
 
-    function getStreamEndedStatus(value) {
+    StreamWrapper.getStreamEndedStatus = function getStreamEndedStatus(value) {
         switch (value) {
         case '':
         case 'none':
@@ -9555,10 +9527,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return 'capacity';
         case 'app-background':
             return 'app-background';
+        case 'egress-failed':
+            return 'egress-failed';
+        case 'egress-setup-failed':
+            return 'egress-setup-failed';
+        case 'overload':
+            return 'overload';
         default:
             return 'custom';
         }
-    }
+    };
 
     return StreamWrapper;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -9884,7 +9862,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
+    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10139,7 +10117,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
+    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11596,7 +11574,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-10-15T16:17:53Z',
+                version: '2018-11-05T19:18:14Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17401,8 +17379,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-10-15T16:17:53Z' || '?';
-    var releaseVersion = '2018.4.0';
+    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
+    var releaseVersion = '2018.4.1';
 
     function Logger() {
         this._appenders = [];

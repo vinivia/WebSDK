@@ -670,35 +670,6 @@ define([
         }, true);
     }
 
-    function getStreamEndedReason(value) {
-        switch (value) {
-        case '':
-        case 'none':
-        case 'ended':
-            return 'ended';
-        case 'server-error':
-        case 'session-error':
-        case 'not-ready':
-        case 'error':
-        case 'died':
-            return 'failed';
-        case 'censored':
-            return 'censored';
-        case 'maintenance':
-            return 'maintenance';
-        case 'capacity':
-            return 'capacity';
-        case 'app-background':
-            return 'app-background';
-        case 'egress-failed':
-            return 'egress-failed';
-        case 'egress-setup-failed':
-            return 'egress-setup-failed';
-        default:
-            return 'custom';
-        }
-    }
-
     function streamEnded(event) {
         var streamId = event.streamId;
         var reason = event.reason;
@@ -730,7 +701,7 @@ define([
         var internalMediaStream = this._mediaStreams[streamId];
 
         if (internalMediaStream) {
-            internalMediaStream.streamEndedCallback(getStreamEndedReason(reason), reason, true);
+            internalMediaStream.streamEndedCallback(StreamWrapper.getStreamEndedStatus(reason), reason, true);
         }
 
         delete this._mediaStreams[streamId];
@@ -738,7 +709,7 @@ define([
         var publisher = this._publishers[streamId];
 
         if (publisher && _.isFunction(publisher.publisherEndedCallback)) {
-            publisher.publisherEndedCallback(publisher, getStreamEndedReason(reason), reason);
+            publisher.publisherEndedCallback(publisher, StreamWrapper.getStreamEndedStatus(reason), reason);
         }
 
         delete this._publishers[streamId];
