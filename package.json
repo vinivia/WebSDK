@@ -94,7 +94,7 @@
     "phenix-web-application-activity-detector": "2018.3.0",
     "phenix-web-assert": "2018.3.0",
     "phenix-web-batch-http": "2018.4.0",
-    "phenix-web-closest-endpoint-resolver": "2018.4.0",
+    "phenix-web-closest-endpoint-resolver": "2018.4.1",
     "phenix-web-detect-browser": "2018.3.0",
     "phenix-web-disposable": "2018.3.0",
     "phenix-web-event": "2018.3.0",

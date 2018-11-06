@@ -1529,7 +1529,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(err);
                 }
 
-                var closestEndPointResolver = new ClosestEndPointResolver(that._logger, that._version, callback, function(err, response){
+                var closestEndPointResolver = new ClosestEndPointResolver({
+                    logger: that._logger,
+                    version: that._version
+                }, callback, function(err, response){
                     if(err){
                         that._logger.warn('An error occured in resolving an endpoint', err);
 
@@ -1556,7 +1559,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-11-05T19:18:14Z',
+                version: '2018-11-06T21:47:22Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9251,7 +9254,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-11-05T19:18:14Z';
+    var sdkVersion = '2018-11-06T21:47:22Z';
 
     function PCast(options) {
         options = options || {};
@@ -15203,7 +15206,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
+    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15458,7 +15461,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
+    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -16657,30 +16660,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, http, disposable) {
     'use strict';
 
-    var measurementsPerEndPoint = 4;
-    var endpointClosenessThreshold = 30;
-
-    function ClosestEndPointResolver(logger, version, onClosestEndpointFound, onAnEndpointResolved) {
-        assert.isObject(logger, 'logger');
-        assert.isStringNotEmpty(version, 'version');
+    function ClosestEndPointResolver(options, onClosestEndpointFound, onAnEndpointResolved) {
+        assert.isObject(options, 'options');
+        assert.isObject(options.logger, 'options.logger');
+        assert.isStringNotEmpty(options.version, 'options.version');
         assert.isFunction(onClosestEndpointFound, 'onClosestEndpointFound');
 
         if (onAnEndpointResolved) {
             assert.isFunction(onAnEndpointResolved, 'onAnEndpointResolved');
         }
 
-        this._logger = logger;
-        this._version = version;
+        this._logger = options.logger;
+        this._version = options.version;
         this._onClosestEndpointFound = onClosestEndpointFound;
-
-        if (onAnEndpointResolved) {
-            this._onAnEndpointResolved = onAnEndpointResolved;
-        }
-
-        this._done = false;
-        this._minTime = Number.MAX_VALUE;
-        this._minResponseText = '';
+        this._onAnEndpointResolved = onAnEndpointResolved;
         this._disposables = new disposable.DisposableList();
+        this._done = false;
     }
 
     ClosestEndPointResolver.prototype.isResolved = function isResolved() {
@@ -16691,95 +16686,63 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disposables.dispose();
     };
 
-    ClosestEndPointResolver.prototype.measurementCallback = function measurementCallback(endPoint, time, responseText) {
-        if (time < this._minTime) {
-            this._logger.info('Current closest end point is [%s] with latency of [%s] ms', responseText, time);
-            this._minTime = time;
-            this._minResponseText = responseText;
+    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint, time, data) {
+        if (this.isResolved()) {
+            return;
         }
 
-        return this.isResolved();
-    };
+        this._done = true;
 
-    ClosestEndPointResolver.prototype.completeCallback = function completeCallback(endPoint) { // eslint-disable-line no-unused-vars
-        if (this._minResponseText && this._minTime < Number.MAX_VALUE && !this.isResolved()) {
-            this._done = true;
-
-            return this._onClosestEndpointFound(null, {
-                uri: this._minResponseText,
-                roundTripTime: this._minTime
-            });
-        }
+        return this._onClosestEndpointFound(null, {
+            uri: data,
+            roundTripTime: time,
+            endPoint: endPoint
+        });
     };
 
     ClosestEndPointResolver.prototype.resolveAll = function resolveAll(endPoints) {
         for (var i = 0; i < endPoints.length; i++) {
-            this.resolve(endPoints[i], measurementsPerEndPoint);
+            this.resolve(endPoints[i]);
         }
     };
 
-    ClosestEndPointResolver.prototype.resolve = function resolve(endPoint, measurements) {
+    ClosestEndPointResolver.prototype.resolve = function resolve(endPoint) {
         var that = this;
-        var measurement = 1;
-        var successfulAttempts = 0;
+        var maxRetryAttempts = 1;
 
-        var nextMeasurement = function nextMeasurement(endPoint) {
-            var maxAttempts = 1;
-            var start = _.now();
+        that._logger.info('Checking end point [%s]', endPoint);
 
-            that._logger.info('[%s] Checking end point [%s]', measurement, endPoint);
+        var requestDisposable = http.getWithRetry(endPoint, {
+            timeout: 15000,
+            queryParameters: {
+                version: that._version,
+                _: _.now()
+            },
+            retryOptions: {maxAttempts: maxRetryAttempts}
+        }, function(err, response) {
+            var time = _.get(response, ['stats', 'successResponseTime'], 0);
 
-            var requestDisposable = http.getWithRetry(endPoint, {
-                timeout: 15000,
-                queryParameters: {
-                    version: that._version,
-                    _: _.now()
-                },
-                retryOptions: {maxAttempts: maxAttempts}
-            }, function(err, response) {
-                var end = _.now();
-                var time = end - start;
-                var timeAboveThreshold = time > endpointClosenessThreshold;
-
-                if (that._onAnEndpointResolved) {
-                    if (err) {
-                        that._onAnEndpointResolved(err);
-                    } else {
-                        that._onAnEndpointResolved(null, {
-                            time: time,
-                            endPoint: endPoint
-                        });
-                    }
+            if (that._onAnEndpointResolved) {
+                if (err) {
+                    that._onAnEndpointResolved(err);
+                } else {
+                    that._onAnEndpointResolved(null, {
+                        time: time,
+                        endPoint: endPoint
+                    });
                 }
+            }
 
-                measurement++;
+            if (err) {
+                return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
+            } else if (that.isResolved()) {
+                return;
+            }
 
-                if (!err) {
-                    if (that.measurementCallback(endPoint, time, response.data)) {
-                        // Done
-                        return;
-                    }
+            return that.completeCallback(endPoint, time, response.data);
+        });
 
-                    successfulAttempts++;
-                }
-
-                if (measurement <= measurements && !that.isResolved() && (timeAboveThreshold || err)) {
-                    if (err) {
-                        that._logger.info('Retrying after failure to resolve end point [%s] with [%s]', endPoint, err);
-                    }
-
-                    return nextMeasurement(endPoint);
-                } else if (successfulAttempts === 0) {
-                    return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
-                }
-
-                return that.completeCallback(endPoint);
-            });
-
-            that._disposables.add(requestDisposable);
-        };
-
-        nextMeasurement(endPoint);
+        that._disposables.add(requestDisposable);
     };
 
     return ClosestEndPointResolver;
@@ -24696,7 +24659,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-05T19:18:14Z' || '?';
+    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
     var releaseVersion = '2018.4.1';
 
     function Logger() {
