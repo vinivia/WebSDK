@@ -1561,7 +1561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-11-06T21:47:22Z',
+                version: '2018-11-12T23:01:25Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9256,7 +9256,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-11-06T21:47:22Z';
+    var sdkVersion = '2018-11-12T23:01:25Z';
 
     function PCast(options) {
         options = options || {};
@@ -10964,6 +10964,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             removeTurnsServers(config);
         }
 
+        switch(phenixRTC.browser){
+        case 'Firefox':
+            // Firefox doesn't support TURN with TCP/TLS https://bugzilla.mozilla.org/show_bug.cgi?id=1056934
+            removeTurnsServers(config);
+
+            break;
+        case 'Edge':
+            // Edge doesn't support TURN with TCP
+            forceTurnUdp(config);
+
+            break;
+        default:
+            break;
+        }
+
         return config;
     }
 
@@ -10975,6 +10990,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         _.forEach(config.iceServers, function(server) {
             server.urls = _.filter(server.urls, function(url) {
                 return !_.startsWith(url, 'turns');
+            });
+        });
+
+        return config;
+    }
+
+    function forceTurnUdp(config) {
+        if (!config) {
+            return config;
+        }
+
+        _.forEach(config.iceServers, function(server) {
+            server.urls = _.map(server.urls, function(url) {
+                return url.replace('transport=tcp', 'transport=udp');
             });
         });
 
@@ -15208,7 +15237,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
+    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15463,7 +15492,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
+    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24661,8 +24690,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-06T21:47:22Z' || '?';
-    var releaseVersion = '2018.4.1';
+    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
+    var releaseVersion = '2018.4.2';
 
     function Logger() {
         this._appenders = [];

@@ -1751,6 +1751,21 @@ define([
             removeTurnsServers(config);
         }
 
+        switch(phenixRTC.browser){
+        case 'Firefox':
+            // Firefox doesn't support TURN with TCP/TLS https://bugzilla.mozilla.org/show_bug.cgi?id=1056934
+            removeTurnsServers(config);
+
+            break;
+        case 'Edge':
+            // Edge doesn't support TURN with TCP
+            forceTurnUdp(config);
+
+            break;
+        default:
+            break;
+        }
+
         return config;
     }
 
@@ -1762,6 +1777,20 @@ define([
         _.forEach(config.iceServers, function(server) {
             server.urls = _.filter(server.urls, function(url) {
                 return !_.startsWith(url, 'turns');
+            });
+        });
+
+        return config;
+    }
+
+    function forceTurnUdp(config) {
+        if (!config) {
+            return config;
+        }
+
+        _.forEach(config.iceServers, function(server) {
+            server.urls = _.map(server.urls, function(url) {
+                return url.replace('transport=tcp', 'transport=udp');
             });
         });
 
