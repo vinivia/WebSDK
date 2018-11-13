@@ -1561,7 +1561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-11-12T23:01:25Z',
+                version: '2018-11-21T19:56:41Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -5620,11 +5620,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
         if (!validPCastStatus(this.getPCastStatus())) {
-            throw new Error('Unable to perform action. Status [%s]. Please wait to reconnect.', this.getPCastStatus());
+            throw new Error('Unable to perform action. Status [' + this.getPCastStatus() + ']. Please wait to reconnect.');
         }
 
         if (!validPCastSessionId(this.getPCastSessionId())) {
-            throw new Error('Unable to perform action. Invalid sessionId [%s]', this.getPCastSessionId());
+            throw new Error('Unable to perform action. Invalid sessionId [' + this.getPCastSessionId() + ']');
         }
     };
 
@@ -9256,7 +9256,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-11-12T23:01:25Z';
+    var sdkVersion = '2018-11-21T19:56:41Z';
+    var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
         options = options || {};
@@ -9305,6 +9306,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
         this._featureDetector = new FeatureDetector(options.features);
+        this._pendingIceCandidates = {};
+        this._addIceCandidatesTimeoutScheduled = {};
 
         var that = this;
         var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
@@ -10702,7 +10705,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (response && _.includes(response.options, 'ice-candidates')) {
-                that._iceCandidateCallbacks = _.bind(onIceCandidate, that, streamId);
+                that._iceCandidateCallbacks[streamId] = _.bind(onIceCandidate, that, streamId);
             }
 
             var localSdp = response.sessionDescription.sdp;
@@ -10728,16 +10731,54 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function onIceCandidate(streamId, candidate) {
         var that = this;
-        var candidates = [];
-        var iceCandidatesOptions = [];
 
-        if (candidate) {
-            candidates.push(candidate);
-        } else {
-            iceCandidatesOptions.push('completed');
+        if (!this._pendingIceCandidates[streamId]) {
+            this._pendingIceCandidates[streamId] = [];
         }
 
-        that._protocol.addIceCandidates(streamId, candidate, iceCandidatesOptions, function(error, response) {
+        if (candidate) {
+            this._pendingIceCandidates[streamId].push(candidate);
+        } else {
+            if (that._addIceCandidatesTimeoutScheduled[streamId]) {
+                that._logger.debug('[%s] Dismissing scheduled batch for adding ICE candidates. Sending candidates immediately because there are no more candidates.', streamId);
+                clearTimeout(that._addIceCandidatesTimeoutScheduled[streamId]);
+            }
+
+            submitIceCandidates.call(that, streamId, ['completed']);
+
+            delete this._pendingIceCandidates[streamId];
+            delete this._addIceCandidatesTimeoutScheduled[streamId];
+        }
+
+        if (this._addIceCandidatesTimeoutScheduled[streamId]) {
+            that._logger.debug('[%s] Using existing batch for adding ICE candidates', streamId);
+
+            return;
+        }
+
+        this._addIceCandidatesTimeoutScheduled[streamId] = setTimeout(function() {
+            submitIceCandidates.call(that, streamId, []);
+
+            delete that._addIceCandidatesTimeoutScheduled[streamId];
+        }, accumulateIceCandidatesDuration);
+
+        this._disposables.add(new disposable.Disposable(function() {
+            if (that._addIceCandidatesTimeoutScheduled[streamId]) {
+                clearTimeout(that._addIceCandidatesTimeoutScheduled[streamId]);
+            }
+
+            delete that._pendingIceCandidates[streamId];
+            delete that._addIceCandidatesTimeoutScheduled[streamId];
+        }));
+    }
+
+    function submitIceCandidates(streamId, options) {
+        var that = this;
+        var candidates = this._pendingIceCandidates[streamId].slice();
+        this._pendingIceCandidates[streamId] = [];
+
+        this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, candidates.length, options);
+        this._protocol.addIceCandidates(streamId, candidates, options, function(error, response) {
             if (error) {
                 return that._logger.error('Failed to add ICE candidate [%s]', error);
             } else if (response.status !== 'ok') {
@@ -10960,11 +11001,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function applyVendorSpecificLogic(config) {
-        if (phenixRTC.browser === 'Firefox') {
-            removeTurnsServers(config);
-        }
-
-        switch(phenixRTC.browser){
+        switch (phenixRTC.browser) {
         case 'Firefox':
             // Firefox doesn't support TURN with TCP/TLS https://bugzilla.mozilla.org/show_bug.cgi?id=1056934
             removeTurnsServers(config);
@@ -15237,7 +15274,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
+    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15492,7 +15529,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
+    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24690,8 +24727,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-12T23:01:25Z' || '?';
-    var releaseVersion = '2018.4.2';
+    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
+    var releaseVersion = '2018.4.3';
 
     function Logger() {
         this._appenders = [];
