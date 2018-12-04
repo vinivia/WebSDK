@@ -235,6 +235,8 @@ define([
                     });
                 });
 
+                normalizedStatistics.timestamp = report.timestamp;
+
                 normalizedReport[normalizedStatistics.id] = normalizedStatistics;
             });
 

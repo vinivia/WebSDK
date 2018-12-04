@@ -751,7 +751,7 @@ define([
                 clearTimeout(setupTimeoutId);
             }
 
-            if (numberOfActiveTracks !== masterStream.getTracks().length) {
+            if (numberOfActiveTracks !== masterStream.getTracks().length && phenixRTC.browser !== 'ReactNative') {
                 setupTimeoutId = setTimeout(function() {
                     state.failed = true;
                     that._logger.warn('[%s] Did not receive all tracks within [%s] ms', streamId, streamSetupInterval);
@@ -1389,7 +1389,7 @@ define([
         }
 
         if (phenixRTC.browser === 'ReactNative') {
-            offerSdp = setGroupLineOrderToMatchMediaSectionOrder(offerSdp);
+            offerSdp = sdpUtil.setGroupLineOrderToMatchMediaSectionOrder(offerSdp);
         }
 
         var onFailure = function onFailure(status) {
@@ -1833,22 +1833,6 @@ define([
 
         return config;
     }
-
-    var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {
-        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
-        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
-        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
-
-        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
-            return sdp.indexOf('m=' + nameA) > sdp.indexOf('m=' + nameB);
-        });
-
-        if (sortedMediaSegmentNames.length > 0) {
-            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
-        }
-
-        return sdp;
-    };
 
     // Shim required. Webrtc adapter successfully shims but breaks Edge.
     var shimPeerConnectionGetStreams = function(peerConnection) {

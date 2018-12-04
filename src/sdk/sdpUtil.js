@@ -195,5 +195,21 @@ define([
         return _.get(peerConnection, ['remoteDescription', 'sdp'], '');
     };
 
+    sdpUtil.prototype.setGroupLineOrderToMatchMediaSectionOrder = function setGroupLineOrderToMatchMediaSectionOrder(sdp) {
+        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
+        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
+        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
+
+        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
+            return sdp.indexOf('m=' + nameA) - sdp.indexOf('m=' + nameB);
+        });
+
+        if (sortedMediaSegmentNames.length > 0) {
+            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
+        }
+
+        return sdp;
+    };
+
     return new sdpUtil();
 });

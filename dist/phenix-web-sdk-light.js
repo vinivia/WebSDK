@@ -1070,6 +1070,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     });
                 });
 
+                normalizedStatistics.timestamp = report.timestamp;
+
                 normalizedReport[normalizedStatistics.id] = normalizedStatistics;
             });
 
@@ -2624,6 +2626,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return _.get(peerConnection, ['remoteDescription', 'sdp'], '');
     };
 
+    sdpUtil.prototype.setGroupLineOrderToMatchMediaSectionOrder = function setGroupLineOrderToMatchMediaSectionOrder(sdp) {
+        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
+        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
+        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
+
+        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
+            return sdp.indexOf('m=' + nameA) - sdp.indexOf('m=' + nameB);
+        });
+
+        if (sortedMediaSegmentNames.length > 0) {
+            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
+        }
+
+        return sdp;
+    };
+
     return new sdpUtil();
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -4113,7 +4131,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-11-21T19:56:41Z';
+    var sdkVersion = '2018-12-04T20:12:46Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -4821,7 +4839,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 clearTimeout(setupTimeoutId);
             }
 
-            if (numberOfActiveTracks !== masterStream.getTracks().length) {
+            if (numberOfActiveTracks !== masterStream.getTracks().length && phenixRTC.browser !== 'ReactNative') {
                 setupTimeoutId = setTimeout(function() {
                     state.failed = true;
                     that._logger.warn('[%s] Did not receive all tracks within [%s] ms', streamId, streamSetupInterval);
@@ -5459,7 +5477,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         if (phenixRTC.browser === 'ReactNative') {
-            offerSdp = setGroupLineOrderToMatchMediaSectionOrder(offerSdp);
+            offerSdp = sdpUtil.setGroupLineOrderToMatchMediaSectionOrder(offerSdp);
         }
 
         var onFailure = function onFailure(status) {
@@ -5903,22 +5921,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         return config;
     }
-
-    var setGroupLineOrderToMatchMediaSectionOrder = function(sdp) {
-        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
-        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
-        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
-
-        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
-            return sdp.indexOf('m=' + nameA) > sdp.indexOf('m=' + nameB);
-        });
-
-        if (sortedMediaSegmentNames.length > 0) {
-            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
-        }
-
-        return sdp;
-    };
 
     // Shim required. Webrtc adapter successfully shims but breaks Edge.
     var shimPeerConnectionGetStreams = function(peerConnection) {
@@ -9928,7 +9930,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
+    var sdkVersion = '2018-12-04T20:12:46Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10183,7 +10185,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
+    var sdkVersion = '2018-12-04T20:12:46Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11603,7 +11605,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-11-21T19:56:41Z',
+                version: '2018-12-04T20:12:46Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17408,8 +17410,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-11-21T19:56:41Z' || '?';
-    var releaseVersion = '2018.4.3';
+    var sdkVersion = '2018-12-04T20:12:46Z' || '?';
+    var releaseVersion = '2018.4.4';
 
     function Logger() {
         this._appenders = [];
