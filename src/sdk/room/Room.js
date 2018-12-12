@@ -29,7 +29,7 @@ define([
 
     Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
         assert.isStringNotEmpty(name, 'name');
-        assert.isStringNotEmpty(description, 'description');
+        assert.isString(description, 'description');
         assert.isArray(members, 'members');
 
         if (id) {
