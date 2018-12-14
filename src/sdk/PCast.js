@@ -1518,13 +1518,14 @@ define([
 
     function onIceCandidate(streamId, candidate) {
         var that = this;
+        var iceCandidates = this._pendingIceCandidates[streamId];
 
-        if (!this._pendingIceCandidates[streamId]) {
-            this._pendingIceCandidates[streamId] = [];
+        if (!iceCandidates) {
+            iceCandidates = this._pendingIceCandidates[streamId] = [];
         }
 
         if (candidate) {
-            this._pendingIceCandidates[streamId].push(candidate);
+            iceCandidates.push(candidate);
         } else {
             if (that._addIceCandidatesTimeoutScheduled[streamId]) {
                 that._logger.debug('[%s] Dismissing scheduled batch for adding ICE candidates. Sending candidates immediately because there are no more candidates.', streamId);
@@ -1560,12 +1561,18 @@ define([
     }
 
     function submitIceCandidates(streamId, options) {
-        var that = this;
-        var candidates = this._pendingIceCandidates[streamId].slice();
-        this._pendingIceCandidates[streamId] = [];
+        var iceCandidates = this._pendingIceCandidates[streamId] || [];
 
-        this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, candidates.length, options);
-        this._protocol.addIceCandidates(streamId, candidates, options, function(error, response) {
+        if (iceCandidates.length === 0 && options.length === 0) {
+            return;
+        }
+
+        var that = this;
+
+        delete that._pendingIceCandidates[streamId];
+
+        this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, iceCandidates.length, options);
+        this._protocol.addIceCandidates(streamId, iceCandidates, options, function(error, response) {
             if (error) {
                 return that._logger.error('Failed to add ICE candidate [%s]', error);
             } else if (response.status !== 'ok') {
