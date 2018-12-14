@@ -227,9 +227,9 @@ requirejs([
 
                 $('.streamIdForPublishing').val(publisher.getStreamId());
                 $('#originStreamId').val(publisher.getStreamId());
-                app.activateStep('step-5-5');
+                app.activateStep('step-8');
                 setTimeout(function() {
-                    app.activateStep('step-6');
+                    app.activateStep('step-9');
                 }, 1500);
             };
 
@@ -340,6 +340,8 @@ requirejs([
             $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
+
+            capabilities.push('publish-uri');
 
             capabilities.push($('#publish-quality button.clicked').val());
 

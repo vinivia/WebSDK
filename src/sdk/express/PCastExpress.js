@@ -66,7 +66,6 @@ define([
         }
 
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
-        this._subscribers = {};
         this._publishers = {};
         this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
         this._isInstantiated = false;
@@ -867,10 +866,8 @@ define([
 
         var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
-                var placeholder = _.uniqueId();
                 var retryOptions = _.assign({isContinuation: true}, options);
 
-                that._subscribers[placeholder] = true;
                 that._ignoredStreamEnds[subscriber.getStreamId()] = true;
 
                 subscriber.stop(reason);
@@ -878,8 +875,6 @@ define([
                 that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
 
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
-
-                delete that._subscribers[placeholder];
             };
 
             if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
@@ -915,8 +910,6 @@ define([
             }
 
             delete options.authFailure;
-
-            that._subscribers[subscriber.getStreamId()] = subscriber;
 
             var renderer;
 

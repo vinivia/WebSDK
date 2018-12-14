@@ -1561,7 +1561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-12-12T23:06:40Z',
+                version: '2018-12-14T00:53:33Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -3893,7 +3893,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
-        this._subscribers = {};
         this._publishers = {};
         this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
         this._isInstantiated = false;
@@ -4694,10 +4693,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         var handleSubscribe = function(pcast, status, subscriber) {
             var retrySubscriber = function retrySubscriber(reason) {
-                var placeholder = _.uniqueId();
                 var retryOptions = _.assign({isContinuation: true}, options);
 
-                that._subscribers[placeholder] = true;
                 that._ignoredStreamEnds[subscriber.getStreamId()] = true;
 
                 subscriber.stop(reason);
@@ -4705,8 +4702,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
 
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
-
-                delete that._subscribers[placeholder];
             };
 
             if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
@@ -4742,8 +4737,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             delete options.authFailure;
-
-            that._subscribers[subscriber.getStreamId()] = subscriber;
 
             var renderer;
 
@@ -9272,7 +9265,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-12-12T23:06:40Z';
+    var sdkVersion = '2018-12-14T00:53:33Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -10747,13 +10740,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function onIceCandidate(streamId, candidate) {
         var that = this;
+        var iceCandidates = this._pendingIceCandidates[streamId];
 
-        if (!this._pendingIceCandidates[streamId]) {
-            this._pendingIceCandidates[streamId] = [];
+        if (!iceCandidates) {
+            iceCandidates = this._pendingIceCandidates[streamId] = [];
         }
 
         if (candidate) {
-            this._pendingIceCandidates[streamId].push(candidate);
+            iceCandidates.push(candidate);
         } else {
             if (that._addIceCandidatesTimeoutScheduled[streamId]) {
                 that._logger.debug('[%s] Dismissing scheduled batch for adding ICE candidates. Sending candidates immediately because there are no more candidates.', streamId);
@@ -10789,12 +10783,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function submitIceCandidates(streamId, options) {
-        var that = this;
-        var candidates = this._pendingIceCandidates[streamId].slice();
-        this._pendingIceCandidates[streamId] = [];
+        var iceCandidates = this._pendingIceCandidates[streamId] || [];
 
-        this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, candidates.length, options);
-        this._protocol.addIceCandidates(streamId, candidates, options, function(error, response) {
+        if (iceCandidates.length === 0 && options.length === 0) {
+            return;
+        }
+
+        var that = this;
+
+        delete that._pendingIceCandidates[streamId];
+
+        this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, iceCandidates.length, options);
+        this._protocol.addIceCandidates(streamId, iceCandidates, options, function(error, response) {
             if (error) {
                 return that._logger.error('Failed to add ICE candidate [%s]', error);
             } else if (response.status !== 'ok') {
@@ -11605,7 +11605,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return membersChangedCallback(members, streamStatus);
             };
 
-            function monitorChannelSubsciber(mediaStreamId, error, response) {
+            function monitorChannelSubscriber(mediaStreamId, error, response) {
                 if (lastStreamId !== mediaStreamId) {
                     return; // Ignore old streams
                 }
@@ -11620,6 +11620,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 if (response.retry && memberSelector.getStrategy() !== 'high-availability') {
+                    that._logger.info('Retrying to subscribe to channel [%s] after stream [%s] failed with reason [%s]',
+                        channelId, mediaStreamId, response.status);
+
                     return response.retry();
                 }
 
@@ -11634,7 +11637,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             var subscribeOptions = _.assign({}, {
                 monitor: {
-                    callback: _.bind(monitorChannelSubsciber, this, streamId),
+                    callback: _.bind(monitorChannelSubscriber, this, streamId),
                     options: {conditionCountForNotificationThreshold: 8}
                 }
             }, options);
@@ -13452,7 +13455,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
-    var iceConnectionTimeout = 5000;
+    var iceConnectionTimeout = 8000;
 
     function PhenixRealTimeStream(streamId, streamSrc, peerConnection, streamTelemetry, options, logger) {
         this._streamId = streamId;
@@ -13699,26 +13702,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function onIceConnectionChange() {
         var that = this;
+        var connectionState = this._peerConnection.iceConnectionState;
 
-        switch (this._peerConnection.iceConnectionState) {
+        switch (connectionState) {
         case 'checking':
         case 'connecting':
-            if (_.isNumber(this._connectionSuccessTimeout)) {
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
                 return;
             }
 
             this._connectionStart = _.now();
-            this._connectionSuccessTimeout = setTimeout(function() {
-                that._logger.warn('[%s] Stream has not connected withing [%s] ms.', that._streamId, iceConnectionTimeout);
+            this._checkConnectionSuccessTimeoutId = setTimeout(function() {
+                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, iceConnectionTimeout);
                 that._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-timeout')]);
             }, iceConnectionTimeout);
 
             break;
-        case 'connected':
-            if (_.isNumber(this._connectionSuccessTimeout)) {
-                clearTimeout(this._connectionSuccessTimeout);
+        case 'closed':
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+                that._logger.warn('[%s] Stream closed before it was connected', that._streamId);
+            }
 
-                this._connectionSuccessTimeout = null;
+            break;
+        case 'connected':
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+                clearTimeout(this._checkConnectionSuccessTimeoutId);
+
+                this._checkConnectionSuccessTimeoutId = null;
             }
 
             this._logger.info('[%s] Ice Connection completed after [%s] ms', this._streamId, _.now() - this._connectionStart);
@@ -13727,6 +13737,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             break;
         default:
+            this._logger.info('[%s] Unsupported Ice Connection state [%s]', this._streamId, connectionState);
             break;
         }
     }
@@ -15274,7 +15285,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-12T23:06:40Z' || '?';
+    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15529,7 +15540,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-12T23:06:40Z' || '?';
+    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -21720,7 +21731,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var nBits = -7
@@ -21733,12 +21744,12 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   e = s & ((1 << (-nBits)) - 1)
   s >>= (-nBits)
   nBits += eLen
-  for (; nBits > 0; e = e * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; e = (e * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   m = e & ((1 << (-nBits)) - 1)
   e >>= (-nBits)
   nBits += mLen
-  for (; nBits > 0; m = m * 256 + buffer[offset + i], i += d, nBits -= 8) {}
+  for (; nBits > 0; m = (m * 256) + buffer[offset + i], i += d, nBits -= 8) {}
 
   if (e === 0) {
     e = 1 - eBias
@@ -21753,7 +21764,7 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
 
 exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   var e, m, c
-  var eLen = nBytes * 8 - mLen - 1
+  var eLen = (nBytes * 8) - mLen - 1
   var eMax = (1 << eLen) - 1
   var eBias = eMax >> 1
   var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
@@ -21786,7 +21797,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
       m = 0
       e = eMax
     } else if (e + eBias >= 1) {
-      m = (value * c - 1) * Math.pow(2, mLen)
+      m = ((value * c) - 1) * Math.pow(2, mLen)
       e = e + eBias
     } else {
       m = value * Math.pow(2, eBias - 1) * Math.pow(2, mLen)
@@ -24727,8 +24738,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-12T23:06:40Z' || '?';
-    var releaseVersion = '2018.4.5';
+    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
+    var releaseVersion = '2018.4.6';
 
     function Logger() {
         this._appenders = [];

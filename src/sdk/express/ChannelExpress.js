@@ -197,7 +197,7 @@ define([
                 return membersChangedCallback(members, streamStatus);
             };
 
-            function monitorChannelSubsciber(mediaStreamId, error, response) {
+            function monitorChannelSubscriber(mediaStreamId, error, response) {
                 if (lastStreamId !== mediaStreamId) {
                     return; // Ignore old streams
                 }
@@ -212,6 +212,9 @@ define([
                 }
 
                 if (response.retry && memberSelector.getStrategy() !== 'high-availability') {
+                    that._logger.info('Retrying to subscribe to channel [%s] after stream [%s] failed with reason [%s]',
+                        channelId, mediaStreamId, response.status);
+
                     return response.retry();
                 }
 
@@ -226,7 +229,7 @@ define([
 
             var subscribeOptions = _.assign({}, {
                 monitor: {
-                    callback: _.bind(monitorChannelSubsciber, this, streamId),
+                    callback: _.bind(monitorChannelSubscriber, this, streamId),
                     options: {conditionCountForNotificationThreshold: 8}
                 }
             }, options);

@@ -29,7 +29,7 @@ define([
 ], function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
-    var iceConnectionTimeout = 5000;
+    var iceConnectionTimeout = 8000;
 
     function PhenixRealTimeStream(streamId, streamSrc, peerConnection, streamTelemetry, options, logger) {
         this._streamId = streamId;
@@ -276,26 +276,33 @@ define([
 
     function onIceConnectionChange() {
         var that = this;
+        var connectionState = this._peerConnection.iceConnectionState;
 
-        switch (this._peerConnection.iceConnectionState) {
+        switch (connectionState) {
         case 'checking':
         case 'connecting':
-            if (_.isNumber(this._connectionSuccessTimeout)) {
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
                 return;
             }
 
             this._connectionStart = _.now();
-            this._connectionSuccessTimeout = setTimeout(function() {
-                that._logger.warn('[%s] Stream has not connected withing [%s] ms.', that._streamId, iceConnectionTimeout);
+            this._checkConnectionSuccessTimeoutId = setTimeout(function() {
+                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, iceConnectionTimeout);
                 that._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-timeout')]);
             }, iceConnectionTimeout);
 
             break;
-        case 'connected':
-            if (_.isNumber(this._connectionSuccessTimeout)) {
-                clearTimeout(this._connectionSuccessTimeout);
+        case 'closed':
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+                that._logger.warn('[%s] Stream closed before it was connected', that._streamId);
+            }
 
-                this._connectionSuccessTimeout = null;
+            break;
+        case 'connected':
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+                clearTimeout(this._checkConnectionSuccessTimeoutId);
+
+                this._checkConnectionSuccessTimeoutId = null;
             }
 
             this._logger.info('[%s] Ice Connection completed after [%s] ms', this._streamId, _.now() - this._connectionStart);
@@ -304,6 +311,8 @@ define([
 
             break;
         default:
+            this._logger.info('[%s] Unsupported Ice Connection state [%s]', this._streamId, connectionState);
+
             break;
         }
     }
