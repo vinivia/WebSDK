@@ -1561,7 +1561,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-12-14T00:53:33Z',
+                version: '2018-12-17T18:35:13Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -7482,9 +7482,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultConditionMonitoringInterval = 1500;
     var defaultFrameRateThreshold = 2;
     var defaultAudioBitRateThreshold = 5000;
-    var defaultVideoBitRateThreshold = 6000;
+    var defaultVideoBitRateThreshold = 1000;
     var defaultConditionCountForNotificationThreshold = 3;
     var defaultTimeoutForNoData = 5000;
+    var minMonitoringInterval = 500;
     var minEdgeMonitoringInterval = 6000;
     var minEdgeConditionCountForNotification = 2;
 
@@ -7508,12 +7509,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             throw new Error('Invalid monitoring direction');
         }
 
+        var monitoringEnabled = options.hasOwnProperty('monitoringInterval') ? options.monitoringInterval > 0 : true;
+
+        if (!monitoringEnabled) {
+            this._logger.info('[%s] Monitoring is disabled', name);
+
+            return;
+        }
+
         this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
         this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
         this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
         this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
-        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
-        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
+        this._monitoringInterval = Math.max(minMonitoringInterval, options.monitoringInterval || defaultMonitoringInterval);
+        this._conditionMonitoringInterval = Math.max(minMonitoringInterval, options.conditionMonitoringInterval || defaultConditionMonitoringInterval);
         this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
         this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
@@ -7764,7 +7773,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 };
 
                 if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS,'
+                        + ' audio bit rate [' + audioBitRate + '] bps'
+                        + ', video bit rate [' + videoBitRate + '] bps'
+                        + ', connection state [' + peerConnection.connectionState + '],'
+                        + ' and ice connection state [' + peerConnection.iceConnectionState + ']'
+                    + ' after [' + conditionCount + '] checks';
                     var streamDeadFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
@@ -9265,7 +9279,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-12-14T00:53:33Z';
+    var sdkVersion = '2018-12-17T18:35:13Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -13738,6 +13752,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             break;
         default:
             this._logger.info('[%s] Unsupported Ice Connection state [%s]', this._streamId, connectionState);
+
             break;
         }
     }
@@ -15285,7 +15300,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
+    var sdkVersion = '2018-12-17T18:35:13Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15540,7 +15555,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
+    var sdkVersion = '2018-12-17T18:35:13Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24738,7 +24753,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-14T00:53:33Z' || '?';
+    var sdkVersion = '2018-12-17T18:35:13Z' || '?';
     var releaseVersion = '2018.4.6';
 
     function Logger() {

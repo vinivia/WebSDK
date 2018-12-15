@@ -27,9 +27,10 @@ define([
     var defaultConditionMonitoringInterval = 1500;
     var defaultFrameRateThreshold = 2;
     var defaultAudioBitRateThreshold = 5000;
-    var defaultVideoBitRateThreshold = 6000;
+    var defaultVideoBitRateThreshold = 1000;
     var defaultConditionCountForNotificationThreshold = 3;
     var defaultTimeoutForNoData = 5000;
+    var minMonitoringInterval = 500;
     var minEdgeMonitoringInterval = 6000;
     var minEdgeConditionCountForNotification = 2;
 
@@ -53,12 +54,20 @@ define([
             throw new Error('Invalid monitoring direction');
         }
 
+        var monitoringEnabled = options.hasOwnProperty('monitoringInterval') ? options.monitoringInterval > 0 : true;
+
+        if (!monitoringEnabled) {
+            this._logger.info('[%s] Monitoring is disabled', name);
+
+            return;
+        }
+
         this._frameRateFailureThreshold = options.frameRateThreshold || defaultFrameRateThreshold;
         this._videoBitRateFailureThreshold = options.videoBitRateThreshold || defaultVideoBitRateThreshold;
         this._audioBitRateFailureThreshold = options.audioBitRateThreshold || defaultAudioBitRateThreshold;
         this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
-        this._monitoringInterval = options.monitoringInterval || defaultMonitoringInterval;
-        this._conditionMonitoringInterval = options.monitoringInterval || defaultConditionMonitoringInterval;
+        this._monitoringInterval = Math.max(minMonitoringInterval, options.monitoringInterval || defaultMonitoringInterval);
+        this._conditionMonitoringInterval = Math.max(minMonitoringInterval, options.conditionMonitoringInterval || defaultConditionMonitoringInterval);
         this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
         this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
         this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
@@ -309,7 +318,12 @@ define([
                 };
 
                 if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS, audio bit rate [' + audioBitRate + '] bps, video bit rate [' + videoBitRate + '] bps, connection state [' + peerConnection.connectionState + '], and ice connection state [' + peerConnection.iceConnectionState + ']';
+                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS,'
+                        + ' audio bit rate [' + audioBitRate + '] bps'
+                        + ', video bit rate [' + videoBitRate + '] bps'
+                        + ', connection state [' + peerConnection.connectionState + '],'
+                        + ' and ice connection state [' + peerConnection.iceConnectionState + ']'
+                    + ' after [' + conditionCount + '] checks';
                     var streamDeadFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
                     var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
