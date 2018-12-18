@@ -771,13 +771,10 @@ define([
 
         var publishCallback = function publishCallback(pcast, status, publisher) {
             var retryPublisher = function retryPublisher(reason) {
-                var placeholder = _.uniqueId();
                 var optionsWithToken = _.assign({
                     streamToken: streamToken,
                     isContinuation: true
                 }, options);
-
-                that._publishers[placeholder] = true;
 
                 that._logger.warn('Retrying publisher after failure with reason [%s]', reason);
 
@@ -790,8 +787,6 @@ define([
                     publisher.stop(reason, true);
                     getStreamingTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
                 }
-
-                delete that._publishers[placeholder];
             };
 
             if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
@@ -823,14 +818,9 @@ define([
 
             cachedPublisher = publisher;
 
-            if (options.videoElement && !hasAlreadyAttachedMedia) {
-                rtc.attachMediaStream(options.videoElement, userMediaOrUri);
-
-                hasAlreadyAttachedMedia = true;
-            }
-
             var isPublisher = true;
             var noopCallback = function() {};
+
             var publisherEndedCallback = _.bind(onPublisherOrStreamEnd, that, noopCallback, retryPublisher, isPublisher);
 
             if (options.monitor) {
@@ -844,6 +834,18 @@ define([
             publisher.setPublisherEndedCallback(publisherEndedCallback);
 
             var expressPublisher = createExpressPublisher.call(that, publisher, options.videoElement, cleanUpUserMediaOnStop);
+
+            if (options.videoElement && !hasAlreadyAttachedMedia) {
+                rtc.attachMediaStream(options.videoElement, userMediaOrUri, function(e) {
+                    if (e) {
+                        that._logger.warn('[%s] Failed to attach publish media stream to video element.', publisher.getStreamId(), e);
+
+                        return;
+                    }
+                });
+
+                hasAlreadyAttachedMedia = true;
+            }
 
             callback(null, {
                 status: 'ok',

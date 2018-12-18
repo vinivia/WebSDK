@@ -59,6 +59,7 @@ define([
     };
 
     PhenixRealTimeRenderer.prototype.start = function(elementToAttachTo) {
+        var that = this;
         var hasAudioTrack = !!_.find(this._streamSrc.getTracks(), function(track) {
             return track.kind === 'audio';
         });
@@ -71,7 +72,34 @@ define([
             }
         }
 
-        this._element = rtc.attachMediaStream(elementToAttachTo, this._streamSrc);
+        this._element = rtc.attachMediaStream(elementToAttachTo, this._streamSrc, function(e) {
+            if (!e) {
+                that._logger.debug('[%s] Successfully started playing stream.', that._streamId);
+
+                return;
+            }
+
+            if (elementToAttachTo.muted || !hasAudioTrack) {
+                that._logger.warn('[%s] Failed to play muted stream.', that._streamId, e);
+
+                return that._namedEvents.fire(streamEnums.rendererEvents.ended.name, ['failed-to-play']);
+            }
+
+            that._logger.debug('[%s] Failed to start playing stream. Auto muting the playback and trying again.', that._streamId);
+            elementToAttachTo.muted = true;
+
+            that._namedEvents.fire(streamEnums.rendererEvents.autoMuted.name, ['retry-play-muted']);
+
+            rtc.attachMediaStream(elementToAttachTo, that._streamSrc, function(e) {
+                if (e) {
+                    that._logger.warn('[%s] Failed to play even after auto muting.', that._streamId, e);
+
+                    return that._namedEvents.fire(streamEnums.rendererEvents.ended.name, ['failed-to-play']);
+                }
+
+                that._logger.info('[%s] Successfully started playing stream after auto muting. User may manually unmute with user triggered action.', that._streamId);
+            });
+        });
 
         this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
         this._disposables.add(this._streamTelemetry.recordRebuffering(elementToAttachTo));

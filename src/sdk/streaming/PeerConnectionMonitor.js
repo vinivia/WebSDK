@@ -161,11 +161,11 @@ define([
                     if (options.direction === 'outbound' && stats.direction === 'upload') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (stats.avgEncode) {
+                            if (typeof stats.avgEncode === 'number') {
                                 additionalMessage += ' with average encoding time [' + stats.avgEncode + '] ms';
                             }
 
-                            if (stats.cpuLimitedResolution) {
+                            if (typeof stats.cpuLimitedResolution === 'number') {
                                 additionalMessage += ' (CPU limited=[' + stats.cpuLimitedResolution + '])';
                             }
 
@@ -197,11 +197,11 @@ define([
                     if (options.direction === 'inbound' && stats.direction === 'download') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (stats.currentDelay) {
+                            if (typeof stats.currentDelay === 'number') {
                                 additionalMessage += ' with current delay [' + stats.currentDelay + '] ms';
                             }
 
-                            if (stats.targetDelay) {
+                            if (typeof stats.targetDelay === 'number') {
                                 additionalMessage += ' and target delay [' + stats.targetDelay + '] ms';
                             }
 
@@ -220,7 +220,7 @@ define([
 
                             break;
                         case 'audio':
-                            if (stats.jitterBuffer) {
+                            if (typeof stats.jitterBuffer === 'number') {
                                 additionalMessage += ' with jitter buffer [' + stats.jitterBuffer + '] ms';
                             }
 

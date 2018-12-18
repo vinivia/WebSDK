@@ -90,7 +90,7 @@
     "moment": "2.22.1",
     "phantomjs-prebuilt": "2.1.16",
     "phenix-react-gum-configuration": "2017.4.6",
-    "phenix-rtc": "2018.4.0",
+    "phenix-rtc": "2018.4.1",
     "phenix-web-application-activity-detector": "2018.3.0",
     "phenix-web-assert": "2018.3.0",
     "phenix-web-batch-http": "2018.4.0",

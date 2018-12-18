@@ -80,6 +80,10 @@ define([
             userActionRequired: {
                 id: 2,
                 name: 'userActionRequired'
+            },
+            autoMuted: {
+                id: 3,
+                name: 'autoMuted'
             }
         }
     };

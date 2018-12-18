@@ -67,6 +67,8 @@ define('video-player', [
                 changePlayerVideoDimensions.call(that, dimensions);
             });
 
+            renderer.on('autoMuted', _.bind(updateMuteClass, this, this.stream, this.video));
+
             renderer.start(this.video);
         } else if (!renderer && sdk.utils.rtc.attachMediaStream) {
             sdk.utils.rtc.attachMediaStream(this.video, this.stream);
@@ -99,6 +101,10 @@ define('video-player', [
             this.video.__renderer = null;
             this.renderer = null;
         }
+    };
+
+    Player.prototype.reevaluteMuteState = function reevaluteMuteState() {
+        return updateMuteClass.call(this, this.stream, this.video);
     };
 
     function setupVideoEvents() {
@@ -279,7 +285,7 @@ define('video-player', [
         setVideoWidthAndHeight.call(this, dimensions, this.options);
     }
 
-    var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementWhileStreamIsActive(stream, videoElement, onEnd) {
+    var displayVideoElementAndControlsWhileStreamIsActive = function displayVideoElementAndControlsWhileStreamIsActive(stream, videoElement, onEnd) {
         var video = $(videoElement);
         var videoControlsContainer = $(this.videoControls);
         var videoControls = $(videoControlsContainer).children();
@@ -290,6 +296,22 @@ define('video-player', [
 
         videoControls.removeClass('hidden');
 
+        updateMuteClass.call(this, stream, videoElement);
+
+        this.lastUpdate = 0;
+        this.boundOnTimeUpdate = videoElementOnTimeUpdate.bind(this);
+
+        _.addEventListener(videoElement, 'timeupdate', this.boundOnTimeUpdate);
+
+        if (onEnd) {
+            onEnd(onStreamEnd.bind(this));
+        }
+    };
+
+    var updateMuteClass = function updateMuteClass(stream, videoElement) {
+        var video = $(videoElement);
+        var videoControlsContainer = $(this.videoControls);
+
         if (stream) {
             var isLocal = video.hasClass('local');
             var isAudioMuted = !isMediaStreamTrackEnabled(stream.getAudioTracks()) || (!isLocal && video[0] && video[0].muted);
@@ -299,15 +321,6 @@ define('video-player', [
             setVideoMuteClass(isVideoMuted, $(videoControlsContainer).find('.mute-video'));
         } else {
             $(videoControlsContainer).find('.mute-video').addClass('hidden');
-        }
-
-        this.lastUpdate = 0;
-        this.boundOnTimeUpdate = videoElementOnTimeUpdate.bind(this);
-
-        _.addEventListener(videoElement, 'timeupdate', this.boundOnTimeUpdate);
-
-        if (onEnd) {
-            onEnd(onStreamEnd.bind(this));
         }
     };
 

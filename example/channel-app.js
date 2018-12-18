@@ -219,6 +219,16 @@ requirejs([
                     });
                 });
 
+                response.renderer.on('autoMuted', function(message) {
+                    channelExpress.getPCastExpress().getPCast().getLogger().warn('Stream was auto muted', message);
+                    app.createNotification('info', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>User Action Required</strong>',
+                        message: message
+                    });
+                    channelPlayer.reevaluteMuteState();
+                });
+
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Viewing Channel</strong>',

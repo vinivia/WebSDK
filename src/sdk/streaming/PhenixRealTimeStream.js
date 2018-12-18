@@ -64,7 +64,6 @@ define([
 
     PhenixRealTimeStream.prototype.createRenderer = function() {
         var that = this;
-
         var renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
 
         renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
