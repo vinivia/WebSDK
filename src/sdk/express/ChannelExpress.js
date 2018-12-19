@@ -33,6 +33,7 @@ define([
         maxOfflineTime: 24 * 60 * 60 * 1000, // 1 day
         maxReconnectFrequency: 60 * 1000 // 60 seconds
     };
+    var roomResetGracePeriod = 10000;
 
     function ChannelExpress(options) {
         assert.isObject(options, 'options');
@@ -135,7 +136,8 @@ define([
             var presenters = _.filter(members, function(member) {
                 return member.getObservableRole().getValue() === memberEnums.roles.presenter.name && member.getObservableStreams().getValue().length > 0;
             });
-            var forceNewMemberSelection = !!streamErrorStatus || !lastMediaStream || !lastStreamId;
+            var wasRoomResetRecently = channelRoomService && channelRoomService.getLastResetTimestamp() > (_.now() - roomResetGracePeriod);
+            var forceNewMemberSelection = (!!streamErrorStatus && streamErrorStatus !== 'client-side-failure') || (!wasRoomResetRecently && streamErrorStatus === 'client-side-failure') || !lastMediaStream || !lastStreamId;
             var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
             var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
             var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
@@ -169,7 +171,7 @@ define([
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
-            if (streamId === lastStreamId) {
+            if (!wasRoomResetRecently && streamId === lastStreamId) {
                 if (streamErrorStatus) {
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
                         lastStreamId, channelId, streamErrorStatus);

@@ -1565,7 +1565,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-12-19T18:54:46Z',
+                version: '2018-12-20T00:05:48Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -6190,12 +6190,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._activeRoom = new observable.Observable(null);
         this._cachedRoom = new observable.Observable(null);
         this._roomChatService = null;
+        this._lastResetTimestamp = 0;
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
         this._authService = new AuthenticationService(this._pcast);
     }
+
+    RoomService.prototype.getLastResetTimestamp = function getLastResetTimestamp() {
+        return this._lastResetTimestamp;
+    };
 
     RoomService.prototype.start = function start(role, screenName) {
         if (this._started) {
@@ -6403,7 +6408,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         leaveRoomRequest.call(that, function() {
             enterRoomRequest.call(that, roomId, alias, function() {
-                that._logger.info('Room Reset Completed');
+                that._logger.info('Room reset completed');
+                that._lastResetTimestamp = _.now();
             });
         });
     }
@@ -9285,7 +9291,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-12-19T18:54:46Z';
+    var sdkVersion = '2018-12-20T00:05:48Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11471,6 +11477,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         maxOfflineTime: 24 * 60 * 60 * 1000, // 1 day
         maxReconnectFrequency: 60 * 1000 // 60 seconds
     };
+    var roomResetGracePeriod = 10000;
 
     function ChannelExpress(options) {
         assert.isObject(options, 'options');
@@ -11573,7 +11580,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var presenters = _.filter(members, function(member) {
                 return member.getObservableRole().getValue() === memberEnums.roles.presenter.name && member.getObservableStreams().getValue().length > 0;
             });
-            var forceNewMemberSelection = !!streamErrorStatus || !lastMediaStream || !lastStreamId;
+            var wasRoomResetRecently = channelRoomService && channelRoomService.getLastResetTimestamp() > (_.now() - roomResetGracePeriod);
+            var forceNewMemberSelection = (!!streamErrorStatus && streamErrorStatus !== 'client-side-failure') || (!wasRoomResetRecently && streamErrorStatus === 'client-side-failure') || !lastMediaStream || !lastStreamId;
             var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
             var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
             var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
@@ -11607,7 +11615,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
-            if (streamId === lastStreamId) {
+            if (!wasRoomResetRecently && streamId === lastStreamId) {
                 if (streamErrorStatus) {
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
                         lastStreamId, channelId, streamErrorStatus);
@@ -15343,7 +15351,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
+    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15598,7 +15606,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
+    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24796,8 +24804,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
-    var releaseVersion = '2018.4.9';
+    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
+    var releaseVersion = '2018.4.10';
 
     function Logger() {
         this._appenders = [];

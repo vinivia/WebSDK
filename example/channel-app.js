@@ -16,7 +16,7 @@
 /* global requirejs */
 requirejs.config({
     paths: {
-        'phenix-web-sdk': 'web-sdk',
+        'phenix-web-sdk': 'phenix-web-sdk',
         'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
@@ -107,7 +107,7 @@ requirejs([
         var joinChannel = function joinChannel() {
             var channelAlias = $('#alias').val();
             var channelVideoEl = $('#channelVideo')[0];
-            var streamSelectionStrategy = app.getUrlParameter('strategy') || 'high-availability';
+            var streamSelectionStrategy = app.getUrlParameter('strategy');
             var subscriberOptions = {};
 
             if (!channelAlias) {

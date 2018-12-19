@@ -16,7 +16,7 @@
 /* global requirejs */
 requirejs.config({
     paths: {
-        'phenix-web-sdk': 'web-sdk',
+        'phenix-web-sdk': 'phenix-web-sdk',
         'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
