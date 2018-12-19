@@ -219,19 +219,21 @@ define([
 
                 transitionToStatus.call(that, 'offline');
 
-                switch (err.code) {
-                case 0:
-                    that._authenticationCallback.call(that, that, 'network-unavailable', '');
+                if (that._authenticationCallback) {
+                    switch (err.code) {
+                    case 0:
+                        that._authenticationCallback.call(that, that, 'network-unavailable', '');
 
-                    break;
-                case 503:
-                    that._authenticationCallback.call(that, that, 'capacity', '');
+                        break;
+                    case 503:
+                        that._authenticationCallback.call(that, that, 'capacity', '');
 
-                    break;
-                default:
-                    that._authenticationCallback.call(that, that, 'failed', '');
+                        break;
+                    default:
+                        that._authenticationCallback.call(that, that, 'failed', '');
 
-                    break;
+                        break;
+                    }
                 }
 
                 that._stopped = true;
@@ -244,6 +246,10 @@ define([
 
             that._networkOneWayLatency = endPoint.roundTripTime / 2;
             that._resolvedEndPoint = endPoint.uri;
+
+            if (!that._started) {
+                return;
+            }
 
             instantiateProtocol.call(that, endPoint.uri);
         });
@@ -290,7 +296,11 @@ define([
             });
         } finally {
             if (this._protocol) {
-                this._protocol.disconnect();
+                try {
+                    this._protocol.disconnect();
+                } catch (e) {
+                    that._logger.warn('Failed to disconnect pcast', e);
+                }
 
                 this._protocol = null;
             }

@@ -1567,7 +1567,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-12-18T21:38:10Z',
+                version: '2018-12-19T18:54:46Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9287,7 +9287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-12-18T21:38:10Z';
+    var sdkVersion = '2018-12-19T18:54:46Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -9463,19 +9463,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 transitionToStatus.call(that, 'offline');
 
-                switch (err.code) {
-                case 0:
-                    that._authenticationCallback.call(that, that, 'network-unavailable', '');
+                if (that._authenticationCallback) {
+                    switch (err.code) {
+                    case 0:
+                        that._authenticationCallback.call(that, that, 'network-unavailable', '');
 
-                    break;
-                case 503:
-                    that._authenticationCallback.call(that, that, 'capacity', '');
+                        break;
+                    case 503:
+                        that._authenticationCallback.call(that, that, 'capacity', '');
 
-                    break;
-                default:
-                    that._authenticationCallback.call(that, that, 'failed', '');
+                        break;
+                    default:
+                        that._authenticationCallback.call(that, that, 'failed', '');
 
-                    break;
+                        break;
+                    }
                 }
 
                 that._stopped = true;
@@ -9488,6 +9490,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             that._networkOneWayLatency = endPoint.roundTripTime / 2;
             that._resolvedEndPoint = endPoint.uri;
+
+            if (!that._started) {
+                return;
+            }
 
             instantiateProtocol.call(that, endPoint.uri);
         });
@@ -9534,7 +9540,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             });
         } finally {
             if (this._protocol) {
-                this._protocol.disconnect();
+                try {
+                    this._protocol.disconnect();
+                } catch (e) {
+                    that._logger.warn('Failed to disconnect pcast', e);
+                }
 
                 this._protocol = null;
             }
@@ -15335,7 +15345,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-18T21:38:10Z' || '?';
+    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15590,7 +15600,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-18T21:38:10Z' || '?';
+    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24788,8 +24798,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-18T21:38:10Z' || '?';
-    var releaseVersion = '2018.4.8';
+    var sdkVersion = '2018-12-19T18:54:46Z' || '?';
+    var releaseVersion = '2018.4.9';
 
     function Logger() {
         this._appenders = [];
