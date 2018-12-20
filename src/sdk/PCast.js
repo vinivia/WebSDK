@@ -20,6 +20,7 @@ define([
     'phenix-web-disposable',
     './logging/pcastLoggerFactory',
     'phenix-web-http',
+    'phenix-web-application-activity-detector',
     './environment',
     './audio/AudioContext',
     './PCastProtocol',
@@ -40,7 +41,7 @@ define([
     './streaming/BitRateMonitor',
     'phenix-rtc',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -76,6 +77,14 @@ define([
             assert.isBoolean(options.disableConsoleLogging, 'options.disableConsoleLogging');
         }
 
+        if (!_.isNullOrUndefined(options.treatBackgroundAsOffline)) {
+            assert.isBoolean(options.treatBackgroundAsOffline, 'options.treatBackgroundAsOffline');
+        }
+
+        if (!_.isNullOrUndefined(options.reAuthenticateOnForeground)) {
+            assert.isBoolean(options.reAuthenticateOnForeground, 'options.reAuthenticateOnForeground');
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -89,6 +98,8 @@ define([
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
+        this._treatBackgroundAsOffline = options.treatBackgroundAsOffline === true;
+        this._reAuthenticateOnForeground = options.reAuthenticateOnForeground === true;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
@@ -210,6 +221,14 @@ define([
 
         this._disposables.add(this._endPoint);
         this._disposables.add(this._sessionTelemetry);
+
+        if (this._treatBackgroundAsOffline) {
+            this._disposables.add(applicationActivityDetector.onBackground(_.bind(handleBackground, this)));
+        }
+
+        if (this._treatBackgroundAsOffline || this._reAuthenticateOnForeground) {
+            this._disposables.add(applicationActivityDetector.onForeground(_.bind(handleForeground, this)));
+        }
 
         var that = this;
 
@@ -622,10 +641,14 @@ define([
         transitionToStatus.call(this, 'reconnecting');
     }
 
-    function reconnected() {
-        transitionToStatus.call(this, 'reconnected');
+    function reconnected(optionalReason) {
+        if (optionalReason) {
+            assert.isString('reason', optionalReason);
+        }
 
-        this._logger.info('Attempting to re-authenticate after reconnect event');
+        transitionToStatus.call(this, 'reconnected', optionalReason);
+
+        this._logger.info('Attempting to re-authenticate after reconnected event');
 
         reAuthenticate.call(this);
     }
@@ -1734,6 +1757,10 @@ define([
         if (oldStatus !== newStatus && !(isOfflineStatus(oldStatus) && newStatus === 'offline')) {
             this._observableStatus.setValue(newStatus);
 
+            var protocol = this.getProtocol();
+            var sessionId = protocol ? protocol.getSessionId() : '';
+            this._logger.debug('[%s] Transition from [%s] to [%s] with reason [%s]', sessionId, oldStatus, newStatus, reason);
+
             if (suppressCallback) {
                 return;
             }
@@ -1766,6 +1793,14 @@ define([
             peerConnection.close();
             peerConnection.__closing = true;
         }
+    }
+
+    function handleForeground() {
+        return reconnected.call(this, 'entered-foreground');
+    }
+
+    function handleBackground() {
+        return transitionToStatus.call(this, 'offline', 'entered-background');
     }
 
     function parseProtobufMessage(message) {
