@@ -45,6 +45,7 @@ define([
         this._limit = 0;
         this._backgroundMonitorEventCallback = null;
         this._disposables = new disposable.DisposableList();
+        this._connected = 0;
 
         this._disposables.add(applicationActivityDetector.onForeground(_.bind(emitPendingBackgroundEvent, this)));
 
@@ -291,6 +292,17 @@ define([
             }, iceConnectionTimeout);
 
             break;
+        case 'failed':
+            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+                clearTimeout(this._checkConnectionSuccessTimeoutId);
+
+                this._checkConnectionSuccessTimeoutId = null;
+            }
+
+            this._logger.warn('[%s] Stream has failed', that._streamId);
+            this._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-failed')]);
+
+            break;
         case 'closed':
             if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
                 that._logger.warn('[%s] Stream closed before it was connected', that._streamId);
@@ -304,8 +316,8 @@ define([
                 this._checkConnectionSuccessTimeoutId = null;
             }
 
-            this._logger.info('[%s] Ice Connection completed after [%s] ms', this._streamId, _.now() - this._connectionStart);
-
+            this._connected++;
+            this._logger.info('[%s] Ice Connection completed after [%s] ms for [%s] time', this._streamId, _.now() - this._connectionStart, this._connected);
             this._connectionStart = null;
 
             break;

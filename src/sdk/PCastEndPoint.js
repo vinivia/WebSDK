@@ -73,9 +73,9 @@ define([
                 var closestEndPointResolver = new ClosestEndPointResolver({
                     logger: that._logger,
                     version: that._version
-                }, callback, function(err, response){
-                    if(err){
-                        that._logger.warn('An error occured in resolving an endpoint', err);
+                }, callback, function(err, response) {
+                    if (err) {
+                        that._logger.warn('An error occurred in resolving an endpoint', err);
 
                         return;
                     }

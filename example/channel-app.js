@@ -77,7 +77,8 @@ requirejs([
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
-                rtmp: {swfSrc: app.getSwfFilePath()}
+                rtmp: {swfSrc: app.getSwfFilePath()},
+                treatBackgroundAsOffline: true
             };
 
             if (app.getUrlParameter('ssmr')) {
@@ -89,6 +90,10 @@ requirejs([
 
             if (app.getUrlParameter('features')) {
                 expressOptions.features = app.getUrlParameter('features').split(',');
+            }
+
+            if (app.getUrlParameter('treatBackgroundAsOffline')) {
+                expressOptions.treatBackgroundAsOffline = app.getUrlParameter('treatBackgroundAsOffline') !== 'false';
             }
 
             channelExpress = new sdk.express.ChannelExpress(expressOptions);
