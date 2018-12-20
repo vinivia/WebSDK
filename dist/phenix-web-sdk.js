@@ -1567,7 +1567,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2018-12-20T00:05:48Z',
+                version: '2018-12-20T01:33:10Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9293,7 +9293,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2018-12-20T00:05:48Z';
+    var sdkVersion = '2018-12-20T01:33:10Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -13307,16 +13307,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             that._logger.debug('[%s] Failed to start playing stream. Auto muting the playback and trying again.', that._streamId);
             elementToAttachTo.muted = true;
 
-            that._namedEvents.fire(streamEnums.rendererEvents.autoMuted.name, ['retry-play-muted']);
-
             rtc.attachMediaStream(elementToAttachTo, that._streamSrc, function(e) {
                 if (e) {
                     that._logger.warn('[%s] Failed to play even after auto muting.', that._streamId, e);
+
+                    // Restore muted state
+                    elementToAttachTo.muted = false;
 
                     return that._namedEvents.fire(streamEnums.rendererEvents.ended.name, ['failed-to-play']);
                 }
 
                 that._logger.info('[%s] Successfully started playing stream after auto muting. User may manually unmute with user triggered action.', that._streamId);
+
+                that._namedEvents.fire(streamEnums.rendererEvents.autoMuted.name, ['retry-play-muted']);
             });
         });
 
@@ -15353,7 +15356,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
+    var sdkVersion = '2018-12-20T01:33:10Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15608,7 +15611,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
+    var sdkVersion = '2018-12-20T01:33:10Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -24806,7 +24809,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2018-12-20T00:05:48Z' || '?';
+    var sdkVersion = '2018-12-20T01:33:10Z' || '?';
     var releaseVersion = '2018.4.10';
 
     function Logger() {
