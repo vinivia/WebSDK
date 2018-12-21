@@ -89,30 +89,54 @@ define('app-setup', [
 
         if (document.getElementById('publish-capabilities')) {
             _.forOwn(getPublisherCapabilities(), function(title, capability) {
-                $('#publish-capabilities').append($('<button>' + title + '</button>').attr('value', capability));
+                addButton('#publish-capabilities', title, capability);
             });
+        }
+
+        const rawPublisherCapabilities = getUrlParameter('publisher-capabilities') || getUrlParameter('pc');
+
+        if (rawPublisherCapabilities) {
+            const publisherCapabilities = _.trim(rawPublisherCapabilities, ',').split(',');
+
+            _.forOwn(_.difference(publisherCapabilities, _.keys(getPublisherCapabilities())), function(capability) {
+                addButton('#publish-capabilities', '[Custom] ' + capability, capability);
+            });
+
+            addClassByValues('#publish-capabilities', publisherCapabilities, 'clicked');
         }
 
         if (document.getElementById('subscriber-mode')) {
             _.forOwn(getSubscriberCapabilities(), function(title, capability) {
-                $('#subscriber-mode').append($('<button>' + title + '</button>').attr('value', capability));
+                addButton('#subscriber-mode', title, capability);
             });
         }
 
         if (document.getElementById('publish-quality')) {
-            _.forOwn(getPublisherQualities(), function(title, capability) {
-                $('#publish-quality').append($('<button>' + title + '</button>').attr('value', capability));
-            });
+            _.forOwn(getPublisherQualities(), function(title, quality) {
+                const isSelected = quality === defaultPublisherQuality;
 
-            if ($('#publish-quality [value=' + defaultPublisherQuality + ']')) {
-                $('#publish-quality [value=' + defaultPublisherQuality + ']').addClass('clicked');
-            }
+                addButton('#publish-quality', title, quality, isSelected);
+            });
         }
 
         if (document.getElementById('subscriber-drm-capabilities')) {
             _.forOwn(getDrmModifiers(), function(title, capability) {
-                $('#subscriber-drm-capabilities').append($('<button>' + title + '</button>').attr('value', capability));
+                addButton('#subscriber-drm-capabilities', title, capability);
             });
+        }
+
+        const rawSubscriberCapabilities = getUrlParameter('subscriber-capabilities') || getUrlParameter('sc');
+
+        if (rawSubscriberCapabilities) {
+            const subscriberCapabilities = _.trim(rawSubscriberCapabilities, ',').split(',');
+            const defaultSubscriberCapabilities = _.merge(getSubscriberCapabilities(), getDrmModifiers());
+
+            _.forOwn(_.difference(subscriberCapabilities, _.keys(defaultSubscriberCapabilities)), function(capability) {
+                addButton('#subscriber-mode', '[Custom] ' + capability, capability);
+            });
+
+            addClassByValues('#subscriber-mode', subscriberCapabilities, 'clicked');
+            addClassByValues('#subscriber-drm-capabilities', subscriberCapabilities, 'clicked');
         }
 
         var updateOptions = function updateOptions() {
@@ -380,6 +404,24 @@ define('app-setup', [
             'drm-open-access': 'DRM - Open Access',
             'drm-hollywood': 'DRM - Hollywood'
         };
+    };
+
+    const addButton = function(containerSelector, caption, value, isSelected) {
+        const button = $('<button>' + caption + '</button>').attr('value', value);
+
+        if (isSelected) {
+            button.addClass('clicked');
+        }
+
+        $(containerSelector).append(button);
+    };
+
+    const addClassByValues = function(containerSelector, values, clazz) {
+        _.forEach(values, function(value) {
+            const elements = $(containerSelector + ' [value=' + value + ']');
+
+            elements.addClass(clazz);
+        });
     };
 
     var getSwfFilePath = function() {
