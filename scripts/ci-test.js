@@ -20,6 +20,5 @@ runner.runCommands([
     'npm --version',
     'npm install',
     'npm run test',
-    'npm run lint',
-    'npm run check-copyright'
+    'npm run lint'
 ]);

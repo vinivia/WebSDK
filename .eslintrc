@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
+ * Copyright 2018 PhenixP2P Inc. Confidential and Proprietary. All Rights Reserved.
  */
 {
     "env": {
@@ -19,8 +19,9 @@
         "sourceType": "module"
     },
     "plugins": [
-        "mocha",
-        "requirejs"
+        "notice",
+        "requirejs",
+        "mocha"
     ],
     "rules" : {
         // Possible Errors - http://eslint.org/docs/rules/#possible-errors
@@ -83,6 +84,11 @@
 
         // Rules specific to this module
         "indent": [2, 4],
+        "notice/notice":["error", {
+            "mustMatch": "Copyright 2018 PhenixP2P Inc.",
+            "templateFile": "copyright.tmpl",
+            "onNonMatchingHeader": "replace"
+        }],
         "mocha/no-exclusive-tests": 2,
         "mocha/handle-done-callback": 2,
         "mocha/no-global-tests": 2,
@@ -94,6 +100,7 @@
         "requirejs/no-named-define": 0,
         "requirejs/no-commonjs-wrapper": 2,
         "requirejs/no-object-define": 1,
-        "requirejs/one-dependency-per-line": [2, { "paths": "always", "names": "never" }]
+        "requirejs/one-dependency-per-line": [2, { "paths": "always", "names": "never" }],
+        "requirejs/amd-function-arity": [2, { "allowExtraDependencies": false }]
     }
 }
