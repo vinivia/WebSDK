@@ -55,7 +55,7 @@
             expressChannel.joinChannel({
                 alias: channelAlias,
                 videoElement: videoElement,
-                capabilities: [sdk.utils.rtc.webrtcSupported ? 'real-time' : 'streaming'] // If WebRTC is not supported then fall back to streaming (~10 second latency)
+                features: sdk.utils.rtc.webrtcSupported ? ['real-time'] : ['rtmp', 'dash', 'hls'] // If WebRTC is not supported then fall back to streaming (~10 second latency)
             }, function joinChannelCallback(error, response) {
                 if (error) {
                     // Handle error

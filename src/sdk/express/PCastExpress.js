@@ -26,6 +26,7 @@ define([
 ], function(_, assert, observable, phenixWebPlayer, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
+    var instanceCounter = 0;
     var unauthorizedStatus = 'unauthorized';
     var capacityBackoffTimeout = 1000;
     var defaultPrerollSkipDuration = 500;
@@ -65,12 +66,14 @@ define([
             assert.isFunction(options.adminApiProxyClient.createAuthenticationToken, 'options.adminApiProxyClient.createAuthenticationToken');
         }
 
+        this._instanceId = ++instanceCounter;
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._publishers = {};
         this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
         this._isInstantiated = false;
-        this._reauthCount = 0;
         this._reconnectCount = 0;
+        this._reauthCount = 0;
+        this._disposed = false;
         this._authToken = options.authToken;
         this._onError = options.onError;
         this._options = options;
@@ -98,6 +101,10 @@ define([
         }
     }
 
+    PCastExpress.prototype.toString = function toString() {
+        return 'PCastExpress[' + this._instanceId + ']';
+    };
+
     PCastExpress.prototype.dispose = function dispose() {
         if (this._listedForCriticalNetworkRecoveryDisposable) {
             this._listedForCriticalNetworkRecoveryDisposable.dispose();
@@ -109,17 +116,18 @@ define([
             this._pcastObservable.setValue(null);
         }
 
-        if (_.isNumber(this._instantiatePCastTimeout)) {
-            clearTimeout(this._instantiatePCastTimeout);
-            this._instantiatePCastTimeout = null;
+        if (_.isNumber(this._instantiatePCastTimeoutId)) {
+            clearTimeout(this._instantiatePCastTimeoutId);
+            this._instantiatePCastTimeoutId = null;
         }
 
         this._adminApiProxyClient.dispose();
 
         this._reconnectCount = 0;
         this._reauthCount = 0;
+        this._disposed = true;
 
-        this._logger.info('Disposed PCast Express Instance');
+        this._logger.info('[%s] Disposed PCast Express instance', this);
     };
 
     PCastExpress.prototype.getPCast = function getPCast() {
@@ -425,7 +433,7 @@ define([
 
         this.waitForOnline(function(error) {
             if (error) {
-                that._logger.error('Failed to subscribe after error waiting for online status', error);
+                that._logger.error('[%s] Failed to subscribe after error waiting for online status', this, error);
 
                 return callback(error);
             }
@@ -434,17 +442,17 @@ define([
                 return subscribeToStream.call(that, options.streamToken, options, callback);
             }
 
-            that._logger.info('[%s] Generating stream token for subscribing to origin [%s]', that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
+            that._logger.info('[%s] [%s] Generating stream token for subscribing to origin [%s]', this, that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
 
             that._adminApiProxyClient.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
                 if (error) {
-                    that._logger.error('Failed to create stream token for subscribing', error);
+                    that._logger.error('[%s] Failed to create stream token for subscribing', this, error);
 
                     return callback(error);
                 }
 
                 if (response.status !== 'ok') {
-                    that._logger.warn('Failed to create stream token for subscribing with status [%s]', response.status);
+                    that._logger.warn('[%s] Failed to create stream token for subscribing with status [%s]', this, response.status);
 
                     return callback(null, response);
                 }
@@ -477,8 +485,8 @@ define([
         var disposeOfWaitTimeout = isNotUserAction ? _.get(that._reconnectOptions, ['maxOfflineTime']) : this._onlineTimeout;
         var pcastSubscription = null;
         var statusSubscription = null;
-        var onlineTimeout = setTimeout(function() {
-            that._logger.info('Disposing of Express Online listener after [%s] ms', disposeOfWaitTimeout);
+        var onlineTimeoutId = setTimeout(function() {
+            that._logger.info('[%s] Disposing of online listener after [%s] ms', this, disposeOfWaitTimeout);
 
             if (pcastSubscription) {
                 pcastSubscription.dispose();
@@ -488,10 +496,16 @@ define([
                 statusSubscription.dispose();
             }
 
+            if (that._disposed) {
+                that._logger.info('[%s] Instance was disposed while waiting for online, ignoring callback', this);
+
+                return;
+            }
+
             callback(new Error('timeout'));
         }, disposeOfWaitTimeout);
 
-        this._logger.info('Waiting for Online status before continuing. Timeout set to [%s]', disposeOfWaitTimeout);
+        this._logger.info('[%s] Waiting for online status before continuing. Timeout set to [%s]', this, disposeOfWaitTimeout);
 
         var subscribeToStatusChange = function(pcast) {
             if (statusSubscription) {
@@ -503,11 +517,23 @@ define([
             }
 
             statusSubscription = pcast.getObservableStatus().subscribe(function(status) {
-                if (status !== 'online') {
+                if (that._disposed) {
+                    that._logger.info('[%s] Instance was disposed while waiting for online, canceling waiting and skip triggering callback', this);
+
+                    clearTimeout(onlineTimeoutId);
+                    statusSubscription.dispose();
+                    pcastSubscription.dispose();
+
                     return;
                 }
 
-                clearTimeout(onlineTimeout);
+                if (status !== 'online') {
+                    that._logger.info('[%s] Still waiting for online status before continuing. Current status is [%s]', this, status);
+
+                    return;
+                }
+
+                clearTimeout(onlineTimeoutId);
                 statusSubscription.dispose();
                 pcastSubscription.dispose();
 
@@ -515,11 +541,7 @@ define([
             }, {initial: 'notify'});
         };
 
-        if (this._pcastObservable.getValue()) {
-            subscribeToStatusChange(this._pcastObservable.getValue());
-        }
-
-        pcastSubscription = this._pcastObservable.subscribe(subscribeToStatusChange);
+        pcastSubscription = this._pcastObservable.subscribe(subscribeToStatusChange, {initial: 'notify'});
     };
 
     function instantiatePCast() {
@@ -557,7 +579,9 @@ define([
             }
 
             if (!that._pcastObservable.getValue()) {
-                return that._logger.warn('Unable to authenticate. PCast not instantiated.');
+                that._logger.warn('[%s] Unable to authenticate. PCast not instantiated.', this);
+
+                return;
             }
 
             that._pcastObservable.getValue().start(response.authenticationToken, _.noop, _.noop, _.noop);
@@ -593,7 +617,7 @@ define([
                 return handleError.call(this, new Error(status));
             }
 
-            that._logger.info('[Express] Attempting to create new authToken and re-connect after [%s] response', unauthorizedStatus);
+            that._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
 
             return getAuthTokenAndReAuthenticate.call(that);
         case 'capacity':
@@ -606,7 +630,9 @@ define([
             that._reconnectCount = 0;
 
             if (!that._isInstantiated) {
-                that._logger.info('Express API successfully instantiated');
+                that._logger.info('[%s] Successfully instantiated', this);
+            } else {
+                that._logger.info('[%s] Successfully reconnected', this);
             }
 
             that._isInstantiated = true;
@@ -631,9 +657,9 @@ define([
         var randomLinearOffset = Math.random() * maxOffsetInSeconds * 1000;
         var timeoutWithRandomOffset = staticTimeout + randomLinearOffset;
 
-        this._logger.info('Waiting for [%s] ms before continuing to attempt to reconnect to PCast', timeoutWithRandomOffset);
+        this._logger.info('[%s] Waiting for [%s] ms before continuing to attempt to reconnect to PCast', this, timeoutWithRandomOffset);
 
-        this._instantiatePCastTimeout = setTimeout(function() {
+        this._instantiatePCastTimeoutId = setTimeout(function() {
             if (!that._pcastObservable.getValue() || !that._pcastObservable.getValue().isStarted()) {
                 return instantiatePCast.call(that);
             }
@@ -659,7 +685,9 @@ define([
             }
 
             if (!that._pcastObservable.getValue()) {
-                return that._logger.warn('Unable to authenticate. PCast not instantiated.');
+                that._logger.warn('[%s] Unable to authenticate. PCast not instantiated.', this);
+
+                return;
             }
 
             that._pcastObservable.getValue().reAuthenticate(response.authenticationToken);
@@ -723,7 +751,7 @@ define([
 
         that.waitForOnline(function(error) {
             if (error) {
-                that._logger.error('Failed to create stream token for publishing after waiting for online status', error);
+                that._logger.error('[%s] Failed to create stream token for publishing after waiting for online status', this, error);
 
                 return callback(error);
             }
@@ -736,17 +764,17 @@ define([
                 generateStreamToken = _.bind(that._adminApiProxyClient.createStreamTokenForPublishingToExternal, that._adminApiProxyClient, sessionId, options.capabilities, options.streamId);
             }
 
-            that._logger.info('[%s] Creating stream token for publishing', sessionId);
+            that._logger.info('[%s] [%s] Creating stream token for publishing', this, sessionId);
 
             generateStreamToken(function(error, response) {
                 if (error) {
-                    that._logger.error('[%s] Failed to create stream token for publishing', sessionId, error);
+                    that._logger.error('[%s] [%s] Failed to create stream token for publishing', this, sessionId, error);
 
                     return callback(error);
                 }
 
                 if (response.status !== 'ok') {
-                    that._logger.warn('[%s] Failed to create stream token for publishing with status [%s]', sessionId, response.status);
+                    that._logger.warn('[%s] [%s] Failed to create stream token for publishing with status [%s]', this, sessionId, response.status);
 
                     return callback(null, response);
                 }
@@ -776,7 +804,7 @@ define([
                     isContinuation: true
                 }, options);
 
-                that._logger.warn('Retrying publisher after failure with reason [%s]', reason);
+                that._logger.warn('[%s] Retrying publisher after failure with reason [%s]', this, reason);
 
                 that._ignoredStreamEnds[publisher.getStreamId()] = true;
 
@@ -790,7 +818,7 @@ define([
             };
 
             if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
-                that._logger.info('[Express] Attempting to create new streamToken and re-publish after [%s] response', unauthorizedStatus);
+                that._logger.info('[%s] Attempting to create new streamToken and re-publish after [%s] response', this, unauthorizedStatus);
 
                 var reAuthOptions = _.assign({
                     isContinuation: true,
@@ -803,7 +831,7 @@ define([
             }
 
             if (status !== 'ok') {
-                that._logger.warn('Failure to publish with status [%s]', status);
+                that._logger.warn('[%s] Failure to publish with status [%s]', this, status);
 
                 if (cachedPublisher) {
                     that._ignoredStreamEnds[cachedPublisher.getStreamId()] = true;
@@ -838,7 +866,7 @@ define([
             if (options.videoElement && !hasAlreadyAttachedMedia) {
                 rtc.attachMediaStream(options.videoElement, userMediaOrUri, function(e) {
                     if (e) {
-                        that._logger.warn('[%s] Failed to attach publish media stream to video element.', publisher.getStreamId(), e);
+                        that._logger.warn('[%s] [%s] Failed to attach publish media stream to video element.', this, publisher.getStreamId(), e);
 
                         return;
                     }
@@ -874,13 +902,13 @@ define([
 
                 subscriber.stop(reason);
 
-                that._logger.warn('[%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', options.streamId, reason);
+                that._logger.warn('[%s] [%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', this, options.streamId, reason);
 
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
             };
 
             if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
-                that._logger.info('[%s] [Express] Attempting to create new streamToken and re-subscribe after [%s] response', options.streamId, unauthorizedStatus);
+                that._logger.info('[%s] [%s] Attempting to create new streamToken and re-subscribe after [%s] response', this, options.streamId, unauthorizedStatus);
 
                 var reAuthOptions = _.assign({
                     isContinuation: true,
@@ -893,7 +921,7 @@ define([
             }
 
             if (status === 'streaming-not-ready') {
-                that._logger.warn('Failure to subscribe with status [%s]. Try again in a few seconds.', status);
+                that._logger.warn('[%s] Failure to subscribe with status [%s]. Try again in a few seconds.', this, status);
 
                 return callback(null, {
                     status: status,
@@ -902,7 +930,7 @@ define([
             }
 
             if (status !== 'ok') {
-                that._logger.warn('Failure to subscribe with status [%s]', status);
+                that._logger.warn('[%s] Failure to subscribe with status [%s]', this, status);
 
                 if (cachedSubsciber) {
                     that._ignoredStreamEnds[cachedSubsciber.getStreamId()] = true;
@@ -953,7 +981,7 @@ define([
                 }
 
                 if (errorType === 'phenix-player' && error.severity === phenixWebPlayer.errors.severity.RECOVERABLE) {
-                    that._logger.warn('[%s] Recoverable error occurred while playing stream with Express API. Attempting to subscribe again.', expressSubscriber.getStreamId(), error);
+                    that._logger.warn('[%s] [%s] Recoverable error occurred while playing stream with Express API. Attempting to subscribe again.', this, expressSubscriber.getStreamId(), error);
 
                     var reAuthOptions = _.assign({isContinuation: true}, options);
 
@@ -962,7 +990,7 @@ define([
                     return that.subscribe(reAuthOptions, callback);
                 }
 
-                that._logger.warn('[%s] Error occurred while playing stream with Express API. Stopping stream.', expressSubscriber.getStreamId(), error);
+                that._logger.warn('[%s] [%s] Error occurred while playing stream with Express API. Stopping stream.', this, expressSubscriber.getStreamId(), error);
 
                 expressSubscriber.stop();
 
@@ -1115,7 +1143,9 @@ define([
         };
 
         if (this._ignoredStreamEnds[publisherOrStream.getStreamId()]) {
-            return this._logger.info('Ignoring stream end due to recovery in progress [%s]', publisherOrStream.getStreamId());
+            this._logger.info('[%s] Ignoring stream end due to recovery in progress [%s]', this, publisherOrStream.getStreamId());
+
+            return;
         }
 
         switch (reason) {
@@ -1141,9 +1171,15 @@ define([
         case 'egress-failed':
         case 'capacity':
             // Don't inform the client, attempt to re-publish automatically after backoff
-            return setTimeout(function() {
+            setTimeout(function() {
+                if (this._disposed) {
+                    return;
+                }
+
                 return retry(reason);
             }, capacityBackoffTimeout);
+
+            return;
         case 'failed':
         case 'maintenance':
         case 'overload':
