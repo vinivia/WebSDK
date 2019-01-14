@@ -89,7 +89,7 @@ define([
             that._logger.debug('[%s] Failed to start playing stream. Auto muting the playback and trying again.', that._streamId);
             elementToAttachTo.muted = true;
 
-            rtc.attachMediaStream(elementToAttachTo, that._streamSrc, function(e) {
+            that._element = rtc.attachMediaStream(elementToAttachTo, that._streamSrc, function(e) {
                 if (e) {
                     that._logger.warn('[%s] Failed to play even after auto muting.', that._streamId, e);
 
