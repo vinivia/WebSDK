@@ -49,7 +49,7 @@ define([
         }
 
         if (!validPCastSessionId(this.getPCastSessionId())) {
-            throw new Error('Unable to perform action. Invalid sessionId [' + this.getPCastSessionId() + ']');
+            throw new Error('Unable to perform action. Invalid sessionId [' + this.getPCastSessionId() + '] with status [' + this.getPCastStatus() + ']');
         }
     };
 

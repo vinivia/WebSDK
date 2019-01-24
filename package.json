@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2019.0.0",
+  "version": "2019.2.0",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -24,7 +24,7 @@
     "ci-test": "node scripts/ci-test.js",
     "ci-bundle": "node scripts/ci-bundle.js",
     "ci-coverage": "node scripts/ci-coverage.js",
-    "ci-deploy": "npm run scripts/ci-deploy.js",
+    "ci-deploy": "node scripts/ci-deploy.js",
     "start": "node example/httpserver.js",
     "jpm-run": "jpm run --addon-dir src/firefox",
     "jpm-xpi": "jpm xpi --addon-dir src/firefox",

@@ -1015,9 +1015,12 @@ define([
     }
 
     function createExpressPublisher(publisher, videoElement, cleanUpUserMediaOnStop) {
+        var that = this;
         var publisherStop = _.bind(publisher.stop, publisher);
 
         publisher.stop = function(reason, isInternal) {
+            that._logger.info('[%s] [%s] Stopping publisher with reason [%s]', that, publisher.getStreamId(), reason);
+
             publisherStop(reason);
 
             if (videoElement) {
@@ -1059,9 +1062,12 @@ define([
     }
 
     function createExpressSubscriber(subscriber, renderer) {
+        var that = this;
         var subscriberStop = _.bind(subscriber.stop, subscriber);
 
         subscriber.stop = function(reason) {
+            that._logger.info('[%s] [%s] Stopping subscriber with reason [%s]', this, subscriber, reason);
+
             if (renderer) {
                 renderer.stop(reason);
             }

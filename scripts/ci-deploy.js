@@ -23,5 +23,6 @@ runner.runCommands([
     'node --version',
     'npm --version',
     'npm publish',
-    'git tag -a v' + version + ' -m "Release ' + version + '"'
+    'git tag -a v' + version + ' -m "Release ' + version + '"',
+    'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version
 ]);

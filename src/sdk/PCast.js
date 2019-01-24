@@ -115,7 +115,8 @@ define([
         var that = this;
         var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
         var logGlobalError = function logGlobalError(event) {
-            that._logger.error('Window Error Event Triggered with pcast in [%s] state', that._observableStatus.getValue(), event ? event.error : 'Unknown Error');
+            var errorToLog = event ? event.error : 'Unknown Error';
+            that._logger.error('Window Error Event Triggered with pcast in [%s] state [%s]', that._observableStatus.getValue(), /* Once for browsers that don't show stack traces */ errorToLog, errorToLog);
         };
 
         this._logger.info('Device supports features [%s], user selected [%s]', supportedFeatures, this._featureDetector.getFeatures());
@@ -805,7 +806,7 @@ define([
             var realTimeStreamDecorator = new StreamWrapper(kind, realTimeStream, that._logger);
 
             var onError = function onError(source, event) {
-                that._logger.warn('Phenix Real-Time Stream Error [%s] [%s]', source, event);
+                that._logger.info('Phenix Real-Time stream error [%s] [%s]', source, event);
 
                 realTimeStreamDecorator.streamErrorCallback(kind, event);
             };
@@ -815,7 +816,7 @@ define([
                     return;
                 }
 
-                that._logger.info('[%s] media stream has stopped with reason', streamId, reason);
+                that._logger.info('[%s] media stream has stopped with reason [%s]', streamId, reason);
 
                 closePeerConnection.call(that, streamId, peerConnection, 'stop');
 

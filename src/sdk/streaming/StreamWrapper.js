@@ -46,6 +46,10 @@ define([
         });
     }
 
+    StreamWrapper.prototype.toString = function() {
+        return 'Stream[' + (this._stream ? this._stream.getStreamId() : '') + ']';
+    };
+
     StreamWrapper.prototype.on = function(name, callback) {
         return this._stream.on(name, callback);
     };

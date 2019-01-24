@@ -418,14 +418,7 @@ define([
     }
 
     function handlePCastStatusChange(status) {
-        this._logger.info('PCast status changed to [%s]', status);
-
-        if (status.toLowerCase() !== 'offline' && this._lastPcastStatus === 'offline') {
-            // ToDo (dcy) disabled until we determine what to do when the client goes back online
-            // resetRoom.call(this);
-        } else if (status.toLowerCase() === 'offline' && this._lastPcastStatus !== 'offline' && !_.isNullOrUndefined(this._lastPcastStatus)) {
-            // ToDo (dcy) disabled until we determine what to do when the client goes offline
-        }
+        this._logger.info('PCast status changed from [%s] to [%s]', this._lastPcastStatus, status);
 
         this._lastPcastStatus = status;
     }
@@ -601,6 +594,12 @@ define([
             this._logger.info('Unable to leave room. Not currently in a room.');
 
             return callback(null, notInRoomResponse);
+        }
+
+        if (this._authService.getPCastSessionId() === '') {
+            this._logger.warn('Unable to leave room. We are currently not connected. Status [' + this._lastPcastStatus + ']');
+
+            return;
         }
 
         if (this._isLeavingRoom) {
