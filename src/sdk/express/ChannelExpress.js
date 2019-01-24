@@ -174,7 +174,7 @@ define([
 
             if (!wasRoomResetRecently && streamId === lastStreamId) {
                 if (streamErrorStatus) {
-                    that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s]',
+                    that._logger.info('Unable to find a new stream to replace stream [%s] that ended in channel [%s] with status [%s]',
                         lastStreamId, channelId, streamErrorStatus);
 
                     if (lastStreamId && lastMediaStream) {

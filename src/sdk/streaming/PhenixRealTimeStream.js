@@ -300,7 +300,7 @@ define([
                 this._checkConnectionSuccessTimeoutId = null;
             }
 
-            this._logger.warn('[%s] Stream has failed', that._streamId);
+            this._logger.info('[%s] Stream has failed', that._streamId);
             this._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-failed')]);
 
             break;

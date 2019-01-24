@@ -216,15 +216,6 @@ requirejs([
                     });
                 });
 
-                response.renderer.on('userActionRequired', function(message) {
-                    channelExpress.getPCastExpress().getPCast().getLogger().warn('Failed to resume playback', message);
-                    app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>User Action Required</strong>',
-                        message: message
-                    });
-                });
-
                 response.renderer.on('autoMuted', function(message) {
                     channelExpress.getPCastExpress().getPCast().getLogger().warn('Stream was auto muted', message);
                     app.createNotification('info', {
