@@ -426,7 +426,7 @@ define('app-setup', [
     };
 
     var getSwfFilePath = function() {
-        return './rtmp-flash-renderer-2018.3.16.swf';
+        return './flash/rtmp-flash-renderer-2018.3.16.swf';
     };
 
     var addDebugAppender = function(pcast) {

@@ -137,11 +137,11 @@ define([
             try {
                 that._player.dispose();
 
-                that._logger.info('[%s] Phenix live stream has been destroyed', that._streamId);
+                that._logger.info('[%s] Phenix stream has been destroyed', that._streamId);
 
                 finalizeStreamEnded();
             } catch (e) {
-                that._logger.error('[%s] Error while destroying Phenix live stream player [%s]', that._streamId, e.code, e);
+                that._logger.error('[%s] Error while destroying Phenix stream player [%s]', that._streamId, e.code, e);
 
                 finalizeStreamEnded();
 
@@ -270,7 +270,7 @@ define([
         this._lastProgress.time = _.now();
 
         if (this._element.buffered.length === 0) {
-            return this._logger.debug('[%s] Phenix live stream player progress event fired without any buffered content', this._streamId);
+            return this._logger.debug('[%s] Phenix stream player progress event fired without any buffered content', this._streamId);
         }
 
         var bufferedEnd = this._element.buffered.end(this._element.buffered.length - 1);
@@ -336,7 +336,7 @@ define([
     }
 
     function ended() {
-        this._logger.info('[%s] Phenix live stream player ended.', this._streamId);
+        this._logger.info('[%s] Phenix stream player ended.', this._streamId);
     }
 
     // Temporary measure. The phenix-web-player logs a lot of debug, info, and trace data

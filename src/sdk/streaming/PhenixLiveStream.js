@@ -135,7 +135,7 @@ define([
     };
 
     PhenixLiveStream.prototype.getStream = function getStream() {
-        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
+        this._logger.debug('[%s] [%s] This type of stream has no internal stream object', this._streamId, this._type);
 
         return null;
     };
@@ -149,7 +149,7 @@ define([
     };
 
     PhenixLiveStream.prototype.getStats = function getStats() {
-        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
+        this._logger.debug('[%s] [%s] This type of stream has no stats', this._streamId, this._type);
 
         return null;
     };

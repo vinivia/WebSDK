@@ -57,9 +57,9 @@ define([
     // TODO(DY) Remove once 'on' is implemented on all Phenix Stream objects
     StreamWrapper.prototype.streamErrorCallback = function(errorSource, error) {
         if (!_.isFunction(this._stream.streamErrorCallback)) {
-            this._logger.error('[%s] [%s] live stream error event [%s]', this._stream.getStreamId(), this._type, error);
+            this._logger.error('[%s] [%s] stream error event [%s]', this._stream.getStreamId(), this._type, error);
         } else {
-            this._logger.debug('[%s] [%s] live stream error event [%s]', this._stream.getStreamId(), this._type, error);
+            this._logger.debug('[%s] [%s] stream error event [%s]', this._stream.getStreamId(), this._type, error);
             this._stream.streamErrorCallback(this._stream, errorSource, error);
         }
     };

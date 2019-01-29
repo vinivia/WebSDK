@@ -1389,7 +1389,7 @@ define([
 
     function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamTelemetry, callback, createOptions) {
         if (phenixRTC.browser === 'IE') {
-            throw new Error('Subscribing in real-time not supported on IE without the PhenixP2P Plugin');
+            throw new Error('Subscribing in real-time not supported on IE');
         }
 
         var that = this;
