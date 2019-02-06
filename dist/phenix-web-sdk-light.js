@@ -2399,7 +2399,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixLiveStream.prototype.getStream = function getStream() {
-        this._logger.debug('[%s] stream not available for [%s] live streams', this._streamId, this._type);
+        this._logger.debug('[%s] [%s] This type of stream has no internal stream object', this._streamId, this._type);
 
         return null;
     };
@@ -2413,7 +2413,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixLiveStream.prototype.getStats = function getStats() {
-        this._logger.debug('[%s] stats not available for [%s] live streams', this._streamId, this._type);
+        this._logger.debug('[%s] [%s] This type of stream has no stats', this._streamId, this._type);
 
         return null;
     };
@@ -4164,7 +4164,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-01-24T22:06:24Z';
+    var sdkVersion = '2019-02-06T04:10:35Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -5508,7 +5508,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function createViewerPeerConnection(peerConnectionConfig, streamId, offerSdp, streamTelemetry, callback, createOptions) {
         if (phenixRTC.browser === 'IE') {
-            throw new Error('Subscribing in real-time not supported on IE without the PhenixP2P Plugin');
+            throw new Error('Subscribing in real-time not supported on IE');
         }
 
         var that = this;
@@ -9035,11 +9035,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             try {
                 that._player.dispose();
 
-                that._logger.info('[%s] Phenix live stream has been destroyed', that._streamId);
+                that._logger.info('[%s] Phenix stream has been destroyed', that._streamId);
 
                 finalizeStreamEnded();
             } catch (e) {
-                that._logger.error('[%s] Error while destroying Phenix live stream player [%s]', that._streamId, e.code, e);
+                that._logger.error('[%s] Error while destroying Phenix stream player [%s]', that._streamId, e.code, e);
 
                 finalizeStreamEnded();
 
@@ -9168,7 +9168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._lastProgress.time = _.now();
 
         if (this._element.buffered.length === 0) {
-            return this._logger.debug('[%s] Phenix live stream player progress event fired without any buffered content', this._streamId);
+            return this._logger.debug('[%s] Phenix stream player progress event fired without any buffered content', this._streamId);
         }
 
         var bufferedEnd = this._element.buffered.end(this._element.buffered.length - 1);
@@ -9234,7 +9234,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function ended() {
-        this._logger.info('[%s] Phenix live stream player ended.', this._streamId);
+        this._logger.info('[%s] Phenix stream player ended.', this._streamId);
     }
 
     // Temporary measure. The phenix-web-player logs a lot of debug, info, and trace data
@@ -9736,9 +9736,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     // TODO(DY) Remove once 'on' is implemented on all Phenix Stream objects
     StreamWrapper.prototype.streamErrorCallback = function(errorSource, error) {
         if (!_.isFunction(this._stream.streamErrorCallback)) {
-            this._logger.error('[%s] [%s] live stream error event [%s]', this._stream.getStreamId(), this._type, error);
+            this._logger.error('[%s] [%s] stream error event [%s]', this._stream.getStreamId(), this._type, error);
         } else {
-            this._logger.debug('[%s] [%s] live stream error event [%s]', this._stream.getStreamId(), this._type, error);
+            this._logger.debug('[%s] [%s] stream error event [%s]', this._stream.getStreamId(), this._type, error);
             this._stream.streamErrorCallback(this._stream, errorSource, error);
         }
     };
@@ -9967,7 +9967,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-01-24T22:06:24Z' || '?';
+    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10223,7 +10223,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-01-24T22:06:24Z' || '?';
+    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11648,7 +11648,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-01-24T22:06:24Z',
+                version: '2019-02-06T04:10:35Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17641,8 +17641,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-01-24T22:06:24Z' || '?';
-    var releaseVersion = '2019.2.0';
+    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
+    var releaseVersion = '2019.2.1';
 
     function Logger() {
         this._appenders = [];

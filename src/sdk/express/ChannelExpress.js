@@ -134,6 +134,8 @@ define([
         };
 
         that._roomExpress.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members, streamErrorStatus) {
+            that._logger.info('[%s] Members changed with status [%s]. Channel has [%s] active members.', channelId, streamErrorStatus, members.length);
+
             var presenters = _.filter(members, function(member) {
                 return member.getObservableRole().getValue() === memberEnums.roles.presenter.name && member.getObservableStreams().getValue().length > 0;
             });
@@ -143,7 +145,7 @@ define([
             var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
             var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
 
-            if (!selectedPresenter || !presenterStream) {
+            if (!presenterStream) {
                 if (presenters.length === 0) {
                     memberSelector.reset();
                     lastMediaStream = null;
@@ -202,7 +204,9 @@ define([
 
             function monitorChannelSubscriber(mediaStreamId, error, response) {
                 if (lastStreamId !== mediaStreamId) {
-                    return; // Ignore old streams
+                    that._logger.info('[%s] Ignore old channel subscriber monitor stream [%s]. Active stream is [%s]', channelId, mediaStreamId, lastStreamId);
+
+                    return;
                 }
 
                 if (error) {
@@ -243,17 +247,21 @@ define([
 
             var mediaStreamCallback = function mediaStreamCallback(mediaStreamId, error, response) {
                 if (lastStreamId !== mediaStreamId) {
-                    return; // Ignore old streams
+                    that._logger.info('[%s] Ignore old media stream callback for stream [%s]. Active stream is [%s]', channelId, mediaStreamId, lastStreamId);
+
+                    return;
                 }
 
-                if (response && response.status === 'ok') {
+                var responseStatus = _.get(response, ['status'], '');
+
+                if (responseStatus === 'ok') {
                     response.reason = successReason;
                 }
 
-                if (error || (response && response.status !== 'ok')) {
-                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, response ? response.status : '', error);
+                if (error || (responseStatus !== 'ok')) {
+                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, responseStatus, error);
 
-                    return tryNextMember(response ? response.status : '');
+                    return tryNextMember(responseStatus);
                 }
 
                 if (response && response.mediaStream) {
