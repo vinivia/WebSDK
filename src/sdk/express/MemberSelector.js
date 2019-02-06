@@ -142,8 +142,16 @@ define([
         case mostRecentStrategy:
             return getMostRecentMember(members);
         case highAvailabilityStrategy:
-            if (this._lastSelectedMember && !forceNewSelection) {
-                return this._lastSelectedMember;
+            if (!forceNewSelection) {
+                var lastSelectedMember = this._lastSelectedMember;
+
+                var lastSelectedMemberIsActive = !!_.find(members, function(member) {
+                    return getMemberKey(member) === getMemberKey(lastSelectedMember);
+                });
+
+                if (lastSelectedMember && lastSelectedMemberIsActive) {
+                    return lastSelectedMember;
+                }
             }
 
             var allowedMembers = getAllowedMembers.call(this, members);

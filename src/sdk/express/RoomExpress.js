@@ -381,7 +381,7 @@ define([
             isUsingDeprecatedSdk = true;
         } else {
             if (!preferredFeature) {
-                this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, this._featureDetector.getFeaturePCastCapabilities());
+                this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, featureCapabilities);
 
                 return callback(null, {status: 'unsupported-features'});
             }
