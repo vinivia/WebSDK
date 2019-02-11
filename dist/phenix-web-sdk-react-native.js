@@ -1241,7 +1241,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var timeDelta = parseFloat(statsReport.timestamp) - lastStats[id].timestamp;
             var up = calculateUploadRate(parseFloat(statsReport.bytesSent), lastStats[id].bytesSent, timeDelta);
             var down = calculateDownloadRate(parseFloat(statsReport.bytesReceived), lastStats[id].bytesReceived, timeDelta);
-            var framerateMean = calculateFrameRate(parseFloat(statsReport.framesEncoded || statsReport.framesDecoded), lastStats[id].framesEncoded || lastStats[id].framesDecoded, timeDelta);
+            var framerateMean = calculateFrameRate(useFirstNumberValue(parseIntOrUndefined(statsReport.framesEncoded), parseIntOrUndefined(statsReport.framesDecoded)), lastStats[id].framesEncoded || lastStats[id].framesDecoded, timeDelta);
 
             if (isOutbound(statsReport)) {
                 direction = 'upload';
@@ -1258,29 +1258,31 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 ssrc: statsReport.ssrc,
                 direction: direction,
                 nativeReport: statsReport,
-                rtt: statsReport.rtt || statsReport.googRtt || statsReport.roundTripTime || statsReport.currentRoundTripTime || '?',
-                bitrateMean: parseInt(statsReport.bitrateMean, 10) || (isOutbound(statsReport) ? up : down) * 1000 || undefined,
-                targetDelay: parseInt(statsReport.targetDelay || statsReport.googTargetDelayMs, 10) || undefined,
-                currentDelay: parseInt(statsReport.currentDelay || statsReport.currentDelayMs || statsReport.googCurrentDelayMs, 10) || undefined
+                rtt: useFirstNumberValue(parseIntOrUndefined(statsReport.rtt), parseIntOrUndefined(statsReport.googRtt), parseIntOrUndefined(statsReport.roundTripTime), parseIntOrUndefined(statsReport.currentRoundTripTime)),
+                bitrateMean: parseIntOrUndefined(statsReport.bitrateMean, 10) || (isOutbound(statsReport) ? up : down) * 1000,
+                targetDelay: parseIntOrUndefined(useFirstStringValue(statsReport.targetDelay, statsReport.googTargetDelayMs), 10),
+                currentDelay: parseIntOrUndefined(useFirstStringValue(statsReport.currentDelay, statsReport.currentDelayMs, statsReport.googCurrentDelayMs), 10)
             };
 
             _.assign(lastStats[id], statsReport);
 
             if (statsReport.mediaType === 'video') {
                 stat = _.assign(stat, {
-                    droppedFrames: parseInt(statsReport.droppedFrames, 10) || 0,
-                    framerateMean: parseInt(statsReport.framerateMean || framerateMean, 10) || statsReport.framesPerSecond || 0,
-                    cpuLimitedResolution: statsReport.cpuLimitedResolution || statsReport.googCpuLimitedResolution,
-                    avgEncode: parseInt(statsReport.avgEncode || statsReport.avgEncodeMs || statsReport.googAvgEncodeMs, 10)
+                    droppedFrames: parseIntOrUndefined(statsReport.droppedFrames, 10) || 0,
+                    framerateMean: useFirstNumberValue(statsReport.framerateMean, statsReport.framesPerSecond, framerateMean) || 0,
+                    cpuLimitedResolution: useFirstStringValue(statsReport.cpuLimitedResolution, statsReport.googCpuLimitedResolution),
+                    avgEncode: parseIntOrUndefined(useFirstStringValue(statsReport.avgEncode, statsReport.avgEncodeMs, statsReport.googAvgEncodeMs), 10)
                 });
             }
 
             if (statsReport.mediaType === 'audio') {
                 stat = _.assign(stat, {
-                    audioInputLevel: statsReport.audioInputLevel || statsReport.googAudioInputLevel,
-                    audioOutputLevel: statsReport.audioOutputLevel || statsReport.googAudioOutputLevel,
-                    jitter: parseInt(statsReport.jitter || statsReport.jitterReceived || statsReport.googJitterReceived, 10) || undefined,
-                    jitterBuffer: parseInt(statsReport.jitterBuffer || statsReport.jitterBufferMs || statsReport.googJitterBufferMs, 10) || undefined
+                    audioInputLevel: useFirstStringValue(statsReport.audioInputLevel, statsReport.googAudioInputLevel),
+                    audioOutputLevel: useFirstStringValue(statsReport.audioOutputLevel, statsReport.googAudioOutputLevel),
+                    jitter: parseIntOrUndefined(useFirstStringValue(statsReport.jitter, statsReport.jitterReceived, statsReport.googJitterReceived), 10),
+                    jitterBuffer: parseIntOrUndefined(useFirstStringValue(statsReport.jitterBuffer, statsReport.jitterBufferMs, statsReport.googJitterBufferMs), 10),
+                    totalSamplesDuration: parseFloatOrUndefined(statsReport.totalSamplesDuration),
+                    totalAudioEnergy: parseFloatOrUndefined(statsReport.totalAudioEnergy)
                 });
             }
 
@@ -1288,6 +1290,66 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
 
         return newStats;
+    }
+
+    function useFirstNumberValue(value1, value2, value3, value4, value5) {
+        if (_.isNumber(value1)) {
+            return value1;
+        }
+
+        if (_.isNumber(value2)) {
+            return value2;
+        }
+
+        if (_.isNumber(value3)) {
+            return value3;
+        }
+
+        if (_.isNumber(value4)) {
+            return value4;
+        }
+
+        return value5;
+    }
+
+    function useFirstStringValue(value1, value2, value3, value4, value5) {
+        if (_.isString(value1)) {
+            return value1;
+        }
+
+        if (_.isString(value2)) {
+            return value2;
+        }
+
+        if (_.isString(value3)) {
+            return value3;
+        }
+
+        if (_.isNumber(value4)) {
+            return value4;
+        }
+
+        return value5;
+    }
+
+    function parseIntOrUndefined(value, radix) {
+        var parsed = parseInt(value, radix);
+
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+
+        return parsed;
+    }
+
+    function parseFloatOrUndefined(value) {
+        var parsed = parseFloat(value);
+
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+
+        return parsed;
     }
 
     function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {
@@ -1571,7 +1633,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-02-06T04:10:35Z',
+                version: '2019-02-11T23:00:16Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -7694,21 +7756,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 function eachStats(stats) {
-                    var additionalMessage = '';
-
                     if (options.direction === 'outbound' && stats.direction === 'upload') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (typeof stats.avgEncode === 'number') {
-                                additionalMessage += ' with average encoding time [' + stats.avgEncode + '] ms';
-                            }
-
-                            if (typeof stats.cpuLimitedResolution === 'number') {
-                                additionalMessage += ' (CPU limited=[' + stats.cpuLimitedResolution + '])';
-                            }
-
-                            that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s] and RTT [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.rtt);
+                            that._logger.debug('[%s] [%s] [%s] [%s] with RTT [%s], bitrate [%s], dropped frames [%s], frame rate [%s] and average encoding time [%s] ms (CPU limited=[%s])',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.avgEncode, stats.cpuLimitedResolution);
 
                             frameRate = stats.framerateMean;
                             videoBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
@@ -7721,7 +7773,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             break;
                         case 'audio':
-                            that._logger.debug('[%s] [%s] [%s] [%s] and RTT [%s] and jitter [%s] and audio input level [%s]',
+                            that._logger.debug('[%s] [%s] [%s] [%s] with RTT [%s], jitter [%s] and audio input level [%s]',
                                 name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.jitter, stats.audioInputLevel);
                             hasAudioBitRate = true;
                             audioBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
@@ -7735,18 +7787,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     if (options.direction === 'inbound' && stats.direction === 'download') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (typeof stats.currentDelay === 'number') {
-                                additionalMessage += ' with current delay [' + stats.currentDelay + '] ms';
-                            }
+                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s], current delay [%s] ms and target delay [%s] ms',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.currentDelay, stats.targetDelay);
 
-                            if (typeof stats.targetDelay === 'number') {
-                                additionalMessage += ' and target delay [' + stats.targetDelay + '] ms';
-                            }
-
-                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean);
-
-                            // Inbound frame rate is not calculated correctly
+                            // Inbound frame rate may not calculated correctly
                             hasFrameRate = true;
                             frameRate = stats.framerateMean || 0;
                             hasVideoBitRate = true;
@@ -7758,12 +7802,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                             break;
                         case 'audio':
-                            if (typeof stats.jitterBuffer === 'number') {
-                                additionalMessage += ' with jitter buffer [' + stats.jitterBuffer + '] ms';
-                            }
 
-                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s]  with output level [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.audioOutputLevel);
+                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s], jitter buffer [%s] ms, audio output level [%s], total audio energy [%s] and total samples duration [%s]',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.jitterBuffer, stats.audioOutputLevel, stats.totalAudioEnergy, stats.totalSamplesDuration);
+
                             hasAudioBitRate = true;
                             audioBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
 
@@ -9366,7 +9408,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-02-06T04:10:35Z';
+    var sdkVersion = '2019-02-11T23:00:16Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11805,20 +11847,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             lastStreamId = streamId;
 
             var mediaStreamCallback = function mediaStreamCallback(mediaStreamId, error, response) {
-                var responseStatus = _.get(response, ['status'], '');
-
                 if (lastStreamId !== mediaStreamId) {
                     that._logger.info('[%s] Ignore old media stream callback for stream [%s]. Active stream is [%s]', channelId, mediaStreamId, lastStreamId);
 
                     return;
                 }
 
+                var responseStatus = _.get(response, ['status'], '');
+
                 if (responseStatus === 'ok') {
                     response.reason = successReason;
                 }
 
                 if (error || (responseStatus !== 'ok')) {
-                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, response ? response.status : '', error);
+                    that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, responseStatus, error);
 
                     return tryNextMember(responseStatus);
                 }
@@ -15358,7 +15400,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
+    var sdkVersion = '2019-02-11T23:00:16Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15614,7 +15656,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
+    var sdkVersion = '2019-02-11T23:00:16Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -25002,8 +25044,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-06T04:10:35Z' || '?';
-    var releaseVersion = '2019.2.1';
+    var sdkVersion = '2019-02-11T23:00:16Z' || '?';
+    var releaseVersion = '2019.2.2';
 
     function Logger() {
         this._appenders = [];

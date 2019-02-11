@@ -52,7 +52,7 @@ define([
             var timeDelta = parseFloat(statsReport.timestamp) - lastStats[id].timestamp;
             var up = calculateUploadRate(parseFloat(statsReport.bytesSent), lastStats[id].bytesSent, timeDelta);
             var down = calculateDownloadRate(parseFloat(statsReport.bytesReceived), lastStats[id].bytesReceived, timeDelta);
-            var framerateMean = calculateFrameRate(parseFloat(statsReport.framesEncoded || statsReport.framesDecoded), lastStats[id].framesEncoded || lastStats[id].framesDecoded, timeDelta);
+            var framerateMean = calculateFrameRate(useFirstNumberValue(parseIntOrUndefined(statsReport.framesEncoded), parseIntOrUndefined(statsReport.framesDecoded)), lastStats[id].framesEncoded || lastStats[id].framesDecoded, timeDelta);
 
             if (isOutbound(statsReport)) {
                 direction = 'upload';
@@ -69,29 +69,31 @@ define([
                 ssrc: statsReport.ssrc,
                 direction: direction,
                 nativeReport: statsReport,
-                rtt: statsReport.rtt || statsReport.googRtt || statsReport.roundTripTime || statsReport.currentRoundTripTime || '?',
-                bitrateMean: parseInt(statsReport.bitrateMean, 10) || (isOutbound(statsReport) ? up : down) * 1000 || undefined,
-                targetDelay: parseInt(statsReport.targetDelay || statsReport.googTargetDelayMs, 10) || undefined,
-                currentDelay: parseInt(statsReport.currentDelay || statsReport.currentDelayMs || statsReport.googCurrentDelayMs, 10) || undefined
+                rtt: useFirstNumberValue(parseIntOrUndefined(statsReport.rtt), parseIntOrUndefined(statsReport.googRtt), parseIntOrUndefined(statsReport.roundTripTime), parseIntOrUndefined(statsReport.currentRoundTripTime)),
+                bitrateMean: parseIntOrUndefined(statsReport.bitrateMean, 10) || (isOutbound(statsReport) ? up : down) * 1000,
+                targetDelay: parseIntOrUndefined(useFirstStringValue(statsReport.targetDelay, statsReport.googTargetDelayMs), 10),
+                currentDelay: parseIntOrUndefined(useFirstStringValue(statsReport.currentDelay, statsReport.currentDelayMs, statsReport.googCurrentDelayMs), 10)
             };
 
             _.assign(lastStats[id], statsReport);
 
             if (statsReport.mediaType === 'video') {
                 stat = _.assign(stat, {
-                    droppedFrames: parseInt(statsReport.droppedFrames, 10) || 0,
-                    framerateMean: parseInt(statsReport.framerateMean || framerateMean, 10) || statsReport.framesPerSecond || 0,
-                    cpuLimitedResolution: statsReport.cpuLimitedResolution || statsReport.googCpuLimitedResolution,
-                    avgEncode: parseInt(statsReport.avgEncode || statsReport.avgEncodeMs || statsReport.googAvgEncodeMs, 10)
+                    droppedFrames: parseIntOrUndefined(statsReport.droppedFrames, 10) || 0,
+                    framerateMean: useFirstNumberValue(statsReport.framerateMean, statsReport.framesPerSecond, framerateMean) || 0,
+                    cpuLimitedResolution: useFirstStringValue(statsReport.cpuLimitedResolution, statsReport.googCpuLimitedResolution),
+                    avgEncode: parseIntOrUndefined(useFirstStringValue(statsReport.avgEncode, statsReport.avgEncodeMs, statsReport.googAvgEncodeMs), 10)
                 });
             }
 
             if (statsReport.mediaType === 'audio') {
                 stat = _.assign(stat, {
-                    audioInputLevel: statsReport.audioInputLevel || statsReport.googAudioInputLevel,
-                    audioOutputLevel: statsReport.audioOutputLevel || statsReport.googAudioOutputLevel,
-                    jitter: parseInt(statsReport.jitter || statsReport.jitterReceived || statsReport.googJitterReceived, 10) || undefined,
-                    jitterBuffer: parseInt(statsReport.jitterBuffer || statsReport.jitterBufferMs || statsReport.googJitterBufferMs, 10) || undefined
+                    audioInputLevel: useFirstStringValue(statsReport.audioInputLevel, statsReport.googAudioInputLevel),
+                    audioOutputLevel: useFirstStringValue(statsReport.audioOutputLevel, statsReport.googAudioOutputLevel),
+                    jitter: parseIntOrUndefined(useFirstStringValue(statsReport.jitter, statsReport.jitterReceived, statsReport.googJitterReceived), 10),
+                    jitterBuffer: parseIntOrUndefined(useFirstStringValue(statsReport.jitterBuffer, statsReport.jitterBufferMs, statsReport.googJitterBufferMs), 10),
+                    totalSamplesDuration: parseFloatOrUndefined(statsReport.totalSamplesDuration),
+                    totalAudioEnergy: parseFloatOrUndefined(statsReport.totalAudioEnergy)
                 });
             }
 
@@ -99,6 +101,66 @@ define([
         });
 
         return newStats;
+    }
+
+    function useFirstNumberValue(value1, value2, value3, value4, value5) {
+        if (_.isNumber(value1)) {
+            return value1;
+        }
+
+        if (_.isNumber(value2)) {
+            return value2;
+        }
+
+        if (_.isNumber(value3)) {
+            return value3;
+        }
+
+        if (_.isNumber(value4)) {
+            return value4;
+        }
+
+        return value5;
+    }
+
+    function useFirstStringValue(value1, value2, value3, value4, value5) {
+        if (_.isString(value1)) {
+            return value1;
+        }
+
+        if (_.isString(value2)) {
+            return value2;
+        }
+
+        if (_.isString(value3)) {
+            return value3;
+        }
+
+        if (_.isNumber(value4)) {
+            return value4;
+        }
+
+        return value5;
+    }
+
+    function parseIntOrUndefined(value, radix) {
+        var parsed = parseInt(value, radix);
+
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+
+        return parsed;
+    }
+
+    function parseFloatOrUndefined(value) {
+        var parsed = parseFloat(value);
+
+        if (isNaN(parsed)) {
+            return undefined;
+        }
+
+        return parsed;
     }
 
     function calculateUploadRate(bytesSent, prevBytesSent, timeDelta) {

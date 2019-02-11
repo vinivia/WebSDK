@@ -242,6 +242,7 @@ public class RtmpFlashRenderer extends Sprite {
                 }
 
                 fire_play_until_ready(attempt + 1);
+
                 return;
             }, 50);
 
@@ -249,6 +250,7 @@ public class RtmpFlashRenderer extends Sprite {
 
             return;
         }, timeout);
+
         return;
     }
 

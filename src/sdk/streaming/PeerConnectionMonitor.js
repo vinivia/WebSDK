@@ -157,21 +157,11 @@ define([
                 }
 
                 function eachStats(stats) {
-                    var additionalMessage = '';
-
                     if (options.direction === 'outbound' && stats.direction === 'upload') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (typeof stats.avgEncode === 'number') {
-                                additionalMessage += ' with average encoding time [' + stats.avgEncode + '] ms';
-                            }
-
-                            if (typeof stats.cpuLimitedResolution === 'number') {
-                                additionalMessage += ' (CPU limited=[' + stats.cpuLimitedResolution + '])';
-                            }
-
-                            that._logger.debug('[%s] [%s] [%s] [%s] with bitrate [%s], droppedFrames [%s] and frame rate [%s] and RTT [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.rtt);
+                            that._logger.debug('[%s] [%s] [%s] [%s] with RTT [%s], bitrate [%s], dropped frames [%s], frame rate [%s] and average encoding time [%s] ms (CPU limited=[%s])',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.bitrateMean, stats.droppedFrames, stats.framerateMean, stats.avgEncode, stats.cpuLimitedResolution);
 
                             frameRate = stats.framerateMean;
                             videoBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
@@ -184,7 +174,7 @@ define([
 
                             break;
                         case 'audio':
-                            that._logger.debug('[%s] [%s] [%s] [%s] and RTT [%s] and jitter [%s] and audio input level [%s]',
+                            that._logger.debug('[%s] [%s] [%s] [%s] with RTT [%s], jitter [%s] and audio input level [%s]',
                                 name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.jitter, stats.audioInputLevel);
                             hasAudioBitRate = true;
                             audioBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
@@ -198,18 +188,10 @@ define([
                     if (options.direction === 'inbound' && stats.direction === 'download') {
                         switch (stats.mediaType) {
                         case 'video':
-                            if (typeof stats.currentDelay === 'number') {
-                                additionalMessage += ' with current delay [' + stats.currentDelay + '] ms';
-                            }
+                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s], current delay [%s] ms and target delay [%s] ms',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.currentDelay, stats.targetDelay);
 
-                            if (typeof stats.targetDelay === 'number') {
-                                additionalMessage += ' and target delay [' + stats.targetDelay + '] ms';
-                            }
-
-                            that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean);
-
-                            // Inbound frame rate is not calculated correctly
+                            // Inbound frame rate may not be calculated correctly
                             hasFrameRate = true;
                             frameRate = stats.framerateMean || 0;
                             hasVideoBitRate = true;
@@ -221,12 +203,10 @@ define([
 
                             break;
                         case 'audio':
-                            if (typeof stats.jitterBuffer === 'number') {
-                                additionalMessage += ' with jitter buffer [' + stats.jitterBuffer + '] ms';
-                            }
 
-                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s]  with output level [%s]' + additionalMessage,
-                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.audioOutputLevel);
+                            that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s], jitter buffer [%s] ms, audio output level [%s], total audio energy [%s] and total samples duration [%s]',
+                                name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.jitterBuffer, stats.audioOutputLevel, stats.totalAudioEnergy, stats.totalSamplesDuration);
+
                             hasAudioBitRate = true;
                             audioBitRate = stats.downloadRate ? stats.downloadRate * 1000 : stats.downloadRate;
 
