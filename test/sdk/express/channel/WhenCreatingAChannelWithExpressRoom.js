@@ -21,7 +21,7 @@ define([
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/room.json'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, room) {
-    describe('When Creating a Channel with ExpressRoom', function() {
+    describe('When creating a channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',

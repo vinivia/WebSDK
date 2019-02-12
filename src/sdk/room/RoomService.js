@@ -46,17 +46,12 @@ define([
         this._activeRoom = new observable.Observable(null);
         this._cachedRoom = new observable.Observable(null);
         this._roomChatService = null;
-        this._lastResetTimestamp = 0;
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
         this._authService = new AuthenticationService(this._pcast);
     }
-
-    RoomService.prototype.getLastResetTimestamp = function getLastResetTimestamp() {
-        return this._lastResetTimestamp;
-    };
 
     RoomService.prototype.start = function start(role, screenName) {
         if (this._started) {
@@ -265,7 +260,6 @@ define([
         leaveRoomRequest.call(that, function() {
             enterRoomRequest.call(that, roomId, alias, function() {
                 that._logger.info('Room reset completed');
-                that._lastResetTimestamp = _.now();
             });
         });
     }

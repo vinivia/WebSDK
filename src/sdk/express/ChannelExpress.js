@@ -30,11 +30,12 @@ define([
 ], function(_, assert, observable, disposable, RoomExpress, ChannelService, Channel, MemberSelector, Stream, roomEnums, memberEnums, streamEnums) {
     'use strict';
 
-    var defaultReconnectOptions = {
-        maxOfflineTime: 24 * 60 * 60 * 1000, // 1 day
-        maxReconnectFrequency: 60 * 1000 // 60 seconds
+    var defaultOptions = {
+        reconnectOptions: {
+            maxOfflineTime: 24 * 60 * 60 * 1000, // 1 day
+            maxReconnectFrequency: 60 * 1000 // 60 seconds
+        }
     };
-    var roomResetGracePeriod = 10000;
 
     function ChannelExpress(options) {
         assert.isObject(options, 'options');
@@ -43,19 +44,24 @@ define([
             assert.isObject(options.roomExpress, 'options.roomExpress');
         }
 
-        var channelExpressOptions = _.assign({reconnectOptions: defaultReconnectOptions}, options);
+        this._channelExpressOptions = _.assign(_.clone(defaultOptions), options);
 
-        this._roomExpress = options.roomExpress || new RoomExpress(channelExpressOptions);
+        this._roomExpress = options.roomExpress || new RoomExpress(this._channelExpressOptions);
         this._shouldDisposeOfRoomExpress = !options.roomExpress;
         this._logger = this._roomExpress.getPCastExpress().getPCast().getLogger();
     }
 
     ChannelExpress.prototype.dispose = function dispose() {
+        if (this._pcastStatusSubscription) {
+            this._pcastStatusSubscription.dispose();
+            this._pcastStatusSubscription = null;
+        }
+
         if (this._shouldDisposeOfRoomExpress) {
             this._roomExpress.dispose();
         }
 
-        this._logger.info('Disposed Channel Express Instance');
+        this._logger.info('Disposed channel express instance');
     };
 
     ChannelExpress.prototype.getRoomExpress = function getPCastExpress() {
@@ -96,7 +102,8 @@ define([
             type: roomEnums.types.channel.name,
             role: memberEnums.roles.audience.name
         }, options);
-        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger);
+        var failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember']);
+        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger, {failureCountForBanningAMember: failureCountForBanningAMember});
         var lastMediaStream;
         var lastStreamId;
         var channelRoomService;
@@ -111,6 +118,11 @@ define([
 
         var joinRoomCallback = function(error, response) {
             var channelResponse = !response || _.assign({}, response);
+
+            if (that._pcastStatusSubscription) {
+                that._pcastStatusSubscription.dispose();
+                that._pcastStatusSubscription = null;
+            }
 
             if (response && response.roomService) {
                 var leaveRoom = response.roomService.leaveRoom;
@@ -139,9 +151,7 @@ define([
             var presenters = _.filter(members, function(member) {
                 return member.getObservableRole().getValue() === memberEnums.roles.presenter.name && member.getObservableStreams().getValue().length > 0;
             });
-            var wasRoomResetRecently = channelRoomService && channelRoomService.getLastResetTimestamp() > (_.now() - roomResetGracePeriod);
-            var forceNewMemberSelection = (!!streamErrorStatus && streamErrorStatus !== 'client-side-failure') || (!wasRoomResetRecently && streamErrorStatus === 'client-side-failure') || !lastMediaStream || !lastStreamId;
-            var selectedPresenter = memberSelector.getNext(presenters, forceNewMemberSelection);
+            var selectedPresenter = memberSelector.getNext(presenters);
             var presenterStream = selectedPresenter ? selectedPresenter.getObservableStreams().getValue()[0] : null;
             var streamId = presenterStream ? presenterStream.getPCastStreamId() : '';
 
@@ -156,7 +166,7 @@ define([
 
                 if (streamErrorStatus) {
                     that._logger.info('Unable to find a new presenter to replace stream [%s] that ended in channel [%s] with status [%s] and [%s] black-listed members',
-                        lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfBlackListedMembers());
+                        lastStreamId, channelId, streamErrorStatus, memberSelector.getNumberOfMembersWithFailures());
 
                     if (lastStreamId && lastMediaStream && lastMediaStream.isActive()) {
                         lastMediaStream.stop('presenter-failure');
@@ -174,21 +184,21 @@ define([
                 return subscriberCallback(null, {status: 'no-stream-playing'});
             }
 
-            if (!wasRoomResetRecently && streamId === lastStreamId) {
-                if (streamErrorStatus) {
-                    that._logger.info('Unable to find a new stream to replace stream [%s] that ended in channel [%s] with status [%s]',
-                        lastStreamId, channelId, streamErrorStatus);
-
-                    if (lastStreamId && lastMediaStream) {
-                        lastMediaStream.stop('same-presenter-failure');
+            if (lastStreamId && lastMediaStream) {
+                if (streamId === lastStreamId) {
+                    if (!streamErrorStatus) {
+                        // New member detected but staying on previous stream
+                        return;
                     }
 
-                    return subscriberCallback(null, {status: streamErrorStatus || 'unable-to-recover'});
+                    that._logger.info('[%s] Stream [%s] ended with status [%s], retrying',
+                        channelId, lastStreamId, streamErrorStatus);
+                    lastMediaStream.stop('same-presenter-failure');
+                } else {
+                    that._logger.info('[%s] Stream [%s] ended with status [%s], failing over to stream [%s]',
+                        channelId, lastStreamId, streamErrorStatus, streamId);
+                    lastMediaStream.stop('change-presenter');
                 }
-
-                return;
-            } else if (lastStreamId && lastMediaStream) {
-                lastMediaStream.stop('change-presenter');
             }
 
             var tryNextMember = function(streamStatus) {
@@ -225,12 +235,27 @@ define([
                     return response.retry();
                 }
 
-                if (response.status !== 'ok') {
+                var responseStatus = _.get(response, ['status'], '');
+
+                if (responseStatus !== 'ok') {
                     if (response.reason === 'custom' && response.description !== 'client-side-failure') {
                         return subscriberCallback(error, response);
                     }
 
-                    return tryNextMember(response.status);
+                    switch (responseStatus) {
+                    case 'ended':
+                        memberSelector.markDead();
+
+                        break;
+                    default:
+                        memberSelector.markFailed();
+
+                        break;
+                    }
+
+                    that._logger.info('[%s] Monitor subscriber reported status [%s]. Trying next member', mediaStreamId, responseStatus);
+
+                    return tryNextMember(responseStatus);
                 }
             }
 
@@ -260,6 +285,21 @@ define([
 
                 if (error || (responseStatus !== 'ok')) {
                     that._logger.info('[%s] Issue with stream [%s]. Trying next member', mediaStreamId, responseStatus, error);
+
+                    switch (responseStatus) {
+                    case 'unauthorized':
+                    case 'not-found':
+                    case 'ended':
+                    case 'origin-not-found':
+                    case 'origin-ended':
+                        memberSelector.markDead();
+
+                        break;
+                    default:
+                        memberSelector.markFailed();
+
+                        break;
+                    }
 
                     return tryNextMember(responseStatus);
                 }

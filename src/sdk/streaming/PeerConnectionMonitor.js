@@ -93,13 +93,21 @@ define([
         assert.isObject(track, 'track');
         assert.isBoolean(state, 'state');
 
-        var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
-        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
-            return pcTrack.id === track.id;
-        });
+        try {
+            var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
+            var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
 
-        if (!foundTrack) {
-            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+            if (!foundTrack) {
+                return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+            }
+        } catch (e) {
+            if (phenixRTC.browser === 'Firefox' && e.message === 'InvalidStateError: Peer connection is closed') {
+                this._logger.debug('Failed to verify monitor track due to closed peer connection');
+            } else {
+                this._logger.warn('Failed to verify monitor track due to [%s]', e.message);
+            }
         }
 
         if (!state) {

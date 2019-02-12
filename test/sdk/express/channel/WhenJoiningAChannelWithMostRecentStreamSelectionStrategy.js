@@ -27,7 +27,7 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
-    describe('When Joining a Channel With Most Recent Stream Selection Strategy', function() {
+    describe('When joining a channel with most recent stream selection strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -111,11 +111,11 @@ define([
             return uri.substring(pcastPrefix.length, uri.length);
         }
 
-        it('upon failure iterates stops when the newest member is the member that failed', function(done) {
+        it('upon failure iterates through all member and stops once each failed', function(done) {
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1', _.now());
             var alternateMember = createMember('alternate', '1', _.now() + 2);
-            var normalMember = createMember('', '1', _.now());
+            var normalMember = createMember('', '1', _.now() + 3);
 
             joinRoomResponse.members = [normalMember, primaryMember, alternateMember];
 
@@ -131,20 +131,23 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'most-recent'
-            }, function() {}, function() {
+            }, function() {}, function(error, response) {
+                if (response.status !== 'ok') {
+                    expect(response.status).to.be.equal('ended');
+                    expect(subscribeCount).to.be.equal(3);
+
+                    done();
+
+                    return;
+                }
+
                 subscribeCount++;
 
-                if (subscribeCount >= 1 && subscribeCount < 2) {
-                    return websocketStubber.stubEvent('pcast.StreamEnded', {
-                        streamId: 'mockStreamId',
-                        reason: 'ended',
-                        sessionId: 'mockSessionId'
-                    });
-                }
-
-                if (subscribeCount >= 2) {
-                    done();
-                }
+                return websocketStubber.stubEvent('pcast.StreamEnded', {
+                    streamId: 'mockStreamId',
+                    reason: 'ended',
+                    sessionId: 'mockSessionId'
+                });
             });
         });
     });

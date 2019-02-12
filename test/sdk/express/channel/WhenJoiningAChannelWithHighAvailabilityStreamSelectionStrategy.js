@@ -28,7 +28,7 @@ define([
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
-    describe('When Joining a Channel With High Availability Stream Selection Strategy', function() {
+    describe('When joining a channel with high availability stream selection strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -139,7 +139,7 @@ define([
             }, function() {}, function() {
                 subscribeCount++;
 
-                if (subscribeCount >= 1 && subscribeCount < 4) {
+                if (subscribeCount > 0 && subscribeCount < 4) {
                     return websocketStubber.stubEvent('pcast.StreamEnded', {
                         streamId: 'mockStreamId',
                         reason: 'ended',
@@ -272,7 +272,9 @@ define([
             });
         });
 
-        it('fails if all members trigger client side failure before timeout', function(done) {
+        it('fails if all members trigger more than allowed client side failures', function(done) {
+            this.timeout(30000);
+
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1');
             var alternateMember = createMember('alternate', '1');
@@ -282,7 +284,7 @@ define([
             var setTimeoutClone = setTimeout;
 
             window.setTimeout = function(callback, timeout) {
-                return setTimeoutClone(callback, timeout / 1000);
+                return setTimeoutClone(callback, timeout / 100);
             };
 
             PeerConnectionMonitor.prototype.start = function(options, activeCallback, monitorCallback) {
@@ -297,7 +299,8 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                failureCountForBanningAMember: 2
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     return subscribeCount++;
@@ -306,7 +309,7 @@ define([
                 window.setTimeout = setTimeoutClone;
                 PeerConnectionMonitor.prototype.start = startClone;
                 expect(response.status).to.be.equal('client-side-failure');
-                expect(subscribeCount).to.be.equal(2);
+                expect(subscribeCount).to.be.equal(4);
                 done();
             });
         });

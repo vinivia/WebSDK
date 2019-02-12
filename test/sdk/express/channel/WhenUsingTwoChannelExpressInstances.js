@@ -24,7 +24,7 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
-    describe('When using two express instances', function() {
+    describe('When using two ChannelExpress instances', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',

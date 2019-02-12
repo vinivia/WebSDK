@@ -24,7 +24,7 @@ define([
     '../../../../test/mock/UserMediaStubber',
     'sdk/streaming/PeerConnectionMonitor'
 ], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
-    describe('When Reconnecting to PCast', function() {
+    describe('When reconnecting to the websocket and re-authenticating', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -86,7 +86,7 @@ define([
             window.setTimeout = setTimeoutClone;
         });
 
-        describe('When subscriber or publisher fails', function() {
+        describe('Given subscriber or publisher fails', function() {
             var reauthTokenSpy = null;
 
             beforeEach(function() {
@@ -103,7 +103,7 @@ define([
                 PeerConnectionMonitor.prototype.start = startClone;
             });
 
-            it('successfully recovers from a subscriber stream end after reconnecting to the websocket and re-authenticating', function(done) {
+            it('successfully recovers from a subscriber stream end', function(done) {
                 var subscribeCount = 0;
                 var reSubscribeCount = 0;
 
@@ -149,7 +149,7 @@ define([
                 });
             });
 
-            it('successfully recovers from a publisher stream end after reconnecting to the websocket and re-authenticating', function(done) {
+            it('successfully recovers from a publisher stream end', function(done) {
                 var publishCount = 0;
                 var rePublishCount = 0;
 

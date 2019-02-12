@@ -28,7 +28,7 @@ define([
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
-    describe('When Joining a Channel With Express Room That Has A Presenter', function() {
+    describe('When joining a channel with ExpressRoom that has a presenter', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',
@@ -96,7 +96,7 @@ define([
             channelExpress.dispose();
         });
 
-        it('Expect monitor event to trigger a callback and re-subscribe', function(done) {
+        it('triggers a callback and re-subscribes when the monitor triggers', function(done) {
             var subscribeCount = 0;
             var startClone = PeerConnectionMonitor.prototype.start;
 
@@ -120,7 +120,7 @@ define([
             });
         });
 
-        it('Expect stream ended reason of ended to trigger callback with reason ended', function(done) {
+        it('triggers a callback with reason ended when the stream terminated with reason ended', function(done) {
             var subscribeCount = 0;
 
             channelExpress.joinChannel({alias: 'ChannelAlias'}, function() {}, function(error, response) {

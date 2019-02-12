@@ -22,9 +22,9 @@ define([
 
     var mostRecentStrategy = 'most-recent';
     var highAvailabilityStrategy = 'high-availability';
-    var blacklistedTimeoutInterval = 3 * 60 * 1000;
+    var defaultBannedFailureCount = 1000;
 
-    function MemberSelector(selectionStrategy, logger) {
+    function MemberSelector(selectionStrategy, logger, options) {
         if (selectionStrategy) {
             assert.isStringNotEmpty(selectionStrategy, 'selectionStrategy');
         }
@@ -33,31 +33,20 @@ define([
 
         this._selectionStrategy = selectionStrategy || mostRecentStrategy;
         this._logger = logger;
-        this._lastSelectedMember = null;
-        this._blackListedMembers = [];
+        this._failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember'], defaultBannedFailureCount);
+
+        this.reset();
     }
 
-    MemberSelector.prototype.getNext = function getNext(members, forceNewSelection) {
-        var newSelectedMember = getNextMember.call(this, members, forceNewSelection);
+    MemberSelector.prototype.getNext = function getNext(members) {
+        this._logger.info('Select member from [%s]', members);
 
-        if (this.getNumberOfBlackListedMembers() > 0 && hasExceededBlacklistedTimeoutInterval.call(this) && !newSelectedMember) {
-            this._logger.info('Unable to select new member. Clearing [%s] black-listed members and trying again', this.getNumberOfBlackListedMembers());
+        var newSelectedMember = getNextMember.call(this, members);
 
-            this.clearBlackListedMembers();
-
-            return this.getNext(members, forceNewSelection);
-        }
-
-        if (this._lastSelectedMember !== newSelectedMember) {
-            if (!newSelectedMember) {
-                this._logger.info('Unable to select new member');
-            } else {
-                this._logger.info('Selecting new Member [%s]/[%s]', newSelectedMember.getSessionId(), newSelectedMember.getObservableScreenName().getValue());
-            }
-
-            if (this._lastSelectedMember && !isBlackListed.call(this, this._lastSelectedMember)) {
-                addBlacklistedMember.call(this, this._lastSelectedMember);
-            }
+        if (!newSelectedMember) {
+            this._logger.info('Unable to select new member from [%s]', members);
+        } else {
+            this._logger.info('Selecting new member [%s]/[%s]', newSelectedMember.getSessionId(), newSelectedMember.getObservableScreenName().getValue());
         }
 
         this._lastSelectedMember = newSelectedMember;
@@ -69,17 +58,46 @@ define([
         return this._selectionStrategy;
     };
 
-    MemberSelector.prototype.clearBlackListedMembers = function() {
-        this._blackListedMembers = [];
+    MemberSelector.prototype.markFailed = function() {
+        if (!this._lastSelectedMember) {
+            this._logger.warn('Marking failed member but there was no recent selected member');
+
+            return;
+        }
+
+        var memberKey = getMemberKey(this._lastSelectedMember);
+        var failureCount = _.get(this._failureCounts, [memberKey], 0);
+
+        failureCount++;
+
+        this._logger.info('Failure count for member [%s] is now [%s]', memberKey, failureCount);
+
+        _.set(this._failureCounts, [memberKey], failureCount);
+        this._lastSelectedMember = null;
     };
 
-    MemberSelector.prototype.getNumberOfBlackListedMembers = function() {
-        return this._blackListedMembers.length;
+    MemberSelector.prototype.markDead = function() {
+        if (!this._lastSelectedMember) {
+            this._logger.warn('Marking dead member but there was no recent selected member');
+
+            return;
+        }
+
+        var memberKey = getMemberKey(this._lastSelectedMember);
+
+        this._logger.info('Member [%s] is now permanently removed', memberKey);
+
+        _.set(this._failureCounts, [memberKey], this._failureCountForBanningAMember);
+        this._lastSelectedMember = null;
+    };
+
+    MemberSelector.prototype.getNumberOfMembersWithFailures = function() {
+        return _.keys(this._failureCounts).length;
     };
 
     MemberSelector.prototype.reset = function() {
         this._lastSelectedMember = null;
-        this._blackListedMembers = [];
+        this._failureCounts = {};
     };
 
     MemberSelector.prototype.dispose = function dispose() {
@@ -104,31 +122,6 @@ define([
         return otherMembers || primaryMembers || alternateMembers;
     };
 
-    function isBlackListed(member) {
-        return !!_.find(this._blackListedMembers, function(blackListedMember) {
-            return blackListedMember.key === getMemberKey(member);
-        });
-    }
-
-    function addBlacklistedMember(member) {
-        if (!member) {
-            return;
-        }
-
-        this._blackListedMembers.push({
-            key: getMemberKey(member),
-            timestamp: _.now()
-        });
-    }
-
-    function hasExceededBlacklistedTimeoutInterval() {
-        var totalTime = _.reduce(this._blackListedMembers, function(total, blackListedMember) {
-            return total + _.now() - blackListedMember.timestamp;
-        }, 0);
-
-        return totalTime > blacklistedTimeoutInterval;
-    }
-
     function getMemberKey(member) {
         if (!member) {
             return '';
@@ -137,52 +130,62 @@ define([
         return member.getSessionId() + member.getObservableScreenName().getValue();
     }
 
-    function getNextMember(members, forceNewSelection) {
+    function getNextMember(members) {
+        var that = this;
+
         switch (this._selectionStrategy) {
         case mostRecentStrategy:
-            return getMostRecentMember(members);
-        case highAvailabilityStrategy:
-            if (!forceNewSelection) {
-                var lastSelectedMember = this._lastSelectedMember;
-
-                var lastSelectedMemberIsActive = !!_.find(members, function(member) {
-                    return getMemberKey(member) === getMemberKey(lastSelectedMember);
-                });
-
-                if (lastSelectedMember && lastSelectedMemberIsActive) {
-                    return lastSelectedMember;
+            var activeMembers = _.reduce(members, function(activeMembers, member) {
+                if (_.get(that._failureCounts, [getMemberKey(member)], 0) < that._failureCountForBanningAMember) {
+                    activeMembers.push(member);
                 }
+
+                return activeMembers;
+            }, []);
+
+            return getMostRecentMember(activeMembers);
+        case highAvailabilityStrategy:
+            if (this._lastSelectedMember && _.includes(members, this._lastSelectedMember)) {
+                return this._lastSelectedMember;
             }
 
-            var allowedMembers = getAllowedMembers.call(this, members);
+            var selectedMember = undefined;
+            var minFailureCount = Math.max(0, that._failureCountForBanningAMember - 1);
 
-            if (forceNewSelection) {
-                allowedMembers = removeMember(allowedMembers, this._lastSelectedMember);
-            }
+            _.forEach(members, function(member) {
+                var failureCount = _.get(that._failureCounts, [getMemberKey(member)], 0);
 
-            var candidates = _.filter(allowedMembers, isPrimary);
+                if (failureCount < minFailureCount) {
+                    minFailureCount = failureCount;
+                    selectedMember = member;
+                } else if (failureCount === minFailureCount) {
+                    if (!selectedMember) {
+                        selectedMember = member;
+                    } else if (isPrimary(member)) {
+                        if (!isPrimary(selectedMember)) {
+                            selectedMember = member;
+                        }
+                    } else if (isAlternate(member)) {
+                        if (!isPrimary(selectedMember) && !isAlternate(selectedMember)) {
+                            selectedMember = member;
+                        }
+                    }
+                }
+            });
 
-            if (candidates.length === 0) {
-                candidates = _.filter(allowedMembers, isAlternate);
-            }
-
-            if (candidates.length === 0) {
-                candidates = allowedMembers;
-            }
-
-            return _.sample(candidates);
+            return selectedMember;
         default:
             throw new Error('Invalid Selection Strategy');
         }
     }
 
     function getMostRecentMember(members) {
-        return _.reduce(members, function(memberA, memberB) {
-            if (!memberA) {
-                return memberB;
+        return _.reduce(members, function(mostRecentMember, member) {
+            if (!mostRecentMember) {
+                return member;
             }
 
-            return memberA.getLastUpdate() > memberB.getLastUpdate() ? memberA : memberB;
+            return mostRecentMember.getLastUpdate() > member.getLastUpdate() ? mostRecentMember : member;
         });
     }
 
@@ -208,20 +211,6 @@ define([
         var alternate = /alternate/i;
 
         return alternate.test(name);
-    }
-
-    function getAllowedMembers(members) {
-        var that = this;
-
-        return _.filter(members, function(member) {
-            return !isBlackListed.call(that, member);
-        });
-    }
-
-    function removeMember(members, memberToRemove) {
-        return _.filter(members, function(member) {
-            return getMemberKey(member) !== getMemberKey(memberToRemove);
-        });
     }
 
     return MemberSelector;

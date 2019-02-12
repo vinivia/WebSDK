@@ -26,7 +26,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
-    describe('When Publishing to a Channel With Express Room', function() {
+    describe('When publishing to a channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
             name: 'mockUser',

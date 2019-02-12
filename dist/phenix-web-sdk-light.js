@@ -2822,13 +2822,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assert.isObject(track, 'track');
         assert.isBoolean(state, 'state');
 
-        var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
-        var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
-            return pcTrack.id === track.id;
-        });
+        try {
+            var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
+            var foundTrack = !!_.find(peerConnectionTracks, function(pcTrack) {
+                return pcTrack.id === track.id;
+            });
 
-        if (!foundTrack) {
-            return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+            if (!foundTrack) {
+                return this._logger.warn('[%s] Unable to find track [%s] [%s] in peer connection', this._name, track.kind, track.id);
+            }
+        } catch (e) {
+            if (phenixRTC.browser === 'Firefox' && e.message === 'InvalidStateError: Peer connection is closed') {
+                this._logger.debug('Failed to verify monitor track due to closed peer connection');
+            } else {
+                this._logger.warn('Failed to verify monitor track due to [%s]', e.message);
+            }
         }
 
         if (!state) {
@@ -2920,7 +2928,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                             that._logger.debug('[%s] [%s] [%s] [%s] with framerate [%s], current delay [%s] ms and target delay [%s] ms',
                                 name, options.direction, stats.mediaType, stats.ssrc, stats.framerateMean, stats.currentDelay, stats.targetDelay);
 
-                            // Inbound frame rate may not calculated correctly
+                            // Inbound frame rate may not be calculated correctly
                             hasFrameRate = true;
                             frameRate = stats.framerateMean || 0;
                             hasVideoBitRate = true;
@@ -4206,7 +4214,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-02-12T01:14:14Z';
+    var sdkVersion = '2019-02-13T22:39:46Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -10009,7 +10017,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-12T01:14:14Z' || '?';
+    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10265,7 +10273,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-12T01:14:14Z' || '?';
+    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11690,7 +11698,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-02-12T01:14:14Z',
+                version: '2019-02-13T22:39:46Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17683,7 +17691,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-12T01:14:14Z' || '?';
+    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
     var releaseVersion = '2019.2.2';
 
     function Logger() {

@@ -26,7 +26,7 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json'
 ], function(_, ChannelExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
-    describe('When Joining a Channel with ExpressRoom', function() {
+    describe('When joining a channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
         var mockAuthData = {
