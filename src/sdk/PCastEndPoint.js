@@ -56,13 +56,18 @@ define([
     };
 
     function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
-        if (baseUri.lastIndexOf('wss:', 0) === 0) {
-            // WSS - Specific web socket end point
+        var isWss = baseUri.lastIndexOf('wss:', 0) === 0;
+        var isWs = baseUri.lastIndexOf('ws:', 0) === 0;
+        var isHttps = baseUri.lastIndexOf('https:', 0) === 0;
+        var isHttp = baseUri.lastIndexOf('http:', 0) === 0;
+
+        if (isWss || isWs) {
+            // WS - Specific web socket end point
             callback(undefined, {
                 uri: baseUri + '/ws',
                 roundTripTime: 0
             });
-        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
+        } else if (isHttps || isHttp) {
             // HTTP - Resolve closest end point
             var that = this;
 
@@ -85,9 +90,11 @@ define([
                         return;
                     }
 
+                    var isHttpsEndPoint = response.endPoint.lastIndexOf('https:', 0) === 0;
+
                     that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: response.time}, null, {
                         resource: response.endPoint,
-                        kind: 'https'
+                        kind: isHttpsEndPoint ? 'https' : 'http'
                     });
                 });
 
@@ -97,7 +104,7 @@ define([
             });
         } else {
             // Not supported
-            callback(new Error('Uri not supported'));
+            callback(new Error('Uri not supported [' + baseUri + ']'));
         }
     }
 

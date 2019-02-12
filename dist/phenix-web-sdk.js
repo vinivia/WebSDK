@@ -1590,13 +1590,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
-        if (baseUri.lastIndexOf('wss:', 0) === 0) {
-            // WSS - Specific web socket end point
+        var isWss = baseUri.lastIndexOf('wss:', 0) === 0;
+        var isWs = baseUri.lastIndexOf('ws:', 0) === 0;
+        var isHttps = baseUri.lastIndexOf('https:', 0) === 0;
+        var isHttp = baseUri.lastIndexOf('http:', 0) === 0;
+
+        if (isWss || isWs) {
+            // WS - Specific web socket end point
             callback(undefined, {
                 uri: baseUri + '/ws',
                 roundTripTime: 0
             });
-        } else if (baseUri.lastIndexOf('https:', 0) === 0) {
+        } else if (isHttps || isHttp) {
             // HTTP - Resolve closest end point
             var that = this;
 
@@ -1619,9 +1624,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         return;
                     }
 
+                    var isHttpsEndPoint = response.endPoint.lastIndexOf('https:', 0) === 0;
+
                     that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: response.time}, null, {
                         resource: response.endPoint,
-                        kind: 'https'
+                        kind: isHttpsEndPoint ? 'https' : 'http'
                     });
                 });
 
@@ -1631,7 +1638,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             });
         } else {
             // Not supported
-            callback(new Error('Uri not supported'));
+            callback(new Error('Uri not supported [' + baseUri + ']'));
         }
     }
 
@@ -1639,7 +1646,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-02-22T01:41:00Z',
+                version: '2019-04-17T22:20:31Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -9440,7 +9447,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-02-22T01:41:00Z';
+    var sdkVersion = '2019-04-17T22:20:31Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -15503,7 +15510,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-22T01:41:00Z' || '?';
+    var sdkVersion = '2019-04-17T22:20:31Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15759,7 +15766,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-22T01:41:00Z' || '?';
+    var sdkVersion = '2019-04-17T22:20:31Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -25161,7 +25168,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-22T01:41:00Z' || '?';
+    var sdkVersion = '2019-04-17T22:20:31Z' || '?';
     var releaseVersion = '2019.2.4';
 
     function Logger() {
