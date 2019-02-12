@@ -277,7 +277,7 @@ define([
         var res = JSON.parse(response.data);
 
         if (res.status !== 'ok') {
-            return callback(null, {status: res.status});
+            return callback(null, {status: res.status || 'status-code-missing'});
         }
 
         return callback(null, res);
