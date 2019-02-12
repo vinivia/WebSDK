@@ -190,7 +190,7 @@ define('app-setup', [
             adminBaseUri += ':' + parser.port;
         }
 
-        return adminBaseUri;
+        return getUrlParameter('adminUrl', adminBaseUri);
     };
 
     var getUrlParameter = function getUrlParameter(parameterName, defaultValue) {
