@@ -139,7 +139,7 @@ define([
             return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
         });
 
-        return _.isNumber(indexOfSection);
+        return indexOfSection < 0;
     };
 
     sdpUtil.prototype.hasActiveAudio = function hasActiveAudio(peerConnection) {
@@ -151,7 +151,7 @@ define([
             return false;
         });
 
-        return _.isNumber(indexOfActiveVideo);
+        return indexOfActiveVideo < 0;
     };
 
     sdpUtil.prototype.hasActiveVideo = function hasActiveVideo(peerConnection) {
@@ -163,7 +163,7 @@ define([
             return false;
         });
 
-        return _.isNumber(indexOfActiveVideo);
+        return indexOfActiveVideo < 0;
     };
 
     sdpUtil.prototype.findInSdpSections = function findInSdpSections(peerConnection, callback) {

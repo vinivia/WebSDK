@@ -298,6 +298,49 @@ define([
             });
         });
 
+        describe('When using fallbackToHigher resolution strategy starting from the lowest resolution', function() {
+            it('will try all higher resolution and not try any lower resolutions', function(done) {
+                var heightToStartAt = 1;
+                var isHigherResolutionCalled = 0;
+                var isLowerResolutionCalled = 0;
+
+                userMediaResolver = new UserMediaResolver(pcast, {
+                    aspectRatio: '16x9',
+                    resolutionHeight: heightToStartAt,
+                    frameRate: 15,
+                    resolutionSelectionStrategy: 'fallbackToHigher'
+                });
+
+                userMediaStubber.stubResolutionError(function(constraints) {
+                    var height = null;
+
+                    if (_.isObject(constraints.video.height)) {
+                        height = constraints.video.height.min;
+                    } else if (_.isObject(constraints.video.mandatory)) {
+                        height = constraints.video.mandatory.minHeight;
+                    }
+
+                    console.log(height, heightToStartAt);
+
+                    if (height !== null && height > heightToStartAt) {
+                        isHigherResolutionCalled++;
+                    }
+
+                    if (height !== null && height < heightToStartAt) {
+                        isLowerResolutionCalled++;
+                    }
+                });
+
+                userMediaResolver.getUserMedia({video: true}, function(error, response) {
+                    expect(error).to.exist;
+                    expect(response).to.not.exist;
+                    expect(isHigherResolutionCalled).to.be.equal(8);
+                    expect(isLowerResolutionCalled).to.be.equal(0);
+                    done();
+                });
+            });
+        });
+
         describe('When using exact resolution strategy', function() {
             it('will not try any higher and any lower resolutions', function(done) {
                 var heightToStartAt = 720;

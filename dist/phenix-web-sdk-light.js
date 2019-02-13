@@ -2646,7 +2646,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
         });
 
-        return _.isNumber(indexOfSection);
+        return indexOfSection < 0;
     };
 
     sdpUtil.prototype.hasActiveAudio = function hasActiveAudio(peerConnection) {
@@ -2658,7 +2658,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         });
 
-        return _.isNumber(indexOfActiveVideo);
+        return indexOfActiveVideo < 0;
     };
 
     sdpUtil.prototype.hasActiveVideo = function hasActiveVideo(peerConnection) {
@@ -2670,7 +2670,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return false;
         });
 
-        return _.isNumber(indexOfActiveVideo);
+        return indexOfActiveVideo < 0;
     };
 
     sdpUtil.prototype.findInSdpSections = function findInSdpSections(peerConnection, callback) {
@@ -4214,7 +4214,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-02-13T22:39:46Z';
+    var sdkVersion = '2019-02-13T22:43:12Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -7837,10 +7837,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var newHeight;
         var newWidth;
 
-        if (!_.isNumber(heightIndex)) {
+        if (heightIndex < 0) {
             heightIndex = getNextHighestKeyIndex(height, aspectRatioHeights);
 
-            if (!heightIndex) {
+            if (heightIndex < 0) {
                 return;
             }
         } else {
@@ -10017,7 +10017,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
+    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10273,7 +10273,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
+    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11540,7 +11540,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             if (that._onAnEndpointResolved) {
                 if (err) {
-                    that._onAnEndpointResolved(err);
+                    that._onAnEndpointResolved(err, {endPoint: endPoint});
                 } else {
                     that._onAnEndpointResolved(null, {
                         time: time,
@@ -11550,7 +11550,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (err) {
-                return that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
+                if (err.code === 503) {
+                    that._logger.info('End point [%s] is temporarily unavailable', endPoint);
+                } else {
+                    that._logger.warn('Unable to resolve end point [%s] with [%s]', endPoint, err);
+                }
+
+                return;
             } else if (that.isResolved()) {
                 return;
             }
@@ -11673,7 +11679,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     version: that._version
                 }, callback, function(err, response) {
                     if (err) {
-                        that._logger.warn('An error occurred in resolving an endpoint', err);
+                        if (err.code === 503) {
+                            that._logger.debug('The end point [%s] is temporarily disabled', _.get(response, ['endPoint']));
+                        } else {
+                            that._logger.warn('An error occurred in resolving an endpoint [%s]', _.get(response, ['endPoint']), err);
+                        }
 
                         return;
                     }
@@ -11698,7 +11708,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-02-13T22:39:46Z',
+                version: '2019-02-13T22:43:12Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17691,7 +17701,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:39:46Z' || '?';
+    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
     var releaseVersion = '2019.2.2';
 
     function Logger() {
@@ -18779,33 +18789,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     _.find = function find(collection, callback, initialIndex) {
         assertIsArray(collection, 'collection');
 
-        var hasItem;
+        var item = undefined;
 
         _.forEach(collection, function findInCollection(value, index) {
             if (callback(value) && index >= (initialIndex || 0)) {
-                hasItem = value;
+                item = value;
 
-                return hasItem;
+                return false;
             }
         });
 
-        return hasItem;
+        return item;
     };
 
     _.findIndex = function find(collection, callback, initialIndex) {
         assertIsArray(collection, 'collection');
 
-        var hasItem;
+        var itemIndex = -1;
 
         _.forEach(collection, function findInCollection(value, index) {
             if (callback(value, index) && index >= (initialIndex || 0)) {
-                hasItem = index;
+                itemIndex = index;
 
-                return hasItem;
+                return false;
             }
         });
 
-        return hasItem;
+        return itemIndex;
     };
 
     _.filter = function filter(collection, callback) {
@@ -18898,6 +18908,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assertIsString(prefix, 'prefix');
 
         return value.indexOf(prefix) === 0;
+    };
+
+    _.endsWith = function endsWith(value, postfix) {
+        assertIsString(value, 'value');
+        assertIsString(postfix, 'postfix');
+
+        var start = value.length - postfix.length;
+
+        return value.indexOf(postfix, start) === start;
     };
 
     _.sameTypes = function sameTypes(first, second) {
@@ -19200,7 +19219,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     return _;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
 
 /***/ }),
 /* 87 */

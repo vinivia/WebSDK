@@ -76,7 +76,11 @@ define([
                     version: that._version
                 }, callback, function(err, response) {
                     if (err) {
-                        that._logger.warn('An error occurred in resolving an endpoint', err);
+                        if (err.code === 503) {
+                            that._logger.debug('The end point [%s] is temporarily disabled', _.get(response, ['endPoint']));
+                        } else {
+                            that._logger.warn('An error occurred in resolving an endpoint [%s]', _.get(response, ['endPoint']), err);
+                        }
 
                         return;
                     }

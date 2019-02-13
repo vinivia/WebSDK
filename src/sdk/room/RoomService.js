@@ -761,7 +761,7 @@ define([
             return self.getSessionId() === member.getSessionId();
         });
 
-        if (!_.isNumber(selfIndex)) {
+        if (selfIndex < 0) {
             return this._logger.info('Self not in server room model.');
         }
 

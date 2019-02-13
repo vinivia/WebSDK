@@ -171,10 +171,10 @@ define([
         var newHeight;
         var newWidth;
 
-        if (!_.isNumber(heightIndex)) {
+        if (heightIndex < 0) {
             heightIndex = getNextHighestKeyIndex(height, aspectRatioHeights);
 
-            if (!heightIndex) {
+            if (heightIndex < 0) {
                 return;
             }
         } else {
