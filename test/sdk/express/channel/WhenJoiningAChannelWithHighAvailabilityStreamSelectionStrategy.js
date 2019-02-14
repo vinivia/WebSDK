@@ -313,5 +313,87 @@ define([
                 done();
             });
         });
+
+        it('fails if all members trigger more than the allowed capacity failures', function(done) {
+            this.timeout(30000);
+
+            var attemptCount = 0;
+            var primaryMember = createMember('primary', '1');
+            var alternateMember = createMember('alternate', '1');
+
+            var setTimeoutClone = setTimeout;
+
+            window.setTimeout = function(callback, timeout) {
+                return setTimeoutClone(callback, timeout / 100);
+            };
+
+            joinRoomResponse.members = [primaryMember, alternateMember];
+
+            httpStubber.stubStreamRequestWithStatus('capacity', function() {
+                attemptCount++;
+            });
+
+            channelExpress.joinChannel({
+                alias: 'ChannelAlias',
+                streamSelectionStrategy: 'high-availability',
+                banMemberOnCapacityFailureCount: 2
+            }, function() {}, function(error, response) {
+                window.setTimeout = setTimeoutClone;
+                expect(response.status).to.be.equal('capacity');
+                expect(attemptCount).to.be.equal(4);
+                done();
+            });
+        });
+
+        it('fails if all members ended', function(done) {
+            this.timeout(30000);
+
+            var notificationCount = 0;
+            var attemptCount = 0;
+            var subscribeCount = 0;
+            var primaryMember = createMember('primary', '1');
+            var alternateMember = createMember('alternate', '1');
+
+            var setTimeoutClone = setTimeout;
+
+            window.setTimeout = function(callback, timeout) {
+                return setTimeoutClone(callback, timeout / 100);
+            };
+
+            joinRoomResponse.members = [primaryMember, alternateMember];
+
+            httpStubber.stubStreamRequest(function() {
+                attemptCount++;
+            });
+
+            channelExpress.joinChannel({
+                alias: 'ChannelAlias',
+                streamSelectionStrategy: 'high-availability'
+            }, function() {}, function(error, response) {
+                notificationCount++;
+
+                if (response.status === 'ok') {
+                    subscribeCount++;
+
+                    return websocketStubber.stubEvent('pcast.StreamEnded', {
+                        streamId: 'mockStreamId',
+                        reason: 'ended',
+                        sessionId: 'mockSessionId'
+                    });
+                }
+
+                window.setTimeout = setTimeoutClone;
+                expect(response.status).to.be.equal('ended');
+                expect(subscribeCount).to.be.equal(attemptCount);
+                expect(subscribeCount).to.be.at.most(2);
+                expect(notificationCount).to.be.at.most(3);
+
+                if (subscribeCount === 2) {
+                    expect(notificationCount).to.be.equal(3);
+
+                    done();
+                }
+            });
+        });
     });
 });

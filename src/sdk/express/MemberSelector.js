@@ -23,6 +23,7 @@ define([
     var mostRecentStrategy = 'most-recent';
     var highAvailabilityStrategy = 'high-availability';
     var defaultBannedFailureCount = 1000;
+    var defaultBanMemberOnCapacityFailureCount = 5;
 
     function MemberSelector(selectionStrategy, logger, options) {
         if (selectionStrategy) {
@@ -34,6 +35,7 @@ define([
         this._selectionStrategy = selectionStrategy || mostRecentStrategy;
         this._logger = logger;
         this._failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember'], defaultBannedFailureCount);
+        this._banMemberOnCapacityFailureCount = _.get(options, ['banMemberOnCapacityFailureCount'], defaultBanMemberOnCapacityFailureCount);
 
         this.reset();
     }
@@ -58,7 +60,7 @@ define([
         return this._selectionStrategy;
     };
 
-    MemberSelector.prototype.markFailed = function() {
+    MemberSelector.prototype.markFailed = function(options) {
         if (!this._lastSelectedMember) {
             this._logger.warn('Marking failed member but there was no recent selected member');
 
@@ -66,13 +68,34 @@ define([
         }
 
         var memberKey = getMemberKey(this._lastSelectedMember);
-        var failureCount = _.get(this._failureCounts, [memberKey], 0);
 
+        if (_.get(options, ['failedDueToCapacity'], false)) {
+            var capacityFailureCount = _.get(this._capacityFailureCounts, [memberKey], 0);
+
+            capacityFailureCount++;
+
+            _.set(this._capacityFailureCounts, [memberKey], capacityFailureCount);
+
+            if (capacityFailureCount >= this._banMemberOnCapacityFailureCount) {
+                this._logger.info('Disabling member [%s] that has exceeded threshold due to [%s] capacity failures', memberKey, capacityFailureCount);
+
+                return this.markDead();
+            }
+        }
+
+        var failureCount = _.get(this._failureCounts, [memberKey], 0);
         failureCount++;
 
         this._logger.info('Failure count for member [%s] is now [%s]', memberKey, failureCount);
 
         _.set(this._failureCounts, [memberKey], failureCount);
+
+        if (failureCount >= this._failureCountForBanningAMember) {
+            this._logger.info('Disabling member [%s] that has exceeded threshold due to [%s] failures', memberKey, failureCount);
+
+            return this.markDead();
+        }
+
         this._lastSelectedMember = null;
     };
 
@@ -87,7 +110,7 @@ define([
 
         this._logger.info('Member [%s] is now permanently removed', memberKey);
 
-        _.set(this._failureCounts, [memberKey], this._failureCountForBanningAMember);
+        _.set(this._deadMembers, [memberKey], true);
         this._lastSelectedMember = null;
     };
 
@@ -98,6 +121,8 @@ define([
     MemberSelector.prototype.reset = function() {
         this._lastSelectedMember = null;
         this._failureCounts = {};
+        this._capacityFailureCounts = {};
+        this._deadMembers = {};
     };
 
     MemberSelector.prototype.dispose = function dispose() {
@@ -136,7 +161,10 @@ define([
         switch (this._selectionStrategy) {
         case mostRecentStrategy:
             var activeMembers = _.reduce(members, function(activeMembers, member) {
-                if (_.get(that._failureCounts, [getMemberKey(member)], 0) < that._failureCountForBanningAMember) {
+                var memberKey = getMemberKey(member);
+                var isDead = _.get(that._deadMembers, [memberKey], false);
+
+                if (!isDead) {
                     activeMembers.push(member);
                 }
 
@@ -150,10 +178,17 @@ define([
             }
 
             var selectedMember = undefined;
-            var minFailureCount = Math.max(0, that._failureCountForBanningAMember - 1);
+            var minFailureCount = Number.MAX_VALUE;
 
             _.forEach(members, function(member) {
-                var failureCount = _.get(that._failureCounts, [getMemberKey(member)], 0);
+                var memberKey = getMemberKey(member);
+                var isDead = _.get(that._deadMembers, [memberKey], false);
+
+                if (isDead) {
+                    return;
+                }
+
+                var failureCount = _.get(that._failureCounts, [member], 0);
 
                 if (failureCount < minFailureCount) {
                     minFailureCount = failureCount;

@@ -1639,7 +1639,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-02-13T22:43:12Z',
+                version: '2019-02-14T23:35:36Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -1997,6 +1997,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var mostRecentStrategy = 'most-recent';
     var highAvailabilityStrategy = 'high-availability';
     var defaultBannedFailureCount = 1000;
+    var defaultBanMemberOnCapacityFailureCount = 5;
 
     function MemberSelector(selectionStrategy, logger, options) {
         if (selectionStrategy) {
@@ -2008,6 +2009,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._selectionStrategy = selectionStrategy || mostRecentStrategy;
         this._logger = logger;
         this._failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember'], defaultBannedFailureCount);
+        this._banMemberOnCapacityFailureCount = _.get(options, ['banMemberOnCapacityFailureCount'], defaultBanMemberOnCapacityFailureCount);
 
         this.reset();
     }
@@ -2032,7 +2034,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._selectionStrategy;
     };
 
-    MemberSelector.prototype.markFailed = function() {
+    MemberSelector.prototype.markFailed = function(options) {
         if (!this._lastSelectedMember) {
             this._logger.warn('Marking failed member but there was no recent selected member');
 
@@ -2040,13 +2042,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         var memberKey = getMemberKey(this._lastSelectedMember);
-        var failureCount = _.get(this._failureCounts, [memberKey], 0);
 
+        if (_.get(options, ['failedDueToCapacity'], false)) {
+            var capacityFailureCount = _.get(this._capacityFailureCounts, [memberKey], 0);
+
+            capacityFailureCount++;
+
+            _.set(this._capacityFailureCounts, [memberKey], capacityFailureCount);
+
+            if (capacityFailureCount >= this._banMemberOnCapacityFailureCount) {
+                this._logger.info('Disabling member [%s] that has exceeded threshold due to [%s] capacity failures', memberKey, capacityFailureCount);
+
+                return this.markDead();
+            }
+        }
+
+        var failureCount = _.get(this._failureCounts, [memberKey], 0);
         failureCount++;
 
         this._logger.info('Failure count for member [%s] is now [%s]', memberKey, failureCount);
 
         _.set(this._failureCounts, [memberKey], failureCount);
+
+        if (failureCount >= this._failureCountForBanningAMember) {
+            this._logger.info('Disabling member [%s] that has exceeded threshold due to [%s] failures', memberKey, failureCount);
+
+            return this.markDead();
+        }
+
         this._lastSelectedMember = null;
     };
 
@@ -2061,7 +2084,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._logger.info('Member [%s] is now permanently removed', memberKey);
 
-        _.set(this._failureCounts, [memberKey], this._failureCountForBanningAMember);
+        _.set(this._deadMembers, [memberKey], true);
         this._lastSelectedMember = null;
     };
 
@@ -2072,6 +2095,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     MemberSelector.prototype.reset = function() {
         this._lastSelectedMember = null;
         this._failureCounts = {};
+        this._capacityFailureCounts = {};
+        this._deadMembers = {};
     };
 
     MemberSelector.prototype.dispose = function dispose() {
@@ -2110,7 +2135,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         switch (this._selectionStrategy) {
         case mostRecentStrategy:
             var activeMembers = _.reduce(members, function(activeMembers, member) {
-                if (_.get(that._failureCounts, [getMemberKey(member)], 0) < that._failureCountForBanningAMember) {
+                var memberKey = getMemberKey(member);
+                var isDead = _.get(that._deadMembers, [memberKey], false);
+
+                if (!isDead) {
                     activeMembers.push(member);
                 }
 
@@ -2124,10 +2152,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             var selectedMember = undefined;
-            var minFailureCount = Math.max(0, that._failureCountForBanningAMember - 1);
+            var minFailureCount = Number.MAX_VALUE;
 
             _.forEach(members, function(member) {
-                var failureCount = _.get(that._failureCounts, [getMemberKey(member)], 0);
+                var memberKey = getMemberKey(member);
+                var isDead = _.get(that._deadMembers, [memberKey], false);
+
+                if (isDead) {
+                    return;
+                }
+
+                var failureCount = _.get(that._failureCounts, [member], 0);
 
                 if (failureCount < minFailureCount) {
                     minFailureCount = failureCount;
@@ -9405,7 +9440,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-02-13T22:43:12Z';
+    var sdkVersion = '2019-02-14T23:35:36Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11634,6 +11669,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             maxReconnectFrequency: 60 * 1000 // 60 seconds
         }
     };
+    var backoffIntervalOnCapacity = 5000;
+    var backoffIntervalOnRetry = 100;
 
     function ChannelExpress(options) {
         assert.isObject(options, 'options');
@@ -11701,7 +11738,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             role: memberEnums.roles.audience.name
         }, options);
         var failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember']);
-        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger, {failureCountForBanningAMember: failureCountForBanningAMember});
+        var banMemberOnCapacityFailureCount = _.get(options, ['banMemberOnCapacityFailureCount']);
+        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger, {
+            failureCountForBanningAMember: failureCountForBanningAMember,
+            banMemberOnCapacityFailureCount: banMemberOnCapacityFailureCount
+        });
         var lastMediaStream;
         var lastStreamId;
         var channelRoomService;
@@ -11800,14 +11841,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             var tryNextMember = function(streamStatus) {
-                var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
-                var members = room ? room.getObservableMembers().getValue() : [];
+                return setTimeout(function() {
+                    var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
 
-                if (!room) {
-                    return; // No longer in room.
-                }
+                    if (!room) {
+                        return; // No longer in room.
+                    }
 
-                return membersChangedCallback(members, streamStatus);
+                    var members = room.getObservableMembers().getValue();
+
+                    return membersChangedCallback(members, streamStatus);
+                }, streamStatus === 'capacity' ? backoffIntervalOnCapacity : backoffIntervalOnRetry);
             };
 
             function monitorChannelSubscriber(mediaStreamId, error, response) {
@@ -11842,11 +11886,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                     switch (responseStatus) {
                     case 'ended':
+                    case 'origin-ended':
+                    case 'origin-stream-ended':
                         memberSelector.markDead();
 
                         break;
                     default:
-                        memberSelector.markFailed();
+                        memberSelector.markFailed({failedDueToCapacity: responseStatus === 'capacity'});
 
                         break;
                     }
@@ -11890,11 +11936,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     case 'ended':
                     case 'origin-not-found':
                     case 'origin-ended':
+                    case 'origin-stream-ended':
                         memberSelector.markDead();
 
                         break;
                     default:
-                        memberSelector.markFailed();
+                        memberSelector.markFailed({failedDueToCapacity: responseStatus === 'capacity'});
 
                         break;
                     }
@@ -15437,7 +15484,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
+    var sdkVersion = '2019-02-14T23:35:36Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15693,7 +15740,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
+    var sdkVersion = '2019-02-14T23:35:36Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -25095,8 +25142,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-02-13T22:43:12Z' || '?';
-    var releaseVersion = '2019.2.2';
+    var sdkVersion = '2019-02-14T23:35:36Z' || '?';
+    var releaseVersion = '2019.2.3';
 
     function Logger() {
         this._appenders = [];

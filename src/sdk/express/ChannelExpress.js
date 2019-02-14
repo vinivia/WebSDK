@@ -36,6 +36,8 @@ define([
             maxReconnectFrequency: 60 * 1000 // 60 seconds
         }
     };
+    var backoffIntervalOnCapacity = 5000;
+    var backoffIntervalOnRetry = 100;
 
     function ChannelExpress(options) {
         assert.isObject(options, 'options');
@@ -103,7 +105,11 @@ define([
             role: memberEnums.roles.audience.name
         }, options);
         var failureCountForBanningAMember = _.get(options, ['failureCountForBanningAMember']);
-        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger, {failureCountForBanningAMember: failureCountForBanningAMember});
+        var banMemberOnCapacityFailureCount = _.get(options, ['banMemberOnCapacityFailureCount']);
+        var memberSelector = new MemberSelector(options.streamSelectionStrategy, this._logger, {
+            failureCountForBanningAMember: failureCountForBanningAMember,
+            banMemberOnCapacityFailureCount: banMemberOnCapacityFailureCount
+        });
         var lastMediaStream;
         var lastStreamId;
         var channelRoomService;
@@ -202,14 +208,17 @@ define([
             }
 
             var tryNextMember = function(streamStatus) {
-                var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
-                var members = room ? room.getObservableMembers().getValue() : [];
+                return setTimeout(function() {
+                    var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
 
-                if (!room) {
-                    return; // No longer in room.
-                }
+                    if (!room) {
+                        return; // No longer in room.
+                    }
 
-                return membersChangedCallback(members, streamStatus);
+                    var members = room.getObservableMembers().getValue();
+
+                    return membersChangedCallback(members, streamStatus);
+                }, streamStatus === 'capacity' ? backoffIntervalOnCapacity : backoffIntervalOnRetry);
             };
 
             function monitorChannelSubscriber(mediaStreamId, error, response) {
@@ -244,11 +253,13 @@ define([
 
                     switch (responseStatus) {
                     case 'ended':
+                    case 'origin-ended':
+                    case 'origin-stream-ended':
                         memberSelector.markDead();
 
                         break;
                     default:
-                        memberSelector.markFailed();
+                        memberSelector.markFailed({failedDueToCapacity: responseStatus === 'capacity'});
 
                         break;
                     }
@@ -292,11 +303,12 @@ define([
                     case 'ended':
                     case 'origin-not-found':
                     case 'origin-ended':
+                    case 'origin-stream-ended':
                         memberSelector.markDead();
 
                         break;
                     default:
-                        memberSelector.markFailed();
+                        memberSelector.markFailed({failedDueToCapacity: responseStatus === 'capacity'});
 
                         break;
                     }
