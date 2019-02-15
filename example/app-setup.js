@@ -359,6 +359,7 @@ define('app-setup', [
             'streaming': 'Streaming',
             'on-demand': 'On Demand',
             'low-latency': 'Low Latency (Streaming)',
+            'prefer-vp8': 'VP8 (Real-time)',
             'prefer-h264': 'H264 (Real-time)',
             'drm': 'DRM',
             'high-fidelity': 'High Fidelity (Audio)',
@@ -376,8 +377,10 @@ define('app-setup', [
     var getSubscriberCapabilities = function() {
         return {
             'real-time': 'Real-time',
-            'prefer-vp8': 'Real-time VP8',
-            'prefer-h264': 'Real-time H264',
+            'prefer-vp8': 'Real-time VP8 (Prefer)',
+            'prefer-vp8=force': 'Real-time VP8 (Force)',
+            'prefer-h264': 'Real-time H264 (Prefer)',
+            'prefer-h264=force': 'Real-time H264 (Force)',
             'single-bitrate': 'Real-time SBR',
             'broadcast': 'Broadcast',
             'streaming': 'Live',
