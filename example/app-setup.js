@@ -370,6 +370,11 @@ define('app-setup', [
             'uniform-gop-size': 'Uniform GOP',
             'constant-resolution': 'Constant Resolution',
             'origin-shield': 'Origin Shield',
+            'scale-wide': 'Scale Wide',
+            'prefer-edge=orgin': 'Edge Origin',
+            'prefer-edge': 'Prefer Edge',
+            'prefer-edge=avoid': 'Avoid Edge',
+            'prefer-edge=disallow': 'Disallow Edge',
             'rtmp': 'RTMP'
         };
     };
