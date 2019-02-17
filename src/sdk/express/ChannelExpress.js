@@ -151,7 +151,15 @@ define([
             wrapResponseWithChannelPrefixesAndContinue(joinChannelCallback, error, channelResponse);
         };
 
+        var backoffTimeoutId = null;
         that._roomExpress.joinRoom(channelOptions, joinRoomCallback, function membersChangedCallback(members, streamErrorStatus) {
+            if (backoffTimeoutId !== null) {
+                that._logger.info('[%s] Clearing backoff interval after member changed', channelId);
+
+                clearTimeout(backoffTimeoutId);
+                backoffTimeoutId = null;
+            }
+
             that._logger.info('[%s] Members changed with status [%s]. Channel has [%s] active members.', channelId, streamErrorStatus, members.length);
 
             var presenters = _.filter(members, function(member) {
@@ -208,7 +216,16 @@ define([
             }
 
             var tryNextMember = function(streamStatus) {
-                return setTimeout(function() {
+                if (backoffTimeoutId !== null) {
+                    that._logger.warn('[%s] Clearing backoff interval after triggering of another unexpected failure [%s]', channelId, streamStatus);
+
+                    clearTimeout(backoffTimeoutId);
+                    backoffTimeoutId = null;
+                }
+
+                return backoffTimeoutId = setTimeout(function() {
+                    backoffTimeoutId = null;
+
                     var room = channelRoomService ? channelRoomService.getObservableActiveRoom().getValue() : null;
 
                     if (!room) {
