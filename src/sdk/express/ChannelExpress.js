@@ -272,6 +272,7 @@ define([
                     case 'ended':
                     case 'origin-ended':
                     case 'origin-stream-ended':
+                    case 'unsupported-features':
                         memberSelector.markDead();
 
                         break;
@@ -321,6 +322,7 @@ define([
                     case 'origin-not-found':
                     case 'origin-ended':
                     case 'origin-stream-ended':
+                    case 'unsupported-features':
                         memberSelector.markDead();
 
                         break;
