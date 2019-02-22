@@ -371,6 +371,7 @@ define('app-setup', [
             'constant-resolution': 'Constant Resolution',
             'origin-shield': 'Origin Shield',
             'scale-wide': 'Scale Wide',
+            'scale-elastic': 'Scale Elastic',
             'prefer-edge=orgin': 'Edge Origin',
             'prefer-edge': 'Prefer Edge',
             'prefer-edge=avoid': 'Avoid Edge',
