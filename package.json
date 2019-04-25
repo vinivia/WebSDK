@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2019.2.5",
+  "version": "2019.2.6",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",
@@ -89,7 +89,7 @@
     "moment": "2.22.1",
     "phantomjs-prebuilt": "2.1.16",
     "phenix-react-gum-configuration": "2017.4.6",
-    "phenix-rtc": "2018.4.1",
+    "phenix-rtc": "2019.0.1",
     "phenix-web-application-activity-detector": "2018.4.2",
     "phenix-web-assert": "2018.4.2",
     "phenix-web-batch-http": "2019.0.0",
