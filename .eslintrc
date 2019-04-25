@@ -85,7 +85,7 @@
         // Rules specific to this module
         "indent": [2, 4],
         "notice/notice":["error", {
-            "mustMatch": "Copyright 2019 PhenixP2P Inc.",
+            "mustMatch": "Copyright 2019 Phenix Real Time Solutions Inc.",
             "templateFile": "copyright.tmpl",
             "onNonMatchingHeader": "replace"
         }],
