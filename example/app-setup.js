@@ -357,6 +357,7 @@ define('app-setup', [
 
     var getPublisherCapabilities = function() {
         return {
+            'audio-only': 'Audio Only',
             'archive': 'Archive',
             'archive-audio-only': 'Archive Audio Only',
             'streaming': 'Streaming',
@@ -385,6 +386,7 @@ define('app-setup', [
 
     var getSubscriberCapabilities = function() {
         return {
+            'audio-only': 'Audio Only',
             'real-time': 'Real-time',
             'prefer-vp8': 'Real-time VP8 (Prefer)',
             'prefer-vp8=force': 'Real-time VP8 (Force)',
