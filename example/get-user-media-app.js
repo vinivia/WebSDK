@@ -144,6 +144,20 @@ requirejs([
             });
         };
 
+        var getErrorReason = function(jqXHR, textStatus, errorThrown) {
+            // We can not catch browser network errors from JS land
+            // but we can notify where a user can find needed information
+            if (jqXHR.readyState !== 4) {
+                return 'A request was not sent. Check Dev Console for more details';
+            }
+
+            if (_.has(jqXHR, ['responseJSON', 'status'])) {
+                return jqXHR.responseJSON.status;
+            }
+
+            return jqXHR.status + ' ' + (errorThrown || textStatus);
+        };
+
         var createAuthToken = function createAuthToken() {
             var data = app.getAuthData();
 
@@ -160,10 +174,12 @@ requirejs([
                     app.activateStep('step-3');
                 }, 1500);
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Auth</strong>',
-                    message: 'Failed to create authentication token (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to create authentication token (' + reason + ')'
                 });
             });
         };
@@ -457,10 +473,12 @@ requirejs([
                     $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
                 }
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Streams</strong>',
-                    message: 'Failed to list streams (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to list streams (' + reason + ')'
                 });
             });
         };
@@ -489,10 +507,12 @@ requirejs([
                 });
                 callback(result.streamToken);
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Stream</strong>',
-                    message: 'Failed to create stream token (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to create stream token (' + reason + ')'
                 });
             });
         };
