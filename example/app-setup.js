@@ -361,8 +361,11 @@ define('app-setup', [
             'archive': 'Archive',
             'archive-audio-only': 'Archive Audio Only',
             'streaming': 'Streaming',
+            'mpegts-streaming': 'Streaming (MP2T)',
             'on-demand': 'On Demand',
             'low-latency': 'Low Latency (Streaming)',
+            'rtmp': 'RTMP',
+            'mpegts-rtmp': 'RTMP (MP2T)',
             'prefer-vp8': 'VP8 (Real-time)',
             'prefer-h264': 'H264 (Real-time)',
             'drm': 'DRM',
@@ -380,7 +383,8 @@ define('app-setup', [
             'prefer-edge': 'Prefer Edge',
             'prefer-edge=avoid': 'Avoid Edge',
             'prefer-edge=disallow': 'Disallow Edge',
-            'rtmp': 'RTMP'
+            'disable-nack': 'No NACKs',
+            'disable-pli': 'No PLIs'
         };
     };
 
@@ -393,6 +397,8 @@ define('app-setup', [
             'prefer-h264': 'Real-time H264 (Prefer)',
             'prefer-h264=force': 'Real-time H264 (Force)',
             'single-bitrate': 'Real-time SBR',
+            'disable-nack': 'No NACKs',
+            'disable-pli': 'No PLIs',
             'broadcast': 'Broadcast',
             'streaming': 'Live',
             'on-demand': 'On Demand',
