@@ -20,8 +20,34 @@ define([
 ], function(_, assert) {
     'use strict';
 
-    // ToDo: Add supported frame rates [30, 15]
     var aspectRatios = [
+        {
+            '9x16': [
+                {3840: 2160}, // 4k (UHD)
+                {1920: 1080}, // 1080p (FHD)
+                {1366: 768}, //
+                {1280: 720}, // 720p(HD)
+                {1024: 576},
+                {854: 480}, // 480p
+                {640: 360}, // 360p (nHD)
+                {320: 180}
+            ]
+        },
+        {
+            '3x4': [
+                {1600: 1200}, // UXGA
+                {1440: 1080},
+                {960: 720},
+                {800: 600}, // SVGA
+                {768: 576},
+                {640: 480}, // VGA
+                {480: 360},
+                {352: 288}, // CIF
+                {320: 240}, // QVGA
+                {176: 144}, // QCIF
+                {160: 120} // QQVGA
+            ]
+        },
         {
             '16x9': [
                 {2160: 3840}, // 4k (UHD)
@@ -29,7 +55,7 @@ define([
                 {768: 1366}, //
                 {720: 1280}, // 720p(HD)
                 {576: 1024},
-                {480: 853}, // 480p
+                {480: 854}, // 480p
                 {360: 640}, // 360p (nHD)
                 {180: 320}
             ]
@@ -80,8 +106,8 @@ define([
             assert.isStringNotEmpty(options.aspectRatio, 'options.aspectRatio');
         }
 
-        if (options.resolutionHeight) {
-            assert.isNumber(options.resolutionHeight, 'options.resolutionHeight');
+        if (options.resolution) {
+            assert.isNumber(options.resolution, 'options.resolution');
         }
 
         if (options.frameRate) {
@@ -90,19 +116,32 @@ define([
 
         this._resolutionSelectionStrategy = options.resolutionSelectionStrategy || resolutionSelectionStrategies.fallbackToLowerThenHigher.name;
         this._defaultAspectRatio = options.aspectRatio || '16x9';
-        this._defaultResolutionHeight = options.resolutionHeight || 720;
+        this._defaultResolution = options.resolution || 720;
         this._defaultFrameRate = options.frameRate || 15;
     }
 
     ResolutionProvider.prototype.getDefaultResolution = function getDefaultResolution() {
-        var aspectRatioHeights = getObjectValueInArray(this._defaultAspectRatio, aspectRatios);
-        var width = getObjectValueInArray(this._defaultResolutionHeight, aspectRatioHeights) || this.calculateWidthByAspectRatio(this._defaultResolutionHeight, this._defaultAspectRatio);
+        var longerDimension = this.calculateLongerDimensionByAspectRatio(this._defaultResolution, this._defaultAspectRatio);
 
-        return {
-            height: this._defaultResolutionHeight,
-            width: width,
-            aspectRatio: this._defaultAspectRatio
-        };
+        switch (this._defaultAspectRatio) {
+        // Portrait
+        case '9x16':
+        case '3x4':
+            return {
+                height: longerDimension,
+                width: this._defaultResolution,
+                aspectRatio: this._defaultAspectRatio
+            };
+        // Landscape
+        case '16x9':
+        case '4x3':
+        default:
+            return {
+                height: this._defaultResolution,
+                width: longerDimension,
+                aspectRatio: this._defaultAspectRatio
+            };
+        }
     };
 
     ResolutionProvider.prototype.getDefaultFrameRate = function getDefaultFrameRate() {
@@ -121,13 +160,13 @@ define([
         case resolutionSelectionStrategies.fallbackToLowerThenHigher.name:
             var nextResolution = null;
 
-            if (height > this._defaultResolutionHeight) {
+            if (height > this._defaultResolution) {
                 nextResolution = getNextHighestResolution.call(this, height, aspectRatio);
             } else {
                 nextResolution = getNextLowestResolution.call(this, height, aspectRatio);
 
                 if (!nextResolution || !nextResolution.height) {
-                    nextResolution = getNextHighestResolution.call(this, this._defaultResolutionHeight, this._defaultAspectRatio);
+                    nextResolution = getNextHighestResolution.call(this, this._defaultResolution, this._defaultAspectRatio);
                 }
             }
 
@@ -142,12 +181,14 @@ define([
         return this._resolutionSelectionStrategy !== resolutionSelectionStrategies.exact.name;
     };
 
-    ResolutionProvider.prototype.calculateWidthByAspectRatio = function calculateWidthByAspectRatio(height, aspectRatio) {
+    ResolutionProvider.prototype.calculateLongerDimensionByAspectRatio = function calculateLongerDimensionByAspectRatio(shorterDimension, aspectRatio) {
         switch (aspectRatio) {
         case '16x9':
-            return roundUpToNearestEvenNumber((16 / 9) * height);
+        case '9x16':
+            return roundUpToNearestEvenNumber((16 / 9) * shorterDimension);
         case '4x3':
-            return roundUpToNearestEvenNumber((4 / 3) * height);
+        case '3x4':
+            return roundUpToNearestEvenNumber((4 / 3) * shorterDimension);
         default:
             throw new Error('Aspect Ratio not supported');
         }
@@ -187,9 +228,9 @@ define([
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
-                heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
+                heightIndex = getNextHighestKeyIndex(this._defaultResolution, newAspectRatioHeights);
                 newHeight = getIndexKey(heightIndex, aspectRatioHeights);
-                newWidth = this.calculateWidthByAspectRatio(newHeight, newAspectRatio);
+                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
                     aspectRatio: newAspectRatio,
@@ -240,8 +281,8 @@ define([
                 aspectRatioIndex++;
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-                newHeight = this._defaultResolutionHeight;
-                newWidth = this.calculateWidthByAspectRatio(newHeight, newAspectRatio);
+                newHeight = this._defaultResolution;
+                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
                     aspectRatio: newAspectRatio,

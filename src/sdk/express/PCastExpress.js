@@ -706,7 +706,7 @@ define([
     function resolveUserMedia(pcast, options, callback) {
         var userMediaResolver = new UserMediaResolver(pcast, {
             aspectRatio: options.aspectRatio,
-            resolutionHeight: options.resolution,
+            resolution: options.resolution,
             frameRate: options.frameRate,
             resolutionSelectionStrategy: options.resolutionSelectionStrategy,
             onScreenShare: function(screenOptions) {
@@ -724,7 +724,7 @@ define([
                     assert.isStringNotEmpty(screenOptions.aspectRatio, 'screenOptions.aspectRatio');
                 }
 
-                return _.assign({resolutionHeight: screenOptions.resolution}, screenOptions);
+                return _.assign({resolution: screenOptions.resolution}, screenOptions);
             }
         });
 

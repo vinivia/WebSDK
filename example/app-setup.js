@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 var version = '1.0.0'; // ToDo: use until sample app separated from repo
 
 define('app-setup', [

@@ -64,7 +64,7 @@ define([
 
             userMediaResolver = new UserMediaResolver(pcast, {
                 aspectRatio: '16x9',
-                resolutionHeight: 720,
+                resolution: 720,
                 frameRate: 15
             });
 
@@ -87,7 +87,7 @@ define([
 
             userMediaResolver = new UserMediaResolver(pcast, {
                 aspectRatio: '16x9',
-                resolutionHeight: 720,
+                resolution: 720,
                 frameRate: 15
             });
 
@@ -110,7 +110,7 @@ define([
 
             userMediaResolver = new UserMediaResolver(pcast, {
                 aspectRatio: '16x9',
-                resolutionHeight: 720,
+                resolution: 720,
                 frameRate: 15
             });
 
@@ -137,7 +137,7 @@ define([
 
             userMediaResolver = new UserMediaResolver(pcast, {
                 aspectRatio: '16x9',
-                resolutionHeight: 720,
+                resolution: 720,
                 frameRate: 15
             });
 
@@ -160,7 +160,7 @@ define([
 
             userMediaResolver = new UserMediaResolver(pcast, {
                 aspectRatio: '16x9',
-                resolutionHeight: 720,
+                resolution: 720,
                 frameRate: 15
             });
 
@@ -182,7 +182,7 @@ define([
 
                 userMediaResolver = new UserMediaResolver(pcast, {
                     aspectRatio: '16x9',
-                    resolutionHeight: heightToStartAt,
+                    resolution: heightToStartAt,
                     frameRate: 15
                 });
 
@@ -222,7 +222,7 @@ define([
 
                 userMediaResolver = new UserMediaResolver(pcast, {
                     aspectRatio: '16x9',
-                    resolutionHeight: heightToStartAt,
+                    resolution: heightToStartAt,
                     frameRate: 15,
                     resolutionSelectionStrategy: 'fallbackToLower'
                 });
@@ -263,7 +263,7 @@ define([
 
                 userMediaResolver = new UserMediaResolver(pcast, {
                     aspectRatio: '16x9',
-                    resolutionHeight: heightToStartAt,
+                    resolution: heightToStartAt,
                     frameRate: 15,
                     resolutionSelectionStrategy: 'fallbackToHigher'
                 });
@@ -277,7 +277,7 @@ define([
                         height = constraints.video.mandatory.minHeight;
                     }
 
-                    console.log(height, heightToStartAt);
+                    console.log('height=' + height + ', heightToStartAt=' + heightToStartAt);
 
                     if (height !== null && height > heightToStartAt) {
                         isHigherResolutionCalled = true;
@@ -306,7 +306,7 @@ define([
 
                 userMediaResolver = new UserMediaResolver(pcast, {
                     aspectRatio: '16x9',
-                    resolutionHeight: heightToStartAt,
+                    resolution: heightToStartAt,
                     frameRate: 15,
                     resolutionSelectionStrategy: 'fallbackToHigher'
                 });
@@ -320,7 +320,7 @@ define([
                         height = constraints.video.mandatory.minHeight;
                     }
 
-                    console.log(height, heightToStartAt);
+                    console.log('height=' + height + ', heightToStartAt=' + heightToStartAt);
 
                     if (height !== null && height > heightToStartAt) {
                         isHigherResolutionCalled++;
@@ -349,7 +349,7 @@ define([
 
                 userMediaResolver = new UserMediaResolver(pcast, {
                     aspectRatio: '16x9',
-                    resolutionHeight: heightToStartAt,
+                    resolution: heightToStartAt,
                     frameRate: 15,
                     resolutionSelectionStrategy: 'exact'
                 });
@@ -363,7 +363,7 @@ define([
                         height = constraints.video.mandatory.minHeight;
                     }
 
-                    console.log(height, heightToStartAt);
+                    console.log('height=' + height + ', heightToStartAt=' + heightToStartAt);
 
                     if (height !== null && height > heightToStartAt) {
                         isHigherResolutionCalled = true;

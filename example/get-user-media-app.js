@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var phenixWebSdk = 'phenix-web-sdk';
+var params = window.location.search.substring(1).split('&');
+
+for (var i = 0; i < params.length; i++) {
+    if (params[i] === 'development') {
+        phenixWebSdk = './web-sdk';
+    }
+}
 
 /* global requirejs */
 if (window.BUILD_ENV === 'webpack') {
-    require("bootstrap/dist/css/bootstrap.css");
-    require("animate.css/animate.css");
-    require("./get-user-media.css");
+    require('bootstrap/dist/css/bootstrap.css');
+    require('animate.css/animate.css');
+    require('./get-user-media.css');
 } else {
     requirejs.config({
         paths: {
-            'phenix-web-sdk': 'phenix-web-sdk',
+            'phenix-web-sdk': phenixWebSdk,
             'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
             'jquery': 'jquery/dist/jquery.min',
             'lodash': 'lodash/lodash.min',
@@ -282,7 +290,7 @@ requirejs([
                 var aspectRatio = $('#gum-aspect-ratio option:selected').val();
                 var userMediaResolver = new sdk.media.UserMediaResolver(pcast, {
                     aspectRatio: aspectRatio,
-                    resolutionHeight: parseInt(quality, 10),
+                    resolution: parseInt(quality, 10),
                     frameRate: parseInt(framerate, 10)
                 });
                 var deviceOptions = {

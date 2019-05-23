@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var phenixWebSdk = 'phenix-web-sdk';
+var params = window.location.search.substring(1).split('&');
+
+for (var i = 0; i < params.length; i++) {
+    if (params[i] === 'development') {
+        phenixWebSdk = './web-sdk';
+    }
+}
 
 /* global requirejs */
 requirejs.config({
     paths: {
-        'phenix-web-sdk': 'phenix-web-sdk',
+        'phenix-web-sdk': phenixWebSdk,
         'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',

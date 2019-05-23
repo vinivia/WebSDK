@@ -52,7 +52,7 @@ define([
     UserMediaResolver.prototype.getVendorSpecificConstraints = function getVendorSpecificConstraints(deviceOptions, resolution, frameRate) {
         resolution = resolution || {};
 
-        if (!deviceOptions || (!deviceOptions.audio && ! deviceOptions.video && !deviceOptions.screen && !deviceOptions.screenAudio)) {
+        if (!deviceOptions || (!deviceOptions.audio && !deviceOptions.video && !deviceOptions.screen && !deviceOptions.screenAudio)) {
             throw new Error('Invalid device options. Must pass in at least one device option.');
         }
 
@@ -418,6 +418,8 @@ define([
 
         this._pcast.getUserMedia(constraints, function(pcast, status, userMedia, error) {
             if (status === 'ok') {
+                that._logger.info('Acquired user media with constraints [%s]', constraints);
+
                 return callback(null, {
                     userMedia: userMedia,
                     options: {
@@ -427,6 +429,8 @@ define([
                     }
                 });
             }
+
+            that._logger.debug('Failed to acquire user media with constraints [%s]', constraints);
 
             var nextResolution = resolution;
             var nextFrameRate = frameRate;
@@ -452,9 +456,9 @@ define([
                     return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
                 case 'framerate':
                 default:
-                    // Always try without frame rate if constraint name not defined
+                    // Always try without frame rate if constraint name is not defined
                     if (frameRate) {
-                        that._logger.warn('Unable to get user media with constraint [%s] and framerate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
+                        that._logger.warn('Unable to get user media with constraint [%s] and frame rate [%s]. Retrying without frame rate constraint.', constraintName, frameRate);
                         nextFrameRate = null;
 
                         return getUserMediaWithOptions.call(that, deviceOptions, nextResolution, nextFrameRate, resolutionProvider, callback);
@@ -486,11 +490,28 @@ define([
 
                 var resolution;
 
-                if (clientConstraints.resolutionHeight && clientConstraints.aspectRatio) {
-                    resolution = {
-                        width: resolutionProvider.calculateWidthByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
-                        height: clientConstraints.resolutionHeight
-                    };
+                if (clientConstraints.resolution && clientConstraints.aspectRatio) {
+                    switch (this._defaultAspectRatio) {
+                    // Portrait
+                    case '9x16':
+                    case '3x4':
+                        resolution = {
+                            width: clientConstraints.resolution,
+                            height: resolutionProvider.calculateLongerDimensionByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio)
+                        };
+
+                        break;
+                    // Landscape
+                    case '16x9':
+                    case '4x3':
+                    default:
+                        resolution = {
+                            width: resolutionProvider.calculateLongerDimensionByAspectRatio(clientConstraints.resolution, clientConstraints.aspectRatio),
+                            height: clientConstraints.resolution
+                        };
+
+                        break;
+                    }
                 }
 
                 clientConstraints = getChromeScreenShareConstraints.call(that, normalizedConstraints, resolution, clientConstraints.frameRate);
