@@ -372,6 +372,8 @@ define('app-setup', [
             'multi-bitrate': 'Multi Bitrate (MBR)',
             'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
             'multi-bitrate-codec=h264': 'H264 MBR Codec',
+            'multi-bitrate-encoding=offload': 'Offload MBR Encoding',
+            'multi-bitrate-encoding=inline': 'Inline MBR Encoding',
             'constant-gop-size': 'Constant GOP',
             'uniform-gop-size': 'Uniform GOP',
             'constant-resolution': 'Constant Resolution',
