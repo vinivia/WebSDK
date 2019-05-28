@@ -346,6 +346,8 @@ define('app-setup', [
             'wss://pcast-europe-west.phenixrts.com': 'EU West',
             'wss://pcast-europe-west2.phenixrts.com': 'EU West 2',
             'wss://pcast-europe-central.phenixrts.com': 'EU Central',
+            'wss://pcast-europe-central2.phenixrts.com': 'EU Central 2',
+            'wss://pcast-europe-north.phenixrts.com': 'EU North',
             'https://pcast-stg.phenixrts.com': 'Anycast - Staging',
             'wss://pcast-stg-us-central.phenixrts.com': 'US Central - Staging',
             'wss://pcast-stg-europe-west.phenixrts.com': 'EU West - Staging',
