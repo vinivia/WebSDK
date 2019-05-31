@@ -116,7 +116,8 @@ define([
 
         this._resolutionSelectionStrategy = options.resolutionSelectionStrategy || resolutionSelectionStrategies.fallbackToLowerThenHigher.name;
         this._defaultAspectRatio = options.aspectRatio || '16x9';
-        this._defaultResolution = options.resolution || 720;
+        this._defaultResolution = parseInt(options.resolution, 10) || 720;
+        this._defaultResolutionHeight = calculateHeight.call(this, this._defaultAspectRatio, this._defaultResolution);
         this._defaultFrameRate = options.frameRate || 15;
     }
 
@@ -128,18 +129,20 @@ define([
         case '9x16':
         case '3x4':
             return {
+                resolution: this._defaultResolution,
+                aspectRatio: this._defaultAspectRatio,
                 height: longerDimension,
-                width: this._defaultResolution,
-                aspectRatio: this._defaultAspectRatio
+                width: this._defaultResolution
             };
         // Landscape
         case '16x9':
         case '4x3':
         default:
             return {
+                resolution: this._defaultResolution,
+                aspectRatio: this._defaultAspectRatio,
                 height: this._defaultResolution,
-                width: longerDimension,
-                aspectRatio: this._defaultAspectRatio
+                width: longerDimension
             };
         }
     };
@@ -160,7 +163,7 @@ define([
         case resolutionSelectionStrategies.fallbackToLowerThenHigher.name:
             var nextResolution = null;
 
-            if (height > this._defaultResolution) {
+            if (height > this._defaultResolutionHeight) {
                 nextResolution = getNextHighestResolution.call(this, height, aspectRatio);
             } else {
                 nextResolution = getNextLowestResolution.call(this, height, aspectRatio);
@@ -200,6 +203,23 @@ define([
         return 2 * Math.floor((value + 1) / 2);
     }
 
+    function calculateHeight(aspectRatio, resolution) {
+        assert.isStringNotEmpty(aspectRatio, 'aspectRatio');
+        assert.isNumber(resolution, 'resolution');
+
+        switch (aspectRatio) {
+        case '16x9':
+        case '4x3':
+            return resolution;
+        case '9x16':
+            return roundUpToNearestEvenNumber((16 / 9) * resolution);
+        case '3x4':
+            return roundUpToNearestEvenNumber((4 / 3) * resolution);
+        default:
+            throw new Error('Aspect Ratio not supported');
+        }
+    }
+
     function getNextHighestResolution(height, aspectRatio) {
         var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
         var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
@@ -216,7 +236,7 @@ define([
             heightIndex = getNextHighestKeyIndex(height, aspectRatioHeights);
 
             if (heightIndex < 0) {
-                return;
+                return null;
             }
         } else {
             if (isLargestHeight) {
@@ -228,14 +248,15 @@ define([
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
-                heightIndex = getNextHighestKeyIndex(this._defaultResolution, newAspectRatioHeights);
-                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
-                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
+                heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
+                newHeight = parseInt(getIndexKey(heightIndex, aspectRatioHeights), 10);
+                newWidth = parseInt(this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio), 10);
 
                 return {
+                    resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
+                    height: newHeight,
+                    width: newWidth
                 };
             }
 
@@ -244,13 +265,14 @@ define([
 
         newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
         newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        newWidth = newAspectRatioHeights[heightIndex][newHeight];
+        newHeight = parseInt(getIndexKey(heightIndex, newAspectRatioHeights), 10);
+        newWidth = parseInt(newAspectRatioHeights[heightIndex][newHeight], 10);
 
         return {
+            resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
+            height: newHeight,
+            width: newWidth
         };
     }
 
@@ -281,13 +303,14 @@ define([
                 aspectRatioIndex++;
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-                newHeight = this._defaultResolution;
+                newHeight = this._defaultResolutionHeight;
                 newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
+                    resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
+                    height: parseInt(newHeight, 10),
+                    width: parseInt(newWidth, 10)
                 };
             }
 
@@ -300,9 +323,10 @@ define([
         newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
+            resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
+            height: parseInt(newHeight, 10),
+            width: parseInt(newWidth, 10)
         };
     }
 
