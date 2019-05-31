@@ -424,13 +424,13 @@ define([
                     userMedia: userMedia,
                     options: {
                         frameRate: hasVideo ? frameRate : null,
-                        resolution: hasVideo ? _.get(resolution, ['height'], null) : null,
+                        resolution: hasVideo ? _.get(resolution, ['resolution'], null) : null,
                         aspectRatio: hasVideo ? _.get(resolution, ['aspectRatio'], null) : null
                     }
                 });
             }
 
-            that._logger.debug('Failed to acquire user media with constraints [%s]', constraints);
+            that._logger.info('Failed to acquire user media with constraints [%s]', constraints);
 
             var nextResolution = resolution;
             var nextFrameRate = frameRate;

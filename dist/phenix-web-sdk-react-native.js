@@ -1644,7 +1644,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-05-23T14:24:51Z',
+                version: '2019-05-31T03:48:54Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -5582,13 +5582,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     userMedia: userMedia,
                     options: {
                         frameRate: hasVideo ? frameRate : null,
-                        resolution: hasVideo ? _.get(resolution, ['height'], null) : null,
+                        resolution: hasVideo ? _.get(resolution, ['resolution'], null) : null,
                         aspectRatio: hasVideo ? _.get(resolution, ['aspectRatio'], null) : null
                     }
                 });
             }
 
-            that._logger.debug('Failed to acquire user media with constraints [%s]', constraints);
+            that._logger.info('Failed to acquire user media with constraints [%s]', constraints);
 
             var nextResolution = resolution;
             var nextFrameRate = frameRate;
@@ -9466,7 +9466,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-05-23T14:24:51Z';
+    var sdkVersion = '2019-05-31T03:48:54Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -12225,7 +12225,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._resolutionSelectionStrategy = options.resolutionSelectionStrategy || resolutionSelectionStrategies.fallbackToLowerThenHigher.name;
         this._defaultAspectRatio = options.aspectRatio || '16x9';
-        this._defaultResolution = options.resolution || 720;
+        this._defaultResolution = parseInt(options.resolution, 10) || 720;
+        this._defaultResolutionHeight = calculateHeight.call(this, this._defaultAspectRatio, this._defaultResolution);
         this._defaultFrameRate = options.frameRate || 15;
     }
 
@@ -12237,18 +12238,20 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         case '9x16':
         case '3x4':
             return {
+                resolution: this._defaultResolution,
+                aspectRatio: this._defaultAspectRatio,
                 height: longerDimension,
-                width: this._defaultResolution,
-                aspectRatio: this._defaultAspectRatio
+                width: this._defaultResolution
             };
         // Landscape
         case '16x9':
         case '4x3':
         default:
             return {
+                resolution: this._defaultResolution,
+                aspectRatio: this._defaultAspectRatio,
                 height: this._defaultResolution,
-                width: longerDimension,
-                aspectRatio: this._defaultAspectRatio
+                width: longerDimension
             };
         }
     };
@@ -12269,7 +12272,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         case resolutionSelectionStrategies.fallbackToLowerThenHigher.name:
             var nextResolution = null;
 
-            if (height > this._defaultResolution) {
+            if (height > this._defaultResolutionHeight) {
                 nextResolution = getNextHighestResolution.call(this, height, aspectRatio);
             } else {
                 nextResolution = getNextLowestResolution.call(this, height, aspectRatio);
@@ -12309,6 +12312,23 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return 2 * Math.floor((value + 1) / 2);
     }
 
+    function calculateHeight(aspectRatio, resolution) {
+        assert.isStringNotEmpty(aspectRatio, 'aspectRatio');
+        assert.isNumber(resolution, 'resolution');
+
+        switch (aspectRatio) {
+        case '16x9':
+        case '4x3':
+            return resolution;
+        case '9x16':
+            return roundUpToNearestEvenNumber((16 / 9) * resolution);
+        case '3x4':
+            return roundUpToNearestEvenNumber((4 / 3) * resolution);
+        default:
+            throw new Error('Aspect Ratio not supported');
+        }
+    }
+
     function getNextHighestResolution(height, aspectRatio) {
         var aspectRatioHeights = getObjectValueInArray(aspectRatio, aspectRatios);
         var aspectRatioIndex = getIndexInArray(aspectRatio, aspectRatios);
@@ -12325,7 +12345,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             heightIndex = getNextHighestKeyIndex(height, aspectRatioHeights);
 
             if (heightIndex < 0) {
-                return;
+                return null;
             }
         } else {
             if (isLargestHeight) {
@@ -12337,14 +12357,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
-                heightIndex = getNextHighestKeyIndex(this._defaultResolution, newAspectRatioHeights);
-                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
-                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
+                heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
+                newHeight = parseInt(getIndexKey(heightIndex, aspectRatioHeights), 10);
+                newWidth = parseInt(this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio), 10);
 
                 return {
+                    resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
+                    height: newHeight,
+                    width: newWidth
                 };
             }
 
@@ -12353,13 +12374,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
         newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
-        newWidth = newAspectRatioHeights[heightIndex][newHeight];
+        newHeight = parseInt(getIndexKey(heightIndex, newAspectRatioHeights), 10);
+        newWidth = parseInt(newAspectRatioHeights[heightIndex][newHeight], 10);
 
         return {
+            resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
+            height: newHeight,
+            width: newWidth
         };
     }
 
@@ -12390,13 +12412,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 aspectRatioIndex++;
 
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
-                newHeight = this._defaultResolution;
+                newHeight = this._defaultResolutionHeight;
                 newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
+                    resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: parseInt(newHeight),
-                    width: parseInt(newWidth)
+                    height: parseInt(newHeight, 10),
+                    width: parseInt(newWidth, 10)
                 };
             }
 
@@ -12409,9 +12432,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
+            resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: parseInt(newHeight),
-            width: parseInt(newWidth)
+            height: parseInt(newHeight, 10),
+            width: parseInt(newWidth, 10)
         };
     }
 
@@ -15570,7 +15594,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-05-23T14:24:51Z' || '?';
+    var sdkVersion = '2019-05-31T03:48:54Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15826,7 +15850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-05-23T14:24:51Z' || '?';
+    var sdkVersion = '2019-05-31T03:48:54Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -25277,8 +25301,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-05-23T14:24:51Z' || '?';
-    var releaseVersion = '2019.2.7';
+    var sdkVersion = '2019-05-31T03:48:54Z' || '?';
+    var releaseVersion = '2019.2.8';
 
     function Logger() {
         this._appenders = [];
