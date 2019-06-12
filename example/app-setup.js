@@ -377,6 +377,7 @@ define('app-setup', [
             'multi-bitrate-encoding=offload': 'Offload MBR Encoding',
             'multi-bitrate-encoding=inline': 'Inline MBR Encoding',
             'constant-gop-size': 'Constant GOP',
+            'dynamic-gop-size': 'Dynamic GOP',
             'uniform-gop-size': 'Uniform GOP',
             'constant-resolution': 'Constant Resolution',
             'origin-shield': 'Origin Shield',
