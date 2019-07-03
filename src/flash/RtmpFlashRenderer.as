@@ -10,6 +10,7 @@ import flash.utils.Timer;
 import flash.external.*;
 import flash.utils.setTimeout;
 
+
 public class RtmpFlashRenderer extends Sprite {
 
     private var _connection:NetConnection = new NetConnection();
@@ -29,6 +30,7 @@ public class RtmpFlashRenderer extends Sprite {
     private var _isLoaded:Boolean = false;
     private var _isEnded:Boolean = false;
     private var _isMuted:Boolean = false;
+    private var _initiallyMuted:Boolean = false;
 
     private var _isSeekInProgress:Boolean = false;
 
@@ -89,6 +91,7 @@ public class RtmpFlashRenderer extends Sprite {
             _id = flashVars.uid;
             _setUpSrc = flashVars.src;
             _autoplay = (flashVars.autoplay == true || flashVars.autoplay === 'true');
+            _initiallyMuted = (flashVars.muted == true || flashVars.muted === 'true');
             _preload = flashVars.preload;
             _streamer = (flashVars.flashstreamer != undefined) ? (String(flashVars.flashstreamer)) : "";
             _timerRate = (flashVars.timerrate != undefined) ? (parseInt(flashVars.timerrate, 10)) : 250;
@@ -246,6 +249,9 @@ public class RtmpFlashRenderer extends Sprite {
                 return;
             }, 50);
 
+            log('[Flash] Setting initial mute state to ' + _initiallyMuted);
+
+            set_muted(_initiallyMuted);
             fire_play();
 
             return;
@@ -353,8 +359,10 @@ public class RtmpFlashRenderer extends Sprite {
         }
     }
     private function set_muted(value:Boolean):void {
+        log('[Flash] Setting mute state to ' + value);
         if (_isConnected && _stream) {
             if (_isMuted == value) {
+                log('[Flash] Mute state already ' + value);
                 return;
             }
 
@@ -368,6 +376,7 @@ public class RtmpFlashRenderer extends Sprite {
         }
     }
     private function set_volume(value:Number = NaN):void {
+        log('[Flash] Setting volume to ' + value);
         if (!isNaN(value)) {
             if (_stream != null) {
                 _soundTransform = new SoundTransform(value);
