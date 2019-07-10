@@ -364,6 +364,7 @@ define('app-setup', [
             'streaming': 'Streaming',
             'mpegts-streaming': 'Streaming (MP2T)',
             'on-demand': 'On Demand',
+            'streaming-lite': 'Lite (Streaming)',
             'low-latency': 'Low Latency (Streaming)',
             'rtmp': 'RTMP',
             'mpegts-rtmp': 'RTMP (MP2T)',
