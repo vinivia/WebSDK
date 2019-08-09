@@ -855,6 +855,13 @@ define([
             var candidate = event.candidate;
 
             if (candidate) {
+                if (!candidate.candidate) {
+                    // Skip bad candidate lines
+                    that._logger.warn('[%s] ICE candidate: [%s] [%s] [%s] is malformed', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+
+                    return;
+                }
+
                 that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
@@ -871,7 +878,7 @@ define([
     function setupStateListener(streamId, peerConnection) {
         var that = this;
         var onNegotiationNeeded = function onNegotiationNeeded(event) { // eslint-disable-line no-unused-vars
-            that._logger.info('[%s] Negotiation needed');
+            that._logger.info('[%s] Negotiation needed', streamId);
         };
 
         var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) { // eslint-disable-line no-unused-vars

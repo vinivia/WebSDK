@@ -4235,7 +4235,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-07-04T01:22:11Z';
+    var sdkVersion = '2019-08-09T02:02:42Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -5045,6 +5045,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var candidate = event.candidate;
 
             if (candidate) {
+                if (!candidate.candidate) {
+                    // Skip bad candidate lines
+                    that._logger.warn('[%s] ICE candidate: [%s] [%s] [%s] is malformed', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
+
+                    return;
+                }
+
                 that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
@@ -5061,7 +5068,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function setupStateListener(streamId, peerConnection) {
         var that = this;
         var onNegotiationNeeded = function onNegotiationNeeded(event) { // eslint-disable-line no-unused-vars
-            that._logger.info('[%s] Negotiation needed');
+            that._logger.info('[%s] Negotiation needed', streamId);
         };
 
         var onIceConnectionStateChanged = function onIceConnectionStateChanged(event) { // eslint-disable-line no-unused-vars
@@ -10103,7 +10110,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-07-04T01:22:11Z' || '?';
+    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10359,7 +10366,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-07-04T01:22:11Z' || '?';
+    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11801,7 +11808,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-07-04T01:22:11Z',
+                version: '2019-08-09T02:02:42Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17837,8 +17844,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-07-04T01:22:11Z' || '?';
-    var releaseVersion = '2019.2.9';
+    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var releaseVersion = '2019.2.10';
 
     function Logger() {
         this._appenders = [];
