@@ -1644,7 +1644,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-08-09T02:02:42Z',
+                version: '2019-08-19T15:08:23Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -2295,25 +2295,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
 
         this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
-            if (!pcast) {
-                var roomServicesToCleanUp = _.assign({}, that._roomServices);
-
-                _.forOwn(that._membersSubscriptions, function(membersSubscription) {
-                    membersSubscription.dispose();
-                });
-
-                that._pcastExpress.waitForOnline(function() {
-                    _.forOwn(roomServicesToCleanUp, function(roomService) {
-                        roomService.stop('pcast-change');
-                    });
-                }, true);
-
-                that._logger.info('Resetting Room Express after change in pcast.');
-
-                that._membersSubscriptions = {};
-                that._roomServices = {};
-                that._activeRoomServices = [];
+            if (pcast) {
+                return;
             }
+
+            var roomServicesToCleanUp = _.assign({}, that._roomServices);
+
+            _.forOwn(that._membersSubscriptions, function(membersSubscription) {
+                membersSubscription.dispose();
+            });
+
+            that._pcastExpress.waitForOnline(function() {
+                _.forOwn(roomServicesToCleanUp, function(roomService) {
+                    roomService.stop('pcast-change');
+                });
+            }, true);
+
+            that._logger.info('Resetting Room Express after change in pcast.');
+
+            that._membersSubscriptions = {};
+            that._roomServices = {};
+            that._activeRoomServices = [];
         });
     }
 
@@ -3402,6 +3404,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 if (updateSelfErrors >= maxUpdateSelfRetries) {
                     that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
+
+                    if (_.isNumber(response.lastUpdate)) {
+                        that._logger.warn('Update self last update from [%s] to [%s] to prevent permanent failure state. Our awareness of self does not match up with the server anymore.',
+                            self.getObservableLastUpdate().getValue(), response.lastUpdate);
+
+                        self.getObservableLastUpdate().setValue(response.lastUpdate);
+                    }
 
                     return callback(new Error('Unable to update self'));
                 }
@@ -6585,11 +6594,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var roomId = activeRoom.getRoomId();
         var alias = activeRoom.getObservableAlias().getValue();
 
-        that._logger.info('Leaving and re-entering room after reset of self model');
+        that._logger.info('[%s] Leaving and re-entering room [%s] after reset of self model', roomId, alias);
 
         leaveRoomRequest.call(that, function() {
             enterRoomRequest.call(that, roomId, alias, function() {
-                that._logger.info('Room reset completed');
+                if (this._roomChatService) {
+                    this._roomChatService.stop();
+                    this._roomChatService.start();
+                }
+
+                that._logger.info('[%s] Room [%s] completed reset', roomId, alias);
             });
         });
     }
@@ -6995,7 +7009,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
         }
 
-        this._logger.info('Updating member info for active room [%s]', roomId);
+        this._logger.info('Updating member info [%s] for active room [%s]', memberForRequest, roomId);
 
         var that = this;
 
@@ -7007,7 +7021,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(error, null);
                 }
 
-                var result = {status: response.status};
+                var result = {
+                    status: response.status,
+                    lastUpdate: response.lastUpdate
+                };
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Update of member failed with status [%s]', response.status);
@@ -9466,7 +9483,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-08-09T02:02:42Z';
+    var sdkVersion = '2019-08-19T15:08:23Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11732,7 +11749,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('Disposed channel express instance');
     };
 
-    ChannelExpress.prototype.getRoomExpress = function getPCastExpress() {
+    ChannelExpress.prototype.getRoomExpress = function getRoomExpress() {
         return this._roomExpress;
     };
 
@@ -13119,6 +13136,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         if (!this._lastSubscribedSessionId || this._lastSubscribedSessionId === sessionId) {
             return;
         }
+
+        this._logger.info('[%s] Refreshing room conversation messages', sessionId);
 
         refreshMessageSubscriptions.call(this);
     }
@@ -15601,7 +15620,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-19T15:08:23Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15857,7 +15876,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-19T15:08:23Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -25308,8 +25327,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
-    var releaseVersion = '2019.2.10';
+    var sdkVersion = '2019-08-19T15:08:23Z' || '?';
+    var releaseVersion = '2019.2.11';
 
     function Logger() {
         this._appenders = [];

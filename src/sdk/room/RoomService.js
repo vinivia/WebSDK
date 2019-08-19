@@ -255,11 +255,16 @@ define([
         var roomId = activeRoom.getRoomId();
         var alias = activeRoom.getObservableAlias().getValue();
 
-        that._logger.info('Leaving and re-entering room after reset of self model');
+        that._logger.info('[%s] Leaving and re-entering room [%s] after reset of self model', roomId, alias);
 
         leaveRoomRequest.call(that, function() {
             enterRoomRequest.call(that, roomId, alias, function() {
-                that._logger.info('Room reset completed');
+                if (this._roomChatService) {
+                    this._roomChatService.stop();
+                    this._roomChatService.start();
+                }
+
+                that._logger.info('[%s] Room [%s] completed reset', roomId, alias);
             });
         });
     }
@@ -665,7 +670,7 @@ define([
             memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
         }
 
-        this._logger.info('Updating member info for active room [%s]', roomId);
+        this._logger.info('Updating member info [%s] for active room [%s]', memberForRequest, roomId);
 
         var that = this;
 

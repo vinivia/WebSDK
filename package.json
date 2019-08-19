@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2019.2.10",
+  "version": "2019.2.11",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.min.js",

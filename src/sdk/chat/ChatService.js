@@ -150,6 +150,8 @@ define([
             return;
         }
 
+        this._logger.info('[%s] Refreshing room conversation messages', sessionId);
+
         refreshMessageSubscriptions.call(this);
     }
 
