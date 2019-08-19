@@ -58,25 +58,27 @@ define([
         var that = this;
 
         this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
-            if (!pcast) {
-                var roomServicesToCleanUp = _.assign({}, that._roomServices);
-
-                _.forOwn(that._membersSubscriptions, function(membersSubscription) {
-                    membersSubscription.dispose();
-                });
-
-                that._pcastExpress.waitForOnline(function() {
-                    _.forOwn(roomServicesToCleanUp, function(roomService) {
-                        roomService.stop('pcast-change');
-                    });
-                }, true);
-
-                that._logger.info('Resetting Room Express after change in pcast.');
-
-                that._membersSubscriptions = {};
-                that._roomServices = {};
-                that._activeRoomServices = [];
+            if (pcast) {
+                return;
             }
+
+            var roomServicesToCleanUp = _.assign({}, that._roomServices);
+
+            _.forOwn(that._membersSubscriptions, function(membersSubscription) {
+                membersSubscription.dispose();
+            });
+
+            that._pcastExpress.waitForOnline(function() {
+                _.forOwn(roomServicesToCleanUp, function(roomService) {
+                    roomService.stop('pcast-change');
+                });
+            }, true);
+
+            that._logger.info('Resetting Room Express after change in pcast.');
+
+            that._membersSubscriptions = {};
+            that._roomServices = {};
+            that._activeRoomServices = [];
         });
     }
 
@@ -1165,6 +1167,13 @@ define([
 
                 if (updateSelfErrors >= maxUpdateSelfRetries) {
                     that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
+
+                    if (_.isNumber(response.lastUpdate)) {
+                        that._logger.warn('Update self last update from [%s] to [%s] to prevent permanent failure state. Our awareness of self does not match up with the server anymore.',
+                            self.getObservableLastUpdate().getValue(), response.lastUpdate);
+
+                        self.getObservableLastUpdate().setValue(response.lastUpdate);
+                    }
 
                     return callback(new Error('Unable to update self'));
                 }

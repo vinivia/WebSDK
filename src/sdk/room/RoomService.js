@@ -677,7 +677,10 @@ define([
                     return callback(error, null);
                 }
 
-                var result = {status: response.status};
+                var result = {
+                    status: response.status,
+                    lastUpdate: response.lastUpdate
+                };
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Update of member failed with status [%s]', response.status);
