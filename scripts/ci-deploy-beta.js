@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-var runner = require('./runner');
+const runner = require('./runner');
+const packageJson = require('../package.json');
+const version = packageJson.version;
 
+// Tag must be manually pushed via `git push --tags`
 runner.runCommands([
-    'npm run deploy-examples:example',
-    'npm run deploy-examples:src',
-    'npm run deploy-examples:dist',
-    'npm run deploy-examples:deps'
+    'node --version',
+    'npm --version',
+    'npm publish --tag beta',
+    'git tag -am "v' + version + '" v' + version,
+    'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version
 ]);

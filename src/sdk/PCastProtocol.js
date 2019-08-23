@@ -257,7 +257,7 @@ define([
         return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
-    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, timestamp, callback) {
+    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, options, timestamp, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');
         } else {
@@ -266,6 +266,7 @@ define([
 
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
+        assert.isArray(options, 'options');
         assert.isFunction(callback, 'callback');
 
         var joinRoom = {
@@ -273,6 +274,7 @@ define([
             alias: alias,
             sessionId: this.getSessionId(),
             member: member,
+            options: options,
             timestamp: timestamp
         };
 

@@ -29,6 +29,7 @@ define([
     }
 
     Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+        assert.isObject(roomService, 'roomService');
         assert.isStringNotEmpty(name, 'name');
         assert.isString(description, 'description');
         assert.isArray(members, 'members');
@@ -47,10 +48,6 @@ define([
 
         if (pin) {
             assert.isStringNotEmpty(pin, 'pin');
-        }
-
-        if (roomService) {
-            assert.isObject(roomService, 'roomService');
         }
 
         this._roomId = new observable.Observable(id);
@@ -175,7 +172,7 @@ define([
     Room.prototype._addMembers = function addMembers(members) {
         var that = this;
 
-        var newMembers = mapMembers(members);
+        var newMembers = mapMembers(members, this._roomService);
 
         _.forEach(newMembers, function(member) {
             that._members.push(member);

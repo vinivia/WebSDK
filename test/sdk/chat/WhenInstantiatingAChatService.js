@@ -317,7 +317,7 @@ define([
                 chatService.stop();
             });
 
-            it('Expect sessionId to cause fetchRoomMessages for all existing listeners', function(done) {
+            it('Expect sessionId to not cause fetchRoomMessages for all existing listeners', function(done) {
                 var subscribeToConversationSpy = sinon.spy();
 
                 websocketStubber.stubResponse('chat.FetchRoomConversation', response, subscribeToConversationSpy);
@@ -327,7 +327,7 @@ define([
                 sessionIdObservable.setValue('mockNewSessionId');
 
                 setTimeout(function() {
-                    sinon.assert.calledTwice(subscribeToConversationSpy);
+                    sinon.assert.calledOnce(subscribeToConversationSpy);
                     done();
                 }, 500);
             });

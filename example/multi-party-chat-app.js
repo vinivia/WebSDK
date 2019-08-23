@@ -80,6 +80,7 @@ requirejs([
     var memberSubscriptions = {};
     var videoSources = [];
     var audioSources = [];
+    var sendMessageIntervalId;
 
     var init = function init() {
         var roomExpress;
@@ -91,6 +92,7 @@ requirejs([
             adminApiProxyClient.setAuthenticationData(app.getAuthData());
 
             roomExpress = new sdk.express.RoomExpress({
+                treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true',
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shaka: shaka
@@ -164,7 +166,7 @@ requirejs([
                     joinRoom();
                 }
 
-                if (app.getUrlParameter('mq') || app.getUrlParameter('multipleQualities')) {
+                if (app.getUrlParameter('multipleQualities')) {
                     publishAndHandleErrors(lowQualityOptions, function(response) {
                         lowQualityPublisher = {publisher: response.publisher};
                     });
@@ -187,6 +189,8 @@ requirejs([
                 }
 
                 if (response.status === 'ok') {
+                    setUserMessage('Online & Publishing');
+
                     callback(response);
                 }
             });
@@ -200,7 +204,7 @@ requirejs([
                 role: 'Participant' // Set your role for yourself. Participant will view and interact with other members (must have streams)
             }, function joinRoomCallback(error, response) {
                 if (error) {
-                    setUserMessage('Unable to publish to Room: ' + error.message);
+                    setUserMessage('Unable to join room: ' + error.message);
                     leaveRoomAndStopPublisher();
 
                     throw error;
@@ -213,12 +217,56 @@ requirejs([
                 }
 
                 displayElement(publishScreenShareButton);
+
+                var chatService = response.roomService.getChatService();
+
+                chatService.start(3);
+
+                chatService.getObservableChatEnabled().subscribe(function(enabled) {
+                    if (enabled) {
+                        console.log('Chat is enabled');
+                    } else {
+                        console.log('Chat is DISABLED');
+                    }
+                }, {initial: 'notify'});
+
+                chatService.getObservableLastChatMessage().subscribe(function(message) {
+                    console.log('Received message [' + message.messageId + ']/[' + new Date(message.timestamp) + ']: [' + message.message + ']');
+                });
+
+                chatService.getObservableChatMessages().subscribe(function(messages) {
+                    console.log('Current chat history is [' + messages.length + '] messages');
+                });
+
+                var messageIdx = 0;
+
+                sendMessageIntervalId = setInterval(function sendMessage() {
+                    if (!chatService.getObservableChatEnabled().getValue()) {
+                        return;
+                    }
+
+                    if (!chatService.canSendMessage()) {
+                        console.log('Can NOT send messages right now');
+
+                        return;
+                    }
+
+                    var message = 'Test message ' + messageIdx++ + ':' + _.now();
+
+                    chatService.sendMessageToRoom(message, function(error, result) {
+                        if (error) {
+                            console.error('Failed to send message', error);
+
+                            return;
+                        }
+
+                        console.log('Sent message to room with status ', _.get(result, ['status']), ': ', message);
+                    });
+                }, 5000);
             }, function membersChangedCallback(members) { // This is triggered every time a member joins or leaves
-                if (roomService) { // Else left room
-                    console.log('addNewMembers');
-                    removeOldMembers(members);
-                    addNewMembers(members);
-                }
+                console.log('Members updated, count=[' + members.length + ']');
+                removeOldMembers(members);
+                addNewMembers(members);
             });
         }
 
@@ -256,7 +304,11 @@ requirejs([
             if (memberSubscriptionToRemove) {
                 memberSubscriptionToRemove.mediaStream.stop();
                 memberSubscriptionToRemove.videoElement.remove();
+
+                return true;
             }
+
+            return false;
         }
 
         function addNewMembers(members) {
@@ -309,7 +361,7 @@ requirejs([
             var isSelf = sessionId === roomService.getSelf().getSessionId(); // Check if is yourself!
             var streamInfo = memberStream.getInfo(); // Access the custom stream info params that you passed when publishing
 
-            if (app.getUrlParameter('mq') || app.getUrlParameter('multipleQualities')) {
+            if (app.getUrlParameter('multipleQualities')) {
                 videoElement.classList.add(streamInfo.quality);
             }
 
@@ -326,6 +378,9 @@ requirejs([
                     return;
                 }
 
+                // Make sure we don't end up with 2 streams due to auto recovery
+                var removed = removeMemberStream(memberStream, sessionId);
+
                 memberSubscriptions[sessionId].push({
                     mediaStream: response.mediaStream,
                     videoElement: videoElement,
@@ -334,6 +389,10 @@ requirejs([
                 });
 
                 videoList.append(videoElement);
+
+                if (removed) {
+                    console.log('Replaced member subscription for session ID [' + sessionId + ']');
+                }
             };
 
             roomExpress.subscribeToMemberStream(memberStream, subscribeOptions, handleSubscribe);
@@ -472,6 +531,8 @@ requirejs([
 
         if (roomService) {
             roomService.leaveRoom(function(error, response) {
+                roomService = null;
+
                 if (error) {
                     throw error;
                 }
@@ -479,15 +540,14 @@ requirejs([
                 if (response.status !== 'ok') {
                     throw new Error(response.status);
                 }
-
-                roomService = null;
             });
         }
 
-        membersStore = [];
-        memberSubscriptions = {};
-        videoSources = [];
-        audioSources = [];
+        if (sendMessageIntervalId) {
+            clearInterval(sendMessageIntervalId);
+
+            sendMessageIntervalId = null;
+        }
 
         hideElement(stopButton);
         displayElement(publishAndJoinRoomButton);

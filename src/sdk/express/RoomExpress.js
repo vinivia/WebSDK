@@ -48,7 +48,6 @@ define([
         this._externalPublishers = [];
         this._roomServicePublishers = {};
         this._activeRoomServices = [];
-        this._membersSubscriptions = {};
         this._publisherDisposables = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
@@ -58,27 +57,23 @@ define([
         var that = this;
 
         this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
-            if (pcast) {
+            if (!pcast) {
                 return;
             }
 
-            var roomServicesToCleanUp = _.assign({}, that._roomServices);
-
-            _.forOwn(that._membersSubscriptions, function(membersSubscription) {
-                membersSubscription.dispose();
-            });
-
-            that._pcastExpress.waitForOnline(function() {
-                _.forOwn(roomServicesToCleanUp, function(roomService) {
-                    roomService.stop('pcast-change');
-                });
-            }, true);
-
             that._logger.info('Resetting Room Express after change in pcast.');
 
-            that._membersSubscriptions = {};
-            that._roomServices = {};
-            that._activeRoomServices = [];
+            that._pcastExpress.waitForOnline(function() {
+                var currentPCast = that._pcastExpress.getPCastObservable().getValue();
+
+                if (currentPCast !== pcast) {
+                    return;
+                }
+
+                _.forOwn(that._roomServices, function(roomService) {
+                    roomService.setPCast(pcast);
+                });
+            });
         });
     }
 
@@ -440,9 +435,6 @@ define([
     };
 
     function disposeOfRoomServices() {
-        _.forOwn(this._membersSubscriptions, function(membersSubscription) {
-            membersSubscription.dispose();
-        });
         _.forOwn(this._roomServicePublishers, function(publishers) {
             _.forEach(publishers, function(publisher) {
                 publisher.stop('dispose');
@@ -452,7 +444,6 @@ define([
             roomService.stop('dispose');
         });
 
-        this._membersSubscriptions = {};
         this._roomServicePublishers = {};
         this._externalPublishers = [];
         this._roomServices = {};
@@ -521,12 +512,6 @@ define([
                     return callback(null, response);
                 }
 
-                if (room && that._membersSubscriptions[room.getRoomId()]) {
-                    that._membersSubscriptions[room.getRoomId()].dispose();
-
-                    delete that._membersSubscriptions[room.getRoomId()];
-                }
-
                 that._logger.info('Successfully disposed Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
                 roomService.stop('leave-room');
@@ -560,13 +545,16 @@ define([
                 var room = activeRoomObservable.getValue();
 
                 if (!room) {
-                    return that._logger.warn('Unable to setup members subscription. Not in room.');
+                    that._logger.warn('Unable to setup members subscription. Not in room.');
+
+                    return;
                 }
 
                 membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
 
                 return activeRoomObservable.subscribe(function(newRoom) {
                     if (membersSubscription) {
+                        membersChangedCallback([]);
                         membersSubscription.dispose();
                         membersSubscription = null;
                     }
@@ -1155,14 +1143,17 @@ define([
                     updateSelfErrors++;
                 }
 
-                if (response && response.status !== 'ok') {
-                    updateSelfErrors++;
-                }
+                var roomService = self.getRoomService();
+                var room = roomService ? roomService.getObservableActiveRoom().getValue() : null;
 
-                if (response && response.status === 'ok') {
+                if (response && response.status === 'ok' || (!room && response.status === 'not-found')) {
                     updateSelfErrors = 0;
 
                     return !callback || callback(null, response);
+                }
+
+                if (response && response.status !== 'ok') {
+                    updateSelfErrors++;
                 }
 
                 if (updateSelfErrors >= maxUpdateSelfRetries) {
@@ -1179,7 +1170,7 @@ define([
                 }
 
                 if (updateSelfErrors > 0 && updateSelfErrors < maxUpdateSelfRetries) {
-                    that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
+                    that._logger.info('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
 
                     return self.commitChanges(handleUpdateSelf);
                 }

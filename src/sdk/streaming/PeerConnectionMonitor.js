@@ -327,7 +327,7 @@ define([
                     };
 
                     if (!monitorCallback(null, monitorEvent)) {
-                        that._logger.error(failureMessage + ': [%s]', report);
+                        that._logger.info(failureMessage + ': [%s]', report);
                     } else {
                         acknowledgeFailure();
                     }
@@ -370,9 +370,17 @@ define([
         var remoteTracks = getRemoteTracks(peerConnection);
 
         if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote tracks.', localTracks.length, remoteTracks.length);
+            var result = [];
 
-            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+            _.forEach(localTracks, function(track) {
+                result.push(track);
+            });
+
+            _.forEach(remoteTracks, function(track) {
+                result.push(track);
+            });
+
+            return result;
         } else if (localTracks.length !== 0) {
             return localTracks;
         } else if (remoteTracks.length !== 0) {

@@ -30,14 +30,11 @@ define([
     }
 
     Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+        assert.isObject(roomService, 'roomService');
         assert.isString(sessionId, 'sessionId');
         assert.isString(screenName, 'screenName');
         assert.isArray(streams, 'streams');
         assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
-
-        if (roomService) {
-            assert.isObject(roomService, 'roomService');
-        }
 
         this._sessionId = new observable.Observable(sessionId);
         this._screenName = new observable.Observable(screenName);
@@ -83,6 +80,10 @@ define([
         return _.map(this._streams.getValue(), function mapToJson(stream) {
             return stream.toJson();
         });
+    };
+
+    Member.prototype.getRoomService = function getRoomService() {
+        return this._roomService;
     };
 
     Member.prototype.commitChanges = function commitChanges(callback) {

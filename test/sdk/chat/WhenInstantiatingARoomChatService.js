@@ -197,9 +197,16 @@ define([
                     var messages = [];
 
                     messages.length = 100;
-                    messages[0] = 0;
-                    messages[1] = 1;
-                    messages[99] = 99;
+
+                    for (var i = 0; i < messages.length; i++) {
+                        var messageId = '' + i;
+
+                        while (messageId.length < 3) {
+                            messageId = '0' + messageId;
+                        }
+
+                        messages[i] = {messageId: messageId};
+                    }
 
                     newMessagesCallback(null, {
                         status: 'ok',
@@ -214,44 +221,70 @@ define([
 
                     newMessagesCallback(null, {
                         status: 'ok',
-                        chatMessages: [100]
+                        chatMessages: [{messageId: '100'}]
                     });
                 });
 
                 it('new message removes first element in array', function() {
                     roomChatService.getObservableChatMessages().subscribe(function(messages) {
-                        expect(messages[0]).to.be.equal(1);
+                        expect(messages[0]).to.be.deep.equal({messageId: '001'});
                     });
 
                     newMessagesCallback(null, {
                         status: 'ok',
-                        chatMessages: [100]
+                        chatMessages: [{messageId: '100'}]
                     });
                 });
 
                 it('new message is added at the end of array', function() {
                     roomChatService.getObservableChatMessages().subscribe(function(messages) {
-                        expect(messages[99]).to.be.equal(100);
+                        expect(messages[messages.length - 1]).to.be.deep.equal({messageId: '100'});
                     });
 
                     newMessagesCallback(null, {
                         status: 'ok',
-                        chatMessages: [100]
+                        chatMessages: [{messageId: '100'}]
+                    });
+                });
+
+                it('new message updates the last chat message', function() {
+                    roomChatService.getObservableLastChatMessage().subscribe(function(message) {
+                        expect(message).to.be.deep.equal({messageId: '100'});
+                    });
+
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [{messageId: '100'}]
                     });
                 });
 
                 it('multiple new messages returns fixed sized array of size 100 with new values at end', function() {
                     roomChatService.getObservableChatMessages().subscribe(function(messages) {
                         expect(messages.length).to.be.equal(100);
-                        expect(messages[98]).to.be.equal(100);
-                        expect(messages[99]).to.be.equal(101);
-                        expect(messages[0]).to.be.undefined;
-                        expect(messages[1]).to.be.undefined;
+                        expect(messages[98]).to.be.deep.equal({messageId: '100'});
+                        expect(messages[99]).to.be.deep.equal({messageId: '101'});
+                        expect(messages[0]).to.be.deep.equal({messageId: '002'});
+                        expect(messages[1]).to.be.deep.equal({messageId: '003'});
                     });
 
                     newMessagesCallback(null, {
                         status: 'ok',
-                        chatMessages: [100, 101]
+                        chatMessages: [{messageId: '100'}, {messageId: '101'}]
+                    });
+                });
+
+                it('ignores messages outside the history', function() {
+                    roomChatService.getObservableChatMessages().subscribe(function(messages) {
+                        expect(messages.length).to.be.equal(100);
+                        expect(messages[98]).to.be.deep.equal({messageId: '099'});
+                        expect(messages[99]).to.be.deep.equal({messageId: '100'});
+                        expect(messages[0]).to.be.deep.equal({messageId: '001'});
+                        expect(messages[1]).to.be.deep.equal({messageId: '002'});
+                    });
+
+                    newMessagesCallback(null, {
+                        status: 'ok',
+                        chatMessages: [{messageId: '100'}, {messageId: '001'}]
                     });
                 });
             });

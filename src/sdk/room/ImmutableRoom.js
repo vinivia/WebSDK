@@ -27,10 +27,9 @@ define([
     }
 
     ImmutableRoom.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        // Don't pass roomService.
-        this._room = new Room(null, id, alias, name, description, type, members, bridgeId, pin);
+        this._room = new Room(roomService, id, alias, name, description, type, members, bridgeId, pin);
 
-        makeArrayOrObjectObservablesImmutable(this._room);
+        makeArrayOrObjectObservablesImmutable(this._room, [roomService]);
     };
 
     ImmutableRoom.prototype.getRoomId = function getImmutableRoomId() {
@@ -88,31 +87,35 @@ define([
         throw new Error('Unable to subscribe to Immutable [ImmutableRoom]');
     }
 
-    function makeArrayOrObjectObservablesImmutable(collection) {
+    function makeArrayOrObjectObservablesImmutable(collection, exclude) {
         if (_.isArray(collection)) {
             _.forEach(collection, function(value) {
-                wrapObservableAndAnyObservableProperties(value);
+                wrapObservableAndAnyObservableProperties(value, exclude);
             });
         } else if (_.isObject(collection)) {
             _.forOwn(collection, function(value) {
-                wrapObservableAndAnyObservableProperties(value);
+                if (_.includes(exclude, value)) {
+                    return;
+                }
+
+                wrapObservableAndAnyObservableProperties(value, exclude);
             });
         }
     }
 
-    function wrapObservableAndAnyObservableProperties(value) {
-        wrapObservable(value);
-        makeArrayOrObjectObservablesImmutable(value);
+    function wrapObservableAndAnyObservableProperties(value, exclude) {
+        wrapObservable(value, exclude);
+        makeArrayOrObjectObservablesImmutable(value, exclude);
     }
 
-    function wrapObservable(value) {
+    function wrapObservable(value, exclude) {
         if (value instanceof observable.Observable || value instanceof observable.ObservableArray) {
             value.setValue = throwImmutableError;
             value.subscribe = throwImmutableSubscribeError;
 
             var observableValue = value.getValue();
 
-            makeArrayOrObjectObservablesImmutable(observableValue);
+            makeArrayOrObjectObservablesImmutable(observableValue, exclude);
         }
     }
 

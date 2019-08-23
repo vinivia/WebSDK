@@ -225,7 +225,7 @@ requirejs([
                 });
 
                 response.renderer.on('autoMuted', function(message) {
-                    channelExpress.getPCastExpress().getPCast().getLogger().warn('Stream was auto muted', message);
+                    channelExpress.getPCastExpress().getPCast().getLogger().info('Stream was auto muted (reason=[%s])', message);
                     app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>User Action Required</strong>',

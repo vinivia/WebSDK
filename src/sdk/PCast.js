@@ -105,6 +105,8 @@ define([
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._treatBackgroundAsOffline = options.treatBackgroundAsOffline === true;
         this._reAuthenticateOnForeground = options.reAuthenticateOnForeground === true;
+        this._authenticateCallId = 0;
+        this._reAuthenticateCallId = 0;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
@@ -604,37 +606,54 @@ define([
     }
 
     function connected() {
-        if (areAllPeerConnectionsOffline.call(this) && this._observableStatus.getValue() === 'offline') {
-            this._logger.warn('[PCast] connected after being offline. Going offline.');
+        var that = this;
 
-            transitionToStatus.call(this, 'critical-network-issue');
+        if (that._stopped) {
+            that._logger.warn('[%s] Skip connect due to stopped state', that);
 
-            return this.stop('critical-network-issue');
+            return;
         }
 
-        var that = this;
+        if (areAllPeerConnectionsOffline.call(that) && that._observableStatus.getValue() === 'offline') {
+            this._logger.warn('[PCast] connected after being offline. Reconnecting.');
+
+            reconnecting.call(that);
+        }
 
         this._connected = true;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                if (that._authenticationCallback) {
-                    if (error) {
-                        that._logger.error('Failed to authenticate [%s]', error);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else if (response.status !== 'ok') {
-                        that._logger.warn('Failed to authenticate, status [%s]', response.status);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else {
-                        transitionToStatus.call(that, 'online');
+        var protocol = that._protocol;
+        var authenticateCallId = ++that._authenticateCallId;
 
-                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
-                    }
+        protocol.authenticate(that._authToken, function(error, response) {
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring authentication response as reset took place');
+
+                return;
+            }
+
+            if (authenticateCallId !== that._authenticateCallId) {
+                that._logger.info('Ignoring authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (that._authenticationCallback) {
+                if (error) {
+                    that._logger.error('Failed to authenticate [%s]', error);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('Failed to authenticate, status [%s]', response.status);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else {
+                    transitionToStatus.call(that, 'online');
+
+                    that._authenticationCallback.call(that, that, response.status, response.sessionId);
                 }
-            });
-        }
+            }
+        });
     }
 
     function reconnecting() {
@@ -648,7 +667,7 @@ define([
 
         transitionToStatus.call(this, 'reconnected', optionalReason);
 
-        this._logger.info('Attempting to re-authenticate after reconnected event');
+        this._logger.info('Attempting to re-authenticate after reconnected event [%s]', optionalReason);
 
         reAuthenticate.call(this);
     }
@@ -656,31 +675,50 @@ define([
     function reAuthenticate() {
         var that = this;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                var suppressCallbackIfNeverDisconnected = that._connected === true;
+        if (that._stopped) {
+            that._logger.info('Skip re-authentication due to stopped state');
 
-                if (error) {
-                    that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
-
-                    return transitionToStatus.call(that, 'reconnect-failed');
-                }
-
-                if (response.status !== 'ok') {
-                    that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
-
-                    var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
-
-                    return transitionToStatus.call(that, reason);
-                }
-
-                that._connected = true;
-
-                that._logger.info('Successfully authenticated after reconnect to WebSocket');
-
-                return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
-            });
+            return;
         }
+
+        var protocol = that._protocol;
+        var reAuthenticateCallId = ++that._reAuthenticateCallId;
+
+        protocol.authenticate(that._authToken, function(error, response) {
+            var suppressCallbackIfNeverDisconnected = that._connected === true;
+
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring re-authentication response as reset took place');
+
+                return;
+            }
+
+            if (reAuthenticateCallId !== that._reAuthenticateCallId) {
+                that._logger.info('Ignoring re-authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (error) {
+                that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
+
+                return transitionToStatus.call(that, 'reconnect-failed');
+            }
+
+            if (response.status !== 'ok') {
+                that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
+
+                var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
+
+                return transitionToStatus.call(that, reason);
+            }
+
+            that._connected = true;
+
+            that._logger.info('Successfully authenticated after reconnect to WebSocket');
+
+            return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
+        });
     }
 
     function disconnected() {
@@ -1120,6 +1158,12 @@ define([
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -1358,7 +1402,7 @@ define([
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -1371,7 +1415,7 @@ define([
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .then(createPublisher)
                 .catch(onFailure);
         }
@@ -1379,14 +1423,14 @@ define([
         that._logger.info('[%s] Using legacy callback api', streamId);
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
                     peerConnection.setLocalDescription(sessionDescription, function() {
-                        onSetLocalDescriptionSuccess.call(that);
+                        onSetLocalDescriptionSuccess.call(that, peerConnection);
                         createPublisher();
                     }, onFailure);
                 }, onFailure);
@@ -1437,6 +1481,12 @@ define([
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -1473,7 +1523,7 @@ define([
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -1486,29 +1536,29 @@ define([
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .catch(onFailure);
         }
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
-                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that), onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that, peerConnection), onFailure);
                 }, onFailure);
             }, onFailure, mediaConstraints);
         }, onFailure);
     }
 
-    function onSetLocalDescriptionSuccess() {
-        this._logger.debug('Set local description (answer)');
+    function onSetLocalDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set local description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['localDescription', 'sdp']));
     }
 
-    function onSetRemoteDescriptionSuccess() {
-        this._logger.debug('Set remote description (offer)');
+    function onSetRemoteDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set remote description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['remoteDescription', 'sdp']));
     }
 
     function onCreateAnswerSuccess(answerSdp) {
@@ -1795,11 +1845,16 @@ define([
     }
 
     function closePeerConnection(streamId, peerConnection, reason) {
-        if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
-            this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
-            peerConnection.close();
-            peerConnection.__closing = true;
+        if (peerConnection.signalingState === 'closed' || peerConnection.__closing) {
+            this._logger.debug('[%s] Peer connection is already closed [%s]', streamId, reason);
+
+            return;
         }
+
+        this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
+
+        peerConnection.close();
+        peerConnection.__closing = true;
     }
 
     function handleForeground() {

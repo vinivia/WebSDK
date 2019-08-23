@@ -216,7 +216,7 @@ define([
     };
 
     PhenixRealTimeStream.prototype.isActive = function isActive() {
-        return !this._isStopped && !isStreamStopped(this._streamSrc);
+        return !this._isStopped;
     };
 
     PhenixRealTimeStream.prototype.getStreamId = function getStreamId() {

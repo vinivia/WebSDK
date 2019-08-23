@@ -21,12 +21,16 @@ define([
     'use strict';
 
     function AuthenticationService(pcast) {
+        this.setPCast(pcast);
+    }
+
+    AuthenticationService.prototype.setPCast = function setPCast(pcast) {
         assert.isObject(pcast, 'pcast');
         assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
         assert.isFunction(pcast.getLogger, 'pcast.getLogger');
         assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
 
-        if (this._pcast === pcast) {
+        if (pcast === this._pcast) {
             return;
         }
 
@@ -41,7 +45,19 @@ define([
 
         this._sessionId = this._protocol.getObservableSessionId();
         this._status = this._pcast.getObservableStatus();
-    }
+    };
+
+    AuthenticationService.prototype.checkAuthorized = function assertAuthorized() {
+        if (!validPCastStatus(this.getPCastStatus())) {
+            return false;
+        }
+
+        if (!validPCastSessionId(this.getPCastSessionId())) {
+            return false;
+        }
+
+        return true;
+    };
 
     AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
         if (!validPCastStatus(this.getPCastStatus())) {

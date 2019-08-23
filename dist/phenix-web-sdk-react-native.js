@@ -1644,7 +1644,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-08-09T02:02:42Z',
+                version: '2019-08-24T00:17:44Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -2285,7 +2285,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._externalPublishers = [];
         this._roomServicePublishers = {};
         this._activeRoomServices = [];
-        this._membersSubscriptions = {};
         this._publisherDisposables = {};
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
@@ -2296,24 +2295,22 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
             if (!pcast) {
-                var roomServicesToCleanUp = _.assign({}, that._roomServices);
-
-                _.forOwn(that._membersSubscriptions, function(membersSubscription) {
-                    membersSubscription.dispose();
-                });
-
-                that._pcastExpress.waitForOnline(function() {
-                    _.forOwn(roomServicesToCleanUp, function(roomService) {
-                        roomService.stop('pcast-change');
-                    });
-                }, true);
-
-                that._logger.info('Resetting Room Express after change in pcast.');
-
-                that._membersSubscriptions = {};
-                that._roomServices = {};
-                that._activeRoomServices = [];
+                return;
             }
+
+            that._logger.info('Resetting Room Express after change in pcast.');
+
+            that._pcastExpress.waitForOnline(function() {
+                var currentPCast = that._pcastExpress.getPCastObservable().getValue();
+
+                if (currentPCast !== pcast) {
+                    return;
+                }
+
+                _.forOwn(that._roomServices, function(roomService) {
+                    roomService.setPCast(pcast);
+                });
+            });
         });
     }
 
@@ -2675,9 +2672,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     function disposeOfRoomServices() {
-        _.forOwn(this._membersSubscriptions, function(membersSubscription) {
-            membersSubscription.dispose();
-        });
         _.forOwn(this._roomServicePublishers, function(publishers) {
             _.forEach(publishers, function(publisher) {
                 publisher.stop('dispose');
@@ -2687,7 +2681,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             roomService.stop('dispose');
         });
 
-        this._membersSubscriptions = {};
         this._roomServicePublishers = {};
         this._externalPublishers = [];
         this._roomServices = {};
@@ -2756,12 +2749,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(null, response);
                 }
 
-                if (room && that._membersSubscriptions[room.getRoomId()]) {
-                    that._membersSubscriptions[room.getRoomId()].dispose();
-
-                    delete that._membersSubscriptions[room.getRoomId()];
-                }
-
                 that._logger.info('Successfully disposed Express Room Service [%s]', room ? room.getRoomId() : 'Uninitialized');
 
                 roomService.stop('leave-room');
@@ -2795,13 +2782,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 var room = activeRoomObservable.getValue();
 
                 if (!room) {
-                    return that._logger.warn('Unable to setup members subscription. Not in room.');
+                    that._logger.warn('Unable to setup members subscription. Not in room.');
+
+                    return;
                 }
 
                 membersSubscription = room.getObservableMembers().subscribe(membersChangedCallback, {initial: 'notify'});
 
                 return activeRoomObservable.subscribe(function(newRoom) {
                     if (membersSubscription) {
+                        membersChangedCallback([]);
                         membersSubscription.dispose();
                         membersSubscription = null;
                     }
@@ -3390,24 +3380,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     updateSelfErrors++;
                 }
 
-                if (response && response.status !== 'ok') {
-                    updateSelfErrors++;
-                }
+                var roomService = self.getRoomService();
+                var room = roomService ? roomService.getObservableActiveRoom().getValue() : null;
 
-                if (response && response.status === 'ok') {
+                if (response && response.status === 'ok' || (!room && response.status === 'not-found')) {
                     updateSelfErrors = 0;
 
                     return !callback || callback(null, response);
                 }
 
+                if (response && response.status !== 'ok') {
+                    updateSelfErrors++;
+                }
+
                 if (updateSelfErrors >= maxUpdateSelfRetries) {
                     that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
+
+                    if (_.isNumber(response.lastUpdate)) {
+                        that._logger.warn('Updating self last update from [%s] to [%s] to prevent permanent failure state. Our awareness of self does not match up with the server anymore.',
+                            self.getObservableLastUpdate().getValue(), response.lastUpdate);
+
+                        self.getObservableLastUpdate().setValue(response.lastUpdate);
+                    }
 
                     return callback(new Error('Unable to update self'));
                 }
 
                 if (updateSelfErrors > 0 && updateSelfErrors < maxUpdateSelfRetries) {
-                    that._logger.warn('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
+                    that._logger.info('Unable to update self after [%s] attempts. Retrying.', updateSelfErrors);
 
                     return self.commitChanges(handleUpdateSelf);
                 }
@@ -4537,53 +4537,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function onPCastStatusChange(status) {
-        var that = this;
-
         switch (status) {
         case 'timeout':
         case 'critical-network-issue':
-            if (that._pcastObservable.getValue()) {
-                that._pcastObservable.getValue().stop('recovery');
-                that._pcastObservable.setValue(null);
+            if (this._pcastObservable.getValue()) {
+                this._pcastObservable.getValue().stop('recovery');
+                this._pcastObservable.setValue(null);
             }
 
-            if (that._pcastStatusSubscription) {
-                that._pcastStatusSubscription.dispose();
-                that._pcastStatusSubscription = null;
+            if (this._pcastStatusSubscription) {
+                this._pcastStatusSubscription.dispose();
+                this._pcastStatusSubscription = null;
             }
 
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'reconnect-failed':
         case 'unauthorized':
             delete this._authToken;
 
-            that._reauthCount++;
+            this._reauthCount++;
 
-            if (that._reauthCount > 1) {
+            if (this._reauthCount > 1) {
                 return handleError.call(this, new Error(status));
             }
 
-            that._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
+            this._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
 
-            return getAuthTokenAndReAuthenticate.call(that);
+            return getAuthTokenAndReAuthenticate.call(this);
         case 'capacity':
         case 'network-unavailable':
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'online':
-            that._reauthCount = 0;
-            that._reconnectCount = 0;
-
-            if (!that._isInstantiated) {
-                that._logger.info('[%s] Successfully instantiated', this);
+            if (!this._isInstantiated) {
+                this._logger.info('[%s] Successfully instantiated', this);
             } else {
-                that._logger.info('[%s] Successfully reconnected', this);
+                this._logger.info('[%s] Successfully reconnected (reconnectCount=[%s],reauthCount=[%s])', this, this._reconnectCount, this._reauthCount);
             }
 
-            that._isInstantiated = true;
+            this._reauthCount = 0;
+            this._reconnectCount = 0;
+            this._isInstantiated = true;
 
             return;
         case 'reconnecting':
@@ -4594,7 +4591,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         case 'failed':
         default:
-            return handleError.call(that, new Error(status));
+            return handleError.call(this, new Error(status));
         }
     }
 
@@ -5777,12 +5774,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     function AuthenticationService(pcast) {
+        this.setPCast(pcast);
+    }
+
+    AuthenticationService.prototype.setPCast = function setPCast(pcast) {
         assert.isObject(pcast, 'pcast');
         assert.isFunction(pcast.getObservableStatus, 'pcast.getObservableStatus');
         assert.isFunction(pcast.getLogger, 'pcast.getLogger');
         assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
 
-        if (this._pcast === pcast) {
+        if (pcast === this._pcast) {
             return;
         }
 
@@ -5797,7 +5798,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._sessionId = this._protocol.getObservableSessionId();
         this._status = this._pcast.getObservableStatus();
-    }
+    };
+
+    AuthenticationService.prototype.checkAuthorized = function assertAuthorized() {
+        if (!validPCastStatus(this.getPCastStatus())) {
+            return false;
+        }
+
+        if (!validPCastSessionId(this.getPCastSessionId())) {
+            return false;
+        }
+
+        return true;
+    };
 
     AuthenticationService.prototype.assertAuthorized = function assertAuthorized() {
         if (!validPCastStatus(this.getPCastStatus())) {
@@ -5918,14 +5931,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+        assert.isObject(roomService, 'roomService');
         assert.isString(sessionId, 'sessionId');
         assert.isString(screenName, 'screenName');
         assert.isArray(streams, 'streams');
         assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
-
-        if (roomService) {
-            assert.isObject(roomService, 'roomService');
-        }
 
         this._sessionId = new observable.Observable(sessionId);
         this._screenName = new observable.Observable(screenName);
@@ -5971,6 +5981,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return _.map(this._streams.getValue(), function mapToJson(stream) {
             return stream.toJson();
         });
+    };
+
+    Member.prototype.getRoomService = function getRoomService() {
+        return this._roomService;
     };
 
     Member.prototype.commitChanges = function commitChanges(callback) {
@@ -6122,6 +6136,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     Room.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
+        assert.isObject(roomService, 'roomService');
         assert.isStringNotEmpty(name, 'name');
         assert.isString(description, 'description');
         assert.isArray(members, 'members');
@@ -6140,10 +6155,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (pin) {
             assert.isStringNotEmpty(pin, 'pin');
-        }
-
-        if (roomService) {
-            assert.isObject(roomService, 'roomService');
         }
 
         this._roomId = new observable.Observable(id);
@@ -6268,7 +6279,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     Room.prototype._addMembers = function addMembers(members) {
         var that = this;
 
-        var newMembers = mapMembers(members);
+        var newMembers = mapMembers(members, this._roomService);
 
         _.forEach(newMembers, function(member) {
             that._members.push(member);
@@ -6364,35 +6375,57 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var inAnotherRoomResponse = _.freeze({status: 'in-another-room'});
 
     function RoomService(pcast) {
-        assert.isObject(pcast, 'pcast');
-        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
-        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
-
-        this._pcast = pcast;
-        this._logger = pcast.getLogger();
-        this._protocol = pcast.getProtocol();
-
         this._self = new observable.Observable(null);
         this._activeRoom = new observable.Observable(null);
         this._cachedRoom = new observable.Observable(null);
         this._roomChatService = null;
 
+        this._authenticationService = new AuthenticationService(pcast);
+
+        this.setPCast(pcast);
+    }
+
+    RoomService.prototype.setPCast = function setPCast(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+        if (this._pcast) {
+            this._logger.info('Resetting pcast instance for room service');
+        }
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+        this._protocol = pcast.getProtocol();
+
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
-        this._authService = new AuthenticationService(this._pcast);
-    }
+        this._authenticationService.setPCast(pcast);
+
+        if (this._roomChatService) {
+            this._roomChatService.setPCast(pcast);
+        }
+
+        if (this._started) {
+            this._disposables.dispose();
+
+            setupSubscriptions.call(this);
+        }
+    };
 
     RoomService.prototype.start = function start(role, screenName) {
         if (this._started) {
-            return this._logger.warn('RoomService already started.');
+            this._logger.warn('RoomService already started.');
+
+            return;
         }
 
         assert.isStringNotEmpty(role, 'role');
         assert.isStringNotEmpty(screenName, 'screenName');
 
         var myState = memberEnums.states.passive.name;
-        var mySessionId = this._authService.getPCastSessionId();
+        var mySessionId = this._authenticationService.getPCastSessionId();
         var myScreenName = screenName;
         var myStreams = [];
         var myLastUpdate = _.now();
@@ -6402,10 +6435,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._self = new observable.Observable(self);
         this._disposables = new disposable.DisposableList();
-
-        var disposeOfRoomEventHandler = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
-
-        this._disposables.add(disposeOfRoomEventHandler);
 
         setupSubscriptions.call(this);
 
@@ -6572,26 +6601,46 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._self.setValue(new Member(roomService, self.state, sessionId || '', self.screenName, self.role, self.streams, self.lastUpdate));
     }
 
-    function resetRoom() {
+    function reenterRoom() {
         var that = this;
 
         var activeRoom = that._activeRoom.getValue();
-        var selfSessionId = that._self.getValue().getSessionId();
 
-        if (!_.isObject(activeRoom) || !selfSessionId) {
+        if (!_.isObject(activeRoom)) {
+            return;
+        }
+
+        var self = that._self.getValue();
+
+        if (!self) {
+            return;
+        }
+
+        var selfSessionId = self.getSessionId();
+
+        if (!selfSessionId) {
             return;
         }
 
         var roomId = activeRoom.getRoomId();
         var alias = activeRoom.getObservableAlias().getValue();
 
-        that._logger.info('Leaving and re-entering room after reset of self model');
+        that._logger.info('[%s] Re-entering room [%s]', roomId, alias);
 
-        leaveRoomRequest.call(that, function() {
-            enterRoomRequest.call(that, roomId, alias, function() {
-                that._logger.info('Room reset completed');
-            });
-        });
+        if (that._roomChatService) {
+            that._logger.info('Performing soft reset on room chat service for room [%s]', roomId);
+            that._roomChatService.stop();
+        }
+
+        enterRoomRequest.call(that, roomId, alias, function() {
+            if (that._roomChatService) {
+                that._logger.info('[%s] Refreshing room chat service after re-entering room [%s]', roomId, alias);
+
+                that._roomChatService.start(that._roomChatService.getBatchSize());
+            }
+
+            that._logger.info('[%s] Room [%s] completed reset', roomId, alias);
+        }, {reenter: true});
     }
 
     // Handle events
@@ -6654,14 +6703,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         };
 
         var joinedSelf = _.find(members, memberIsSelf);
+        var selfInRoom = false;
 
         if (joinedSelf) {
-            replaceSelfInstanceInRoom.call(that, room);
+            selfInRoom = replaceSelfInstanceInRoom.call(that, room);
 
             room._updateMembers([joinedSelf]);
         }
 
-        this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
+        this._logger.info('[%s] Room has now [%d] members (Self is present in room [%s])', roomId, room.getObservableMembers().getValue().length, selfInRoom);
     }
 
     function onMembersLeavesRoom(roomId, members) {
@@ -6728,6 +6778,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         resetSelf.call(this, sessionId);
     }
 
+    function handleSelfUpdated(self) {
+        var that = this;
+
+        if (!self) {
+            return;
+        }
+
+        if (!self.getSessionId()) {
+            return;
+        }
+
+        var activeRoom = that._activeRoom.getValue();
+
+        if (!activeRoom) {
+            return;
+        }
+
+        that._logger.info('[%s] Updating self in room after update', activeRoom.getRoomId());
+
+        updateMemberRequest.call(this, this.getSelf(), function(error, response) {
+            if (_.get(response, ['status']) === 'ok') {
+                that._logger.info('[%s] Updated self in room after update', activeRoom.getRoomId());
+            } else {
+                that._logger.info('[%s] Self was not updated in room after update', activeRoom.getRoomId());
+            }
+        });
+    }
+
     function findMemberInObservableRoom(sessionId, observableRoom) {
         var room = observableRoom.getValue();
         var members = room.getObservableMembers().getValue();
@@ -6745,14 +6823,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('PCast status changed from [%s] to [%s]', this._lastPcastStatus, status);
 
         this._lastPcastStatus = status;
+
+        if (status === 'online') {
+            reenterRoom.call(this);
+        }
     }
 
     function setupSubscriptions() {
-        var selfSubscription = this._self.subscribe(_.bind(resetRoom, this));
+        var roomEventSubscription = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
+        var selfSubscription = this._self.subscribe(_.bind(handleSelfUpdated, this));
+        var pcastStatusSubscription = this._authenticationService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
+        var pcastSessionIdSubscription = this._authenticationService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
 
-        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
-        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
-
+        this._disposables.add(roomEventSubscription);
         this._disposables.add(selfSubscription);
         this._disposables.add(pcastStatusSubscription);
         this._disposables.add(pcastSessionIdSubscription);
@@ -6763,7 +6846,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         return _.map(members, function(member) {
             var cachedMember = findMemberInObservableRoom(member.sessionId, that._cachedRoom);
-            var placeholderMember = new Member(null, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+            var placeholderMember = new Member(that, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
             var memberWithOnlyDifferentProperties = buildMemberForRequest(placeholderMember, cachedMember);
 
             memberWithOnlyDifferentProperties.lastUpdate = member.lastUpdate;
@@ -6801,7 +6884,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function getRoomInfoRequest(roomId, alias, callback) {
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var that = this;
 
@@ -6821,7 +6904,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(null, result);
                 }
 
-                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+                result.room = _.freeze(createImmutableRoomFromResponse.call(that, response));
 
                 callback(null, result);
             }
@@ -6829,11 +6912,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function createRoomRequest(room, callback) {
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var that = this;
 
-        var validatedRoom = getValidRoomObject(room);
+        var validatedRoom = getValidRoomObject.call(that, room);
 
         this._protocol.createRoom(validatedRoom, function handleCreateRoomResponse(error, response) {
             if (error) {
@@ -6850,7 +6933,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(null, result);
             }
 
-            result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+            result.room = _.freeze(createImmutableRoomFromResponse.call(that, response));
 
             callback(null, result);
         });
@@ -6862,32 +6945,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return (new Room(roomService, '', room.alias, room.name, room.description, room.type, [], room.bridgeId, room.pin)).toJson();
     }
 
-    function enterRoomRequest(roomId, alias, callback) {
+    function enterRoomRequest(roomId, alias, callback, options) {
+        var reenter = _.get(options, 'reenter') === true;
         var activeRoom = this._activeRoom.getValue();
 
         if (activeRoom) {
             var isSameRoom = roomId === activeRoom.getRoomId() || alias === activeRoom.getObservableAlias().getValue();
 
-            this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
+            if (isSameRoom && !reenter) {
+                this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
 
-            return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+                return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+            }
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var self = this._self.getValue();
 
         var screenName = self.getObservableScreenName().getValue();
         var role = self.getObservableRole().getValue();
         var selfForRequest = buildMemberForRequest.call(this, self, null);
+        var enterRoomOptions = [];
         var timestamp = _.now();
+
+        if (reenter) {
+            enterRoomOptions.push('reenter');
+        }
 
         this._logger.info('Enter room [%s]/[%s] with screen name [%s] and role [%s]', roomId, alias, screenName, role);
 
         var that = this;
 
-        this._protocol.enterRoom(roomId, alias, selfForRequest, timestamp,
+        if (that._isEnteringRoom) {
+            that._logger.info('[%s] We are already entering the room [%s], skipping', roomId, alias);
+
+            return;
+        }
+
+        that._isEnteringRoom = true;
+
+        this._protocol.enterRoom(roomId, alias, selfForRequest, enterRoomOptions, timestamp,
             function handleEnterRoomResponse(error, response) {
+                that._isEnteringRoom = false;
+
                 if (error) {
                     that._logger.error('Joining of room failed with error [%s]', error);
 
@@ -6908,20 +7009,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     that.getSelf()._update(response.self);
                 }
 
+                that._logger.info('Successfully entered room [%s]/[%s]', roomId, alias);
+
                 callback(null, result);
             }
         );
     }
 
     function leaveRoomRequest(callback) {
-        if (!this._activeRoom.getValue()) {
-            this._logger.info('Unable to leave room. Not currently in a room.');
+        var room = this._activeRoom.getValue();
+
+        if (!room) {
+            this._logger.info('Not currently in a room.');
 
             return callback(null, notInRoomResponse);
         }
 
-        if (this._authService.getPCastSessionId() === '') {
-            this._logger.warn('Unable to leave room. We are currently not connected. Status [' + this._lastPcastStatus + ']');
+        if (this._authenticationService.getPCastSessionId() === '') {
+            this._logger.warn('Unable to leave room. We are currently not connected. Status [%s]', this._lastPcastStatus);
 
             return;
         }
@@ -6930,9 +7035,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var roomId = this._activeRoom.getValue().getRoomId();
+        var roomId = room.getRoomId();
         var timestamp = _.now();
 
         this._logger.info('Leave room [%s]', roomId);
@@ -6944,6 +7049,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
                 that._isLeavingRoom = false;
+
+                that._activeRoom.setValue(null);
+                that._cachedRoom.setValue(null);
 
                 if (error) {
                     that._logger.error('Leaving room failed with error [%s]', error);
@@ -6959,15 +7067,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(null, result);
                 }
 
-                if (that._roomChatService) {
-                    that._roomChatService.stop();
-                }
-
-                that._roomChatService = null;
-
-                that._activeRoom.setValue(null);
-                that._cachedRoom.setValue(null);
-
                 callback(null, result);
             }
         );
@@ -6980,7 +7079,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return callback(null, notInRoomResponse);
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var activeRoom = this._activeRoom.getValue();
         var roomId = activeRoom.getRoomId();
@@ -6995,7 +7094,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
         }
 
-        this._logger.info('Updating member info for active room [%s]', roomId);
+        this._logger.info('Updating member info [%s] for active room [%s]', memberForRequest, roomId);
 
         var that = this;
 
@@ -7007,10 +7106,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(error, null);
                 }
 
-                var result = {status: response.status};
+                var result = {
+                    status: response.status,
+                    lastUpdate: response.lastUpdate
+                };
 
                 if (response.status !== 'ok') {
-                    that._logger.warn('Update of member failed with status [%s]', response.status);
+                    that._logger.info('Update of member failed with status [%s]', response.status);
                 }
 
                 if (response.status === 'ok' && isSelfBecomingAudience && _.isNumber(response.lastUpdate)) {
@@ -7029,7 +7131,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return callback(null, notInRoomResponse);
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var room = this._activeRoom.getValue();
         var timestamp = _.now();
@@ -7072,13 +7174,30 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function initializeRoomAndBuildCache(response) {
+        var activeRoom = this._activeRoom.getValue();
+        var cachedRoom = this._cachedRoom.getValue();
         var room = createRoomFromResponse.call(this, response);
-        var cachedRoom = createRoomFromResponse.call(this, response);
 
         replaceSelfInstanceInRoom.call(this, room);
 
+        if (activeRoom && cachedRoom) {
+            this._logger.debug('[%s] Updating existing room model.', activeRoom.getRoomId());
+
+            activeRoom._update(response.room);
+            cachedRoom._update(response.room);
+
+            activeRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
+            cachedRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
+
+            return activeRoom;
+        }
+
+        var newCachedRoom = createRoomFromResponse.call(this, response);
+
+        replaceSelfInstanceInRoom.call(this, newCachedRoom);
+
         this._activeRoom.setValue(room);
-        this._cachedRoom.setValue(cachedRoom);
+        this._cachedRoom.setValue(newCachedRoom);
 
         return room;
     }
@@ -7092,7 +7211,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
 
         if (selfIndex < 0) {
-            return this._logger.info('Self not in server room model.');
+            this._logger.debug('Self not in server room model.');
+
+            return false;
         }
 
         self._update(members[selfIndex].toJson());
@@ -7100,6 +7221,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         members[selfIndex] = self;
 
         room.getObservableMembers().setValue(members);
+
+        return true;
     }
 
     return RoomService;
@@ -7976,7 +8099,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     };
 
                     if (!monitorCallback(null, monitorEvent)) {
-                        that._logger.error(failureMessage + ': [%s]', report);
+                        that._logger.info(failureMessage + ': [%s]', report);
                     } else {
                         acknowledgeFailure();
                     }
@@ -8019,9 +8142,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var remoteTracks = getRemoteTracks(peerConnection);
 
         if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote tracks.', localTracks.length, remoteTracks.length);
+            var result = [];
 
-            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+            _.forEach(localTracks, function(track) {
+                result.push(track);
+            });
+
+            _.forEach(remoteTracks, function(track) {
+                result.push(track);
+            });
+
+            return result;
         } else if (localTracks.length !== 0) {
             return localTracks;
         } else if (remoteTracks.length !== 0) {
@@ -9466,7 +9597,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-08-09T02:02:42Z';
+    var sdkVersion = '2019-08-24T00:17:44Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -9526,6 +9657,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._treatBackgroundAsOffline = options.treatBackgroundAsOffline === true;
         this._reAuthenticateOnForeground = options.reAuthenticateOnForeground === true;
+        this._authenticateCallId = 0;
+        this._reAuthenticateCallId = 0;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
@@ -10025,37 +10158,54 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function connected() {
-        if (areAllPeerConnectionsOffline.call(this) && this._observableStatus.getValue() === 'offline') {
-            this._logger.warn('[PCast] connected after being offline. Going offline.');
+        var that = this;
 
-            transitionToStatus.call(this, 'critical-network-issue');
+        if (that._stopped) {
+            that._logger.warn('[%s] Skip connect due to stopped state', that);
 
-            return this.stop('critical-network-issue');
+            return;
         }
 
-        var that = this;
+        if (areAllPeerConnectionsOffline.call(that) && that._observableStatus.getValue() === 'offline') {
+            this._logger.warn('[PCast] connected after being offline. Reconnecting.');
+
+            reconnecting.call(that);
+        }
 
         this._connected = true;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                if (that._authenticationCallback) {
-                    if (error) {
-                        that._logger.error('Failed to authenticate [%s]', error);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else if (response.status !== 'ok') {
-                        that._logger.warn('Failed to authenticate, status [%s]', response.status);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else {
-                        transitionToStatus.call(that, 'online');
+        var protocol = that._protocol;
+        var authenticateCallId = ++that._authenticateCallId;
 
-                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
-                    }
+        protocol.authenticate(that._authToken, function(error, response) {
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring authentication response as reset took place');
+
+                return;
+            }
+
+            if (authenticateCallId !== that._authenticateCallId) {
+                that._logger.info('Ignoring authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (that._authenticationCallback) {
+                if (error) {
+                    that._logger.error('Failed to authenticate [%s]', error);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('Failed to authenticate, status [%s]', response.status);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else {
+                    transitionToStatus.call(that, 'online');
+
+                    that._authenticationCallback.call(that, that, response.status, response.sessionId);
                 }
-            });
-        }
+            }
+        });
     }
 
     function reconnecting() {
@@ -10069,7 +10219,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         transitionToStatus.call(this, 'reconnected', optionalReason);
 
-        this._logger.info('Attempting to re-authenticate after reconnected event');
+        this._logger.info('Attempting to re-authenticate after reconnected event [%s]', optionalReason);
 
         reAuthenticate.call(this);
     }
@@ -10077,31 +10227,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function reAuthenticate() {
         var that = this;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                var suppressCallbackIfNeverDisconnected = that._connected === true;
+        if (that._stopped) {
+            that._logger.info('Skip re-authentication due to stopped state');
 
-                if (error) {
-                    that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
-
-                    return transitionToStatus.call(that, 'reconnect-failed');
-                }
-
-                if (response.status !== 'ok') {
-                    that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
-
-                    var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
-
-                    return transitionToStatus.call(that, reason);
-                }
-
-                that._connected = true;
-
-                that._logger.info('Successfully authenticated after reconnect to WebSocket');
-
-                return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
-            });
+            return;
         }
+
+        var protocol = that._protocol;
+        var reAuthenticateCallId = ++that._reAuthenticateCallId;
+
+        protocol.authenticate(that._authToken, function(error, response) {
+            var suppressCallbackIfNeverDisconnected = that._connected === true;
+
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring re-authentication response as reset took place');
+
+                return;
+            }
+
+            if (reAuthenticateCallId !== that._reAuthenticateCallId) {
+                that._logger.info('Ignoring re-authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (error) {
+                that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
+
+                return transitionToStatus.call(that, 'reconnect-failed');
+            }
+
+            if (response.status !== 'ok') {
+                that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
+
+                var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
+
+                return transitionToStatus.call(that, reason);
+            }
+
+            that._connected = true;
+
+            that._logger.info('Successfully authenticated after reconnect to WebSocket');
+
+            return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
+        });
     }
 
     function disconnected() {
@@ -10541,6 +10710,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -10779,7 +10954,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -10792,7 +10967,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .then(createPublisher)
                 .catch(onFailure);
         }
@@ -10800,14 +10975,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         that._logger.info('[%s] Using legacy callback api', streamId);
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
                     peerConnection.setLocalDescription(sessionDescription, function() {
-                        onSetLocalDescriptionSuccess.call(that);
+                        onSetLocalDescriptionSuccess.call(that, peerConnection);
                         createPublisher();
                     }, onFailure);
                 }, onFailure);
@@ -10858,6 +11033,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -10894,7 +11075,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -10907,29 +11088,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .catch(onFailure);
         }
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
-                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that), onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that, peerConnection), onFailure);
                 }, onFailure);
             }, onFailure, mediaConstraints);
         }, onFailure);
     }
 
-    function onSetLocalDescriptionSuccess() {
-        this._logger.debug('Set local description (answer)');
+    function onSetLocalDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set local description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['localDescription', 'sdp']));
     }
 
-    function onSetRemoteDescriptionSuccess() {
-        this._logger.debug('Set remote description (offer)');
+    function onSetRemoteDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set remote description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['remoteDescription', 'sdp']));
     }
 
     function onCreateAnswerSuccess(answerSdp) {
@@ -11216,11 +11397,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function closePeerConnection(streamId, peerConnection, reason) {
-        if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
-            this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
-            peerConnection.close();
-            peerConnection.__closing = true;
+        if (peerConnection.signalingState === 'closed' || peerConnection.__closing) {
+            this._logger.debug('[%s] Peer connection is already closed [%s]', streamId, reason);
+
+            return;
         }
+
+        this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
+
+        peerConnection.close();
+        peerConnection.__closing = true;
     }
 
     function handleForeground() {
@@ -11732,7 +11918,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('Disposed channel express instance');
     };
 
-    ChannelExpress.prototype.getRoomExpress = function getPCastExpress() {
+    ChannelExpress.prototype.getRoomExpress = function getRoomExpress() {
         return this._roomExpress;
     };
 
@@ -12365,14 +12551,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
                 heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
-                newHeight = parseInt(getIndexKey(heightIndex, aspectRatioHeights), 10);
-                newWidth = parseInt(this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio), 10);
+
+                if (heightIndex < 0) {
+                    return null;
+                }
+
+                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
+                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
                     resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: newHeight,
-                    width: newWidth
+                    height: parseInt(newHeight, 10),
+                    width: parseInt(newWidth, 10)
                 };
             }
 
@@ -12381,13 +12572,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
         newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = parseInt(getIndexKey(heightIndex, newAspectRatioHeights), 10);
-        newWidth = parseInt(newAspectRatioHeights[heightIndex][newHeight], 10);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
             resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: newHeight,
+            height: parseInt(newHeight, 10),
             width: newWidth
         };
     }
@@ -12474,7 +12665,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function getNextHighestKeyIndex(value, collection) {
         if ( _.keys(collection[0])[0] < value) {
-            return null;
+            return -1;
         }
 
         return _.reduce(collection, function(closestIndex, nextItem, index) {
@@ -13002,13 +13193,24 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = pcast.getLogger();
         this._protocol = pcast.getProtocol();
         this._enabled = new observable.Observable(false);
-        this._lastSubscribedSessionId = null;
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
-        this._authService = new AuthenticationService(this._pcast);
+        this._authenticationService = new AuthenticationService(pcast);
     }
+
+    ChatService.prototype.setPCast = function setPCast(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+        this._protocol = pcast.getProtocol();
+
+        this._authenticationService.setPCast(pcast);
+    };
 
     ChatService.prototype.start = function start() {
         if (this._enabled.getValue()) {
@@ -13031,6 +13233,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         }
 
+        this._enabled.setValue(false);
+
         if (this._disposables) {
             this._disposables.dispose();
         }
@@ -13038,6 +13242,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     ChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
         return this._enabled;
+    };
+
+    ChatService.prototype.canSendMessage = function canSendMessage() {
+        return this._authenticationService.checkAuthorized();
     };
 
     ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback) {
@@ -13061,11 +13269,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     function setupSubscriptions() {
-        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
-        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(onSessionIdChange, this));
+        var pcastStatusSubscription = this._authenticationService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
 
         this._disposables.add(pcastStatusSubscription);
-        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function setupChatListener(roomId, onReceiveMessages) {
@@ -13115,22 +13321,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         // Only reason to redo subscriptions is if sessionId changes, which infers status changed
     }
 
-    function onSessionIdChange(sessionId) {
-        if (!this._lastSubscribedSessionId || this._lastSubscribedSessionId === sessionId) {
-            return;
-        }
-
-        refreshMessageSubscriptions.call(this);
-    }
-
-    function refreshMessageSubscriptions() {
-        var that = this;
-
-        _.forOwn(this._roomMessagesListeners, function(listener, roomId) {
-            subscribeToRoomConversationRequest.call(that, roomId, 1);
-        });
-    }
-
     function getMessagesRequest(roomId, batchSize, afterMessageId, beforeMessageId, callback) {
         assert.isStringNotEmpty(roomId, 'roomId');
         assert.isFunction(callback, 'callback');
@@ -13148,9 +13338,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         }
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         this._logger.info('Get messages from room [%s] conversation with batch size of [%s], after [%s], and before [%s]', roomId, batchSize, afterMessageId, beforeMessageId);
 
@@ -13186,11 +13376,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assert.isNumber(batchSize, 'batchSize');
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
-
-        this._lastSubscribedSessionId = sessionId;
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
 
@@ -13236,9 +13424,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         var chatMessage = {
             messageId: '',
@@ -13334,17 +13522,34 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function RoomChatService(roomService) {
         assert.isObject(roomService, 'roomService');
         assert.isObject(roomService._pcast, 'roomService._pcast');
-        assert.isObject(roomService._logger, 'roomService._logger');
 
         this._roomService = roomService;
-        this._pcast = roomService._pcast;
-        this._logger = roomService._logger;
-        this._chatService = new ChatService(this._pcast);
+
         this._chatMessages = new observable.ObservableArray([]);
-        this._latestMessageQueue = [];
+        this._lastChatMessage = new observable.Observable(null);
         this._disposables = new disposable.DisposableList();
         this._chatRoomId = null;
+
+        this.setPCast(roomService._pcast);
     }
+
+    RoomChatService.prototype.setPCast = function setPCast(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+
+        if (this._chatService) {
+            this._chatService.setPCast(pcast);
+        } else {
+            this._chatService = new ChatService(pcast);
+        }
+    };
+
+    RoomChatService.prototype.getBatchSize = function getBatchSize() {
+        return this._batchSize;
+    };
 
     RoomChatService.prototype.start = function start(batchSize) {
         this._batchSize = batchSize || defaultBatchSize;
@@ -13368,14 +13573,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._chatMessages;
     };
 
+    RoomChatService.prototype.getObservableLastChatMessage = function getObservableLastChatMessage() {
+        return this._lastChatMessage;
+    };
+
     RoomChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
         return this._chatService.getObservableChatEnabled();
     };
 
+    RoomChatService.prototype.canSendMessage = function canSendMessage() {
+        return this._chatService.canSendMessage();
+    };
+
     RoomChatService.prototype.sendMessageToRoom = function sendMessageToRoom(message, callback) {
         var room = this._roomService.getObservableActiveRoom().getValue();
+
+        if (!room) {
+            return callback(new Error('Not in room'), null);
+        }
+
         var roomId = room.getRoomId();
         var self = this._roomService._self.getValue();
+
+        if (!self) {
+            return callback(new Error('No record for oneself'), null);
+        }
+
         var screenName = self.getObservableScreenName().getValue();
         var role = self.getObservableRole().getValue();
         var lastUpdate = self.getLastUpdate();
@@ -13440,13 +13663,36 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
 
             if (response.status !== 'ok') {
-                throw new Error('Unable to subscribe to room chat. Status ' + status);
+                throw new Error('Unable to subscribe to room chat. Status [' + response.status + ']');
             }
 
             var messages = that._chatMessages.getValue();
 
             _.forEach(response.chatMessages, function addMessage(message) {
-                messages.push(message);
+                var insertIdx = messages.length;
+
+                // Find its position in the history
+                while (insertIdx > 0 && message.messageId < _.get(messages, [insertIdx - 1, 'messageId'])) {
+                    insertIdx--;
+                }
+
+                if (insertIdx === 0 && messages.length > 0) {
+                    that._logger.info('[%] Ignoring message [%s]/[%s] prior to current chat history to prevent gaps.',
+                        roomId, message.messageId, message.timestamp);
+
+                    return;
+                }
+
+                if (insertIdx > 0 && _.get(messages, [insertIdx - 1, 'messageId']) === message.messageId) {
+                    that._logger.info('[%] Ignoring duplicate message [%s]/[%s]',
+                        roomId, message.messageId, message.timestamp);
+
+                    return;
+                }
+
+                messages.splice(insertIdx, 0, message);
+
+                that._lastChatMessage.setValue(message);
             });
 
             if (messages.length > maxCachedQueueSize) {
@@ -13494,10 +13740,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     ImmutableRoom.prototype.init = function init(roomService, id, alias, name, description, type, members, bridgeId, pin) {
-        // Don't pass roomService.
-        this._room = new Room(null, id, alias, name, description, type, members, bridgeId, pin);
+        this._room = new Room(roomService, id, alias, name, description, type, members, bridgeId, pin);
 
-        makeArrayOrObjectObservablesImmutable(this._room);
+        makeArrayOrObjectObservablesImmutable(this._room, [roomService]);
     };
 
     ImmutableRoom.prototype.getRoomId = function getImmutableRoomId() {
@@ -13555,31 +13800,35 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         throw new Error('Unable to subscribe to Immutable [ImmutableRoom]');
     }
 
-    function makeArrayOrObjectObservablesImmutable(collection) {
+    function makeArrayOrObjectObservablesImmutable(collection, exclude) {
         if (_.isArray(collection)) {
             _.forEach(collection, function(value) {
-                wrapObservableAndAnyObservableProperties(value);
+                wrapObservableAndAnyObservableProperties(value, exclude);
             });
         } else if (_.isObject(collection)) {
             _.forOwn(collection, function(value) {
-                wrapObservableAndAnyObservableProperties(value);
+                if (_.includes(exclude, value)) {
+                    return;
+                }
+
+                wrapObservableAndAnyObservableProperties(value, exclude);
             });
         }
     }
 
-    function wrapObservableAndAnyObservableProperties(value) {
-        wrapObservable(value);
-        makeArrayOrObjectObservablesImmutable(value);
+    function wrapObservableAndAnyObservableProperties(value, exclude) {
+        wrapObservable(value, exclude);
+        makeArrayOrObjectObservablesImmutable(value, exclude);
     }
 
-    function wrapObservable(value) {
+    function wrapObservable(value, exclude) {
         if (value instanceof observable.Observable || value instanceof observable.ObservableArray) {
             value.setValue = throwImmutableError;
             value.subscribe = throwImmutableSubscribeError;
 
             var observableValue = value.getValue();
 
-            makeArrayOrObjectObservablesImmutable(observableValue);
+            makeArrayOrObjectObservablesImmutable(observableValue, exclude);
         }
     }
 
@@ -14116,7 +14365,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixRealTimeStream.prototype.isActive = function isActive() {
-        return !this._isStopped && !isStreamStopped(this._streamSrc);
+        return !this._isStopped;
     };
 
     PhenixRealTimeStream.prototype.getStreamId = function getStreamId() {
@@ -15601,7 +15850,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15857,7 +16106,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -20416,7 +20665,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
-    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, timestamp, callback) {
+    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, options, timestamp, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');
         } else {
@@ -20425,6 +20674,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
+        assert.isArray(options, 'options');
         assert.isFunction(callback, 'callback');
 
         var joinRoom = {
@@ -20432,6 +20682,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             alias: alias,
             sessionId: this.getSessionId(),
             member: member,
+            options: options,
             timestamp: timestamp
         };
 
@@ -25308,8 +25559,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
-    var releaseVersion = '2019.2.10';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
+    var releaseVersion = '2019.2.12-beta.0';
 
     function Logger() {
         this._appenders = [];

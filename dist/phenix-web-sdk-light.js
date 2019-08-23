@@ -3077,7 +3077,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     };
 
                     if (!monitorCallback(null, monitorEvent)) {
-                        that._logger.error(failureMessage + ': [%s]', report);
+                        that._logger.info(failureMessage + ': [%s]', report);
                     } else {
                         acknowledgeFailure();
                     }
@@ -3120,9 +3120,17 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var remoteTracks = getRemoteTracks(peerConnection);
 
         if (localTracks.length !== 0 && remoteTracks.length !== 0) {
-            this._logger.error('Invalid State. PeerConnection contains [%s] local and [%s] remote tracks.', localTracks.length, remoteTracks.length);
+            var result = [];
 
-            throw new Error('Invalid State. PeerConnection contains both local and remote streams.');
+            _.forEach(localTracks, function(track) {
+                result.push(track);
+            });
+
+            _.forEach(remoteTracks, function(track) {
+                result.push(track);
+            });
+
+            return result;
         } else if (localTracks.length !== 0) {
             return localTracks;
         } else if (remoteTracks.length !== 0) {
@@ -4235,7 +4243,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-08-09T02:02:42Z';
+    var sdkVersion = '2019-08-24T00:17:44Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -4295,6 +4303,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._disableMultiplePCastInstanceWarning = options.disableMultiplePCastInstanceWarning;
         this._treatBackgroundAsOffline = options.treatBackgroundAsOffline === true;
         this._reAuthenticateOnForeground = options.reAuthenticateOnForeground === true;
+        this._authenticateCallId = 0;
+        this._reAuthenticateCallId = 0;
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
@@ -4794,37 +4804,54 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function connected() {
-        if (areAllPeerConnectionsOffline.call(this) && this._observableStatus.getValue() === 'offline') {
-            this._logger.warn('[PCast] connected after being offline. Going offline.');
+        var that = this;
 
-            transitionToStatus.call(this, 'critical-network-issue');
+        if (that._stopped) {
+            that._logger.warn('[%s] Skip connect due to stopped state', that);
 
-            return this.stop('critical-network-issue');
+            return;
         }
 
-        var that = this;
+        if (areAllPeerConnectionsOffline.call(that) && that._observableStatus.getValue() === 'offline') {
+            this._logger.warn('[PCast] connected after being offline. Reconnecting.');
+
+            reconnecting.call(that);
+        }
 
         this._connected = true;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                if (that._authenticationCallback) {
-                    if (error) {
-                        that._logger.error('Failed to authenticate [%s]', error);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else if (response.status !== 'ok') {
-                        that._logger.warn('Failed to authenticate, status [%s]', response.status);
-                        transitionToStatus.call(that, 'unauthorized');
-                        that._authenticationCallback.call(that, that, 'unauthorized', '');
-                    } else {
-                        transitionToStatus.call(that, 'online');
+        var protocol = that._protocol;
+        var authenticateCallId = ++that._authenticateCallId;
 
-                        that._authenticationCallback.call(that, that, response.status, response.sessionId);
-                    }
+        protocol.authenticate(that._authToken, function(error, response) {
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring authentication response as reset took place');
+
+                return;
+            }
+
+            if (authenticateCallId !== that._authenticateCallId) {
+                that._logger.info('Ignoring authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (that._authenticationCallback) {
+                if (error) {
+                    that._logger.error('Failed to authenticate [%s]', error);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('Failed to authenticate, status [%s]', response.status);
+                    transitionToStatus.call(that, 'unauthorized');
+                    that._authenticationCallback.call(that, that, 'unauthorized', '');
+                } else {
+                    transitionToStatus.call(that, 'online');
+
+                    that._authenticationCallback.call(that, that, response.status, response.sessionId);
                 }
-            });
-        }
+            }
+        });
     }
 
     function reconnecting() {
@@ -4838,7 +4865,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         transitionToStatus.call(this, 'reconnected', optionalReason);
 
-        this._logger.info('Attempting to re-authenticate after reconnected event');
+        this._logger.info('Attempting to re-authenticate after reconnected event [%s]', optionalReason);
 
         reAuthenticate.call(this);
     }
@@ -4846,31 +4873,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function reAuthenticate() {
         var that = this;
 
-        if (!that._stopped) {
-            that._protocol.authenticate(that._authToken, function(error, response) {
-                var suppressCallbackIfNeverDisconnected = that._connected === true;
+        if (that._stopped) {
+            that._logger.info('Skip re-authentication due to stopped state');
 
-                if (error) {
-                    that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
-
-                    return transitionToStatus.call(that, 'reconnect-failed');
-                }
-
-                if (response.status !== 'ok') {
-                    that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
-
-                    var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
-
-                    return transitionToStatus.call(that, reason);
-                }
-
-                that._connected = true;
-
-                that._logger.info('Successfully authenticated after reconnect to WebSocket');
-
-                return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
-            });
+            return;
         }
+
+        var protocol = that._protocol;
+        var reAuthenticateCallId = ++that._reAuthenticateCallId;
+
+        protocol.authenticate(that._authToken, function(error, response) {
+            var suppressCallbackIfNeverDisconnected = that._connected === true;
+
+            if (protocol !== that._protocol) {
+                that._logger.info('Ignoring re-authentication response as reset took place');
+
+                return;
+            }
+
+            if (reAuthenticateCallId !== that._reAuthenticateCallId) {
+                that._logger.info('Ignoring re-authentication response as a latter request is already underway');
+
+                return;
+            }
+
+            if (error) {
+                that._logger.error('Unable to authenticate after reconnect to WebSocket [%s]', error);
+
+                return transitionToStatus.call(that, 'reconnect-failed');
+            }
+
+            if (response.status !== 'ok') {
+                that._logger.warn('Unable to authenticate after reconnect to WebSocket, status [%s]', response.status);
+
+                var reason = response.status === 'capacity' ? response.status : 'reconnect-failed';
+
+                return transitionToStatus.call(that, reason);
+            }
+
+            that._connected = true;
+
+            that._logger.info('Successfully authenticated after reconnect to WebSocket');
+
+            return transitionToStatus.call(that, 'online', null, suppressCallbackIfNeverDisconnected);
+        });
     }
 
     function disconnected() {
@@ -5310,6 +5356,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -5548,7 +5600,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -5561,7 +5613,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .then(createPublisher)
                 .catch(onFailure);
         }
@@ -5569,14 +5621,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         that._logger.info('[%s] Using legacy callback api', streamId);
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
                     peerConnection.setLocalDescription(sessionDescription, function() {
-                        onSetLocalDescriptionSuccess.call(that);
+                        onSetLocalDescriptionSuccess.call(that, peerConnection);
                         createPublisher();
                     }, onFailure);
                 }, onFailure);
@@ -5627,6 +5679,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return;
             }
 
+            if (status instanceof Error) {
+                that._logger.info('[%s] Failed to setup peer connection', streamId, status);
+
+                status = 'failed';
+            }
+
             state.failed = true;
             state.stopped = true;
 
@@ -5663,7 +5721,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (typeof phenixRTC.global.Promise === 'function') {
             return peerConnection.setRemoteDescription(offerSessionDescription)
-                .then(_.bind(onSetRemoteDescriptionSuccess, that))
+                .then(_.bind(onSetRemoteDescriptionSuccess, that, peerConnection))
                 .then(function() {
                     return peerConnection.createAnswer(mediaConstraints);
                 })
@@ -5676,29 +5734,29 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 .then(function(sessionDescription) {
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
-                .then(_.bind(onSetLocalDescriptionSuccess, that))
+                .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
                 .catch(onFailure);
         }
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
-            onSetRemoteDescriptionSuccess.call(that);
+            onSetRemoteDescriptionSuccess.call(that, peerConnection);
 
             peerConnection.createAnswer(function(answerSdp) {
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
-                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that), onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that, peerConnection), onFailure);
                 }, onFailure);
             }, onFailure, mediaConstraints);
         }, onFailure);
     }
 
-    function onSetLocalDescriptionSuccess() {
-        this._logger.debug('Set local description (answer)');
+    function onSetLocalDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set local description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['localDescription', 'sdp']));
     }
 
-    function onSetRemoteDescriptionSuccess() {
-        this._logger.debug('Set remote description (offer)');
+    function onSetRemoteDescriptionSuccess(peerConnection) {
+        this._logger.debug('Set remote description [%s] [%s]', _.get(peerConnection, ['localDescription', 'type']), _.get(peerConnection, ['remoteDescription', 'sdp']));
     }
 
     function onCreateAnswerSuccess(answerSdp) {
@@ -5985,11 +6043,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function closePeerConnection(streamId, peerConnection, reason) {
-        if (peerConnection.signalingState !== 'closed' && !peerConnection.__closing) {
-            this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
-            peerConnection.close();
-            peerConnection.__closing = true;
+        if (peerConnection.signalingState === 'closed' || peerConnection.__closing) {
+            this._logger.debug('[%s] Peer connection is already closed [%s]', streamId, reason);
+
+            return;
         }
+
+        this._logger.debug('[%s] close peer connection [%s]', streamId, reason);
+
+        peerConnection.close();
+        peerConnection.__closing = true;
     }
 
     function handleForeground() {
@@ -7073,53 +7136,50 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function onPCastStatusChange(status) {
-        var that = this;
-
         switch (status) {
         case 'timeout':
         case 'critical-network-issue':
-            if (that._pcastObservable.getValue()) {
-                that._pcastObservable.getValue().stop('recovery');
-                that._pcastObservable.setValue(null);
+            if (this._pcastObservable.getValue()) {
+                this._pcastObservable.getValue().stop('recovery');
+                this._pcastObservable.setValue(null);
             }
 
-            if (that._pcastStatusSubscription) {
-                that._pcastStatusSubscription.dispose();
-                that._pcastStatusSubscription = null;
+            if (this._pcastStatusSubscription) {
+                this._pcastStatusSubscription.dispose();
+                this._pcastStatusSubscription = null;
             }
 
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'reconnect-failed':
         case 'unauthorized':
             delete this._authToken;
 
-            that._reauthCount++;
+            this._reauthCount++;
 
-            if (that._reauthCount > 1) {
+            if (this._reauthCount > 1) {
                 return handleError.call(this, new Error(status));
             }
 
-            that._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
+            this._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
 
-            return getAuthTokenAndReAuthenticate.call(that);
+            return getAuthTokenAndReAuthenticate.call(this);
         case 'capacity':
         case 'network-unavailable':
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'online':
-            that._reauthCount = 0;
-            that._reconnectCount = 0;
-
-            if (!that._isInstantiated) {
-                that._logger.info('[%s] Successfully instantiated', this);
+            if (!this._isInstantiated) {
+                this._logger.info('[%s] Successfully instantiated', this);
             } else {
-                that._logger.info('[%s] Successfully reconnected', this);
+                this._logger.info('[%s] Successfully reconnected (reconnectCount=[%s],reauthCount=[%s])', this, this._reconnectCount, this._reauthCount);
             }
 
-            that._isInstantiated = true;
+            this._reauthCount = 0;
+            this._reconnectCount = 0;
+            this._isInstantiated = true;
 
             return;
         case 'reconnecting':
@@ -7130,7 +7190,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return;
         case 'failed':
         default:
-            return handleError.call(that, new Error(status));
+            return handleError.call(this, new Error(status));
         }
     }
 
@@ -7943,14 +8003,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
                 heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
-                newHeight = parseInt(getIndexKey(heightIndex, aspectRatioHeights), 10);
-                newWidth = parseInt(this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio), 10);
+
+                if (heightIndex < 0) {
+                    return null;
+                }
+
+                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
+                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
                     resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: newHeight,
-                    width: newWidth
+                    height: parseInt(newHeight, 10),
+                    width: parseInt(newWidth, 10)
                 };
             }
 
@@ -7959,13 +8024,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
         newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = parseInt(getIndexKey(heightIndex, newAspectRatioHeights), 10);
-        newWidth = parseInt(newAspectRatioHeights[heightIndex][newHeight], 10);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
             resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: newHeight,
+            height: parseInt(newHeight, 10),
             width: newWidth
         };
     }
@@ -8052,7 +8117,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function getNextHighestKeyIndex(value, collection) {
         if ( _.keys(collection[0])[0] < value) {
-            return null;
+            return -1;
         }
 
         return _.reduce(collection, function(closestIndex, nextItem, index) {
@@ -8625,7 +8690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixRealTimeStream.prototype.isActive = function isActive() {
-        return !this._isStopped && !isStreamStopped(this._streamSrc);
+        return !this._isStopped;
     };
 
     PhenixRealTimeStream.prototype.getStreamId = function getStreamId() {
@@ -10110,7 +10175,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10366,7 +10431,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11808,7 +11873,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-08-09T02:02:42Z',
+                version: '2019-08-24T00:17:44Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -14184,7 +14249,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
     };
 
-    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, timestamp, callback) {
+    PCastProtocol.prototype.enterRoom = function(roomId, alias, member, options, timestamp, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');
         } else {
@@ -14193,6 +14258,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         assert.isObject(member, 'member');
         assert.isNumber(timestamp, 'timestamp');
+        assert.isArray(options, 'options');
         assert.isFunction(callback, 'callback');
 
         var joinRoom = {
@@ -14200,6 +14266,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             alias: alias,
             sessionId: this.getSessionId(),
             member: member,
+            options: options,
             timestamp: timestamp
         };
 
@@ -17844,8 +17911,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
-    var releaseVersion = '2019.2.10';
+    var sdkVersion = '2019-08-24T00:17:44Z' || '?';
+    var releaseVersion = '2019.2.12-beta.0';
 
     function Logger() {
         this._appenders = [];
