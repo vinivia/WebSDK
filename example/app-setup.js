@@ -396,7 +396,9 @@ define('app-setup', [
             'prefer-edge=avoid': 'Avoid Edge',
             'prefer-edge=disallow': 'Disallow Edge',
             'disable-nack': 'No NACKs',
-            'disable-pli': 'No PLIs'
+            'disable-pli': 'No PLIs',
+            'transcoding={"selectedQualities":["hd"]}': 'HD Streaming only',
+            'transcoding={"selectedQualities":["sd"]}': 'SD Streaming only'
         };
     };
 
