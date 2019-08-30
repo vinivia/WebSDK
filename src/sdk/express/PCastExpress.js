@@ -908,7 +908,7 @@ define([
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
             };
 
-            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
+            if ((options.skipRetryOnUnauthorized && status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[%s] [%s] Attempting to create new streamToken and re-subscribe after [%s] response', this, options.streamId, unauthorizedStatus);
 
                 var reAuthOptions = _.assign({
