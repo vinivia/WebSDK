@@ -18,11 +18,11 @@ const runner = require('./runner');
 const packageJson = require('../package.json');
 const version = packageJson.version;
 
-// Tag must be manually pushed via `git push --tags`
 runner.runCommands([
     'node --version',
     'npm --version',
     'npm publish',
+    'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version,
     'git tag -am "v' + version + '" v' + version,
-    'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version
+    'git push --tags'
 ]);
