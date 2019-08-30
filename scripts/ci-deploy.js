@@ -24,5 +24,6 @@ runner.runCommands([
     'npm --version',
     'npm publish',
     'git tag -am "v' + version + '" v' + version,
+    'git push --tags',
     'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version
 ]);
