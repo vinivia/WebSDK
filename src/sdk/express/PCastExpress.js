@@ -1010,7 +1010,13 @@ define([
                 return callback(error);
             }
 
-            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, options.subscriberOptions);
+            var subscriberOptions = _.clone(options.subscriberOptions || {});
+
+            if (options.streamId) {
+                subscriberOptions.originStreamId = options.streamId;
+            }
+
+            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, subscriberOptions);
         }, options.isContinuation);
     }
 

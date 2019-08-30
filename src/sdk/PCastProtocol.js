@@ -125,6 +125,10 @@ define([
             }
         };
 
+        if (options.originStreamId) {
+            setupStream.createStream.originStreamId = options.originStreamId;
+        }
+
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
                 streamId: '',

@@ -1646,7 +1646,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-08-09T02:02:42Z',
+                version: '2019-08-30T17:12:22Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -2297,25 +2297,27 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var that = this;
 
         this._pcastExpress.getPCastObservable().subscribe(function(pcast) {
-            if (!pcast) {
-                var roomServicesToCleanUp = _.assign({}, that._roomServices);
-
-                _.forOwn(that._membersSubscriptions, function(membersSubscription) {
-                    membersSubscription.dispose();
-                });
-
-                that._pcastExpress.waitForOnline(function() {
-                    _.forOwn(roomServicesToCleanUp, function(roomService) {
-                        roomService.stop('pcast-change');
-                    });
-                }, true);
-
-                that._logger.info('Resetting Room Express after change in pcast.');
-
-                that._membersSubscriptions = {};
-                that._roomServices = {};
-                that._activeRoomServices = [];
+            if (pcast) {
+                return;
             }
+
+            var roomServicesToCleanUp = _.assign({}, that._roomServices);
+
+            _.forOwn(that._membersSubscriptions, function(membersSubscription) {
+                membersSubscription.dispose();
+            });
+
+            that._pcastExpress.waitForOnline(function() {
+                _.forOwn(roomServicesToCleanUp, function(roomService) {
+                    roomService.stop('pcast-change');
+                });
+            }, true);
+
+            that._logger.info('Resetting Room Express after change in pcast.');
+
+            that._membersSubscriptions = {};
+            that._roomServices = {};
+            that._activeRoomServices = [];
         });
     }
 
@@ -3404,6 +3406,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
                 if (updateSelfErrors >= maxUpdateSelfRetries) {
                     that._logger.warn('Unable to update self after [%s] attempts.', maxUpdateSelfRetries);
+
+                    if (_.isNumber(response.lastUpdate)) {
+                        that._logger.warn('Updating self last update from [%s] to [%s] to prevent permanent failure state. Our awareness of self does not match up with the server anymore.',
+                            self.getObservableLastUpdate().getValue(), response.lastUpdate);
+
+                        self.getObservableLastUpdate().setValue(response.lastUpdate);
+                    }
 
                     return callback(new Error('Unable to update self'));
                 }
@@ -4959,7 +4968,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(error);
             }
 
-            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, options.subscriberOptions);
+            var subscriberOptions = _.clone(options.subscriberOptions || {});
+
+            if (options.streamId) {
+                subscriberOptions.originStreamId = options.streamId;
+            }
+
+            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, subscriberOptions);
         }, options.isContinuation);
     }
 
@@ -7009,7 +7024,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return callback(error, null);
                 }
 
-                var result = {status: response.status};
+                var result = {
+                    status: response.status,
+                    lastUpdate: response.lastUpdate
+                };
 
                 if (response.status !== 'ok') {
                     that._logger.warn('Update of member failed with status [%s]', response.status);
@@ -9468,7 +9486,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-08-09T02:02:42Z';
+    var sdkVersion = '2019-08-30T17:12:22Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -9907,14 +9925,18 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var streamType = 'download';
             var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
             var streamTelemetry = new StreamTelemetry(that.getProtocol().getSessionId(), that._logger, that._metricsTransmitter);
-            var createStreamOptions = _.assign({}, options);
+            var createViewerOptions = _.assign({}, options);
 
-            createStreamOptions.canPlaybackAudio = that._canPlaybackAudio;
+            createViewerOptions.canPlaybackAudio = that._canPlaybackAudio;
 
             if (!that._canPlaybackAudio && options.disableAudioIfNoOutputFound && options.receiveAudio !== false) {
                 setupStreamOptions.receiveAudio = false;
-                createStreamOptions.receiveAudio = false;
-                createStreamOptions.forcedAudioDisabled = true;
+                createViewerOptions.receiveAudio = false;
+                createViewerOptions.forcedAudioDisabled = true;
+            }
+
+            if (options.originStreamId) {
+                setupStreamOptions.originStreamId = options.originStreamId;
             }
 
             streamTelemetry.setProperty('resource', streamType);
@@ -9957,7 +9979,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         kind: 'https'
                     });
 
-                    createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+                    createViewerOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
                     if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
@@ -9983,7 +10005,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                         } else {
                             callback.call(that, that, 'ok', phenixMediaStream);
                         }
-                    }, createStreamOptions);
+                    }, createViewerOptions);
                 }
             });
         });
@@ -15603,7 +15625,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-30T17:12:22Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -15859,7 +15881,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
+    var sdkVersion = '2019-08-30T17:12:22Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -20285,6 +20307,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 userAgent: _.get(phenixRTC, ['global', 'navigator', 'userAgent'], browserWithVersion)
             }
         };
+
+        if (options.originStreamId) {
+            setupStream.createStream.originStreamId = options.originStreamId;
+        }
 
         if (options.negotiate) {
             setupStream.createStream.createOfferDescription = {
@@ -25310,8 +25336,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-08-09T02:02:42Z' || '?';
-    var releaseVersion = '2019.2.10';
+    var sdkVersion = '2019-08-30T17:12:22Z' || '?';
+    var releaseVersion = '2019.2.12';
 
     function Logger() {
         this._appenders = [];

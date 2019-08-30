@@ -484,14 +484,18 @@ define([
             var streamType = 'download';
             var setupStreamOptions = _.assign({}, options, {negotiate: options.negotiate !== false});
             var streamTelemetry = new StreamTelemetry(that.getProtocol().getSessionId(), that._logger, that._metricsTransmitter);
-            var createStreamOptions = _.assign({}, options);
+            var createViewerOptions = _.assign({}, options);
 
-            createStreamOptions.canPlaybackAudio = that._canPlaybackAudio;
+            createViewerOptions.canPlaybackAudio = that._canPlaybackAudio;
 
             if (!that._canPlaybackAudio && options.disableAudioIfNoOutputFound && options.receiveAudio !== false) {
                 setupStreamOptions.receiveAudio = false;
-                createStreamOptions.receiveAudio = false;
-                createStreamOptions.forcedAudioDisabled = true;
+                createViewerOptions.receiveAudio = false;
+                createViewerOptions.forcedAudioDisabled = true;
+            }
+
+            if (options.originStreamId) {
+                setupStreamOptions.originStreamId = options.originStreamId;
             }
 
             streamTelemetry.setProperty('resource', streamType);
@@ -534,7 +538,7 @@ define([
                         kind: 'https'
                     });
 
-                    createStreamOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+                    createViewerOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
                     if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                         // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
@@ -560,7 +564,7 @@ define([
                         } else {
                             callback.call(that, that, 'ok', phenixMediaStream);
                         }
-                    }, createStreamOptions);
+                    }, createViewerOptions);
                 }
             });
         });
