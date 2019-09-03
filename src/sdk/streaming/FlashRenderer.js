@@ -30,7 +30,7 @@ define([
 
     var timeoutForStallWithoutProgressToRestart = 6000;
     var minTimeBeforeNextReload = 15000;
-    var mostRecentSwfFile = 'rtmp-flash-renderer-2019.2.9.swf';
+    var mostRecentSwfFile = 'rtmp-flash-renderer-2019.2.18.swf';
     var defaultSwfFileSrcs = {
         local: 'https://local.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
         staging: 'https://stg.phenixrts.com/public/rtmp/' + mostRecentSwfFile,
