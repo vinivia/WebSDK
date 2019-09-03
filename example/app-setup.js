@@ -460,7 +460,7 @@ define('app-setup', [
     };
 
     var getSwfFilePath = function() {
-        return './flash/rtmp-flash-renderer-2019.2.9.swf';
+        return './flash/rtmp-flash-renderer-2019.2.18.swf';
     };
 
     var addDebugAppender = function(pcast) {

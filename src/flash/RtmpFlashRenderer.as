@@ -368,25 +368,33 @@ public class RtmpFlashRenderer extends Sprite {
 
             if (value == true) {
                 _oldVolume = (_stream == null) ? _oldVolume : _stream.soundTransform.volume;
-                set_volume(0);
+                set_volume_internal(0);
             } else {
-                set_volume(_oldVolume);
+                set_volume_internal(_oldVolume);
             }
             _isMuted = value;
         }
     }
     private function set_volume(value:Number = NaN):void {
         log('[Flash] Setting volume to ' + value);
-        if (!isNaN(value)) {
-            if (_stream != null) {
-                _soundTransform = new SoundTransform(value);
-                _stream.soundTransform = _soundTransform;
-            }
 
-            _volume = value;
-            _isMuted = (_volume == 0);
-            sendEvent("volumechange");
+        // Make sure we properly remember the value upon unmute
+        _oldVolume = value;
+        set_volume_internal(value);
+    }
+    private function set_volume_internal(value:Number = NaN):void {
+        if (isNaN(value)) {
+            return;
         }
+
+        if (_stream != null) {
+            _soundTransform = new SoundTransform(value);
+            _stream.soundTransform = _soundTransform;
+        }
+
+        _volume = value;
+        _isMuted = (_volume == 0);
+        sendEvent("volumechange");
     }
     private function set_currentTime(pos:Number = NaN):void {
         if (_stream == null) {
