@@ -15,7 +15,6 @@
  */
 
 /* global __dirname module */
-const webpack = require('webpack');
 const path = require('path');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const merge = require('webpack-merge');
@@ -34,10 +33,7 @@ var baseConfig = {
         libraryTarget: 'umd',
         umdNamedDefine: true
     },
-    plugins: [
-        new webpack.DefinePlugin({'process.env': {'NODE_ENV': 'production'}}),
-        new CaseSensitivePathsPlugin()
-    ],
+    plugins: [new CaseSensitivePathsPlugin()],
     resolve: {
         alias: { // Webpack issue - alias libraries used in self and dependent libraries to avoid duplication in bundle
             'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light'),
@@ -71,7 +67,7 @@ var lightConfig = {
     }
 };
 
-var mainConfigs = [{
+var webSdkConfigs = [{
     devtool: 'source-map',
     output: {filename: 'phenix-web-sdk.js'},
     resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc.min')}},
@@ -91,7 +87,7 @@ var mainConfigs = [{
         ]
     }
 }];
-var reactNativeConfigs = [{
+var reactNativeSdkConfigs = [{
     devtool: 'source-map',
     output: {filename: 'phenix-web-sdk-react-native.js'},
     resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native.min')}},
@@ -111,11 +107,18 @@ var reactNativeConfigs = [{
         ]
     }
 }];
+var nodeConfigs = [merge(baseConfig, {
+    target: 'node',
+    entry: path.join(__dirname, 'src', 'node-sdk.js'),
+    output: {filename: 'phenix-node-sdk.js'},
+    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc')}},
+    optimization: {minimize: false}
+})];
 
-var normalConfigs = mainConfigs.concat(reactNativeConfigs).map(function(config) {
+var normalConfigs = webSdkConfigs.concat(reactNativeSdkConfigs).map(function(config) {
     return merge(baseConfig, config, normalConfig);
 });
-var lightConfigs = mainConfigs.map(function(config) {
+var lightConfigs = webSdkConfigs.map(function(config) {
     config = merge(baseConfig, config, lightConfig);
 
     config.output.filename = config.output.filename.replace('phenix-web-sdk', 'phenix-web-sdk-light');
@@ -123,4 +126,4 @@ var lightConfigs = mainConfigs.map(function(config) {
     return config;
 });
 
-module.exports = normalConfigs.concat(lightConfigs);
+module.exports = normalConfigs.concat(lightConfigs).concat(nodeConfigs);
