@@ -31,7 +31,7 @@
     "lint": "eslint ./ —-cache",
     "lint-fix": "eslint ./ --fix",
     "prepack": "npm run webpack-workflow-example && npm run add-copyright",
-    "add-copyright": "eslint --no-eslintrc --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:3 --parser-options=sourceType:module --rule \"notice/notice: [2, {mustMatch: Copyright .* Phenix Real Time Solutions Inc,templateFile: copyright.tmpl}]\" ./dist --fix",
+    "add-copyright": "eslint --no-eslintrc --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:9 --parser-options=sourceType:module --rule \"notice/notice: [2, {mustMatch: Copyright .* Phenix Real Time Solutions. Inc[.],templateFile: copyright.tmpl}]\" ./dist --fix",
     "deploy-examples:example": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R example/* gs://phenix-assets-us/examples",
     "deploy-examples:src": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R src/* gs://phenix-assets-us/examples",
     "deploy-examples:dist": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R dist/* gs://phenix-assets-us/examples",
@@ -117,7 +117,7 @@
     "uglifyjs-webpack-plugin": "1.2.4",
     "url-loader": "1.0.1",
     "webpack": "4.8.3",
-    "webpack-cli": "^2.1.4",
+    "webpack-cli": "2.1.4",
     "webpack-merge": "4.1.2"
   }
 }
