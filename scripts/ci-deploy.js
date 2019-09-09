@@ -21,7 +21,7 @@ const version = packageJson.version;
 runner.runCommands([
     'node --version',
     'npm --version',
-    'npm publish',
+    version.match(/beta/g) ? 'npm publish --tag beta' : 'npm publish',
     'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version,
     'git tag -am "v' + version + '" v' + version,
     'git push --tags'

@@ -16,7 +16,6 @@
 
 /* global module __dirname process */
 var path = require('path');
-var webpack = require('webpack');
 var puppeteerExecutablePath = require('puppeteer').executablePath();
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 
@@ -31,7 +30,7 @@ module.exports = function(config) {
 
         // Frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha'],
+        frameworks: ['mocha', 'stacktrace'],
 
         // List of files / patterns to load in the browser
         files: [
@@ -45,7 +44,7 @@ module.exports = function(config) {
 
         // Preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {'../test/test-runner.js': ['webpack', 'sourcemap']},
+        preprocessors: {'../test/test-runner.js': ['webpack']},
 
         webpack: {
             mode: 'development',
@@ -53,8 +52,6 @@ module.exports = function(config) {
             devtool: 'inline-source-map',
             resolve: {alias: {'sdk': path.resolve(__dirname, '../src/sdk')}}, // Resolve test dependencies to src
             plugins: [
-                new webpack.DefinePlugin({'process.env.PHENIX_APPLICATION_ID': JSON.stringify(process.env.PHENIX_APPLICATION_ID)}),
-                new webpack.DefinePlugin({'process.env.PHENIX_SECRET': JSON.stringify(process.env.PHENIX_SECRET)}),
                 new CaseSensitivePathsPlugin()
             ],
             module: {
@@ -68,12 +65,29 @@ module.exports = function(config) {
             }
         },
 
-        webpackMiddleware: {stats: 'errors-only'},
+        webpackMiddleware: {
+            noInfo: true,
+            stats: 'errors-only'
+        },
+
+        plugins: [
+            require('karma-webpack'),
+            require('karma-mocha'),
+            require('karma-chrome-launcher'),
+            require('karma-edge-launcher'),
+            require('karma-firefox-launcher'),
+            require('karma-ie-launcher'),
+            require('karma-opera-launcher'),
+            require('karma-phantomjs-launcher'),
+            require('karma-safari-launcher'),
+            require('karma-spec-reporter'),
+            require('karma-stacktrace')
+        ],
 
         // Test results reporter to use
-        // possible values: 'dots', 'progress'
+        // possible values: 'dots', 'progress', 'spec'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ['progress', 'coverage-istanbul'],
+        reporters: ['spec', 'coverage-istanbul'],
 
         coverageIstanbulReporter: {
             dir: path.resolve(__dirname, '../coverage'),
@@ -96,14 +110,7 @@ module.exports = function(config) {
 
         // Start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['ChromeHeadlessCustom'],
-
-        customLaunchers: {
-            'ChromeHeadlessCustom': {
-                base: 'ChromeHeadless',
-                flags: ['--no-sandbox']
-            }
-        },
+        browsers: ['ChromeHeadless'],
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
