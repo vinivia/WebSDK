@@ -859,13 +859,6 @@ define([
             var candidate = event.candidate;
 
             if (candidate) {
-                if (!candidate.candidate) {
-                    // Skip bad candidate lines
-                    that._logger.warn('[%s] ICE candidate: [%s] [%s] [%s] is malformed', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
-
-                    return;
-                }
-
                 that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
@@ -1568,7 +1561,7 @@ define([
             iceCandidates = this._pendingIceCandidates[streamId] = [];
         }
 
-        if (candidate) {
+        if (candidate && _.get(candidate, ['candidate'])) {
             iceCandidates.push(candidate);
         } else {
             if (that._addIceCandidatesTimeoutScheduled[streamId]) {
@@ -1616,6 +1609,7 @@ define([
         delete that._pendingIceCandidates[streamId];
 
         this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, iceCandidates.length, options);
+
         this._protocol.addIceCandidates(streamId, iceCandidates, options, function(error, response) {
             if (error) {
                 return that._logger.error('Failed to add ICE candidate [%s]', error);

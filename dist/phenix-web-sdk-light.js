@@ -4235,7 +4235,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-09-05T03:16:28Z';
+    var sdkVersion = '2019-09-10T21:54:14Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -5049,13 +5049,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             var candidate = event.candidate;
 
             if (candidate) {
-                if (!candidate.candidate) {
-                    // Skip bad candidate lines
-                    that._logger.warn('[%s] ICE candidate: [%s] [%s] [%s] is malformed', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
-
-                    return;
-                }
-
                 that._logger.info('[%s] ICE candidate: [%s] [%s] [%s]', streamId, candidate.sdpMid, candidate.sdpMLineIndex, candidate.candidate);
             } else {
                 that._logger.info('[%s] ICE candidate discovery complete', streamId);
@@ -5758,7 +5751,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             iceCandidates = this._pendingIceCandidates[streamId] = [];
         }
 
-        if (candidate) {
+        if (candidate && _.get(candidate, ['candidate'])) {
             iceCandidates.push(candidate);
         } else {
             if (that._addIceCandidatesTimeoutScheduled[streamId]) {
@@ -5806,6 +5799,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         delete that._pendingIceCandidates[streamId];
 
         this._logger.info('[%s] Adding [%s] ICE Candidates with Options [%s]', streamId, iceCandidates.length, options);
+
         this._protocol.addIceCandidates(streamId, iceCandidates, options, function(error, response) {
             if (error) {
                 return that._logger.error('Failed to add ICE candidate [%s]', error);
@@ -10120,7 +10114,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-09-05T03:16:28Z' || '?';
+    var sdkVersion = '2019-09-10T21:54:14Z' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -10376,7 +10370,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-09-05T03:16:28Z' || '?';
+    var sdkVersion = '2019-09-10T21:54:14Z' || '?';
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -11818,7 +11812,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-09-05T03:16:28Z',
+                version: '2019-09-10T21:54:14Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -17858,8 +17852,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || '?';
-    var sdkVersion = '2019-09-05T03:16:28Z' || '?';
-    var releaseVersion = '2019.2.19';
+    var sdkVersion = '2019-09-10T21:54:14Z' || '?';
+    var releaseVersion = '2019.2.20';
 
     function Logger() {
         this._appenders = [];
