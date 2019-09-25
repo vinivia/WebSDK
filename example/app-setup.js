@@ -398,6 +398,9 @@ define('app-setup', [
             'prefer-edge=disallow': 'Disallow Edge',
             'disable-nack': 'No NACKs',
             'disable-pli': 'No PLIs',
+            'on-demand-archive=PT1M': 'VOD Archive (1 minute)',
+            'on-demand-archive=PT1H': 'VOD Archive (1 hour)',
+            'on-demand-archive=PT1D': 'VOD Archive (1 day)',
             'transcoding={"selectedQualities":["hd"]}': 'HD Streaming only',
             'transcoding={"selectedQualities":["sd"]}': 'SD Streaming only'
         };
