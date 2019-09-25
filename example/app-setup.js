@@ -359,19 +359,20 @@ define('app-setup', [
 
     var getPublisherCapabilities = function() {
         return {
-            'prefer-vp8': 'VP8 (Real-time)',
-            'prefer-h264': 'H264 (Real-time)',
+            'prefer-vp8': 'VP8',
+            'prefer-h264': 'H264',
             'archive': 'Archive',
             'archive-audio-only': 'Archive Audio Only',
-            'streaming': 'Streaming',
-            'mpegts-streaming': 'Streaming (MP2T)',
-            'webm-streaming': 'Streaming (WebM)',
-            'on-demand': 'On Demand',
-            'streaming-lite': 'Lite (Streaming)',
-            'low-latency': 'Low Latency (Streaming)',
+            'streaming': 'Live',
+            'on-demand': 'VOD',
+            'streaming-lite': 'Lite for Live',
+            'on-demand-lite': 'Lite for VOD',
+            'low-latency': 'Low Latency for DASH+HLS',
+            'mpegts-streaming': 'MP2T for DASH+HLS',
+            'webm-streaming': 'WebM for DASH+HLS',
             'rtmp': 'RTMP',
-            'mpegts-rtmp': 'RTMP (MP2T)',
-            'webm-rtmp': 'RTMP (WebM)',
+            'mpegts-rtmp': 'MP2T for RTMP',
+            'webm-rtmp': 'WebM for RTMP',
             'drm': 'DRM',
             'multi-bitrate': 'Multi Bitrate (MBR)',
             'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
@@ -388,7 +389,7 @@ define('app-setup', [
             'aspect-ratio=3x4': '3x4',
             'aspect-ratio=1x1': '1x1',
             'audio-only': 'Audio Only',
-            'high-fidelity': 'High Fidelity (Audio)',
+            'high-fidelity': 'High Fidelity Audio',
             'origin-shield': 'Origin Shield',
             'scale-wide': 'Scale Wide',
             'scale-elastic': 'Scale Elastic',
@@ -401,8 +402,8 @@ define('app-setup', [
             'on-demand-archive=PT1M': 'VOD Archive (1 minute)',
             'on-demand-archive=PT1H': 'VOD Archive (1 hour)',
             'on-demand-archive=PT1D': 'VOD Archive (1 day)',
-            'transcoding={"selectedQualities":["hd"]}': 'HD Streaming only',
-            'transcoding={"selectedQualities":["sd"]}': 'SD Streaming only'
+            'transcoding={"selectedQualities":["hd"]}': 'HD DASH+HLS only',
+            'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only'
         };
     };
 
