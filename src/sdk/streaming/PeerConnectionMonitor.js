@@ -30,7 +30,6 @@ define([
     var defaultAudioBitRateThreshold = 5000;
     var defaultVideoBitRateThreshold = 1000;
     var defaultConditionCountForNotificationThreshold = 3;
-    var defaultTimeoutForNoData = 5000;
     var minMonitoringInterval = 500;
     var minEdgeMonitoringInterval = 6000;
     var minEdgeConditionCountForNotification = 2;
@@ -146,13 +145,11 @@ define([
     function monitorPeerConnection(name, peerConnection, options, activeCallback, monitorCallback) {
         var that = this;
         var conditionCount = 0;
-        var reasons = [];
         var frameRate = undefined;
         var videoBitRate = undefined;
         var audioBitRate = undefined;
-        var checkForNoDataTimeout = null;
 
-        function nextCheck(checkForNoData) {
+        function nextCheck() {
             var selector = null;
 
             getStats.call(that, peerConnection, options, selector, activeCallback, function successCallback(report) {
@@ -257,10 +254,14 @@ define([
                     }
                 }
 
+                var reasons = [];
+
                 if (that._monitorState
                     && (peerConnection.connectionState === 'closed'
-                    || peerConnection.connectionState === 'failed'
-                    || peerConnection.iceConnectionState === 'failed')) {
+                        || peerConnection.connectionState === 'disconnected'
+                        || peerConnection.connectionState === 'failed'
+                        || peerConnection.iceConnectionState === 'disconnected'
+                        || peerConnection.iceConnectionState === 'failed')) {
                     var active = hasActiveAudio && hasActiveVideo;
                     var tracks = getAllTracks.call(that, peerConnection);
 
@@ -270,51 +271,50 @@ define([
                         return;
                     }
 
-                    conditionCount++;
                     reasons.push('connection');
-                } else if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
+                }
+
+                if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     reasons.push('frameRate');
-                } else if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
-                    conditionCount++;
+                }
+
+                if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
                     reasons.push('audioBitRate');
-                } else if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
-                    conditionCount++;
+                }
+
+                if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
                     reasons.push('videoBitRate');
-                } else {
-                    conditionCount = 0;
-                    reasons = [];
                 }
 
-                var isNoData = (videoBitRate === 0 || !hasVideoBitRate) && (audioBitRate === 0 || !hasAudioBitRate) && !areAllTracksPaused.call(that);
-
-                if (isNoData && !checkForNoDataTimeout) {
-                    checkForNoDataTimeout = setTimeout(_.bind(nextCheck, this, true), defaultTimeoutForNoData);
-                } else if (!isNoData) {
-                    clearTimeout(checkForNoDataTimeout);
-
-                    checkForNoDataTimeout = null;
+                if (videoBitRate === 0 && hasActiveVideo && !areAllTracksOfTypePaused.call(that, 'video')) {
+                    reasons.push('noVideoData');
                 }
 
-                var isStreamDead = checkForNoData && isNoData && checkForNoDataTimeout;
+                if (audioBitRate === 0 && hasActiveAudio && !areAllTracksOfTypePaused.call(that, 'audio')) {
+                    reasons.push('noAudioData');
+                }
+
                 var acknowledgeFailure = function acknowledgeFailure() {
                     that._logger.info('[%s] [%s] Failure has been acknowledged', name, options.direction);
 
                     conditionCount = Number.MIN_VALUE;
-                    reasons = [];
 
                     setTimeout(nextCheck, that._monitoringInterval);
                 };
 
-                if (conditionCount >= that._conditionCountForNotificationThreshold || isStreamDead) {
-                    var defaultFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS,'
+                if (reasons.length > 0) {
+                    conditionCount++;
+                } else {
+                    conditionCount = 0;
+                }
+
+                if (conditionCount >= that._conditionCountForNotificationThreshold) {
+                    var failureMessage = '[' + name + '] [' + options.direction + '] Failure detected with frame rate [' + frameRate + '] FPS,'
                         + ' audio bit rate [' + audioBitRate + '] bps'
                         + ', video bit rate [' + videoBitRate + '] bps'
                         + ', connection state [' + peerConnection.connectionState + '],'
                         + ' and ice connection state [' + peerConnection.iceConnectionState + ']'
                     + ' after [' + conditionCount + '] checks';
-                    var streamDeadFailureMessage = '[' + name + '] [' + options.direction + '] Failure detected with 0 bps audio and video for [' + (defaultTimeoutForNoData / 1000) + '] seconds';
-                    var failureMessage = isStreamDead ? streamDeadFailureMessage : defaultFailureMessage;
                     var monitorEvent = {
                         type: 'condition',
                         reasons: reasons,
@@ -420,22 +420,6 @@ define([
         }
 
         return tracks;
-    }
-
-    function areAllTracksPaused() {
-        var that = this;
-
-        return _.reduce(getAllTracks.call(this, this._peerConnection), function(areAllPaused, track) {
-            if (!areAllPaused) {
-                return areAllPaused;
-            }
-
-            var isTrackPaused = !!_.find(that._pausedTracks, function(pcTrack) {
-                return pcTrack.id === track.id;
-            });
-
-            return !track.enabled || isTrackPaused;
-        }, true);
     }
 
     function areAllTracksOfTypePaused(kind) {
