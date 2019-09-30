@@ -305,6 +305,7 @@ define([
 
             break;
         case 'closed':
+        case 'disconnected':
             if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
                 that._logger.warn('[%s] Stream closed before it was connected', that._streamId);
             }
