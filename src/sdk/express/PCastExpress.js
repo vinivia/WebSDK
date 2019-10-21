@@ -590,53 +590,50 @@ define([
     }
 
     function onPCastStatusChange(status) {
-        var that = this;
-
         switch (status) {
         case 'timeout':
         case 'critical-network-issue':
-            if (that._pcastObservable.getValue()) {
-                that._pcastObservable.getValue().stop('recovery');
-                that._pcastObservable.setValue(null);
+            if (this._pcastObservable.getValue()) {
+                this._pcastObservable.getValue().stop('recovery');
+                this._pcastObservable.setValue(null);
             }
 
-            if (that._pcastStatusSubscription) {
-                that._pcastStatusSubscription.dispose();
-                that._pcastStatusSubscription = null;
+            if (this._pcastStatusSubscription) {
+                this._pcastStatusSubscription.dispose();
+                this._pcastStatusSubscription = null;
             }
 
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'reconnect-failed':
         case 'unauthorized':
             delete this._authToken;
 
-            that._reauthCount++;
+            this._reauthCount++;
 
-            if (that._reauthCount > 1) {
+            if (this._reauthCount > 1) {
                 return handleError.call(this, new Error(status));
             }
 
-            that._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
+            this._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
 
-            return getAuthTokenAndReAuthenticate.call(that);
+            return getAuthTokenAndReAuthenticate.call(this);
         case 'capacity':
         case 'network-unavailable':
-            that._reconnectCount++;
+            this._reconnectCount++;
 
-            return instantiateWithBackoff.call(that);
+            return instantiateWithBackoff.call(this);
         case 'online':
-            that._reauthCount = 0;
-            that._reconnectCount = 0;
-
-            if (!that._isInstantiated) {
-                that._logger.info('[%s] Successfully instantiated', this);
+            if (!this._isInstantiated) {
+                this._logger.info('[%s] Successfully instantiated', this);
             } else {
-                that._logger.info('[%s] Successfully reconnected', this);
+                this._logger.info('[%s] Successfully reconnected (reconnectCount=[%s],reauthCount=[%s])', this, this._reconnectCount, this._reauthCount);
             }
 
-            that._isInstantiated = true;
+            this._reauthCount = 0;
+            this._reconnectCount = 0;
+            this._isInstantiated = true;
 
             return;
         case 'reconnecting':
@@ -647,7 +644,7 @@ define([
             return;
         case 'failed':
         default:
-            return handleError.call(that, new Error(status));
+            return handleError.call(this, new Error(status));
         }
     }
 

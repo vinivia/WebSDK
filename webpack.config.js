@@ -15,14 +15,14 @@
  */
 
 /* global __dirname module */
-const path = require('path');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const merge = require('webpack-merge');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const assert = require('phenix-web-assert/dist/phenix-web-assert.min');
-const assertNames = '^' + Object.keys(assert.__proto__).join('$|^') + '$';
-const uglifyManglePropRegex = new RegExp('^_[^_].*' + '|^global$|' + assertNames);
-const distDir = path.resolve(__dirname, './dist');
+var path = require('path');
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+var merge = require('webpack-merge');
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var assert = require('phenix-web-assert/dist/phenix-web-assert.min');
+var assertNames = '^' + Object.keys(assert.__proto__).join('$|^') + '$';
+var uglifyManglePropRegex = new RegExp('^_[^_].*' + '|^global$|' + assertNames);
+var distDir = path.resolve(__dirname, './dist');
 
 var baseConfig = {
     mode: 'production',

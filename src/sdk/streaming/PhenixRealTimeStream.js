@@ -188,7 +188,7 @@ define([
                 return that._backgroundMonitorEventCallback = monitorCallback.bind(null, error, monitorEvent);
             }
 
-            that._logger.warn('[%s] Media stream triggered monitor condition for [%s]', that._streamId, monitorEvent.reasons);
+            that._logger.warn('[%s] Media stream triggered monitor condition for [%s] [%s]', that._streamId, monitorEvent.type, monitorEvent.reasons);
 
             return callback(that, 'client-side-failure', monitorEvent);
         });
@@ -216,7 +216,7 @@ define([
     };
 
     PhenixRealTimeStream.prototype.isActive = function isActive() {
-        return !this._isStopped && !isStreamStopped(this._streamSrc);
+        return !this._isStopped;
     };
 
     PhenixRealTimeStream.prototype.getStreamId = function getStreamId() {

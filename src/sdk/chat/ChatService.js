@@ -32,13 +32,24 @@ define([
         this._logger = pcast.getLogger();
         this._protocol = pcast.getProtocol();
         this._enabled = new observable.Observable(false);
-        this._lastSubscribedSessionId = null;
 
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
-        this._authService = new AuthenticationService(this._pcast);
+        this._authenticationService = new AuthenticationService(pcast);
     }
+
+    ChatService.prototype.setPCast = function setPCast(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+        this._protocol = pcast.getProtocol();
+
+        this._authenticationService.setPCast(pcast);
+    };
 
     ChatService.prototype.start = function start() {
         if (this._enabled.getValue()) {
@@ -61,6 +72,8 @@ define([
             return;
         }
 
+        this._enabled.setValue(false);
+
         if (this._disposables) {
             this._disposables.dispose();
         }
@@ -68,6 +81,10 @@ define([
 
     ChatService.prototype.getObservableChatEnabled = function getObservableChatEnabled() {
         return this._enabled;
+    };
+
+    ChatService.prototype.canSendMessage = function canSendMessage() {
+        return this._authenticationService.checkAuthorized();
     };
 
     ChatService.prototype.sendMessageToRoom = function sendMessageToRoom(roomId, screenName, role, lastUpdate, message, callback) {
@@ -91,11 +108,9 @@ define([
     };
 
     function setupSubscriptions() {
-        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
-        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(onSessionIdChange, this));
+        var pcastStatusSubscription = this._authenticationService.getObservableStatus().subscribe(_.bind(onStatusChange, this));
 
         this._disposables.add(pcastStatusSubscription);
-        this._disposables.add(pcastSessionIdSubscription);
     }
 
     function setupChatListener(roomId, onReceiveMessages) {
@@ -145,22 +160,6 @@ define([
         // Only reason to redo subscriptions is if sessionId changes, which infers status changed
     }
 
-    function onSessionIdChange(sessionId) {
-        if (!this._lastSubscribedSessionId || this._lastSubscribedSessionId === sessionId) {
-            return;
-        }
-
-        refreshMessageSubscriptions.call(this);
-    }
-
-    function refreshMessageSubscriptions() {
-        var that = this;
-
-        _.forOwn(this._roomMessagesListeners, function(listener, roomId) {
-            subscribeToRoomConversationRequest.call(that, roomId, 1);
-        });
-    }
-
     function getMessagesRequest(roomId, batchSize, afterMessageId, beforeMessageId, callback) {
         assert.isStringNotEmpty(roomId, 'roomId');
         assert.isFunction(callback, 'callback');
@@ -178,9 +177,9 @@ define([
         }
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         this._logger.info('Get messages from room [%s] conversation with batch size of [%s], after [%s], and before [%s]', roomId, batchSize, afterMessageId, beforeMessageId);
 
@@ -216,11 +215,9 @@ define([
         assert.isNumber(batchSize, 'batchSize');
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
-
-        this._lastSubscribedSessionId = sessionId;
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         this._logger.info('Subscribe to room [%s] conversation with batch size of [%s]', roomId, batchSize);
 
@@ -266,9 +263,9 @@ define([
         assert.isFunction(callback, 'callback');
 
         assertEnabled.call(this);
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var sessionId = this._authService.getPCastSessionId();
+        var sessionId = this._authenticationService.getPCastSessionId();
 
         var chatMessage = {
             messageId: '',

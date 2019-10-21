@@ -249,14 +249,19 @@ define([
                 newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
                 newAspectRatioHeights = getObjectValueInArray(newAspectRatio, aspectRatios);
                 heightIndex = getNextHighestKeyIndex(this._defaultResolutionHeight, newAspectRatioHeights);
-                newHeight = parseInt(getIndexKey(heightIndex, aspectRatioHeights), 10);
-                newWidth = parseInt(this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio), 10);
+
+                if (heightIndex < 0) {
+                    return null;
+                }
+
+                newHeight = getIndexKey(heightIndex, aspectRatioHeights);
+                newWidth = this.calculateLongerDimensionByAspectRatio(newHeight, newAspectRatio);
 
                 return {
                     resolution: Math.min(newHeight, newWidth),
                     aspectRatio: newAspectRatio,
-                    height: newHeight,
-                    width: newWidth
+                    height: parseInt(newHeight, 10),
+                    width: parseInt(newWidth, 10)
                 };
             }
 
@@ -265,13 +270,13 @@ define([
 
         newAspectRatio = getIndexKey(aspectRatioIndex, aspectRatios);
         newAspectRatioHeights = getIndexValue(aspectRatioIndex, aspectRatios);
-        newHeight = parseInt(getIndexKey(heightIndex, newAspectRatioHeights), 10);
-        newWidth = parseInt(newAspectRatioHeights[heightIndex][newHeight], 10);
+        newHeight = getIndexKey(heightIndex, newAspectRatioHeights);
+        newWidth = newAspectRatioHeights[heightIndex][newHeight];
 
         return {
             resolution: Math.min(newHeight, newWidth),
             aspectRatio: newAspectRatio,
-            height: newHeight,
+            height: parseInt(newHeight, 10),
             width: newWidth
         };
     }
@@ -358,7 +363,7 @@ define([
 
     function getNextHighestKeyIndex(value, collection) {
         if ( _.keys(collection[0])[0] < value) {
-            return null;
+            return -1;
         }
 
         return _.reduce(collection, function(closestIndex, nextItem, index) {

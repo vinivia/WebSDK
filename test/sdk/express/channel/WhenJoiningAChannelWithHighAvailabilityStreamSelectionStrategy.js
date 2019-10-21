@@ -66,9 +66,14 @@ define([
             members: []
         };
 
-        before(function() {
+        beforeEach(function() {
             chromeRuntimeStubber.stub();
             peerConnectionStubber.stub();
+        });
+
+        afterEach(function() {
+            chromeRuntimeStubber.restore();
+            peerConnectionStubber.restore();
         });
 
         beforeEach(function() {
@@ -86,11 +91,6 @@ define([
                 uri: 'wss://mockURI',
                 onlineTimeout: 600000
             });
-        });
-
-        after(function() {
-            chromeRuntimeStubber.restore();
-            peerConnectionStubber.restore();
         });
 
         afterEach(function() {
