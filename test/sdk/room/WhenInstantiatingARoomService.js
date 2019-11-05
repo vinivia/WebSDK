@@ -160,7 +160,7 @@ define([
             expect(roomService._self).to.be.a('object');
         });
 
-        describe('When Room does not exist', function() {
+        context('Given the room does not exist', function() {
             it('Returns no roomChatService', function() {
                 var roomChatService = roomService.getChatService();
 
@@ -269,8 +269,8 @@ define([
             });
         });
 
-        describe('When Room does exist', function() {
-            it('Returns immutable room on getRoomInfo', function() {
+        context('Given the room does exist', function() {
+            it('Returns an immutable room on getRoomInfo', function() {
                 response.status = 'ok';
                 websocketStubber.stubResponse('chat.GetRoomInfo', response);
 
@@ -357,7 +357,7 @@ define([
                 });
             });
 
-            describe('When already in room', function() {
+            context('Given member is already in room', function() {
                 var member2 = {
                     state: member.states.passive.name,
                     sessionId: 'member2',
@@ -411,7 +411,7 @@ define([
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
 
-                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(4);
+                        expect(currentRoom.getObservableMembers().getValue()).to.have.lengthOf(4);
                     });
 
                     it('Self joined has self instance in room with updated values', function() {
@@ -449,7 +449,7 @@ define([
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
 
-                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
+                        expect(currentRoom.getObservableMembers().getValue()).to.have.lengthOf(2);
                     });
 
                     it('MemberLeft event for self removes member from room', function() {
@@ -461,7 +461,7 @@ define([
 
                         var currentRoom = roomService.getObservableActiveRoom().getValue();
 
-                        expect(currentRoom.getObservableMembers().getValue().length).to.be.equal(2);
+                        expect(currentRoom.getObservableMembers().getValue()).to.have.lengthOf(2);
                     });
 
                     it('MemberUpdated event updates room member screenName', function() {
@@ -602,13 +602,17 @@ define([
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
-                            expect(memberToUpdate.streams.length).to.be.equal(2);
+                            expect(memberToUpdate).to.have.property('streams');
+                            expect(memberToUpdate.streams).to.have.lengthOf(2);
                             done();
                         });
 
                         var publishedStreams = self.getStreams();
 
                         publishedStreams.push(publishedStream2);
+
+                        expect(publishedStreams).to.have.lengthOf(2);
+
                         self.setStreams(publishedStreams);
 
                         roomService.updateSelf(function() {});
@@ -618,7 +622,7 @@ define([
                         websocketStubber.stubResponse('chat.UpdateMember', response, function(type, message) {
                             var memberToUpdate = message.member;
 
-                            expect(memberToUpdate.streams.length).to.be.equal(0);
+                            expect(memberToUpdate.streams).to.have.lengthOf(0);
                             done();
                         });
 
@@ -759,7 +763,8 @@ define([
                 });
 
                 describe('When Session Id updated', function() {
-                    it('Session Id update causes member to leave and then enter room', function(done) {
+                    // TODO This is not desired b/c to get a new session ID one gets disconnected first
+                    it.skip('Session Id update causes member to leave and then enter room', function(done) {
                         var leaveRoomSpy = sinon.spy();
                         websocketStubber.stubResponse('chat.LeaveRoom', {status: 'ok'}, leaveRoomSpy);
                         websocketStubber.stubResponse('chat.JoinRoom', response, function() {

@@ -16,9 +16,9 @@
 
 define([
     'sdk/sdpUtil',
-    './opera52',
-    './firefox60',
-    './androidChrome63'
+    './fixtures/opera52',
+    './fixtures/firefox60',
+    './fixtures/androidChrome63'
 ], function(sdpUtil, opera52Sdp, firefox60Sdp, androidChrome63) {
     'use strict';
 

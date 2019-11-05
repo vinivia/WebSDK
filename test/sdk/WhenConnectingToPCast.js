@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-/* global process */
 define([
     'phenix-web-http',
     'lodash',
@@ -23,6 +22,8 @@ define([
     'phenix-web-logging'
 ], function(http, _, PCast, pcastLoggerFactory, logging) {
     'use strict';
+
+    var customBackend = 'ci.phenixrts.com';
 
     describe('When connecting to PCast', function() {
         var pcastLoggerStub;
@@ -42,27 +43,9 @@ define([
 
             pcast = new PCast();
 
-            var url = pcast.getBaseUri();
+            var data = {};
 
-            if (url.indexOf('://')) {
-                url = url.split('://')[1];
-            }
-
-            if (url.indexOf('/')) {
-                url = url.split('/')[0];
-            }
-
-            var applicationId = process.env.PHENIX_APPLICATION_ID;
-            var secret = process.env.PHENIX_SECRET;
-            var data = {
-                applicationId: applicationId,
-                secret: secret
-            };
-
-            expect(applicationId).to.be.a('string');
-            expect(secret).to.be.a('string');
-
-            http.postWithRetry('https://' + url + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
+            http.postWithRetry('https://' + customBackend + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
                 if (error) {
                     console.error(error);
 

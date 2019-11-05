@@ -34,8 +34,6 @@ requirejs.config({
         'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
-        'Long': 'long/dist/long.min',
-        'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
         'shaka-player': 'shaka-player/dist/shaka-player.compiled',
         'video-player': 'player',
         'app-setup': 'app-setup',
@@ -226,7 +224,7 @@ requirejs([
                 });
 
                 response.renderer.on('autoMuted', function(message) {
-                    channelExpress.getPCastExpress().getPCast().getLogger().warn('Stream was auto muted', message);
+                    channelExpress.getPCastExpress().getPCast().getLogger().info('Stream was auto muted (reason=[%s])', message);
                     app.createNotification('info', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>User Action Required</strong>',
