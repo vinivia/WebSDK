@@ -261,9 +261,9 @@ define([
             }, options);
 
             if (room.getObservableType().getValue() === roomEnums.types.channel.name) {
-                publishOptions.tags = ['channelId:' + room.getRoomId()].concat(publishOptions.tags || []);
+                publishOptions.tags = ['channelId:' + room.getRoomId(), 'channelAlias:' + room.getObservableAlias().getValue()].concat(publishOptions.tags || []);
             } else {
-                publishOptions.tags = ['roomId:' + room.getRoomId()].concat(publishOptions.tags || []);
+                publishOptions.tags = ['roomId:' + room.getRoomId(), 'roomAlias:' + room.getObservableAlias().getValue()].concat(publishOptions.tags || []);
             }
 
             if (options.streamUri) {
