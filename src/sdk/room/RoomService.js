@@ -34,35 +34,57 @@ define([
     var inAnotherRoomResponse = _.freeze({status: 'in-another-room'});
 
     function RoomService(pcast) {
-        assert.isObject(pcast, 'pcast');
-        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
-        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
-
-        this._pcast = pcast;
-        this._logger = pcast.getLogger();
-        this._protocol = pcast.getProtocol();
-
         this._self = new observable.Observable(null);
         this._activeRoom = new observable.Observable(null);
         this._cachedRoom = new observable.Observable(null);
         this._roomChatService = null;
 
+        this._authenticationService = new AuthenticationService(pcast);
+
+        this.setPCast(pcast);
+    }
+
+    RoomService.prototype.setPCast = function setPCast(pcast) {
+        assert.isObject(pcast, 'pcast');
+        assert.isFunction(pcast.getLogger, 'pcast.getLogger');
+        assert.isFunction(pcast.getProtocol, 'pcast.getProtocol');
+
+        if (this._pcast) {
+            this._logger.info('Resetting pcast instance for room service');
+        }
+
+        this._pcast = pcast;
+        this._logger = pcast.getLogger();
+        this._protocol = pcast.getProtocol();
+
         assert.isObject(this._logger, 'this._logger');
         assert.isObject(this._protocol, 'this._protocol');
 
-        this._authService = new AuthenticationService(this._pcast);
-    }
+        this._authenticationService.setPCast(pcast);
+
+        if (this._roomChatService) {
+            this._roomChatService.setPCast(pcast);
+        }
+
+        if (this._started) {
+            this._disposables.dispose();
+
+            setupSubscriptions.call(this);
+        }
+    };
 
     RoomService.prototype.start = function start(role, screenName) {
         if (this._started) {
-            return this._logger.warn('RoomService already started.');
+            this._logger.warn('RoomService already started.');
+
+            return;
         }
 
         assert.isStringNotEmpty(role, 'role');
         assert.isStringNotEmpty(screenName, 'screenName');
 
         var myState = memberEnums.states.passive.name;
-        var mySessionId = this._authService.getPCastSessionId();
+        var mySessionId = this._authenticationService.getPCastSessionId();
         var myScreenName = screenName;
         var myStreams = [];
         var myLastUpdate = _.now();
@@ -72,10 +94,6 @@ define([
 
         this._self = new observable.Observable(self);
         this._disposables = new disposable.DisposableList();
-
-        var disposeOfRoomEventHandler = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
-
-        this._disposables.add(disposeOfRoomEventHandler);
 
         setupSubscriptions.call(this);
 
@@ -242,26 +260,46 @@ define([
         this._self.setValue(new Member(roomService, self.state, sessionId || '', self.screenName, self.role, self.streams, self.lastUpdate));
     }
 
-    function resetRoom() {
+    function reenterRoom() {
         var that = this;
 
         var activeRoom = that._activeRoom.getValue();
-        var selfSessionId = that._self.getValue().getSessionId();
 
-        if (!_.isObject(activeRoom) || !selfSessionId) {
+        if (!_.isObject(activeRoom)) {
+            return;
+        }
+
+        var self = that._self.getValue();
+
+        if (!self) {
+            return;
+        }
+
+        var selfSessionId = self.getSessionId();
+
+        if (!selfSessionId) {
             return;
         }
 
         var roomId = activeRoom.getRoomId();
         var alias = activeRoom.getObservableAlias().getValue();
 
-        that._logger.info('Leaving and re-entering room after reset of self model');
+        that._logger.info('[%s] Re-entering room [%s]', roomId, alias);
 
-        leaveRoomRequest.call(that, function() {
-            enterRoomRequest.call(that, roomId, alias, function() {
-                that._logger.info('Room reset completed');
-            });
-        });
+        if (that._roomChatService) {
+            that._logger.info('Performing soft reset on room chat service for room [%s]', roomId);
+            that._roomChatService.stop();
+        }
+
+        enterRoomRequest.call(that, roomId, alias, function() {
+            if (that._roomChatService) {
+                that._logger.info('[%s] Refreshing room chat service after re-entering room [%s]', roomId, alias);
+
+                that._roomChatService.start(that._roomChatService.getBatchSize());
+            }
+
+            that._logger.info('[%s] Room [%s] completed reset', roomId, alias);
+        }, {reenter: true});
     }
 
     // Handle events
@@ -324,14 +362,15 @@ define([
         };
 
         var joinedSelf = _.find(members, memberIsSelf);
+        var selfInRoom = false;
 
         if (joinedSelf) {
-            replaceSelfInstanceInRoom.call(that, room);
+            selfInRoom = replaceSelfInstanceInRoom.call(that, room);
 
             room._updateMembers([joinedSelf]);
         }
 
-        this._logger.info('[%s] Room has now [%d] members', roomId, room.getObservableMembers().getValue().length);
+        this._logger.info('[%s] Room has now [%d] members (Self is present in room [%s])', roomId, room.getObservableMembers().getValue().length, selfInRoom);
     }
 
     function onMembersLeavesRoom(roomId, members) {
@@ -392,10 +431,40 @@ define([
 
     function handlePCastSessionIdChanged(sessionId) {
         if (this.getSelf() && this.getSelf().getSessionId() === (sessionId || '')) {
+            this._logger.info('[%s] Skip session ID change since it is the same as in self model', sessionId);
+
             return;
         }
 
         resetSelf.call(this, sessionId);
+    }
+
+    function handleSelfUpdated(self) {
+        var that = this;
+
+        if (!self) {
+            return;
+        }
+
+        if (!self.getSessionId()) {
+            return;
+        }
+
+        var activeRoom = that._activeRoom.getValue();
+
+        if (!activeRoom) {
+            return;
+        }
+
+        that._logger.info('[%s] Updating self in room after update', activeRoom.getRoomId());
+
+        updateMemberRequest.call(this, this.getSelf(), function(error, response) {
+            if (_.get(response, ['status']) === 'ok') {
+                that._logger.info('[%s] Updated self in room after update', activeRoom.getRoomId());
+            } else {
+                that._logger.info('[%s] Self was not updated in room after update', activeRoom.getRoomId());
+            }
+        });
     }
 
     function findMemberInObservableRoom(sessionId, observableRoom) {
@@ -415,14 +484,19 @@ define([
         this._logger.info('PCast status changed from [%s] to [%s]', this._lastPcastStatus, status);
 
         this._lastPcastStatus = status;
+
+        if (status === 'online') {
+            reenterRoom.call(this);
+        }
     }
 
     function setupSubscriptions() {
-        var selfSubscription = this._self.subscribe(_.bind(resetRoom, this));
+        var roomEventSubscription = this._protocol.onEvent('chat.RoomEvent', _.bind(onRoomEvent, this));
+        var selfSubscription = this._self.subscribe(_.bind(handleSelfUpdated, this));
+        var pcastStatusSubscription = this._authenticationService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
+        var pcastSessionIdSubscription = this._authenticationService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
 
-        var pcastStatusSubscription = this._authService.getObservableStatus().subscribe(_.bind(handlePCastStatusChange, this));
-        var pcastSessionIdSubscription = this._authService.getObservableSessionId().subscribe(_.bind(handlePCastSessionIdChanged, this));
-
+        this._disposables.add(roomEventSubscription);
         this._disposables.add(selfSubscription);
         this._disposables.add(pcastStatusSubscription);
         this._disposables.add(pcastSessionIdSubscription);
@@ -433,7 +507,7 @@ define([
 
         return _.map(members, function(member) {
             var cachedMember = findMemberInObservableRoom(member.sessionId, that._cachedRoom);
-            var placeholderMember = new Member(null, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
+            var placeholderMember = new Member(that, member.state, member.sessionId, member.screenName, member.role, member.streams, member.lastUpdate);
             var memberWithOnlyDifferentProperties = buildMemberForRequest(placeholderMember, cachedMember);
 
             memberWithOnlyDifferentProperties.lastUpdate = member.lastUpdate;
@@ -471,7 +545,7 @@ define([
     }
 
     function getRoomInfoRequest(roomId, alias, callback) {
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var that = this;
 
@@ -491,7 +565,7 @@ define([
                     return callback(null, result);
                 }
 
-                result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+                result.room = _.freeze(createImmutableRoomFromResponse.call(that, response));
 
                 callback(null, result);
             }
@@ -499,11 +573,11 @@ define([
     }
 
     function createRoomRequest(room, callback) {
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var that = this;
 
-        var validatedRoom = getValidRoomObject(room);
+        var validatedRoom = getValidRoomObject.call(that, room);
 
         this._protocol.createRoom(validatedRoom, function handleCreateRoomResponse(error, response) {
             if (error) {
@@ -520,7 +594,7 @@ define([
                 return callback(null, result);
             }
 
-            result.room = _.freeze(createImmutableRoomFromResponse.call(this, response));
+            result.room = _.freeze(createImmutableRoomFromResponse.call(that, response));
 
             callback(null, result);
         });
@@ -532,32 +606,50 @@ define([
         return (new Room(roomService, '', room.alias, room.name, room.description, room.type, [], room.bridgeId, room.pin)).toJson();
     }
 
-    function enterRoomRequest(roomId, alias, callback) {
+    function enterRoomRequest(roomId, alias, callback, options) {
+        var reenter = _.get(options, 'reenter') === true;
         var activeRoom = this._activeRoom.getValue();
 
         if (activeRoom) {
             var isSameRoom = roomId === activeRoom.getRoomId() || alias === activeRoom.getObservableAlias().getValue();
 
-            this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
+            if (isSameRoom && !reenter) {
+                this._logger.info('Unable to join room. Already in [%s]/[%s] room.', activeRoom.getRoomId(), activeRoom.getObservableAlias().getValue());
 
-            return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+                return callback(null, _.assign({room: activeRoom}, isSameRoom ? alreadyInRoomResponse : inAnotherRoomResponse));
+            }
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var self = this._self.getValue();
 
         var screenName = self.getObservableScreenName().getValue();
         var role = self.getObservableRole().getValue();
         var selfForRequest = buildMemberForRequest.call(this, self, null);
+        var enterRoomOptions = [];
         var timestamp = _.now();
+
+        if (reenter) {
+            enterRoomOptions.push('reenter');
+        }
 
         this._logger.info('Enter room [%s]/[%s] with screen name [%s] and role [%s]', roomId, alias, screenName, role);
 
         var that = this;
 
-        this._protocol.enterRoom(roomId, alias, selfForRequest, timestamp,
+        if (that._isEnteringRoom) {
+            that._logger.info('[%s] We are already entering the room [%s], skipping', roomId, alias);
+
+            return;
+        }
+
+        that._isEnteringRoom = true;
+
+        this._protocol.enterRoom(roomId, alias, selfForRequest, enterRoomOptions, timestamp,
             function handleEnterRoomResponse(error, response) {
+                that._isEnteringRoom = false;
+
                 if (error) {
                     that._logger.error('Joining of room failed with error [%s]', error);
 
@@ -578,20 +670,24 @@ define([
                     that.getSelf()._update(response.self);
                 }
 
+                that._logger.info('Successfully entered room [%s]/[%s]', roomId, alias);
+
                 callback(null, result);
             }
         );
     }
 
     function leaveRoomRequest(callback) {
-        if (!this._activeRoom.getValue()) {
-            this._logger.info('Unable to leave room. Not currently in a room.');
+        var room = this._activeRoom.getValue();
+
+        if (!room) {
+            this._logger.info('Not currently in a room.');
 
             return callback(null, notInRoomResponse);
         }
 
-        if (this._authService.getPCastSessionId() === '') {
-            this._logger.warn('Unable to leave room. We are currently not connected. Status [' + this._lastPcastStatus + ']');
+        if (this._authenticationService.getPCastSessionId() === '') {
+            this._logger.warn('Unable to leave room. We are currently not connected. Status [%s]', this._lastPcastStatus);
 
             return;
         }
@@ -600,9 +696,9 @@ define([
             return;
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
-        var roomId = this._activeRoom.getValue().getRoomId();
+        var roomId = room.getRoomId();
         var timestamp = _.now();
 
         this._logger.info('Leave room [%s]', roomId);
@@ -614,6 +710,9 @@ define([
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
                 that._isLeavingRoom = false;
+
+                that._activeRoom.setValue(null);
+                that._cachedRoom.setValue(null);
 
                 if (error) {
                     that._logger.error('Leaving room failed with error [%s]', error);
@@ -629,15 +728,6 @@ define([
                     return callback(null, result);
                 }
 
-                if (that._roomChatService) {
-                    that._roomChatService.stop();
-                }
-
-                that._roomChatService = null;
-
-                that._activeRoom.setValue(null);
-                that._cachedRoom.setValue(null);
-
                 callback(null, result);
             }
         );
@@ -650,12 +740,13 @@ define([
             return callback(null, notInRoomResponse);
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var activeRoom = this._activeRoom.getValue();
         var roomId = activeRoom.getRoomId();
         var memberIsSelf = member.getSessionId() === this.getSelf().getSessionId();
         var cachedMember = findMemberInObservableRoom(member.getSessionId(), this._cachedRoom);
+
         var memberForRequest = buildMemberForRequest.call(this, member, cachedMember);
         var timestamp = _.now();
         var wasSelfAudienceMember = memberIsSelf && !cachedMember;
@@ -665,7 +756,7 @@ define([
             memberForRequest.lastUpdate = member.getObservableLastUpdate().getValue();
         }
 
-        this._logger.info('Updating member info for active room [%s]', roomId);
+        this._logger.info('Updating member info [%s] for active room [%s]', memberForRequest, roomId);
 
         var that = this;
 
@@ -683,7 +774,7 @@ define([
                 };
 
                 if (response.status !== 'ok') {
-                    that._logger.warn('Update of member failed with status [%s]', response.status);
+                    that._logger.info('Update of member failed with status [%s]', response.status);
                 }
 
                 if (response.status === 'ok' && isSelfBecomingAudience && _.isNumber(response.lastUpdate)) {
@@ -702,7 +793,7 @@ define([
             return callback(null, notInRoomResponse);
         }
 
-        this._authService.assertAuthorized();
+        this._authenticationService.assertAuthorized();
 
         var room = this._activeRoom.getValue();
         var timestamp = _.now();
@@ -745,13 +836,29 @@ define([
     }
 
     function initializeRoomAndBuildCache(response) {
+        var activeRoom = this._activeRoom.getValue();
+        var cachedRoom = this._cachedRoom.getValue();
         var room = createRoomFromResponse.call(this, response);
-        var cachedRoom = createRoomFromResponse.call(this, response);
 
         replaceSelfInstanceInRoom.call(this, room);
 
+        if (activeRoom && cachedRoom) {
+            this._logger.debug('[%s] Updating existing room model.', activeRoom.getRoomId());
+
+            activeRoom._update(response.room);
+            cachedRoom._update(response.room);
+
+            activeRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
+            cachedRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
+
+            return activeRoom;
+        }
+
+        // The cached room does not contain a reference to the self object so updates to self and room are detected by comparing it against the cached room
+        var newCachedRoom = createRoomFromResponse.call(this, response);
+
         this._activeRoom.setValue(room);
-        this._cachedRoom.setValue(cachedRoom);
+        this._cachedRoom.setValue(newCachedRoom);
 
         return room;
     }
@@ -765,7 +872,9 @@ define([
         });
 
         if (selfIndex < 0) {
-            return this._logger.info('Self not in server room model.');
+            this._logger.debug('Self not in server room model.');
+
+            return false;
         }
 
         self._update(members[selfIndex].toJson());
@@ -773,6 +882,8 @@ define([
         members[selfIndex] = self;
 
         room.getObservableMembers().setValue(members);
+
+        return true;
     }
 
     return RoomService;

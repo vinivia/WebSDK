@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global Promise */
 
 define([
     'phenix-web-lodash-light',
@@ -52,20 +53,59 @@ define([
         that._mockPeerConnection = {
             addStream: sinon.stub(),
             getStats: sinon.stub(),
-            createOffer: sinon.stub(),
             close: sinon.stub(),
+            createOffer: function(onCreateOfferSuccess, onFailure, mediaConstraints) { // eslint-disable-line no-unused-vars
+                var offer = {
+                    type: 'Offer',
+                    sdp: 'v=0\n'
+                };
+
+                if (_.isFunction(onCreateOfferSuccess)) {
+                    onCreateOfferSuccess(offer);
+
+                    return;
+                }
+
+                return new Promise(function(resolve) {
+                    resolve(offer);
+                });
+            },
             createAnswer: function(onCreateAnswerSuccess, onFailure, mediaConstraints) { // eslint-disable-line no-unused-vars
-                onCreateAnswerSuccess(that._mockPeerConnection._remoteDescription);
+                if (_.isFunction(onCreateAnswerSuccess)) {
+                    onCreateAnswerSuccess(that._mockPeerConnection._remoteDescription);
+
+                    return;
+                }
+
+                return new Promise(function(resolve) {
+                    resolve(that._mockPeerConnection._remoteDescription);
+                });
             },
             setRemoteDescription: function(sessionDescription, onSetRemoteDescriptionSuccess, onFailure) { // eslint-disable-line no-unused-vars
                 that._mockPeerConnection._remoteDescription = sessionDescription;
 
-                onSetRemoteDescriptionSuccess(sessionDescription);
+                if (onSetRemoteDescriptionSuccess) {
+                    onSetRemoteDescriptionSuccess(sessionDescription);
+
+                    return;
+                }
+
+                return new Promise(function(resolve) {
+                    return resolve(sessionDescription);
+                });
             },
             setLocalDescription: function(sessionDescription, onSetLocalDescriptionSuccess, onFailure) { // eslint-disable-line no-unused-vars
                 that._mockPeerConnection._localDescription = sessionDescription;
 
-                onSetLocalDescriptionSuccess(sessionDescription);
+                if (onSetLocalDescriptionSuccess) {
+                    onSetLocalDescriptionSuccess(sessionDescription);
+
+                    return;
+                }
+
+                return new Promise(function(resolve) {
+                    resolve(sessionDescription);
+                });
             },
             addEventListener: function(name, listener) {
                 if (name !== 'addstream' || !listener) {

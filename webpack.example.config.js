@@ -15,14 +15,14 @@
  */
 
 /* global __dirname module */
-const webpack = require('webpack');
-const path = require('path');
-const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const appDir = path.join(__dirname, './example');
-const distDir = path.join(__dirname, './dist');
+var webpack = require('webpack');
+var path = require('path');
+var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var MiniCssExtractPlugin = require('mini-css-extract-plugin');
+var {CleanWebpackPlugin} = require('clean-webpack-plugin');
+var appDir = path.join(__dirname, './example');
+var distDir = path.join(__dirname, './dist');
 
 var configs = [{
     entry: path.join(appDir, 'get-user-media-app.js'),
@@ -33,14 +33,14 @@ var configs = [{
         filename: 'get-user-media-app-bundled.js'
     },
     plugins: [
-        new CleanWebpackPlugin([path.join(distDir, 'workflow-example')]),
+        new CleanWebpackPlugin(),
         new webpack.DefinePlugin({'window.BUILD_ENV': JSON.stringify('webpack')}),
         new CaseSensitivePathsPlugin(),
         new HtmlWebpackPlugin({
             template: path.join(appDir, 'GetUserMediaWorkflowDemo.html'),
             inject: true
         }),
-        new ExtractTextPlugin("styles.css")
+        new MiniCssExtractPlugin("styles.css")
     ],
     module: {
         rules: [{
@@ -69,11 +69,16 @@ var configs = [{
         },
         {
             test: /\.css$/,
-            use: ExtractTextPlugin.extract({
-                fallback: "style-loader",
-                use: "css-loader"
-            })
-            // Use: ['style-loader', 'css-loader']
+            use: [
+                {
+                    loader: MiniCssExtractPlugin.loader,
+                    options: {
+                        publicPath: '../',
+                        hmr: true
+                    }
+                },
+                'css-loader'
+            ]
         }
         ]
     },

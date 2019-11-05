@@ -34,8 +34,6 @@ requirejs.config({
         'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
-        'Long': 'long/dist/long.min',
-        'ByteBuffer': 'bytebuffer/dist/ByteBufferAB.min',
         'shaka-player': 'shaka-player/dist/shaka-player.compiled',
         'video-player': 'player',
         'app-setup': 'app-setup',

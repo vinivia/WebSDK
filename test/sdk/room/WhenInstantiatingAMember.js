@@ -194,7 +194,7 @@ define([
 
             it('Should accept Long value on constructor', function() {
                 var myLong = Long.fromNumber(1488469432437);
-                var roomService = null;
+                var roomService = stubRoomService;
                 var myMember = new Member(roomService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [stream1], myLong);
 
                 expect(myMember.getLastUpdate()).to.be.equal(1488469432437);

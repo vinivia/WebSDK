@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-const runner = require('./runner');
+var runner = require('./runner');
 
 runner.runCommands([
     'npm run deploy-examples:example',
