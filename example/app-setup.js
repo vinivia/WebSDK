@@ -403,7 +403,8 @@ define('app-setup', [
             'on-demand-archive=PT1H': 'VOD Archive (1 hour)',
             'on-demand-archive=PT1D': 'VOD Archive (1 day)',
             'transcoding={"selectedQualities":["hd"]}': 'HD DASH+HLS only',
-            'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only'
+            'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only',
+            'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists'
         };
     };
 
