@@ -394,6 +394,7 @@ define('app-setup', [
             'scale-wide': 'Scale Wide',
             'scale-elastic': 'Scale Elastic',
             'prefer-edge=origin': 'Edge Origin',
+            'prefer-edge=origin-disallow': 'Disallow Edge Origin',
             'prefer-edge': 'Prefer Edge',
             'prefer-edge=avoid': 'Avoid Edge',
             'prefer-edge=disallow': 'Disallow Edge',
