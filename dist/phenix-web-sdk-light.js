@@ -1668,7 +1668,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-11-22T16:44:09Z';
+    var sdkVersion = '2019-11-22T22:08:09Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -6346,6 +6346,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             return this._requestHandler(requestTypes.auth.name, {}, _.bind(handleOverrideRequestResponse, this, requestTypes.auth.name, callback));
         }
 
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
+        }
+
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createAuthTokenPath, {}, defaultRequestOptions);
 
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
@@ -6362,6 +6368,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (this._requestHandler) {
             return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
+
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
         }
 
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
@@ -6397,6 +6409,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         if (this._requestHandler) {
             return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
+
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
         }
 
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
@@ -7917,8 +7935,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-22T16:44:09Z' || false;
-    var releaseVersion = '2019.2.23';
+    var sdkVersion = '2019-11-22T22:08:09Z' || false;
+    var releaseVersion = '2019.2.25';
 
     function Logger() {
         this._appenders = [];
@@ -14209,7 +14227,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-11-22T16:44:09Z',
+                version: '2019-11-22T22:08:09Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -15292,7 +15310,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-22T16:44:09Z' || false;
+    var sdkVersion = '2019-11-22T22:08:09Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -15620,7 +15638,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-22T16:44:09Z' || false;
+    var sdkVersion = '2019-11-22T22:08:09Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -18319,7 +18337,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._instanceId = ++instanceCounter;
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._publishers = {};
-        this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
+        this._adminApiProxyClient = options.adminApiProxyClient;
         this._isInstantiated = false;
         this._reconnectCount = 0;
         this._reauthCount = 0;
@@ -18332,7 +18350,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = null;
         this._ignoredStreamEnds = {};
 
-        if (!options.adminApiProxyClient) {
+        if (!this._adminApiProxyClient) {
+            this._adminApiProxyClient = new AdminApiProxyClient();
             this._adminApiProxyClient.setBackendUri(options.backendUri);
             this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
         }
@@ -18341,7 +18360,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
-            if (options.backendUri) {
+            if (options.backendUri || _.isString(options.backendUri)) {
                 this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
 
