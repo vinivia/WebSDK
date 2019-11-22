@@ -30,7 +30,7 @@ define([
 ], function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
-    var iceConnectionTimeout = 8000;
+    var defaultIceConnectionTimeout = 12000;
 
     function PhenixRealTimeStream(streamId, streamSrc, peerConnection, streamTelemetry, options, logger) {
         this._streamId = streamId;
@@ -47,6 +47,7 @@ define([
         this._backgroundMonitorEventCallback = null;
         this._disposables = new disposable.DisposableList();
         this._connected = 0;
+        this._iceConnectionTimeout = _.get(options, ['iceConnectionTimeout'], defaultIceConnectionTimeout);
 
         this._disposables.add(applicationActivityDetector.onForeground(_.bind(emitPendingBackgroundEvent, this)));
 
@@ -288,9 +289,9 @@ define([
 
             this._connectionStart = _.now();
             this._checkConnectionSuccessTimeoutId = setTimeout(function() {
-                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, iceConnectionTimeout);
+                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, that._iceConnectionTimeout);
                 that._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-timeout')]);
-            }, iceConnectionTimeout);
+            }, that._iceConnectionTimeout);
 
             break;
         case 'failed':
