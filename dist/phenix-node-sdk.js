@@ -8287,7 +8287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-11-05T19:47:19Z',
+                version: '2019-11-22T16:44:09Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -11371,7 +11371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-11-05T19:47:19Z';
+    var sdkVersion = '2019-11-22T16:44:09Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11840,6 +11840,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     case 'capacity':
                     case 'stream-ended':
                     case 'origin-stream-ended':
+                    case 'origin-not-found':
                     case 'streaming-not-available':
                     case 'unauthorized':
                     case 'timeout':
@@ -23786,8 +23787,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-05T19:47:19Z' || false;
-    var releaseVersion = '2019.2.22';
+    var sdkVersion = '2019-11-22T16:44:09Z' || false;
+    var releaseVersion = '2019.2.23';
 
     function Logger() {
         this._appenders = [];
@@ -31769,7 +31770,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-05T19:47:19Z' || false;
+    var sdkVersion = '2019-11-22T16:44:09Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -32097,7 +32098,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-05T19:47:19Z' || false;
+    var sdkVersion = '2019-11-22T16:44:09Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -33695,7 +33696,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
-    var iceConnectionTimeout = 8000;
+    var defaultIceConnectionTimeout = 12000;
 
     function PhenixRealTimeStream(streamId, streamSrc, peerConnection, streamTelemetry, options, logger) {
         this._streamId = streamId;
@@ -33712,6 +33713,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._backgroundMonitorEventCallback = null;
         this._disposables = new disposable.DisposableList();
         this._connected = 0;
+        this._iceConnectionTimeout = _.get(options, ['iceConnectionTimeout'], defaultIceConnectionTimeout);
 
         this._disposables.add(applicationActivityDetector.onForeground(_.bind(emitPendingBackgroundEvent, this)));
 
@@ -33953,9 +33955,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             this._connectionStart = _.now();
             this._checkConnectionSuccessTimeoutId = setTimeout(function() {
-                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, iceConnectionTimeout);
+                that._logger.warn('[%s] Stream has not connected within [%s] ms', that._streamId, that._iceConnectionTimeout);
                 that._namedEvents.fire(streamEnums.streamEvents.playerError.name, ['real-time', new Error('connection-timeout')]);
-            }, iceConnectionTimeout);
+            }, that._iceConnectionTimeout);
 
             break;
         case 'failed':
