@@ -514,6 +514,7 @@ define([
                     case 'capacity':
                     case 'stream-ended':
                     case 'origin-stream-ended':
+                    case 'origin-not-found':
                     case 'streaming-not-available':
                     case 'unauthorized':
                     case 'timeout':
