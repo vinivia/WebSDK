@@ -159,6 +159,12 @@ define([
             return this._requestHandler(requestTypes.auth.name, {}, _.bind(handleOverrideRequestResponse, this, requestTypes.auth.name, callback));
         }
 
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
+        }
+
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createAuthTokenPath, {}, defaultRequestOptions);
 
         return requestWithTimeout.call(this, requestWithoutCallback, callback);
@@ -175,6 +181,12 @@ define([
 
         if (this._requestHandler) {
             return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
+
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
         }
 
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
@@ -210,6 +222,12 @@ define([
 
         if (this._requestHandler) {
             return this._requestHandler(requestTypes.stream.name, data, _.bind(handleOverrideRequestResponse, this, requestTypes.stream.name, callback));
+        }
+
+        if (!this._backendUri) {
+            callback(null, {status: 'unauthorized'});
+
+            return;
         }
 
         var requestWithoutCallback = bindAuthDataAndPrepareRequest.call(this, http.postWithRetry, http, this._backendUri + this._endpointPaths.createStreamTokenPath, data, defaultRequestOptions);
