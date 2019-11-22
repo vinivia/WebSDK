@@ -70,7 +70,7 @@ define([
         this._instanceId = ++instanceCounter;
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._publishers = {};
-        this._adminApiProxyClient = options.adminApiProxyClient || new AdminApiProxyClient();
+        this._adminApiProxyClient = options.adminApiProxyClient;
         this._isInstantiated = false;
         this._reconnectCount = 0;
         this._reauthCount = 0;
@@ -83,7 +83,8 @@ define([
         this._logger = null;
         this._ignoredStreamEnds = {};
 
-        if (!options.adminApiProxyClient) {
+        if (!this._adminApiProxyClient) {
+            this._adminApiProxyClient = new AdminApiProxyClient();
             this._adminApiProxyClient.setBackendUri(options.backendUri);
             this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
         }
@@ -92,7 +93,7 @@ define([
 
         // After logger is instantiated
         if (!options.adminApiProxyClient) {
-            if (options.backendUri) {
+            if (options.backendUri || _.isString(options.backendUri)) {
                 this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
             }
 
