@@ -240,7 +240,16 @@ define([
         var requestDisposable = requestWithoutCallback(_.bind(handleResponse, this, function(error, response) {
             clearTimeout(requestTimeoutId);
 
-            callback(error, response);
+            switch (_.get(error, ['code'])) {
+                case 401:
+                    return callback(null, {status: 'unauthorized'});
+                case 404:
+                    return callback(null, {status: 'origin-not-found'});
+                case 410:
+                    return callback(null, {status: 'origin-ended'});
+                default:
+                    return callback(error, response);
+            }
         }));
 
         requestTimeoutId = setTimeout(function() {
