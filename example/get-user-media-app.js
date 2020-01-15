@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,8 @@ requirejs([
             var pcastOptions = {
                 uri: uri,
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
-                rtmp: {swfSrc: app.getSwfFilePath()}
+                rtmp: {swfSrc: app.getSwfFilePath()},
+                screenSharingEnabled: app.getUrlParameter('screenSharingEnabled') ? true : false
             };
 
             adminBaseUri = app.getBaseUri();

@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1668,7 +1668,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-11-25T17:22:49Z';
+    var sdkVersion = '2020-01-15T19:52:00Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -6428,14 +6428,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             clearTimeout(requestTimeoutId);
 
             switch (_.get(error, ['code'])) {
-                case 401:
-                    return callback(null, {status: 'unauthorized'});
-                case 404:
-                    return callback(null, {status: 'origin-not-found'});
-                case 410:
-                    return callback(null, {status: 'origin-ended'});
-                default:
-                    return callback(error, response);
+            case 401:
+                return callback(null, {status: 'unauthorized'});
+            case 404:
+                return callback(null, {status: 'origin-not-found'});
+            case 410:
+                return callback(null, {status: 'origin-ended'});
+            default:
+                return callback(error, response);
             }
         }));
 
@@ -7944,8 +7944,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
-    var releaseVersion = '2019.2.26';
+    var sdkVersion = '2020-01-15T19:52:00Z' || false;
+    var releaseVersion = '2019.2.27';
 
     function Logger() {
         this._appenders = [];
@@ -14236,7 +14236,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-11-25T17:22:49Z',
+                version: '2020-01-15T19:52:00Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -14457,21 +14457,32 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = logger;
         this._screenSharingExtensionId = options.screenSharingExtensionId || getDefaultExtensionId();
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
-        this._screenSharingEnabled = false;
+        this._screenSharingEnabled = options.screenSharingEnabled || false;
+        this._screenSharingAvailable = false;
         this._isInitializedObservable = new observable.Observable(false);
 
         if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
             addLinkHeaderElement.call(this);
         }
 
-        checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
+        if (this._screenSharingEnabled) {
+            checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
+        }
     }
+
+    ScreenShareExtensionManager.prototype.checkForScreenSharingCapability = function(callback) {
+        return checkForScreenSharingCapability.call(this, function(isEnabled) {
+            handleCheckForScreenSharing.call(this, isEnabled);
+
+            callback(isEnabled);
+        });
+    };
 
     ScreenShareExtensionManager.prototype.isScreenSharingEnabled = function(callback) {
         var that = this;
 
         return waitForInitialized.call(this, function() {
-            return callback(that._screenSharingEnabled);
+            return callback(that._screenSharingAvailable);
         });
     };
 
@@ -14490,7 +14501,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function handleCheckForScreenSharing(isEnabled) {
         this._isInitializedObservable.setValue(true);
 
-        this._screenSharingEnabled = isEnabled;
+        this._screenSharingAvailable = isEnabled;
     }
 
     function checkForScreenSharingCapability(callback) {
@@ -14694,8 +14705,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function installScreenShareExtension(callback) {
         var that = this;
 
-        if (that._screenSharingEnabled) {
-            return;
+        if (that._screenSharingAvailable) {
+            return callback(null, {status: 'ok'});
         }
 
         var installCallback = function installCallback(error, status) {
@@ -14707,10 +14718,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 return callback(new Error('screen-sharing-installation-failed'), {status: status});
             }
 
-            checkForScreenSharingCapability.call(that, function(screenSharingEnabled) {
-                that._screenSharingEnabled = screenSharingEnabled;
+            checkForScreenSharingCapability.call(that, function(screenSharingAvailable) {
+                that._screenSharingAvailable = screenSharingAvailable;
 
-                if (!that._screenSharingEnabled) {
+                if (!that._screenSharingAvailable) {
                     return callback(new Error('screen-sharing-installation-failed'), {status: status});
                 }
 
@@ -15319,7 +15330,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
+    var sdkVersion = '2020-01-15T19:52:00Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -15647,7 +15658,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
+    var sdkVersion = '2020-01-15T19:52:00Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;

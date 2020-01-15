@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,21 +42,34 @@ define([
         this._logger = logger;
         this._screenSharingExtensionId = options.screenSharingExtensionId || getDefaultExtensionId();
         this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
-        this._screenSharingEnabled = false;
+        this._screenSharingEnabled = options.screenSharingEnabled || false;
+        this._screenSharingAvailable = false;
         this._isInitializedObservable = new observable.Observable(false);
 
         if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
             addLinkHeaderElement.call(this);
         }
 
-        checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
+        if (this._screenSharingEnabled) {
+            checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
+        } else {
+            handleCheckForScreenSharing.call(this, false);
+        }
     }
+
+    ScreenShareExtensionManager.prototype.checkForScreenSharingCapability = function(callback) {
+        return checkForScreenSharingCapability.call(this, function(isEnabled) {
+            handleCheckForScreenSharing.call(this, isEnabled);
+
+            callback(isEnabled);
+        });
+    };
 
     ScreenShareExtensionManager.prototype.isScreenSharingEnabled = function(callback) {
         var that = this;
 
         return waitForInitialized.call(this, function() {
-            return callback(that._screenSharingEnabled);
+            return callback(that._screenSharingAvailable);
         });
     };
 
@@ -75,7 +88,7 @@ define([
     function handleCheckForScreenSharing(isEnabled) {
         this._isInitializedObservable.setValue(true);
 
-        this._screenSharingEnabled = isEnabled;
+        this._screenSharingAvailable = isEnabled;
     }
 
     function checkForScreenSharingCapability(callback) {
@@ -279,8 +292,8 @@ define([
     function installScreenShareExtension(callback) {
         var that = this;
 
-        if (that._screenSharingEnabled) {
-            return;
+        if (that._screenSharingAvailable) {
+            return callback(null, {status: 'ok'});
         }
 
         var installCallback = function installCallback(error, status) {
@@ -292,10 +305,10 @@ define([
                 return callback(new Error('screen-sharing-installation-failed'), {status: status});
             }
 
-            checkForScreenSharingCapability.call(that, function(screenSharingEnabled) {
-                that._screenSharingEnabled = screenSharingEnabled;
+            checkForScreenSharingCapability.call(that, function(screenSharingAvailable) {
+                that._screenSharingAvailable = screenSharingAvailable;
 
-                if (!that._screenSharingEnabled) {
+                if (!that._screenSharingAvailable) {
                     return callback(new Error('screen-sharing-installation-failed'), {status: status});
                 }
 
