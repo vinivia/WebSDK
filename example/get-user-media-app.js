@@ -364,7 +364,7 @@ requirejs([
                 return;
             }
 
-            var tags = ['my-stream-id'];
+            var tags = ['my-stream-id', '💩', 'דספחלכפדחכלדפ'];
 
             var publishCallback = function publishCallback(pcast, status, phenixPublisher) {
                 if (status !== 'ok') {
