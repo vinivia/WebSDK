@@ -138,13 +138,7 @@ define([
                     return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
                 }
 
-                return that._screenShareExtensionManager.installExtension(function(error, response) {
-                    if (error || (response && response.status !== 'ok')) {
-                        return callback(error, response);
-                    }
-
-                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
-                });
+                return callback(new Error('screen-sharing-not-available'));
             });
         }
 
