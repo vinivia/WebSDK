@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6604,7 +6604,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6811,7 +6811,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7618,7 +7618,7 @@ try {
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7820,7 +7820,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -7891,7 +7891,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8042,7 +8042,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8099,7 +8099,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8174,7 +8174,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8287,7 +8287,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2019-11-25T17:22:49Z',
+                version: '2020-02-07T01:59:32Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8317,7 +8317,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8660,7 +8660,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -8838,7 +8838,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11325,7 +11325,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -11371,7 +11371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2019-11-25T17:22:49Z';
+    var sdkVersion = '2020-02-07T01:59:32Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -13833,7 +13833,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14292,7 +14292,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14341,7 +14341,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14803,7 +14803,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15025,7 +15025,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15206,7 +15206,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15340,7 +15340,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16236,7 +16236,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16339,7 +16339,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16573,7 +16573,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16779,7 +16779,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16824,7 +16824,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17422,7 +17422,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18637,7 +18637,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18879,14 +18879,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             clearTimeout(requestTimeoutId);
 
             switch (_.get(error, ['code'])) {
-                case 401:
-                    return callback(null, {status: 'unauthorized'});
-                case 404:
-                    return callback(null, {status: 'origin-not-found'});
-                case 410:
-                    return callback(null, {status: 'origin-ended'});
-                default:
-                    return callback(error, response);
+            case 401:
+                return callback(null, {status: 'unauthorized'});
+            case 404:
+                return callback(null, {status: 'origin-not-found'});
+            case 410:
+                return callback(null, {status: 'origin-ended'});
+            default:
+                return callback(error, response);
             }
         }));
 
@@ -18980,7 +18980,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20380,7 +20380,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20638,7 +20638,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20747,7 +20747,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 "use strict";
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23815,8 +23815,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
-    var releaseVersion = '2019.2.26';
+    var sdkVersion = '2020-02-07T01:59:32Z' || false;
+    var releaseVersion = '2020.1.1';
 
     function Logger() {
         this._appenders = [];
@@ -24115,7 +24115,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24179,7 +24179,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27371,7 +27371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27773,7 +27773,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29830,7 +29830,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30893,7 +30893,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30918,13 +30918,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     var defaultChromePCastScreenSharingExtensionId = 'icngjadgidcmifnehjcielbmiapkhjpn';
-    var defaultFirefoxPCastScreenSharingAddOn = _.freeze({
-        url: 'https://addons.mozilla.org/firefox/downloads/file/474686/pcast_screen_sharing-1.0.3-an+fx.xpi',
-        iconUrl: 'https://phenixp2p.com/public/images/phenix-logo-unicolor-64x64.png',
-        hash: 'sha256:4972e9718ea7f7c896abc12d1a9e664d5f3efe498539b082ab7694f9d7af4f3b'
-    });
-    var firefoxInstallationCheckInterval = 100;
-    var firefoxMaxInstallationChecks = 450;
     var minimumSupportFirefoxVersionForUnWhiteListedScreenShare = 52;
 
     function ScreenShareExtensionManager(options, logger) {
@@ -30935,27 +30928,39 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         this._logger = logger;
         this._screenSharingExtensionId = options.screenSharingExtensionId || getDefaultExtensionId();
-        this._screenSharingAddOn = options.screenSharingAddOn || defaultFirefoxPCastScreenSharingAddOn;
-        this._screenSharingEnabled = false;
+        this._eagerlyCheckScreenSharingCapabilities = options.eagerlyCheckScreenSharingCapabilities || false;
+        this._screenSharingAvailable = false;
         this._isInitializedObservable = new observable.Observable(false);
 
-        if (phenixRTC.browser === 'Chrome' && this._screenSharingExtensionId) {
-            addLinkHeaderElement.call(this);
+        if (this._eagerlyCheckScreenSharingCapabilities) {
+            checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
+        } else {
+            handleCheckForScreenSharing.call(this, false);
         }
-
-        checkForScreenSharingCapability.call(this, _.bind(handleCheckForScreenSharing, this));
     }
+
+    ScreenShareExtensionManager.prototype.checkForScreenSharingCapability = function(callback) {
+        return checkForScreenSharingCapability.call(this, function(isEnabled) {
+            handleCheckForScreenSharing.call(this, isEnabled);
+
+            callback(isEnabled);
+        });
+    };
 
     ScreenShareExtensionManager.prototype.isScreenSharingEnabled = function(callback) {
         var that = this;
 
         return waitForInitialized.call(this, function() {
-            return callback(that._screenSharingEnabled);
-        });
-    };
+            if (that._eagerlyCheckScreenSharingCapabilities || that._screenSharingAvailable) {
+                return callback(that._screenSharingAvailable);
+            }
 
-    ScreenShareExtensionManager.prototype.installExtension = function(callback) {
-        return waitForInitialized.call(this, _.bind(installScreenShareExtension, this, callback));
+            checkForScreenSharingCapability.call(that, function(isEnabled) {
+                that._screenSharingAvailable = isEnabled;
+
+                callback(isEnabled);
+            });
+        });
     };
 
     ScreenShareExtensionManager.prototype.getScreenSharingConstraints = function(options, callback) {
@@ -30969,7 +30974,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     function handleCheckForScreenSharing(isEnabled) {
         this._isInitializedObservable.setValue(true);
 
-        this._screenSharingEnabled = isEnabled;
+        this._screenSharingAvailable = isEnabled;
     }
 
     function checkForScreenSharingCapability(callback) {
@@ -30984,13 +30989,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
             try {
                 runtimeEnvironment.sendMessage(that._screenSharingExtensionId, {type: 'version'}, function(response) {
-                    if (response && response.status === 'ok') {
-                        that._logger.info('Screen sharing enabled using version [%s]', response.version);
-                        callback(true);
-                    } else {
+                    if (runtimeEnvironment.lastError || !response || response.status !== 'ok') {
                         that._logger.info('Screen sharing NOT available');
                         callback(false);
+
+                        return;
                     }
+
+                    that._logger.info('Screen sharing enabled using version [%s]', response.version);
+                    callback(true);
                 });
             } catch (e) {
                 if (e.message) {
@@ -31020,36 +31027,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         });
     }
 
-    function getChromeWebStoreLink() {
-        return 'https://chrome.google.com/webstore/detail/' + this._screenSharingExtensionId;
-    }
-
-    function addLinkHeaderElement() {
-        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
-
-        if (typeof document !== "object") {
-            return;
-        }
-
-        var links = document.getElementsByTagName('link');
-
-        for (var i = 0; i < links.length; i++) {
-            if (links[i].href === chromeWebStoreUrl) {
-                // Link already present
-                return;
-            }
-        }
-
-        this._logger.debug('Adding Chrome Web Store link [%s]', chromeWebStoreUrl);
-
-        var link = document.createElement('link');
-
-        link.rel = 'chrome-webstore-item';
-        link.href = chromeWebStoreUrl;
-
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-
     function getScreenSharingConstraints(options, callback) {
         switch (phenixRTC.browser) {
         case 'Chrome':
@@ -31062,11 +31039,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 // If it fails to request the audio the user will receive an error
                 if (!response.data && !response.options) {
                     response.options = {canRequestAudioTrack: true};
-                }
-
-                // TODO(DY) Remove once customers have updated their extensions
-                if (response.data && _.hasIndexOrKey(response.data, 'hasAudio') && !response.options) {
-                    response.options = {canRequestAudioTrack: response.data.hasAudio};
                 }
 
                 callback(null, {
@@ -31101,7 +31073,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 type: 'get-desktop-media',
                 sources: ['screen', 'window', 'tab', 'audio']
             }, function(response) {
-                var shouldCheckIfScreenShareStillInstalled = !response;
+                var shouldCheckIfScreenShareStillInstalled = runtimeEnvironment.lastError || !response;
 
                 if (shouldCheckIfScreenShareStillInstalled) {
                     return checkForScreenSharingCapability.call(that, function(isEnabled) {
@@ -31112,7 +31084,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 }
 
                 if (response.status !== 'ok') {
-                    return callback(new Error(response.status), response);
+                    callback(new Error(response.status), response);
+
+                    return;
                 }
 
                 callback(null, response);
@@ -31170,135 +31144,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         return constraints;
     }
 
-    function installScreenShareExtension(callback) {
-        var that = this;
-
-        if (that._screenSharingEnabled) {
-            return;
-        }
-
-        var installCallback = function installCallback(error, status) {
-            if (status === 'cancelled') {
-                return callback(null, {status: 'cancelled'});
-            }
-
-            if (status !== 'ok') {
-                return callback(new Error('screen-sharing-installation-failed'), {status: status});
-            }
-
-            checkForScreenSharingCapability.call(that, function(screenSharingEnabled) {
-                that._screenSharingEnabled = screenSharingEnabled;
-
-                if (!that._screenSharingEnabled) {
-                    return callback(new Error('screen-sharing-installation-failed'), {status: status});
-                }
-
-                callback(null, {status: 'ok'});
-            });
-        };
-
-        switch (phenixRTC.browser) {
-        case 'Chrome':
-            tryInstallChromeScreenSharingExtension.call(that, installCallback);
-
-            break;
-        case 'Firefox':
-            tryInstallFirefoxScreenSharingExtension.call(that, installCallback);
-
-            break;
-        default:
-            callback(new Error('not-supported'), {status: 'not-supported'});
-
-            break;
-        }
-    }
-
-    function tryInstallChromeScreenSharingExtension(callback) {
-        var that = this;
-        var chromeWebStoreUrl = getChromeWebStoreLink.call(this);
-
-        try {
-            chrome.webstore.install(chromeWebStoreUrl, function successCallback() {
-                return callback(null, 'ok');
-            }, function failureCallback(reason) {
-                if (reason) {
-                    if (reason.match(/cancelled/ig)) {
-                        that._logger.info('User cancelled screen sharing');
-
-                        return callback(new Error(reason), 'cancelled');
-                    }
-
-                    that._logger.warn(reason);
-                }
-
-                return callback(new Error(reason || 'failed'), 'failed');
-            });
-        } catch (e) {
-            if (e.message) {
-                that._logger.warn(e.message);
-            }
-
-            callback(e, 'failed');
-        }
-    }
-
-    function tryInstallFirefoxScreenSharingExtension(callback) {
-        try {
-            var params = {
-                "PCast Screen Sharing": {
-                    URL: this._screenSharingAddOn.url,
-                    IconURL: this._screenSharingAddOn.iconUrl,
-                    Hash: this._screenSharingAddOn.hash,
-                    toString: function() {
-                        return this.URL;
-                    }
-                }
-            };
-            var attemptsLeft = firefoxMaxInstallationChecks;
-            var intervalId;
-            var success = function success() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-
-                callback(null, 'ok');
-            };
-
-            var failure = function failure() {
-                if (intervalId) {
-                    clearInterval(intervalId);
-                }
-
-                callback(new Error('failed'), 'failed');
-            };
-
-            intervalId = setInterval(function() {
-                if (_.isObject(phenixRTC.global.PCastScreenSharing)) {
-                    return success();
-                }
-
-                if (attemptsLeft-- < 0) {
-                    return failure();
-                }
-            }, firefoxInstallationCheckInterval);
-
-            InstallTrigger.install(params, function xpiInstallCallback(url, status) { // eslint-disable-line no-undef
-                // Callback only works for verified sites
-                if (status === 0) {
-                    success();
-                } else {
-                    failure();
-                }
-            });
-        } catch (e) {
-            if (e.message) {
-                this._logger.warn(e.message);
-            }
-
-            callback('failed', e);
-        }
-    }
-
     function getRuntime() {
         var that = this;
 
@@ -31336,7 +31181,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31475,13 +31320,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
                 }
 
-                return that._screenShareExtensionManager.installExtension(function(error, response) {
-                    if (error || (response && response.status !== 'ok')) {
-                        return callback(error, response);
-                    }
-
-                    return that._screenShareExtensionManager.getScreenSharingConstraints(options, callback);
-                });
+                return callback(new Error('screen-sharing-not-available'));
             });
         }
 
@@ -31604,7 +31443,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31668,7 +31507,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31773,7 +31612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31798,7 +31637,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
+    var sdkVersion = '2020-02-07T01:59:32Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -32099,7 +31938,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32126,7 +31965,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2019-11-25T17:22:49Z' || false;
+    var sdkVersion = '2020-02-07T01:59:32Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -32357,7 +32196,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32466,7 +32305,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32619,7 +32458,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33028,7 +32867,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33400,7 +33239,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33693,7 +33532,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34034,7 +33873,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34341,7 +34180,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34470,7 +34309,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34690,7 +34529,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35022,7 +34861,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35141,7 +34980,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35204,7 +35043,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35347,7 +35186,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35468,7 +35307,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35538,7 +35377,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35637,7 +35476,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36050,7 +35889,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36091,7 +35930,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36500,7 +36339,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2019 Phenix Real Time Solutions, Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

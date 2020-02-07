@@ -80,7 +80,8 @@ requirejs([
                 uri: app.getUri(),
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
                 authToken: 'dud',
-                rtmp: {swfSrc: './rtmp-flash-renderer.swf'}
+                rtmp: {swfSrc: './rtmp-flash-renderer.swf'},
+                eagerlyCheckScreenSharingCapabilities: app.getUrlParameter('screenSharing') ? true : false
             };
 
             if (app.getUrlParameter('features')) {

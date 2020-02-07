@@ -123,7 +123,8 @@ requirejs([
             var pcastOptions = {
                 uri: uri,
                 shaka: app.getUrlParameter('shaka') ? shaka : null,
-                rtmp: {swfSrc: app.getSwfFilePath()}
+                rtmp: {swfSrc: app.getSwfFilePath()},
+                eagerlyCheckScreenSharingCapabilities: app.getUrlParameter('screenSharing') ? true : false
             };
 
             adminBaseUri = app.getBaseUri();
