@@ -416,7 +416,10 @@ define('app-setup', [
             'on-demand-archive=PT1D': 'VOD Archive (1 day)',
             'transcoding={"selectedQualities":["hd"]}': 'HD DASH+HLS only',
             'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only',
-            'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists'
+            'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists',
+            'monitor-tracks': 'Monitor Tracks',
+            'kill-session-on-stream-failure': 'Kill Session on Failure',
+            'abandon-deadline=PT15S': 'Data in 15s or fail'
         };
     };
 
