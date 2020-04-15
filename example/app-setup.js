@@ -419,6 +419,7 @@ define('app-setup', [
             'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists',
             'monitor-tracks': 'Monitor Tracks',
             'kill-session-on-stream-failure': 'Kill Session on Failure',
+            'setup-deadline=PT5S': 'Setup in 5s or fail',
             'abandon-deadline=PT15S': 'Data in 15s or fail'
         };
     };
