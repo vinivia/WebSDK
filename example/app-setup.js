@@ -438,7 +438,8 @@ define('app-setup', [
             'broadcast': 'Broadcast',
             'streaming': 'Live',
             'on-demand': 'On Demand',
-            'rtmp': 'Rtmp'
+            'rtmp': 'Rtmp',
+            'any-stream': 'Any Stream'
         };
     };
 
