@@ -267,7 +267,9 @@ define('app-setup', [
             return;
         }
 
-        $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
+        if (getUrlParameter('auto-scroll') !== 'false') {
+            $('html, body').animate({scrollTop: $('.' + enabledSteps[enabledSteps.length - 1]).offset().top - ($(window).height() / 3)}, 'slow');
+        }
     };
 
     var activateStep = function activateStep(step) {
