@@ -351,7 +351,17 @@ requirejs([
 
             capabilities.push('publish-uri');
 
-            capabilities.push($('#publish-quality button.clicked').val());
+            var audioQuality = $('#publish-audio-quality button.clicked').val();
+
+            if (audioQuality) {
+                capabilities.push(audioQuality);
+            }
+
+            var videoQuality = $('#publish-video-quality button.clicked').val();
+
+            if (videoQuality) {
+                capabilities.push(videoQuality);
+            }
 
             return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
                 app.activateStep('step-6');

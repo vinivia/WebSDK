@@ -112,11 +112,19 @@ define('app-setup', [
             });
         }
 
-        if (document.getElementById('publish-quality')) {
-            _.forOwn(getPublisherQualities(), function(title, quality) {
+        if (document.getElementById('publish-audio-quality')) {
+            _.forOwn(getPublisherAudioQualities(), function(title, quality) {
+                const isSelected = false;
+
+                addButton('#publish-audio-quality', title, quality, isSelected);
+            });
+        }
+
+        if (document.getElementById('publish-video-quality')) {
+            _.forOwn(getPublisherVideoQualities(), function(title, quality) {
                 const isSelected = quality === defaultPublisherQuality;
 
-                addButton('#publish-quality', title, quality, isSelected);
+                addButton('#publish-video-quality', title, quality, isSelected);
             });
         }
 
@@ -157,8 +165,8 @@ define('app-setup', [
         });
 
         $('.form-single-button-control button').click(function(){
-            $('.form-single-button-control button').removeClass('clicked');
-            $(this).addClass('clicked');
+            $(this).siblings().removeClass('clicked');
+            $(this).toggleClass('clicked');
         });
 
         $('#environment').change(function() {
@@ -408,8 +416,6 @@ define('app-setup', [
             'playout-buffer=PT0.8S': 'PB 0.8s',
             'playout-buffer=PT1.0S': 'PB 1.0s',
             'playout-buffer=PT2.0S': 'PB 2.0s',
-            'audio-only': 'Audio Only',
-            'high-fidelity': 'High Fidelity Audio',
             'origin-shield': 'Origin Shield',
             'scale-wide': 'Scale Wide',
             'scale-elastic': 'Scale Elastic',
@@ -437,6 +443,7 @@ define('app-setup', [
     var getSubscriberCapabilities = function() {
         return {
             'audio-only': 'Audio Only',
+            'video-only': 'Video Only',
             'real-time': 'Real-time',
             'prefer-vp8': 'Real-time VP8 (Prefer)',
             'prefer-vp8=force': 'Real-time VP8 (Force)',
@@ -454,8 +461,17 @@ define('app-setup', [
         };
     };
 
-    var getPublisherQualities = function() {
+    var getPublisherAudioQualities = function() {
         return {
+            'video-only': 'Video Only',
+            'default-fidelity': 'Default Fidelity',
+            'high-fidelity': 'High Fidelity'
+        };
+    };
+
+    var getPublisherVideoQualities = function() {
+        return {
+            'audio-only': 'Audio Only',
             'uld': 'ULD',
             'vvld': 'VVLD',
             'vld': 'VLD',
