@@ -272,7 +272,6 @@ define([
                     case 'ended':
                     case 'origin-ended':
                     case 'origin-stream-ended':
-                    case 'unsupported-features':
                         memberSelector.markDead();
 
                         break;

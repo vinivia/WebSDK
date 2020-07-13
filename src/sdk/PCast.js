@@ -510,65 +510,54 @@ define([
                 } else if (response.status !== 'ok') {
                     that._logger.warn('Failed to create downloader, status [%s]', response.status);
 
-                    switch (response.status) {
-                    case 'capacity':
-                    case 'stream-ended':
-                    case 'origin-stream-ended':
-                    case 'origin-not-found':
-                    case 'streaming-not-available':
-                    case 'unauthorized':
-                    case 'timeout':
-                        return callback.call(that, that, response.status);
-                    default:
-                        return callback.call(that, that, 'failed');
-                    }
-                } else {
-                    var streamId = response.createStreamResponse.streamId;
-                    var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
-                    var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
-                    var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-                    var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
-
-                    if (isNotRealTime) {
-                        create = createChunkedOrRtmpViewer;
-                    }
-
-                    streamTelemetry.setStreamId(streamId);
-                    streamTelemetry.setStartOffset(response.createStreamResponse.offset);
-                    streamTelemetry.recordMetric('Provisioned');
-                    streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
-                        resource: that.getBaseUri(),
-                        kind: 'https'
-                    });
-
-                    createViewerOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
-
-                    if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
-                        // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
-                        var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
-                        var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
-
-                        if (!preferredLevelId) {
-                            that._logger.warn('[%s] Unable to find new subscriber h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
-                                streamId, profileLevelIdToReplace, that._h264ProfileIds);
-                        } else if (profileLevelIdToReplace !== preferredLevelId) {
-                            that._logger.info('[%s] Replacing subscriber h264 profile level id [%s] with new value [%s] in offer sdp',
-                                streamId, profileLevelIdToReplace, preferredLevelId);
-
-                            offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, profileLevelIdToReplace, preferredLevelId);
-                        }
-                    }
-
-                    return create.call(that, streamId, offerSdp, streamTelemetry, function(phenixMediaStream, error) {
-                        streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
-
-                        if (error) {
-                            callback.call(that, that, 'failed', null);
-                        } else {
-                            callback.call(that, that, 'ok', phenixMediaStream);
-                        }
-                    }, createViewerOptions);
+                    return callback.call(that, that, response.status);
                 }
+
+                var streamId = response.createStreamResponse.streamId;
+                var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
+                var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
+                var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
+                var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
+
+                if (isNotRealTime) {
+                    create = createChunkedOrRtmpViewer;
+                }
+
+                streamTelemetry.setStreamId(streamId);
+                streamTelemetry.setStartOffset(response.createStreamResponse.offset);
+                streamTelemetry.recordMetric('Provisioned');
+                streamTelemetry.recordMetric('RoundTripTime', {uint64: that._networkOneWayLatency * 2}, null, {
+                    resource: that.getBaseUri(),
+                    kind: 'https'
+                });
+
+                createViewerOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
+
+                if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                    // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
+                    var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
+                    var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
+
+                    if (!preferredLevelId) {
+                        that._logger.warn('[%s] Unable to find new subscriber h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
+                            streamId, profileLevelIdToReplace, that._h264ProfileIds);
+                    } else if (profileLevelIdToReplace !== preferredLevelId) {
+                        that._logger.info('[%s] Replacing subscriber h264 profile level id [%s] with new value [%s] in offer sdp',
+                            streamId, profileLevelIdToReplace, preferredLevelId);
+
+                        offerSdp = sdpUtil.replaceH264ProfileId(offerSdp, profileLevelIdToReplace, preferredLevelId);
+                    }
+                }
+
+                return create.call(that, streamId, offerSdp, streamTelemetry, function(phenixMediaStream, error) {
+                    streamTelemetry.recordMetric('SetupCompleted', {string: error ? 'failed' : 'ok'});
+
+                    if (error) {
+                        callback.call(that, that, 'failed', null);
+                    } else {
+                        callback.call(that, that, 'ok', phenixMediaStream);
+                    }
+                }, createViewerOptions);
             });
         });
     };
