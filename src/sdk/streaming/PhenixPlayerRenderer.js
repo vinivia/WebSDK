@@ -21,11 +21,10 @@ define([
     'phenix-web-event',
     'phenix-web-http',
     'phenix-web-disposable',
-    'phenix-web-player',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, logging, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var bandwidthAt720 = 3000000;
@@ -33,12 +32,13 @@ define([
     var minTimeBeforeNextReload = 15000;
     var originStreamReadyDuration = 6000;
 
-    function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, logger) {
+    function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, webPlayer, logger) {
         this._logger = logger;
         this._streamId = streamId;
         this._manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
         this._streamTelemetry = streamTelemetry;
         this._options = options;
+        this._webPlayer = webPlayer;
         this._renderer = null;
         this._element = null;
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
@@ -59,7 +59,7 @@ define([
     }
 
     PhenixPlayerRenderer.isSupported = function() {
-        return phenixWebPlayer.isSupported;
+        return this._webPlayer && this._webPlayer.isSupported;
     };
 
     PhenixPlayerRenderer.prototype.on = function(name, callback) {
@@ -68,9 +68,9 @@ define([
 
     PhenixPlayerRenderer.prototype.start = function(elementToAttachTo) {
         var that = this;
-        var loggerAtWarningThreshold = createWarningThresholdLogger(this._logger);
+        var loggerAtInfoThreshold = createInfoThresholdLogger(this._logger);
 
-        this._throttledLogger = loggerAtWarningThreshold;
+        this._throttledLogger = loggerAtInfoThreshold;
         this._element = elementToAttachTo;
 
         this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
@@ -216,7 +216,7 @@ define([
             }
         }
 
-        var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._element, playerOptions);
+        var webPlayer = new this._webPlayer.WebPlayer(this._throttledLogger, this._element, playerOptions);
         var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
         if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent && _.includes(this._manifestUri, '.m3u8')) {
@@ -231,7 +231,7 @@ define([
     }
 
     function handleError(e) {
-        if (canReload.call(this) && e && (e.code === 3 || e.severity === phenixWebPlayer.errors.severity.RECOVERABLE)) {
+        if (canReload.call(this) && e && (e.code === 3 || e.severity === this._webPlayer.errors.severity.RECOVERABLE)) {
             this._logger.warn('Reloading unhealthy stream after error event [%s]', e);
 
             return reloadIfAble.call(this);
@@ -339,8 +339,7 @@ define([
         this._logger.info('[%s] Phenix stream player ended.', this._streamId);
     }
 
-    // Temporary measure. The phenix-web-player logs a lot of debug, info, and trace data
-    function createWarningThresholdLogger(logger) {
+    function createInfoThresholdLogger(logger) {
         var appenders = logger.getAppenders();
         var throttledLogger = new logging.Logger();
 

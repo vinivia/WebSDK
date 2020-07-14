@@ -18,13 +18,12 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
-    'phenix-web-player',
     '../AdminApiProxyClient',
     '../userMedia/UserMediaResolver',
     '../PCast',
     'phenix-rtc',
     '../streaming/shaka.json'
-], function(_, assert, observable, phenixWebPlayer, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
+], function(_, assert, observable, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var instanceCounter = 0;
@@ -979,7 +978,9 @@ define([
                     return; // Ignore error
                 }
 
-                if (errorType === 'phenix-player' && error.severity === phenixWebPlayer.errors.severity.RECOVERABLE) {
+                var RECOVERABLE = 1;
+
+                if (errorType === 'phenix-player' && error.severity === RECOVERABLE) {
                     that._logger.warn('[%s] [%s] Recoverable error occurred while playing stream with Express API. Attempting to subscribe again.', this, expressSubscriber.getStreamId(), error);
 
                     var reAuthOptions = _.assign({isContinuation: true}, options);

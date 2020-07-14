@@ -19,21 +19,21 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-rtc',
-    'phenix-web-player',
     './ShakaRenderer',
     './PhenixPlayerRenderer',
     './FlashRenderer',
     './stream.json'
-], function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
+], function(_, assert, event, rtc, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
     'use strict';
 
-    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
+    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, webPlayer, logger) {
         this._type = type;
         this._streamId = streamId;
         this._uri = uri;
         this._streamTelemetry = streamTelemetry;
         this._options = options;
         this._shaka = shaka;
+        this._webPlayer = webPlayer,
         this._logger = logger;
         this._renderers = [];
         this._dimensionsChangedMonitor = null;
@@ -49,15 +49,21 @@ define([
 
         switch (this._type) {
         case streamEnums.types.dash.name:
-            if (this._shaka) {
+            if (this._webPlayer) {
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._webPlayer, this._logger);
+            } else if (this._shaka) {
+                if (!this._shaka.Player.isBrowserSupported()) {
+                    this._logger.warn('[%s] Shaka does not support this browser', this._streamId);
+
+                    throw new Error('Shaka does not support this browser');
+                }
+
                 renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
-            } else {
-                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
             }
 
             break;
         case streamEnums.types.hls.name:
-            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._webPlayer, this._logger);
 
             break;
         case streamEnums.types.rtmp.name:
@@ -159,11 +165,14 @@ define([
     };
 
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
+        var deviceSupportsDashPlayback = !!rtc.global.MediaSource;
+        var deviceSupportsHlsPlayback = deviceSupportsDashPlayback || (typeof document === 'object' && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe');
+
         switch (type) {
         case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+            return deviceSupportsDashPlayback;
         case streamEnums.types.hls.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
+            return deviceSupportsHlsPlayback;
         case streamEnums.types.rtmp.name:
             return FlashRenderer.isSupported();
         default:

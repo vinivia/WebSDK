@@ -59,10 +59,9 @@ requirejs([
     'jquery',
     'lodash',
     'phenix-web-sdk',
-    'shaka-player',
     'video-player',
     'app-setup'
-], function($, _, sdk, shaka, Player, app) {
+], function($, _, sdk, Player, app) {
     var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
     var stopButton = document.getElementById('stopButton');
     var publishScreenShareButton = document.getElementById('publishScreenButton');
@@ -94,7 +93,24 @@ requirejs([
                 treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true',
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
-                shaka: shaka
+                shakaLoader: function(callback) {
+                    if (!app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['shaka-player'], function(shaka) {
+                        callback(shaka);
+                    });
+                },
+                webPlayerLoader: function(callback) {
+                    if (app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['phenix-web-player'], function(webPlayer) {
+                        callback(webPlayer);
+                    });
+                }
             });
 
             if (app.getUrlParameter('debug') === 'true') {

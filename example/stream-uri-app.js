@@ -61,10 +61,9 @@ requirejs([
     'bootstrap-notify',
     'fingerprintjs2',
     'phenix-web-sdk',
-    'shaka-player',
     'video-player',
     'app-setup'
-], function($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
+], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var primaryPlayer = null;
@@ -91,7 +90,24 @@ requirejs([
                 pcast = new sdk.lowLevel.PCast({
                     uri: uri,
                     deviceId: fingerprint,
-                    shaka: app.getUrlParameter('shaka') ? shaka : null
+                    shakaLoader: function(callback) {
+                        if (!app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['shaka-player'], function(shaka) {
+                            callback(shaka);
+                        });
+                    },
+                    webPlayerLoader: function(callback) {
+                        if (app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['phenix-web-player'], function(webPlayer) {
+                            callback(webPlayer);
+                        });
+                    }
                 });
 
                 if (app.getUrlParameter('debug') === 'true') {

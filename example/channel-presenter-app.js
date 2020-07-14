@@ -59,10 +59,9 @@ requirejs([
     'jquery',
     'lodash',
     'phenix-web-sdk',
-    'shaka-player',
     'video-player',
     'app-setup'
-], function($, _, sdk, shaka, Player, app) {
+], function($, _, sdk, Player, app) {
     var channelExpress;
     var channelPublisher;
     var publisherPlayer;
@@ -78,7 +77,24 @@ requirejs([
             channelExpress = new sdk.express.ChannelExpress({
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
-                shaka: app.getUrlParameter('shaka') ? shaka : null,
+                shakaLoader: function(callback) {
+                    if (!app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['shaka-player'], function(shaka) {
+                        callback(shaka);
+                    });
+                },
+                webPlayerLoader: function(callback) {
+                    if (app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['phenix-web-player'], function(webPlayer) {
+                        callback(webPlayer);
+                    });
+                },
                 rtmp: {swfSrc: app.getSwfFilePath()}
             });
 
