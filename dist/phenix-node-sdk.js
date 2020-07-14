@@ -198,7 +198,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
- * Copyright 2019 Phenix Real Time Solutions Inc. All Rights Reserved.
+ * Copyright 2020 Phenix Real Time Solutions Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -6105,7 +6105,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     'use strict';
 
     var log = function() {
-        console.log.apply(console, arguments);
+        // console.log.apply(console, arguments);
     };
 
     var browser = new DetectBrowser(navigator.userAgent).detect();
@@ -6250,6 +6250,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function navigatorGetUserMedia(constraints, successCallback, errorCallback) {
         var onSuccess = _.bind(handleGetUserMediaSuccess, this, constraints, successCallback, errorCallback);
+
+        if (navigator && navigator.mediaDevices && _.isFunction(navigator.mediaDevices.getUserMedia)) {
+            return navigator.mediaDevices.getUserMedia(constraints)
+                .then(function (mediaStream) {
+                    return onSuccess(mediaStream);
+                }).catch(function (e) {
+                    return errorCallback(e);
+                });
+        }
 
         if (navigator && _.isFunction(navigator.getUserMedia)) {
             return navigator.getUserMedia(constraints, onSuccess, errorCallback);
@@ -8287,7 +8296,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2020-07-13T16:27:21Z',
+                version: '2020-07-14T12:25:12Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -11371,7 +11380,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2020-07-13T16:27:21Z';
+    var sdkVersion = '2020-07-14T12:25:12Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -23804,8 +23813,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-13T16:27:21Z' || false;
-    var releaseVersion = '2020.1.3';
+    var sdkVersion = '2020-07-14T12:25:12Z' || false;
+    var releaseVersion = '2020.2.1';
 
     function Logger() {
         this._appenders = [];
@@ -31626,7 +31635,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-13T16:27:21Z' || false;
+    var sdkVersion = '2020-07-14T12:25:12Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -31954,7 +31963,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-13T16:27:21Z' || false;
+    var sdkVersion = '2020-07-14T12:25:12Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
