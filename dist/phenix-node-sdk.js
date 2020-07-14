@@ -106,7 +106,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 64);
+/******/ 	return __webpack_require__(__webpack_require__.s = 63);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -129,7 +129,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(81)
+    __webpack_require__(80)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(LodashLight) {
     'use strict';
 
@@ -157,7 +157,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(83)
+    __webpack_require__(82)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert) {
     return assert;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
@@ -183,8 +183,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(84),
-    __webpack_require__(85)
+    __webpack_require__(83),
+    __webpack_require__(84)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Disposable, DisposableList) {
     return {
         Disposable: Disposable,
@@ -214,7 +214,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
-		module.exports = factory(__webpack_require__(0), __webpack_require__(21), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4), __webpack_require__(5));
+		module.exports = factory(__webpack_require__(0), __webpack_require__(39), __webpack_require__(1), __webpack_require__(2), __webpack_require__(4), __webpack_require__(5));
 	else { var i, a; }
 })(this, function(__WEBPACK_EXTERNAL_MODULE_1__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_6__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_8__, __WEBPACK_EXTERNAL_MODULE_16__) {
 return /******/ (function(modules) { // webpackBootstrap
@@ -6536,9 +6536,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(41),
-    __webpack_require__(86),
-    __webpack_require__(87)
+    __webpack_require__(40),
+    __webpack_require__(85),
+    __webpack_require__(86)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Observable, ObservableArray, ObservableMonitor) {
     'use strict';
 
@@ -6570,8 +6570,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(42),
-    __webpack_require__(88)
+    __webpack_require__(41),
+    __webpack_require__(87)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Event, NamedEvents) {
     return {
         Event: Event,
@@ -6600,7 +6600,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(108)
+    __webpack_require__(107)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(http) {
     'use strict';
 
@@ -6726,7 +6726,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(90)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(89)], __WEBPACK_AMD_DEFINE_RESULT__ = (function(getGlobal) {
     'use strict';
 
     return getGlobal();
@@ -6770,9 +6770,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(89),
-    __webpack_require__(91),
-    __webpack_require__(22)
+    __webpack_require__(88),
+    __webpack_require__(90),
+    __webpack_require__(20)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(Logger, ConsoleAppender, logging) {
     'use strict';
 
@@ -6789,34 +6789,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 /***/ }),
 /* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(110)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
-    'use strict';
-
-    return new ApplicationActivityDetector();
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -6941,16 +6913,16 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const Limiter = __webpack_require__(70);
-const zlib = __webpack_require__(71);
+const Limiter = __webpack_require__(69);
+const zlib = __webpack_require__(70);
 
-const bufferUtil = __webpack_require__(14);
+const bufferUtil = __webpack_require__(13);
 const { kStatusCode, NOOP } = __webpack_require__(9);
 
 const TRAILER = Buffer.from([0x00, 0x00, 0xff, 0xff]);
@@ -7466,7 +7438,7 @@ function inflateOnError(err) {
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7589,7 +7561,7 @@ function viewToBuffer(view) {
 }
 
 try {
-  const bufferUtil = __webpack_require__(72);
+  const bufferUtil = __webpack_require__(71);
   const bu = bufferUtil.BufferUtil || bufferUtil;
 
   module.exports = {
@@ -7617,13 +7589,35 @@ try {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(e,t){if(true)module.exports=t(__webpack_require__(1),__webpack_require__(0),__webpack_require__(10),__webpack_require__(5),__webpack_require__(2),__webpack_require__(3),__webpack_require__(6),__webpack_require__(21),__webpack_require__(11));else { var n, i; }}(this,function(e,t,i,n,r,a,s,o,l){return function(e){function t(n){if(i[n])return i[n].exports;var r=i[n]={i:n,l:!1,exports:{}};return e[n].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var i={};return t.m=e,t.c=i,t.d=function(e,i,n){t.o(e,i)||Object.defineProperty(e,i,{configurable:!1,enumerable:!0,get:n})},t.n=function(e){var i=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(i,"a",i),i},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=22)}([function(t,i){t.exports=e},function(e,i){e.exports=t},function(e,t){e.exports=i},function(e,t){e.exports=n},function(e,t){e.exports=r},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(10),i(7),i(23),i(24),i(13),i(15),i(26),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c,d,h){"use strict";function g(e,a){a&&t.isStringNotEmpty(a,"playlistUrl"),this.parsedPlaylist=null,this._logger=e||new i.Logger,this.playlistUrl=a,this.baseUrl=a?a.substring(0,a.lastIndexOf("/")+1):"",this._name=a?a.substring(a.lastIndexOf("/"),a.length):"",this._trackAddedEvent=new n.Event,this._playlistTracksByMimeType={},this._mimeTypes=[],this._deliveryType=m(this.playlistUrl),this._type=null,this._localToServerTimeOffset=0,this._disposables=new r.DisposableList,this._disposables.add(this._trackAddedEvent)}function f(t,i){return 0===e.keys(i).length?t:e.filter(t,function(t){return function(t,i){var n=t.getHeight()||0,r=t.getBandwidth()||0;return e.reduce(i,function(e,t,i){switch(i){case"maxHeight":return n<=t;case"minHeight":return n>=t;case"maxBandwidth":return r<=t;case"minBandwidth":return r>=t;default:throw new Error("Unknown restriction "+i)}},!1)}(t,i)})}function p(i,n){t.isInstanceOf(i,s,"track"),n=n||e.noop,t.isFunction(n,"eventCallback");var a=i.getMimeType();this._playlistTracksByMimeType[a]||(this._playlistTracksByMimeType[a]=[]),e.includes(this._playlistTracksByMimeType[a],i)||this._playlistTracksByMimeType[a].push(i),e.includes(this._mimeTypes,a)||this._mimeTypes.push(a),this._disposables.add(new r.Disposable(function(){i.dispose()})),this._trackAddedEvent.fireAsync([i],this,n)}function m(e){return/[.]mpd\??[^\s]*/i.test(e)?"Dash":/[.]m3u8\??[^\s]*/i.test(e)?"Hls":null}function y(t,i,n,r){if(n&&n.attempts===v){var a="Failed to get playlist ["+t+"] with max retries of ["+v+" after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return this._logger.warn(a),r(_(h.name.playlistNotFound.name,h.severity.CRITICAL,a))}if(0===i.code){var s="Failed to get playlist ["+t+"] with timeout after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"]";return this._logger.warn(s),r(_(h.name.timeout.name,h.severity.RECOVERABLE,s))}return this._logger.warn("Failed to load playlist [%s]. Status code: [%s] (status text: [%s])",t,i.code,i.message),r(_(h.name.error.name,h.severity.CRITICAL,i))}function _(e,t,i){return{category:h.category.PLAYLIST,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var v=5,b=0;return g.prototype.toString=function(){return"Playlist [playlistUrl="+this.playlistUrl+", baseUrl="+this.baseUrl+", mimeTypes="+this._mimeTypes+", trackAddedEvent(size)="+this._trackAddedEvent.size()+", playlistTracks="+this.getAllPlaylistTracks()+"]"},g.prototype.dispose=function(){this._playlistTracksByMimeType={},this._disposables.dispose()},g.prototype.getPlaylistTracksByMimeType=function(e){return this._playlistTracksByMimeType[e]},g.prototype.fetch=function(t){(function(t){var i=this;a.getWithRetry(i.playlistUrl,{retryOptions:{backoff:1,delay:1e3,maxAttempts:v,additionalRetryErrorCodes:[b]}},function(n,r){if(n)return y.call(i,i.playlistUrl,n,r,t);(function(t,i,n){var r=null,s=[],h=this;switch(this._deliveryType){case"Dash":r=new u(h._logger,t);var g=new d(h._logger,r.timeSources,i);h._disposables.add(g),h.parsedPlaylist=r,h._availabilityStartTime=h.parsedPlaylist.availabilityStartTime?h.parsedPlaylist.availabilityStartTime.getTime():null,h._publishTime=h.parsedPlaylist.publishTime?h.parsedPlaylist.publishTime.getTime():null,h._suggestedPresentationDelayTotalMillis=e.get(h.parsedPlaylist,["suggestedPresentationDelay","totalMillis"],null),h._totalMediaTimeInMillis=e.get(h.parsedPlaylist,["mediaPresentationDuration","totalMillis"],1/0),h._minBufferTimeTotalMillis=e.get(h.parsedPlaylist,["minBufferTime","totalMillis"],null),h._type=h.parsedPlaylist.type,s=function(t){var i=this;return e.map(t.representations,function(e){return{chunkDuration:e.duration,dataChunkUrlTemplate:e.media,codec:e.mseCodec,bandwidth:e.bandwidth,height:e.height,trackId:e.id,initUrl:e.initialization,mimeType:e.mimeType,totalNumberOfChunks:Math.ceil(i._totalMediaTimeInMillis/e.duration)}})}.call(h,h.parsedPlaylist),e.forEach(s,function(e){p.call(h,new o(h._logger,e))}),g.calculateOffset(function(e,t){h._localToServerTimeOffset=t,n()}),g.setInterval(function e(t,i){if(t)return h._warn("Unable to get server local time offset",t),g.setInterval(e);h._localToServerTimeOffset=i});break;case"Hls":r=new c(h._logger,h._name,t),h.parsedPlaylist=r,h._availabilityStartTime=null,h._minBufferTimeTotalMillis=0,h._suggestedPresentationDelayTotalMillis=0,h._totalMediaTimeInMillis=1/0;var f=0;e.forEach(r.streamVariants,function(e){var t=h.baseUrl+e.name,i=new l(h._logger,{mediaSegmentPlaylistUrl:t,codecs:e.codecs.join(","),bandwidth:e.bandwidth,trackId:e.name,mimeType:"application/octet-stream",height:null});a.getWithRetry(t,{retryOptions:{maxAttempts:v,backoff:1}},function(e,a){if(e)return y.call(h,t,e,a,n);i.updateMediaSegments(a.data),p.call(h,i),++f===r.streamVariants.length&&(h._type=i.isComplete()?"static":"dynamic","static"===h._type&&(h._totalMediaTimeInMillis=1e3*i.getPlayableDuration()),n())})});break;default:throw h._logger.error("[%s] Unsupported Delivery Type [%s]",h.playlistUrl,m(h.playlistUrl)),new Error("Unsupported Delivery Type "+m(h.playlistUrl))}}).call(i,r.data,r.stats.successResponseTime,function(){t(n,{raw:r,parsed:i.parsedPlaylist})})})}).call(this,t)},g.prototype.getType=function(){return this._type},g.prototype.getDeliveryType=function(){return this._deliveryType},g.prototype.getPlaylistTracksByBandwidthPerMimeType=function(i,n){t.isObject(n,"restrictions");var r=this,a=e.map(this._mimeTypes,function(t){var a=f(r.getPlaylistTracksByMimeType(t),n),s=e.reduce(a,function(e,t){return t.getBandwidth()>i?e:e&&e.getBandwidth()>t.getBandwidth()?e:t},null)||r.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(0,t,n);if(s)return s;var o=e.get(e.filter(a,function(e){return!e.getBandwidth()}),"0");if(o)return r._logger.debug("Unable to get track with bandwidth [%s] and restrictions [%s]. Falling back to track [%s].",i,JSON.stringify(n),o.getTrackId()),o;r._logger.warn("Unable to get track with bandwidth [%s] and restrictions [%s]. No other tracks to fallback on.",i,JSON.stringify(n))});return e.filter(a,function(t){return!e.isNullOrUndefined(t)})},g.prototype.getPlaylistTrackByBandwidthAndMimeType=function(t,i){return e.find(this.getPlaylistTracksByBandwidthPerMimeType(t,{}),function(e){return e.getMimeType()===i})},g.prototype.getPlaylistTrackByMimeTypeAndNextHighestBandwidth=function(t,i,n){var r=f(this.getPlaylistTracksByMimeType(i),n);return e.reduce(r,function(e,i){return i.getBandwidth()<=t?e:e?e.getBandwidth()>i.getBandwidth()?i:e:i},null)},g.prototype.getAllPlaylistTracks=function(){return[].concat.apply([],e.values(this._playlistTracksByMimeType))},g.prototype.getMimeTypes=function(){return this._mimeTypes},g.prototype.getPlaybackDurationSinceAvailable=function(){return this.currentServerTime()-this._availabilityStartTime},g.prototype.getPlaybackDurationSincePublish=function(){return this.currentServerTime()-this._publishTime},g.prototype.getSuggestedPresentationDelayTotalMillis=function(){return this._suggestedPresentationDelayTotalMillis},g.prototype.getTotalMediaTimeInMillis=function(){return this._totalMediaTimeInMillis},g.prototype.getMinBufferTimeTotalMillis=function(){return this._minBufferTimeTotalMillis},g.prototype.getLocalToServerTimeOffset=function(){return this._localToServerTimeOffset},g.prototype.currentServerTime=function(){return e.now()-this._localToServerTimeOffset},g.prototype.getMaxChunkDuration=function(){return e.reduce(this.getAllPlaylistTracks(),function(e,t){return Math.max(t.getChunkDuration(),e)},0)},g.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackadded":return this._trackAddedEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},g}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n;void 0!==(n=function(){"use strict";return{name:{chunkNotFound:{id:0,name:"chunk-not-found"},timeout:{id:1,name:"timeout"},error:{id:2,name:"error"},playlistNotFound:{id:3,name:"playlist-not-found"},progressTimeOut:{id:4,name:"progress-timeout"},hlsNativeError:{id:5,name:"hls-native-error"}},category:{PLAYLIST:4,STREAMING:5,DRM:6},severity:{RECOVERABLE:1,CRITICAL:2}}}.apply(t,[]))&&(e.exports=n)},function(e,t,i){var n,r;n=[i(0)],void 0!==(r=function(e){"use strict";function t(t,i,n){e.isObject(t,"logger")}return t.prototype.toString=function(){return"IPlaylistTrack[]"},t.prototype.dispose=function(){throw new Error("Must be implemented")},t.prototype.getMseCodec=function(){throw new Error("Must be implemented")},t.prototype.getTrackId=function(){throw new Error("Must be implemented")},t.prototype.getChunkDuration=function(){throw new Error("Must be implemented")},t.prototype.getBandwidth=function(){throw new Error("Must be implemented")},t.prototype.getHeight=function(){throw new Error("Must be implemented")},t.prototype.getMimeType=function(){throw new Error("Must be implemented")},t.prototype.getTotalNumberOfChunks=function(){throw new Error("Must be implemented")},t.prototype.getCurrentChunkId=function(){throw new Error("Must be implemented")},t.prototype.setCurrentChunkId=function(e){throw new Error("Must be implemented")},t.prototype.incrementCurrentChunkId=function(){throw new Error("Must be implemented")},t.prototype.addDataChunk=function(e,t,i){throw new Error("Must be implemented")},t.prototype.getChunks=function(){throw new Error("Must be implemented")},t.prototype.addEventListener=function(e,t){throw new Error("Must be implemented")},t}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=a},function(e,t,i){var n,r;n=[i(1),i(2)],void 0!==(r=function(e,t){"use strict";function i(e,i){this._options=i||{},this._logger=e||new t.Logger,this._rateDataPoints={},this._ewmaPeriods=i.ewmaPeriods||null,this._ewmaMultiplier=this._ewmaPeriods?2/(this._ewmaPeriods+1):null}function n(e,t,i,n,r){var a=(i*(e.length-1)+r(t))/e.length;if(n>0)for(;t.added-e[0].added>n;){var s=e.shift();a=(a*(e.length+1)-r(s))/e.length}return a}return i.prototype.toString=function(){var t=this;return"StatsProvider [rateDataPoints(keys)="+e.keys(this._rateDataPoints)+", rateDataPoints="+e.toString(e.map(this._rateDataPoints,function(e,i){return t.getRateAverages(i)}))+", options="+this._options+"]"},i.prototype.dispose=function(){delete this._rateDataPoints},i.prototype.addRateDataPoint=function(t,i,r,a){if(!e.isNullOrUndefined(this._rateDataPoints)){this._rateDataPoints[t]||(this._rateDataPoints[t]={tenSecDataPoints:[],thirtySecDataPoints:[],oneMinDataPoints:[],twoMinDataPoints:[],ewmaDataPoints:[],tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,smaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0,smaDuration:0});var s={duration:i,amount:r,durationToSecondsFactor:a,rate:r/(i*a),added:e.now()};(function(e,t){var i=function(e){return e.rate},r=function(e){return e.duration};e.tenSecDataPoints.push(t),e.thirtySecDataPoints.push(t),e.oneMinDataPoints.push(t),e.twoMinDataPoints.push(t),e.tenSecAverageRate=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageRate,1e4,i),e.thirtySecAverageRate=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageRate,3e4,i),e.oneMinAverageRate=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageRate,6e4,i),e.twoMinAverageRate=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageRate,12e4,i),e.tenSecAverageDuration=n.call(this,e.tenSecDataPoints,t,e.tenSecAverageDuration,1e4,r),e.thirtySecAverageDuration=n.call(this,e.thirtySecDataPoints,t,e.thirtySecAverageDuration,3e4,r),e.oneMinAverageDuration=n.call(this,e.oneMinDataPoints,t,e.oneMinAverageDuration,6e4,r),e.twoMinAverageDuration=n.call(this,e.twoMinDataPoints,t,e.twoMinAverageDuration,12e4,r),this._ewmaMultiplier&&(e.ewmaDataPoints.push(t),e.smaRate=n.call(this,e.ewmaDataPoints,t,e.smaRate,-1,i),e.smaDuration=n.call(this,e.ewmaDataPoints,t,e.smaDuration,-1,r),e.ewmaDataPoints.length>=this._ewmaPeriods&&(e.ewmaDataPoints.shift(),e.ewmaDataPoints.length===this._ewmaPeriods?(e.ewmaRate=e.smaRate,e.ewmaDuration=e.smaDuration):(e.ewmaRate=this._ewmaMultiplier*(e.smaRate-e.ewmaRate)+e.ewmaRate,e.ewmaDuration=this._ewmaMultiplier*(e.smaDuration-e.ewmaDuration)+e.ewmaDuration)))}).call(this,this._rateDataPoints[t],s)}},i.prototype.getRateAverages=function(t){if(!e.get(this._rateDataPoints,[t]))return{tenSecAverageRate:0,thirtySecAverageRate:0,oneMinAverageRate:0,twoMinAverageRate:0,ewmaRate:0,tenSecAverageDuration:0,thirtySecAverageDuration:0,oneMinAverageDuration:0,twoMinAverageDuration:0,ewmaDuration:0};var i=this._rateDataPoints[t];return{tenSecAverageRate:i.tenSecAverageRate,thirtySecAverageRate:i.thirtySecAverageRate,oneMinAverageRate:i.oneMinAverageRate,twoMinAverageRate:i.twoMinAverageRate,ewmaRate:i.ewmaRate,tenSecAverageDuration:i.tenSecAverageDuration,thirtySecAverageDuration:i.thirtySecAverageDuration,oneMinAverageDuration:i.oneMinAverageDuration,twoMinAverageDuration:i.twoMinAverageDuration,ewmaDuration:i.ewmaDuration}},i}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=s},function(e,t){e.exports=o},function(e,t,i){var n,r;n=[i(0)],void 0!==(r=function(e){"use strict";function t(t,i,n,r){e.isObject(t,"logger")}return t.prototype.toString=function(){return"IPlaylistChunkFeeder[]"},t.prototype.dispose=function(){throw new Error("Must be implemented")},t.prototype.initialize=function(e,t,i,n){throw new Error("Must be implemented")},t.prototype.setActiveTracks=function(e){throw new Error("Must be implemented")},t.prototype.initializePlaylistTracks=function(e,t,i,n){throw new Error("Must be implemented")},t.prototype.startRequestingDataForActiveTracks=function(){throw new Error("Must be implemented")},t.prototype.isFetchingData=function(){throw new Error("Must be implemented")},t.prototype.seekToChunk=function(e){throw new Error("Must be implemented")},t.prototype.stopRequestingAllData=function(){throw new Error("Must be implemented")},t}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(14)],void 0!==(r=function(e,t,i){"use strict";function n(n,a){t.isStringNotEmpty(a,"mpdXml"),t.isObject(n,"logger"),this._mpdXml=a,this._logger=n,this.minBufferTime=0,this.type=null,this.publishTime=null,this.availabilityStartTime=null,this.timeShiftBufferDepth=0,this.suggestedPresentationDelay=0,this.minimumUpdatePeriod=0,this.maxSegmentDuration=0,this.profiles=null,this.moreInfoUrl=null,this.programInfoTitle=null,this.representations=[],function(){t.isStringNotEmpty(this._mpdXml,"mpdXml");var n,a=i.parseXml(this._mpdXml),u=a.getElementsByTagName("parsererror");if(u&&u.length>0)throw n="Failed to parse MPD Playlist XML: "+u.item(0).innerText+" (source xml: "+this._mpdXml+")",this._logger.error(n),new Error(n);if("MPD"!==a.documentElement.nodeName)throw n='Invalid MPD Playlist XML. Does not start with "MPD": '+this._mpdXml,this._logger.error(n),new Error(n);this.minBufferTime=r(o(a.documentElement,"minBufferTime")),this.type=o(a.documentElement,"type"),this.publishTime=s(o(a.documentElement,"publishTime")),this.availabilityStartTime=s(o(a.documentElement,"availabilityStartTime")),this.timeShiftBufferDepth=r(o(a.documentElement,"timeShiftBufferDepth")),this.suggestedPresentationDelay=r(o(a.documentElement,"suggestedPresentationDelay")),this.minimumUpdatePeriod=r(o(a.documentElement,"minimumUpdatePeriod")),this.maxSegmentDuration=r(o(a.documentElement,"maxSegmentDuration")),this.mediaPresentationDuration=r(o(a.documentElement,"mediaPresentationDuration")),this.profiles=o(a.documentElement,"profiles");var c=a.getElementsByTagName("ProgramInformation"),d=a.getElementsByTagName("UTCTiming");if(c&&c.length>=1){var h=c.item(0);this.programInfoTitle=l(h,"Title").childNodes[0].nodeValue,this.moreInfoUrl=o(h,"moreInformationURL")}var g=a.getElementsByTagName("ContentProtection");if(this.contentProtectionTags=[],g.length>0)for(var f=0;f<g.length;f++){var p=g.item(f),m=e.reduce(p.attributes,function(e,t){return e[t.name]=t.value,e},{});this.contentProtectionTags.push(m)}for(var y=a.getElementsByTagName("Representation"),_=0;_<y.length;_++){var v=function(e){var t={};if(t.id=o(e,"id"),t.mimeType=o(e,"mimeType"),t.codecs=o(e,"codecs"),t.mseCodec=i.getMSECodec(t.mimeType,t.codecs),t.isAudio=t.mimeType.indexOf("audio")>=0,t.isVideo=t.mimeType.indexOf("video")>=0,!i.isCodecSupported(t.mseCodec))return this._logger.debug("MPD representation has unsupported codec. Skipping stream id [%s] (mimeType=[%s], codecs=[%s])",t.id,t.mimeType,t.codecs),null;var n=o(e,"bandwidth");t.bandwidth=n?parseInt(n,10):null;var r=o(e,"height");t.height=r?parseInt(r,10):null;var a=l(e,"SegmentTemplate");a&&(t.timescale=parseInt(o(a,"timescale")),t.media=o(a,"media"),t.startNumber=parseInt(o(a,"startNumber")),t.duration=parseInt(o(a,"duration")),t.initialization=o(a,"initialization"));return t}.call(this,y.item(_));v&&this.representations.push(v)}this.timeSources=[];for(var b=0;b<d.length;b++){var k=d.item(b),w=o(k,"schemeIdUri"),T=o(k,"value"),E=s(T);this.timeSources.push({name:w,value:isNaN(E.getTime())?T:E.getTime()})}}.call(this)}function r(e){if(!e)return null;var t=/^(-)?P(?:(-?[0-9,.]*)Y)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)W)?(?:(-?[0-9,.]*)D)?(?:T(?:(-?[0-9,.]*)H)?(?:(-?[0-9,.]*)M)?(?:(-?[0-9,.]*)S)?)?$/.exec(e);if(t){var i="-"===t[1]?-1:1,n={year:a(t[2],i),month:a(t[3],i),week:a(t[4],i),day:a(t[5],i),hour:a(t[6],i),minute:a(t[7],i),second:a(t[8],i)};return n.totalMillis=1e3*(n.second+60*(n.minute+60*(n.hour+24*n.day))),n}return null}function a(e,t){var i=e&&parseFloat(e.replace(",","."));return(isNaN(i)?0:i)*t}function s(e){if(!e)return null;var t=new Date;return t.setTime(Date.parse(e)),t}function o(e,t){var i=e.attributes.getNamedItem(t);return i?i.value:null}function l(e,t){for(var i=0;i<e.childNodes.length;i++){var n=e.childNodes.item(i);if(n.nodeName===t)return n}return null}return n.prototype.toString=function(){return"Mpd [minBufferTime="+this.minBufferTime+", type="+this.type+", publishTime="+this.publishTime+", availabilityStartTime="+this.availabilityStartTime+", timeShiftBufferDepth="+this.timeShiftBufferDepth+", suggestedPresentationDelay="+this.suggestedPresentationDelay+", minimumUpdatePeriod="+this.minimumUpdatePeriod+", maxSegmentDuration="+this.maxSegmentDuration+", profiles="+this.profiles+", moreInfoUrl="+this.moreInfoUrl+", programInfoTitle="+this.programInfoTitle+", representations="+JSON.stringify(this.representations)+"]"},n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(8)],void 0!==(r=function(e,t,i){"use strict";function n(){}return n.prototype.isCodecSupported=function(e){return t.isStringNotEmpty(e,"codec"),i.global.MediaSource&&"function"==typeof i.global.MediaSource.isTypeSupported&&i.global.MediaSource.isTypeSupported(e)},n.prototype.parseXml=function(e){if(t.isStringNotEmpty(e,"xmlString"),void 0!==i.global.DOMParser)return(new i.global.DOMParser).parseFromString(e,"text/xml");if(void 0!==i.global.ActiveXObject&&new i.global.ActiveXObject("Microsoft.XMLDOM")){var n=new i.global.ActiveXObject("Microsoft.XMLDOM");return n.async="false",n.loadXML(e),n}throw new Error("No XML parser found")},n.prototype.getMSECodec=function(e,i){return t.isStringNotEmpty(e,"mpdMimeType"),t.isStringNotEmpty(i,"mpdCodecs"),e+'; codecs="'+i+'"'},n.prototype.getChunkIndexFromSegmentTemplate=function(t,i){var n=t.match(/\$Number.*\$/),r=t.match(/\$Number%(\d\d)d\$/),a=e.get(r,[1],"0"),s=parseInt(a,10),o=e.pad(i,s);if(!n)throw new Error("Unable to match template Url ["+t+"]");return t.replace(n[0],o)},new n}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"M3u8VariantPlaylistString"),t.isStringNotEmpty(r,"name"),t.isObject(i,"logger"),this._rawM3u8VariantPlaylist=a,this._name=r,this._logger=i,function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch(o){case"EXT-X-STREAM-INF":r.streamVariants=r.streamVariants||[];var u=[l,i[a+1]];r.streamVariants.push(function(t){var i=(function(t){var i=e.get(t.match(/(?:CODECS=).*?",/),["0"],""),n=e.get(i.split("="),["1"],"");return n.substring(1,n.length-2)}(t[0])||"").split(","),r=(n(t[0],"FRAME-RATE")||"").trim();return{programId:n(t[0],"PROGRAM-ID"),codecs:i,bandwidth:parseInt(n(t[0],"BANDWIDTH")),averageBandwidth:parseInt(n(t[0],"AVERAGE-BANDWIDTH")),frameRate:parseInt(parseInt(r)||0),name:e.get(t,["1"],"").trim()}}(u));break;case"EXT-X-ALLOW-CACHE":r.allowCache="YES"===l;break;case"#EXT-X-COMBINED":r.combined="YES"===l;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Variant] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3u8VariantPlaylist)}function n(t,i){var n=new RegExp("(?:"+i+"=).*?(?=[,\n\r])"),r=new RegExp("(?:"+i+"=).*?$"),a=e.get(t.match(n)||t.match(r),["0"],"");return e.get(a.split("="),["1"])}return i.prototype.toString=function(){return"M3u8VariantPlaylist[name="+this._name+",numberOfStreamVariants="+this.streamVariants.length+"]"},i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(17),i(12),i(5),i(7),i(9),i(13),i(14),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c,d){"use strict";function h(a,o,c,d){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isInstanceOf(c,l,"statsProvider"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),t.isNumber(d.targetLatency,"options.targetLatency"),d&&d.defaultPresentationDelay&&t.isNumber(d.defaultPresentationDelay,"options.defaultPresentationDelay"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=c,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._defaultPresentationDelay=e.get(d,"defaultPresentationDelay",T),this._targetLatencyInMilliseconds=1e3*d.targetLatency,this._timeOfChunkAvailabilityDelta={average:0,values:[],maxSize:10}}function g(e){var t=Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds:0,0),i=this._playlist.getPlaybackDurationSinceAvailable(),n=Math.max(Math.ceil((i-t)/e),0);return"static"===this._playlist.getType()&&(n=0),this._logger.trace("Getting chunk index to start: [%s], playbackTimePassed=[%s], duration=[%s]",n,i,e),n}function f(){var t=this;e.forEach(t._activeTracks,function(e){e.setCurrentChunkId(p.call(t,e.getChunkDuration()))})}function p(e){var t=e/1e3;return Math.floor(this._currentPlaybackTimeInSeconds/t)}function m(t){var i=this,n=i._activeTracks.length;e.forEach(i._activeTracks,function(r,a){!function(r,a){if(e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})===r){var s=p.call(i,r.getChunkDuration()),o=s>=r.getTotalNumberOfChunks();if("static"===i._playlist.getType()&&o)return a===n-1&&(i._keepFetchingData=!1),i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());e.isNullOrUndefined(t)&&"dynamic"===i._playlist.getType()&&(t=y.call(i,r)),_.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),w):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",e),n--),n<=0&&i._keepFetchingData){if("dynamic"===i._playlist.getType()){var t=y.call(i,r);return i._logger.debug("Done fetching chunk with index [%s] for each active track. Waiting for [%s] ms before moving on to next chunk.",s,t),m.call(i,t)}i._logger.debug("Done fetching chunk with index [%s] for each active track. Moving on to next chunk",s),m.call(i,null)}})}}(r,a)})}function y(e){var t=1e3*this._currentPlaybackTimeInSeconds+2*e.getChunkDuration()-this._playlist.getPlaybackDurationSinceAvailable(),i=Math.max(t,0);return Math.min(e.getChunkDuration(),i)+this._timeOfChunkAvailabilityDelta.average}function _(e,t,i,n){var r=this;(function(e,t,i){var n=this,r=c.getChunkIndexFromSegmentTemplate(n._baseUrl+e.getDataChunkUrlTemplate(),e.getCurrentChunkId()),a=e.getCurrentChunkId();n._logger.trace("Fetching data chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),r,e.getCurrentChunkId());var s=e.getMseCodec();v.call(n,r,t,w,function(o,l){if(n._logger.trace("DONE Fetching data chunk for [%s] : [%s], nextChunkId=[%s]",s,r,e.getCurrentChunkId()+(o?": FAILED: "+o.code:": data="+l.data.byteLength)),!o){n._statsProvider.addRateDataPoint(s,l.stats.successResponseTime,l.data.byteLength,.001);var u=l.stats.totalResponseTimeForAllAttempts-l.stats.successResponseTime-Math.max(t,0);if(n._timeOfChunkAvailabilityDelta.values.push(u),n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length-1)+u)/n._timeOfChunkAvailabilityDelta.values.length,n._timeOfChunkAvailabilityDelta.values.length>n._timeOfChunkAvailabilityDelta.maxSize){var c=n._timeOfChunkAvailabilityDelta.values.shift();n._timeOfChunkAvailabilityDelta.average=(n._timeOfChunkAvailabilityDelta.average*(n._timeOfChunkAvailabilityDelta.values.length+1)-c)/n._timeOfChunkAvailabilityDelta.values.length}}if(!o&&a===e.getCurrentChunkId())return e.incrementCurrentChunkId(),n._currentPlaybackTimeInSeconds=e.getChunkDuration()*e.getCurrentChunkId()/1e3,e.addDataChunk(l.data,a,function(){i(o)});o?(o.feederReason=404===o.code?"not yet available":"other",i(o)):i(null,l.data)})}).call(r,e,i,function(a){return a&&r._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',e,a),!a&&t>1&&_.call(r,e,t-1,i,n),n(a)})}function v(t,i,n,r){var a=this,s={responseType:"arraybuffer",retryOptions:{delay:n,maxAttempts:k},timeout:E};if(e.isNumber(i)&&0!==i)s.delay=i;else if(!e.isNullOrUndefined(i)&&0!==i)throw new Error('"delay" must be a positive number greater than or equal to 0 or null or undefined');return this._httpRequestManager.getWithRetry(t,s,function(i,n){if(i){if(n&&n.attempts===k){var s="Failed to get chunk ["+t+"] with max retries of ["+k+" after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return a._logger.warn(s),a._feederErrorEvent.fire([b(d.name.chunkNotFound.name,d.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk ["+t+"]  with timeout after ["+e.get(n,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+E+"]";return a._logger.warn(o),a._feederErrorEvent.fire([b(d.name.timeout.name,d.severity.RECOVERABLE,o)])}return a._logger.warn("Failed to load data chunk [%s]. Status code: [%s] (status text: [%s])",t,i.code,i.message),a._feederErrorEvent.fire([b(d.name.error.name,d.severity.CRITICAL,i)])}r(i,n)})}function b(e,t,i){return{category:d.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var k=15,w=150,T=0,E=5e3;return h.prototype=Object.create(a.prototype),h.prototype.constructor=h,h.prototype.toString=function(){return"MpdPlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},h.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},h.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._feederErrorEvent.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0},h.prototype.initializeActiveTracks=function(i){var n=this;t.isFunction(i,"callback");var r=e.filter(this._activeTracks,function(e){return!e.getInitChunkData()});if(0===r.length)return i();(function(i,n){t.isArray(i,"tracks"),t.isFunction(n,"callback");var r=0,a=this;e.forEach(i,function(e){t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(g.call(a,e.getChunkDuration())),function(e,t){var i=this;(function(e,t){var i=this;i._logger.trace("Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()),v.call(i,i._baseUrl+e.getInitUrl(),null,500,function(n,r){i._logger.trace("DONE Fetching init chunk for [%s]: [%s], nextChunkId=[%s]",e.getMseCodec(),i._baseUrl+e.getInitUrl(),e.getCurrentChunkId()+(n?": FAILED: "+n.code:": data="+r.data.byteLength)),t(n,r.data)})}).call(i,e,function(n,r){if(n){var a=new Error("Failed to fetch init chunk of stream for config [%s]",e);return a.cause=n,i._logger.error("[%s] (Cause: [%s])",a.message,n),t(a)}e.setInitChunkData(r),i._logger.debug("Got init chunk for track [%s]",e.getTrackId()),t()})}.call(a,e,function(e){if(e)return n(e);++r===i.length&&n()})})}).call(n,r,i,function(e){return n._logger.error("Unable to initialize active tracks",e),i(e)})},h.prototype.fetchNChunks=function(i,n){if(t.isNumber(i,"chunksToFetch"),t.isFunction(n,"done"),this.isFetchingData())return this._logger.debug("Unable to fetch requesting data. Feeder is already fetching data.");var r=this,a=0;r._logger.debug("Fetching [%s] chunks for [%s] active tracks",i,this._activeTracks.length),e.forEach(this._activeTracks,function(e){return t.isInstanceOf(e,o,"track"),e.setCurrentChunkId(g.call(r,e.getChunkDuration())),_.call(r,e,i,null,function(t){return t?(r._logger.warn("Failed to get [%s] chunks for track [%s]",i,e.getTrackId(),t),n(t)):++a===r._activeTracks.length?(r._logger.info("Got [%s] chunks for [%s] active tracks",i,r._activeTracks.length),n()):void 0})})},h.prototype.setActiveTracks=function(e){this._activeTracks=e},h.prototype.getActiveTracks=function(){return this._activeTracks},h.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),f.call(this),m.call(this,null)},h.prototype.isFetchingData=function(){return this._keepFetchingData},h.prototype.seekToChunk=function(e){this._currentPlaybackTimeInSeconds=Math.floor(e),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds),f.call(this)},h.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(e,t){return t.getChunkDuration()>e?t.getChunkDuration():e},0),i=(Math.max(this._playlist.getPlaybackDurationSinceAvailable(),0)-Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},h.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests())},h}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(10),i(4)],void 0!==(r=function(e,t,i,n){"use strict";function r(e){t.isObject(e,"logger"),this._logger=e,this._requestDisposables=new n.DisposableList}return r.prototype.toString=function(){return"HttpRequestManager"},r.prototype.disposePendingRequests=function(){this._requestDisposables.dispose(),this._requestDisposables=new n.DisposableList},r.prototype.dispose=function(){this.disposePendingRequests()},r.prototype.getWithRetry=function(n,r,a){t.isStringNotEmpty(n,"url"),t.isObject(r,"options"),t.isFunction(a,"callback");var s=this;r.retryOptions=e.assign({delay:0,backoff:1,maxAttempts:1,additionalRetryErrorCodes:[404,0]},r.retryOptions),this._requestDisposables.add(i.getWithRetry(n,r,function(e,t){return e&&4e3===e.code?s._logger.debug("Request handler disposed of before response received for get [%s]",n):(e&&s._logger.debug("Status code: [%s] (status text: [%s]) for get [%s]",e.code,e.message,n),a(e,t))}))},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(17),i(12),i(5),i(7),i(9),i(15),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c){"use strict";function d(a,o,l,c){t.isInstanceOf(o,s,"playlist"),t.isInstanceOf(o.parsedPlaylist,u,"playlist.parsedPlaylist"),t.isStringNotEmpty(o.playlistUrl,"playlist.playlistUrl"),t.isStringNotEmpty(o.baseUrl,"playlist.baseUrl"),c&&c.targetLatencyInMilliseconds&&t.isNumber(c.targetLatencyInMilliseconds,"options.targetLatencyInMilliseconds"),this._playlist=o,this._baseUrl=this._playlist.baseUrl,this._statsProvider=l,this._logger=a||new i.Logger,this._httpRequestManager=new r(this._logger),this._options=c,this._feederErrorEvent=new n.Event,this._activeTracks=[],this._currentPlaybackTimeInSeconds=0,this._keepFetchingData=!1,this._targetLatencyInMilliseconds=e.get(c,"targetLatencyInMS",0),this._minBufferSize=Math.max(this._playlist.getSuggestedPresentationDelayTotalMillis(),this._playlist.getMinBufferTimeTotalMillis(),this._defaultPresentationDelay),this._streamDurationBeforeInitialization=Math.max(this._playlist.getPlaybackDurationSinceAvailable()-this._minBufferSize,0)}function h(){var t=this;e.isNumber(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=setTimeout(function(){(function(t){var i=this,n=0;e.forEach(this._activeTracks,function(r){var a=r.getMediaSegmentPlaylistUrlInfo(),s=e.assign({version:e.now()},a.queryParameters),o={retryOptions:{delay:v,maxAttempts:b},queryParameters:s};i._httpRequestManager.getWithRetry(a.url,o,function(e,s){if(e)return i._logger.debug("Unable to get media segment playlist [%s]",a.url);s&&r.updateMediaSegments(s.data),++n===i._activeTracks.length&&t()})},_)}).call(t,function(){e.isNullOrUndefined(t._mediaSegmentRequestTimeout)||(t._mediaSegmentRequestTimeout=null,h.call(t))})},_))}function g(t){var i=this,n=i._activeTracks.length;i._waitingForNextSegment=!1;e.forEach(i._activeTracks,function(r,a){!function(r){e.find(i._activeTracks,function(e){return e.getMimeType()===r.getMimeType()})!==r?i._logger.debug("Wrong track type [%s]. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId()):r.isLastMediaSegment(i._currentPlaybackTimeInSeconds)?("dynamic"===i._playlist.getType()&&(i._waitingForNextSegment=!0),i._logger.debug("No more chunks. Pausing fetching for track [%s]",r.getMimeType(),r.getTrackId())):f.call(i,r,1,t,function(e){if(e&&e.causes&&e.causes.length>0&&"not yet available"===e.causes[0].feederReason?i._logger.info("Failed to get next chunk (packet not yet available) for [%s]|[%s]. Trying to fetch again in [%s] ms.",r.getMseCodec(),r.getBandwidth(),y):(e&&i._logger.warn("Failed to get next chunk (# of errors=[%s], errors=[%s]). Moving on.",e.causes?e.causes.length:"n/a",JSON.stringify(e)),n--),n<=0){i._logger.debug("Done fetching chunk for timestamp [%s] for each active track. Moving on to next chunk. (keep fetching=[%s])",i._currentPlaybackTimeInSeconds,i._keepFetchingData);var t=r.isLastMediaSegment(i._currentPlaybackTimeInSeconds);if("static"===i._playlist.getType()&&t)return i._keepFetchingData=!1,i._logger.info("Finished getting chunks for [static] track [%s] [%s]",r.getTrackId(),r.getMimeType());if(t)return i._waitingForNextSegment=!0,i._logger.debug("Waiting for new segment on the Segment Playlist for [dynaimic] track [%s] [%s]",r.getTrackId(),r.getMimeType());i._keepFetchingData&&g.call(i,null)}})}(r)})}function f(t,i,n,r){var a=this;(function(t,i,n){var r=this,a=t.getSegmentByTimestamp(r._currentPlaybackTimeInSeconds),s=r._baseUrl+a.name;r._logger.trace("Fetching data chunk for [%s]: [%s], next segment=[%s]",t.getMseCodec(),s,a.name);var o=t.getMseCodec();(function(t,i,n){var r=this,a={responseType:"arraybuffer",retryOptions:{delay:y,maxAttempts:m},timeout:k};if(e.isNumber(i))a.delay=i;else if(!e.isNullOrUndefined(i))throw new Error('"delay" must be a number or null or undefined');return this._httpRequestManager.getWithRetry(t,a,function(i,a){if(i){if(a&&a.attempts===m){var s="Failed to get chunk ["+t+"] with max retries of ["+m+" after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms";return r._logger.warn(s),r._feederErrorEvent.fire([p(c.name.chunkNotFound.name,c.severity.CRITICAL,s)])}if(0===i.code){var o="Failed to get chunk ["+t+"] with timeout after ["+e.get(a,["stats","totalResponseTimeForAllAttempts"],0)+"] ms with chunk timeout of ["+k+"]";return r._logger.warn(o),r._feederErrorEvent.fire([p(c.name.timeout.name,c.severity.RECOVERABLE,o)])}return r._logger.warn("Failed to load [%s]. Status code: [%s] (status text: [%s])",t,i.code,i.message),r._feederErrorEvent.fire([p(c.name.error.name,c.severity.CRITICAL,i)])}n(i,a)})}).call(r,s,i,function(e,i){if(r._logger.trace("DONE Fetching data chunk for [%s] : [%s], next segment=[%s]",o,s,a.name+(e?": FAILED: "+e.code:": data="+i.data.byteLength)),e||r._statsProvider.addRateDataPoint(o,i.stats.successResponseTime,i.data.byteLength,.001),!e)return r._logger.debug("Finished fetching [%s]. Updating timestamp to fetch to [%s]",a.name,a.timestamp+a.duration),r._currentPlaybackTimeInSeconds=a.timestamp+a.duration,t.addDataChunk(i.data,a.name,function(){n(e)});e?(e.feederReason=404===e.code?"not yet available":"other",n(e)):n(null,i.data)})}).call(a,t,n,function(e){return e&&a._logger.trace('Failed to fetch data chunk of stream for config [%s]". Error: [%s]',JSON.stringify(t),e),!e&&i>1&&f.call(a,t,i,n,r),r(e)})}function p(e,t,i){return{category:c.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=15,y=700,_=500,v=10,b=2,k=5e3;return d.prototype=Object.create(a.prototype),d.prototype.constructor=d,d.prototype.toString=function(){return"M3u8PlaylistChunkFeeder [mpdPlaylistUrl="+this._playlist.playlistUrl+", baseUrl="+this._baseUrl+", defaultPresentationDelay="+this._defaultPresentationDelay+"]"},d.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._feederErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},d.prototype.dispose=function(){this.stopRequestingAllData(e.noop),this._httpRequestManager.dispose(),this._playlist.dispose(),this._statsProvider.dispose(),this._activeTracks=null,this._currentPlaybackTimeInSeconds=0,this._segmentsReadyDisposable&&(this._segmentsReadyDisposable.dispose(),this._segmentsReadyDisposable=null)},d.prototype.initializeActiveTracks=function(i,n){t.isFunction(n,"callback"),"dynamic"===this._playlist.getType()&&h.call(this),this._waitingForNextSegment=!1;var r=this;if(1!==this._activeTracks.length)throw new Error("Unable to support multiple active tracks");e.forEach(this._activeTracks,function(e){r._segmentsReadyDisposable=e.addEventListener("segmentsready",function(){r._waitingForNextSegment&&(r._logger.debug("Continuing fetching of track [%s] segments after wait",e.getTrackId()),g.call(r,null))})}),n()},d.prototype.fetchNChunks=function(i,n){if(t.isNumber(i,"chunksToFetch"),t.isFunction(n,"callback"),this.isFetchingData())return this._logger.debug("Unable to fetch requesting data. Feeder is already fetching data.");var r=this,a=0;r._logger.debug("Fetching [%s] chunks for [%s] active tracks",i,this._activeTracks.length),e.forEach(this._activeTracks,function(t){f.call(r,t,1,null,function(t){if(t)return n(t);++a===r._activeTracks.length&&(r._initializedAt=e.now(),n())})})},d.prototype.setActiveTracks=function(t){this._activeTracks=t;var i=e.map(t,function(e){return e.getTrackId()});this._logger.debug("Setting active tracks [%s]",i)},d.prototype.getActiveTracks=function(){return this._activeTracks},d.prototype.startRequestingDataForActiveTracks=function(){if(this.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._keepFetchingData=!0,this._logger.debug("Starting requesting data at timestamp [%s]",this._currentPlaybackTimeInSeconds),"dynamic"===this._playlist.getType()&&h.call(this),g.call(this,null)},d.prototype.isFetchingData=function(){return this._keepFetchingData},d.prototype.seekToChunk=function(t){var i=e.get(this._activeTracks,["0"]),n=i.getClosestSegmentNotGreaterThanTimestamp(t),r=e.get(n,["timestamp"]);e.isUndefined(r)?i||(this._currentPlaybackTimeInSeconds=t):this._currentPlaybackTimeInSeconds=Math.floor(n.timestamp),this._logger.debug("Seeking to timestamp [%s]",this._currentPlaybackTimeInSeconds)},d.prototype.seekToCurrent=function(){var t=e.reduce(this._activeTracks,function(t,i){var n=e.get(i.getLastSegment(),["duration"],0);return n>t?n:t},0),i=(e.reduce(this._activeTracks,function(e,t){var i=t.getLastSegment().timestamp;return i<e?i:e},0)-Math.max(this._targetLatencyInMilliseconds?this._targetLatencyInMilliseconds-t:0,t))/1e3;return this._logger.info("Seeking to most recent chunk"),this.seekToChunk(i),i},d.prototype.stopRequestingAllData=function(){this._keepFetchingData&&(this._keepFetchingData=!1,this._waitingForNextSegment=!1,this._logger.debug("Pausing requesting of data at timestamp [%s]",this._currentPlaybackTimeInSeconds),this._httpRequestManager.disposePendingRequests(),clearTimeout(this._mediaSegmentRequestTimeout),this._mediaSegmentRequestTimeout=null)},d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(10),i(4),i(11),i(8),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l){"use strict";function u(r,s,u,h){t.isObject(s,"videoElement");var D=this;this._videoElement=s,this._logger=r||new i.Logger,this._mediaKeys=null,this._licenseRequestRetryTimeout=null,this._certificateRequestRetryTimeout=null,this._disposables=new a.DisposableList;var M=e.bind(C,this);"Safari"===m.browser&&(M=e.bind(function(t,i){var n=this;if(i=i||1,!this._fairplayServerCertificate){if(i<=T)return n._logger.debug("Attempt [%s] for checking if the certificate have been set",i),void(n._certificateRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find fairplay certificate after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoCertificate",l.severity.RECOVERABLE,r)])}this._logger.info("Key requested by Webkit browser"),n._fallbackLicenseUri=function(e){return"https://"+function(e){return String.fromCharCode.apply(null,new o.global.Uint16Array(e.buffer))}(e).split("skd://")[1]}(t.initData);var s="phenix-fairplay-"+e.now(),u=function(e,t,i){var n=function(e){for(var t=new o.global.ArrayBuffer(2*e.length),i=new o.global.Uint16Array(t),n=0,r=e.length;n<r;n++)i[n]=e.charCodeAt(n);return i}(t),r=0,a=new o.global.ArrayBuffer(e.byteLength+4+n.byteLength+4+i.byteLength),s=new o.global.DataView(a);new Uint8Array(a,r,e.byteLength).set(e),r+=e.byteLength,s.setUint32(r,n.byteLength,!0),r+=4;var l=new o.global.Uint16Array(a,r,n.length);return l.set(n),r+=l.byteLength,s.setUint32(r,i.byteLength,!0),r+=4,new Uint8Array(a,r,i.byteLength).set(i),new Uint8Array(a,0,a.byteLength)}(t.initData,s,n._fairplayServerCertificate);n._videoElement.webkitKeys||n._videoElement.webkitSetMediaKeys(new o.global.WebKitMediaKeys(b));if(!n._videoElement.webkitKeys)return n._drmErrorEvent.fire([p("webkitKeys",l.severity.RECOVERABLE,new Error("Could not create MediaKeys"))]);var c=n._videoElement.webkitKeys.createSession("video/mp4",u);if(!c)return n._drmErrorEvent.fire([p("webkitKeySession",l.severity.RECOVERABLE,new Error("Could not create key session"))]);var h=e.bind(d,n);c.addEventListener("webkitkeymessage",h,!1),n._disposables.add(new a.Disposable(function(){c.removeEventListener("webkitkeymessage",h,!1)}));var g=function(){n._logger.info("Decryption key was added")};c.addEventListener("webkitkeyadded",g,!1),n._disposables.add(new a.Disposable(function(){c.removeEventListener("webkitkeyadded",g,!1)}));var f=function(e){n._drmErrorEvent.fire([p("webkitkeyerror",l.severity.RECOVERABLE,e)])};c.addEventListener("webkitkeyerror",f,!1),n._disposables.add(new a.Disposable(function(){c.removeEventListener("webkitkeyerror",f,!1)}))},this)),this._videoElement.addEventListener(S,M,!1),this._disposables.add(new a.Disposable(function(){D._videoElement.removeEventListener(S,M,!1)})),this._disposables.add(new a.Disposable(function(){null!==D._licenseRequestRetryTimeout&&o.global.clearTimeout(D._licenseRequestRetryTimeout)})),this._disposables.add(new a.Disposable(function(){null!==D._certificateRequestRetryTimeout&&o.global.clearTimeout(D._certificateRequestRetryTimeout)})),this._defaultMediaKeySystemConfig={initDataTypes:["cenc"],videoCapabilities:[{contentType:'video/mp4; codecs="avc1.42c01f"'}],audioCapabilities:[{contentType:'audio/mp4; codecs="mp4a.40.2"'}],persistentState:"optional",distinctiveIdentifier:"optional"},this._config={},"Edge"===m.browser||"IE"===m.browser?this._selectedKeySystem=_:"Safari"===m.browser?this._selectedKeySystem=b:this._selectedKeySystem=y,function(t,i){var n=this,r=function(t){return e.keys(e.reduce(t,function(e,t){return e[t]=1,e},{}))}(e.keys(t).concat(e.keys(i)));e.forEach(r,function(r){e.set(n._config,[r],e.assign({},e.get(t,[r],{}),e.get(i,[r],{}))),e.set(n._config,[r,"mediaKeySystemConfiguration"],e.assign({},n._defaultMediaKeySystemConfig,e.get(t,[r,"mediaKeySystemConfiguration"],{}),e.get(i,[r,"mediaKeySystemConfiguration"],{})))})}.call(this,function(t){return e.reduce(t,function(t,i){var n="com.phenixp2p.widevine"===i.schemeIdUri||"com.phenixrts.widevine"===i.schemeIdUri?y:i.schemeIdUri===v?_:i.schemeIdUri,r="",a="";return"com.phenixp2p.widevine"!==i.schemeIdUri&&"com.phenixrts.widevine"!==i.schemeIdUri||(r=i.widevineLicenseServerUrl||i.licenseServerUrl,a=i.serverCertificateUrl),t[n]={licenseServerUrl:r?c(r):"",serverCertificateUrl:a?c(a):""},e.forOwn(i,function(i,r){e.startsWith(r,"mediaKeySystemConfiguration.")&&e.set(t[n],r,i)}),t},{})}(u),h||{}),function(){t.isObject(this._config,"this._config");var i=this;e.forOwn(this._config,function(e,n){t.isValidType(n,k,n),n===i._selectedKeySystem&&(n!==y&&n!==b||t.isStringNotEmpty(e.serverCertificateUrl,n+"[serverCertificateUrl]"),t.isObject(e.mediaKeySystemConfiguration,n+"[mediaKeySystemConfiguration]"),t.isArrayOfString(e.mediaKeySystemConfiguration.initDataTypes,n+"[mediaKeySystemConfiguration][initDataTypes]"),t.isArray(e.mediaKeySystemConfiguration.videoCapabilities,n+"[mediaKeySystemConfiguration][videoCapabilities]"),t.isArray(e.mediaKeySystemConfiguration.audioCapabilities,n+"[mediaKeySystemConfiguration][audioCapabilities]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.persistentState,n+"[mediaKeySystemConfiguration][persistentState]"),t.isStringNotEmpty(e.mediaKeySystemConfiguration.distinctiveIdentifier,n+"[mediaKeySystemConfiguration][distinctiveIdentifier]"))})}.call(this),this._drmErrorEvent=new n.Event,this._drmTrackEventRestrictionsAvailableEvent=new n.Event,this._disposables.add(this._drmErrorEvent),this._disposables.add(this._drmTrackEventRestrictionsAvailableEvent),E&&function(){var t=this;if(!this._videoElement.mediaKeys){var i=e.get(this._config,[this._selectedKeySystem,"mediaKeySystemConfiguration"]);o.global.navigator.requestMediaKeySystemAccess(this._selectedKeySystem,[i]).then(function(i){i.createMediaKeys().catch(function(e){t._drmErrorEvent.fire([p("CreateMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to create MediaKeys",e)}).then(function(e){return t._mediaKeys=e,t._videoElement.setMediaKeys(e)}).catch(function(e){t._drmErrorEvent.fire([p("SetMediaKeys",l.severity.CRITICAL,e)]),t._logger.error("Unable to set MediaKeys",e)}).then(function(){return new o.global.Promise(function(i){var n=e.get(t._config,[t._selectedKeySystem,"serverCertificateUrl"]);if(!n)return t._logger.info("Not fetching server certificate because [%s] -> [serverCertificateUrl] is not set",t._selectedKeySystem),i();g(n,function(e,n){if(e)return t._logger.warn("Failed to get service certificate",e),i();var r=f(n.data);return t._mediaKeys.setServerCertificate(r).then(i).catch(function(e){t._logger.warn("Failed to set service certificate",e)})})})})}).catch(function(e){t._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,e)]),t._logger.error("[%s] Unable to request MediaKeySystemAccess with error [%s]",t._selectedKeySystem,e)})}}.call(this),"Safari"===m.browser&&(o.global.WebKitMediaKeys.isTypeSupported("com.apple.fps.1_0","video/mp4")||D._drmErrorEvent.fire([p("isTypeSupported",l.severity.CRITICAL,new Error("com.apple.fps.1_0 Key System not supported"))]),g(e.get(D._config,[D._selectedKeySystem,"serverCertificateUrl"]),function(e,t){e&&(D._drmErrorEvent.fire([p("getServerCertificateFairplay",l.severity.CRITICAL,e)]),D._logger.error("[Fairplay] Failed to get service certificate",e)),D._fairplayServerCertificate=f(t.data)}))}function c(i){t.isStringNotEmpty(i,"xmlSafeUrl");var n=i.split("?"),r=e.get(n,[0]),a=e.get(n,[1],"");return r+(a?"?"+decodeURIComponent(a):"")}function d(t){var i=this,n=t.target;h.call(this,t.message,function(t,r){if(t)return i._drmErrorEvent.fire([p("LicenseRetrieval",l.severity.RECOVERABLE,t)]);try{var a=n.update(r)}catch(e){return i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)])}e.isFunction(e.get(a,["catch"]))&&a.catch(function(e){i._drmErrorEvent.fire([p("KeySessionUpdate",l.severity.CRITICAL,e)]),i._logger.error("Update of keySession with license failed [%s]",e)})})}function h(i,n){var a,s=this,l=e.get(this._config,[this._selectedKeySystem,"licenseServerUrl"],this._fallbackLicenseUri),u={};if(t.isStringNotEmpty(l,"licenseServerUrl"),this._selectedKeySystem===_){var c=(new DOMParser).parseFromString(String.fromCharCode.apply(null,new o.global.Uint16Array(i)),"application/xml");if(!c.getElementsByTagName("Challenge")[0])return n(new Error("[Playready] Cannot find `challenge` in key message"));a=atob(c.getElementsByTagName("Challenge")[0].childNodes[0].nodeValue);var d=c.getElementsByTagName("name"),h=c.getElementsByTagName("value");if(d.length!==h.length)return n(new Error("[Playready] Mismatched header name/value pair in key message"));u.headers={};for(var g=0;g<d.length;g++){var f=e.get(d,[g,"childNodes",0,"nodeValue"]),p=e.get(h,[g,"childNodes",0,"nodeValue"]);f&&p&&(u.headers[f]=p)}u.responseType="arraybuffer"}else u.contentType="application/octet-stream",a=i;r.post(l,a,u,function(e,t){if(e)return s._logger.error("Failed to get license with [%s] [%s]",e,t),n(e);if(s._selectedKeySystem===_)return n(null,t.data);var i=t.data,r=null,a=null;try{s._logger.debug("Attempting to unwrap license response"),r=(i=JSON.parse(i)).license||i.ckc,i.trackRestrictions&&s._drmTrackEventRestrictionsAvailableEvent.fire([i.trackRestrictions])}catch(e){if(!(e instanceof SyntaxError))return s._logger.error("Unexpected error [%s]",e),n(e);s._logger.debug("Unwrapping of license failed. Assuming that license response is already unwrapped"),r=i}"<ckc>"===r.substr(0,5)&&"</ckc>"===r.substr(-6)&&(r=r.slice(5,-6));try{a=function(e){for(var t=o.global.atob(e),i=new Uint8Array(t.length),n=0;n<t.length;++n)i[n]=t.charCodeAt(n);return i}(r)}catch(e){s._logger.error("Failed to convert base64 license string [%s] to binary",r),n(e)}n(null,a)})}function g(e,t){r.get(e,{mimeType:"text/plain; charset=x-user-defined"},t)}function f(e){for(var t=e.length,i=new o.global.Uint8Array(t),n=0;n<t;n++)i[n]=e.charCodeAt(n);return i}function p(e,t,i){return{category:l.category.DRM,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var m=new s(o.global.navigator.userAgent).detect(),y="com.widevine.alpha",_="com.microsoft.playready",v="urn:uuid:9a04f079-9840-4286-ab92-e65be0885f95",b="com.apple.fps.1_0",k=e.freeze([{id:1,name:"org.w3.clearkey"},{id:2,name:y},{id:3,name:_},{id:4,name:v},{id:5,name:b}]),w=200,T=20,E=!!o.global.navigator.requestMediaKeySystemAccess,S="encrypted";E||"Edge"!==m.browser&&"IE"!==m.browser||(S="msneedkey"),"Safari"===m.browser&&(S="webkitneedkey"),u.isSupported=function(){return"IE"===m.browser&&11===m.version||("Safari"===m.browser?!(e.isNullOrUndefined(o.global.WebKitMediaKeys)||e.isNullOrUndefined(o.global.Uint16Array)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.ArrayBuffer)||e.isNullOrUndefined(o.global.DataView)):!(e.isNullOrUndefined(o.global.navigator.requestMediaKeySystemAccess)||e.isNullOrUndefined(o.global.Promise)||e.isNullOrUndefined(o.global.Uint8Array)||e.isNullOrUndefined(o.global.atob)))},u.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"trackRestrictionsAvailable":return this._drmTrackEventRestrictionsAvailableEvent.listen(i);case"error":return this._drmErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},u.prototype.toString=function(){return"EncryptedMediaHandler [config="+JSON.stringify(this._config)+"]"},u.prototype.dispose=function(){this._disposables.dispose(),delete this._mediaKeys};var C=function(t,i){var n=this;if(i=i||1,!E)try{this._videoElement.msSetMediaKeys(new o.global.MSMediaKeys(this._selectedKeySystem))}catch(r){return n._drmErrorEvent.fire([p("RequestMediaKeySystemAccess",l.severity.CRITICAL,new Error('Unable to create MediaKeys ("'+this._selectedKeySystem+'"). Error: '+r.message))])}if(!this._mediaKeys&&!n._videoElement.msKeys){if(i<=20)return n._logger.debug("Attempt [%s] for checking if the media keys have been set",i),void(n._licenseRequestRetryTimeout=setTimeout(function(){C.call(n,t,i+1)},w));var r="Unable to find media keys after "+(i-1)+" attempts";return n._logger.warn(r),n._drmErrorEvent.fire([p("NoMediaKeys",l.severity.RECOVERABLE,r)])}if(n._videoElement.msKeys){var s=n._videoElement.msKeys.createSession("video/mp4",t.initData);s||n._drmErrorEvent.fire([p("NoKeySession",l.severity.CRITICAL,new Error("Could not create key session"))]);var u=function(e){h.call(n,e.message.buffer,function(e,t){if(e)return n._drmErrorEvent.fire([p("getLicense",l.severity.RECOVERABLE,e)]);s.update(new Uint8Array(t))})};s.addEventListener("mskeymessage",u,!1),n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeymessage",u,!1)}));var c=function(){n._drmErrorEvent.fire([p("MicrosoftKeyError",l.severity.CRITICAL,new Error("Unexpected `keyerror` event from key session. Code: "+s.error.code+", systemCode: "+s.error.systemCode))])};return s.addEventListener("mskeyerror",c,!1),void n._disposables.add(new a.Disposable(function(){s.removeEventListener("mskeyerror",c,!1)}))}var g=n._mediaKeys.createSession(),f=e.bind(d,n);return g.addEventListener("message",f,!1),n._disposables.add(new a.Disposable(function(){g.removeEventListener("message",f,!1)})),g.generateRequest(t.initDataType,t.initData).then(function(){n._logger.info("passing the media data to CDM")}).catch(function(e){n._drmErrorEvent.fire([p("InitKeySessionFailure",l.severity.CRITICAL,e)]),n._logger.error("Unable to create or initialize key session [%s]",e)})};return u}.apply(t,n))&&(e.exports=r)},function(e,t){e.exports=l},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(4),i(20),i(5),i(9)],void 0!==(r=function(e,t,i,n,r,a,s){"use strict";function o(o,h,m,y){t.isInstanceOf(h,a,"playlist"),t.isNotUndefined(m,"webPlayer"),t.isInstanceOf(y,s,"statsProvider"),this._playlist=h,this._webPlayer=m,this._statsProvider=y,this._logger=o||new i.Logger,this._bandwidthChangeDetails={nextSwitchCheckTime:e.now()+5e3,oldBandwidth:-1},this._disposables=new n.DisposableList,this._webPlayer.addEventListener("started",e.bind(function(){var t=this;this._bandwidthLimits=e.reduce(this._playlist.getMimeTypes(),function(i,n){var r=t._playlist.getPlaylistTracksByMimeType(n)||[],a=e.filter(r,function(t){return e.isNumber(t.getBandwidth())}),s=e.map(a,function(e){return e.getBandwidth()});return r.length>a.length&&t._logger.info("Excluding [%s] tracks without Bandwidth from ABR switching.",r.length-a.length),i[n]={max:Math.max.apply(null,s),min:Math.min.apply(null,s)},i},{}),this._logger.debug("Listening for bandwidth changes with max and min bandwidths of [%s]",this._bandwidthLimits),this._webPlayer.addEventListener("playbacktimeleft",e.bind(function(t,i){if(this._bandwidthChangeDetails.isInProgress||!r.isForeground())return;var n=this._bandwidthLimits[i.getMimeType()],a=this;if(this._bandwidthChangeDetails.nextSwitchCheckTime>0){if(this._bandwidthChangeDetails.nextSwitchCheckTime>e.now())return;this._bandwidthChangeDetails.nextSwitchCheckTime=0,this._bandwidthChangeDetails.oldBandwidth=-1}var s=e.bind(function(){this._bandwidthChangeDetails.isInProgress=!1},this);if(l.call(a,i,t)&&i.getBandwidth()<n.max){this._bandwidthChangeDetails.isInProgress=!0;var o=this._playlist.getPlaylistTrackByMimeTypeAndNextHighestBandwidth(i.getBandwidth(),i.getMimeType(),{});this._playbackTimeout=setTimeout(function(){l.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to higher quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+g,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(o.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}else if(u.call(a,i,t)&&i.getBandwidth()>n.min){this._bandwidthChangeDetails.isInProgress=!0;var d=this._playlist.getPlaylistTrackByBandwidthAndMimeType(i.getBandwidth()-1,i.getMimeType());this._playbackTimeout=setTimeout(function(){u.call(a,i,a._webPlayer.getTimeLeft())?(a._logger.info("Switching to lower quality track with [%s] time left in buffer and ewma of [%s].",a._webPlayer.getTimeLeft(),c.call(a,i)),a._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+1e3*t+f,a._bandwidthChangeDetails.oldBandwidth=i.getBandwidth(),a._webPlayer.changeBandwidthLimit(d.getBandwidth(),s)):a._bandwidthChangeDetails.isInProgress=!1},p)}},this))},this)),this._disposables.add(r.onBackground(e.bind(d,this,!1))),this._disposables.add(r.onForeground(e.bind(d,this,!0))),this._backgroundTimeout=null,this._foregroundBandwidth=null}function l(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t>3.5||i>0&&i<=3*n/4&&t/(n/1e3)>2}function u(e,t){var i=this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration,n=e.getChunkDuration();return t<.7||i>0&&i>=7*n/8&&t/(n/1e3)<=1.5}function c(e){return this._statsProvider.getRateAverages(e.getMseCodec()).ewmaDuration}function d(t){null!==this._playbackTimeout&&(clearTimeout(this._playbackTimeout),this._playbackTimeout=null);var i=this._webPlayer.getVideoElement();if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,null===this._foregroundBandwidth)return;var n=this._foregroundBandwidth;return this._foregroundBandwidth=null,n!==this._webPlayer.getBandwidthLimit()&&(this._bandwidthChangeDetails.nextSwitchCheckTime=e.now()+g,this._logger.info("Detected change to [foreground] for tab. Reverting to [%s] previous bandwidth limit from [%s]",n,this._webPlayer.getBandwidthLimit()),this._webPlayer.changeBandwidthLimit(n)),void(h(i)||"dynamic"!==this._playlist.getType()||(this._logger.info("Detecting application [foreground] with muted video. Resuming playback at most recent available chunk."),this._webPlayer.play()))}var a=this;this._backgroundTimeout=setTimeout(function(){r.isForeground()||(a._foregroundBandwidth=a._webPlayer.getBandwidthLimit(),h(i)||"dynamic"!==a._playlist.getType()||(a._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),a._webPlayer.pause()))},m)}function h(t){return!t.muted&&0!==t.volume&&(e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.mozHasAudio||t.hasAudio||t.webkitHasAudio)}var g=15e3,f=5e3,p=500,m=3e3;return o.prototype.dispose=function(){null!==this._playbackTimeout&&clearTimeout(this._playbackTimeout),null!==this._backgroundTimeout&&clearTimeout(this._backgroundTimeout),this._disposables.dispose(),this._backgroundTimeout=null,this._playbackTimeout=null},o}.apply(t,n))&&(e.exports=r)},function(e,t,i){"use strict";var n,r;n=[i(5),i(16),i(18),i(27),i(9),i(21),i(6)],void 0!==(r=function(e,t,i,n,r,a,s){return{Playlist:e,MpdPlaylistChunkFeeder:t,M3u8PlaylistChunkFeeder:i,WebPlayer:n,StatsProvider:r,AdaptiveStreamingManager:a,isSupported:n.isSupported,errors:s}}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(0),i(3),i(2),i(7)],void 0!==(r=function(e,t,i,n){"use strict";function r(n,r,o){if(e.isObject(n,"logger"),e.isObject(r,"playlistTrackConfig"),e.isStringNotEmpty(r.codec,"playlistTrackConfig.codec"),e.isStringNotEmpty(r.mimeType,"playlistTrackConfig.mimeType"),e.isNumber(r.bandwidth,"playlistTrackConfig.bandwidth"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),e.isStringNotEmpty(r.trackId,"playlistTrackConfig.trackId"),e.isStringNotEmpty(r.initUrl,"playlistTrackConfig.initUrl"),e.isStringNotEmpty(r.dataChunkUrlTemplate,"playlistTrackConfig.dataChunkUrlTemplate"),e.isNumber(r.chunkDuration,"playlistTrackConfig.chunkDuration"),o=o||{},this._logger=n||new i.Logger,this._mseCodec=r.codec,this._chunkDuration=r.chunkDuration,this._bandwidth=r.bandwidth,this._height=r.height,this._trackId=r.trackId,this._mimeType=r.mimeType,this._initUrl=r.initUrl,this._dataChunkUrlTemplate=r.dataChunkUrlTemplate,this._totalNumberOfChunks=r.totalNumberOfChunks,this._currentChunkId=null,this._maxChunksToCache=o.maxChunksToCache||a,this._lowWaterMaxChunks=o.lowWaterMaxChunks||s,e.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),e.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new t.Event}var a=20,s=15;return r.prototype=Object.create(n.prototype),r.prototype.constructor=r,r.prototype.toString=function(){return"MpdPlaylistTrack [mseCodec="+this._mseCodec+", maxChunksToCache="+this._maxChunksToCache+", lowWaterMaxChunks="+this._lowWaterMaxChunks+", initChunk="+this._initChunk+", dataChunks(size)="+this._dataChunks.length+", chunkAddedEvent(size)="+this._chunkAddedEvent.size()+", trackId="+(this._trackId?this._trackId:"n/a")+", bandwidth="+(this.bandwidth?this.bandwidth:"n/a")+"]"},r.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},r.prototype.getMseCodec=function(){return this._mseCodec},r.prototype.getTrackId=function(){return this._trackId},r.prototype.getChunkDuration=function(){return this._chunkDuration},r.prototype.getBandwidth=function(){return this._bandwidth},r.prototype.getHeight=function(){return this._height},r.prototype.getMimeType=function(){return this._mimeType},r.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},r.prototype.getInitChunkData=function(){return this._initChunk},r.prototype.setInitChunkData=function(e){this._initChunk=e},r.prototype.getCurrentChunkId=function(){return this._currentChunkId},r.prototype.setCurrentChunkId=function(e){this._currentChunkId=e},r.prototype.incrementCurrentChunkId=function(){null===this._currentChunkId&&this._logger.error("[%s] Attempting to increment `CurrentChunkId` that is not initialized",this._trackId),this._currentChunkId++},r.prototype.getInitUrl=function(){return this._initUrl},r.prototype.getDataChunkUrlTemplate=function(){return this._dataChunkUrlTemplate},r.prototype.addDataChunk=function(t,i,n){e.isNotUndefined(t,"dataChunk"),n=n||function(){},e.isFunction(n,"eventCallback");var r={data:t,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},r.prototype.getChunks=function(){return this._dataChunks},r.prototype.addEventListener=function(t,i){if(e.isString(t,"eventName"),e.isFunction(i,"listener"),"chunkadded"!==t)throw new Error('Event "'+t+'" is unknown.');return this._chunkAddedEvent.listen(i)},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(3),i(2),i(7),i(25)],void 0!==(r=function(e,t,i,n,r,a){"use strict";function s(r,a,s){if(t.isObject(r,"logger"),t.isObject(a,"playlistTrackConfig"),t.isStringNotEmpty(a.codecs,"playlistTrackConfig.codecs"),t.isNumber(a.bandwidth,"playlistTrackConfig.bandwidth"),t.isStringNotEmpty(a.trackId,"playlistTrackConfig.trackId"),s=s||{},this._logger=r||new n.Logger,this._mseCodec=function(e){if(e.split(",").length>1)return"video/mp4; codecs="+e;return"audio/mp4; codecs="+e}(a.codecs),this._bandwidth=a.bandwidth,this._height=a.height,this._trackId=a.trackId,this._mimeType=a.mimeType,this._totalNumberOfChunks=a.totalNumberOfChunks,this._mediaSegments=[],this._isComplete=!1,this._playableDuration=0,this._chunkDuration=0,this._mediaSegmentPlaylistUrlInfo=function(t){var i=t.split("?")[0],n=e.get(t.split("?"),[1],""),r=e.reduce(n.split("&"),function(e,t){var i=t.split("=")[0];return i&&(e[i]=t.split("=")[1]),e},{});return{url:i,queryParameters:r}}(a.mediaSegmentPlaylistUrl),this._currentChunkId=null,this._maxChunksToCache=s.maxChunksToCache||o,this._lowWaterMaxChunks=s.lowWaterMaxChunks||l,t.isNumber(this._maxChunksToCache,"options.maxChunksToCache"),t.isNumber(this._lowWaterMaxChunks,"options.lowWaterMaxChunks"),this._lowWaterMaxChunks>=this._maxChunksToCache)throw new Error('The "maxChunksToCache" cannot be less than or equal to the "lowWaterMaxChunks"');this._initChunk=null,this._dataChunks=[],this._chunkAddedEvent=new i.Event,this._segmentsReadyEvent=new i.Event}var o=20,l=15;return s.prototype=Object.create(r.prototype),s.prototype.constructor=s,s.prototype.toString=function(){return"M3u8PlaylistTrack"},s.prototype.dispose=function(){this._dataChunks=[],this._chunkAddedEvent.dispose()},s.prototype.getMseCodec=function(){return this._mseCodec},s.prototype.getTrackId=function(){return this._trackId},s.prototype.getChunkDuration=function(){return this._chunkDuration},s.prototype.getBandwidth=function(){return this._bandwidth},s.prototype.getHeight=function(){return this._height},s.prototype.getMimeType=function(){return this._mimeType},s.prototype.getTotalNumberOfChunks=function(){return this._totalNumberOfChunks},s.prototype.getPlayableDuration=function(){return this._playableDuration},s.prototype.isComplete=function(){return this._isComplete},s.prototype.hasSegments=function(){return this._mediaSegments.length>0},s.prototype.getSegmentByTimestamp=function(t){return e.find(this._mediaSegments,function(e){return e.timestamp<=t&&t<e.timestamp+e.duration})},s.prototype.getLastSegment=function(){return e.get(this._mediaSegments,[this._mediaSegments.length-1],null)},s.prototype.getMediaSegmentPlaylistUrlInfo=function(){return this._mediaSegmentPlaylistUrlInfo},s.prototype.getClosestSegmentNotGreaterThanTimestamp=function(e){return e>this._playableDuration?this._mediaSegments[this._mediaSegments.length-1]:this.getSegmentByTimestamp(e)},s.prototype.isLastMediaSegment=function(t){var i=this.getSegmentByTimestamp(t),n=!this._isComplete&&e.get(i,["timestamp"],0)+e.get(i,["duration"],0)===this._playableDuration,r=!this._isComplete&&t>this._playableDuration;return this._playableDuration===t||n||r},s.prototype.updateMediaSegments=function(t){var i=new a(this._logger,this._trackId,t),n=this._totalNumberOfChunks||0,r=e.map(this._mediaSegments,function(e){return e.name}),s=this,o=e.get(this._mediaSegments,[this._mediaSegments.length-1]),l=e.get(o,["timestamp"])+e.get(o,["duration"])||void 0;e.forEach(i.mediaSegments,function(t){e.includes(r,t.name)||(t.timestamp=e.isUndefined(l)?0:l,s._mediaSegments.push(t),s._playableDuration+=t.duration,l=t.timestamp+t.duration,t.duration>s._chunkDuration&&(s._chunkDuration=t.duration),s._logger.trace("[%s]:[%s]:[%s] Got new segment from playlist [%s]",(new Date).getHours(),(new Date).getMinutes(),(new Date).getSeconds(),t.name))}),n!==this._mediaSegments.length&&(this._isComplete=i.isComplete,this._totalNumberOfChunks=this._mediaSegments.length,this._segmentsReadyEvent.fireAsync([this._mediaSegments],null,e.noop))},s.prototype.addDataChunk=function(e,i,n){t.isNotUndefined(e,"dataChunk"),n=n||function(){},t.isFunction(n,"eventCallback");var r={data:e,chunkId:i,timestamp:i*this._chunkDuration/1e3};if(this._dataChunks.push(r),this._dataChunks.length>this._maxChunksToCache)for(;this._dataChunks.length>this._lowWaterMaxChunks;)this._dataChunks.shift();this._chunkAddedEvent.fireAsync([r],this,n)},s.prototype.getChunks=function(){return this._dataChunks},s.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"chunkadded":return this._chunkAddedEvent.listen(i);case"segmentsready":return this._segmentsReadyEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},s}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0)],void 0!==(r=function(e,t){"use strict";function i(i,r,a){t.isStringNotEmpty(a,"m3u8String"),t.isObject(i,"logger"),this._rawM3U8=a,this._logger=i,this._name=r,this.mediaSegments=[],function(t){var i=t.match(/[^\r\n]+/g),r=this;return e.forEach(i,function(t,a){var s=t.match(/(?!#)EXT.+?(?=[:\n\r])/),o=e.get(s,["0"],null),l=t.trim().substring(o?o.length+2:0,t.length);switch("#EXT-X-ENDLIST"===t&&(o="EXT-X-ENDLIST"),o){case"EXT-X-VERSION":r.version=parseFloat(l);break;case"EXT-X-PROGRAM-DATE-TIME":r.programDateTime=function(e){return e?new Date(e.trim()):null}(l);break;case"EXT-X-TARGETDURATION":r.targetDuration=1e3*parseFloat(l)||0;break;case"EXT-X-MEDIA-SEQUENCE":r.mediaSequence=parseInt(l);break;case"EXTINF":var u=[l,i[a+1]];r.mediaSegments.push(n(u,r.mediaSegments+1));break;case"EXT-X-ENDLIST":r.isComplete=!0;break;case"EXTM3U":case null:break;default:return r._logger.debug("[%s] [Segment] Playlist unsupported key type [%s]",r._name,o)}}),r}.call(this,this._rawM3U8);var s=0;e.forEach(this.mediaSegments,function(e){e.timestamp=s,s+=e.duration}),this.playableDuration=s,this.isComplete=!!this.isComplete}i.prototype.toString=function(){return"vod"};var n=function(t){var i=e.get(t,["0"],"").split(","),n=e.get(i,["0"],0),r=e.get(i,["1"],"").trim(),a=e.get(t,["1"],"").trim();return{duration:parseFloat(n),title:r,name:a}};return i}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(4),i(10)],void 0!==(r=function(e,t,i,n){"use strict";function r(e,n,r){t.isObject(e,"logger"),this._logger=e,this._timeSources=function(e){return e.sort(function(e,t){return o[e.name]-o[t.name]})}(n),this._directSourceOffset=r,this._disposables=new i.DisposableList}function a(e){return(Math.random()-.5)*(e/20)+e}function s(t,i){i=i||0;var r=this,a=e.get(this._timeSources,[i],{});(function(t,i){var r=this;switch(t.name){case"urn:mpeg:dash:utc:http-head:2014":var a=n.getWithRetry(t.value,e.assign({contentType:"text/plain"},l),function(n,a){var s=e.get(a,["headers","date"],""),o=new Date(s).getTime();if(n||isNaN(o))return r._logger.warn("Unable to resolve dash timing via [%s]",t.value,n),i(n||new Error("invalid-server-time"));var l=e.now()-o-a.stats.successResponseTime/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,l),i(null,l)});return this._disposables.add(a),a;case"urn:mpeg:dash:utc:direct:2014":var s=e.now()-t.value-this._directSourceOffset/2;return r._logger.info("Resolved [%s] local to server timestamp offset [%s]",t.name,s),i(null,s);default:return r._logger.info("Unable to resolve mpd Timing Sources. Defaulting to local time"),i(null,0)}}).call(this,a,function(n,a){if(!e.isNumber(a))return s.call(r,t,i+1);t(n,a)})}var o={"urn:mpeg:dash:utc:http-head:2014":0,"urn:mpeg:dash:utc:direct:2014":1},l={retryOptions:{backoff:2,delay:2e3,maxAttempts:3,additionalRetryErrorCodes:[0]}};return r.prototype.calculateOffset=function(e){s.call(this,e)},r.prototype.setInterval=function(n,r){t.isFunction(n,"callback"),e.isUndefined(r)||t.isNumber(r,"interval");var o=this,l=a(r||3e5),u=setTimeout(function e(){o._logger.debug("Syncing local to server time"),s.call(o,function(t,i){if(t)return n(t);l=a(r||3e5),n(t,i),o._logger.debug("Waiting [%s] ms before next time sync",l),u=setTimeout(e,l)})},l),c=new i.Disposable(function(){clearTimeout(u)});return this._logger.debug("Waiting [%s] ms before next time sync",l),this._disposables.add(c),c},r.prototype.dispose=function(){return this._logger.debug("Disposing of mdp time sync"),this._disposables.dispose()},r.prototype.toString=function(){return"MpdTimeSync [Time Source Number: "+this._timeSources.length+", Direct Source Offset: "+this._directSourceOffset+"]"},r}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(8),i(28),i(29),i(5),i(9),i(21),i(16),i(18)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c,d,h,g){"use strict";function f(o,l,u){t.isNotUndefined(l,"videoElement"),t.isNotUndefined(l.videoWidth,"videoElement.videoWidth"),this._logger=o||new i.Logger,this._options=e.assign({targetLatency:m},u),this._videoElement=l,this._disposables=new r.DisposableList,this._browserDetails=new a(s.global.navigator.userAgent).detect(),this._preferNative=this._options.preferNative||!1,this._player=null,this._playbackStarted=!1,this._isWaiting=!1,this._playbackStarted=!1,this._playbackTimeLeftEvent=new n.Event,this._playerStartedEvent=new n.Event,this._playerErrorEvent=new n.Event,this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerStartedEvent),this._disposables.add(this._playerErrorEvent)}function p(){var e=this;"Edge"===e._browserDetails.browser||"IE"===e._browserDetails.browser?(e._videoElement.play(),e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")):e._videoElement.play().then(function(){e._playbackStarted=!0,e._playerStartedEvent.fireAsync([],e),e._logger.debug("Playback Started")}).catch(function(t){e._logger.error("Playback Failed [%s]",t)})}var m=8;return f.prototype.toString=function(){return e.toString(this)},f.prototype.start=function(e){if(t.isStringNotEmpty(e,"uri"),this._player)return this._logger.warn("Already started Phenix Web Player");var i=this;if(l.isSupported){if(this._preferNative||!o.isSupported)return this._logger.info("HLS native player selected"),this._player=new l(this._logger,this._videoElement,this._options),this._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),this._disposables.add(this._player),this._player.start(e,function(){p.call(i)})}else this._preferNative&&this._logger.warn("HLS native player is not supported");this._logger.info("MSE player selected");var n=new u(this._logger,e);i._disposables.add(n),n.fetch(function(e){if(e)return i._playerErrorEvent.fire([e]);var t,r=new c(i._logger,{ewmaPeriods:30});"Dash"===n.getDeliveryType()?t=new h(i._logger,n,r,i._options):"Hls"===n.getDeliveryType()&&(t=new g(i._logger,n,r,i._options));var a=new o(i._logger,n,i._videoElement,t,i._options),s=new d(i._logger,n,i,r);a.start(),p.call(i),i._player=a,i._player.addEventListener("playbacktimeleft",function(e,t){i._playbackTimeLeftEvent.fire([e,t])}),i._player.addEventListener("error",function(e){i._playerErrorEvent.fire([e])}),i._disposables.add(i._player),i._disposables.add(r),i._disposables.add(s)})},f.prototype.play=function(){p.call(this),this._player&&this._player.play()},f.prototype.pause=function(){this._logger.info("Pausing web player"),this._player&&this._player.pause()},f.prototype.getVideoElement=function(){return this._videoElement},f.prototype.dispose=function(){this._disposables.dispose(),this._videoElement&&(this._videoElement.load(),this._videoElement.src="",this._videoElement.mediaKeys&&this._videoElement.setMediaKeys(null)),this._player=null,this._videoElement=null},f.prototype.getBandwidthLimit=function(){this._player.getBandwidthLimit()},f.prototype.getTimeLeft=function(){return this._videoElement?function(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=function(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}.call(this,this._videoElement).timeBufferedButNotPlayed:0},f.prototype.changeBandwidthLimit=function(e,t){this._player.changeBandwidthLimit(e,t)},f.prototype.addEventListener=function(i,n){switch(t.isString(i,"eventName"),t.isFunction(n,"listener"),i){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(n);case"started":var r=this._playerStartedEvent.listen(n);return this._playbackStarted&&setTimeout(e.bind(n,this),0),r;case"error":return this._playerErrorEvent.listen(n);default:throw new Error('Event "'+i+'" is unknown.')}},f.prototype.getStats=function(){return this._player?this._player.getStats():{}},f.isSupported=l.isSupported||o.isSupported,f.deviceSupportsHlsPlayback=l.isSupported||o.isSupported,f.deviceSupportsDashPlayback=o.isSupported,f}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(8),i(5),i(12),i(19),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c){"use strict";function d(d,g,f,p,m){t.isInstanceOf(g,o,"playlist"),t.isNotUndefined(f,"videoElement"),t.isNotUndefined(f.videoWidth,"videoElement.videoWidth"),t.isNotUndefined(p,"playlistChunkFeeder"),t.isInstanceOf(p,l,"playlistChunkFeeder"),t.isNumber(m.targetLatency,"options.targetLatency"),e.isUndefined(e.get(m,"bandwidthToStartAt"))||t.isNumber(m.bandwidthToStartAt,"options.bandwidthToStartAt"),e.isUndefined(e.get(m,"trackRestrictions"))||t.isObject(m.trackRestrictions,"options.trackRestrictions"),e.isUndefined(e.get(m,"bufferSizeToPauseFetch"))||t.isNumber(m.bufferSizeToPauseFetch,"options.bufferSizeToPauseFetch"),e.isUndefined(e.get(m,"bufferSizeToResumeFetch"))||t.isNumber(m.bufferSizeToResumeFetch,"options.bufferSizeToResumeFetch"),e.isUndefined(e.get(m,"maximumFrequencyForAlteringPlaybackRate"))||t.isNumber(m.maximumFrequencyForAlteringPlaybackRate,"options.maximumFrequencyForAlteringPlaybackRate"),e.isUndefined(e.get(m,"playbackRateToRecover"))||t.isNumber(m.playbackRateToRecover,"options.playbackRateToRecover");var y=this;this._options=m,this._videoElement=f,this._feeder=p,this._playlist=g,this._disposables=new r.DisposableList,this._logger=d||new i.Logger,this._bandwidthLimit=e.get(m,"bandwidthToStartAt",w),this._trackRestrictions=e.get(m,"trackRestrictions",{}),this._playbackMode=e.get(m,"playbackMode",L.strict.name),this._bufferSizeToPauseFetch=e.get(m,"bufferSizeToPauseFetch",T),this._bufferSizeToResumeFetch=e.get(m,"bufferSizeToResumeFetch",E),this._targetLatencyInMilliseconds=1e3*m.targetLatency,this._playbackStarted=!1,this._isWaiting=!1,this._bufferStats=[],this._browserDetails=new a(s.global.navigator.userAgent).detect();var _=(this._targetLatencyInMilliseconds-(this._playlist.getMaxChunkDuration()||1e3)-500)/this._targetLatencyInMilliseconds;this._playbackRateToDecreaseBuffer=e.get(m,"playbackRateToDecreaseBuffer",C),this._playbackRateToIncreaseBuffer=e.get(m,"playbackRateToIncreaseBuffer",D),this._minimumIntervalBetweenPlaybackRateChange=e.get(m,"minimumIntervalBetweenPlaybackRateChange",M),this._targetBufferSizeToIncreasePlaybackRate=this._targetLatencyInMilliseconds/1e3*_,this._targetBufferSizeToReducePlaybackRate=this._targetLatencyInMilliseconds/1e3/4,this._maxBufferSizeWhilePlaybackRateIsReduced=this._targetLatencyInMilliseconds/1e3/2,this._logger.info("Target latency set to [%s] MS ([%s]/[%s] rates at most every [%s] with target buffers [%s] - [%s] - [%s])",this._targetLatencyInMilliseconds,this._playbackRateToIncreaseBuffer,this._playbackRateToDecreaseBuffer,this._minimumIntervalBetweenPlaybackRateChange,this._targetBufferSizeToReducePlaybackRate,this._maxBufferSizeWhilePlaybackRateIsReduced,this._targetBufferSizeToIncreasePlaybackRate),function(){var t=this,i=e.get(this._playlist,["parsedPlaylist","contentProtectionTags"],[]);if(0===i.length)return this._logger.info("No Content Protection Tags found in the playlist so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,i,e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){if(e.keys(i).length>0){if(t._trackRestrictions=i,0===h.call(t).length)return t._playerErrorEvent.fire([function(e,t,i,n){return{category:e,name:t,severity:i,error:"Error"===n.constructor.name?n:new Error(n)}}(c.category.DRM,"UnmetDRMRestrictions",c.severity.CRITICAL,"DRM Track restrictions not met")]);t._videoElement.play()}}),this._disposables.add(this._encryptedMediaHandler)}.call(this),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._playbackTimeLeftEvent=new n.Event,this._playerErrorEvent=new n.Event,this._feeder.addEventListener("error",function(e){y._playerErrorEvent.fire([e])}),this._disposables.add(this._feeder),this._disposables.add(this._playbackTimeLeftEvent),this._disposables.add(this._playerErrorEvent),this._disposables.add(new r.Disposable(function(){null!==y._switchTrackDisposable&&s.global.clearTimeout(y._switchTrackDisposable)}))}function h(){var e=this._playlist.getPlaylistTracksByBandwidthPerMimeType(this._bandwidthLimit,this._trackRestrictions);return this._feeder.setActiveTracks(e),e}function g(e,t,i){this._logger.debug("VIDEO EVENT: [%s]",e,i),t&&t.call(this,i)}function f(t,i){var n=e.bind(g,this,"durationchange",function(){var r=this;if("dynamic"!==r._playlist.getType())return r._videoElement.removeEventListener("durationchange",n,!1),r._readyAt=null;0!==e.get(r._videoElement,["buffered","length"],0)&&function(t,i){var n=this;t=e.isNumber(t)?t:(n._playlist.getPlaybackDurationSinceAvailable()-n._targetLatencyInMilliseconds)/1e3,this._playbackMode===L.strict.name&&(t=(n._playlist.getPlaybackDurationSinceAvailable()-n._targetLatencyInMilliseconds)/1e3),"Firefox"===this._browserDetails.browser&&(t-=1),setTimeout(function(){var r=n._videoElement.buffered.start(n._videoElement.buffered.length-1),a=n._videoElement.buffered.end(n._videoElement.buffered.length-1),s=n._videoElement.currentTime<t||n._videoElement.currentTime>t+1,o=r<=t&&t<=a,l=n._durationChangeCount>=R;if(n._readyAt||!o&&!l&&n._initialized)n._durationChangeCount++;else{if(s&&!n._setTimeoutOnce&&(o||l||!n._initialized)){var u=l?(a-r)/2+r:r;n._initialized||o||(u=r),n._logger.debug("Setting video current time to [%s], attempt [%s]",u,n._durationChangeCount),n._videoElement.currentTime=u,n._setTimeoutOnce=!0,n._initialized||(n._initialized=!0)}r<=n._videoElement.currentTime&&n._videoElement.currentTime<=a&&(o||l)&&(n._readyAt=e.now(),n._setTimeoutOnce=!1,n._logger.debug("Successfully updated video current time [%s] after [%s] attempts",n._videoElement.currentTime,n._durationChangeCount),i())}},10)}.call(r,t,function(){r._videoElement.removeEventListener("durationchange",n,!1),i&&i()})});return this._durationChangeCount=0,n}function p(t){var i=this,n=this._feeder.getActiveTracks(),a=h.call(this);(function(t){if("static"===this._playlist.getType()&&this._mediaSource.duration!==this._playlist.getTotalMediaTimeInMillis()/1e3)this._mediaSource.duration=this._playlist.getTotalMediaTimeInMillis()/1e3;else if("Hls"===this._playlist.getDeliveryType()&&this._mediaSource.duration!==1/0){this._mediaSource.duration=1/0;var i=e.reduce(t,function(t,i){var n=e.get(i.getLastSegment(),["timestamp"],0);return e.isNullOrUndefined(t)?n:n<t?n:t})||0;this._feeder.seekToChunk(i)}}).call(this,a),this._feeder.initializeActiveTracks(function(s){if(s)return i._logger.error("Unable to initialize playlist tracks",s),i._playerErrorEvent.fire([s]),t(s);var o=e.filter(a,function(e){return!i._bufferDetails[k(e)]});if(o.length>0){var l=e.map(o,function(e){return e.getTrackId()});i._logger.info("Initializing source buffers for [%s] tracks [%s]",o.length,l),function(t){this._logger.debug("Creating MSE buffers for all tracks."),e.forEach(t,e.bind(function(t){(function(t){var i=this,n={track:t,chunks:[],chunkAddRequested:!1},a=b(t),s=!e.includes(e.keys(i._mediaSourceBuffers),a),o=s?i._mediaSource.addSourceBuffer(t.getMseCodec()):i._mediaSourceBuffers[a].buffer,l=k(t);i._bufferDetails[l]=n,s&&(o.mode="segments","static"===i._playlist.getType()&&(o.appendWindowEnd=i._playlist.getTotalMediaTimeInMillis()/1e3),i._logger.debug("Creating MSE Buffer for [%s] with mode [%s]",i._playlist.getType(),o.mode),i._mediaSourceBuffers[a]={buffer:o,updateEnd:function(e){o.updating||v.call(this,e,!0)}},i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceBuffer [%s]",a),i._mediaSource.removeSourceBuffer(o)})));var u=t.addEventListener("chunkadded",e.bind(function(t,r){n.addInitChunkFirst&&"Dash"===i._playlist.getDeliveryType()&&(n.addInitChunkFirst=!1,this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),"Init"),n.chunks.push(t.getInitChunkData())),this._logger.debug("Pushing track [%s] chunk [%s] into buffer",t.getTrackId(),r.chunkId),n.chunks.push(r.data),n.chunkAddRequested&&(n.chunkAddRequested=!1,o.updating||v.call(this,t,!1));var a=e.now()-this._lastUpdate>=S,s=e.now()-this._lastPlayAttempt>=500;this._isWaiting&&a&&s&&!this._videoElement.paused&&!this._pausedAt&&(this._logger.trace("Starting after wait [%s]",e.now()-this._lastUpdate),this._lastPlayAttempt=e.now(),this._videoElement.play())},i,t));i._disposables.add(u)}).call(this,t)},this))}.call(i,o)}var u=e.filter(a,function(t){return!e.find(n,function(e){return e.getTrackId()===t.getTrackId()})});e.forEach(u,function(t){(function(t){var i=this._mediaSourceBuffers[b(t)],n=e.bind(function(e){this._logger.warn("Buffer Error [%s]",e)},this),r=!!i.track;if(i.track===t)return;var a=this._bufferDetails[k(t)];i.track&&i.track!==t&&r&&(i.buffer.removeEventListener("updateend",i.updateEndListener),i.buffer.removeEventListener("error",n),a&&(a.addInitChunkFirst=!0,a.chunkAddRequested=!0,a.chunks=[]));if(i.track=t,i.updateEndListener=e.bind(i.updateEnd,this,t),i.buffer.addEventListener("updateend",i.updateEndListener),i.buffer.addEventListener("error",n),i.buffer.onerror=n,!r){var s="Dash"===this._playlist.getDeliveryType()?[t.getInitChunkData()]:[];a.chunks=[].concat(s,e.map(t.getChunks(),function(e){return e.data})),"static"===this._playlist.getType()&&"Edge"!==this._browserDetails.browser&&"IE"!==this._browserDetails.browser&&this._mediaSource.setLiveSeekableRange(0,this._playlist.getTotalMediaTimeInMillis()/1e3),v.call(this,t,!1)}}).call(i,t),i._logger.info("Switched [%s] to track [%s] with [%s] bandwidth limit",b(t),t.getTrackId(),i._bandwidthLimit)}),t()})}function m(t){var i=this._videoElement.currentTime,n=this._videoElement.duration,r=y(t,i),a=e.isNumber(r)?t.buffered.end(r):0,s=0===a?0:a-i;return{bufferedLength:t.buffered.length,current:i,bufferEnd:a,timeBufferedButNotPlayed:s,duration:n,timestampOffset:t.timestampOffset}}function y(e,t){for(var i=0;i<e.buffered.length;i++){var n=e.buffered.start(i),r=e.buffered.end(i);if(n<=t&&t<=r)return i}}function _(){var t=!0,i=!1;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var n=m.call(this,e.buffer),r=parseFloat(n.timeBufferedButNotPlayed);r<this._bufferSizeToPauseFetch&&(t=!1),r<this._bufferSizeToResumeFetch&&(i=!0)},this)),t&&this._feeder.isFetchingData()&&(this._logger.debug("Pausing feeder due to excess buffer"),x.call(this)),!i||this._feeder.isFetchingData()||this._pausedAt||(this._logger.debug("Starting feeder due to limited buffer"),N.call(this))}function v(t,i){var n=this._mediaSourceBuffers[b(t)],r=this._bufferDetails[k(t)];if(!r)return this._logger.warn("Unable to add chunk for non existent buffer");if("dynamic"===this._playlist.getType()&&this._pausedAt&&!this._reset&&n.buffer.buffered.length>0)n.buffer.remove(0,n.buffer.buffered.end(n.buffer.buffered.length-1)),n.cleared=!0,e.reduce(this._mediaSourceBuffers,function(e,t){return e?t.cleared:e},!0)&&(this._initialized=!1,this._readyAt=null,this._setTimeoutOnce=!1,this._reset=!0);else if(r.chunks.length>0){if(this._videoElement.error)return this._logger.error("Unable to continue appending to buffer. Video element error code [%s] and message [%s]",this._videoElement.error.code,this._videoElement.error.message),x.call(this),this._playerErrorEvent.fire([this._videoElement.error]);var a=r.chunks.shift();n.cleared=!1,this._logger.debug("Appending chunk to buffer for track [%s]",t.getTrackId()),n.buffer.appendBuffer(new Uint8Array(a))}else i&&(this._lastPlayAttempt&&_.call(this),r.chunkAddRequested=!0)}function b(e){return e.getMseCodec().indexOf("video")>=0?"video":e.getMseCodec().indexOf("audio")>=0?"audio":"other"}function k(e){return e.getTrackId()+"_"+e.getMseCodec()}var w=2e6,T=60,E=30,S=1e3,C=1.03,D=.97,M=300,P=4e3,A=3e5,R=2,I=500,L={loose:{id:0,name:"loose"},strict:{id:1,name:"strict"}};d.prototype.toString=function(){return e.toString(this)},d.prototype.play=function(){if("dynamic"===this._playlist.getType()){var e=this._feeder.seekToCurrent();N.call(this);var t=this,i=f.call(this,e,function(){t._pausedAt=0,t._videoElement&&t._videoElement.play()});return setTimeout(function(){t._videoElement.addEventListener("durationchange",i,!1)},300),this._disposables.add(new r.Disposable(function(){t._videoElement.removeEventListener("durationchange",i,!1)}))}N.call(this),this._videoElement&&this._videoElement.play()},d.prototype.pause=function(){this._logger.info("Pausing web player"),x.call(this);var t=this;this._videoElement&&(this._videoElement.pause(),this._pausedAt=e.now(),this._reset=!1,e.forOwn(this._feeder.getActiveTracks(),function(e){t._mediaSourceBuffers[b(e)].buffer.updating||v.call(t,e,!1)}))},d.prototype.dispose=function(){this._disposables.dispose(),this._playbackStarted=!1,this._mediaSourceBuffers={},this._bufferDetails={},this._bufferStats=[],this._mediaSource=null,this._playlist=null,this._videoElement=null},d.prototype.start=function(t){(function(t){var i=this;i._mediaSource=new MediaSource;var n=function(){(function(t){var i=this;p.call(i,function n(a){if(a)return t(a);var s=i._feeder.getActiveTracks(),o=e.map(s,function(e){return e.getTrackId()});i._logger.debug("Initializing tracks [%s]",o);var l=setTimeout(function(){return i._feeder.stopRequestingAllData(),i._bandwidthLimit=i._bandwidthLimit/2,p.call(i,n)},i._playlist.getMaxChunkDuration());i._feeder.fetchNChunks(1,function(n){if("timeout"!==e.get(n,["message"])){if(clearTimeout(l),n)return t(n);"Hls"===i._playlist.getDeliveryType()&&e.forEach(i._feeder.getActiveTracks(),function(e){i._bufferDetails[k(e)].chunkAddRequested=!0}),i._logger.info("Initializing feeder with [%s] [%s] playlist of duration [%s]",i._playlist.getType(),i._playlist.getDeliveryType(),i._playlist.getTotalMediaTimeInMillis()/1e3),function(t){var i=this,n=e.bind(function(){this._isWaiting=!1,this._lastUpdate=e.now();var t,i=e.now()-this._startTime>P;e.forOwn(this._mediaSourceBuffers,e.bind(function(e){var i=m.call(this,e.buffer);(!t||t>i.timeBufferedButNotPlayed)&&(t=i.timeBufferedButNotPlayed),this._playbackTimeLeftEvent.fire([i.timeBufferedButNotPlayed,e.track],this)},this)),_.call(this),i&&(function(t){this._bufferStats.push({size:t,timestamp:e.now()});for(var i=e.get(this._bufferStats,[0,"timestamp"],e.now());e.now()-i>A;)this._bufferStats.shift(),i=e.get(this._bufferStats,[0,"timestamp"],e.now());this._bufferStatsMin=Math.min.apply(null,e.map(this._bufferStats,function(e){return e.size}))}.call(this,t),function(t){if("Dash"===this._playlist.getDeliveryType()||"dynamic"===this._playlist.getType()){var i=this._targetBufferSizeToIncreasePlaybackRate,n=this._lastPlaybackRateChange,r=e.now()-this._startTime>P,a=!n||e.now()-n>1e3*this._minimumIntervalBetweenPlaybackRateChange,s=this._targetLatencyInMilliseconds/1e3,o=this._bufferStatsMin>this._targetBufferSizeToReducePlaybackRate,l=this._bufferStatsMin<=s+.1&&this._bufferStatsMin>=s-.1,u=t>=this._maxBufferSizeWhilePlaybackRateIsReduced&&this._videoElement.playbackRate===this._playbackRateToIncreaseBuffer;t>=i&&o&&this._videoElement.playbackRate<=1&&r&&a?(this._logger.info("Adjusting playback rate to [%s] to reduce buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToDecreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToDecreaseBuffer):!o&&!l&&this._videoElement.playbackRate>=1&&a?(this._logger.info("Adjusting playback rate to [%s] to increase buffer size from [%s] with minimum buffer size of [%s]",this._playbackRateToIncreaseBuffer,t,this._bufferStatsMin),this._videoElement.playbackRate=this._playbackRateToIncreaseBuffer):(u||l)&&1!==this._videoElement.playbackRate&&(this._logger.info("Resuming normal playback rate with buffer size of [%s] and minimum buffer size of [%s]",t,this._bufferStatsMin),this._videoElement.playbackRate=1,this._lastPlaybackRateChange=e.now())}}.call(this,t||0))},i),a=e.bind(g,i,"stalled",null),s=e.bind(g,i,"suspend",null),o=e.bind(g,i,"ended",null),l=e.bind(g,i,"error",null),u=e.bind(g,i,"pause",null),c=e.bind(g,i,"play",function(){this._pausedAt&&this._videoElement.pause()}),d=e.bind(g,i,"waiting",function(){this._playbackStarted&&(this._logger.debug("Waiting for new chunk or end of track"),this._isWaiting=!0)}),h=e.bind(g,i,"seeking",function(t){var i=e.keys(this._mediaSourceBuffers),n=e.get(i,"0",null),r=this._mediaSourceBuffers[n],a=e.now()-this._readyAt,s=this;if(!(r&&a>I&&"Hls"!==this._playlist.getDeliveryType()))return this._logger.debug("Ignoring video seek event during initialization");var o=y(r.buffer,t.timeStamp/1e3),l=y(r.buffer,this._videoElement.currentTime),u=e.reduce(this._mediaSourceBuffers,function(t,i){var n=y(i.buffer,s._videoElement.currentTime),r=e.isNumber(n)?i.buffer.buffered.end(n):0;return t?r<t?r:t:r})||this._videoElement.currentTime;if(this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed."),this._feeder.seekToChunk("dynamic"===this._playlist.getType()?this._videoElement.currentTime:u),o!==l||e.isNullOrUndefined(l)){if(this._feeder.isFetchingData())return;this._feeder.startRequestingDataForActiveTracks(this._bandwidthLimit)}}),p=f.call(i);i._videoElement.addEventListener("timeupdate",n,!1),i._videoElement.addEventListener("ended",o,!1),i._videoElement.addEventListener("error",l,!1),i._videoElement.addEventListener("pause",u,!1),i._videoElement.addEventListener("stalled",a,!1),i._videoElement.addEventListener("suspend",s,!1),i._videoElement.addEventListener("play",c,!1),i._videoElement.addEventListener("waiting",d,!1),i._videoElement.addEventListener("seeking",h,!1),i._videoElement.addEventListener("durationchange",p,!1),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up videoElement listeners"),i._videoElement.removeEventListener("timeupdate",n,!1),i._videoElement.removeEventListener("ended",o,!1),i._videoElement.removeEventListener("error",l,!1),i._videoElement.removeEventListener("pause",u,!1),i._videoElement.removeEventListener("stalled",a,!1),i._videoElement.removeEventListener("suspend",s,!1),i._videoElement.removeEventListener("play",c,!1),i._videoElement.removeEventListener("waiting",d,!1),i._videoElement.removeEventListener("seeking",h,!1),i._videoElement.removeEventListener("durationchange",p,!1)})),N.call(i),i._lastPlayAttempt=e.now(),e.isFunction(t)&&t()}.call(i,t)}})})}).call(i,t)};i._mediaSource.addEventListener("sourceopen",n),i._disposables.add(new r.Disposable(function(){i._logger.debug("Cleaning up sourceopen listener"),i._mediaSource.removeEventListener("sourceopen",n)})),i._videoElement.src=s.global.URL.createObjectURL(i._mediaSource)}).call(this,t),this._startTime=e.now()},d.prototype.getBandwidthLimit=function(){return this._bandwidthLimit},d.prototype.changeBandwidthLimit=function(t,i){this._logger.debug("Changing playback bandwidth limit: [%s], current limit: [%s]",t,this._bandwidthLimit),this._bandwidthLimit=t,this._switchTrackDisposable=setTimeout(e.bind(function(t){var i=this;p.call(this,function(n){if(n)return t(n);var r=i._feeder.getActiveTracks(),a=e.reduce(r,function(t,n){var r=i._mediaSourceBuffers[b(n)],a=y(r.buffer,i._videoElement.currentTime),s=n.getChunkDuration()/1e3;if(!e.isNumber(a))return!e.isNumber(t)||t>i._videoElement.currentTime?i._videoElement.currentTime:t;var o=Math.round(r.buffer.buffered.end(a)/s)*s;return!e.isNumber(t)||t>o?o:t});return e.isNumber(a)||(a=i._videoElement.currentTime),i._feeder.stopRequestingAllData(),i._feeder.seekToChunk(a),i._logger.debug("Pausing of feeder completed."),i._feeder.isFetchingData()?t():(i._feeder.startRequestingDataForActiveTracks(i._bandwidthLimit),t())})},this,i||e.noop),250)},d.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"playbacktimeleft":return this._playbackTimeLeftEvent.listen(i);case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},d.prototype.getStats=function(){return{currentTime:e.get(this._element,["currentTime"],0),width:e.get(this._element,["videoWidth"],0)||e.get(this._element,["width"],0),height:e.get(this._element,["videoHeight"],0)||e.get(this._element,["height"],0),lag:0,deliveryType:this._playlist.getDeliveryType(),isNative:!1}},d.isSupported=!!s.global.MediaSource;var x=function(){this._feeder.stopRequestingAllData(),this._logger.debug("Pausing of feeder completed.")},N=function(){if(this._feeder.isFetchingData())return this._logger.debug("Unable to start requesting data. Feeder is already fetching data.");this._feeder.startRequestingDataForActiveTracks()};return d}.apply(t,n))&&(e.exports=r)},function(e,t,i){var n,r;n=[i(1),i(0),i(2),i(3),i(4),i(11),i(20),i(8),i(5),i(19),i(6)],void 0!==(r=function(e,t,i,n,r,a,s,o,l,u,c){"use strict";function d(s,d,m){t.isNotUndefined(d,"videoElement"),t.isNotUndefined(d.videoWidth,"videoElement.videoWidth"),this._options=m,this._videoElement=d,this._disposables=new r.DisposableList,this._logger=s||new i.Logger,this._browserDetails=new a(o.global.navigator.userAgent).detect(),this._playerErrorEvent=new n.Event,this._disposables.add(this._playerErrorEvent),this._onStalled=e.bind(function(){var e=this,t=this._element.currentTime,i=function(){return 1.5*this._lastProgress.averageLength<4e3?4e3:1.5*this._lastProgress.averageLength}.call(e);if(e._element.paused)return;setTimeout(function(){if(0===e._lastProgress.count&&!e._element.paused&&e._element.currentTime===t){var n="Stream has not started within ["+i/1e3+"] seconds";e._logger.warn(n),f.call(e,c.name.progressTimeOut.name,n)}},i),setTimeout(function(){if(e._element&&e._element.currentTime===t&&!e._element.paused&&h.call(e)){var i="Stream has been stalled for ["+_/1e3+"] seconds";e._logger.warn(i),g.call(e,c.name.progressTimeOut.name,i)}},_)},this),this._onProgress=e.bind(function(){if(this._lastProgress.time=e.now(),0===this._element.buffered.length)return this._logger.debug("[%s] Hls stream progress event fired without any buffered content",this._uri);var t=this._element.buffered.end(this._element.buffered.length-1);if(this._lastProgress.buffered===t)return;if(null!==this._lastProgress.buffered){var i=this._lastProgress.averageLength*this._lastProgress.count+(t-this._lastProgress.buffered);if(this._lastProgress.count+=1,this._lastProgress.averageLength=i/this._lastProgress.count,this._lastProgress.lastCurrentTime!==this._element.currentTime&&(this._lastProgress.lastCurrentTimeOccurrenceTimestamp=e.now()),this._lastProgress.lastCurrentTimeOccurrenceTimestamp&&e.now()-this._lastProgress.lastCurrentTimeOccurrenceTimestamp>_&&this._element&&!this._element.paused&&h.call(this)){var n="Reloading stream after current time has not changed for ["+_/1e3+"] seconds due to unregistered stall.";this._logger.warn(n),g.call(this,c.name.progressTimeOut.name,n)}}this._lastProgress.buffered=t,this._lastProgress.lastCurrentTime=this._element.currentTime},this),this._onEnded=e.bind(function(){this._logger.info("[%s] Hls stream ended",this._streamId),this.stop("ended")},this),this._onError=e.bind(function(t){var i=this,n=0===i._lastProgress.count;4===e.get(this._element,["error","code"])&&n&&f.call(i,c.name.hlsNativeError.name,t);p.call(this,c.name.hlsNativeError.name,t)},this),this._lastProgress={time:0,buffered:null,averageLength:0,count:0,lastCurrentTime:0,lastCurrentTimeOccurrenceTimestamp:0},this._bufferSizeHistory=[],function(){var t=this,i=e.get(this._options,["drm","com.apple.fps.1_0"],{});if(0===e.keys(i).length)return this._logger.info("DRM config is empty so skipping initialization of EncryptedMediaHandler");if(!u.isSupported())return this._logger.error("DRM not supported by the browser");this._encryptedMediaHandler=new u(this._logger,this._videoElement,[],e.get(this._options,"drm")),this._encryptedMediaHandler.addEventListener("error",function(e){t._playerErrorEvent.fire([e])}),this._encryptedMediaHandler.addEventListener("trackRestrictionsAvailable",function(i){e.keys(i).length>0&&(t._trackRestrictions=i)}),this._disposables.add(this._encryptedMediaHandler)}.call(this),setTimeout(e.bind(function(){this._playlist=new l(this._logger,this._uri),this._disposables.add(this._playlist),this._playlist.fetch(e.noop)},this),b)}function h(){return this._element&&0!==this._element.buffered.length}function g(e,t){if(!h.call(this))return p.call(this,e,t);f.call(this,e,t)}function f(e,t){this._playerErrorEvent.fire([y(e,c.severity.RECOVERABLE,t)])}function p(e,t){this._playerErrorEvent.fire([y(e,c.severity.CRITICAL,t)])}function m(t){if(t){if(clearTimeout(this._backgroundTimeout),this._backgroundTimeout=null,!this._backgroundThrottled)return;return this._backgroundThrottled=!1,void this.start(this._element)}var i=this;this._backgroundTimeout=setTimeout(function(){s.isForeground()||function(t){if(t.muted)return!1;return e.get(t,["webkitAudioDecodedByteCount"],0)>0||e.get(t,["audioTracks","length"],0)>0||t.webkitHasAudio}(i._element)||(i._logger.info("Detecting application [background] with muted video. Pausing playback until application focused again."),i._element.pause(),i._backgroundThrottled=!0)},v)}function y(e,t,i){return{category:c.category.STREAMING,name:e,severity:t,error:"Error"===i.constructor.name?i:new Error(i)}}var _=6e3,v=3e3,b=2e3;return d.prototype.toString=function(){return e.toString(this)},d.prototype.play=function(){this._videoElement.play()},d.prototype.pause=function(){this._videoElement.pause()},d.prototype.dispose=function(){this._disposables.dispose()},d.prototype.start=function(t){if(this._uri)return this._logger.warn("Already started player");this._uri=t,this._disposables.add(s.onBackground(e.bind(m,this,!1))),this._disposables.add(s.onForeground(e.bind(m,this,!0))),function(t){o.attachUriStream(t,this._uri),!1===this._options.receiveAudio&&(t.muted=!0),e.addEventListener(t,"error",this._onError,!0),e.addEventListener(t,"stalled",this._onStalled,!1),e.addEventListener(t,"pause",this._onStalled,!1),e.addEventListener(t,"suspend",this._onStalled,!1),e.addEventListener(t,"progress",this._onProgress,!1),e.addEventListener(t,"ended",this._onEnded,!1),this._element=t}.call(this,this._videoElement)},d.prototype.getBandwidthLimit=function(){return this._logger.warn("getBandwidthLimit not supported for HLS Native")},d.prototype.changeBandwidthLimit=function(){return this._logger.warn("changeBandwidthLimit not supported for HLS Native")},d.prototype.addEventListener=function(e,i){switch(t.isString(e,"eventName"),t.isFunction(i,"listener"),e){case"error":return this._playerErrorEvent.listen(i);default:throw new Error('Event "'+e+'" is unknown.')}},d.prototype.getStats=function(){if(!this._videoElement)return{width:0,height:0,currentTime:0,lag:0,deliveryType:"Hls",isNative:!0};var t=e.get(this._element,["currentTime"],0),i=this._element&&this._element.buffered&&this._element.buffered.length>0?this._element.buffered.end(this._element.buffered.length-1):0,n=Math.max(0,i-t);this._bufferSizeHistory.push(n),this._bufferSizeHistory.length>15&&this._bufferSizeHistory.shift();for(var r=0,a=0,s=this._bufferSizeHistory.length;a<s;a++)r=Math.max(r,this._bufferSizeHistory[a]);var o=2;this._playlist&&this._playlist.getAllPlaylistTracks().length>0&&(o=this._playlist.getAllPlaylistTracks()[0].getChunkDuration());var l=2*o+r;return{width:this._element.videoWidth||this._element.width,height:this._element.videoHeight||this._element.height,currentTime:t,lag:l,deliveryType:"Hls",isNative:!0}},d.isSupported="object"==typeof document&&"maybe"===document.createElement("video").canPlayType("application/vnd.apple.mpegURL"),d}.apply(t,n))&&(e.exports=r)}])});
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(109)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ApplicationActivityDetector) {
+    'use strict';
+
+    return new ApplicationActivityDetector();
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7647,7 +7641,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(3),
     __webpack_require__(8),
-    __webpack_require__(51),
+    __webpack_require__(50),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, global, PhenixLiveStream, streamEnums) {
     'use strict';
@@ -7825,7 +7819,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7896,7 +7890,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -7971,45 +7965,19 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 module.exports = require("http");
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 module.exports = require("crypto");
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
- * Copyright 2018 Phenix Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(82)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
-    return detectBrowser;
-}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8047,7 +8015,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8070,7 +8038,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(10),
-    __webpack_require__(92)
+    __webpack_require__(91)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, telemetryAppenderFactory) {
     'use strict';
 
@@ -8104,7 +8072,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8147,7 +8115,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8166,9 +8134,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(94),
-    __webpack_require__(105),
-    __webpack_require__(45)
+    __webpack_require__(93),
+    __webpack_require__(104),
+    __webpack_require__(44)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(MQWebSocket, BatchHttpProto, MQService) {
     return {
         MQWebSocket: MQWebSocket,
@@ -8179,7 +8147,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8203,7 +8171,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(6),
     __webpack_require__(2),
-    __webpack_require__(114)
+    __webpack_require__(113)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(assert, _, http, disposable, ClosestEndPointResolver) {
     'use strict';
 
@@ -8296,7 +8264,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2020-07-14T12:25:12Z',
+                version: '2020-07-14T14:13:29Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -8322,7 +8290,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8665,7 +8633,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 28 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8688,8 +8656,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(29),
-    __webpack_require__(57)
+    __webpack_require__(27),
+    __webpack_require__(56)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, stream, track) {
     'use strict';
 
@@ -8843,7 +8811,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -8888,41 +8856,41 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("url");
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = require("https");
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const EventEmitter = __webpack_require__(34);
-const https = __webpack_require__(32);
-const http = __webpack_require__(19);
-const net = __webpack_require__(68);
-const tls = __webpack_require__(69);
-const { randomBytes, createHash } = __webpack_require__(20);
-const { URL } = __webpack_require__(30);
+const EventEmitter = __webpack_require__(32);
+const https = __webpack_require__(30);
+const http = __webpack_require__(18);
+const net = __webpack_require__(67);
+const tls = __webpack_require__(68);
+const { randomBytes, createHash } = __webpack_require__(19);
+const { URL } = __webpack_require__(28);
 
-const PerMessageDeflate = __webpack_require__(13);
-const Receiver = __webpack_require__(36);
-const Sender = __webpack_require__(39);
+const PerMessageDeflate = __webpack_require__(12);
+const Receiver = __webpack_require__(34);
+const Sender = __webpack_require__(37);
 const {
   BINARY_TYPES,
   EMPTY_BUFFER,
@@ -8931,9 +8899,9 @@ const {
   kWebSocket,
   NOOP
 } = __webpack_require__(9);
-const { addEventListener, removeEventListener } = __webpack_require__(78);
-const { format, parse } = __webpack_require__(40);
-const { toBuffer } = __webpack_require__(14);
+const { addEventListener, removeEventListener } = __webpack_require__(77);
+const { format, parse } = __webpack_require__(38);
+const { toBuffer } = __webpack_require__(13);
 
 const readyStates = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'];
 const protocolVersions = [8, 13];
@@ -9821,18 +9789,18 @@ function socketOnError() {
 
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = require("events");
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fs = __webpack_require__(31)
-var path = __webpack_require__(73)
-var os = __webpack_require__(74)
+var fs = __webpack_require__(29)
+var path = __webpack_require__(72)
+var os = __webpack_require__(73)
 
 // Workaround to fix webpack's build warnings: 'the request of a dependency is an expression'
 var runtimeRequire =  true ? require : undefined // eslint-disable-line
@@ -9908,23 +9876,23 @@ function isElectron () {
 
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const { Writable } = __webpack_require__(37);
+const { Writable } = __webpack_require__(35);
 
-const PerMessageDeflate = __webpack_require__(13);
+const PerMessageDeflate = __webpack_require__(12);
 const {
   BINARY_TYPES,
   EMPTY_BUFFER,
   kStatusCode,
   kWebSocket
 } = __webpack_require__(9);
-const { concat, toArrayBuffer, unmask } = __webpack_require__(14);
-const { isValidStatusCode, isValidUTF8 } = __webpack_require__(38);
+const { concat, toArrayBuffer, unmask } = __webpack_require__(13);
+const { isValidStatusCode, isValidUTF8 } = __webpack_require__(36);
 
 const GET_INFO = 0;
 const GET_PAYLOAD_LENGTH_16 = 1;
@@ -10407,20 +10375,20 @@ function error(ErrorCtor, message, prefix, statusCode) {
 
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, exports) {
 
 module.exports = require("stream");
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 try {
-  const isValidUTF8 = __webpack_require__(76);
+  const isValidUTF8 = __webpack_require__(75);
 
   exports.isValidUTF8 =
     typeof isValidUTF8 === 'object'
@@ -10450,18 +10418,18 @@ exports.isValidStatusCode = (code) => {
 
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const { randomFillSync } = __webpack_require__(20);
+const { randomFillSync } = __webpack_require__(19);
 
-const PerMessageDeflate = __webpack_require__(13);
+const PerMessageDeflate = __webpack_require__(12);
 const { EMPTY_BUFFER } = __webpack_require__(9);
-const { isValidStatusCode } = __webpack_require__(38);
-const { mask: applyMask, toBuffer } = __webpack_require__(14);
+const { isValidStatusCode } = __webpack_require__(36);
+const { mask: applyMask, toBuffer } = __webpack_require__(13);
 
 const mask = Buffer.alloc(4);
 
@@ -10817,7 +10785,7 @@ module.exports = Sender;
 
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11047,7 +11015,33 @@ module.exports = { format, parse };
 
 
 /***/ }),
-/* 41 */
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+ * Copyright 2018 Phenix Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+!(__WEBPACK_AMD_DEFINE_ARRAY__ = [
+    __webpack_require__(81)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(detectBrowser) {
+    return detectBrowser;
+}).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ }),
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11237,7 +11231,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 42 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11330,7 +11324,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 43 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -11354,33 +11348,33 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(23),
+    __webpack_require__(21),
     __webpack_require__(6),
-    __webpack_require__(11),
+    __webpack_require__(14),
+    __webpack_require__(22),
+    __webpack_require__(47),
+    __webpack_require__(110),
     __webpack_require__(24),
-    __webpack_require__(48),
-    __webpack_require__(111),
-    __webpack_require__(26),
+    __webpack_require__(115),
     __webpack_require__(116),
+    __webpack_require__(48),
+    __webpack_require__(11),
     __webpack_require__(117),
-    __webpack_require__(49),
-    __webpack_require__(12),
-    __webpack_require__(118),
+    __webpack_require__(119),
     __webpack_require__(120),
-    __webpack_require__(121),
-    __webpack_require__(27),
-    __webpack_require__(123),
-    __webpack_require__(51),
-    __webpack_require__(127),
-    __webpack_require__(16),
+    __webpack_require__(25),
+    __webpack_require__(122),
+    __webpack_require__(50),
+    __webpack_require__(126),
+    __webpack_require__(15),
     __webpack_require__(7),
-    __webpack_require__(52),
+    __webpack_require__(51),
     __webpack_require__(3),
-    __webpack_require__(50)
+    __webpack_require__(49)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2020-07-14T12:25:12Z';
+    var sdkVersion = '2020-07-14T14:13:29Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -11425,6 +11419,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             this._logger.warn('Conflicting options "reAuthenticateOnForeground" can not be false when "treatBackgroundAsOffline" is true. Will reauthenticate upon entering foreground.');
         }
 
+        if (options.shakaLoader) {
+            assert.isFunction(options.shakaLoader, 'options.shakaLoader');
+        }
+
+        if (options.webPlayerLoader) {
+            assert.isFunction(options.webPlayerLoader, 'options.webPlayerLoader');
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -11432,8 +11434,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
-        this._shaka = options.shaka;
-        this._videojs = options.videojs || phenixRTC.global.videojs;
+        this._shakaLoader = options.shakaLoader;
+        this._webPlayerLoader = options.webPlayerLoader;
         this._rtmpOptions = options.rtmp || {};
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
@@ -13064,12 +13066,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                 options.playreadyLicenseUrl = offerSdp.match(/a=x-playready-license-url:([^\n][^\s]*)/m)[1];
             }
 
-            if (this._shaka && !this._shaka.Player.isBrowserSupported()) {
-                this._logger.warn('[%s] Shaka does not support this browser', streamId);
-
-                return callback.call(this, undefined, 'browser-unsupported');
-            }
-
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
         case streamEnums.types.hls.name:
             this._logger.info('Selecting hls playback for live stream.');
@@ -13094,41 +13090,81 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     function createLiveViewerOfKind(streamId, uri, kind, streamTelemetry, callback, options) {
         var that = this;
-        var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, this._shaka, this._logger);
-        var liveStreamDecorator = new StreamWrapper(kind, liveStream, this._logger);
+        var pending = 0;
+        var shaka = null;
+        var webPlayer = null;
 
-        var onPlayerError = function onPlayerError(source, event) {
-            that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
+        if (this._shakaLoader) {
+            pending++;
+        }
 
-            liveStreamDecorator.streamErrorCallback(source, event);
+        if (this._webPlayerLoader) {
+            pending++;
+        }
+
+        var loaded = function() {
+            var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, shaka, webPlayer, that._logger);
+            var liveStreamDecorator = new StreamWrapper(kind, liveStream, that._logger);
+
+            var onPlayerError = function onPlayerError(source, event) {
+                that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
+
+                liveStreamDecorator.streamErrorCallback(source, event);
+            };
+
+            var onStop = function onStop(reason) {
+                if (!that._protocol) {
+                    return that._logger.warn('Unable to destroy stream [%s]', streamId);
+                }
+
+                that._protocol.destroyStream(streamId, reason || '', function(error, response) {
+                    if (error) {
+                        that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+
+                        return;
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
+                        return;
+                    }
+                });
+            };
+
+            streamTelemetry.setProperty('kind', kind);
+
+            liveStreamDecorator.on(streamEnums.streamEvents.playerError.name, onPlayerError);
+            liveStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
+
+            that._mediaStreams[streamId] = liveStreamDecorator;
+
+            callback.call(that, liveStreamDecorator.getPhenixMediaStream());
         };
 
-        var onStop = function onStop(reason) {
-            if (!that._protocol) {
-                return that._logger.warn('Unable to destroy stream [%s]', streamId);
-            }
+        if (this._shakaLoader) {
+            this._shakaLoader(function(s) {
+                shaka = s;
+                pending--;
 
-            that._protocol.destroyStream(streamId, reason || '', function(error, response) {
-                if (error) {
-                    that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
-
-                    return;
-                } else if (response.status !== 'ok') {
-                    that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
-
-                    return;
+                if (pending === 0) {
+                    return loaded();
                 }
             });
-        };
+        }
 
-        streamTelemetry.setProperty('kind', kind);
+        if (this._webPlayerLoader) {
+            this._webPlayerLoader(function(w) {
+                webPlayer = w;
+                pending--;
 
-        liveStreamDecorator.on(streamEnums.streamEvents.playerError.name, onPlayerError);
-        liveStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
+                if (pending === 0) {
+                    return loaded();
+                }
+            });
+        }
 
-        this._mediaStreams[streamId] = liveStreamDecorator;
-
-        callback.call(this, liveStreamDecorator.getPhenixMediaStream());
+        if (pending === 0) {
+            return loaded();
+        }
     }
 
     function transitionToStatus(newStatus, reason, suppressCallback) {
@@ -13316,7 +13352,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 44 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13335,7 +13371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(97)
+    __webpack_require__(96)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(networkConnectionMonitor) {
     'use strict';
 
@@ -13344,7 +13380,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 45 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13367,8 +13403,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(2),
-    __webpack_require__(46),
-    __webpack_require__(102)
+    __webpack_require__(45),
+    __webpack_require__(101)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, disposable, MQProtocol, Base64) {
     'use strict';
 
@@ -13743,7 +13779,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 46 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -13763,9 +13799,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
-    __webpack_require__(98),
-    __webpack_require__(100),
-    __webpack_require__(101)
+    __webpack_require__(97),
+    __webpack_require__(99),
+    __webpack_require__(100)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, Pbf, Schema, mqProto) {
     'use strict';
 
@@ -13827,7 +13863,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 47 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14286,7 +14322,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14335,7 +14371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -14359,8 +14395,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(3),
-    __webpack_require__(50),
-    __webpack_require__(27)
+    __webpack_require__(49),
+    __webpack_require__(25)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, phenixRTC, sdpUtil, PeerConnection) {
     'use strict';
 
@@ -14797,7 +14833,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15019,7 +15055,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15043,21 +15079,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(3),
-    __webpack_require__(15),
+    __webpack_require__(123),
     __webpack_require__(124),
     __webpack_require__(125),
-    __webpack_require__(126),
     __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, phenixWebPlayer, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, ShakaRenderer, PhenixPlayerRenderer, FlashRenderer, streamEnums) {
     'use strict';
 
-    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, logger) {
+    function PhenixLiveStream(type, streamId, uri, streamTelemetry, options, shaka, webPlayer, logger) {
         this._type = type;
         this._streamId = streamId;
         this._uri = uri;
         this._streamTelemetry = streamTelemetry;
         this._options = options;
         this._shaka = shaka;
+        this._webPlayer = webPlayer,
         this._logger = logger;
         this._renderers = [];
         this._dimensionsChangedMonitor = null;
@@ -15073,15 +15109,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
         switch (this._type) {
         case streamEnums.types.dash.name:
-            if (this._shaka) {
+            if (this._webPlayer) {
+                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._webPlayer, this._logger);
+            } else if (this._shaka) {
+                if (!this._shaka.Player.isBrowserSupported()) {
+                    this._logger.warn('[%s] Shaka does not support this browser', this._streamId);
+
+                    throw new Error('Shaka does not support this browser');
+                }
+
                 renderer = new ShakaRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._shaka, this._logger);
-            } else {
-                renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
             }
 
             break;
         case streamEnums.types.hls.name:
-            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._logger);
+            renderer = new PhenixPlayerRenderer(this._streamId, this._uri, this._streamTelemetry, this._options, this._webPlayer, this._logger);
 
             break;
         case streamEnums.types.rtmp.name:
@@ -15183,11 +15225,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     };
 
     PhenixLiveStream.canPlaybackType = function canPlaybackType(type) {
+        var deviceSupportsDashPlayback = !!rtc.global.MediaSource;
+        var deviceSupportsHlsPlayback = deviceSupportsDashPlayback || (typeof document === 'object' && document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe');
+
         switch (type) {
         case streamEnums.types.dash.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsDashPlayback;
+            return deviceSupportsDashPlayback;
         case streamEnums.types.hls.name:
-            return phenixWebPlayer.WebPlayer.deviceSupportsHlsPlayback;
+            return deviceSupportsHlsPlayback;
         case streamEnums.types.rtmp.name:
             return FlashRenderer.isSupported();
         default:
@@ -15200,7 +15245,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15334,7 +15379,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -15358,13 +15403,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
+    __webpack_require__(53),
     __webpack_require__(54),
+    __webpack_require__(128),
     __webpack_require__(55),
     __webpack_require__(129),
-    __webpack_require__(56),
-    __webpack_require__(130),
-    __webpack_require__(18),
-    __webpack_require__(17)
+    __webpack_require__(17),
+    __webpack_require__(16)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AuthenticationService, Room, ImmutableRoom, Member, RoomChatService, roomEnums, memberEnums) {
     'use strict';
 
@@ -16230,7 +16275,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16333,7 +16378,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16356,8 +16401,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(56),
-    __webpack_require__(18)
+    __webpack_require__(55),
+    __webpack_require__(17)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, Member, room) {
     'use strict';
     var roomTypes = room.types;
@@ -16567,7 +16612,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16590,8 +16635,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(28),
-    __webpack_require__(17)
+    __webpack_require__(26),
+    __webpack_require__(16)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, Stream, member) {
     'use strict';
     var memberRoles = member.roles;
@@ -16773,7 +16818,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16818,7 +16863,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -16841,7 +16886,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(3),
-    __webpack_require__(138)
+    __webpack_require__(137)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, RTC, ResolutionProvider) {
     'use strict';
 
@@ -17416,7 +17461,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -17439,13 +17484,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(15),
-    __webpack_require__(60),
-    __webpack_require__(58),
-    __webpack_require__(43),
+    __webpack_require__(59),
+    __webpack_require__(57),
+    __webpack_require__(42),
     __webpack_require__(3),
-    __webpack_require__(139)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, phenixWebPlayer, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
+    __webpack_require__(138)
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var instanceCounter = 0;
@@ -18400,7 +18444,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
                     return; // Ignore error
                 }
 
-                if (errorType === 'phenix-player' && error.severity === phenixWebPlayer.errors.severity.RECOVERABLE) {
+                var RECOVERABLE = 1;
+
+                if (errorType === 'phenix-player' && error.severity === RECOVERABLE) {
                     that._logger.warn('[%s] [%s] Recoverable error occurred while playing stream with Express API. Attempting to subscribe again.', this, expressSubscriber.getStreamId(), error);
 
                     var reAuthOptions = _.assign({isContinuation: true}, options);
@@ -18631,7 +18677,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18974,7 +19020,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18998,15 +19044,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(59),
-    __webpack_require__(53),
-    __webpack_require__(62),
-    __webpack_require__(28),
-    __webpack_require__(18),
+    __webpack_require__(58),
+    __webpack_require__(52),
+    __webpack_require__(61),
+    __webpack_require__(26),
     __webpack_require__(17),
-    __webpack_require__(29),
-    __webpack_require__(57),
-    __webpack_require__(16)
+    __webpack_require__(16),
+    __webpack_require__(27),
+    __webpack_require__(56),
+    __webpack_require__(15)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
     'use strict';
 
@@ -20374,7 +20420,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20632,7 +20678,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -20740,7 +20786,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20765,21 +20811,21 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 /* global global, process*/
 global.window = undefined;
 global.navigator = {userAgent: 'Node/' + process.version + ' (Version/' + process.version + ')'};
-global.XMLHttpRequest = __webpack_require__(65).XMLHttpRequest; // External dependency https://www.npmjs.com/package/xmlhttprequest
-global.WebSocket = __webpack_require__(67); // External dependency https://www.npmjs.com/package/ws
+global.XMLHttpRequest = __webpack_require__(64).XMLHttpRequest; // External dependency https://www.npmjs.com/package/xmlhttprequest
+global.WebSocket = __webpack_require__(66); // External dependency https://www.npmjs.com/package/ws
 
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(3),
     __webpack_require__(10),
-    __webpack_require__(43),
-    __webpack_require__(53),
-    __webpack_require__(132),
-    __webpack_require__(136),
+    __webpack_require__(42),
+    __webpack_require__(52),
+    __webpack_require__(131),
+    __webpack_require__(135),
+    __webpack_require__(57),
     __webpack_require__(58),
-    __webpack_require__(59),
-    __webpack_require__(61),
-    __webpack_require__(140),
-    __webpack_require__(60)
+    __webpack_require__(60),
+    __webpack_require__(139),
+    __webpack_require__(59)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
     return {
         express: {
@@ -20806,7 +20852,7 @@ global.WebSocket = __webpack_require__(67); // External dependency https://www.n
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -20822,9 +20868,9 @@ global.WebSocket = __webpack_require__(67); // External dependency https://www.n
  * @license MIT
  */
 
-var Url = __webpack_require__(30);
-var spawn = __webpack_require__(66).spawn;
-var fs = __webpack_require__(31);
+var Url = __webpack_require__(28);
+var spawn = __webpack_require__(65).spawn;
+var fs = __webpack_require__(29);
 
 exports.XMLHttpRequest = function() {
   "use strict";
@@ -20833,8 +20879,8 @@ exports.XMLHttpRequest = function() {
    * Private variables
    */
   var self = this;
-  var http = __webpack_require__(19);
-  var https = __webpack_require__(32);
+  var http = __webpack_require__(18);
+  var https = __webpack_require__(30);
 
   // Holds http.js objects
   var request;
@@ -21432,42 +21478,42 @@ exports.XMLHttpRequest = function() {
 
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports) {
 
 module.exports = require("child_process");
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const WebSocket = __webpack_require__(33);
+const WebSocket = __webpack_require__(31);
 
-WebSocket.createWebSocketStream = __webpack_require__(79);
-WebSocket.Server = __webpack_require__(80);
-WebSocket.Receiver = __webpack_require__(36);
-WebSocket.Sender = __webpack_require__(39);
+WebSocket.createWebSocketStream = __webpack_require__(78);
+WebSocket.Server = __webpack_require__(79);
+WebSocket.Receiver = __webpack_require__(34);
+WebSocket.Sender = __webpack_require__(37);
 
 module.exports = WebSocket;
 
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, exports) {
 
 module.exports = require("net");
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports) {
 
 module.exports = require("tls");
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21541,40 +21587,40 @@ module.exports = Queue;
 
 
 /***/ }),
-/* 71 */
+/* 70 */
 /***/ (function(module, exports) {
 
 module.exports = require("zlib");
 
 /***/ }),
-/* 72 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
 
 try {
-  module.exports = __webpack_require__(35)(__dirname);
+  module.exports = __webpack_require__(33)(__dirname);
 } catch (e) {
-  module.exports = __webpack_require__(75);
+  module.exports = __webpack_require__(74);
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
-/* 73 */
+/* 72 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, exports) {
 
 module.exports = require("os");
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21615,22 +21661,22 @@ module.exports = { mask, unmask };
 
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(__dirname) {
 
 try {
-  module.exports = __webpack_require__(35)(__dirname);
+  module.exports = __webpack_require__(33)(__dirname);
 } catch (e) {
-  module.exports = __webpack_require__(77);
+  module.exports = __webpack_require__(76);
 }
 
 /* WEBPACK VAR INJECTION */}.call(this, "/"))
 
 /***/ }),
-/* 77 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21699,7 +21745,7 @@ module.exports = isValidUTF8;
 
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21876,13 +21922,13 @@ module.exports = EventTarget;
 
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const { Duplex } = __webpack_require__(37);
+const { Duplex } = __webpack_require__(35);
 
 /**
  * Emits the `'close'` event on a stream.
@@ -22033,19 +22079,19 @@ module.exports = createWebSocketStream;
 
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const EventEmitter = __webpack_require__(34);
-const { createHash } = __webpack_require__(20);
-const { createServer, STATUS_CODES } = __webpack_require__(19);
+const EventEmitter = __webpack_require__(32);
+const { createHash } = __webpack_require__(19);
+const { createServer, STATUS_CODES } = __webpack_require__(18);
 
-const PerMessageDeflate = __webpack_require__(13);
-const WebSocket = __webpack_require__(33);
-const { format, parse } = __webpack_require__(40);
+const PerMessageDeflate = __webpack_require__(12);
+const WebSocket = __webpack_require__(31);
+const { format, parse } = __webpack_require__(38);
 const { GUID } = __webpack_require__(9);
 
 const keyRegex = /^[+/0-9A-Za-z]{22}==$/;
@@ -22446,7 +22492,7 @@ function abortHandshake(socket, code, message, headers) {
 
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23197,7 +23243,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23295,7 +23341,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 83 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23431,7 +23477,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 
 /***/ }),
-/* 84 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23480,7 +23526,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 85 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23536,7 +23582,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 86 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23557,7 +23603,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(41)
+    __webpack_require__(40)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Observable) {
     'use strict';
 
@@ -23644,7 +23690,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 87 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23706,7 +23752,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 88 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23727,7 +23773,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(42)
+    __webpack_require__(41)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Event) {
     'use strict';
 
@@ -23784,7 +23830,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 89 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -23806,15 +23852,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(8),
-    __webpack_require__(22)
+    __webpack_require__(20)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, logging) {
     'use strict';
 
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T12:25:12Z' || false;
-    var releaseVersion = '2020.2.1';
+    var sdkVersion = '2020-07-14T14:13:29Z' || false;
+    var releaseVersion = '2020.2.2';
 
     function Logger() {
         this._appenders = [];
@@ -24001,7 +24047,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 90 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24043,7 +24089,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 91 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24064,7 +24110,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(22)
+    __webpack_require__(20)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging) {
     'use strict';
 
@@ -24109,7 +24155,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 92 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24131,8 +24177,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(24),
-    __webpack_require__(93)
+    __webpack_require__(22),
+    __webpack_require__(92)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, TelemetryAppender) {
     var config = {
         urls: {
@@ -24173,7 +24219,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 93 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24197,8 +24243,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(3),
     __webpack_require__(10),
-    __webpack_require__(25),
-    __webpack_require__(47)
+    __webpack_require__(23),
+    __webpack_require__(46)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, rtc, logging, proto, telemetryProto) {
     function TelemetryAppender(uri) {
         assert.isString(uri, 'uri');
@@ -24291,7 +24337,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 94 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24313,8 +24359,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(5),
-    __webpack_require__(95),
-    __webpack_require__(45)
+    __webpack_require__(94),
+    __webpack_require__(44)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, ReconnectingWebSocket, MQService) {
     'use strict';
 
@@ -24423,7 +24469,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 95 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24442,7 +24488,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(96)
+    __webpack_require__(95)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ReconnectingWebSocket) {
     'use strict';
 
@@ -24451,7 +24497,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 96 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24472,7 +24518,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(44)
+    __webpack_require__(43)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, networkConnectionMonitor) {
     'use strict';
 
@@ -24832,7 +24878,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 97 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24920,7 +24966,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 98 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24928,7 +24974,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
 module.exports = Pbf;
 
-var ieee754 = __webpack_require__(99);
+var ieee754 = __webpack_require__(98);
 
 function Pbf(buf) {
     this.buf = ArrayBuffer.isView && ArrayBuffer.isView(buf) ? buf : new Uint8Array(buf || 0);
@@ -25545,7 +25591,7 @@ function writeUtf8(buf, str, pos) {
 
 
 /***/ }),
-/* 99 */
+/* 98 */
 /***/ (function(module, exports) {
 
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -25635,7 +25681,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 
 
 /***/ }),
-/* 100 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -25973,7 +26019,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 101 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26101,7 +26147,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 102 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26123,7 +26169,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(8),
-    __webpack_require__(103)
+    __webpack_require__(102)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, global, lxiv) {
     'use strict';
 
@@ -26182,7 +26228,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 103 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -26201,11 +26247,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  limitations under the License.
  */
 
-module.exports = __webpack_require__(104);
+module.exports = __webpack_require__(103);
 
 
 /***/ }),
-/* 104 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_RESULT__;/*
@@ -26347,7 +26393,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/*
 
 
 /***/ }),
-/* 105 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26368,9 +26414,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(106),
-    __webpack_require__(46),
-    __webpack_require__(109)
+    __webpack_require__(105),
+    __webpack_require__(45),
+    __webpack_require__(108)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, BatchHttp, MQProtocol, Binary) {
     'use strict';
 
@@ -26399,7 +26445,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 106 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26418,7 +26464,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(107)
+    __webpack_require__(106)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(BatchHttp) {
     'use strict';
 
@@ -26427,7 +26473,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 107 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -26450,7 +26496,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(5),
     __webpack_require__(8),
-    __webpack_require__(44),
+    __webpack_require__(43),
     __webpack_require__(6),
     __webpack_require__(4),
     __webpack_require__(2)
@@ -26744,7 +26790,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 108 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27113,7 +27159,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 109 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27184,7 +27230,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 110 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27365,7 +27411,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 111 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -27388,10 +27434,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(25),
+    __webpack_require__(23),
     __webpack_require__(3),
-    __webpack_require__(112),
-    __webpack_require__(113)
+    __webpack_require__(111),
+    __webpack_require__(112)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {
     'use strict';
 
@@ -27767,7 +27813,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 112 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -29824,7 +29870,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 113 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30739,7 +30785,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 114 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30758,14 +30804,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
  * limitations under the License.
  */
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
-    __webpack_require__(115)
+    __webpack_require__(114)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(ClosestEndPointResolver) {
     return ClosestEndPointResolver;
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 115 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -30887,7 +30933,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 116 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31175,7 +31221,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 117 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31437,7 +31483,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 118 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31459,8 +31505,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(24),
-    __webpack_require__(119)
+    __webpack_require__(22),
+    __webpack_require__(118)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, environment, MetricsTransmitter) {
     var config = {
         urls: {
@@ -31501,7 +31547,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 119 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31523,9 +31569,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(25),
+    __webpack_require__(23),
     __webpack_require__(3),
-    __webpack_require__(47)
+    __webpack_require__(46)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, proto, rtc, telemetryProto) {
     function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
@@ -31606,7 +31652,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 120 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31635,7 +31681,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T12:25:12Z' || false;
+    var sdkVersion = '2020-07-14T14:13:29Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -31932,7 +31978,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 121 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31955,15 +32001,15 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(2),
-    __webpack_require__(11),
-    __webpack_require__(122),
+    __webpack_require__(14),
+    __webpack_require__(121),
     __webpack_require__(3)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T12:25:12Z' || false;
+    var sdkVersion = '2020-07-14T14:13:29Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;
@@ -32190,7 +32236,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 122 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -32299,7 +32345,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 123 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -32452,7 +32498,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 124 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -32478,7 +32524,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(6),
     __webpack_require__(2),
     __webpack_require__(3),
-    __webpack_require__(12),
+    __webpack_require__(11),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
@@ -32861,7 +32907,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 125 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -32887,11 +32933,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(5),
     __webpack_require__(6),
     __webpack_require__(2),
-    __webpack_require__(15),
     __webpack_require__(3),
-    __webpack_require__(12),
+    __webpack_require__(11),
     __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var bandwidthAt720 = 3000000;
@@ -32899,12 +32944,13 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var minTimeBeforeNextReload = 15000;
     var originStreamReadyDuration = 6000;
 
-    function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, logger) {
+    function PhenixPlayerRenderer(streamId, uri, streamTelemetry, options, webPlayer, logger) {
         this._logger = logger;
         this._streamId = streamId;
         this._manifestUri = encodeURI(uri).replace(/[#]/g, '%23');
         this._streamTelemetry = streamTelemetry;
         this._options = options;
+        this._webPlayer = webPlayer;
         this._renderer = null;
         this._element = null;
         this._dimensionsChangedMonitor = new DimensionsChangedMonitor(logger);
@@ -32925,7 +32971,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     PhenixPlayerRenderer.isSupported = function() {
-        return phenixWebPlayer.isSupported;
+        return this._webPlayer && this._webPlayer.isSupported;
     };
 
     PhenixPlayerRenderer.prototype.on = function(name, callback) {
@@ -32934,9 +32980,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     PhenixPlayerRenderer.prototype.start = function(elementToAttachTo) {
         var that = this;
-        var loggerAtWarningThreshold = createWarningThresholdLogger(this._logger);
+        var loggerAtInfoThreshold = createInfoThresholdLogger(this._logger);
 
-        this._throttledLogger = loggerAtWarningThreshold;
+        this._throttledLogger = loggerAtInfoThreshold;
         this._element = elementToAttachTo;
 
         this._disposables.add(this._streamTelemetry.recordTimeToFirstFrame(elementToAttachTo));
@@ -33082,7 +33128,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
             }
         }
 
-        var webPlayer = new phenixWebPlayer.WebPlayer(this._throttledLogger, this._element, playerOptions);
+        var webPlayer = new this._webPlayer.WebPlayer(this._throttledLogger, this._element, playerOptions);
         var timeSinceOriginStreamStart = _.now() - this._options.originStartTime;
 
         if (timeSinceOriginStreamStart < originStreamReadyDuration && this._options.isDrmProtectedContent && _.includes(this._manifestUri, '.m3u8')) {
@@ -33097,7 +33143,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     }
 
     function handleError(e) {
-        if (canReload.call(this) && e && (e.code === 3 || e.severity === phenixWebPlayer.errors.severity.RECOVERABLE)) {
+        if (canReload.call(this) && e && (e.code === 3 || e.severity === this._webPlayer.errors.severity.RECOVERABLE)) {
             this._logger.warn('Reloading unhealthy stream after error event [%s]', e);
 
             return reloadIfAble.call(this);
@@ -33205,8 +33251,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         this._logger.info('[%s] Phenix stream player ended.', this._streamId);
     }
 
-    // Temporary measure. The phenix-web-player logs a lot of debug, info, and trace data
-    function createWarningThresholdLogger(logger) {
+    function createInfoThresholdLogger(logger) {
         var appenders = logger.getAppenders();
         var throttledLogger = new logging.Logger();
 
@@ -33233,7 +33278,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 126 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -33259,11 +33304,10 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(5),
     __webpack_require__(6),
     __webpack_require__(2),
-    __webpack_require__(15),
     __webpack_require__(3),
-    __webpack_require__(12),
+    __webpack_require__(11),
     __webpack_require__(7)
-], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, logging, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;
@@ -33526,7 +33570,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 127 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -33551,12 +33595,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(5),
     __webpack_require__(3),
     __webpack_require__(2),
-    __webpack_require__(11),
-    __webpack_require__(27),
-    __webpack_require__(49),
-    __webpack_require__(52),
-    __webpack_require__(128),
-    __webpack_require__(16),
+    __webpack_require__(14),
+    __webpack_require__(25),
+    __webpack_require__(48),
+    __webpack_require__(51),
+    __webpack_require__(127),
+    __webpack_require__(15),
     __webpack_require__(7)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
@@ -33867,7 +33911,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 128 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -33893,12 +33937,12 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(6),
     __webpack_require__(2),
     __webpack_require__(3),
-    __webpack_require__(11),
-    __webpack_require__(21),
+    __webpack_require__(14),
+    __webpack_require__(39),
     __webpack_require__(8),
-    __webpack_require__(12),
+    __webpack_require__(11),
     __webpack_require__(7),
-    __webpack_require__(16)
+    __webpack_require__(15)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DetectBrowser, global, DimensionsChangedMonitor, streamEnums, FeatureDetector) {
     'use strict';
 
@@ -34174,7 +34218,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 129 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -34197,7 +34241,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(0),
     __webpack_require__(1),
     __webpack_require__(4),
-    __webpack_require__(55)
+    __webpack_require__(54)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, Room) {
     'use strict';
 
@@ -34303,7 +34347,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 130 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -34327,7 +34371,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(131)
+    __webpack_require__(130)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, ChatService) {
     'use strict';
 
@@ -34523,7 +34567,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 131 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -34547,7 +34591,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(54)
+    __webpack_require__(53)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, AuthenticationService) {
     'use strict';
 
@@ -34855,7 +34899,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 132 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -34877,11 +34921,11 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(23),
-    __webpack_require__(26),
-    __webpack_require__(48),
-    __webpack_require__(133),
-    __webpack_require__(135)
+    __webpack_require__(21),
+    __webpack_require__(24),
+    __webpack_require__(47),
+    __webpack_require__(132),
+    __webpack_require__(134)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
     'use strict';
 
@@ -34974,7 +35018,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 133 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -34996,7 +35040,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(134)
+    __webpack_require__(133)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, AudioVolumeMeter) {
     'use strict';
 
@@ -35037,7 +35081,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 134 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35180,7 +35224,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 135 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35301,7 +35345,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 136 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35323,9 +35367,9 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(23),
-    __webpack_require__(26),
-    __webpack_require__(137)
+    __webpack_require__(21),
+    __webpack_require__(24),
+    __webpack_require__(136)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
     'use strict';
 
@@ -35371,7 +35415,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 137 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35470,7 +35514,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 138 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35883,7 +35927,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 139 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35924,7 +35968,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 140 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -35948,14 +35992,14 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     __webpack_require__(1),
     __webpack_require__(4),
     __webpack_require__(2),
-    __webpack_require__(61),
-    __webpack_require__(141),
-    __webpack_require__(63),
+    __webpack_require__(60),
+    __webpack_require__(140),
     __webpack_require__(62),
-    __webpack_require__(28),
-    __webpack_require__(18),
+    __webpack_require__(61),
+    __webpack_require__(26),
     __webpack_require__(17),
-    __webpack_require__(29)
+    __webpack_require__(16),
+    __webpack_require__(27)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, RoomExpress, ChannelService, Channel, MemberSelector, Stream, roomEnums, memberEnums, streamEnums) {
     'use strict';
 
@@ -36332,7 +36376,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ }),
-/* 141 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -36354,7 +36398,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 !(__WEBPACK_AMD_DEFINE_ARRAY__ = [
     __webpack_require__(0),
     __webpack_require__(1),
-    __webpack_require__(63)
+    __webpack_require__(62)
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, Channel) {
     'use strict';
 

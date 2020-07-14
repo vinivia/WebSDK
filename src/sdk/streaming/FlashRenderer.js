@@ -21,11 +21,10 @@ define([
     'phenix-web-event',
     'phenix-web-http',
     'phenix-web-disposable',
-    'phenix-web-player',
     'phenix-rtc',
     '../DimensionsChangedMonitor',
     './stream.json'
-], function(_, assert, logging, event, http, disposable, phenixWebPlayer, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, logging, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
     'use strict';
 
     var timeoutForStallWithoutProgressToRestart = 6000;

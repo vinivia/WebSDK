@@ -21,9 +21,8 @@ define('app-setup', [
     'lodash',
     'bootstrap-notify',
     'fingerprintjs2',
-    'phenix-web-sdk',
-    'shaka-player'
-], function($, _, bootstrapNotify, Fingerprint, sdk, shaka) {
+    'phenix-web-sdk'
+], function($, _, bootstrapNotify, Fingerprint, sdk) {
     var enabledSteps = ['step-1'];
     var onStepsReset;
     var defaultPublisherQuality = 'hd';
@@ -49,12 +48,6 @@ define('app-setup', [
             $('#phenix').addClass('warning');
         } else {
             $('#phenix').addClass('danger');
-        }
-
-        var canPlayHls = document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe';
-
-        if (!canPlayHls && !shaka.Player.isBrowserSupported()) {
-            shaka.polyfill.installAll();
         }
 
         if (document.getElementById('environment')) {

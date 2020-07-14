@@ -17,7 +17,7 @@
 /* global chrome */
 'use strict';
 
-const defaultSources = ['screen', 'window', 'tab'];
+var defaultSources = ['screen', 'window', 'tab'];
 var desktopMediaRequestId;
 
 function getDesktopMedia(sources, sender, callback) {

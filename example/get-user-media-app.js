@@ -66,10 +66,9 @@ requirejs([
     'bootstrap-notify',
     'fingerprintjs2',
     'phenix-web-sdk',
-    'shaka-player',
     'video-player',
     'app-setup'
-], function($, _, bootstrapNotify, Fingerprint, sdk, shaka, Player, app) {
+], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
         var fingerprint = new Fingerprint();
         var localPrimaryPlayer = null;
@@ -122,7 +121,30 @@ requirejs([
             var uri = app.getUri();
             var pcastOptions = {
                 uri: uri,
-                shaka: app.getUrlParameter('shaka') ? shaka : null,
+                shakaLoader: function(callback) {
+                    if (!app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['shaka-player'], function(shaka) {
+                        var canPlayHls = document.createElement('video').canPlayType('application/vnd.apple.mpegURL') === 'maybe';
+
+                        if (!canPlayHls && !shaka.Player.isBrowserSupported()) {
+                            shaka.polyfill.installAll();
+                        }
+
+                        callback(shaka);
+                    });
+                },
+                webPlayerLoader: function(callback) {
+                    if (app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['phenix-web-player'], function(webPlayer) {
+                        callback(webPlayer);
+                    });
+                },
                 rtmp: {swfSrc: app.getSwfFilePath()},
                 eagerlyCheckScreenSharingCapabilities: app.getUrlParameter('screenSharing') ? true : false
             };

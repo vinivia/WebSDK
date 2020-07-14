@@ -90,6 +90,14 @@ define([
             this._logger.warn('Conflicting options "reAuthenticateOnForeground" can not be false when "treatBackgroundAsOffline" is true. Will reauthenticate upon entering foreground.');
         }
 
+        if (options.shakaLoader) {
+            assert.isFunction(options.shakaLoader, 'options.shakaLoader');
+        }
+
+        if (options.webPlayerLoader) {
+            assert.isFunction(options.webPlayerLoader, 'options.webPlayerLoader');
+        }
+
         this._observableStatus = new observable.Observable('offline');
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
@@ -97,8 +105,8 @@ define([
         this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
-        this._shaka = options.shaka;
-        this._videojs = options.videojs || phenixRTC.global.videojs;
+        this._shakaLoader = options.shakaLoader;
+        this._webPlayerLoader = options.webPlayerLoader;
         this._rtmpOptions = options.rtmp || {};
         this._streamingSourceMapping = options.streamingSourceMapping;
         this._disposables = new disposable.DisposableList();
@@ -1729,12 +1737,6 @@ define([
                 options.playreadyLicenseUrl = offerSdp.match(/a=x-playready-license-url:([^\n][^\s]*)/m)[1];
             }
 
-            if (this._shaka && !this._shaka.Player.isBrowserSupported()) {
-                this._logger.warn('[%s] Shaka does not support this browser', streamId);
-
-                return callback.call(this, undefined, 'browser-unsupported');
-            }
-
             return createLiveViewerOfKind.call(that, streamId, manifestUrl, streamEnums.types.dash.name, streamTelemetry, callback, options);
         case streamEnums.types.hls.name:
             this._logger.info('Selecting hls playback for live stream.');
@@ -1759,41 +1761,81 @@ define([
 
     function createLiveViewerOfKind(streamId, uri, kind, streamTelemetry, callback, options) {
         var that = this;
-        var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, this._shaka, this._logger);
-        var liveStreamDecorator = new StreamWrapper(kind, liveStream, this._logger);
+        var pending = 0;
+        var shaka = null;
+        var webPlayer = null;
 
-        var onPlayerError = function onPlayerError(source, event) {
-            that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
+        if (this._shakaLoader) {
+            pending++;
+        }
 
-            liveStreamDecorator.streamErrorCallback(source, event);
+        if (this._webPlayerLoader) {
+            pending++;
+        }
+
+        var loaded = function() {
+            var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, shaka, webPlayer, that._logger);
+            var liveStreamDecorator = new StreamWrapper(kind, liveStream, that._logger);
+
+            var onPlayerError = function onPlayerError(source, event) {
+                that._logger.warn('Phenix Live Stream Player Error [%s] [%s]', source, event);
+
+                liveStreamDecorator.streamErrorCallback(source, event);
+            };
+
+            var onStop = function onStop(reason) {
+                if (!that._protocol) {
+                    return that._logger.warn('Unable to destroy stream [%s]', streamId);
+                }
+
+                that._protocol.destroyStream(streamId, reason || '', function(error, response) {
+                    if (error) {
+                        that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
+
+                        return;
+                    } else if (response.status !== 'ok') {
+                        that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
+
+                        return;
+                    }
+                });
+            };
+
+            streamTelemetry.setProperty('kind', kind);
+
+            liveStreamDecorator.on(streamEnums.streamEvents.playerError.name, onPlayerError);
+            liveStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
+
+            that._mediaStreams[streamId] = liveStreamDecorator;
+
+            callback.call(that, liveStreamDecorator.getPhenixMediaStream());
         };
 
-        var onStop = function onStop(reason) {
-            if (!that._protocol) {
-                return that._logger.warn('Unable to destroy stream [%s]', streamId);
-            }
+        if (this._shakaLoader) {
+            this._shakaLoader(function(s) {
+                shaka = s;
+                pending--;
 
-            that._protocol.destroyStream(streamId, reason || '', function(error, response) {
-                if (error) {
-                    that._logger.error('[%s] failed to destroy stream, [%s]', streamId, error);
-
-                    return;
-                } else if (response.status !== 'ok') {
-                    that._logger.warn('[%s] failed to destroy stream, status [%s]', streamId, response.status);
-
-                    return;
+                if (pending === 0) {
+                    return loaded();
                 }
             });
-        };
+        }
 
-        streamTelemetry.setProperty('kind', kind);
+        if (this._webPlayerLoader) {
+            this._webPlayerLoader(function(w) {
+                webPlayer = w;
+                pending--;
 
-        liveStreamDecorator.on(streamEnums.streamEvents.playerError.name, onPlayerError);
-        liveStreamDecorator.on(streamEnums.streamEvents.stopped.name, onStop);
+                if (pending === 0) {
+                    return loaded();
+                }
+            });
+        }
 
-        this._mediaStreams[streamId] = liveStreamDecorator;
-
-        callback.call(this, liveStreamDecorator.getPhenixMediaStream());
+        if (pending === 0) {
+            return loaded();
+        }
     }
 
     function transitionToStatus(newStatus, reason, suppressCallback) {
