@@ -8264,7 +8264,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
         var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
             timeout: 15000,
             queryParameters: {
-                version: '2020-07-14T14:13:29Z',
+                version: '2020-07-14T20:04:12Z',
                 _: _.now()
             },
             retryOptions: {maxAttempts: maxAttempts}
@@ -11374,7 +11374,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 ], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
-    var sdkVersion = '2020-07-14T14:13:29Z';
+    var sdkVersion = '2020-07-14T20:04:12Z';
     var accumulateIceCandidatesDuration = 50;
 
     function PCast(options) {
@@ -23475,7 +23475,6 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
-
 /***/ }),
 /* 83 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -23859,8 +23858,8 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
     var defaultCategory = 'websdk';
     var start = global['__phenixPageLoadTime'] || global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T14:13:29Z' || false;
-    var releaseVersion = '2020.2.2';
+    var sdkVersion = '2020-07-14T20:04:12Z' || false;
+    var releaseVersion = '2020.2.3';
 
     function Logger() {
         this._appenders = [];
@@ -31681,7 +31680,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T14:13:29Z' || false;
+    var sdkVersion = '2020-07-14T20:04:12Z' || false;
 
     function StreamTelemetry(sessionId, logger, metricsTransmitter) {
         assert.isStringNotEmpty(sessionId, 'sessionId');
@@ -32009,7 +32008,7 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
     var defaultEnvironment = 'production' || false;
-    var sdkVersion = '2020-07-14T14:13:29Z' || false;
+    var sdkVersion = '2020-07-14T20:04:12Z' || false;
 
     function SessionTelemetry(logger, metricsTransmitter) {
         this._environment = defaultEnvironment;

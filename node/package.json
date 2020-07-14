@@ -1,6 +1,6 @@
 {
   "name": "phenix-node-sdk-examples",
-  "version": "2019.0.0",
+  "version": "2020.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "phenix-web-sdk": "~2019.2.19"
+    "phenix-web-sdk": "~2020.2.3"
   }
 }
