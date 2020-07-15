@@ -337,7 +337,7 @@ define([
 
     function getObjectValueInArray(value, collection) {
         var valueObject = _.find(collection, function(item) {
-            return item.hasOwnProperty(value);
+            return Object.prototype.hasOwnProperty.call(item, value);
         });
 
         return valueObject ? valueObject[value] : null;
@@ -345,7 +345,7 @@ define([
 
     function getIndexInArray(value, collection) {
         return _.findIndex(collection, function(item) {
-            return item.hasOwnProperty(value);
+            return Object.prototype.hasOwnProperty.call(item, value);
         });
     }
 

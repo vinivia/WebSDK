@@ -15,11 +15,11 @@
  */
 
 /* global process module */
-const moment = require('moment');
-const sdkVersion = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
-const releaseVersion = require('./package.json').version;
-const environment = process.env.NODE_ENV;
-const webpackConfigs = require('./webpack.config');
+var moment = require('moment');
+var sdkVersion = moment.utc().format('YYYY-MM-DDTHH:mm:ss') + 'Z';
+var releaseVersion = require('./package.json').version;
+var environment = process.env.NODE_ENV;
+var webpackConfigs = require('./webpack.config');
 
 console.log('Using version', sdkVersion);
 

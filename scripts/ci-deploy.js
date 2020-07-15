@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-const runner = require('./runner');
-const packageJson = require('../package.json');
-const version = packageJson.version;
+var runner = require('./runner');
+var packageJson = require('../package.json');
+var version = packageJson.version;
 
 runner.runCommands([
     'node --version',

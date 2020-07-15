@@ -15,13 +15,13 @@
  */
 
 /* global process */
-const http = require('http');
-const https = require('https');
-const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const app = express();
-const bodyParser = require('body-parser');
+var http = require('http');
+var https = require('https');
+var express = require('express');
+var path = require('path');
+var fs = require('fs');
+var app = express();
+var bodyParser = require('body-parser');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -41,18 +41,18 @@ app.post('/log', function(req, res) {
     res.sendStatus(200);
 });
 
-const httpServer = http.createServer(app);
+var httpServer = http.createServer(app);
 
 httpServer.listen(8888);
 
 console.log('Listening on port 8888/http');
 
 if (process.env['PHENIX_HTTPS_PFX']) {
-    const httpsOptions = {
+    var httpsOptions = {
         pfx: fs.readFileSync(process.env['PHENIX_HTTPS_PFX']),
         passphrase: process.env['PHENIX_HTTPS_PASSPHRASE']
     };
-    const httpsServer = https.createServer(httpsOptions, app);
+    var httpsServer = https.createServer(httpsOptions, app);
 
     httpsServer.listen(8843);
 

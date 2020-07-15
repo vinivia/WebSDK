@@ -54,7 +54,7 @@ define([
             throw new Error('Invalid monitoring direction');
         }
 
-        var monitoringEnabled = options.hasOwnProperty('monitoringInterval') ? options.monitoringInterval > 0 : true;
+        var monitoringEnabled = Object.prototype.hasOwnProperty.call(options, 'monitoringInterval') ? options.monitoringInterval > 0 : true;
 
         if (!monitoringEnabled) {
             this._logger.info('[%s] Monitoring is disabled', name);
@@ -68,9 +68,9 @@ define([
         this._conditionCountForNotificationThreshold = options.conditionCountForNotificationThreshold || defaultConditionCountForNotificationThreshold;
         this._monitoringInterval = Math.max(minMonitoringInterval, options.monitoringInterval || defaultMonitoringInterval);
         this._conditionMonitoringInterval = Math.max(minMonitoringInterval, options.conditionMonitoringInterval || defaultConditionMonitoringInterval);
-        this._monitorFrameRate = options.hasOwnProperty('monitorFrameRate') ? options.monitorFrameRate : true;
-        this._monitorBitRate = options.hasOwnProperty('monitorBitRate') ? options.monitorBitRate : true;
-        this._monitorState = options.hasOwnProperty('monitorState') ? options.monitorState : true;
+        this._monitorFrameRate = Object.prototype.hasOwnProperty.call(options, 'monitorFrameRate') ? options.monitorFrameRate : true;
+        this._monitorBitRate = Object.prototype.hasOwnProperty.call(options, 'monitorBitRate') ? options.monitorBitRate : true;
+        this._monitorState = Object.prototype.hasOwnProperty.call(options, 'monitorState') ? options.monitorState : true;
         this._pausedTracks = [];
         this._calculatedMetricsEvent = new event.Event();
 
