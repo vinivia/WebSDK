@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-const sdk = require('phenix-web-sdk/dist/phenix-node-sdk');
-const adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+var sdk = require('phenix-web-sdk/dist/phenix-node-sdk');
+var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
 
 adminApiProxyClient.setBackendUri('https://demo.phenixrts.com/pcast');
 
-const channelExpress = new sdk.express.ChannelExpress({adminApiProxyClient});
-const streamUri = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
-const capabilities = ['fhd'];
-const channelAlias = 'channelNodeExample'; // https://phenixrts.com/channel/?m=r#channelNodeExample
+var channelExpress = new sdk.express.ChannelExpress({adminApiProxyClient: adminApiProxyClient});
+var streamUri = 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
+var capabilities = ['fhd'];
+var channelAlias = 'channelNodeExample'; // https://phenixrts.com/channel/?m=r#channelNodeExample
 
 channelExpress.publishToChannel({
     streamUri: streamUri,

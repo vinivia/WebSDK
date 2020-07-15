@@ -16,7 +16,7 @@
     "extends": ["eslint:recommended"],
     "parserOptions": {
         "ecmaVersion": 3,
-        "sourceType": "module"
+        "sourceType": "script"
     },
     "plugins": [
         "notice",

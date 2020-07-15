@@ -20,7 +20,7 @@ var path = require('path');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var {CleanWebpackPlugin} = require('clean-webpack-plugin');
+var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
 var appDir = path.join(__dirname, './example');
 var distDir = path.join(__dirname, './dist');
 

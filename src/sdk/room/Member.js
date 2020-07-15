@@ -132,23 +132,23 @@ define([
             return;
         }
 
-        if (member.hasOwnProperty('state')) {
+        if (Object.prototype.hasOwnProperty.call(member, 'state')) {
             this._state.setValue(member.state);
         }
 
-        if (member.hasOwnProperty('screenName')) {
+        if (Object.prototype.hasOwnProperty.call(member, 'screenName')) {
             this._screenName.setValue(member.screenName);
         }
 
-        if (member.hasOwnProperty('role')) {
+        if (Object.prototype.hasOwnProperty.call(member, 'role')) {
             this._role.setValue(member.role);
         }
 
-        if (member.hasOwnProperty('lastUpdate')) {
+        if (Object.prototype.hasOwnProperty.call(member, 'lastUpdate')) {
             this._lastUpdate.setValue(member.lastUpdate);
         }
 
-        if (member.hasOwnProperty('streams')) {
+        if (Object.prototype.hasOwnProperty.call(member, 'streams')) {
             updateStreams.call(this, member.streams);
         }
     };

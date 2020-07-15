@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-const packageJson = require('../package.json');
+var packageJson = require('../package.json');
 
 process.stdout.write(packageJson.version);

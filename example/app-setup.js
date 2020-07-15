@@ -87,10 +87,10 @@ define('app-setup', [
             });
         }
 
-        const rawPublisherCapabilities = getUrlParameter('publisher-capabilities') || getUrlParameter('pc');
+        var rawPublisherCapabilities = getUrlParameter('publisher-capabilities') || getUrlParameter('pc');
 
         if (rawPublisherCapabilities) {
-            const publisherCapabilities = _.trim(rawPublisherCapabilities, ',').split(',');
+            var publisherCapabilities = _.trim(rawPublisherCapabilities, ',').split(',');
 
             _.forOwn(_.difference(publisherCapabilities, _.keys(getPublisherCapabilities())), function(capability) {
                 addButton('#publish-capabilities', '[Custom] ' + capability, capability);
@@ -107,7 +107,7 @@ define('app-setup', [
 
         if (document.getElementById('publish-audio-quality')) {
             _.forOwn(getPublisherAudioQualities(), function(title, quality) {
-                const isSelected = false;
+                var isSelected = false;
 
                 addButton('#publish-audio-quality', title, quality, isSelected);
             });
@@ -115,7 +115,7 @@ define('app-setup', [
 
         if (document.getElementById('publish-video-quality')) {
             _.forOwn(getPublisherVideoQualities(), function(title, quality) {
-                const isSelected = quality === defaultPublisherQuality;
+                var isSelected = quality === defaultPublisherQuality;
 
                 addButton('#publish-video-quality', title, quality, isSelected);
             });
@@ -127,11 +127,11 @@ define('app-setup', [
             });
         }
 
-        const rawSubscriberCapabilities = getUrlParameter('subscriber-capabilities') || getUrlParameter('sc');
+        var rawSubscriberCapabilities = getUrlParameter('subscriber-capabilities') || getUrlParameter('sc');
 
         if (rawSubscriberCapabilities) {
-            const subscriberCapabilities = _.trim(rawSubscriberCapabilities, ',').split(',');
-            const defaultSubscriberCapabilities = _.merge(getSubscriberCapabilities(), getDrmModifiers());
+            var subscriberCapabilities = _.trim(rawSubscriberCapabilities, ',').split(',');
+            var defaultSubscriberCapabilities = _.merge(getSubscriberCapabilities(), getDrmModifiers());
 
             _.forOwn(_.difference(subscriberCapabilities, _.keys(defaultSubscriberCapabilities)), function(capability) {
                 addButton('#subscriber-mode', '[Custom] ' + capability, capability);
@@ -484,8 +484,8 @@ define('app-setup', [
         };
     };
 
-    const addButton = function(containerSelector, caption, value, isSelected) {
-        const button = $('<button>' + caption + '</button>').attr('value', value);
+    var addButton = function(containerSelector, caption, value, isSelected) {
+        var button = $('<button>' + caption + '</button>').attr('value', value);
 
         if (isSelected) {
             button.addClass('clicked');
@@ -494,9 +494,9 @@ define('app-setup', [
         $(containerSelector).append(button);
     };
 
-    const addClassByValues = function(containerSelector, values, clazz) {
+    var addClassByValues = function(containerSelector, values, clazz) {
         _.forEach(values, function(value) {
-            const elements = $(containerSelector + ' [value=' + value + ']');
+            var elements = $(containerSelector + ' [value=' + value + ']');
 
             elements.addClass(clazz);
         });

@@ -305,7 +305,7 @@ define([
         assert.isNumber(timestamp, 'timestamp');
         assert.isFunction(callback, 'callback');
 
-        member.updateStreams = member.hasOwnProperty('streams');
+        member.updateStreams = Object.prototype.hasOwnProperty.call(member, 'streams');
 
         var updateMember = {
             sessionId: this.getSessionId(),

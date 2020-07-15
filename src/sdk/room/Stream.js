@@ -72,7 +72,7 @@ define([
             return;
         }
 
-        if (stream.hasOwnProperty('uri')) {
+        if (Object.prototype.hasOwnProperty.call(stream, 'uri')) {
             if (stream.uri !== this._uri.getValue() && matchPCastStreams(stream.uri, this._uri.getValue())) {
                 this._uri.setValue(stream.uri);
 
@@ -80,11 +80,11 @@ define([
             }
         }
 
-        if (stream.hasOwnProperty('audioState')) {
+        if (Object.prototype.hasOwnProperty.call(stream, 'audioState')) {
             this._audioState.setValue(stream.audioState);
         }
 
-        if (stream.hasOwnProperty('videoState')) {
+        if (Object.prototype.hasOwnProperty.call(stream, 'videoState')) {
             this._videoState.setValue(stream.videoState);
         }
     };
