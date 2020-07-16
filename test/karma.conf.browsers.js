@@ -79,7 +79,6 @@ module.exports = function(config) {
             require('karma-firefox-launcher'),
             require('karma-ie-launcher'),
             require('karma-opera-launcher'),
-            require('karma-phantomjs-launcher'),
             require('karma-safari-launcher'),
             require('karma-spec-reporter'),
             require('karma-stacktrace')

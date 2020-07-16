@@ -78,7 +78,6 @@ module.exports = function(config) {
             require('karma-firefox-launcher'),
             require('karma-ie-launcher'),
             require('karma-opera-launcher'),
-            require('karma-phantomjs-launcher'),
             require('karma-safari-launcher'),
             require('karma-spec-reporter'),
             require('karma-coverage-istanbul-reporter'),
@@ -111,7 +110,14 @@ module.exports = function(config) {
 
         // Start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['ChromeHeadless'],
+        browsers: ['ChromeHeadlessNoSandbox'],
+
+        customLaunchers: {
+            ChromeHeadlessNoSandbox: {
+                base: 'ChromeHeadless',
+                flags: ['--no-sandbox']
+            }
+        },
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits

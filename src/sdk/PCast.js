@@ -1765,6 +1765,12 @@ define([
         var shaka = null;
         var webPlayer = null;
 
+        if (!this._shakaLoader && !this._webPlayerLoader) {
+            that._logger.warn('[%s] No player available for [%s] and uri [%s]. Please provide a loader via options.', streamId, kind, uri);
+
+            return callback.call(that, undefined, 'unsupported-features');
+        }
+
         if (this._shakaLoader) {
             pending++;
         }
@@ -1774,6 +1780,12 @@ define([
         }
 
         var loaded = function() {
+            if (!shaka && !webPlayer) {
+                that._logger.warn('[%s] No player available for [%s] and uri [%s]. Please make sure the loader properly provides the player.', streamId, kind, uri);
+
+                return callback.call(that, undefined, 'unsupported-features');
+            }
+
             var liveStream = new PhenixLiveStream(kind, streamId, uri, streamTelemetry, options, shaka, webPlayer, that._logger);
             var liveStreamDecorator = new StreamWrapper(kind, liveStream, that._logger);
 

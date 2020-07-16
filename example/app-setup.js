@@ -42,14 +42,6 @@ define('app-setup', [
             $('#webrtc .support').addClass('glyphicon-remove');
         }
 
-        if (sdk.utils.rtc.isPhenixEnabled()) {
-            $('#phenix').addClass('success');
-        } else if (sdk.utils.rtc.phenixSupported) {
-            $('#phenix').addClass('warning');
-        } else {
-            $('#phenix').addClass('danger');
-        }
-
         if (document.getElementById('environment')) {
             _.forOwn(getPCastEndpoints(), function(name, endpoint) {
                 $('#environment').append($('<option></option>').attr('value', endpoint).text(name));
