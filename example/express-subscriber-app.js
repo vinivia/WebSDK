@@ -243,13 +243,5 @@ requirejs([
     $(function() {
         app.init();
         init();
-
-        // Plugin might load with delay
-        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
-            sdk.utils.rtc.onload = function() {
-                app.init();
-                init();
-            };
-        }
     });
 });

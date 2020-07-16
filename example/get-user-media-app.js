@@ -24,41 +24,35 @@ for (var i = 0; i < params.length; i++) {
 }
 
 /* global requirejs */
-if (window.BUILD_ENV === 'webpack') {
-    require('bootstrap/dist/css/bootstrap.css');
-    require('animate.css/animate.css');
-    require('./get-user-media.css');
-} else {
-    requirejs.config({
-        paths: {
-            'phenix-web-sdk': phenixWebSdk,
-            'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
-            'jquery': 'jquery/dist/jquery.min',
-            'lodash': 'lodash/lodash.min',
-            'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-            'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
-            'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
-            'shaka-player': 'shaka-player/dist/shaka-player.compiled',
-            'video-player': 'player',
-            'app-setup': 'app-setup',
-            'phenix-web-lodash-light': 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min',
-            'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
-            'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
-            'phenix-web-logging': 'phenix-web-logging/dist/phenix-web-logging.min',
-            'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable.min',
-            'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
-            'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
-            'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
-            'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
-            'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
-            'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
-            'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min',
-            'phenix-web-application-activity-detector': 'phenix-web-application-activity-detector/dist/phenix-web-application-activity-detector.min',
-            'phenix-web-global': 'phenix-web-global/dist/phenix-web-global.min',
-            'phenix-web-detect-browser': 'phenix-web-detect-browser/dist/phenix-web-detect-browser.min'
-        }
-    });
-}
+requirejs.config({
+    paths: {
+        'phenix-web-sdk': phenixWebSdk,
+        'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
+        'jquery': 'jquery/dist/jquery.min',
+        'lodash': 'lodash/lodash.min',
+        'bootstrap': 'bootstrap/dist/js/bootstrap.min',
+        'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
+        'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
+        'shaka-player': 'shaka-player/dist/shaka-player.compiled',
+        'video-player': 'player',
+        'app-setup': 'app-setup',
+        'phenix-web-lodash-light': 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min',
+        'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
+        'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
+        'phenix-web-logging': 'phenix-web-logging/dist/phenix-web-logging.min',
+        'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable.min',
+        'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
+        'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
+        'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
+        'phenix-web-event': 'phenix-web-event/dist/phenix-web-event.min',
+        'phenix-web-disposable': 'phenix-web-disposable/dist/phenix-web-disposable.min',
+        'phenix-web-closest-endpoint-resolver': 'phenix-web-closest-endpoint-resolver/dist/phenix-web-closest-endpoint-resolver.min',
+        'phenix-web-player': 'phenix-web-player/dist/phenix-web-player-bundled.min',
+        'phenix-web-application-activity-detector': 'phenix-web-application-activity-detector/dist/phenix-web-application-activity-detector.min',
+        'phenix-web-global': 'phenix-web-global/dist/phenix-web-global.min',
+        'phenix-web-detect-browser': 'phenix-web-detect-browser/dist/phenix-web-detect-browser.min'
+    }
+});
 
 requirejs([
     'jquery',
@@ -70,7 +64,6 @@ requirejs([
     'app-setup'
 ], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
-        var fingerprint = new Fingerprint();
         var localPrimaryPlayer = null;
         var localSecondaryPlayer = null;
         var primaryPlayer = null;
@@ -162,11 +155,16 @@ requirejs([
                 pcastOptions.features = app.getUrlParameter('features').split(',');
             }
 
-            fingerprint.get(function(fingerprint) {
-                pcastOptions.deviceId = fingerprint;
+            Fingerprint.get(function(components) {
+                var values = components.map(function(component) {
+                    return component.value;
+                });
+                var murmur = Fingerprint.x64hash128(values.join(''), 31);
+
+                pcastOptions.deviceId = murmur;
                 pcast = new sdk.lowLevel.PCast(pcastOptions);
 
-                if (app.getUrlParameter('debug') === 'true') {
+                if (app.getUrlParameter('debug', 'false') !== 'false') {
                     app.addDebugAppender(pcast);
                 }
 
@@ -771,13 +769,5 @@ requirejs([
     $(function() {
         app.init();
         init();
-
-        // Plugin might load with delay
-        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
-            sdk.utils.rtc.onload = function() {
-                app.init();
-                init();
-            };
-        }
     });
 });
