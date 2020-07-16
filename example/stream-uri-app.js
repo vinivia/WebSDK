@@ -65,7 +65,6 @@ requirejs([
     'app-setup'
 ], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
-        var fingerprint = new Fingerprint();
         var primaryPlayer = null;
         var secondaryPlayer = null;
 
@@ -86,10 +85,15 @@ requirejs([
 
             adminBaseUri = app.getBaseUri();
 
-            fingerprint.get(function(fingerprint) {
+            Fingerprint.get(function(components) {
+                var values = components.map(function(component) {
+                    return component.value;
+                });
+                var murmur = Fingerprint.x64hash128(values.join(''), 31);
+
                 pcast = new sdk.lowLevel.PCast({
                     uri: uri,
-                    deviceId: fingerprint,
+                    deviceId: murmur,
                     shakaLoader: function(callback) {
                         if (!app.getUrlParameter('shaka')) {
                             return callback(null);
@@ -552,13 +556,5 @@ requirejs([
     $(function() {
         app.init();
         init();
-
-        // Plugin might load with delay
-        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
-            sdk.utils.rtc.onload = function() {
-                app.init();
-                init();
-            };
-        }
     });
 });
