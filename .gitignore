@@ -6,7 +6,6 @@
 .idea/codeStyles/
 node_modules/
 coverage/
+dist/
 npm-debug.log
-dist/pcast-screen-sharing.zip
-dist/pcast-screen-sharing/
-dist/workflow-example/
+.eslintcache
