@@ -15,16 +15,15 @@
  */
 
 /* global __dirname module */
-var webpack = require('webpack');
-var path = require('path');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var MiniCssExtractPlugin = require('mini-css-extract-plugin');
-var CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
-var appDir = path.join(__dirname, './example');
-var distDir = path.join(__dirname, './dist');
-
-var configs = [{
+const webpack = require('webpack');
+const path = require('path');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin;
+const appDir = path.join(__dirname, './example');
+const distDir = path.join(__dirname, './dist');
+const config = {
     entry: path.join(appDir, 'get-user-media-app.js'),
     devtool: 'source-map',
     target: 'web',
@@ -40,7 +39,7 @@ var configs = [{
             template: path.join(appDir, 'GetUserMediaWorkflowDemo.html'),
             inject: true
         }),
-        new MiniCssExtractPlugin("styles.css")
+        new MiniCssExtractPlugin('styles.css')
     ],
     module: {
         rules: [{
@@ -90,6 +89,6 @@ var configs = [{
         }
     },
     optimization: {minimize: true}
-}];
+};
 
-module.exports = configs;
+module.exports = [config];

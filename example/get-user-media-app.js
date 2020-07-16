@@ -70,7 +70,6 @@ requirejs([
     'app-setup'
 ], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
-        var fingerprint = new Fingerprint();
         var localPrimaryPlayer = null;
         var localSecondaryPlayer = null;
         var primaryPlayer = null;
@@ -162,11 +161,16 @@ requirejs([
                 pcastOptions.features = app.getUrlParameter('features').split(',');
             }
 
-            fingerprint.get(function(fingerprint) {
-                pcastOptions.deviceId = fingerprint;
+            Fingerprint.get(function(components) {
+                var values = components.map(function(component) {
+                    return component.value;
+                });
+                var murmur = Fingerprint.x64hash128(values.join(''), 31);
+
+                pcastOptions.deviceId = murmur;
                 pcast = new sdk.lowLevel.PCast(pcastOptions);
 
-                if (app.getUrlParameter('debug') === 'true') {
+                if (app.getUrlParameter('debug', 'false') !== 'false') {
                     app.addDebugAppender(pcast);
                 }
 
@@ -771,13 +775,5 @@ requirejs([
     $(function() {
         app.init();
         init();
-
-        // Plugin might load with delay
-        if (sdk.utils.rtc.phenixSupported && !sdk.utils.rtc.isPhenixEnabled()) {
-            sdk.utils.rtc.onload = function() {
-                app.init();
-                init();
-            };
-        }
     });
 });

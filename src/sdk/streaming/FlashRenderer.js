@@ -83,7 +83,7 @@ define([
         };
 
         this._originElement = elementToAttachTo;
-        this._phenixVideo = new rtc.PhenixVideo(elementToAttachTo, this._streamsInfo, 'flash', options);
+        this._phenixVideo = new rtc.PhenixFlashVideo(elementToAttachTo, this._streamsInfo, options);
 
         this._phenixVideo.hookUpEvents();
 
