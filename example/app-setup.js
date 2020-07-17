@@ -328,6 +328,7 @@ define('app-setup', [
             'https://pcast-alternate.phenixrts.com': 'Anycast (Alternate Network)',
             'wss://pcast-asia-southeast.phenixrts.com': 'APAC South East',
             'wss://pcast-asia-east.phenixrts.com': 'APAC East',
+            'wss://pcast-asia-east2.phenixrts.com': 'APAC East 2',
             'wss://pcast-asia-northeast.phenixrts.com': 'APAC North East',
             'wss://pcast-asia-south.phenixrts.com': 'APAC South',
             'wss://pcast-australia-southeast.phenixrts.com': 'Australia South East',
