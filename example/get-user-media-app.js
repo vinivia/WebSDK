@@ -189,16 +189,23 @@ requirejs([
         };
 
         var createAuthToken = function createAuthToken() {
-            var data = app.getAuthData();
+            var credentials = app.getAuthData();
+            var data = {
+                type: 'Auth',
+                expiresInSeconds: 30
+            };
 
             $.ajax({
-                url: adminBaseUri + '/pcast/auth',
+                url: adminBaseUri + '/pcast/edgeAuth',
                 accepts: 'application/json',
                 contentType: 'application/json',
                 method: 'POST',
-                data: JSON.stringify(data)
+                data: JSON.stringify(data),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(credentials.applicationId + ':' + credentials.secret));
+                }
             }).done(function(result) {
-                $('.authToken').val(result.authenticationToken);
+                $('.authToken').val(result.edgeAuthToken);
                 app.activateStep('step-2');
                 setTimeout(function() {
                     app.activateStep('step-3');
@@ -513,29 +520,32 @@ requirejs([
             });
         };
 
-        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, capabilities, callback) {
+        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, capabilities, applyTags, callback) {
             var data = {
-                applicationId: applicationId,
-                secret: secret,
-                sessionId: sessionId,
+                type: originStreamId ? 'Stream' : 'Publish',
+                expiresInSeconds: 30,
                 originStreamId: originStreamId,
-                capabilities: capabilities
+                capabilities: capabilities,
+                applyTags: applyTags
             };
 
             $.ajax({
-                url: adminBaseUri + '/pcast/stream',
+                url: adminBaseUri + '/pcast/edgeAuth',
                 accepts: 'application/json',
                 contentType: 'application/json',
                 method: 'POST',
-                data: JSON.stringify(data)
+                data: JSON.stringify(data),
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Basic ' + btoa(applicationId + ':' + secret));
+                }
             }).done(function(result) {
-                $(targetElementSelector).val(result.streamToken);
+                $(targetElementSelector).val(result.edgeAuthToken);
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
                     message: 'Created token for stream "' + originStreamId + '"'
                 });
-                callback(result.streamToken);
+                callback(result.edgeAuthToken);
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 var reason = getErrorReason(jqXHR, textStatus, errorThrown);
 
@@ -553,6 +563,7 @@ requirejs([
             var sessionId = $('#sessionIdForPublishing').val();
             var originStreamId = '';
             var capabilities = [];
+            var tags = $('#tagsForPublishing').val().split(',');
 
             $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
@@ -570,7 +581,7 @@ requirejs([
                 capabilities.push(videoQuality);
             }
 
-            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
+            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
                 app.activateStep('step-5-3');
                 setTimeout(function() {
                     app.activateStep('step-5-4');
@@ -583,6 +594,7 @@ requirejs([
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForViewing').val();
             var originStreamId = $('#originStreamId').val();
+            var tags = $('#tagsForViewing').val().split(',');
             var capabilities = [];
 
             $('#subscriber-mode button.clicked').each(function() {
@@ -593,7 +605,7 @@ requirejs([
                 capabilities.push($(this).val());
             });
 
-            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, function() {
+            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
                 app.activateStep('step-7');
                 setTimeout(function() {
                     app.activateStep('step-8');

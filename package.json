@@ -32,11 +32,8 @@
     "add-copyright": "eslint --no-eslintrc --no-ignore --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:9 --parser-options=sourceType:module --rule \"notice/notice: [2, {mustMatch: Copyright .* Phenix Real Time Solutions. Inc[.],templateFile: copyright.tmpl}]\" ./dist --fix",
     "postadd-copyright": "npm run check-ecma-version",
     "check-ecma-version": "eslint --no-eslintrc --no-ignore --parser-options=ecmaVersion:5 --parser-options=sourceType:script ./dist/*-web-*.js",
-    "deploy-examples:example": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R example/* gs://phenix-assets-us/examples",
-    "deploy-examples:src": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R src/* gs://phenix-assets-us/examples",
-    "deploy-examples:dist": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R dist/* gs://phenix-assets-us/examples",
-    "deploy-examples:deps": "gsutil -h \"Cache-Control:public, max-age=0\" -m cp -R node_modules/phenix-* node_modules/jquery node_modules/lodash node_modules/bootstrap node_modules/bootstrap-notify node_modules/fingerprintjs2 node_modules/shaka-player node_modules/requirejs node_modules/animate.css gs://phenix-assets-us/examples",
-    "deploy-examples": "node scripts/deploy-examples.js",
+    "deploy-examples:production": "node scripts/deploy-examples-prduction.js",
+    "deploy-examples:staging": "node scripts/deploy-examples-staging.js",
     "version": "node scripts/version.js"
   },
   "engines": {
