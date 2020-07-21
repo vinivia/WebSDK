@@ -78,6 +78,10 @@ define([
             assert.isBoolean(options.disableConsoleLogging, 'options.disableConsoleLogging');
         }
 
+        if (!_.isNullOrUndefined(options.loggingLevel)) {
+            assert.isNumber(options.loggingLevel, 'options.loggingLevel');
+        }
+
         if (!_.isNullOrUndefined(options.treatBackgroundAsOffline)) {
             assert.isBoolean(options.treatBackgroundAsOffline, 'options.treatBackgroundAsOffline');
         }
@@ -102,7 +106,7 @@ define([
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging);
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging, options.loggingLevel);
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shakaLoader = options.shakaLoader;
