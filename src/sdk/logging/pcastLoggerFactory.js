@@ -26,7 +26,7 @@ define([
 
     }
 
-    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole) {
+    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole, loggingLevel) {
         if (baseUri) {
             assert.isStringNotEmpty(baseUri, 'baseUri');
         }
@@ -34,7 +34,11 @@ define([
         var logger = new logging.Logger();
         var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
 
-        telemetryAppender.setThreshold(logging.level.INFO);
+        if (loggingLevel) {
+            telemetryAppender.setThreshold(loggingLevel);
+        } else {
+            telemetryAppender.setThreshold(logging.level.INFO);
+        }
 
         if (!disableConsole) {
             logger.addAppender(new logging.ConsoleAppender());
