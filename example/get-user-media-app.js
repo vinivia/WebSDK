@@ -192,8 +192,17 @@ requirejs([
             var credentials = app.getAuthData();
             var data = {
                 type: 'Auth',
-                expiresInSeconds: 30
+                expiresInSeconds: 30,
+                capabilities: []
             };
+
+            if ($('#geoCountryAllow').val()) {
+                data.capabilities.push('geo-country-allow=' + $('#geoCountryAllow').val());
+            }
+
+            if ($('#geoCountryDeny').val()) {
+                data.capabilities.push('geo-country-deny=' + $('#geoCountryDeny').val());
+            }
 
             $.ajax({
                 url: adminBaseUri + '/pcast/edgeAuth',
