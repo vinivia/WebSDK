@@ -78,7 +78,20 @@ const nodeConfig = merge(config, {
     output: {filename: 'phenix-node-sdk.js'},
     resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-no-edge')}}
 });
-const minifiedConfigs = [config, noEdgeConfig, externalizedConfig].map(function(config) {
+const noPublishConfig = merge(config, {
+    output: {filename: config.output.filename.replace('.js', '-no-publish.js')},
+    resolve: {
+        alias: {
+            './userMedia/UserMediaProvider': path.resolve(__dirname, 'src/dummy'),
+            './sdk/userMedia/UserMediaResolver': path.resolve(__dirname, 'src/dummy'),
+            '../userMedia/UserMediaResolver': path.resolve(__dirname, 'src/dummy'),
+            './sdk/bandwidth/BandwidthMonitor': path.resolve(__dirname, 'src/dummy'),
+            './userMedia/ScreenShareExtensionManager': path.resolve(__dirname, 'src/dummy'),
+            './sdk/audio/AudioSpeakerDetector': path.resolve(__dirname, 'src/dummy')
+        }
+    }
+});
+const minifiedConfigs = [config, noEdgeConfig, externalizedConfig, noPublishConfig].map(function(config) {
     return merge(config, {
         output: {filename: config.output.filename.replace('.js', '.min.js')},
         optimization: {
@@ -96,4 +109,4 @@ const minifiedConfigs = [config, noEdgeConfig, externalizedConfig].map(function(
     });
 });
 
-module.exports = [config, noEdgeConfig, externalizedConfig, reactNativeConfig, nodeConfig].concat(minifiedConfigs);
+module.exports = [config, noEdgeConfig, externalizedConfig, reactNativeConfig, nodeConfig, noPublishConfig].concat(minifiedConfigs);

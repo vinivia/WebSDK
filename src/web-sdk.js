@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 define('phenix-web-sdk', [
     'phenix-rtc',
     'phenix-web-logging',
@@ -29,6 +27,8 @@ define('phenix-web-sdk', [
     './sdk/express/ChannelExpress',
     './sdk/AdminApiProxyClient'
 ], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
+    'use strict';
+
     rtc.global.PhenixPCast = PCast;
 
     return {
