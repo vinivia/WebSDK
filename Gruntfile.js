@@ -77,6 +77,78 @@ module.exports = function(grunt) {
                 replacement: environment || 'production',
                 recursive: true,
                 path: 'dist'
+            },
+            'no-publish-camera': {
+                pattern: 'camera',
+                replacement: 'apparat',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-microphone': {
+                pattern: 'microphone',
+                replacement: 'ohr',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-publisher': {
+                pattern: 'publisher',
+                replacement: 'verleger',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-publish': {
+                pattern: 'publish',
+                replacement: 'verlegen',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-Publisher': {
+                pattern: 'Publisher',
+                replacement: 'Verleger',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-Publish': {
+                pattern: 'Publish',
+                replacement: 'Verlegen',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-getUserMedia': {
+                pattern: 'getUserMedia',
+                replacement: 'getFluss',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-shimGetUserMedia': {
+                pattern: 'shimGetUserMedia',
+                replacement: 'shimGetFluss',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
+            },
+            'no-publish-PublisherLimited': {
+                pattern: 'VerlegerLimited',
+                replacement: 'PublisherLimited',
+                path: [
+                    'dist/phenix-web-sdk-no-publish.js',
+                    'dist/phenix-web-sdk-no-publish.min.js'
+                ]
             }
         },
         webpack: webpackConfigs,

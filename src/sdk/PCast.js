@@ -447,7 +447,7 @@ define([
                         var preferredLevelId = sdpUtil.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
 
                         if (!preferredLevelId) {
-                            that._logger.warn('[%s] Unable to find new publisher h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
+                            that._logger.warn('[%s] Unable to find h264 profile level id to replace [%s]. Rejected environment defaults of [%s]',
                                 streamId, profileLevelIdToReplace, that._h264ProfileIds);
                         } else if (profileLevelIdToReplace !== preferredLevelId) {
                             that._logger.info('[%s] Replacing publisher h264 profile level id [%s] with new value [%s] in offer sdp',
@@ -951,13 +951,13 @@ define([
             },
 
             getStream: function getStream() {
-                that._logger.debug('[%s] Unable to get stream on publisher of remote origin.', streamId);
+                that._logger.debug('[%s] Unable to get stream for remote origin.', streamId);
 
                 return null;
             },
 
             getStats: function getStats() {
-                that._logger.debug('[%s] Unable to get stream stats on publisher of remote origin.', streamId);
+                that._logger.debug('[%s] Unable to get stream stats for remote origin.', streamId);
 
                 return null;
             },

@@ -264,7 +264,7 @@ define([
         }
 
         if (options.videoElement) {
-            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+            throw new Error('May not preview remote stream. Please subscribe to view.');
         }
 
         if (options.prerollSkipDuration) {
@@ -351,7 +351,7 @@ define([
         }
 
         if (options.videoElement) {
-            throw new Error('May not view remote stream publisher. Please subscribe to view.');
+            throw new Error('May not preview external stream. Please subscribe to view.');
         }
 
         if (options.monitor) {
