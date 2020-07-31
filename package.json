@@ -32,7 +32,7 @@
     "add-copyright": "eslint --no-eslintrc --no-ignore --ignore-path .gitignore --plugin notice --parser-options=ecmaVersion:9 --parser-options=sourceType:module --rule \"notice/notice: [2, {mustMatch: Copyright .* Phenix Real Time Solutions. Inc[.],templateFile: copyright.tmpl}]\" ./dist --fix",
     "postadd-copyright": "npm run check-ecma-version",
     "check-ecma-version": "eslint --no-eslintrc --no-ignore --parser-options=ecmaVersion:5 --parser-options=sourceType:script ./dist/*-web-*.js",
-    "deploy-examples:production": "node scripts/deploy-examples-prduction.js",
+    "deploy-examples:production": "node scripts/deploy-examples-production.js",
     "deploy-examples:staging": "node scripts/deploy-examples-staging.js",
     "version": "node scripts/version.js"
   },
