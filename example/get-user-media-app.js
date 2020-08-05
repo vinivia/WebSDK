@@ -27,12 +27,13 @@ for (var i = 0; i < params.length; i++) {
 requirejs.config({
     paths: {
         'phenix-web-sdk': phenixWebSdk,
-        'phenix-rtc': 'phenix-rtc/dist/phenix-rtc-bundled',
+        'phenix-rtc': 'phenix-rtc/dist/phenix-rtc',
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
+        'webrtc-adapter': 'webrtc-adapter/out/adapter',
         'shaka-player': 'shaka-player/dist/shaka-player.compiled',
         'video-player': 'player',
         'app-setup': 'app-setup',

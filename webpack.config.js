@@ -62,11 +62,11 @@ const externalizePhenixImports = (context, request, callback) => {
 
 const noEdgeConfig = merge(config, {
     output: {filename: config.output.filename.replace('.js', '-no-edge.js')},
-    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-no-edge')}}
+    resolve: {alias: {'webrtc-adapter': path.resolve(__dirname, 'node_modules', 'webrtc-adapter/out/adapter_no_edge_no_global.js')}}
 });
 const externalizedConfig = merge(config, {
     output: {filename: '[name]-externalized.js'},
-    externals: [externalizePhenixImports]
+    externals: [externalizePhenixImports, 'webrtc-adapter']
 });
 const reactNativeConfig = merge(config, {
     output: {filename: config.output.filename.replace('.js', '-react-native.js')},
@@ -76,7 +76,7 @@ const nodeConfig = merge(config, {
     target: 'node',
     entry: path.join(__dirname, 'src', 'node-sdk.js'),
     output: {filename: 'phenix-node-sdk.js'},
-    resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-no-edge')}}
+    resolve: {alias: {'webrtc-adapter': path.resolve(__dirname, 'node_modules', 'webrtc-adapter/out/adapter_no_edge_no_global.js')}}
 });
 const noPublishConfig = merge(config, {
     output: {filename: config.output.filename.replace('.js', '-no-publish.js')},

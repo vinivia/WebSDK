@@ -126,14 +126,6 @@ module.exports = function(grunt) {
                     'dist/phenix-web-sdk-no-publish.min.js'
                 ]
             },
-            'no-publish-getUserMedia': {
-                pattern: 'getUserMedia',
-                replacement: 'getFluss',
-                path: [
-                    'dist/phenix-web-sdk-no-publish.js',
-                    'dist/phenix-web-sdk-no-publish.min.js'
-                ]
-            },
             'no-publish-shimGetUserMedia': {
                 pattern: 'shimGetUserMedia',
                 replacement: 'shimGetFluss',
