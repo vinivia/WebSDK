@@ -1415,11 +1415,14 @@ define([
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
                 .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
+                .then(function() {
+                    that._logger.info('[%s] Peer connection setup completed', streamId);
+                })
                 .then(createPublisher)
                 .catch(onFailure);
         }
 
-        that._logger.info('[%s] Using legacy callback api', streamId);
+        that._logger.info('[%s] Using legacy peer connection api to publish', streamId);
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
             onSetRemoteDescriptionSuccess.call(that, peerConnection);
@@ -1430,6 +1433,9 @@ define([
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
                     peerConnection.setLocalDescription(sessionDescription, function() {
                         onSetLocalDescriptionSuccess.call(that, peerConnection);
+
+                        that._logger.info('[%s] Peer connection setup completed', streamId);
+
                         createPublisher();
                     }, onFailure);
                 }, onFailure);
@@ -1536,8 +1542,13 @@ define([
                     return peerConnection.setLocalDescription(sessionDescription);
                 })
                 .then(_.bind(onSetLocalDescriptionSuccess, that, peerConnection))
+                .then(function() {
+                    that._logger.info('[%s] Peer connection setup completed', streamId);
+                })
                 .catch(onFailure);
         }
+
+        that._logger.info('[%s] Using legacy peer connection api to subscribe', streamId);
 
         peerConnection.setRemoteDescription(offerSessionDescription, function() {
             onSetRemoteDescriptionSuccess.call(that, peerConnection);
@@ -1546,7 +1557,11 @@ define([
                 onCreateAnswerSuccess.call(that, answerSdp);
 
                 setRemoteAnswer.call(that, streamId, answerSdp, function(sessionDescription) {
-                    peerConnection.setLocalDescription(sessionDescription, _.bind(onSetLocalDescriptionSuccess, that, peerConnection), onFailure);
+                    peerConnection.setLocalDescription(sessionDescription, function() {
+                        onSetLocalDescriptionSuccess.call(that, peerConnection);
+
+                        that._logger.info('[%s] Peer connection setup completed', streamId);
+                    }, onFailure);
                 }, onFailure);
             }, onFailure, mediaConstraints);
         }, onFailure);

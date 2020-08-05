@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2020.2.10",
+  "version": "2020.2.12",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.js",
@@ -93,7 +93,7 @@
     "mocha": "8.0.1",
     "moment": "2.27.0",
     "phenix-gum-configuration": "2020.0.1",
-    "phenix-rtc": "2020.2.2",
+    "phenix-rtc": "2020.4.2",
     "phenix-web-application-activity-detector": "2020.0.2",
     "phenix-web-assert": "2020.0.2",
     "phenix-web-batch-http": "2020.0.2",
@@ -121,9 +121,10 @@
     "uglifyjs-webpack-plugin": "2.2.0",
     "url-loader": "4.1.0",
     "utf-8-validate": "5.0.2",
-    "webpack": "4.43.0",
+    "webpack": "4.44.1",
     "webpack-cli": "3.3.12",
     "webpack-merge": "5.0.9",
+    "webrtc-adapter": "4.2.1",
     "ws": "7.3.1",
     "xmlhttprequest": "1.8.0"
   }
