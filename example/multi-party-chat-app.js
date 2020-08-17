@@ -142,8 +142,8 @@ requirejs([
                 capabilities: ['fhd', 'prefer-h264'], // Add other capabilities if you like. Prefer-h264 allows publishing/viewing on Safari/IOS 11
                 room: {
                     alias: roomAlias,
-                    name: roomAlias,
-                    type: 'MultiPartyChat'
+                    name: app.getUrlParameter('roomName', roomAlias),
+                    type: app.getUrlParameter('roomType', 'MultiPartyChat')
                 }, // Set alias so that you can always uniquely identify room without accessing the return value
                 mediaConstraints: {
                     audio: {deviceId: audioSources[0].id},
