@@ -266,9 +266,9 @@ define([
         this._logger.info('[%s] Resume playing after entering foreground [%s]', this._streamId, this._browser.browser);
 
         if (this._browser.browser === 'Safari' && FeatureDetector.isIOS()) {
-            // TODO(sbi) Due to the wait below this might be no longer necessary.
+            // 2020-08-19 Observed on iOS Safari/13
             var pausing = function pausing() {
-                that._logger.info('Rendered was paused after entering foreground');
+                that._logger.info('Renderer was paused after entering foreground');
                 that._namedEvents.fire(streamEnums.rendererEvents.failedToPlay.name, ['paused-by-background']);
             };
 
