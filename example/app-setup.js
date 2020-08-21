@@ -392,6 +392,8 @@ define('app-setup', [
             'bitrate-limit=500000': '500kbps',
             'bitrate-limit=650000': '650kbps',
             'bitrate-limit=1100000': '1.1Mbps',
+            'resample=2/1': '2/1',
+            'resample=3/2': '3/2',
             'encoding-jitter-buffer=PT0.1S': '0.1s',
             'encoding-jitter-buffer=PT0.5S': '0.5s',
             'encoding-jitter-buffer=PT1.0S': '1.0s',
