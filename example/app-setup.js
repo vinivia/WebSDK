@@ -394,6 +394,8 @@ define('app-setup', [
             'bitrate-limit=1100000': '1.1Mbps',
             'resample=2/1': '2/1',
             'resample=3/2': '3/2',
+            'encoding-profile=phenix-2019': 'Legacy Ladder',
+            'encoding-profile=phenix-2020': 'New Ladder',
             'encoding-jitter-buffer=PT0.1S': '0.1s',
             'encoding-jitter-buffer=PT0.5S': '0.5s',
             'encoding-jitter-buffer=PT1.0S': '1.0s',
