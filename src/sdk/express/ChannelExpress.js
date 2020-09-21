@@ -362,6 +362,7 @@ define([
             };
 
             for (var i = 0; i < members.length; i++) {
+                memberSubscriptions.push(members[i].getObservableScreenName().subscribe(evaluateMembers));
                 memberSubscriptions.push(members[i].getObservableRole().subscribe(evaluateMembers));
                 memberSubscriptions.push(members[i].getObservableStreams().subscribe(evaluateMembers));
             }
