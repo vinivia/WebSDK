@@ -22,7 +22,7 @@ define([
 
     var mostRecentStrategy = 'most-recent';
     var highAvailabilityStrategy = 'high-availability';
-    var defaultBannedFailureCount = 1000;
+    var defaultBannedFailureCount = 100;
     var defaultBanMemberOnCapacityFailureCount = 5;
 
     function MemberSelector(selectionStrategy, logger, options) {

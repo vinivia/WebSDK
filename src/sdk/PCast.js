@@ -1787,6 +1787,18 @@ define([
         if (!this._shakaLoader && !this._webPlayerLoader) {
             that._logger.warn('[%s] No player available for [%s] and uri [%s]. Please provide a loader via options.', streamId, kind, uri);
 
+            that._protocol.destroyStream(streamId, 'unsupported-features', function(error, response) {
+                if (error) {
+                    that._logger.error('[%s] failed to destroy stream with unsupported features, [%s]', streamId, error);
+
+                    return;
+                } else if (response.status !== 'ok') {
+                    that._logger.warn('[%s] failed to destroy stream with unsupported features, status [%s]', streamId, response.status);
+
+                    return;
+                }
+            });
+
             return callback.call(that, undefined, 'unsupported-features');
         }
 
