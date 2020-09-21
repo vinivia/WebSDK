@@ -447,6 +447,7 @@ define('app-setup', [
             'streaming': 'Live',
             'on-demand': 'On Demand',
             'rtmp': 'Rtmp',
+            'time-shift': 'DVR',
             'any-stream': 'Any Stream'
         };
     };
