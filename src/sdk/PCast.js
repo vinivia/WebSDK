@@ -529,7 +529,7 @@ define([
                 var offerSdp = response.createStreamResponse.createOfferDescriptionResponse.sessionDescription.sdp;
                 var peerConnectionConfig = applyVendorSpecificLogic(parseProtobufMessage(response.createStreamResponse.rtcConfiguration));
                 var create = _.bind(createViewerPeerConnection, that, peerConnectionConfig);
-                var isNotRealTime = offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/);
+                var isNotRealTime = !(offerSdp.match(/m=audio /) || offerSdp.match(/m=video /)) && (offerSdp.match(/a=x-playlist:/) || offerSdp.match(/a=x-rtmp:/));
 
                 if (isNotRealTime) {
                     create = createChunkedOrRtmpViewer;
