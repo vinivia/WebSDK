@@ -424,6 +424,7 @@ define('app-setup', [
             'transcoding={"selectedQualities":["hd"]}': 'HD DASH+HLS only',
             'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only',
             'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists',
+            'transcoding={"playlistStartOffset":"-PT10M"}': '10m playlist offset',
             'monitor-tracks': 'Monitor Tracks',
             'kill-session-on-stream-failure': 'Kill Session on Failure',
             'setup-deadline=PT5S': 'Setup in 5s or fail',
