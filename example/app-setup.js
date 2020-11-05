@@ -401,6 +401,7 @@ define('app-setup', [
             'encoding-jitter-buffer=PT0.5S': '0.5s',
             'encoding-jitter-buffer=PT1.0S': '1.0s',
             'encoding-jitter-buffer=PT2.0S': '2.0s',
+            'encoding-jitter-buffer=PT20S': '20s',
             'playout-buffer=PT0.1S': 'PB 0.1s',
             'playout-buffer=PT0.3S': 'PB 0.3s',
             'playout-buffer=PT0.5S': 'PB 0.5s',
