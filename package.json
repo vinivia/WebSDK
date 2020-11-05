@@ -36,6 +36,9 @@
     "deploy-examples:staging": "node scripts/deploy-examples-staging.js",
     "version": "node scripts/version.js"
   },
+  "files": [
+   "dist/"
+  ],
   "engines": {
     "node": ">=12.18.2"
   },
