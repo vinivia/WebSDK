@@ -375,6 +375,14 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
+        if (options.streamToken && options.capabilities) {
+            this._logger.warn('[%s] Trying to publish with both `streamToken` and `capabilities` set. Only use one of the two options');
+
+            callback(new Error('Publishing with both `streamToken` and `capabilities` defined'), {status: 'conflicting-options'});
+
+            return;
+        }
+
         var channelOptions = _.assign({
             memberRole: memberEnums.roles.presenter.name,
             streamType: streamEnums.types.presentation.name,

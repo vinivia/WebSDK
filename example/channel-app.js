@@ -139,6 +139,7 @@ requirejs([
             var channelVideoEl = $('#channelVideo')[0];
             var streamSelectionStrategy = app.getUrlParameter('strategy');
             var subscriberOptions = {};
+            var streamToken = app.getUrlParameter('edgeToken');
 
             if (!channelAlias) {
                 return;
@@ -159,6 +160,7 @@ requirejs([
             channelExpress.joinChannel({
                 alias: channelAlias,
                 videoElement: channelVideoEl,
+                streamToken: streamToken,
                 streamSelectionStrategy: streamSelectionStrategy,
                 subscriberOptions: subscriberOptions
             }, function joinChannelCallback(error, response) {

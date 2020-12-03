@@ -227,6 +227,10 @@ define([
             assert.isObject(options.streamInfo, 'options.streamInfo');
         }
 
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
         if (options.viewerStreamSelectionStrategy) {
             assert.isStringNotEmpty(options.viewerStreamSelectionStrategy, 'options.viewerStreamSelectionStrategy');
         }
@@ -342,7 +346,8 @@ define([
         var streamInfo = memberStream.getInfo();
         var isScreen = _.get(streamInfo, ['isScreen'], false);
         var streamToken = null;
-        var publisherCapabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
+        var capabilitiesFromToken = options.streamToken && getCapabilitiesFromToken(options.streamToken);
+        var publisherCapabilities = capabilitiesFromToken || streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
         var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
         var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
         var subscriberCapabilities = preferredFeatureCapability ? [preferredFeatureCapability] : [];
@@ -433,6 +438,14 @@ define([
             callback(error, responseWithOriginStreamId);
         });
     };
+
+    function getCapabilitiesFromToken(streamToken) {
+        var base64Token = streamToken.split(':')[1];
+        var decodedToken = atob(base64Token);
+        var tokenOptions = JSON.parse(decodedToken).token;
+
+        return JSON.parse(tokenOptions).capabilities;
+    }
 
     function disposeOfRoomServices() {
         _.forOwn(this._roomServicePublishers, function(publishers) {
@@ -827,7 +840,11 @@ define([
         var streamInfo = options.streamInfo;
         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
 
-        publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+        if (options.streamToken) {
+            publisherStream = addStreamInfo(publisherStream, 'capabilities', getCapabilitiesFromToken(options.streamToken).join(','));
+        } else {
+            publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+        }
 
         if (!options.enableWildcardCapability) {
             var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
@@ -851,7 +868,11 @@ define([
         var disposable;
 
         if (!_.includes(publisherStream, 'capabilities')) {
-            publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+            if (options.streamToken) {
+                publisherStream = addStreamInfo(publisherStream, 'capabilities', getCapabilitiesFromToken(options.streamToken).join(','));
+            } else {
+                publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+            }
         }
 
         if (composeWithAdditionalStreams) {

@@ -109,6 +109,7 @@ requirejs([
             var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
             var streamSelectionStrategy = app.getUrlParameter('strategy');
+            var streamToken = app.getUrlParameter('edgeToken');
 
             $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
@@ -126,17 +127,24 @@ requirejs([
                 capabilities.push(videoQuality);
             }
 
-            channelExpress.publishToChannel({
+            var publishOptions = {
                 mediaConstraints: getConstraints(),
                 channel: {
                     alias: channelAlias,
                     name: channelAlias
                 },
-                capabilities: capabilities,
                 videoElement: channelVideoEl,
                 viewerStreamSelectionStrategy: streamSelectionStrategy,
                 screenName: 'primary' + _.random(1000000)
-            }, function publishToChannelCallback(error, response) {
+            };
+
+            if (streamToken) {
+                publishOptions.streamToken = streamToken;
+            } else {
+                publishOptions.capabilities = capabilities;
+            }
+
+            channelExpress.publishToChannel(publishOptions, function publishToChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',

@@ -741,10 +741,20 @@ define([
     function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
 
-        assert.isArray(options.capabilities, 'options.capabilities');
-
         if (options.streamToken) {
+            var base64Token = options.streamToken.split(':')[1];
+            var decodedToken = typeof(base64Token) === 'string' && atob(base64Token);
+            var tokenOptions = decodedToken && JSON.parse(decodedToken).token;
+
+            if (tokenOptions && JSON.parse(tokenOptions).capabilities) {
+                options.capabilities = JSON.parse(tokenOptions).capabilities;
+            }
+
             return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+        }
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
         }
 
         that.waitForOnline(function(error) {
