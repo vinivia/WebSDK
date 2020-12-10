@@ -121,7 +121,8 @@
         }
 
         .members video {
-            max-width:70%
+            max-width:70%;
+            position: relative;
         }
 
         .self-view {
@@ -165,6 +166,17 @@
         .low {
             border: 3px solid orange;
         }
+
+        .status-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .status-container div {
+            padding: 5px;
+        }
+
 
     </style>
 
@@ -225,6 +237,10 @@
             <div class="column full members">
                 <div id="videoList"></div>
                 <span>Other Members</span>
+            </div>
+            <div>
+                <button id="muteAudio">Mute Audio</button>
+                <button id="muteVideo">Mute Video</button>
             </div>
             <div class="column quarter self">
                 <div id="selfVideoList" class="self-view"></div>

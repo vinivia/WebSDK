@@ -1390,10 +1390,10 @@ define([
                 }
             };
 
-            _.addEventListener(track, 'StateChange', handleStateChange);
+            _.addEventListener(track, 'TrackStateChange', handleStateChange);
 
             disposables.add(new disposable.Disposable(function() {
-                _.removeEventListener(track, 'StateChange', handleStateChange);
+                _.removeEventListener(track, 'TrackStateChange', handleStateChange);
             }));
         });
     }

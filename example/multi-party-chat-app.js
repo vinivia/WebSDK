@@ -65,6 +65,10 @@ requirejs([
 ], function($, _, sdk, Player, app) {
     var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
     var stopButton = document.getElementById('stopButton');
+    var muteAudio = false;
+    var muteVideo = false;
+    var muteAudioButton = document.getElementById('muteAudio');
+    var muteVideoButton = document.getElementById('muteVideo');
     var publishScreenShareButton = document.getElementById('publishScreenButton');
     var stopScreenShareButton = document.getElementById('stopPublishScreenButton');
     var videoList = document.getElementById('videoList');
@@ -376,6 +380,13 @@ requirejs([
             var videoElement = createVideo();
             var isSelf = sessionId === roomService.getSelf().getSessionId(); // Check if is yourself!
             var streamInfo = memberStream.getInfo(); // Access the custom stream info params that you passed when publishing
+            var statusContainer = document.createElement('div');
+            var audioStatus = document.createElement('div');
+            var videoStatus = document.createElement('div');
+
+            statusContainer.classList.add('status-container');
+            statusContainer.appendChild(audioStatus);
+            statusContainer.appendChild(videoStatus);
 
             if (app.getUrlParameter('multipleQualities')) {
                 videoElement.classList.add(streamInfo.quality);
@@ -404,6 +415,29 @@ requirejs([
                     memberStream: memberStream
                 });
 
+                function onPrivacyChange() {
+                    var audiMuted = (memberStream.getObservableAudioState().getValue() !== 'TrackEnabled');
+                    var videoMuted = (memberStream.getObservableVideoState().getValue() !== 'TrackEnabled');
+
+                    if (audiMuted) {
+                        audioStatus.innerHTML = 'Audio is Off';
+                    } else {
+                        audioStatus.innerHTML = 'Audio is On';
+                    }
+
+                    if (videoMuted) {
+                        videoStatus.innerHTML = 'Video is Off';
+                    } else {
+                        videoStatus.innerHTML = 'Video is On';
+                    }
+                }
+
+                onPrivacyChange();
+
+                memberStream.getObservableVideoState().subscribe(onPrivacyChange);
+                memberStream.getObservableAudioState().subscribe(onPrivacyChange);
+
+                videoList.append(statusContainer);
                 videoList.append(videoElement);
 
                 if (removed) {
@@ -474,7 +508,7 @@ requirejs([
                 monitor: {callback: onMonitorEvent}
             };
 
-            videoElement.setAttribute('muted', true); // Don't want to hear yourself
+            videoElement.setAttribute('muted'); // Don't want to hear yourself
 
             return roomExpress.publishScreenToRoom(publishOptions, function(error, response) {
                 if (error) {
@@ -512,6 +546,8 @@ requirejs([
             }
         }
 
+        muteAudioButton.onclick = onMuteAudioClick;
+        muteVideoButton.onclick = onMuteVideoClick;
         publishAndJoinRoomButton.onclick = publishVideoAndCameraAtTwoQualitiesAndJoinRoom;
         stopButton.onclick = leaveRoomAndStopPublisher;
         publishScreenShareButton.onclick = publishScreen;
@@ -523,6 +559,36 @@ requirejs([
 
         createRoomExpress();
     };
+
+    function onMuteAudioClick() {
+        muteAudio = !muteAudio;
+        muteAudioButton.textContent = muteAudio
+            ? 'Unmute Audio'
+            : 'Mute Audio';
+
+        if (publisher) {
+            if (muteAudio) {
+                publisher.publisher.disableAudio();
+            } else {
+                publisher.publisher.enableAudio();
+            }
+        }
+    }
+
+    function onMuteVideoClick() {
+        muteVideo = !muteVideo;
+        muteVideoButton.textContent = muteVideo
+            ? 'Unmute Video'
+            : 'Mute Video';
+
+        if (publisher) {
+            if (muteVideo) {
+                publisher.publisher.disableVideo();
+            } else {
+                publisher.publisher.enableVideo();
+            }
+        }
+    }
 
     function leaveRoomAndStopPublisher() {
         if (publisher) {
