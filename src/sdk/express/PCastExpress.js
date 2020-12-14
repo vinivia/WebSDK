@@ -545,6 +545,30 @@ define([
         pcastSubscription = this._pcastObservable.subscribe(subscribeToStatusChange, {initial: 'notify'});
     };
 
+    PCastExpress.prototype.parseCapabilitiesFromToken = function parseCapabilitiesFromToken(streamToken) {
+        var that = this;
+
+        if (!streamToken.startsWith('DIGEST:')) {
+            that._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
+
+            throw new Error('Bad `streamToken`');
+        }
+
+        try {
+            var base64Token = streamToken.split(':')[1];
+            var decodedToken = atob(base64Token);
+            var token = JSON.parse(decodedToken).token;
+            var tokenOptions = JSON.parse(token);
+
+            return _.get(tokenOptions, ['capabilities'], []);
+        } catch (e) {
+            var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
+            that._logger.warn('[%s] Failed to parse the `streamToken` [%s]', sessionId, streamToken);
+
+            throw new Error(e);
+        }
+    };
+
     function instantiatePCast() {
         var that = this;
 
@@ -742,12 +766,12 @@ define([
         var that = this;
 
         if (options.streamToken) {
-            var base64Token = options.streamToken.split(':')[1];
-            var decodedToken = typeof(base64Token) === 'string' && atob(base64Token);
-            var tokenOptions = decodedToken && JSON.parse(decodedToken).token;
+            try {
+                var capabilitiesFromStreamToken = that.parseCapabilitiesFromToken(options.streamToken);
 
-            if (tokenOptions && JSON.parse(tokenOptions).capabilities) {
-                options.capabilities = JSON.parse(tokenOptions).capabilities;
+                options.capabilities = capabilitiesFromStreamToken;
+            } catch (e) {
+                return callback(new Error('Bad `streamToken`', e), {status: 'bad-token'});
             }
 
             return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);

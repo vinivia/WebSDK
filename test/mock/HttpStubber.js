@@ -39,12 +39,12 @@ define(['phenix-web-lodash-light'], function(_) {
         }, callback);
     };
 
-    HttpStubber.prototype.stubStreamRequest = function(callback) {
+    HttpStubber.prototype.stubStreamRequest = function(callback, token = 'newToken') {
         stubIfNoneExist.call(this);
 
         this.stubResponse('stream', 'application/json', {
             status: 'ok',
-            streamToken: 'newToken'
+            streamToken: token
         }, callback);
     };
 

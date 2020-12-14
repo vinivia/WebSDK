@@ -57,7 +57,7 @@ define([
                 streamTokenRequests.push(body);
                 // Make sure setup passes after token request
                 websocketStubber.stubSetupStream();
-            });
+            }, 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9');
 
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
@@ -192,6 +192,33 @@ define([
                             done();
                         }
                     }
+                });
+            });
+
+            it('log `bad-token` warning, when there is a broken token provided for publishing', function(done) {
+                httpStubber.stubStreamRequest(null, 'badToken');
+
+                var rePublishCount = 0;
+
+                pcastExpress.publish({
+                    capabilities: [],
+                    userMediaStream: UserMediaStubber.getMockMediaStream(),
+                    monitor: {
+                        callback: function(error, response) {
+                            if (response.retry) {
+                                rePublishCount++;
+
+                                if (rePublishCount === 1) {
+                                    websocketStubber.stubResponse('pcast.SetupStream', {status: 'unauthorized'});
+                                }
+
+                                response.retry();
+                            }
+                        }
+                    }
+                }, function(error, response) {
+                    expect(response.status).to.be.equal('bad-token');
+                    done();
                 });
             });
         });

@@ -149,6 +149,8 @@ define([
         });
 
         it('Expect monitor retry with unauthorized status for setupStream to trigger request one time to get new streamToken', function(done) {
+            httpStubber.stubStreamRequest(null, 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9');
+
             var startClone = PeerConnectionMonitor.prototype.start;
             var subscribeCount = 0;
 

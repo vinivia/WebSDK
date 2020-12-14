@@ -330,6 +330,9 @@ define([
     };
 
     RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback, defaultFeatureIndex) {
+        var capabilitiesFromStreamToken;
+        var that = this;
+
         assert.isObject(memberStream, 'memberStream');
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
@@ -340,14 +343,23 @@ define([
             throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
         }
 
-        var that = this;
+        if (options.streamToken) {
+            capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
+
+            if (!capabilitiesFromStreamToken) {
+                that._logger.warn('Failed to parse the `streamToken` [%s]', options.streamToken);
+
+                return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
+            }
+        }
+
         var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
         var streamInfo = memberStream.getInfo();
         var isScreen = _.get(streamInfo, ['isScreen'], false);
         var streamToken = null;
-        var capabilitiesFromToken = options.streamToken && getCapabilitiesFromToken(options.streamToken);
-        var publisherCapabilities = capabilitiesFromToken || streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
+        var capabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
+        var publisherCapabilities = capabilitiesFromStreamToken || capabilities;
         var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
         var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
         var subscriberCapabilities = preferredFeatureCapability ? [preferredFeatureCapability] : [];
@@ -439,12 +451,16 @@ define([
         });
     };
 
-    function getCapabilitiesFromToken(streamToken) {
-        var base64Token = streamToken.split(':')[1];
-        var decodedToken = atob(base64Token);
-        var tokenOptions = JSON.parse(decodedToken).token;
+    function getCapabilitiesFromTokenIfAble(streamToken) {
+        var that = this;
 
-        return JSON.parse(tokenOptions).capabilities;
+        try {
+            var capabilitiesFromStreamToken = that._pcastExpress.parseCapabilitiesFromToken(streamToken);
+
+            return capabilitiesFromStreamToken;
+        } catch (e) {
+            return;
+        }
     }
 
     function disposeOfRoomServices() {
@@ -836,12 +852,19 @@ define([
     }
 
     function createOptionalViewerStreamTokensAndUpdateSelf(options, publisher, room, callback) {
+        var that = this;
         var streamType = options.streamType;
         var streamInfo = options.streamInfo;
         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
 
         if (options.streamToken) {
-            publisherStream = addStreamInfo(publisherStream, 'capabilities', getCapabilitiesFromToken(options.streamToken).join(','));
+            var capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
+
+            if (!capabilitiesFromStreamToken) {
+                return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
+            }
+
+            publisherStream = addStreamInfo(publisherStream, 'capabilities', capabilitiesFromStreamToken.join(','));
         } else {
             publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
         }
@@ -869,7 +892,13 @@ define([
 
         if (!_.includes(publisherStream, 'capabilities')) {
             if (options.streamToken) {
-                publisherStream = addStreamInfo(publisherStream, 'capabilities', getCapabilitiesFromToken(options.streamToken).join(','));
+                var capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
+
+                if (!capabilitiesFromStreamToken) {
+                    return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
+                }
+
+                publisherStream = addStreamInfo(publisherStream, 'capabilities', capabilitiesFromStreamToken.join(','));
             } else {
                 publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
             }
