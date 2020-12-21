@@ -53,6 +53,8 @@ define([
         this._disposables = new disposable.DisposableList();
         this._disposed = false;
         this._featureDetector = new FeatureDetector(options.features);
+        this._isHandlingTrackChange = false;
+        this._handleStateChangeTimeOut = null;
 
         var that = this;
 
@@ -799,7 +801,7 @@ define([
                 });
             };
 
-            listenForTrackStateChange.call(that, publisher, room);
+            listenForTrackStateChange.call(that, publisher, room, callbackWithPublisher);
 
             if (options.enableWildcardCapability) {
                 refreshTokenIntervalId = setInterval(function() {
@@ -1204,6 +1206,7 @@ define([
 
                 if (response && response.status === 'ok' || (!room && response.status === 'not-found')) {
                     updateSelfErrors = 0;
+                    that._isHandlingTrackChange = false;
 
                     return !callback || callback(null, response);
                 }
@@ -1221,6 +1224,8 @@ define([
 
                         self.getObservableLastUpdate().setValue(response.lastUpdate);
                     }
+
+                    that._isHandlingTrackChange = false;
 
                     return callback(new Error('Unable to update self'));
                 }
@@ -1376,7 +1381,7 @@ define([
         return publishedStream;
     }
 
-    function listenForTrackStateChange(publisher, room) {
+    function listenForTrackStateChange(publisher, room, callbackWithPublisher) {
         var that = this;
         var disposables = that._publisherDisposables[publisher.getStreamId()];
         var stream = publisher.getStream();
@@ -1389,6 +1394,8 @@ define([
 
         _.forEach(tracks, function(track) {
             var handleStateChange = function handleStateChange() {
+                that._isHandlingTrackChange = true;
+
                 var state = track.enabled ? trackEnums.states.trackEnabled.name : trackEnums.states.trackDisabled.name;
                 var activeRoomService = findActiveRoom.call(that, room.getRoomId());
 
@@ -1415,14 +1422,31 @@ define([
                 }
 
                 if (self) {
-                    updateSelfWithRetry.call(that, self);
+                    updateSelfWithRetry.call(that, self, callbackWithPublisher);
                 }
             };
 
-            _.addEventListener(track, 'TrackStateChange', handleStateChange);
+            var handleStateChangeIfPossible = function handleStateChangeIfPossible() {
+                if (that._handleStateChangeTimeOut) {
+                    clearTimeout(that._handleStateChangeTimeOut);
+                    that._handleStateChangeTimeOut = null;
+                }
+
+                if (!that._isHandlingTrackChange) {
+                    handleStateChange();
+
+                    return;
+                }
+
+                that._handleStateChangeTimeOut = setTimeout(function() {
+                    handleStateChangeIfPossible();
+                });
+            };
+
+            _.addEventListener(track, 'TrackStateChange', handleStateChangeIfPossible);
 
             disposables.add(new disposable.Disposable(function() {
-                _.removeEventListener(track, 'TrackStateChange', handleStateChange);
+                _.removeEventListener(track, 'TrackStateChange', handleStateChangeIfPossible);
             }));
         });
     }
