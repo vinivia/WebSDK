@@ -1160,8 +1160,7 @@ define([
         assert.isArray(tracks, 'tracks');
 
         _.forEach(tracks, function(track) {
-            track.enabled = enabled;
-            track.dispatchEvent(new Event('TrackStateChange'));
+            track.updateState(enabled);
         });
     }
 

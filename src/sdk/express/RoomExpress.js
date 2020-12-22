@@ -1383,7 +1383,6 @@ define([
 
     function listenForTrackStateChange(publisher, room, callbackWithPublisher) {
         var that = this;
-        var disposables = that._publisherDisposables[publisher.getStreamId()];
         var stream = publisher.getStream();
 
         if (!stream) {
@@ -1443,11 +1442,10 @@ define([
                 });
             };
 
-            _.addEventListener(track, 'TrackStateChange', handleStateChangeIfPossible);
-
-            disposables.add(new disposable.Disposable(function() {
-                _.removeEventListener(track, 'TrackStateChange', handleStateChangeIfPossible);
-            }));
+            track.updateState = function(enabled) {
+                this.enabled = enabled;
+                handleStateChangeIfPossible();
+            };
         });
     }
 
