@@ -440,12 +440,23 @@ requirejs([
                 videoList.append(statusContainer);
                 videoList.append(videoElement);
 
+                setTimeout(function() {
+                    if (videoElement.muted) {
+                        unMuteAudio(videoElement);
+                    }
+                }, 10);
+
                 if (removed) {
                     console.log('Replaced member subscription for session ID [' + sessionId + ']');
                 }
             };
 
             roomExpress.subscribeToMemberStream(memberStream, subscribeOptions, handleSubscribe);
+        }
+
+        function unMuteAudio(videoElement) {
+            videoElement.muted = false;
+            videoElement.setAttribute('muted', false);
         }
 
         function setUserMessage(message) {
