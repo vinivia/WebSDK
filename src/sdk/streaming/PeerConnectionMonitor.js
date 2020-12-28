@@ -208,7 +208,6 @@ define([
 
                             break;
                         case 'audio':
-
                             that._logger.debug('[%s] [%s] [%s] [%s] with jitter [%s], jitter buffer [%s] ms, audio output level [%s], total audio energy [%s] and total samples duration [%s]',
                                 name, options.direction, stats.mediaType, stats.ssrc, stats.jitter, stats.jitterBuffer, stats.audioOutputLevel, stats.totalAudioEnergy, stats.totalSamplesDuration);
 
@@ -274,23 +273,27 @@ define([
                     reasons.push('connection');
                 }
 
-                if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                var peerConnectionTracks = options.direction === 'outbound' ?
+                    getLocalTracks.call(this, peerConnection) :
+                    getRemoteTracks.call(this, peerConnection);
+
+                if (that._monitorFrameRate && hasFrameRate && frameRate <= that._frameRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video', peerConnectionTracks)) {
                     reasons.push('frameRate');
                 }
 
-                if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio')) {
+                if (that._monitorBitRate && hasAudioBitRate && audioBitRate <= that._audioBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'audio', peerConnectionTracks)) {
                     reasons.push('audioBitRate');
                 }
 
-                if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video')) {
+                if (that._monitorBitRate && hasVideoBitRate && videoBitRate <= that._videoBitRateFailureThreshold && !areAllTracksOfTypePaused.call(that, 'video', peerConnectionTracks)) {
                     reasons.push('videoBitRate');
                 }
 
-                if (videoBitRate === 0 && hasActiveVideo && !areAllTracksOfTypePaused.call(that, 'video')) {
+                if (videoBitRate === 0 && hasActiveVideo && !areAllTracksOfTypePaused.call(that, 'video', peerConnectionTracks)) {
                     reasons.push('noVideoData');
                 }
 
-                if (audioBitRate === 0 && hasActiveAudio && !areAllTracksOfTypePaused.call(that, 'audio')) {
+                if (audioBitRate === 0 && hasActiveAudio && !areAllTracksOfTypePaused.call(that, 'audio', peerConnectionTracks)) {
                     reasons.push('noAudioData');
                 }
 
@@ -430,8 +433,7 @@ define([
         return tracks;
     }
 
-    function areAllTracksOfTypePaused(kind) {
-        var peerConnectionTracks = getAllTracks.call(this, this._peerConnection);
+    function areAllTracksOfTypePaused(kind, peerConnectionTracks) {
         var pcTracksOfType = _.filter(peerConnectionTracks, function(track) {
             return track.kind === kind;
         });
