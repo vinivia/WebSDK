@@ -839,23 +839,21 @@ define([
         var activeRoom = this._activeRoom.getValue();
         var cachedRoom = this._cachedRoom.getValue();
         var room = createRoomFromResponse.call(this, response);
+        // The cached room does not contain a reference to the self object so updates to self and room are detected by comparing it against the cached room
+        var newCachedRoom = createRoomFromResponse.call(this, response);
 
         replaceSelfInstanceInRoom.call(this, room);
 
         if (activeRoom && cachedRoom) {
             this._logger.debug('[%s] Updating existing room model.', activeRoom.getRoomId());
-
             activeRoom._update(response.room);
             cachedRoom._update(response.room);
 
             activeRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
-            cachedRoom.getObservableMembers().setValue(room.getObservableMembers().getValue());
+            cachedRoom.getObservableMembers().setValue(newCachedRoom.getObservableMembers().getValue());
 
             return activeRoom;
         }
-
-        // The cached room does not contain a reference to the self object so updates to self and room are detected by comparing it against the cached room
-        var newCachedRoom = createRoomFromResponse.call(this, response);
 
         this._activeRoom.setValue(room);
         this._cachedRoom.setValue(newCachedRoom);
