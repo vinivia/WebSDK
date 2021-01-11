@@ -37,7 +37,13 @@ define([
         var newStats = [];
         var normalizedStats = normalizeStatsReport(stats);
 
-        _.forOwn(normalizedStats, function convertStats(statsReport) {
+        var iteratorDidRun = false;
+
+        function convertStats(statsReport) {
+            if (!iteratorDidRun) {
+                iteratorDidRun = true;
+            }
+
             if (!_.hasIndexOrKey(statsReport, 'ssrc') || !statsReport.ssrc || _.includes(statsReport.id, 'rtcp')) {
                 return;
             }
@@ -98,7 +104,13 @@ define([
             }
 
             newStats.push(stat);
-        });
+        }
+
+        _.forOwn(normalizedStats, convertStats);
+
+        if (!iteratorDidRun && newStats.length <= 0 && normalizedStats.forEach) {
+            normalizedStats.forEach(convertStats);
+        }
 
         return newStats;
     }

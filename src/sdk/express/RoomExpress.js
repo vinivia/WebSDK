@@ -1197,7 +1197,7 @@ define([
 
         try {
             self.commitChanges(function handleUpdateSelf(error, response) {
-                if (error) {
+                if (error || !response) {
                     updateSelfErrors++;
                 }
 
