@@ -165,7 +165,8 @@ define([
             phenixRTC.shim();
         }
 
-        if (phenixRTC.webrtcSupported) {
+        // We need to check connection status because FF can create PC only with network status online
+        if (phenixRTC.webrtcSupported && this._observableStatus.getValue() === 'online') {
             setEnvironmentCodecDefaults.call(this);
             setAudioState.call(this);
         }
