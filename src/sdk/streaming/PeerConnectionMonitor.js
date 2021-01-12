@@ -173,6 +173,10 @@ define([
                             hasFrameRate = true;
                             hasVideoBitRate = true;
 
+                            if (options.setNetworkRTT) {
+                                options.setNetworkRTT(stats.rtt);
+                            }
+
                             if (phenixRTC.browser === 'Edge') {
                                 hasFrameRate = false;
                             }
@@ -183,6 +187,10 @@ define([
                                 name, options.direction, stats.mediaType, stats.ssrc, stats.rtt, stats.jitter, stats.audioInputLevel);
                             hasAudioBitRate = true;
                             audioBitRate = stats.uploadRate ? stats.uploadRate * 1000 : stats.uploadRate;
+
+                            if (options.setNetworkRTT) {
+                                options.setNetworkRTT(stats.rtt);
+                            }
 
                             break;
                         default:

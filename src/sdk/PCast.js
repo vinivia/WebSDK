@@ -103,6 +103,7 @@ define([
         }
 
         this._observableStatus = new observable.Observable('offline');
+        this._networkRTT = new observable.Observable(0);
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
@@ -1297,7 +1298,9 @@ define([
                     var monitor = new PeerConnectionMonitor(streamId, peerConnection, that._logger);
 
                     options.direction = 'outbound';
-
+                    options.setNetworkRTT = function(rtt) {
+                        that._networkRTT.setValue(rtt);
+                    };
                     monitor.start(options, function activeCallback() {
                         return that._publishers[streamId] === publisher && !state.stopped;
                     }, function monitorCallback(error, monitorEvent) {
@@ -1362,7 +1365,9 @@ define([
                     return phenixRTC.getStats(peerConnection, null, function(stats) {
                         callback(PeerConnection.convertPeerConnectionStats(stats, that._lastStats));
                     });
-                }
+                },
+
+                networkRTT: that._networkRTT
             };
 
             that._publishers[streamId] = publisher;

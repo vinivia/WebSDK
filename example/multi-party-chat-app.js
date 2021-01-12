@@ -178,6 +178,12 @@ requirejs([
                     videoElement: videoElement
                 };
 
+                // Detecting network RTT for bad network
+                publisher.publisher.networkRTT.subscribe(function(rtt) {
+                    console.log('networkRTT', rtt);
+                    // If RTT is higher than 800 and dont get lower we probably want to resubscribe with 'audio-only'
+                });
+
                 selfVideoList.append(videoElement);
 
                 if (!roomService) {
