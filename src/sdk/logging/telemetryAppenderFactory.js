@@ -20,22 +20,13 @@ define([
     '../environment',
     './TelemetryAppender'
 ], function(_, assert, environment, TelemetryAppender) {
-    var config = {
-        urls: {
-            local: '',
-            staging: 'https://telemetry-stg.phenixrts.com',
-            production: 'https://telemetry.phenixrts.com'
-        }
-    };
-
     function TelemetryAppenderFactory() {
         this._telemetryAppenders = {};
     }
 
     TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
         var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
-
-        var telemetryServerUrl = config.urls[env];
+        var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
 
         if (!this._telemetryAppenders[env]) {
             this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);

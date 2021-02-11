@@ -20,14 +20,6 @@ define([
     '../environment',
     './MetricsTransmitter'
 ], function(_, assert, environment, MetricsTransmitter) {
-    var config = {
-        urls: {
-            local: '',
-            staging: 'https://telemetry-stg.phenixrts.com',
-            production: 'https://telemetry.phenixrts.com'
-        }
-    };
-
     function MetricsTransmitterFactory() {
         this._metricsTransmitters = {};
     }
@@ -35,7 +27,7 @@ define([
     MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
         var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
 
-        var telemetryServerUrl = config.urls[env];
+        var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
 
         if (!this._metricsTransmitters[env]) {
             this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl);
