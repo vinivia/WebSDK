@@ -171,6 +171,7 @@ requirejs([
             });
 
             videoElement.setAttribute('muted', true); // Don't want to hear yourself
+            videoElement.muted = true;
 
             return publishAndHandleErrors(highQualityOptions, function(response) {
                 publisher = {
@@ -526,6 +527,7 @@ requirejs([
             };
 
             videoElement.setAttribute('muted'); // Don't want to hear yourself
+            videoElement.muted = true;
 
             return roomExpress.publishScreenToRoom(publishOptions, function(error, response) {
                 if (error) {
