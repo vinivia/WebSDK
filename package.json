@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2020.2.28",
+  "version": "2020.2.29",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.js",
@@ -100,7 +100,7 @@
     "phenix-web-application-activity-detector": "2020.0.2",
     "phenix-web-assert": "2020.0.2",
     "phenix-web-batch-http": "2020.0.2",
-    "phenix-web-closest-endpoint-resolver": "2020.0.2",
+    "phenix-web-closest-endpoint-resolver": "2020.0.3",
     "phenix-web-detect-browser": "2020.0.2",
     "phenix-web-disposable": "2020.0.2",
     "phenix-web-event": "2020.0.2",

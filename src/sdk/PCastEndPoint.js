@@ -17,13 +17,10 @@
 define([
     'phenix-web-assert',
     'phenix-web-lodash-light',
-    'phenix-web-http',
     'phenix-web-disposable',
     'phenix-web-closest-endpoint-resolver'
-], function(assert, _, http, disposable, ClosestEndPointResolver) {
+], function(assert, _, disposable, ClosestEndPointResolver) {
     'use strict';
-
-    var maxAttempts = 4;
 
     function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
         assert.isStringNotEmpty(version, 'version');
@@ -109,14 +106,11 @@ define([
     }
 
     function getEndpoints(baseUri, callback) {
-        var requestDisposable = http.getWithRetry(baseUri + '/pcast/endPoints', {
-            timeout: 15000,
-            queryParameters: {
-                version: '%SDKVERSION%',
-                _: _.now()
-            },
-            retryOptions: {maxAttempts: maxAttempts}
-        }, function(err, response) {
+        var version = '%SDKVERSION%';
+        var requestUrl = baseUri + '/pcast/endPoints?version=' + version + '&_=' + _.now();
+        var xhr = getAndOpenVendorSpecificXmlHttpMethod('GET', requestUrl);
+
+        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, function(err, response) {
             if (err) {
                 return callback(new Error('Failed to resolve an end point', err));
             }
@@ -128,9 +122,64 @@ define([
             }
 
             callback(undefined, endPoints);
-        });
+        }));
+        xhr.timeout = 15000;
+        xhr.send(null);
+    }
 
-        this._disposables.add(requestDisposable);
+    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
+        var xhr = new XMLHttpRequest();
+
+        if ('withCredentials' in xhr) {
+            // Most browsers.
+            xhr.open(requestMethod, requestUrl, true);
+        } else if (typeof XDomainRequest !== 'undefined') {
+            // IE8 & IE9
+            // eslint-disable-next-line no-undef
+            xhr = new XDomainRequest();
+            xhr.open(requestMethod, requestUrl);
+        } else {
+            return;
+        }
+
+        return xhr;
+    }
+
+    function handleReadyStateChange(xhr, callback) {
+        if (xhr.readyState === 4 /* DONE */) {
+            if (xhr.status === 200) {
+                var responseHeaders = getXhrResponseHeaders(xhr);
+                var response = {
+                    data: xhr.response || xhr.responseText,
+                    headers: responseHeaders,
+                    rawXhr: xhr
+                };
+
+                callback(null, response);
+            } else {
+                var err = new Error(xhr.status === 0 ? 'timeout' : 'Status=[' + xhr.status + ']');
+
+                err.code = xhr.status;
+
+                callback(err);
+            }
+        }
+    }
+
+    function getXhrResponseHeaders(xhr) {
+        var responseHeadersString = xhr.getAllResponseHeaders();
+
+        return _.reduce(responseHeadersString.trim().split(/[\r\n]+/), function(headers, header) {
+            var parts = header.split(': ');
+            var headerName = parts.shift();
+            var headerValue = parts.join(': ');
+
+            if (headerName) {
+                headers[headerName] = headerValue;
+            }
+
+            return headers;
+        }, {});
     }
 
     return PCastEndPoint;
