@@ -248,16 +248,8 @@ define([
         var that = this;
         var screenName = options.screenName || _.uniqueId();
 
-        this.createRoom(options, function(error, createRoomResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
-                return callback(null, createRoomResponse);
-            }
-
-            var room = createRoomResponse.room;
+        var activeRoomService = findActiveRoom.call(that, options.room.roomId, options.room.alias);
+        var joinAndPublish = function joinAndPublish(room, createRoomResponse) {
             var publishOptions = _.assign({
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
@@ -322,6 +314,30 @@ define([
 
                 publishAndUpdateSelf.call(that, publishOptions, activeRoom, callbackWithRoomService);
             });
+
+            return;
+        };
+
+        if (activeRoomService) {
+            var activeRoom = activeRoomService.getObservableActiveRoom().getValue();
+
+            joinAndPublish(activeRoom, null);
+
+            return;
+        }
+
+        this.createRoom(options, function(error, createRoomResponse) {
+            if (error) {
+                return callback(error);
+            }
+
+            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
+                return callback(null, createRoomResponse);
+            }
+
+            var room = createRoomResponse.room;
+
+            joinAndPublish(room, createRoomResponse);
         });
     };
 
