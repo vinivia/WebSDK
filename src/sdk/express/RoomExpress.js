@@ -217,10 +217,6 @@ define([
             assert.isStringNotEmpty(options.screenName, 'options.screenName');
         }
 
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
-        }
-
         if (options.tags) {
             assert.isArray(options.tags, 'options.tags');
         }
@@ -233,8 +229,16 @@ define([
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
         }
 
+        if (options.streamToken && options.capabilities) {
+            throw new Error('Do not pass capabilities with streamToken. StreamToken should include capabilities.');
+        }
+
         if (options.viewerStreamSelectionStrategy) {
             assert.isStringNotEmpty(options.viewerStreamSelectionStrategy, 'options.viewerStreamSelectionStrategy');
+        }
+
+        if (options.capabilities) {
+            assert.isArray(options.capabilities, 'options.capabilities');
         }
 
         if (_.isUndefined(options.enableWildcardCapability)) {
