@@ -17,6 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -26,7 +27,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
+], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
     describe('When joining a channel with most recent stream selection strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -79,9 +80,12 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', joinRoomResponse);
             websocketStubber.stubSetupStream();
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             channelExpress = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
         });

@@ -17,6 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -25,7 +26,7 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
+], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
     describe('When publishing to a channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -64,9 +65,12 @@ define([
                 }
             });
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             channelExpress = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
         });
@@ -85,6 +89,7 @@ define([
         it('returns a publisher and no channelService when publishing remotely', function(done) {
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -122,6 +127,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name,
@@ -147,6 +153,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -178,6 +185,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'

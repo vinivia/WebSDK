@@ -43,6 +43,10 @@ define([
             assert.isStringNotEmpty(options.authToken, 'options.authToken');
         }
 
+        if (options.authToken && options.adminApiProxyClient) {
+            throw new Error('Do not pass "options.adminApiProxyClient" if you are using "options.authToken"');
+        }
+
         if (options.onError) {
             assert.isFunction(options.onError, 'options.onError');
         }
@@ -82,12 +86,6 @@ define([
         this._logger = null;
         this._ignoredStreamEnds = {};
 
-        if (!this._adminApiProxyClient) {
-            this._adminApiProxyClient = new AdminApiProxyClient();
-            this._adminApiProxyClient.setBackendUri(options.backendUri);
-            this._adminApiProxyClient.setAuthenticationData(options.authenticationData);
-        }
-
         instantiatePCast.call(this);
 
         // After logger is instantiated
@@ -122,7 +120,9 @@ define([
             this._instantiatePCastTimeoutId = null;
         }
 
-        this._adminApiProxyClient.dispose();
+        if (this._adminApiProxyClient) {
+            this._adminApiProxyClient.dispose();
+        }
 
         this._reconnectCount = 0;
         this._reauthCount = 0;
@@ -407,7 +407,6 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamId, 'options.streamId');
-        assert.isObject(options.capabilities, 'options.capabilities');
 
         if (options.videoElement) {
             assert.isObject(options.videoElement, 'options.videoElement');
@@ -424,6 +423,8 @@ define([
 
         if (options.streamToken) {
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        } else {
+            assert.isObject(options.capabilities, 'options.capabilities');
         }
 
         if (options.subscriberOptions) {
@@ -441,6 +442,10 @@ define([
 
             if (options.streamToken) {
                 return subscribeToStream.call(that, options.streamToken, options, callback);
+            }
+
+            if (!options.streamToken && !that._adminApiProxyClient) {
+                throw new Error('Use stream token, or set adminApiProxyClient');
             }
 
             that._logger.info('[%s] [%s] Generating stream token for subscribing to origin [%s]', this, that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
@@ -590,6 +595,10 @@ define([
             return this._pcastObservable.getValue().start(this._authToken, _.noop, _.noop, _.noop);
         }
 
+        if (!this._authToken && !that._adminApiProxyClient) {
+            throw new Error('Use auth token, or set adminApiProxyClient');
+        }
+
         this._adminApiProxyClient.createAuthenticationToken(function(error, response) {
             if (error && error.message === 'timeout') {
                 return onPCastStatusChange.call(that, error.message);
@@ -633,6 +642,10 @@ define([
         case 'reconnect-failed':
         case 'unauthorized':
             delete this._authToken;
+
+            if (!this._adminApiProxyClient) {
+                return handleError.call(this, new Error(status));
+            }
 
             this._reauthCount++;
 
@@ -939,7 +952,7 @@ define([
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
             };
 
-            if ((!options.skipRetryOnUnauthorized && status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
+            if (((!options.skipRetryOnUnauthorized && status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') && that._adminApiProxyClient) {
                 that._logger.info('[%s] [%s] Attempting to create new streamToken and re-subscribe after [%s] response', this, options.streamId, unauthorizedStatus);
 
                 var reAuthOptions = _.assign({

@@ -17,6 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
@@ -25,7 +26,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
+], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
     describe('When joining a channel with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
@@ -76,10 +77,11 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            channelExpress = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData
-            });
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+            channelExpress = new ChannelExpress({adminApiProxyClient: adminApiProxyClient});
 
             response = {
                 status: 'ok',

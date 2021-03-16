@@ -17,6 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     'sdk/room/Stream',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -27,7 +28,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, ChannelExpress, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
+], function(_, ChannelExpress, AdminApiProxyClient, Stream, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream, track) {
     describe('When publishing to a channel with high availability', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -77,9 +78,12 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', response);
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             channelExpress = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
 
@@ -111,6 +115,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -154,6 +159,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -210,6 +216,7 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,

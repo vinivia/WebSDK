@@ -32,7 +32,6 @@ define([
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
-    var defaultWildcardEnabled = true;
     var streamingTypeCapabilities = ['streaming', 'rtmp'];
 
     function RoomExpress(options) {
@@ -201,6 +200,8 @@ define([
         assert.isFunction(callback, 'callback');
         assert.isObject(options.room, 'options.room');
 
+        var adminApi = this._pcastExpress.getAdminAPI();
+
         if (options.streamUri) {
             assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
         } else if (options.mediaConstraints) {
@@ -233,6 +234,10 @@ define([
             throw new Error('Do not pass capabilities with streamToken. StreamToken should include capabilities.');
         }
 
+        if (!options.streamToken && !adminApi) {
+            throw new Error('Pass "options.streamToken", or set adminApiProxyClient on initiating room express');
+        }
+
         if (options.viewerStreamSelectionStrategy) {
             assert.isStringNotEmpty(options.viewerStreamSelectionStrategy, 'options.viewerStreamSelectionStrategy');
         }
@@ -242,7 +247,7 @@ define([
         }
 
         if (_.isUndefined(options.enableWildcardCapability)) {
-            options.enableWildcardCapability = defaultWildcardEnabled;
+            options.enableWildcardCapability = !options.streamToken;
         }
 
         assert.isValidType(options.streamType, memberStreamEnums.types, 'options.streamType');
@@ -1055,6 +1060,11 @@ define([
 
     function generateWildcardStreamTokenAndAppendToStream(capabilities, streamId, additionalStreamIds, stream, tokenName, callback) {
         var that = this;
+        var adminApi = that._pcastExpress.getAdminAPI();
+
+        if (!adminApi) {
+            throw new Error('Set "options.enableWildcardCapability" to "false", or set adminApiProxyClient on initiating room express');
+        }
 
         return that._pcastExpress.getAdminAPI().createStreamTokenForSubscribing('*', capabilities, streamId, additionalStreamIds, function(error, response) {
             if (error) {

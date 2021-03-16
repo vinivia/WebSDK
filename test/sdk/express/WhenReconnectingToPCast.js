@@ -16,13 +16,14 @@
 
 define([
     'phenix-web-lodash-light',
+    'sdk/AdminApiProxyClient',
     'sdk/express/PCastExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
     '../../../test/mock/UserMediaStubber'
-], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
+], function(_, AdminApiProxyClient, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Reconnecting to PCast', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -43,6 +44,10 @@ define([
         });
 
         beforeEach(function(done) {
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             window.setTimeout = function(callback, timeout) {
                 return setTimeoutClone(callback, timeout / 100);
             };
@@ -55,8 +60,7 @@ define([
             websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI',
                 onError: _.noop,
                 onlineTimeout: 60000

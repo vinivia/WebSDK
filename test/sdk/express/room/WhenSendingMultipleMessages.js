@@ -23,11 +23,6 @@ define([
     'sdk/room/member.json'
 ], function(_, RoomExpress, HttpStubber, WebSocketStubber, room, member) {
     describe('When Sending Multiple Messages', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
         var mockRoom = {
             roomId: 'TestRoom123',
             alias: 'TestRoom123Alias',
@@ -52,10 +47,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData
-            });
+            roomExpress = new RoomExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9'});
 
             response = {
                 status: 'ok',

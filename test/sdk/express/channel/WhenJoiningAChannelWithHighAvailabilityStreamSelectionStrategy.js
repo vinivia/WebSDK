@@ -17,6 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -27,7 +28,7 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When joining a channel with high availability stream selection strategy', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -85,9 +86,12 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', joinRoomResponse);
             websocketStubber.stubSetupStream();
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             channelExpress = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI',
                 onlineTimeout: 600000
             });

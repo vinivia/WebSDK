@@ -17,13 +17,14 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/PCastExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
     '../../../../test/mock/UserMediaStubber',
     'sdk/streaming/PeerConnectionMonitor'
-], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
+], function(_, PCastExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
     describe('When reconnecting to the websocket and re-authenticating', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -63,9 +64,13 @@ define([
             websocketStubber.stubAuthRequest();
             websocketStubber.stubSetupStream();
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+
             pcastExpress = new PCastExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI',
                 onError: _.noop,
                 onlineTimeout: 60000
@@ -109,6 +114,7 @@ define([
 
                 pcastExpress.subscribe({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     streamId: 'MockStreamId',
                     monitor: {
                         callback: function(error, response) {
@@ -155,6 +161,7 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     monitor: {
                         callback: function(error, response) {
@@ -202,6 +209,7 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     monitor: {
                         callback: function(error, response) {

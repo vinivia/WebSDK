@@ -16,6 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
+    'sdk/AdminApiProxyClient',
     'sdk/express/RoomExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -25,7 +26,7 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
+], function(_, AdminApiProxyClient, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
     describe('When Reconnecting to Room Express', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -75,9 +76,13 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', roomResponse);
             websocketStubber.stubResponse('chat.CreateRoom', roomResponse);
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+
             roomExpress = new RoomExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
 
@@ -103,6 +108,7 @@ define([
         it('successfully publishes to a room', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -125,6 +131,7 @@ define([
 
                 roomExpress.publishToRoom({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     room: {
                         alias: roomAlias,
@@ -163,6 +170,7 @@ define([
             it('successfully publishes to a room', function(done) {
                 roomExpress.publishToRoom({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     room: {
                         alias: roomAlias,

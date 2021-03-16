@@ -57,7 +57,7 @@ define([
         it('subscribes with real-time when real-time is only capability on publisher, is supported feature and is requested as a feature', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities='});
             var roomExpress = new RoomExpress({
-                authenticationData: {},
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 backendUri: 'asd'
             });
 
@@ -80,8 +80,7 @@ define([
         it('fails to subscribe if real-time is only capability on publisher, is supported feature and is not requested as a feature', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities='});
             var roomExpress = new RoomExpress({
-                authenticationData: {},
-                backendUri: 'asd',
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 features: ['hls', 'dash', 'rtmp']
             });
 
@@ -101,8 +100,7 @@ define([
         it('fails to subscribe if real-time is only capability on publisher, not a supported feature and is requested as a feature', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities='});
             var roomExpress = new RoomExpress({
-                authenticationData: {},
-                backendUri: 'asd',
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 features: ['hls', 'dash', 'rtmp']
             });
 
@@ -122,8 +120,7 @@ define([
         it('subscribes with first supported feature even if it is not listed first as a feature', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities=streaming'});
             var roomExpress = new RoomExpress({
-                authenticationData: {},
-                backendUri: 'asd',
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 features: ['real-time', 'dash']
             });
 
@@ -146,8 +143,7 @@ define([
         it('subscribes with the first supported feature even if multiple are supported', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities=streaming'});
             var roomExpress = new RoomExpress({
-                authenticationData: {},
-                backendUri: 'asd',
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 features: ['dash', 'real-time']
             });
 

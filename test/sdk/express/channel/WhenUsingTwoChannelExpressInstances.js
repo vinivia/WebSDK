@@ -17,13 +17,14 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
+    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
+], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
     describe('When using two ChannelExpress instances', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -72,14 +73,17 @@ define([
                 members: []
             });
 
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+
             channelExpressPublisher = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
             channelExpressSubscriber = new ChannelExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
         });
@@ -99,6 +103,7 @@ define([
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
                 capabilities: [],
+                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -125,6 +130,7 @@ define([
             }, _.noop, function(){
                 channelExpressPublisher.publishToChannel({
                     capabilities: [],
+                    enableWildcardCapability: true,
                     room: {
                         alias: 'ChannelAlias',
                         name: 'Channel'

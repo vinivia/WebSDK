@@ -16,6 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
+    'sdk/AdminApiProxyClient',
     'sdk/express/RoomExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -25,7 +26,7 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
+], function(_, AdminApiProxyClient, RoomExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
     describe('When publishing to a room', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -60,6 +61,11 @@ define([
         });
 
         beforeEach(function() {
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -77,8 +83,7 @@ define([
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
             roomExpress = new RoomExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                adminApiProxyClient: adminApiProxyClient,
                 uri: 'wss://mockURI'
             });
 
@@ -103,6 +108,7 @@ define([
         it('returns publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -125,6 +131,7 @@ define([
         it('returns remote publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
+                enableWildcardCapability: true,
                 streamUri: 'streamUri',
                 room: {
                     alias: roomAlias,
@@ -158,6 +165,7 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamInfo: streamInfo,
                 room: {
@@ -193,6 +201,7 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -226,6 +235,7 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -251,42 +261,6 @@ define([
 
                 expect(memberStreamInfo.streamToken).to.be.a('string');
                 expect(memberStreamInfo.streamTokenForLiveStream).to.be.a('string');
-                done();
-            });
-        });
-
-        it('results in new member with no stream tokens if not using wildcard tokens', function(done) {
-            websocketStubber.stubJoinRoomResponse(response.room, response.members);
-
-            roomExpress.publishToRoom({
-                capabilities: ['streaming'],
-                userMediaStream: UserMediaStubber.getMockMediaStream(),
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
-                streamType: stream.types.user.name,
-                memberRole: member.roles.participant.name,
-                enableWildcardCapability: false
-            }, function() {});
-
-            roomExpress.joinRoom({
-                role: member.roles.participant.name,
-                alias: roomAlias,
-                name: roomName
-            }, function() {}, function(members){
-                if (members.length === 0) {
-                    return;
-                }
-
-                expect(members.length).to.be.equal(1);
-
-                var memberStreamInfo = members[0].getObservableStreams().getValue()[0].getInfo();
-
-                expect(memberStreamInfo.capabilities).to.be.a('array');
-                expect(memberStreamInfo.capabilities).to.be.deep.equal(['streaming']);
-                expect(_.values(memberStreamInfo).length).to.be.equal(1);
                 done();
             });
         });

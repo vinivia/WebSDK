@@ -59,9 +59,9 @@ define([
 
         it('subscribes to a member stream and returns mediaStream and originStreamId', function(done) {
             var stream = _.assign({}, baseStream, {uri: Stream.getPCastPrefix() + mockStreamId + '?capabilities=streaming'});
+            var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9';
             var roomExpress = new RoomExpress({
-                authenticationData: {},
-                backendUri: 'asd',
+                authToken: token,
                 features: ['real-time', 'dash']
             });
 
@@ -69,7 +69,7 @@ define([
                 return feature === 'dash' || feature === 'real-time';
             });
 
-            roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {}, function(error, response) {
+            roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: token}, function(error, response) {
                 expect(error).to.not.exist;
                 expect(response).to.be.an('object');
                 expect(response.status).to.be.equal('ok');

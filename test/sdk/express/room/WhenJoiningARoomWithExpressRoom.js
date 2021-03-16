@@ -16,6 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
+    'sdk/AdminApiProxyClient',
     'sdk/express/RoomExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -23,7 +24,7 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
+], function(_, AdminApiProxyClient, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
     describe('When Joining a Room with ExpressRoom', function() {
         var mockBackendUri = 'https://mockUri';
         var mockAuthData = {
@@ -47,6 +48,10 @@ define([
         var response;
 
         beforeEach(function(done) {
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
             httpStubber = new HttpStubber();
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
@@ -54,10 +59,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData
-            });
+            roomExpress = new RoomExpress({adminApiProxyClient: adminApiProxyClient});
 
             response = {
                 status: 'ok',

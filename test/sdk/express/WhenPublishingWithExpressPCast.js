@@ -16,20 +16,15 @@
 
 define([
     'sdk/express/PCastExpress',
+    'sdk/AdminApiProxyClient',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
     '../../../test/mock/UserMediaStubber',
     'sdk/streaming/PeerConnectionMonitor'
-], function(PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
+], function(PCastExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, PeerConnectionMonitor) {
     describe('When Publishing with Express PCast', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
-
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
@@ -52,8 +47,7 @@ define([
             websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
-                backendUri: mockBackendUri,
-                authenticationData: mockAuthData,
+                authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 uri: 'wss://mockURI'
             });
 
@@ -77,7 +71,7 @@ define([
 
         it('Expect publisher to be returned in subscribe callback', function(done) {
             pcastExpress.publish({
-                capabilities: [],
+                streamToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 expect(response.publisher).to.be.a('object');
@@ -93,7 +87,7 @@ define([
             };
 
             pcastExpress.publish({
-                capabilities: [],
+                streamToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
@@ -124,7 +118,7 @@ define([
             };
 
             pcastExpress.publish({
-                capabilities: [],
+                streamToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
@@ -147,7 +141,57 @@ define([
                 }
             });
         });
+    });
 
+    describe('When Publishing with Express PCast and adminApi', function() {
+        var mockBackendUri = 'https://mockUri';
+        var mockAuthData = {
+            name: 'mockUser',
+            password: 'somePassword'
+        };
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var peerConnectionStubber = new PeerConnectionStubber();
+        var pcastExpress;
+
+        var clientFailureReason = 'client-side-failure';
+
+        before(function() {
+            chromeRuntimeStubber.stub();
+            peerConnectionStubber.stub();
+        });
+
+        beforeEach(function() {
+            var adminApiProxyClient = new AdminApiProxyClient();
+
+            adminApiProxyClient.setBackendUri(mockBackendUri);
+            adminApiProxyClient.setAuthenticationData(mockAuthData);
+            httpStubber = new HttpStubber();
+            httpStubber.stubAuthRequest();
+            httpStubber.stubStreamRequest();
+
+            websocketStubber = new WebSocketStubber();
+            websocketStubber.stubAuthRequest();
+
+            pcastExpress = new PCastExpress({
+                adminApiProxyClient,
+                uri: 'wss://mockURI'
+            });
+
+            websocketStubber.stubSetupStream();
+        });
+
+        after(function() {
+            chromeRuntimeStubber.restore();
+            peerConnectionStubber.restore();
+        });
+
+        afterEach(function() {
+            httpStubber.restore();
+            websocketStubber.restore();
+            pcastExpress.dispose();
+        });
         it('Expect monitor retry with unauthorized status for setupStream to trigger request one time to get new streamToken', function(done) {
             httpStubber.stubStreamRequest(null, 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9');
 
@@ -166,6 +210,7 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
+                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,
