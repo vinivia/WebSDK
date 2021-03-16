@@ -1105,7 +1105,7 @@ define([
         var subscriberStop = _.bind(subscriber.stop, subscriber);
 
         subscriber.stop = function(reason) {
-            that._logger.info('[%s] [%s] Stopping subscriber with reason [%s]', this, subscriber, reason);
+            that._logger.info('[%s] [%s] Stopping subscriber with reason [%s]', that, subscriber, reason);
 
             if (renderer) {
                 renderer.stop(reason);

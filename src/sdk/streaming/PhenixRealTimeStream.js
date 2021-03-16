@@ -242,6 +242,10 @@ define([
         return _.get(this._renderers, [0], null);
     };
 
+    PhenixRealTimeStream.prototype.toString = function toString() {
+        return 'PhenixRealTimeStream[' + this._streamId + ']';
+    };
+
     function emitPendingBackgroundEvent() {
         if (!this._backgroundMonitorEventCallback) {
             return;
