@@ -90,7 +90,9 @@ define([
         _.addEventListener(elementToAttachTo, 'progress', that._onProgress, false);
         _.addEventListener(elementToAttachTo, 'ended', that._onEnded, false);
 
-        that._dimensionsChangedMonitor.start(this, elementToAttachTo);
+        if (!this._options.capabilities.includes('audio-only')) {
+            this._dimensionsChangedMonitor.start(this, elementToAttachTo);
+        }
 
         return elementToAttachTo;
     };

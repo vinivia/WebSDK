@@ -57,7 +57,7 @@ define([
 
         it('Expect an error to be thrown if pcast has not been started when subscribing', function() {
             expect(function() {
-                pcast.subscribe('mockStreamToken', function() {}, {});
+                pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function() {}, {});
             }).to.throw(Error);
         });
 
@@ -79,7 +79,7 @@ define([
                 websocketStubber.stubSetupStream();
 
                 expect(function() {
-                    pcast.subscribe('mockStreamToken', function() {}, {});
+                    pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function() {}, {});
                 }).to.not.throw();
             });
 
@@ -90,13 +90,13 @@ define([
                     done();
                 });
 
-                pcast.subscribe('mockStreamToken', function() {}, {connectOptions: ['mock-option']});
+                pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function() {}, {connectOptions: ['mock-option']});
             });
 
             it('Expect mediaStream to be returned in subscribe callback', function(done) {
                 websocketStubber.stubSetupStream();
 
-                pcast.subscribe('mockStreamToken', function(internalPcast, status, mediaStream) {
+                pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function(internalPcast, status, mediaStream) {
                     done();
                     expect(mediaStream).to.be.a('object');
                 });

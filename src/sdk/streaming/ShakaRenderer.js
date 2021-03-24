@@ -126,7 +126,10 @@ define([
                 that._namedEvents.fire(streamEnums.rendererEvents.error.name, ['shaka', e]);
             });
 
-            that._dimensionsChangedMonitor.start(this, elementToAttachTo);
+            if (!that._options.capabilities.includes('audio-only')) {
+                that._dimensionsChangedMonitor.start(this, elementToAttachTo);
+            }
+
             that._element = elementToAttachTo;
         }
 

@@ -35,11 +35,11 @@ define(['phenix-web-lodash-light'], function(_) {
 
         this.stubResponse('auth', 'application/json', {
             status: 'ok',
-            authenticationToken: 'newToken'
+            authenticationToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'
         }, callback);
     };
 
-    HttpStubber.prototype.stubStreamRequest = function(callback, token = 'newToken') {
+    HttpStubber.prototype.stubStreamRequest = function(callback, token = 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9') {
         stubIfNoneExist.call(this);
 
         this.stubResponse('stream', 'application/json', {

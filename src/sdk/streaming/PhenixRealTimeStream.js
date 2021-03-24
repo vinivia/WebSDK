@@ -67,7 +67,32 @@ define([
 
     PhenixRealTimeStream.prototype.createRenderer = function() {
         var that = this;
-        var renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, this._options, this._logger);
+        var sdp = _.get(this._peerConnection, ['remoteDescription', 'sdp']);
+        var options = Object.assign({}, this._options);
+
+        if (sdp && !this._options.capabilities.includes('audio-only') || !this._options.capabilities.includes('video-only')) {
+            if (!sdp.includes('m=audio')) {
+                options.capabilities.push('video-only');
+            }
+
+            if (!sdp.includes('m=video')) {
+                options.capabilities.push('audio-only');
+            }
+
+            var sdpTracks = sdp.split('m=');
+
+            sdpTracks.forEach(function(track) {
+                if (track.startsWith('audio') && track.includes('a=inactive')) {
+                    options.capabilities.push('video-only');
+                }
+
+                if (track.startsWith('video') && track.includes('a=inactive')) {
+                    options.capabilities.push('audio-only');
+                }
+            });
+        }
+
+        var renderer = new PhenixRealTimeRenderer(this._streamId, this._streamSrc, this._streamTelemetry, options, this._logger);
 
         renderer.on(streamEnums.rendererEvents.error.name, function(type, error) {
             that._namedEvents.fire(streamEnums.streamEvents.playerError.name, [type, error]);

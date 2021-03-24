@@ -69,13 +69,13 @@ define([
 
         it('Expect an error to not be thrown when subscribing', function() {
             expect(function() {
-                pcast.subscribe('mockStreamToken', function() {}, {});
+                pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function() {}, {});
             }).to.not.throw();
         });
 
         it('Expect an error to not be thrown when publishing', function() {
             expect(function() {
-                pcast.publish('mockStreamToken', UserMediaStubber.getMockMediaStream(), function() {});
+                pcast.publish('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', UserMediaStubber.getMockMediaStream(), function() {});
             }).to.not.throw();
         });
     });

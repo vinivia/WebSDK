@@ -551,27 +551,9 @@ define([
     };
 
     PCastExpress.prototype.parseCapabilitiesFromToken = function parseCapabilitiesFromToken(streamToken) {
-        var that = this;
+        var pcast = this._pcastObservable.getValue();
 
-        if (!streamToken.startsWith('DIGEST:')) {
-            that._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
-
-            throw new Error('Bad `streamToken`');
-        }
-
-        try {
-            var base64Token = streamToken.split(':')[1];
-            var decodedToken = atob(base64Token);
-            var token = JSON.parse(decodedToken).token;
-            var tokenOptions = JSON.parse(token);
-
-            return _.get(tokenOptions, ['capabilities'], []);
-        } catch (e) {
-            var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
-            that._logger.warn('[%s] Failed to parse the `streamToken` [%s]', sessionId, streamToken);
-
-            throw new Error(e);
-        }
+        return pcast.parseCapabilitiesFromToken(streamToken);
     };
 
     function instantiatePCast() {

@@ -421,7 +421,6 @@ define([
         var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
         streamTelemetry.setProperty('resource', streamType);
-
         this._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
@@ -514,6 +513,8 @@ define([
 
             createViewerOptions.canPlaybackAudio = that._canPlaybackAudio;
 
+            createViewerOptions.capabilities = that.parseCapabilitiesFromToken(streamToken);
+
             if (!that._canPlaybackAudio && options.disableAudioIfNoOutputFound && options.receiveAudio !== false) {
                 setupStreamOptions.receiveAudio = false;
                 createViewerOptions.receiveAudio = false;
@@ -599,6 +600,28 @@ define([
         var sessionId = protocol ? protocol.getSessionId() : '';
 
         return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
+    };
+
+    PCast.prototype.parseCapabilitiesFromToken = function(streamToken) {
+        if (!streamToken.startsWith('DIGEST:')) {
+            this._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
+
+            throw new Error('Bad `streamToken`');
+        }
+
+        try {
+            var base64Token = streamToken.split(':')[1];
+            var decodedToken = atob(base64Token);
+            var token = JSON.parse(decodedToken).token;
+            var tokenOptions = JSON.parse(token);
+
+            return _.get(tokenOptions, ['capabilities'], []);
+        } catch (e) {
+            var sessionId = this.getProtocol().getSessionId();
+            this._logger.warn('[%s] Failed to parse the `streamToken` [%s]', sessionId, streamToken);
+
+            throw new Error(e);
+        }
     };
 
     function instantiateProtocol(uri) {

@@ -132,7 +132,9 @@ define([
         _.addEventListener(elementToAttachTo, 'suspend', this._onStalling, false);
         _.addEventListener(elementToAttachTo, 'ended', this._onEnded, false);
 
-        this._dimensionsChangedMonitor.start(this, elementToAttachTo);
+        if (!this._options.capabilities.includes('audio-only')) {
+            this._dimensionsChangedMonitor.start(this, elementToAttachTo);
+        }
 
         return elementToAttachTo;
     };

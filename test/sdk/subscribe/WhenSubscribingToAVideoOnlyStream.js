@@ -64,7 +64,7 @@ define([
                 done();
             });
 
-            pcast.subscribe('mockStreamToken', function() {}, {receiveAudio: false});
+            pcast.subscribe('DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9', function() {}, {receiveAudio: false});
         });
     });
 });
