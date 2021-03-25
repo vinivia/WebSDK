@@ -1092,19 +1092,19 @@ define([
         };
 
         publisher.enableAudio = function() {
-            return setStreamAudioTracksState(publisher.getStream(), true);
+            return setStreamAudioTracksState.call(that, publisher, true);
         };
 
         publisher.disableAudio = function() {
-            return setStreamAudioTracksState(publisher.getStream(), false);
+            return setStreamAudioTracksState.call(that, publisher, false);
         };
 
         publisher.enableVideo = function() {
-            return setStreamVideoTracksState(publisher.getStream(), true);
+            return setStreamVideoTracksState.call(that, publisher, true);
         };
 
         publisher.disableVideo = function() {
-            return setStreamVideoTracksState(publisher.getStream(), false);
+            return setStreamVideoTracksState.call(that, publisher, false);
         };
 
         // Publisher Ended Callback handled with normal callback route for express
@@ -1149,7 +1149,42 @@ define([
         return subscriber;
     }
 
-    function setStreamAudioTracksState(stream, newState) {
+    function setStreamAudioTracksState(publisher, newState) {
+        var pcast = this.getPCast();
+
+        if (!pcast) {
+            return;
+        }
+
+        var streamId = publisher.getStreamId();
+        var peerConnectionDescription = pcast.getRemoteDescriptionSdp(streamId);
+
+        if (!peerConnectionDescription) {
+            return;
+        }
+
+        var stream = publisher.getStream();
+        var audioIndex = peerConnectionDescription.lastIndexOf('m=audio');
+
+        if (audioIndex < 0) {
+            return;
+        }
+
+        var endIndex = peerConnectionDescription.lastIndexOf('m=video');
+
+        if (endIndex < audioIndex) {
+            endIndex = peerConnectionDescription.length;
+        }
+
+        var trackConfiguration = peerConnectionDescription.substring(
+            audioIndex,
+            endIndex
+        );
+
+        if (trackConfiguration.includes('a=inactive')) {
+            return;
+        }
+
         if (!stream) {
             return;
         }
@@ -1159,7 +1194,42 @@ define([
         return newState;
     }
 
-    function setStreamVideoTracksState(stream, newState) {
+    function setStreamVideoTracksState(publisher, newState) {
+        var pcast = this.getPCast();
+
+        if (!pcast) {
+            return;
+        }
+
+        var streamId = publisher.getStreamId();
+        var peerConnectionDescription = pcast.getRemoteDescriptionSdp(streamId);
+
+        if (!peerConnectionDescription) {
+            return;
+        }
+
+        var stream = publisher.getStream();
+        var videoIndex = peerConnectionDescription.lastIndexOf('m=video');
+
+        if (videoIndex < 0) {
+            return;
+        }
+
+        var endIndex = peerConnectionDescription.lastIndexOf('m=audio');
+
+        if (endIndex < videoIndex) {
+            endIndex = peerConnectionDescription.length;
+        }
+
+        var trackConfiguration = peerConnectionDescription.substring(
+            videoIndex,
+            endIndex
+        );
+
+        if (trackConfiguration.includes('a=inactive')) {
+            return;
+        }
+
         if (!stream) {
             return;
         }

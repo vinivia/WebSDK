@@ -882,7 +882,7 @@ define([
         var that = this;
         var streamType = options.streamType;
         var streamInfo = options.streamInfo;
-        var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo);
+        var capabilities = [];
 
         if (options.streamToken) {
             var capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
@@ -891,10 +891,12 @@ define([
                 return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
             }
 
-            publisherStream = addStreamInfo(publisherStream, 'capabilities', capabilitiesFromStreamToken.join(','));
+            capabilities = capabilitiesFromStreamToken;
         } else {
-            publisherStream = addStreamInfo(publisherStream, 'capabilities', options.capabilities.join(','));
+            capabilities = options.capabilities;
         }
+
+        var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, capabilities);
 
         if (!options.enableWildcardCapability) {
             var activeRoomService = findActiveRoom.call(this, room.getRoomId(), room.getObservableAlias().getValue());
@@ -1359,12 +1361,20 @@ define([
         }
     }
 
-    function mapStreamToMemberStream(publisher, type, streamInfo, viewerStreamToken, viewerStreamTokenForBroadcastStream, viewerStreamTokenForLiveStream, drmStreamTokens) {
+    function mapStreamToMemberStream(publisher, type, streamInfo, capabilities, viewerStreamToken, viewerStreamTokenForBroadcastStream, viewerStreamTokenForLiveStream, drmStreamTokens) {
         var mediaStream = publisher.getStream();
         var audioTracks = mediaStream ? mediaStream.getAudioTracks() : null;
         var videoTracks = mediaStream ? mediaStream.getVideoTracks() : null;
         var audioTrackEnabled = audioTracks.length > 0 && audioTracks[0].enabled;
         var videoTrackEnabled = videoTracks.length > 0 && videoTracks[0].enabled;
+
+        if (capabilities.includes('audio-only')) {
+            videoTrackEnabled = false;
+        }
+
+        if (capabilities.includes('video-only')) {
+            audioTrackEnabled = false;
+        }
 
         var publishedStream = {
             uri: Stream.getPCastPrefix() + publisher.getStreamId(),
@@ -1407,6 +1417,8 @@ define([
         if (queryParamString.length > 0) {
             publishedStream.uri = publishedStream.uri + queryParamString;
         }
+
+        publishedStream = addStreamInfo(publishedStream, 'capabilities', capabilities.join(','));
 
         return publishedStream;
     }

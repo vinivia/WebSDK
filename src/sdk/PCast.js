@@ -185,6 +185,16 @@ define([
         return this._observableStatus;
     };
 
+    PCast.prototype.getRemoteDescriptionSdp = function(streamId) {
+        assert.isStringNotEmpty(streamId);
+
+        if (!this._peerConnections) {
+            return;
+        }
+
+        return _.get(this._peerConnections, [streamId, 'remoteDescription', 'sdp']);
+    };
+
     PCast.prototype.isStarted = function() {
         return this._started;
     };
