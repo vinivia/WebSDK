@@ -175,12 +175,12 @@ define([
                 if (joinRoomResponse && joinRoomResponse.roomService) {
                     var leaveRoom = joinRoomResponse.roomService.leaveRoom;
 
-                    joinRoomResponse.roomService.leaveRoom = function(callback) {
+                    joinRoomResponse.roomService.leaveRoom = function(callback, isForceLeaveRoom) {
                         if (subscription && pcast.getObservableStatus() !== 'offline') {
                             subscription.dispose();
                         }
 
-                        leaveRoom(callback);
+                        leaveRoom(callback, isForceLeaveRoom);
                     };
                 }
 
@@ -558,7 +558,7 @@ define([
             delete that._roomServices[uniqueId];
         };
 
-        roomService.leaveRoom = function leaveRoom(callback) {
+        roomService.leaveRoom = function leaveRoom(callback, isForceLeaveRoom) {
             var room = roomService.getObservableActiveRoom().getValue();
 
             roomServiceLeaveRoom.call(roomService, function(error, response) {
@@ -577,7 +577,7 @@ define([
                 roomService.stop('leave-room');
 
                 return callback(null, response);
-            });
+            }, isForceLeaveRoom);
         };
 
         return roomService;

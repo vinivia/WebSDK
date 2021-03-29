@@ -339,6 +339,8 @@ define([
                     track.stop();
                 });
             });
+        } catch (e) {
+            that._logger.warn('Pcast stop caught an error', e);
         } finally {
             if (this._protocol) {
                 try {

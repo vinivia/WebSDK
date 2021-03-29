@@ -264,7 +264,7 @@ define([
                     roomService.leaveRoom(function(error, response) {
                         expect(response).to.be.not.ok;
                         expect(error).to.be.ok;
-                    });
+                    }, false);
                 });
             });
         });

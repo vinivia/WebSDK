@@ -136,10 +136,10 @@ define([
         enterRoomRequest.call(this, roomId, alias, callback);
     };
 
-    RoomService.prototype.leaveRoom = function leaveRoom(callback) {
+    RoomService.prototype.leaveRoom = function leaveRoom(callback, isForceLeaveRoom) {
         var that = this;
 
-        return leaveRoomRequest.call(that, callback);
+        return leaveRoomRequest.call(that, callback, isForceLeaveRoom);
     };
 
     RoomService.prototype.getChatService = function getChatService() {
@@ -677,8 +677,12 @@ define([
         );
     }
 
-    function leaveRoomRequest(callback) {
+    function leaveRoomRequest(callback, isForceLeaveRoom) {
         var room = this._activeRoom.getValue();
+
+        if (!_.isBoolean(isForceLeaveRoom)) {
+            isForceLeaveRoom = true;
+        }
 
         if (!room) {
             this._logger.info('Not currently in a room.');
@@ -707,28 +711,36 @@ define([
 
         this._isLeavingRoom = true;
 
+        that._activeRoom.setValue(null);
+        that._cachedRoom.setValue(null);
+
+        if (isForceLeaveRoom) {
+            callback(null, {status: 'ok'});
+        }
+
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
                 that._isLeavingRoom = false;
 
-                that._activeRoom.setValue(null);
-                that._cachedRoom.setValue(null);
-
                 if (error) {
                     that._logger.error('Leaving room failed with error [%s]', error);
+
+                    if (isForceLeaveRoom) {
+                        return;
+                    }
 
                     return callback(error, null);
                 }
 
-                var result = {status: response.status};
-
                 if (response.status !== 'ok') {
                     that._logger.warn('Leaving room failed with status [%s]', response.status);
-
-                    return callback(null, result);
                 }
 
-                callback(null, result);
+                if (isForceLeaveRoom) {
+                    return;
+                }
+
+                return callback(null, {status: response.status});
             }
         );
     }
