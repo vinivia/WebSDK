@@ -559,6 +559,12 @@ define([
     function instantiatePCast() {
         var that = this;
 
+        var authenticationCallback = function(_, status) {
+            if (status === 'failed') {
+                return onPCastStatusChange.call(that, 'timeout');
+            }
+        };
+
         if (!this._pcastObservable.getValue()) {
             var pcastOptions = _.assign({logger: this._logger}, this._options);
 
@@ -574,7 +580,7 @@ define([
         }
 
         if (this._authToken) {
-            return this._pcastObservable.getValue().start(this._authToken, _.noop, _.noop, _.noop);
+            return this._pcastObservable.getValue().start(this._authToken, authenticationCallback, _.noop, _.noop);
         }
 
         if (!this._authToken && !that._adminApiProxyClient) {

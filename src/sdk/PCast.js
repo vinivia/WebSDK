@@ -262,8 +262,6 @@ define([
             if (err) {
                 that._logger.error('Failed to connect to [%s]', that._baseUri, err);
 
-                transitionToStatus.call(that, 'offline');
-
                 if (that._authenticationCallback) {
                     switch (err.code) {
                     case 0:
@@ -277,9 +275,11 @@ define([
                     default:
                         that._authenticationCallback.call(that, that, 'failed', '');
 
-                        break;
+                        return;
                     }
                 }
+
+                transitionToStatus.call(that, 'offline');
 
                 that._stopped = true;
                 that._started = false;
