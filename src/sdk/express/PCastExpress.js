@@ -560,8 +560,8 @@ define([
         var that = this;
 
         var authenticationCallback = function(_, status) {
-            if (status === 'failed') {
-                return onPCastStatusChange.call(that, 'timeout');
+            if (status === 'critical-network-issue') {
+                return onPCastStatusChange.call(that, status);
             }
         };
 

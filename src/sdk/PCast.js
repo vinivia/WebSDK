@@ -273,7 +273,7 @@ define([
 
                         break;
                     default:
-                        that._authenticationCallback.call(that, that, 'failed', '');
+                        that._authenticationCallback.call(that, that, 'critical-network-issue', '');
 
                         return;
                     }
