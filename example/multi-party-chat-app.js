@@ -118,6 +118,10 @@ requirejs([
                 }
             });
 
+            roomExpress.getPCastExpress().getSessionIdObservable().subscribe(function(value) {
+                console.log('SessionIdObservable', value);
+            });
+
             if (app.getUrlParameter('debug') === 'true') {
                 app.addDebugAppender(roomExpress.getPCastExpress().getPCast());
             }

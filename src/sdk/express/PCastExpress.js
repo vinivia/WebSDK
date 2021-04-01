@@ -72,6 +72,7 @@ define([
 
         this._instanceId = ++instanceCounter;
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
+        this._sessionIdObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._publishers = {};
         this._adminApiProxyClient = options.adminApiProxyClient;
         this._isInstantiated = false;
@@ -115,6 +116,10 @@ define([
             this._pcastObservable.setValue(null);
         }
 
+        if (this._sessionIdObservable.getValue()) {
+            this._sessionIdObservable.setValue(null);
+        }
+
         if (_.isNumber(this._instantiatePCastTimeoutId)) {
             clearTimeout(this._instantiatePCastTimeoutId);
             this._instantiatePCastTimeoutId = null;
@@ -122,6 +127,14 @@ define([
 
         if (this._adminApiProxyClient) {
             this._adminApiProxyClient.dispose();
+        }
+
+        if (this.sessionIdSubscription) {
+            this.sessionIdSubscription.dispose();
+        }
+
+        if (this._sessionIdObservable && this._sessionIdObservable.dispose) {
+            this._sessionIdObservable.dispose();
         }
 
         this._reconnectCount = 0;
@@ -137,6 +150,10 @@ define([
 
     PCastExpress.prototype.getPCastObservable = function() {
         return this._pcastObservable;
+    };
+
+    PCastExpress.prototype.getSessionIdObservable = function() {
+        return this._sessionIdObservable;
     };
 
     PCastExpress.prototype.getAdminAPI = function getAdminAPI() {
@@ -579,6 +596,16 @@ define([
             this._pcastStatusSubscription = this._pcastObservable.getValue().getObservableStatus().subscribe(_.bind(onPCastStatusChange, this));
         }
 
+        if (this.sessionIdSubscription) {
+            this.sessionIdSubscription.dispose();
+        }
+
+        var handleSessionIdChange = function(sessionId) {
+            this._sessionIdObservable.setValue(sessionId);
+        };
+
+        this.sessionIdSubscription = this._pcastObservable.getValue().getObservableSessionId().subscribe(_.bind(handleSessionIdChange, this));
+
         if (this._authToken) {
             return this._pcastObservable.getValue().start(this._authToken, authenticationCallback, _.noop, _.noop);
         }
@@ -617,6 +644,10 @@ define([
             if (this._pcastObservable.getValue()) {
                 this._pcastObservable.getValue().stop('recovery');
                 this._pcastObservable.setValue(null);
+            }
+
+            if (this._sessionIdObservable.getValue()) {
+                this._sessionIdObservable.setValue(null);
             }
 
             if (this._pcastStatusSubscription) {

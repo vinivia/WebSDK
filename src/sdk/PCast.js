@@ -104,6 +104,7 @@ define([
 
         this._observableStatus = new observable.Observable('offline');
         this._networkRTT = new observable.Observable(0);
+        this._observableSessionId = new observable.Observable(null);
         this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
@@ -361,6 +362,11 @@ define([
                 this._sessionTelemetry.setSessionId(null);
             }
 
+            if (this._sessionIdSubscription) {
+                this._sessionIdSubscription.dispose();
+                this._observableSessionId.setValue(null);
+            }
+
             phenixRTC.global.__phenixInstantiatedPCastCount--;
 
             this._disposables.dispose();
@@ -597,6 +603,10 @@ define([
         return this._logger;
     };
 
+    PCast.prototype.getObservableSessionId = function() {
+        return this._observableSessionId;
+    };
+
     PCast.prototype.toString = function() {
         var protocol = this.getProtocol();
         var sessionId = protocol ? protocol.getSessionId() : '';
@@ -644,6 +654,16 @@ define([
             this._sessionTelemetrySubscription.dispose();
             this._sessionTelemetry.setSessionId(null);
         }
+
+        if (this._sessionIdSubscription) {
+            this._sessionIdSubscription.dispose();
+        }
+
+        var handleSessionIdChange = function(sessionId) {
+            this._observableSessionId.setValue(sessionId);
+        };
+
+        this._sessionIdSubscription = this._protocol.getObservableSessionId().subscribe(_.bind(handleSessionIdChange, this));
 
         this._sessionTelemetrySubscription = this._protocol.getObservableSessionId().subscribe(_.bind(this._sessionTelemetry.setSessionId, this._sessionTelemetry));
     }
