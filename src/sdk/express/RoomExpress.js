@@ -228,14 +228,23 @@ define([
 
         if (options.streamToken) {
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+            this._logger.warn('`options.streamToken` is deprecated please use `options.publishToken`.');
+        }
+
+        if (options.publishToken && options.capabilities) {
+            throw new Error('Do not pass `options.capabilities` with `options.publishToken`. `options.publishToken` should include capabilities in the token.');
+        }
+
+        if (options.publishToken && options.streamToken) {
+            throw new Error('Do not pass `options.streamToken` with `options.publishToken`. Please use `options.publishToken`.');
         }
 
         if (options.streamToken && options.capabilities) {
-            throw new Error('Do not pass capabilities with streamToken. StreamToken should include capabilities.');
+            throw new Error('Do not pass `options.capabilities` with `options.streamToken`. `options.streamToken` should include capabilities in the token.');
         }
 
-        if (!options.streamToken && !adminApi) {
-            throw new Error('Pass "options.streamToken", or set adminApiProxyClient on initiating room express');
+        if (!options.streamToken && !options.publishToken && !adminApi) {
+            throw new Error('Pass `options.publishToken`, or set adminApiProxyClient on initiating room express');
         }
 
         if (options.viewerStreamSelectionStrategy) {
@@ -247,7 +256,7 @@ define([
         }
 
         if (_.isUndefined(options.enableWildcardCapability)) {
-            options.enableWildcardCapability = !options.streamToken;
+            options.enableWildcardCapability = !(options.publishToken || options.streamToken);
         }
 
         assert.isValidType(options.streamType, memberStreamEnums.types, 'options.streamType');

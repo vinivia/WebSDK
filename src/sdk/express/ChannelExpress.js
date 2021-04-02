@@ -375,6 +375,14 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
+        if (options.publishToken && options.capabilities) {
+            this._logger.warn('[%s] Trying to publish with both `publishToken` and `capabilities` set. Only use one of the two options');
+
+            callback(new Error('Publishing with both `publishToken` and `capabilities` defined'), {status: 'conflicting-options'});
+
+            return;
+        }
+
         if (options.streamToken && options.capabilities) {
             this._logger.warn('[%s] Trying to publish with both `streamToken` and `capabilities` set. Only use one of the two options');
 

@@ -232,8 +232,16 @@ define([
             }
         }
 
+        if (options.publishToken) {
+            assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        }
+
         if (options.streamToken) {
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
+        if (options.publishToken && options.streamToken) {
+            throw new Error('Do not pass streamToken with publishToken. Please use publishToken.');
         }
 
         var that = this;
@@ -309,8 +317,16 @@ define([
             }
         }
 
+        if (options.publishToken) {
+            assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        }
+
         if (options.streamToken) {
             assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        }
+
+        if (options.publishToken && options.streamToken) {
+            throw new Error('Do not pass streamToken with publishToken. Please use publishToken.');
         }
 
         var that = this;
@@ -797,6 +813,18 @@ define([
     function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
 
+        if (options.publishToken) {
+            try {
+                var capabilitiesFromPublishToken = that.parseCapabilitiesFromToken(options.publishToken);
+
+                options.capabilities = capabilitiesFromPublishToken;
+            } catch (e) {
+                return callback(new Error('Bad `publishToken`', e), {status: 'bad-token'});
+            }
+
+            return publishUserMediaOrUri.call(that, options.publishToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+        }
+
         if (options.streamToken) {
             try {
                 var capabilitiesFromStreamToken = that.parseCapabilitiesFromToken(options.streamToken);
@@ -881,7 +909,7 @@ define([
                 }
             };
 
-            if ((status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') {
+            if ((status === unauthorizedStatus && ((options.streamToken || options.publishToken) || !options.authFailure)) || status === 'timeout') {
                 that._logger.info('[%s] Attempting to create new streamToken and re-publish after [%s] response', this, unauthorizedStatus);
 
                 var reAuthOptions = _.assign({
@@ -890,6 +918,7 @@ define([
                 }, options);
 
                 delete reAuthOptions.streamToken;
+                delete reAuthOptions.publishToken;
 
                 return getStreamingTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
             }
