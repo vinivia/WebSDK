@@ -145,11 +145,12 @@ define([
         _.forEach(queryParams, function(param) {
             var parsedParams = param.split('=');
             var key = parsedParams[0];
+            var value = decodeURIComponent(parsedParams[1]);
 
-            parsedUriInfo[key] = parsedParams[1];
+            parsedUriInfo[key] = value;
 
             if (key === 'capabilities') {
-                parsedUriInfo[key] = parsedParams[1] ? (parsedParams[1].split(',') || []) : [];
+                parsedUriInfo[key] = value ? (value.split(',') || []) : [];
             }
         });
 
