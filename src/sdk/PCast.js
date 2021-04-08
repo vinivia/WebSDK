@@ -187,7 +187,7 @@ define([
     };
 
     PCast.prototype.getRemoteDescriptionSdp = function(streamId) {
-        assert.isStringNotEmpty(streamId);
+        assert.isStringNotEmpty(streamId, 'streamId');
 
         if (!this._peerConnections) {
             return;

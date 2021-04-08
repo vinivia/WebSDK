@@ -690,7 +690,7 @@ define([
             return callback(null, notInRoomResponse);
         }
 
-        if (this._authenticationService.getPCastSessionId() === '') {
+        if (this._authenticationService.getPCastSessionId() === '' || this._authenticationService.getPCastSessionId() === null) {
             this._logger.warn('Unable to leave room. We are currently not connected. Status [%s]', this._lastPcastStatus);
 
             return;
@@ -711,12 +711,15 @@ define([
 
         this._isLeavingRoom = true;
 
-        that._activeRoom.setValue(null);
-        that._cachedRoom.setValue(null);
+        setTimeout(function() {
+            that._activeRoom.setValue(null);
+            that._cachedRoom.setValue(null);
 
-        if (isForceLeaveRoom) {
-            callback(null, {status: 'ok'});
-        }
+            if (isForceLeaveRoom) {
+                that._isLeavingRoom = false;
+                callback(null, {status: 'ok'});
+            }
+        });
 
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {
