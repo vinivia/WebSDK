@@ -623,7 +623,7 @@ define([
 
         try {
             var base64Token = streamToken.split(':')[1];
-            var decodedToken = atob(base64Token);
+            var decodedToken = phenixRTC.global.atob(base64Token);
             var token = JSON.parse(decodedToken).token;
             var tokenOptions = JSON.parse(token);
 
