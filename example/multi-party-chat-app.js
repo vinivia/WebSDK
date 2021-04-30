@@ -63,6 +63,7 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, Player, app) {
+    var isMobileAppleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
     var stopButton = document.getElementById('stopButton');
     var muteAudio = false;
@@ -95,7 +96,7 @@ requirejs([
             adminApiProxyClient.setAuthenticationData(app.getAuthData());
 
             roomExpress = new sdk.express.RoomExpress({
-                treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true',
+                treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true' || isMobileAppleDevice,
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shakaLoader: function(callback) {
@@ -497,7 +498,7 @@ requirejs([
         function createVideo() {
             var videoElement = document.createElement('video');
 
-            videoElement.setAttribute('playsline', ''); // For Safari and IOS
+            videoElement.setAttribute('playsinline', ''); // For Safari and IOS
             videoElement.setAttribute('autoplay', ''); // For Safari and IOS + Mobile
 
             // To resolve unintended pauses
