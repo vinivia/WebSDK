@@ -658,7 +658,7 @@ requirejs([
 
                 mediaStream.setStreamErrorCallback(function(mediaStream, errSource, err) {
                     var errTitle = 'Stream Error';
-                    var errMessage = err;
+                    var errMessage = err.error || err;
 
                     if (errSource === 'shaka') {
                         if (err && err.category) {
