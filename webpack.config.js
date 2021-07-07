@@ -69,7 +69,8 @@ const externalizedConfig = merge(config, {
     externals: [externalizePhenixImports, 'webrtc-adapter']
 });
 const reactNativeConfig = merge(config, {
-    output: {filename: config.output.filename.replace('.js', '-react-native.js')},
+    entry: path.join(__dirname, 'src', 'react-native-sdk.js'),
+    output: {filename: 'phenix-web-sdk-react-native.js'},
     resolve: {alias: {'phenix-rtc': path.resolve(__dirname, 'node_modules', 'phenix-rtc/dist/phenix-rtc-react-native')}}
 });
 const nodeConfig = merge(config, {
