@@ -265,8 +265,18 @@ define([
 
         var that = this;
         var screenName = options.screenName || _.uniqueId();
+        var roomId = options.room.roomId;
+        var alias = options.room.alias;
 
-        var activeRoomService = findActiveRoom.call(that, options.room.roomId, options.room.alias);
+        if (options.publishToken || options.streamToken) {
+            roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.publishToken || options.streamToken);
+            alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.publishToken || options.streamToken);
+
+            this._logger.info('[%s] [%s] RoomId and Alias read from token [%s]', roomId, alias, options.publishToken || options.streamToken);
+        }
+
+        var activeRoomService = findActiveRoom.call(that, roomId, alias);
+
         var joinAndPublish = function joinAndPublish(room, createRoomResponse) {
             var publishOptions = _.assign({
                 monitor: {

@@ -47,6 +47,8 @@ define([
 
     var sdkVersion = '%SDKVERSION%';
     var accumulateIceCandidatesDuration = 50;
+    var roomOrChannelIdRegex = /^(?:room|channel)Id[:](.*)$/;
+    var roomOrChannelAliasRegex = /^(?:room|channel)Alias[:](.*)$/;
 
     function PCast(options) {
         options = options || {};
@@ -615,6 +617,24 @@ define([
     };
 
     PCast.prototype.parseCapabilitiesFromToken = function(streamToken) {
+        return _.get(parseToken.call(this, streamToken), ['capabilities'], []);
+    };
+
+    PCast.prototype.parseRoomOrChannelIdFromToken = function(streamToken) {
+        var requiredTag = _.get(parseToken.call(this, streamToken), ['requiredTag'], '');
+        var idMatch = requiredTag.match(roomOrChannelIdRegex);
+
+        return idMatch ? idMatch[1] : null;
+    };
+
+    PCast.prototype.parseRoomOrChannelAliasFromToken = function(streamToken) {
+        var requiredTag = _.get(parseToken.call(this, streamToken), ['requiredTag'], '');
+        var aliasMatch = requiredTag.match(roomOrChannelAliasRegex);
+
+        return aliasMatch ? aliasMatch[1] : null;
+    };
+
+    function parseToken(streamToken) {
         if (!streamToken.startsWith('DIGEST:')) {
             this._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
 
@@ -627,14 +647,14 @@ define([
             var token = JSON.parse(decodedToken).token;
             var tokenOptions = JSON.parse(token);
 
-            return _.get(tokenOptions, ['capabilities'], []);
+            return tokenOptions;
         } catch (e) {
             var sessionId = this.getProtocol().getSessionId();
             this._logger.warn('[%s] Failed to parse the `streamToken` [%s]', sessionId, streamToken);
 
             throw new Error(e);
         }
-    };
+    }
 
     function instantiateProtocol(uri) {
         this._protocol = new PCastProtocol(uri, this._deviceId, this._version, this._logger);

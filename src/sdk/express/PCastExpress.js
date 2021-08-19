@@ -589,6 +589,18 @@ define([
         return pcast.parseCapabilitiesFromToken(streamToken);
     };
 
+    PCastExpress.prototype.parseRoomOrChannelIdFromToken = function parseRoomOrChannelIdFromToken(streamToken) {
+        var pcast = this._pcastObservable.getValue();
+
+        return pcast.parseRoomOrChannelIdFromToken(streamToken);
+    };
+
+    PCastExpress.prototype.parseRoomOrChannelAliasFromToken = function parseRoomOrChannelAliasFromToken(streamToken) {
+        var pcast = this._pcastObservable.getValue();
+
+        return pcast.parseRoomOrChannelAliasFromToken(streamToken);
+    };
+
     function instantiatePCast() {
         var that = this;
 
