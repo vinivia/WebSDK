@@ -312,7 +312,7 @@ define([
         switch (connectionState) {
         case 'checking':
         case 'connecting':
-            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+            if (this._checkConnectionSuccessTimeoutId) {
                 return;
             }
 
@@ -324,7 +324,7 @@ define([
 
             break;
         case 'failed':
-            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+            if (this._checkConnectionSuccessTimeoutId) {
                 clearTimeout(this._checkConnectionSuccessTimeoutId);
 
                 this._checkConnectionSuccessTimeoutId = null;
@@ -336,13 +336,13 @@ define([
             break;
         case 'closed':
         case 'disconnected':
-            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+            if (this._checkConnectionSuccessTimeoutId) {
                 that._logger.warn('[%s] Stream closed before it was connected', that._streamId);
             }
 
             break;
         case 'connected':
-            if (_.isNumber(this._checkConnectionSuccessTimeoutId)) {
+            if (this._checkConnectionSuccessTimeoutId) {
                 clearTimeout(this._checkConnectionSuccessTimeoutId);
 
                 this._checkConnectionSuccessTimeoutId = null;
