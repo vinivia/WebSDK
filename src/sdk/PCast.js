@@ -635,7 +635,7 @@ define([
     };
 
     function parseToken(streamToken) {
-        if (!streamToken.startsWith('DIGEST:')) {
+        if (!_.startsWith(streamToken, 'DIGEST:')) {
             this._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
 
             throw new Error('Bad `streamToken`');
