@@ -19,80 +19,104 @@ define([
     'sdk/environment'
 ], function(_, environment) {
     'use strict';
-    describe('When setting backend uri with local subdomain "https://local.test.com"', function() {
-        it('return "https://local.test.com"', function() {
+    describe('When setting pcast-uri with local subdomain "https://local.test.com"', function() {
+        it('resolves to telemetry URL "https://local.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://local.test.com');
-            expect(telemetryUrl).eql('https://local.test.com');
+            expect(telemetryUrl).eql('https://local.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with pcast-stg subdomain "https://pcast-stg.test.com"', function() {
-        it('return "https://telemetry-stg.test.com"', function() {
+    describe('When setting pcast-uri with local subdomain and port "https://local.test.com:9999"', () => {
+        it('resolves to telemetry URL "https://local.test.com:9999/telemetry"', () => {
+            const telemetryUrl = environment.getTelemetryServerUri('https://local.test.com:9999');
+
+            expect(telemetryUrl).eql('https://local.test.com:9999/telemetry');
+        });
+    });
+
+    describe('When setting pcast-uri with local subdomain, port and path "https://local.test.com:9999/pcast/uri"', () => {
+        it('resolves to telemetry URL "https://local.test.com:9999/telemetry"', () => {
+            const telemetryUrl = environment.getTelemetryServerUri('https://local.test.com:9999/pcast/uri');
+
+            expect(telemetryUrl).eql('https://local.test.com:9999/telemetry');
+        });
+    });
+
+    describe('When setting pcast-uri with pcast-stg subdomain "https://pcast-stg.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry-stg.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://pcast-stg.test.com');
-            expect(telemetryUrl).eql('https://telemetry-stg.test.com');
+            expect(telemetryUrl).eql('https://telemetry-stg.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with stg subdomain "https://stg.test.com"', function() {
-        it('return "https://telemetry-stg.test.com"', function() {
+    describe('When setting pcast-uri with stg subdomain "https://stg.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry-stg.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://stg.test.com');
-            expect(telemetryUrl).eql('https://telemetry-stg.test.com');
+            expect(telemetryUrl).eql('https://telemetry-stg.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with stg-us subdomain "https://stg-us.test.com"', function() {
-        it('return "https://telemetry.test.com"', function() {
+    describe('When setting pcast-uri with stg-us subdomain "https://stg-us.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry-stg.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://stg-us.test.com');
-            expect(telemetryUrl).eql('https://telemetry.test.com');
+            expect(telemetryUrl).eql('https://telemetry-stg.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with pcast subdomain "https://pcast.test.com"', function() {
-        it('return "https://telemetry.test.com"', function() {
+    describe('When setting pcast-uri with pcast subdomain "https://pcast.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://pcast.test.com');
-            expect(telemetryUrl).eql('https://telemetry.test.com');
+            expect(telemetryUrl).eql('https://telemetry.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with XYZ subdomain "https://xyz.test.com"', function() {
-        it('return "https://telemetry.test.com"', function() {
+    describe('When setting pcast-uri with XYZ subdomain "https://xyz.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://xyz.test.com');
-            expect(telemetryUrl).eql('https://telemetry.test.com');
+            expect(telemetryUrl).eql('https://telemetry.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with co.uk subdomain "https://xyz.test.co.uk"', function() {
-        it('return "https://telemetry.test.co.uk"', function() {
+    describe('When setting pcast-uri with co.uk subdomain "https://xyz.test.co.uk"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.co.uk/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://xyz.test.co.uk');
-            expect(telemetryUrl).eql('https://telemetry.test.co.uk');
+            expect(telemetryUrl).eql('https://telemetry.test.co.uk/telemetry');
         });
     });
 
-    describe('When setting backend uri with co.uk subdomain "https://test.co.uk"', function() {
-        it('return "https://telemetry.test.co.uk"', function() {
+    describe('When setting pcast-uri with co.uk subdomain "https://test.co.uk"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.co.uk/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://test.co.uk');
-            expect(telemetryUrl).eql('https://telemetry.test.co.uk');
+            expect(telemetryUrl).eql('https://telemetry.test.co.uk/telemetry');
         });
     });
 
-    describe('When setting backend uri with two subdomain XYZ.XYZ subdomain "https://xyz.xyz.test.com"', function() {
-        it('return "https://telemetry.xyz.test.com"', function() {
+    describe('When setting pcast-uri with two subdomain XYZ.XYZ subdomain "https://xyz.xyz.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry.xyz.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://xyz.xyz.test.com');
-            expect(telemetryUrl).eql('https://telemetry.xyz.test.com');
+            expect(telemetryUrl).eql('https://telemetry.xyz.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri with www. subdomain "https://www.test.com"', function() {
-        it('return "https://telemetry.test.com"', function() {
+    describe('When setting pcast-uri with www. subdomain "https://www.test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://www.test.com');
-            expect(telemetryUrl).eql('https://telemetry.test.com');
+            expect(telemetryUrl).eql('https://telemetry.test.com/telemetry');
         });
     });
 
-    describe('When setting backend uri no subdomain "https://test.com"', function() {
-        it('return "https://telemetry.test.com"', function() {
+    describe('When setting pcast-uri with two subdomain XYZ.XYZ subdomain "https://xyz.xyz-stg.test.com"', () => {
+        it('resolves to telemetry URL "https://telemetry.xyz-stg.test.com/telemetry"', () => {
+            const telemetryUrl = environment.getTelemetryServerUri('https://xyz.xyz-stg.test.com');
+
+            expect(telemetryUrl).eql('https://telemetry.xyz-stg.test.com/telemetry');
+        });
+    });
+
+    describe('When setting pcast-uri no subdomain "https://test.com"', function() {
+        it('resolves to telemetry URL "https://telemetry.test.com/telemetry"', function() {
             var telemetryUrl = environment.getTelemetryServerUri('https://test.com');
-            expect(telemetryUrl).eql('https://telemetry.test.com');
+            expect(telemetryUrl).eql('https://telemetry.test.com/telemetry');
         });
     });
 });

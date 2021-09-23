@@ -43,14 +43,14 @@ define([
             var segments = baseURL.hostname.split('.');
 
             if (_.includes(segments[0], 'local')) {
-                return baseUri;
+                return baseURL.origin + '/telemetry';
             }
 
             if (segments.length === 2 ||
                 (segments.length === 3 && segments[segments.length - 2].length <= 2 && segments[segments.length - 1].length <= 3)
             ) {
                 segments.unshift('telemetry');
-            } else if (_.includes(segments[0], '-stg') || segments[0] === 'stg') {
+            } else if (_.includes(segments[0], '-stg') || _.includes(segments[0], 'stg-') || _.includes(segments[0], '-stg-') || segments[0] === 'stg') {
                 segments[0] = 'telemetry-stg';
             } else {
                 segments[0] = 'telemetry';
@@ -58,7 +58,7 @@ define([
 
             baseURL.hostname = segments.join('.');
 
-            return baseURL.origin;
+            return baseURL.origin + '/telemetry';
         } catch (e) {
             return baseUri;
         }

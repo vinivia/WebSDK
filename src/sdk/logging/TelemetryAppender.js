@@ -22,16 +22,17 @@ define([
     'phenix-web-proto',
     '../protocol/telemetryProto.json'
 ], function(_, assert, rtc, logging, proto, telemetryProto) {
+    var loggingUrl = '/logs';
+
     function TelemetryAppender(uri) {
         assert.isString(uri, 'uri');
 
-        this._loggingUrl = '/telemetry/logs';
         this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
         this._minLevel = logging.level.TRACE;
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
         this._mostRecentRuntime = 0;
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
             maxAttempts: 3,
             maxBufferedRecords: 1000,
             maxBatchSize: 512

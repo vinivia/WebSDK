@@ -21,14 +21,15 @@ define([
     'phenix-rtc',
     '../protocol/telemetryProto.json'
 ], function(_, assert, proto, rtc, telemetryProto) {
+    var metricsUrl = '/metrics';
+
     function MetricsTransmitter(uri) {
         assert.isString(uri, 'uri');
 
-        this._loggingUrl = '/telemetry/metrics';
         this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
         this._isEnabled = true;
         this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + this._loggingUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
+        this._batchHttpProtocol = new proto.BatchHttpProto(uri + metricsUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
             maxAttempts: 3,
             maxBufferedRecords: 1000,
             maxBatchSize: 512
