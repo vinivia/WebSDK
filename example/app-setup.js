@@ -364,6 +364,7 @@ define('app-setup', [
             'on-demand': 'VOD',
             'streaming-lite': 'Lite for Live',
             'on-demand-lite': 'Lite for VOD',
+            'time-shift-manifest': 'Time Shift',
             'low-latency': 'Low Latency for DASH+HLS',
             'mpegts-streaming': 'MP2T for DASH+HLS',
             'webm-streaming': 'WebM for DASH+HLS',
