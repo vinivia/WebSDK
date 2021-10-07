@@ -157,11 +157,19 @@ define([
             });
         });
 
-        describe('Given a pcast uri "ws://www.test.com"', () => {
-            it('resolves to telemetry URL "ws://telemetry.test.com/telemetry"', () => {
-                const telemetryUrl = environment.getTelemetryServerUri('ws://www.test.com');
+        describe('Given a pcast uri "ws://www.test.com/ws"', () => {
+            it('resolves to telemetry URL "http://telemetry.test.com/telemetry"', () => {
+                const telemetryUrl = environment.getTelemetryServerUri('ws://www.test.com/ws');
 
                 expect(telemetryUrl).eql('http://telemetry.test.com/telemetry');
+            });
+        });
+
+        describe('Given a pcast uri "wss://local.rt.test.com:8443"', () => {
+            it('resolves to telemetry URL "https://local.rt.test.com:8443/telemetry"', () => {
+                const telemetryUrl = environment.getTelemetryServerUri('wss://local.rt.test.com:8443');
+
+                expect(telemetryUrl).eql('https://local.rt.test.com:8443/telemetry');
             });
         });
     });
