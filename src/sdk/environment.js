@@ -58,6 +58,20 @@ define([
 
             baseURL.hostname = segments.join('.');
 
+            switch (baseURL.protocol) {
+            case 'ws:':
+                baseURL.protocol = 'http:';
+
+                break;
+            case 'wss:':
+                baseURL.protocol = 'https:';
+
+                break;
+
+            default:
+                break;
+            }
+
             return baseURL.origin + '/telemetry';
         } catch (e) {
             return baseUri;
