@@ -42,20 +42,6 @@ define([
             var baseURL = new URL(baseUri);
             var segments = baseURL.hostname.split('.');
 
-            switch (baseURL.protocol) {
-            case 'ws:':
-                baseURL.protocol = 'http:';
-
-                break;
-            case 'wss:':
-                baseURL.protocol = 'https:';
-
-                break;
-
-            default:
-                break;
-            }
-
             if (segments.length === 2 ||
                 (segments.length === 3 && segments[segments.length - 2].length <= 2 && segments[segments.length - 1].length <= 3)
             ) {
@@ -69,6 +55,20 @@ define([
             }
 
             baseURL.hostname = segments.join('.');
+
+            switch (baseURL.protocol) {
+            case 'ws:':
+                baseURL.protocol = 'http:';
+
+                break;
+            case 'wss:':
+                baseURL.protocol = 'https:';
+
+                break;
+
+            default:
+                break;
+            }
 
             return baseURL.origin + '/telemetry';
         } catch (e) {
