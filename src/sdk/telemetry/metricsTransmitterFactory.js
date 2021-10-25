@@ -25,19 +25,19 @@ define([
     }
 
     MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
-        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
+        var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
 
         var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
 
         if (!this._metricsTransmitters[env]) {
-            this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl);
+            this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl, env);
         }
 
         return this._metricsTransmitters[env];
     };
 
-    function createNewTransmitter(uri) {
-        var transmitter = new MetricsTransmitter(uri);
+    function createNewTransmitter(uri, env) {
+        var transmitter = new MetricsTransmitter(uri, env);
 
         if (!uri) {
             transmitter.setEnabled(false);

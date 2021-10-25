@@ -21,7 +21,7 @@ define([
     'use strict';
 
     describe('When resolving the telemetry URL', () => {
-        describe('Given a pcast uri  "https://local.test.com"', () => {
+        describe('Given a pcast uri "https://local.test.com"', () => {
             it('resolves to telemetry URL "https://local.test.com/telemetry"', () => {
                 const telemetryUrl = environment.getTelemetryServerUri('https://local.test.com');
 

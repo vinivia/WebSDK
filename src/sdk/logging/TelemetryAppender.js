@@ -71,8 +71,8 @@ define([
         this._mostRecentRuntime = since;
         this._mostRecentSessionId = sessionId;
         this._mostRecentUserId = userId;
-        this._mostRecentEnvironment = environment;
         this._mostRecentVersion = version;
+        this._mostRecentEnvironment = environment;
 
         addMessagesToRecords.call(this, level, category, messages);
     };

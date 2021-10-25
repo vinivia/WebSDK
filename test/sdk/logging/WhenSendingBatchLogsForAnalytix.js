@@ -33,7 +33,7 @@ define([
                 requests.push(req);
             };
 
-            telemetryAppender = new TelemetryAppender('stg');
+            telemetryAppender = new TelemetryAppender('https://telemetry.phenixrts.com');
         });
 
         afterEach(function() {

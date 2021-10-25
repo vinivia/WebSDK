@@ -23,7 +23,7 @@ define([
 ], function(_, assert, proto, rtc, telemetryProto) {
     var metricsUrl = '/metrics';
 
-    function MetricsTransmitter(uri) {
+    function MetricsTransmitter(uri, environment) {
         assert.isString(uri, 'uri');
 
         this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
@@ -34,6 +34,8 @@ define([
             maxBufferedRecords: 1000,
             maxBatchSize: 512
         });
+
+        this._mostRecentEnvironment = environment;
 
         this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
     }
@@ -48,7 +50,7 @@ define([
         this._isEnabled = enabled;
     };
 
-    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, environment, version, value) {
+    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, version, value) {
         if (!this._isEnabled) {
             return;
         }
@@ -59,7 +61,6 @@ define([
         this._mostRecentRuntime = since;
         this._mostRecentSessionId = sessionId;
         this._mostRecentStreamId = streamId;
-        this._mostRecentEnvironment = environment;
         this._mostRecentVersion = version;
 
         addMetricToRecords.call(this, metric, value);

@@ -21,6 +21,16 @@ define([
 
     var environment = {};
 
+    environment.getEnvironmentFromUrl = function(uri) {
+        try {
+            var baseURL = new URL(uri);
+
+            return baseURL.origin;
+        } catch (e) {
+            return '';
+        }
+    };
+
     environment.parseEnvFromPcastBaseUri = function(uri) {
         uri = uri.toLowerCase();
 

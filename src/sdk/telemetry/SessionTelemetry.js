@@ -25,11 +25,9 @@ define([
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();
-    var defaultEnvironment = '%ENVIRONMENT%' || '?';
     var sdkVersion = '%SDKVERSION%' || '?';
 
     function SessionTelemetry(logger, metricsTransmitter) {
-        this._environment = defaultEnvironment;
         this._version = sdkVersion;
         this._sessionId = null;
         this._properties = {
@@ -226,7 +224,7 @@ define([
 
         var annotatedRecord = _.assign({}, this._properties, record);
 
-        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, null, this._environment, this._version, annotatedRecord);
+        this._metricsTransmitter.submitMetric(record.metric, since, this._sessionId, null, this._version, annotatedRecord);
     }
 
     function recordAllMetrics() {

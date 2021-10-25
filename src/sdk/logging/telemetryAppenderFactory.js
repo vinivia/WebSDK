@@ -25,7 +25,7 @@ define([
     }
 
     TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
-        var env = environment.parseEnvFromPcastBaseUri(pcastBaseUri || '');
+        var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
         var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
 
         if (!this._telemetryAppenders[env]) {

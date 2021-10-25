@@ -18,8 +18,9 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-logging',
+    '../environment',
     './telemetryAppenderFactory'
-], function(_, assert, logging, telemetryAppenderFactory) {
+], function(_, assert, logging, environment, telemetryAppenderFactory) {
     'use strict';
 
     function PCastLoggerFactory() {
@@ -32,7 +33,10 @@ define([
         }
 
         var logger = new logging.Logger();
+        var env = environment.getEnvironmentFromUrl(baseUri);
         var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
+
+        logger.setEnvironment(env);
 
         if (loggingLevel) {
             telemetryAppender.setThreshold(loggingLevel);
