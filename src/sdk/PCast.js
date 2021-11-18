@@ -130,6 +130,20 @@ define([
         this._pendingIceCandidates = {};
         this._addIceCandidatesTimeoutScheduled = {};
 
+        if (options.authToken) {
+            if (options.uri) {
+                this._logger.warn('Trying to join room with both authToken and uri. Please only use authToken.');
+            }
+
+            var baseUri = this.parseUriFromToken.call(this, options.authToken);
+
+            if (baseUri) {
+                this._logger.info('Base uri is set to [%s] from authToken [%s]', baseUri, options.authToken);
+
+                this._baseUri = baseUri;
+            }
+        }
+
         var that = this;
         var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
         var logGlobalError = function logGlobalError(event) {
@@ -618,6 +632,10 @@ define([
 
     PCast.prototype.parseCapabilitiesFromToken = function(streamToken) {
         return _.get(parseToken.call(this, streamToken), ['capabilities'], []);
+    };
+
+    PCast.prototype.parseUriFromToken = function(streamToken) {
+        return _.get(parseToken.call(this, streamToken), ['uri'], '');
     };
 
     PCast.prototype.parseRoomOrChannelIdFromToken = function(streamToken) {
