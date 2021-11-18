@@ -163,6 +163,31 @@ define([
             assert.isArray(options.streams, 'options.streams');
         }
 
+        if (options.streamToken) {
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+
+            if (options.roomId) {
+                this._logger.warn('Trying to join room with both streamToken and roomId. Please only use streamToken.');
+            }
+
+            if (options.alias) {
+                this._logger.warn('Trying to join room with both streamToken and alias. Please only use streamToken.');
+            }
+
+            var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.streamToken);
+            var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.streamToken);
+
+            if (roomId) {
+                options.roomId = roomId;
+                this._logger.info('Room ID is set to [%s] from streamToken [%s]', roomId, options.streamToken);
+            }
+
+            if (alias) {
+                options.alias = alias;
+                this._logger.info('Alias is set to [%s] from streamToken [%s]', alias, options.streamToken);
+            }
+        }
+
         var that = this;
         var joinRoomWithPCast = function(pcast) {
             if (!pcast) {
