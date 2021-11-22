@@ -302,7 +302,7 @@ define([
 
         var activeRoomService = findActiveRoom.call(that, roomId, alias);
 
-        var joinAndPublish = function joinAndPublish(room, createRoomResponse) {
+        var publishToActiveRoom = function publishToActiveRoom(room, joinRoomResponse) {
             var publishOptions = _.assign({
                 monitor: {
                     callback: _.bind(monitorSubsciberOrPublisher, that, callback),
@@ -339,58 +339,47 @@ define([
                     ]);
                 }
 
-                var callbackWithRoomService = function(error, response) {
+                var callbackWithNoRoomService = function(error, response) {
                     callback(error, response ? _.assign({roomService: null}, response) : response);
                 };
 
-                return that._pcastExpress.publishRemote(remoteOptions, callbackWithRoomService);
+                return that._pcastExpress.publishRemote(remoteOptions, callbackWithNoRoomService);
             }
 
-            var joinRoomAsAudienceOptions = _.assign({}, options, {
-                role: memberEnums.roles.audience.name,
-                roomId: room.getRoomId()
-            });
+            var callbackWithRoomService = function(error, response) {
+                callback(error, response ? _.assign({roomService: joinRoomResponse.roomService}, response) : response);
+            };
 
-            joinRoomWithOptions.call(that, joinRoomAsAudienceOptions, function(error, joinRoomResponse) {
-                if (error) {
-                    return callback(error);
-                }
-
-                if (joinRoomResponse.status !== 'ok' && joinRoomResponse.status !== 'already-in-room') {
-                    return callback(null, createRoomResponse);
-                }
-
-                var activeRoom = joinRoomResponse.roomService.getObservableActiveRoom().getValue();
-                var callbackWithRoomService = function(error, response) {
-                    callback(error, response ? _.assign({roomService: joinRoomResponse.roomService}, response) : response);
-                };
-
-                publishAndUpdateSelf.call(that, publishOptions, activeRoom, callbackWithRoomService);
-            });
-
-            return;
+            publishAndUpdateSelf.call(that, publishOptions, room, callbackWithRoomService);
         };
 
         if (activeRoomService) {
             var activeRoom = activeRoomService.getObservableActiveRoom().getValue();
 
-            joinAndPublish(activeRoom, null);
+            publishToActiveRoom(activeRoom, {roomService: activeRoomService});
 
             return;
         }
 
-        this.createRoom(options, function(error, createRoomResponse) {
+        var joinRoomAsPresenterOptions = _.assign({}, options, {
+            role: memberEnums.roles.audience.name,
+            roomId: roomId,
+            alias: alias
+        });
+
+        joinRoomWithOptions.call(this, joinRoomAsPresenterOptions, function joinRoomCallback(error, joinRoomWithOptionsResponse) {
             if (error) {
                 return callback(error);
             }
 
-            if (createRoomResponse.status !== 'ok' && createRoomResponse.status !== 'already-exists') {
-                return callback(null, createRoomResponse);
+            if (joinRoomWithOptionsResponse.status !== 'ok') {
+                return callback(null, joinRoomWithOptionsResponse);
             }
 
-            var room = createRoomResponse.room;
-
-            joinAndPublish(room, createRoomResponse);
+            var activeRoom = joinRoomWithOptionsResponse.roomService.getObservableActiveRoom().getValue();
+            publishToActiveRoom(activeRoom, joinRoomWithOptionsResponse);
+        }, function membersChangedCallback() {
+            return null;
         });
     };
 

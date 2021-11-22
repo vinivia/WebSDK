@@ -65,6 +65,18 @@ define([
                 }
             });
 
+            websocketStubber.stubResponse('chat.JoinRoom', {
+                status: 'ok',
+                members: [],
+                room: {
+                    roomId: 'ChannelId',
+                    alias: 'ChannelAlias',
+                    name: 'ChannelAlias',
+                    description: 'Channel',
+                    type: room.types.channel.name
+                }
+            });
+
             var adminApiProxyClient = new AdminApiProxyClient();
 
             adminApiProxyClient.setBackendUri(mockBackendUri);
