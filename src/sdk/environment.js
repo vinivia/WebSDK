@@ -15,17 +15,29 @@
  */
 
 define([
-    'phenix-web-lodash-light'
-], function(_) {
+    'phenix-web-lodash-light',
+    'phenix-web-detect-browser'
+], function(_, DetectBrowser) {
     'use strict';
 
     var environment = {};
+    var browser = new DetectBrowser(navigator.userAgent).detect();
 
     environment.getEnvironmentFromUrl = function(uri) {
         try {
-            var baseURL = new URL(uri);
+            var baseURL;
 
-            return baseURL.origin;
+            if (URL && browser.browser !== 'IE') {
+                baseURL = new URL(uri);
+            } else {
+                baseURL = getLocation(uri);
+            }
+
+            if (baseURL.port) {
+                return baseURL.protocol + '//' + baseURL.hostname + ':' + baseURL.port;
+            }
+
+            return baseURL.protocol + '//' + baseURL.hostname;
         } catch (e) {
             return '';
         }
@@ -49,7 +61,14 @@ define([
         }
 
         try {
-            var baseURL = new URL(baseUri);
+            var baseURL;
+
+            if (URL && browser.browser !== 'IE') {
+                baseURL = new URL(baseUri);
+            } else {
+                baseURL = getLocation(baseUri);
+            }
+
             var segments = baseURL.hostname.split('.');
 
             if (segments.length === 2 ||
@@ -80,11 +99,31 @@ define([
                 break;
             }
 
-            return baseURL.origin + '/telemetry';
+            if (baseURL.port) {
+                return baseURL.protocol + '//' + baseURL.hostname + ':' + baseURL.port + '/telemetry';
+            }
+
+            return baseURL.protocol + '//' + baseURL.hostname + '/telemetry';
         } catch (e) {
             return baseUri;
         }
     };
+
+    function getLocation(url) {
+        var match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/); // eslint-disable-line
+
+        return match && {
+            href: url,
+            protocol: match[1],
+            host: match[2],
+            hostname: match[3],
+            port: match[4],
+            pathname: match[5],
+            search: match[6],
+            hash: match[7],
+            origin: match[1] + '//' + match[2]
+        };
+    }
 
     return environment;
 });
