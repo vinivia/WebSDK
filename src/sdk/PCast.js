@@ -107,11 +107,36 @@ define([
         this._observableStatus = new observable.Observable('offline');
         this._networkRTT = new observable.Observable(0);
         this._observableSessionId = new observable.Observable(null);
-        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging, options.loggingLevel);
-        this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
+
+        if (!options.authToken) {
+            this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+            setupPcastLoggerAndMetrics.call(this, options);
+        } else {
+            var baseUri = this.parseUriFromToken.call(this, options.authToken);
+
+            if (baseUri) {
+                this._baseUri = baseUri;
+                setupPcastLoggerAndMetrics.call(this, options);
+
+                if (options.uri) {
+                    this._logger.warn('Trying to join room with both authToken and uri. Please only use authToken.');
+                }
+
+                this._logger.info('Base uri is set to [%s] from authToken [%s]', baseUri, options.authToken);
+            } else {
+                this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+                setupPcastLoggerAndMetrics.call(this, options);
+
+                if (options.uri) {
+                    this._logger.warn('Trying to join room with options uri. Please use authToken.');
+
+                    this._logger.info('Base uri is set to [%s] from options uri', options.uri);
+                }
+            }
+        }
+
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
         this._shakaLoader = options.shakaLoader;
         this._webPlayerLoader = options.webPlayerLoader;
@@ -129,20 +154,6 @@ define([
         this._featureDetector = new FeatureDetector(options.features);
         this._pendingIceCandidates = {};
         this._addIceCandidatesTimeoutScheduled = {};
-
-        if (options.authToken) {
-            if (options.uri) {
-                this._logger.warn('Trying to join room with both authToken and uri. Please only use authToken.');
-            }
-
-            var baseUri = this.parseUriFromToken.call(this, options.authToken);
-
-            if (baseUri) {
-                this._logger.info('Base uri is set to [%s] from authToken [%s]', baseUri, options.authToken);
-
-                this._baseUri = baseUri;
-            }
-        }
 
         var that = this;
         var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
@@ -651,6 +662,11 @@ define([
 
         return aliasMatch ? aliasMatch[1] : null;
     };
+
+    function setupPcastLoggerAndMetrics(options) {
+        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri, options.disableConsoleLogging, options.loggingLevel);
+        this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
+    }
 
     function parseToken(streamToken) {
         if (!_.startsWith(streamToken, 'DIGEST:')) {
