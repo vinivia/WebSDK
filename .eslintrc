@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Phenix Real Time Solutions, Inc. Confidential and Proprietary. All Rights Reserved.
+ * Copyright 2022 Phenix Real Time Solutions, Inc. Confidential and Proprietary. All Rights Reserved.
  */
 {
     "env": {
@@ -85,7 +85,7 @@
         // Rules specific to this module
         "indent": [2, 4],
         "notice/notice":["error", {
-            "mustMatch": "Copyright 2020 Phenix Real Time Solutions, Inc.",
+            "mustMatch": "Copyright 2022 Phenix Real Time Solutions, Inc.",
             "templateFile": "copyright.tmpl",
             "onNonMatchingHeader": "replace"
         }],
