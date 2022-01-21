@@ -366,6 +366,8 @@ define('app-setup', [
             'on-demand-lite': 'Lite for VOD',
             'time-shift-manifest': 'Time Shift',
             'low-latency': 'Low Latency for DASH+HLS',
+            'cdn-domain=cdn.phenixrts.com': 'Alternate CDN',
+            'cdn-domain=cdn-stg.phenixrts.com': 'Alternate CDN STG',
             'mpegts-streaming': 'MP2T for DASH+HLS',
             'webm-streaming': 'WebM for DASH+HLS',
             'token-auth': 'Token Auth',
@@ -453,6 +455,8 @@ define('app-setup', [
             'on-demand': 'On Demand',
             'rtmp': 'Rtmp',
             'time-shift': 'DVR',
+            'cdn-domain=cdn.phenixrts.com': 'Alternate CDN',
+            'cdn-domain=cdn-stg.phenixrts.com': 'Alternate CDN STG',
             'any-stream': 'Any Stream'
         };
     };
