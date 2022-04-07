@@ -49,7 +49,16 @@ const config = {
         })],
     devtool: 'source-map',
     performance: {hints: false},
-    optimization: {minimize: false}
+    optimization: {minimize: false},
+    resolve: {
+        alias: {
+            'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert/dist/phenix-web-assert.js'),
+            'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser/dist/phenix-web-detect-browser.js'),
+            'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable/dist/phenix-web-disposable.js'),
+            'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event/dist/phenix-web-event.js'),
+            'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light/dist/phenix-web-lodash-light.js')
+        }
+    }
 };
 const externalizePhenixImports = (context, request, callback) => {
     if (/^phenix-.*$/.test(request)){
@@ -106,6 +115,15 @@ const minifiedConfigs = [config, noEdgeConfig, externalizedConfig, noPublishConf
                     }
                 })
             ]
+        },
+        resolve: {
+            alias: {
+                'phenix-web-assert': path.resolve(__dirname, 'node_modules', 'phenix-web-assert/dist/phenix-web-assert.min.js'),
+                'phenix-web-detect-browser': path.resolve(__dirname, 'node_modules', 'phenix-web-detect-browser/dist/phenix-web-detect-browser.min.js'),
+                'phenix-web-disposable': path.resolve(__dirname, 'node_modules', 'phenix-web-disposable/dist/phenix-web-disposable.min.js'),
+                'phenix-web-event': path.resolve(__dirname, 'node_modules', 'phenix-web-event/dist/phenix-web-event.min.js'),
+                'phenix-web-lodash-light': path.resolve(__dirname, 'node_modules', 'phenix-web-lodash-light/dist/phenix-web-lodash-light.min.js')
+            }
         }
     });
 });
