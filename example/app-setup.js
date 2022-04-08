@@ -432,6 +432,7 @@ define('app-setup', [
             'transcoding={"playlistStartOffset":"-PT10M"}': '10m playlist offset',
             'monitor-tracks': 'Monitor Tracks',
             'kill-session-on-stream-failure': 'Kill Session on Failure',
+            'kill-session-on-stream-ended': 'Kill Session on Ended',
             'setup-deadline=PT5S': 'Setup in 5s or fail',
             'abandon-deadline=PT15S': 'Data in 15s or fail'
         };
