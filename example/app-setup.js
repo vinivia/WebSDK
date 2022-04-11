@@ -270,6 +270,17 @@ define('app-setup', [
         enableSteps();
     };
 
+    var resetToStep = function resetToStep(target) {
+        var steps = [];
+        enabledSteps.every(function(step) {
+            steps.push(step);
+
+            return step !== target;
+        });
+        enabledSteps = steps;
+        enableSteps();
+    };
+
     function createNotification(type, message) {
         $.notify(message, {
             type: type,
@@ -536,6 +547,7 @@ define('app-setup', [
         getUrlParameter: getUrlParameter,
         enableSteps: enableSteps,
         activateStep: activateStep,
+        resetToStep: resetToStep,
         createNotification: createNotification,
         setOnReset: function(callback) {
             onStepsReset = callback;

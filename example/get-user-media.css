@@ -66,10 +66,6 @@ input[name="option"] {
     border: 2px solid #892b60;
 }
 
-.hidden {
-    visibility: hidden;
-}
-
 .video-container, .video-controls {
     display: block;
     clear: both;

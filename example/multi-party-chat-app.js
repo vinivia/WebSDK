@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -42,7 +41,7 @@ requirejs.config({
         'phenix-web-assert': 'phenix-web-assert/dist/phenix-web-assert.min',
         'phenix-web-http': 'phenix-web-http/dist/phenix-web-http.min',
         'phenix-web-logging': 'phenix-web-logging/dist/phenix-web-logging.min',
-        'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable',
+        'phenix-web-observable': 'phenix-web-observable/dist/phenix-web-observable.min',
         'phenix-web-reconnecting-websocket': 'phenix-web-reconnecting-websocket/dist/phenix-web-reconnecting-websocket.min',
         'phenix-web-network-connection-monitor': 'phenix-web-network-connection-monitor/dist/phenix-web-network-connection-monitor.min',
         'phenix-web-proto': 'phenix-web-proto/dist/phenix-web-proto.min',
@@ -89,7 +88,7 @@ requirejs([
     var init = function init() {
         var roomExpress;
 
-        var createRoomExpress = function createPCastExpress() {
+        var createPCastExpress = function createPCastExpress() {
             var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
 
             adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
@@ -578,10 +577,10 @@ requirejs([
         stopScreenShareButton.onclick = stopPublishScreen;
 
         app.setOnReset(function() {
-            createRoomExpress();
+            createPCastExpress();
         });
 
-        createRoomExpress();
+        createPCastExpress();
     };
 
     function onMuteAudioClick() {

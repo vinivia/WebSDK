@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -67,22 +66,40 @@ requirejs([
 ], function($, _, bootstrapNotify, Fingerprint, sdk, Player, app) {
     var init = function init() {
         var primaryPlayer = null;
-        var secondaryPlayer = null;
-
-        if (app.getUrlParameter('streamId')) {
-            $('#stream').append($('<option></option>').attr('value', app.getUrlParameter('streamId')).attr('selected', 'selected').text(app.getUrlParameter('streamId')));
-            $('#originStreamId').val(app.getUrlParameter('streamId'));
-        }
-
         var adminBaseUri;
         var pcast;
 
         var createPCast = function createPCast() {
+            window.onerror = function(e) {
+                pcast.getLogger().error('Window Error', e);
+            };
+
             if (pcast) {
                 pcast.stop();
             }
 
             var uri = app.getUri();
+            var pcastOptions = {
+                uri: uri,
+                shakaLoader: function(callback) {
+                    if (!app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['shaka-player'], function(shaka) {
+                        callback(shaka);
+                    });
+                },
+                webPlayerLoader: function(callback) {
+                    if (app.getUrlParameter('shaka')) {
+                        return callback(null);
+                    }
+
+                    requirejs(['phenix-web-player'], function(webPlayer) {
+                        callback(webPlayer);
+                    });
+                }
+            };
 
             adminBaseUri = app.getBaseUri();
 
@@ -92,28 +109,8 @@ requirejs([
                 });
                 var murmur = Fingerprint.x64hash128(values.join(''), 31);
 
-                pcast = new sdk.lowLevel.PCast({
-                    uri: uri,
-                    deviceId: murmur,
-                    shakaLoader: function(callback) {
-                        if (!app.getUrlParameter('shaka')) {
-                            return callback(null);
-                        }
-
-                        requirejs(['shaka-player'], function(shaka) {
-                            callback(shaka);
-                        });
-                    },
-                    webPlayerLoader: function(callback) {
-                        if (app.getUrlParameter('shaka')) {
-                            return callback(null);
-                        }
-
-                        requirejs(['phenix-web-player'], function(webPlayer) {
-                            callback(webPlayer);
-                        });
-                    }
-                });
+                pcastOptions.deviceId = murmur;
+                pcast = new sdk.lowLevel.PCast(pcastOptions);
 
                 if (app.getUrlParameter('debug') === 'true') {
                     app.addDebugAppender(pcast);
@@ -123,6 +120,20 @@ requirejs([
                 app.setLoggerEnvironment(pcast);
                 app.setLoggerVersion(pcast);
             });
+        };
+
+        var getErrorReason = function(jqXHR, textStatus, errorThrown) {
+            // We can not catch browser network errors from JS land
+            // but we can notify where a user can find needed information
+            if (jqXHR.readyState !== 4) {
+                return 'A request was not sent. Check Dev Console for more details';
+            }
+
+            if (_.has(jqXHR, ['responseJSON', 'status'])) {
+                return jqXHR.responseJSON.status;
+            }
+
+            return jqXHR.status + ' ' + (errorThrown || textStatus);
         };
 
         var createAuthToken = function createAuthToken() {
@@ -141,16 +152,19 @@ requirejs([
                     app.activateStep('step-3');
                 }, 1500);
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Auth</strong>',
-                    message: 'Failed to create authentication token (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to create authentication token (' + reason + ')'
                 });
             });
         };
 
         var start = function start() {
             pcast.start($('#authToken').val(), function authenticateCallback(pcast, status, sessionId) {
+                $('#start').addClass('disabled');
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
             }, function onlineCallback() {
@@ -173,9 +187,12 @@ requirejs([
         };
 
         var stop = function stop() {
+            stopPublisher();
             pcast.stop();
             $('.sessionId').val('');
+            $('#start').removeClass('disabled');
             $('#stop').addClass('disabled');
+            app.resetToStep('step-1');
         };
 
         var publisher;
@@ -230,6 +247,7 @@ requirejs([
                 stopPublisher();
 
                 publisher = phenixPublisher;
+                $('#publish').addClass('disabled');
                 $('#stopPublisher').removeClass('disabled');
 
                 publisher.setDataQualityChangedCallback(function(publisher, status, reason) {
@@ -248,18 +266,9 @@ requirejs([
                     });
                 });
 
-                app.createNotification('success', {
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Publish</strong>',
-                    message: 'Started publishing stream "' + publisher.getStreamId() + '"'
-                });
-
-                $('.streamIdForPublishing').val(publisher.getStreamId());
-                $('#originStreamId').val(publisher.getStreamId());
-                app.activateStep('step-8');
                 setTimeout(function() {
-                    app.activateStep('step-9');
-                }, 1500);
+                    listStreams(publisher.getStreamId());
+                }, 500);
             };
 
             var options = {connectOptions: sourceOptions};
@@ -268,24 +277,21 @@ requirejs([
         };
 
         var stopPublisher = function() {
+            stopSubscriber();
+
             if (publisher) {
                 publisher.stop();
                 publisher = null;
-                $('#stopPublisher').addClass('disabled');
                 $('.streamIdForPublishing').val('');
+                $('#originStreamId').val('');
+                app.resetToStep('step-7');
             }
+
+            $('#publish').removeClass('disabled');
+            $('#stopPublisher').addClass('disabled');
         };
 
-        var onStreamSelected = function onStreamSelected() {
-            var streamId = $('#stream option:selected').text();
-
-            if (streamId) {
-                $('#originStreamId').val(streamId);
-                app.activateStep('step-6');
-            }
-        };
-
-        var listStreams = function listStreams() {
+        var listStreams = function listStreams(streamId) {
             var applicationId = $('#applicationId').val();
             var secret = $('#secret').val();
 
@@ -307,22 +313,51 @@ requirejs([
                 method: 'PUT',
                 data: JSON.stringify(data)
             }).done(function(result) {
-                $('#stream').find('option').remove().end();
+                // First streamId is "ingest", wait for "publishing" streamId before moving to step-8
 
-                if (result.streams.length > 0) {
-                    $('#stream').append($('<option></option>').attr('value', '').text('Please select a stream'));
-
-                    _.forEach(result.streams, function(stream) {
-                        $('#stream').append($('<option></option>').attr('value', stream.streamId).text(stream.streamId));
+                if (result.streams.length < 0) {
+                    app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publish</strong>',
+                        message: 'No stream available...'
                     });
-                } else {
-                    $('#stream').append($('<option></option>').attr('value', '').text('No stream available - Please publish a stream'));
+
+                    return;
                 }
+
+                if (result.streams.length < 2) {
+                    setTimeout(function() {
+                        listStreams(streamId);
+                    }, 500);
+
+                    return;
+                }
+
+                _.forEach(result.streams, function(stream) {
+                    if (stream.streamId !== streamId) {
+                        app.createNotification('success', {
+                            icon: 'glyphicon glyphicon-film',
+                            title: '<strong>Publish</strong>',
+                            message: 'Started publishing stream "' + stream.streamId + '"'
+                        });
+
+                        $('.streamIdForPublishing').val(stream.streamId);
+                        $('#originStreamId').val(stream.streamId);
+                        app.activateStep('step-8');
+                        setTimeout(function() {
+                            app.activateStep('step-9');
+                        }, 1500);
+
+                        return;
+                    }
+                });
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Streams</strong>',
-                    message: 'Failed to list streams (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to list streams (' + reason + ')'
                 });
             });
         };
@@ -351,10 +386,12 @@ requirejs([
                 });
                 callback(result.streamToken);
             }).fail(function(jqXHR, textStatus, errorThrown) {
+                var reason = getErrorReason(jqXHR, textStatus, errorThrown);
+
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Stream</strong>',
-                    message: 'Failed to create stream token (' + (errorThrown || jqXHR.status) + ')'
+                    message: 'Failed to create stream token (' + reason + ')'
                 });
             });
         };
@@ -463,16 +500,6 @@ requirejs([
 
                 primaryPlayer.start(primaryMediaStream);
 
-                if (mediaStream.getStream() && mediaStream.getStream().getTracks().length > 2) {
-                    var secondaryMediaStream = mediaStream.select(function(track, index) {
-                        return track.kind === 'video' && index === 2;
-                    });
-
-                    secondaryPlayer = new Player('remoteVideoSecondary');
-
-                    secondaryPlayer.start(secondaryMediaStream);
-                }
-
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Stream</strong>',
@@ -480,6 +507,7 @@ requirejs([
                 });
 
                 subscriberMediaStream = mediaStream;
+                $('#subscribe').addClass('disabled');
                 $('#stopSubscriber').removeClass('disabled');
             });
         };
@@ -488,16 +516,15 @@ requirejs([
             if (subscriberMediaStream) {
                 subscriberMediaStream.stop(reason);
                 subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
             }
 
             if (primaryPlayer) {
                 primaryPlayer.stop();
+                primaryPlayer = null;
             }
 
-            if (secondaryPlayer) {
-                secondaryPlayer.stop();
-            }
+            $('#subscribe').removeClass('disabled');
+            $('#stopSubscriber').addClass('disabled');
         };
 
         var monitorStream = function monitorStream(stream, reason) {
@@ -523,18 +550,20 @@ requirejs([
             }
         };
 
+        // ----------------------------------------
+
         app.setOnReset(function() {
             createPCast();
             app.setLoggerEnvironment(pcast);
-            listStreams();
+            stopPublisher();
         });
 
         $('#applicationId').change(function() {
-            listStreams();
+            stopPublisher();
             app.setLoggerUserId(pcast);
         });
 
-        $('#secret').change(listStreams);
+        $('#secret').change(stopPublisher);
         $('#createAuthToken').click(createAuthToken);
 
         $('#start').click(start);
@@ -543,11 +572,8 @@ requirejs([
         $('#createStreamTokenForPublishing').click(createStreamTokenForPublishing);
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);
-        $('#stream').change(onStreamSelected);
-        $('#stream-refresh').click(listStreams);
 
         $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
-
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 

@@ -165,7 +165,7 @@ requirejs([
                 pcastOptions.deviceId = murmur;
                 pcast = new sdk.lowLevel.PCast(pcastOptions);
 
-                if (app.getUrlParameter('debug', 'false') !== 'false') {
+                if (app.getUrlParameter('debug') === 'true') {
                     app.addDebugAppender(pcast);
                 }
 
@@ -233,6 +233,7 @@ requirejs([
 
         var start = function start() {
             pcast.start($('#authToken').val(), function authenticateCallback(pcast, status, sessionId) {
+                $('#start').addClass('disabled');
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
             }, function onlineCallback() {
@@ -244,6 +245,10 @@ requirejs([
                 app.activateStep('step-4');
                 setTimeout(function() {
                     app.activateStep('step-5');
+
+                    if ($('#getUserMedia').hasClass('disabled')) {
+                        app.activateStep('step-5-2');
+                    }
                 }, 1500);
             }, function offlineCallback() {
                 app.createNotification('warning', {
@@ -255,9 +260,12 @@ requirejs([
         };
 
         var stop = function stop() {
+            stopPublisher();
             pcast.stop();
             $('.sessionId').val('');
+            $('#start').removeClass('disabled');
             $('#stop').addClass('disabled');
+            app.resetToStep('step-1');
         };
 
         var getUserMedia = function getUserMedia() {
@@ -283,6 +291,7 @@ requirejs([
                 stopUserMedia();
 
                 userMediaStream = response.userMedia;
+                $('#getUserMedia').addClass('disabled');
                 $('#stopUserMedia').removeClass('disabled');
 
                 $('#userMediaInfo').html('User Media Stream is running with ' + response.userMedia.getTracks().length + ' tracks');
@@ -356,6 +365,8 @@ requirejs([
         };
 
         var stopUserMedia = function() {
+            stopPublisher();
+
             if (userMediaStream) {
                 var tracks = userMediaStream.getTracks();
 
@@ -364,17 +375,21 @@ requirejs([
                 }
 
                 userMediaStream = null;
-
-                $('#stopUserMedia').addClass('disabled');
+                app.resetToStep('step-5');
             }
 
             if (localPrimaryPlayer) {
                 localPrimaryPlayer.stop();
+                localPrimaryPlayer = null;
             }
 
             if (localSecondaryPlayer) {
                 localSecondaryPlayer.stop();
+                localSecondaryPlayer = null;
             }
+
+            $('#getUserMedia').removeClass('disabled');
+            $('#stopUserMedia').addClass('disabled');
         };
 
         var publisher;
@@ -418,6 +433,7 @@ requirejs([
                 stopPublisher();
 
                 publisher = phenixPublisher;
+                $('#publish').addClass('disabled');
                 $('#stopPublisher').removeClass('disabled');
 
                 publisher.setDataQualityChangedCallback(function(publisher, status, reason) {
@@ -469,12 +485,17 @@ requirejs([
         };
 
         var stopPublisher = function() {
+            stopSubscriber();
+
             if (publisher) {
                 publisher.stop();
                 publisher = null;
-                $('#stopPublisher').addClass('disabled');
                 $('.streamIdForPublishing').val('');
+                app.resetToStep('step-5-2');
             }
+
+            $('#publish').removeClass('disabled');
+            $('#stopPublisher').addClass('disabled');
         };
 
         var onStreamSelected = function onStreamSelected() {
@@ -712,6 +733,7 @@ requirejs([
                 });
 
                 subscriberMediaStream = mediaStream;
+                $('#subscribe').addClass('disabled');
                 $('#stopSubscriber').removeClass('disabled');
             }, subscriberOptions);
         };
@@ -720,16 +742,20 @@ requirejs([
             if (subscriberMediaStream) {
                 subscriberMediaStream.stop(reason);
                 subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
             }
 
             if (primaryPlayer) {
                 primaryPlayer.stop();
+                primaryPlayer = null;
             }
 
             if (secondaryPlayer) {
                 secondaryPlayer.stop();
+                secondaryPlayer = null;
             }
+
+            $('#subscribe').removeClass('disabled');
+            $('#stopSubscriber').addClass('disabled');
         };
 
         var monitorStream = function monitorStream(stream, reason) {
@@ -755,6 +781,8 @@ requirejs([
             }
         };
 
+        // ----------------------------------------
+
         app.setOnReset(function() {
             createPCast();
             app.setLoggerEnvironment(pcast);
@@ -774,14 +802,15 @@ requirejs([
 
         $('#getUserMedia').click(getUserMedia);
         $('#stopUserMedia').click(stopUserMedia);
+
         $('#createStreamTokenForPublishing').click(createStreamTokenForPublishing);
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);
+
         $('#stream').change(onStreamSelected);
         $('#stream-refresh').click(listStreams);
 
         $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
-
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 

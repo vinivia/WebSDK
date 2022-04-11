@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -64,98 +63,116 @@ requirejs([
     'app-setup'
 ], function($, _, sdk, Player, app) {
     var init = function init() {
-        var pcastExpress;
-
-        var createPCastExpress = function createPCastExpress() {
-            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
-            var expressOptions = {
-                adminApiProxyClient: adminApiProxyClient,
-                uri: app.getUri(),
-                shakaLoader: function(callback) {
-                    if (!app.getUrlParameter('shaka')) {
-                        return callback(null);
-                    }
-
-                    requirejs(['shaka-player'], function(shaka) {
-                        callback(shaka);
-                    });
-                },
-                webPlayerLoader: function(callback) {
-                    if (app.getUrlParameter('shaka')) {
-                        return callback(null);
-                    }
-
-                    requirejs(['phenix-web-player'], function(webPlayer) {
-                        callback(webPlayer);
-                    });
-                },
-                rtmp: {swfSrc: app.getSwfFilePath()}
-            };
-
-            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
-            adminApiProxyClient.setAuthenticationData(app.getAuthData());
-
-            if (app.getUrlParameter('features')) {
-                expressOptions.features = app.getUrlParameter('features').split(',');
-            }
-
-            pcastExpress = new sdk.express.PCastExpress(expressOptions);
-
-            if (app.getUrlParameter('debug') === 'true') {
-                app.addDebugAppender(pcastExpress.getPCast());
-            }
-        };
-
+        var channelExpress = null;
+        var channelService = null;
         var subscriberMediaStream = null;
         var subscriberPlayer = null;
 
+        var createChannelExpress = function createChannelExpress() {
+            if (!$('#viewingToken').val()) {
+                stopSubscriber();
+
+                return;
+            }
+
+            try {
+                channelExpress = new sdk.express.ChannelExpress({
+                    authToken: $('#viewingToken').val(),
+                    shakaLoader: function(callback) {
+                        if (!app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['shaka-player'], function(shaka) {
+                            callback(shaka);
+                        });
+                    },
+                    webPlayerLoader: function(callback) {
+                        if (app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['phenix-web-player'], function(webPlayer) {
+                            callback(webPlayer);
+                        });
+                    },
+                    onError: function() {
+                        app.createNotification('danger', {
+                            icon: 'glyphicon glyphicon-remove-sign',
+                            title: '<strong>Unauthorized</strong>',
+                            message: 'Failed to authenticate'
+                        });
+                        $('#subscribe').addClass('disabled');
+                    }
+                });
+                $('#subscribe').removeClass('disabled');
+            } catch (e) {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse authToken'
+                });
+                $('#subscribe').addClass('disabled');
+            }
+        };
+
         var subscribe = function subscribe() {
-            var applicationId = $('#applicationId').val();
-            var secret = $('#secret').val();
-            var streamId = $('.streamIdForPublishing').val();
-            var remoteVideoEl = $('#remoteVideo')[0];
-            var capabilities = [];
+            var subscribeOptions = {
+                streamToken: $('#viewingToken').val(),
+                videoElement: $('#remoteVideo')[0]
+            };
 
-            if (!applicationId) {
-                return app.createNotification('danger', {
+            try {
+                channelExpress.joinChannel(subscribeOptions, joinChannelCallback, subscribeCallback);
+            } catch (e) {
+                app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>ApplicationId Required</strong>',
-                    message: 'ApplicationId must be provided'
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse viewingToken'
                 });
             }
 
-            if (!secret) {
-                return app.createNotification('danger', {
-                    icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>Secret Required</strong>',
-                    message: 'Secret must be provided'
+            function joinChannelCallback(error, response) {
+                if (error) {
+                    $('#subscribe').removeClass('disabled');
+
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Join</strong>',
+                        message: 'Failed to join channel (' + error.message + ')'
+                    });
+                }
+
+                if (response.status === 'room-not-found') {
+                    $('#subscribe').removeClass('disabled');
+
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Join</strong>',
+                        message: 'Channel not found'
+                    });
+                }
+
+                if (response.status !== 'ok') {
+                    $('#subscribe').removeClass('disabled');
+
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Join</strong>',
+                        message: 'Failed to join channel (' + response.status + ')'
+                    });
+                }
+
+                channelService = response.channelService;
+
+                app.createNotification('success', {
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Join</strong>',
+                    message: 'Joined channel'
                 });
             }
 
-            if (!streamId) {
-                return app.createNotification('danger', {
-                    icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>StreamId Required</strong>',
-                    message: 'StreamId must be provided'
-                });
-            }
-
-            $('#subscriber-mode button.clicked').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            $('#subscriber-drm-capabilities button.clicked').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            createPCastExpress();
-
-            pcastExpress.subscribe({
-                streamId: streamId,
-                capabilities: capabilities,
-                videoElement: remoteVideoEl,
-                monitor: {callback: onMonitorEvent}
-            }, function subscribeCallback(error, response) {
+            function subscribeCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -172,6 +189,28 @@ requirejs([
                     });
                 }
 
+                if (response.status === 'ended') {
+                    stopSubscriber();
+                    createChannelExpress();
+
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscribing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
+                if (response.status === 'no-stream-playing') {
+                    stopSubscriber();
+                    createChannelExpress();
+
+                    return app.createNotification('info', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscribing to Channel</strong>',
+                        message: 'No Stream Playing'
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -180,9 +219,17 @@ requirejs([
                     });
                 }
 
-                if (subscriberPlayer) {
-                    subscriberPlayer.stop();
-                }
+                subscriberMediaStream = response.mediaStream;
+                subscriberPlayer = new Player('remoteVideo');
+                subscriberPlayer.start(subscriberMediaStream, response.renderer);
+
+                subscriberMediaStream.addBitRateThreshold([0, .2, .4, .6, .8], function(event) {
+                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscriber BitRate</strong>',
+                        message: event.message
+                    });
+                });
 
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
@@ -190,55 +237,65 @@ requirejs([
                     message: 'Starting stream'
                 });
 
-                subscriberMediaStream = response.mediaStream;
-                subscriberPlayer = new Player('remoteVideo');
-
-                subscriberPlayer.start(subscriberMediaStream, response.renderer);
-
+                $('#subscribe').addClass('disabled');
                 $('#stopSubscriber').removeClass('disabled');
-            });
+            }
         };
 
-        var stopSubscriber = function(reason) {
-            if (subscriberMediaStream) {
-                subscriberMediaStream.stop(reason);
-                subscriberMediaStream = null;
-                $('#stopSubscriber').addClass('disabled');
-            }
+        var stopSubscriber = function stopSubscriber(reason) {
+            $('#subscribe').addClass('disabled');
+            $('#stopSubscriber').addClass('disabled');
 
             if (subscriberPlayer) {
                 subscriberPlayer.stop();
+                subscriberPlayer = null;
+            }
+
+            if (subscriberMediaStream) {
+                subscriberMediaStream.stop(reason);
+                subscriberMediaStream = null;
+            }
+
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    channelService = null;
+                });
+            }
+
+            if (channelExpress) {
+                channelExpress.dispose();
+                channelExpress = null;
             }
         };
 
-        function onMonitorEvent(error, response) {
-            if (error) {
-                return app.createNotification('danger', {
-                    icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>Monitor Event</strong>',
-                    message: 'Monitor Event triggered for (' + error.message + ')'
-                });
-            }
-
-            if (response.status !== 'ok') {
-                app.createNotification('danger', {
-                    icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>Monitor Event</strong>',
-                    message: 'Monitor Event triggered (' + response.status + ')'
-                });
-            }
-
-            if (response.retry) {
-                response.retry();
-            }
-        }
+        // ----------------------------------------
 
         app.setOnReset(function() {
-            createPCastExpress();
+            createChannelExpress();
         });
 
-        $('#subscribe').click(subscribe);
-        $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
+        $('#viewingToken').change(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
+
+        $('#subscribe').click(function() {
+            $('#subscribe').addClass('disabled');
+            subscribe();
+        });
+
+        $('#stopSubscriber').click(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
     };
 
     $(function() {

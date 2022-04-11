@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -63,15 +62,21 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, Player, app) {
-    var channelExpress;
-    var channelPublisher;
-    var publisherPlayer;
-    var channelService;
-
     var init = function init() {
-        var createChannelExpress = function createPCastExpress() {
-            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+        var adminApiProxyClient = null;
+        var channelExpress = null;
+        var channelService = null;
+        var publisher = null;
+        var publisherPlayer = null;
 
+        var createChannelExpress = function createChannelExpress() {
+            if (!$('#applicationId').val() || !$('#secret').val() || !$('#alias').val()) {
+                stopPublisher();
+
+                return;
+            }
+
+            adminApiProxyClient = new sdk.net.AdminApiProxyClient();
             adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
             adminApiProxyClient.setAuthenticationData(app.getAuthData());
 
@@ -98,30 +103,46 @@ requirejs([
                 },
                 rtmp: {swfSrc: app.getSwfFilePath()}
             });
-
-            if (app.getUrlParameter('debug') === 'true') {
-                app.addDebugAppender(channelExpress.getPCastExpress().getPCast());
-            }
+            $('#publish').removeClass('disabled');
         };
 
-        var publishLocalMediaToChannel = function publishToChannel() {
+        var getConstraints = function getConstraints() {
+            var source = $('#gum-source option:selected').val();
+            var deviceOptions = {
+                screen: _.includes(source.toLowerCase(), 'screen'),
+                audio: _.includes(source.toLowerCase(), 'microphone'),
+                video: _.includes(source.toLowerCase(), 'camera'),
+                screenAudio: _.includes(source.toLowerCase(), 'screenaudio')
+            };
+
+            if (_.includes(source.toLowerCase(), 'application')) {
+                deviceOptions.screen = {mediaSource: 'application'};
+            }
+
+            if (_.includes(source.toLowerCase(), 'desktop')) {
+                deviceOptions.screen = {mediaSource: 'screen'};
+            }
+
+            if (source === 'user' || source === 'environment') {
+                deviceOptions = {video: {facingMode: source}};
+            }
+
+            return deviceOptions;
+        };
+
+        var publish = function publish() {
             var channelAlias = $('#alias').val();
-            var channelVideoEl = $('#channelVideo')[0];
             var capabilities = [];
-            var streamSelectionStrategy = app.getUrlParameter('strategy');
-            var streamToken = app.getUrlParameter('edgeToken');
+            var audioQuality = $('#publish-audio-quality button.clicked').val();
+            var videoQuality = $('#publish-video-quality button.clicked').val();
 
             $('#publish-capabilities button.clicked').each(function() {
                 capabilities.push($(this).val());
             });
 
-            var audioQuality = $('#publish-audio-quality button.clicked').val();
-
             if (audioQuality) {
                 capabilities.push(audioQuality);
             }
-
-            var videoQuality = $('#publish-video-quality button.clicked').val();
 
             if (videoQuality) {
                 capabilities.push(videoQuality);
@@ -133,23 +154,17 @@ requirejs([
                     alias: channelAlias,
                     name: channelAlias
                 },
-                videoElement: channelVideoEl,
-                viewerStreamSelectionStrategy: streamSelectionStrategy,
+                capabilities: capabilities,
+                videoElement: $('#localVideo')[0],
                 screenName: 'primary' + _.random(1000000)
             };
-
-            if (streamToken) {
-                publishOptions.streamToken = streamToken;
-            } else {
-                publishOptions.capabilities = capabilities;
-            }
 
             channelExpress.publishToChannel(publishOptions, function publishToChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
                         title: '<strong>Publish</strong>',
-                        message: 'Unable to join Channel (' + error.message + ')'
+                        message: 'Unable to publish to channel (' + error.message + ')'
                     });
                 }
 
@@ -177,21 +192,12 @@ requirejs([
                     });
                 }
 
-                if (publisherPlayer) {
-                    publisherPlayer.stop();
-                }
-
-                app.createNotification('success', {
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Publishing to Channel</strong>',
-                    message: 'Successfully published to Channel "' + channelAlias + '"'
-                });
-
                 channelService = response.channelService;
-                channelPublisher = response.publisher;
-                publisherPlayer = new Player('channelVideo');
+                publisher = response.publisher;
+                publisherPlayer = new Player('localVideo');
+                publisherPlayer.start(publisher);
 
-                channelPublisher.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
+                publisher.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
                     app.createNotification('success', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Bitrate change</strong>',
@@ -199,83 +205,86 @@ requirejs([
                     });
                 });
 
-                publisherPlayer.start(channelPublisher);
+                app.createNotification('success', {
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Publishing to Channel</strong>',
+                    message: 'Successfully published to Channel "' + channelAlias + '"'
+                });
 
                 $('#stopPublisher').removeClass('disabled');
             });
         };
 
+        var stopPublisher = function stopPublisher() {
+            $('#publish').addClass('disabled');
+            $('#stopPublisher').addClass('disabled');
+
+            if (publisherPlayer) {
+                publisherPlayer.stop();
+                publisherPlayer = null;
+            }
+
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    channelService = null;
+                });
+            }
+
+            if (publisher) {
+                publisher.stop();
+                publisher = null;
+            }
+
+            if (channelExpress) {
+                channelExpress.dispose();
+                channelExpress = null;
+            }
+
+            if (adminApiProxyClient) {
+                adminApiProxyClient.dispose();
+                adminApiProxyClient = null;
+            }
+        };
+
+        // ----------------------------------------
+
         app.setOnReset(function() {
             createChannelExpress();
         });
 
-        $('#publish').click(publishLocalMediaToChannel);
-        $('#stopPublisher').click(stopPublisher);
+        $('#applicationId').change(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
 
-        createChannelExpress();
+        $('#secret').change(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#alias').change(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#publish').click(function() {
+            $('#publish').addClass('disabled');
+            publish();
+        });
+
+        $('#stopPublisher').click(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
     };
-
-    function getConstraints() {
-        var source = $('#gum-source option:selected').val();
-        var deviceOptions = {
-            screen: _.includes(source.toLowerCase(), 'screen'),
-            audio: _.includes(source.toLowerCase(), 'microphone'),
-            video: _.includes(source.toLowerCase(), 'camera'),
-            screenAudio: _.includes(source.toLowerCase(), 'screenaudio')
-        };
-
-        if (_.includes(source.toLowerCase(), 'application')) {
-            deviceOptions.screen = {mediaSource: 'application'};
-        }
-
-        if (_.includes(source.toLowerCase(), 'desktop')) {
-            deviceOptions.screen = {mediaSource: 'screen'};
-        }
-
-        if (source === 'user' || source === 'environment') {
-            deviceOptions = {video: {facingMode: source}};
-        }
-
-        return deviceOptions;
-    }
-
-    var stopPublisher = function stopPublisher() {
-        if (channelPublisher) {
-            channelPublisher.stop();
-            channelPublisher = null;
-        }
-
-        if (publisherPlayer) {
-            publisherPlayer.stop();
-            publisherPlayer = null;
-        }
-
-        if (channelService) {
-            channelService.leaveChannel(function(error, response) {
-                if (error) {
-                    throw error;
-                }
-
-                if (response.status !== 'ok') {
-                    throw new Error(response.status);
-                }
-
-                channelService = null;
-            });
-        }
-
-        $('#stopPublisher').addClass('disabled');
-    };
-
-    $('#applicationId').change(function() {
-        stopPublisher();
-        init();
-    });
-
-    $('#secret').change(function() {
-        stopPublisher();
-        init();
-    });
 
     $(function() {
         app.init();

@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -63,25 +62,25 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, Player, app) {
-    var channelExpress;
-    var channelSubscriber;
-    var channelPlayer;
-    var leaveChannelCallback;
-
     var init = function init() {
-        if (app.getUrlParameter('m') || app.getUrlParameter('mode')) {
-            var subscriberMode = app.getModeFromAbbreviation(app.getUrlParameter('m') || app.getUrlParameter('mode'));
+        var adminApiProxyClient = null;
+        var channelExpress = null;
+        var channelService = null;
+        var subscriberMediaStream = null;
+        var subscriberPlayer = null;
 
-            $('#subscriber-mode').val(subscriberMode);
-        }
+        var createChannelExpress = function createChannelExpress() {
+            if (!$('#applicationId').val() || !$('#secret').val() || !$('#alias').val()) {
+                stopSubscriber();
 
-        var createChannelExpress = function createPCastExpress() {
-            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+                return;
+            }
 
+            adminApiProxyClient = new sdk.net.AdminApiProxyClient();
             adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
             adminApiProxyClient.setAuthenticationData(app.getAuthData());
 
-            var expressOptions = {
+            channelExpress = new sdk.express.ChannelExpress({
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shakaLoader: function(callback) {
@@ -101,31 +100,9 @@ requirejs([
                     requirejs(['phenix-web-player'], function(webPlayer) {
                         callback(webPlayer);
                     });
-                },
-                rtmp: {swfSrc: app.getSwfFilePath()},
-                treatBackgroundAsOffline: true
-            };
-
-            if (app.getUrlParameter('ssmr')) {
-                expressOptions.streamingSourceMapping = {
-                    patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),
-                    replacement: app.getUrlParameter('ssmr')
-                };
-            }
-
-            if (app.getUrlParameter('features')) {
-                expressOptions.features = app.getUrlParameter('features').split(',');
-            }
-
-            if (app.getUrlParameter('treatBackgroundAsOffline')) {
-                expressOptions.treatBackgroundAsOffline = app.getUrlParameter('treatBackgroundAsOffline') !== 'false';
-            }
-
-            channelExpress = new sdk.express.ChannelExpress(expressOptions);
-
-            if (app.getUrlParameter('debug') === 'true') {
-                app.addDebugAppender(channelExpress.getPCastExpress().getPCast());
-            }
+                }
+            });
+            $('#subscribe').removeClass('disabled');
 
             app.setLoggerUserId(channelExpress.getPCastExpress().getPCast());
             app.setLoggerEnvironment(channelExpress.getPCastExpress().getPCast());
@@ -134,34 +111,13 @@ requirejs([
             channelExpress.getPCastExpress().getPCast().getLogger().info('BROWSER', sdk.utils.rtc.browser, sdk.utils.rtc.browserVersion);
         };
 
-        var joinChannel = function joinChannel() {
+        var subscribe = function subscribe() {
             var channelAlias = $('#alias').val();
-            var channelVideoEl = $('#channelVideo')[0];
-            var streamSelectionStrategy = app.getUrlParameter('strategy');
             var subscriberOptions = {};
-            var streamToken = app.getUrlParameter('edgeToken');
-
-            if (!channelAlias) {
-                return;
-            }
-
-            if (app.getUrlParameter('targetLatency')) {
-                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
-            }
-
-            if (app.getUrlParameter('targetDuration')) {
-                subscriberOptions.hlsTargetDuration = parseInt(app.getUrlParameter('targetDuration'), 10);
-            }
-
-            if (app.getUrlParameter('preferNative')) {
-                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
-            }
 
             channelExpress.joinChannel({
                 alias: channelAlias,
-                videoElement: channelVideoEl,
-                streamToken: streamToken,
-                streamSelectionStrategy: streamSelectionStrategy,
+                videoElement: $('#remoteVideo')[0],
                 subscriberOptions: subscriberOptions
             }, function joinChannelCallback(error, response) {
                 if (error) {
@@ -194,9 +150,9 @@ requirejs([
                     message: 'Successfully joined Channel "' + channelAlias + '"'
                 });
 
-                leaveChannelCallback = _.bind(response.channelService.stop, response.channelService);
+                channelService = response.channelService;
 
-                $('#leaveChannel').removeClass('disabled');
+                $('#stopSubscriber').removeClass('disabled');
             }, function subscriberCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
@@ -214,6 +170,28 @@ requirejs([
                     });
                 }
 
+                if (response.status === 'ended') {
+                    stopSubscriber();
+                    createChannelExpress();
+
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscribing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
+                if (response.status === 'no-stream-playing') {
+                    stopSubscriber();
+                    createChannelExpress();
+
+                    return app.createNotification('info', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscribing to Channel</strong>',
+                        message: 'No Stream Playing'
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -222,19 +200,14 @@ requirejs([
                     });
                 }
 
-                if (channelPlayer) {
-                    channelPlayer.stop();
-                }
-
-                channelSubscriber = response.mediaStream;
-                channelPlayer = new Player('channelVideo', {
+                subscriberMediaStream = response.mediaStream;
+                subscriberPlayer = new Player('remoteVideo', {
                     minWidth: 320,
                     minHeight: 240
                 });
+                subscriberPlayer.start(subscriberMediaStream, response.renderer);
 
-                channelPlayer.start(channelSubscriber, response.renderer);
-
-                channelSubscriber.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
+                subscriberMediaStream.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
                     app.createNotification('success', {
                         icon: 'glyphicon glyphicon-film',
                         title: '<strong>Bitrate change</strong>',
@@ -249,7 +222,7 @@ requirejs([
                         title: '<strong>User Action Required</strong>',
                         message: message
                     });
-                    channelPlayer.reevaluteMuteState();
+                    subscriberPlayer.reevaluteMuteState();
                 });
 
                 app.createNotification('success', {
@@ -257,46 +230,82 @@ requirejs([
                     title: '<strong>Viewing Channel</strong>',
                     message: 'Stream changed (' + response.reason + ')'
                 });
+
+                $('#subscribe').addClass('disabled');
+                $('#stopSubscriber').removeClass('disabled');
             });
         };
+
+        var stopSubscriber = function stopSubscriber(reason) {
+            $('#subscribe').addClass('disabled');
+            $('#stopSubscriber').addClass('disabled');
+
+            if (subscriberPlayer) {
+                subscriberPlayer.stop();
+                subscriberPlayer = null;
+            }
+
+            if (subscriberMediaStream) {
+                subscriberMediaStream.stop(reason);
+                subscriberMediaStream = null;
+            }
+
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    channelService = null;
+                });
+            }
+
+            if (channelExpress) {
+                channelExpress.dispose();
+                channelExpress = null;
+            }
+
+            if (adminApiProxyClient) {
+                adminApiProxyClient.dispose();
+                adminApiProxyClient = null;
+            }
+        };
+
+        // ----------------------------------------
 
         app.setOnReset(function() {
             createChannelExpress();
         });
 
-        $('#joinChannel').click(joinChannel);
-        $('#leaveChannel').click(leaveChannel);
+        $('#applicationId').change(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
 
-        createChannelExpress();
-        joinChannel();
+        $('#secret').change(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
+
+        $('#alias').change(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
+
+        $('#subscribe').click(function() {
+            $('#subscribe').addClass('disabled');
+            subscribe();
+        });
+
+        $('#stopSubscriber').click(function() {
+            stopSubscriber('stopped-by-user');
+            createChannelExpress();
+        });
     };
-
-    var leaveChannel = function leaveChannel() {
-        if (channelSubscriber) {
-            channelSubscriber.stop();
-            channelSubscriber = null;
-        }
-
-        if (channelPlayer) {
-            channelPlayer.stop();
-        }
-
-        if (leaveChannelCallback) {
-            leaveChannelCallback();
-            leaveChannelCallback = null;
-            $('#leaveChannel').addClass('disabled');
-        }
-    };
-
-    $('#applicationId').change(function() {
-        leaveChannel();
-        init();
-    });
-
-    $('#secret').change(function() {
-        leaveChannel();
-        init();
-    });
 
     $(function() {
         app.init();

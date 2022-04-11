@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -63,292 +62,64 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, Player, app) {
-    var pcastExpress;
-    var publisher;
-    var publisherPlayer;
-    var subscriberMediaStream = null;
-    var subscriberPlayer = null;
-
     var init = function init() {
-        var createPCastExpress = function createPCastExpress() {
-            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
+        var channelExpress = null;
+        var channelService = null;
+        var publisher = null;
+        var publisherPlayer = null;
+        var subscriberMediaStream = null;
+        var subscriberPlayer = null;
 
-            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
-            adminApiProxyClient.setAuthenticationData(app.getAuthData());
+        var createChannelExpress = function createChannelExpress() {
+            if (!$('#authToken').val() || !$('#publishToken').val()) {
+                stopSubscriber();
+                stopPublisher();
 
-            var pcastOptions = {
-                adminApiProxyClient: adminApiProxyClient,
-                uri: app.getUri(),
-                shakaLoader: function(callback) {
-                    if (!app.getUrlParameter('shaka')) {
-                        return callback(null);
+                return;
+            }
+
+            try {
+                channelExpress = new sdk.express.ChannelExpress({
+                    authToken: $('#authToken').val(),
+                    shakaLoader: function(callback) {
+                        if (!app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['shaka-player'], function(shaka) {
+                            callback(shaka);
+                        });
+                    },
+                    webPlayerLoader: function(callback) {
+                        if (app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['phenix-web-player'], function(webPlayer) {
+                            callback(webPlayer);
+                        });
+                    },
+                    onError: function() {
+                        app.createNotification('danger', {
+                            icon: 'glyphicon glyphicon-remove-sign',
+                            title: '<strong>Unauthorized</strong>',
+                            message: 'Failed to authenticate'
+                        });
+                        $('#publish').addClass('disabled');
                     }
-
-                    requirejs(['shaka-player'], function(shaka) {
-                        callback(shaka);
-                    });
-                },
-                webPlayerLoader: function(callback) {
-                    if (app.getUrlParameter('shaka')) {
-                        return callback(null);
-                    }
-
-                    requirejs(['phenix-web-player'], function(webPlayer) {
-                        callback(webPlayer);
-                    });
-                },
-                authToken: 'dud',
-                rtmp: {swfSrc: app.getSwfFilePath()},
-                eagerlyCheckScreenSharingCapabilities: app.getUrlParameter('screenSharing') ? true : false
-            };
-
-            if (app.getUrlParameter('features')) {
-                pcastOptions.features = app.getUrlParameter('features').split(',');
-            }
-
-            if (app.getUrlParameter('ssmr')) {
-                pcastOptions.streamingSourceMapping = {
-                    patternToReplace: app.getUrlParameter('ssmp') || app.getDefaultReplaceUrl(),
-                    replacement: app.getUrlParameter('ssmr')
-                };
-            }
-
-            pcastExpress = new sdk.express.PCastExpress(pcastOptions);
-
-            if (app.getUrlParameter('debug') === 'true') {
-                app.addDebugAppender(pcastExpress.getPCast());
-            }
-        };
-
-        var publish = function publish() {
-            var localVideoEl = $('#localVideo')[0];
-            var capabilities = [];
-            var constraints = getConstraints();
-            var publishMethod = _.bind(pcastExpress.publish, pcastExpress);
-
-            $('#publish-capabilities button.clicked').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            var audioQuality = $('#publish-audio-quality button.clicked').val();
-
-            if (audioQuality) {
-                capabilities.push(audioQuality);
-            }
-
-            var videoQuality = $('#publish-video-quality button.clicked').val();
-
-            if (videoQuality) {
-                capabilities.push(videoQuality);
-            }
-
-            if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
-                publishMethod = _.bind(pcastExpress.publishScreen, pcastExpress);
-            }
-
-            publishMethod({
-                mediaConstraints: constraints,
-                onScreenShare: function(options) {
-                    app.createNotification('success', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Got Screen Share Constraints</strong>',
-                        message: 'With options (' + _.get(options, ['screen', 'mediaSource']) + '|' + _.get(options, ['screenAudio', 'mediaSource']) + ')'
-                    });
-
-                    return {
-                        frameRate: 30,
-                        resolution: 2160,
-                        aspectRatio: '16x9'
-                    };
-                },
-                capabilities: capabilities,
-                videoElement: localVideoEl,
-                monitor: {callback: onMonitorEvent},
-                streamToken: 'dud',
-                resolution: 720,
-                frameRate: 30,
-                onResolveMedia: function(options) {
-                    return app.createNotification('success', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Got User Media</strong>',
-                        message: 'With options (' + options.frameRate + '|' + options.aspectRatio + '|' + options.resolution + ')'
-                    });
-                }
-            }, function publishCallback(error, response) {
-                if (error) {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Publish</strong>',
-                        message: 'Failed to publish stream (' + error.messaage + ')'
-                    });
-                }
-
-                if (response.status === 'offline') {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Offline</strong>',
-                        message: 'Disconnected from PCast'
-                    });
-                }
-
-                if (response.status !== 'ok') {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Publish</strong>',
-                        message: 'Failed to publish stream (' + response.status + ')'
-                    });
-                }
-
-                if (publisherPlayer) {
-                    publisherPlayer.stop();
-                }
-
-                publisher = response.publisher;
-                publisherPlayer = new Player('localVideo');
-
-                publisherPlayer.start(publisher);
-
-                window.publisher = publisher;
-
-                publisher.addBitRateThreshold({levels: 5}, function(event) {
-                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>Publisher BitRate</strong>',
-                        message: event.message
-                    });
                 });
-
-                app.createNotification('success', {
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Publish</strong>',
-                    message: 'Started publishing stream "' + publisher.getStreamId() + '"'
-                });
-
-                $('#stopPublisher').removeClass('disabled');
-
-                $('.streamIdForPublishing').val(publisher.getStreamId());
-                $('#originStreamId').val(publisher.getStreamId());
-
-                app.activateStep('step-2');
-            });
-        };
-
-        var subscribe = function subscribe() {
-            var streamId = $('.streamIdForPublishing').val();
-            var remoteVideoEl = $('#remoteVideo')[0];
-            var capabilities = [];
-            var constraints = getConstraints();
-            var quality = $('#gum-quality option:selected').val();
-            var subscribeMethod = _.bind(pcastExpress.subscribe, pcastExpress);
-            var subscriberOptions = {};
-
-            if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
-                subscribeMethod = _.bind(pcastExpress.subscribeToScreen, pcastExpress);
-            }
-
-            $('#subscriber-mode button.clicked').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            $('#subscriber-drm-capabilities button.clicked').each(function() {
-                capabilities.push($(this).val());
-            });
-
-            if (app.getUrlParameter('preferNative')) {
-                subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
-            }
-
-            if (app.getUrlParameter('targetLatency')) {
-                subscriberOptions.targetLatency = parseFloat(app.getUrlParameter('targetLatency'));
-            }
-
-            subscribeMethod({
-                streamId: streamId,
-                capabilities: capabilities,
-                videoElement: remoteVideoEl,
-                monitor: {callback: onMonitorEvent},
-                streamToken: 'dud',
-                resolution: parseInt(quality, 10),
-                subscriberOptions: subscriberOptions
-            }, function subscribeCallback(error, response) {
-                if (error) {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Subscribe</strong>',
-                        message: 'Failed to subscribe to stream (' + error.message + ')'
-                    });
-                }
-
-                if (response.status === 'offline') {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Offline</strong>',
-                        message: 'Disconnected from PCast'
-                    });
-                }
-
-                if (response.status !== 'ok') {
-                    return app.createNotification('danger', {
-                        icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Subscribe</strong>',
-                        message: 'Failed to subscribe to stream (' + response.status + ')'
-                    });
-                }
-
-                if (subscriberPlayer) {
-                    subscriberPlayer.stop();
-                }
-
-                app.createNotification('success', {
-                    icon: 'glyphicon glyphicon-film',
-                    title: '<strong>Stream</strong>',
-                    message: 'Starting stream'
-                });
-
-                subscriberMediaStream = response.mediaStream;
-                subscriberPlayer = new Player('remoteVideo');
-
-                subscriberMediaStream.addBitRateThreshold([0, .2, .4, .6, .8], function(event) {
-                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
-                        icon: 'glyphicon glyphicon-film',
-                        title: '<strong>Subscriber BitRate</strong>',
-                        message: event.message
-                    });
-                });
-
-                subscriberPlayer.start(subscriberMediaStream, response.renderer);
-
-                $('#stopSubscriber').removeClass('disabled');
-            });
-        };
-
-        function onMonitorEvent(error, response) {
-            if (error) {
-                return app.createNotification('danger', {
-                    icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>Monitor Event</strong>',
-                    message: 'Monitor Event triggered for (' + error.message + ')'
-                });
-            }
-
-            if (response.status !== 'ok') {
+                $('#publish').removeClass('disabled');
+            } catch (e) {
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
-                    title: '<strong>Monitor Event</strong>',
-                    message: 'Monitor Event triggered (' + response.message + ')'
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse authToken'
                 });
+                $('#publish').addClass('disabled');
             }
+        };
 
-            if (app.getUrlParameter('ackFailure') === 'true' && response.acknowledgeFailure) {
-                return response.acknowledgeFailure();
-            }
-
-            if (response.retry) {
-                response.retry();
-            }
-        }
-
-        function getConstraints() {
+        var getConstraints = function getConstraints() {
             var source = $('#gum-source option:selected').val();
             var deviceOptions = {
                 screen: _.includes(source.toLowerCase(), 'screen'),
@@ -370,55 +141,289 @@ requirejs([
             }
 
             return deviceOptions;
-        }
+        };
+
+        var onMonitorEvent = function onMonitorEvent(error, response) {
+            if (error) {
+                return app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Monitor Event</strong>',
+                    message: 'Monitor Event triggered for (' + error.message + ')'
+                });
+            }
+
+            if (response.status !== 'ok') {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Monitor Event</strong>',
+                    message: 'Monitor Event triggered (' + response.status + ')'
+                });
+            }
+
+            if (response.retry) {
+                response.retry();
+            }
+        };
+
+        var publish = function publish() {
+            var constraints = getConstraints();
+            var publishOptions = {
+                channel: {},
+                publishToken: $('#publishToken').val(),
+                mediaConstraints: constraints,
+                videoElement: $('#localVideo')[0],
+                monitor: {callback: onMonitorEvent},
+                resolution: 720,
+                frameRate: 30,
+                onResolveMedia: function(options) {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Got User Media</strong>',
+                        message: 'With options (' + options.frameRate + '|' + options.aspectRatio + '|' + options.resolution + ')'
+                    });
+                }
+            };
+
+            try {
+                if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
+                    channelExpress.publishScreenToChannel(publishOptions, publishCallback);
+                } else {
+                    channelExpress.publishToChannel(publishOptions, publishCallback);
+                }
+            } catch (e) {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse publishToken'
+                });
+            }
+
+            function publishCallback(error, response) {
+                if (error) {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Publish</strong>',
+                        message: 'Failed to publish stream (' + error.messaage + ')'
+                    });
+                }
+
+                if (response.status === 'offline') {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Offline</strong>',
+                        message: 'Disconnected from PCast'
+                    });
+                }
+
+                if (response.status === 'ended') {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publishing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
+                if (response.status !== 'ok') {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Publish</strong>',
+                        message: 'Failed to publish stream (' + response.status + ')'
+                    });
+                }
+
+                channelService = response.channelService;
+                publisher = response.publisher;
+                publisherPlayer = new Player('localVideo');
+                publisherPlayer.start(publisher);
+
+                publisher.addBitRateThreshold({levels: 5}, function(event) {
+                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publisher BitRate</strong>',
+                        message: event.message
+                    });
+                });
+
+                app.createNotification('success', {
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Publish</strong>',
+                    message: 'Started publishing stream "' + publisher.getStreamId() + '"'
+                });
+
+                $('#stopPublisher').removeClass('disabled');
+                $('#subscribe').removeClass('disabled');
+                $('.streamIdForPublishing').val(publisher.getStreamId());
+                app.activateStep('step-2');
+            }
+        };
+
+        var stopPublisher = function stopPublisher() {
+            $('#publish').addClass('disabled');
+            $('#stopPublisher').addClass('disabled');
+            $('#subscribe').addClass('disabled');
+
+            if (publisherPlayer) {
+                publisherPlayer.stop();
+                publisherPlayer = null;
+            }
+
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    channelService = null;
+                });
+            }
+
+            if (publisher) {
+                publisher.stop();
+                publisher = null;
+            }
+
+            if (channelExpress) {
+                channelExpress.dispose();
+                channelExpress = null;
+            }
+        };
+
+        var subscribe = function subscribe() {
+            var constraints = getConstraints();
+            var subscribeOptions = {
+                streamId: $('.streamIdForPublishing').val(),
+                streamToken: $('#publishToken').val(),
+                videoElement: $('#remoteVideo')[0],
+                monitor: {callback: onMonitorEvent},
+                subscriberOptions: {}
+            };
+            var pcastExpress = channelExpress.getPCastExpress();
+
+            try {
+                if ((constraints.screen || constraints.screenAudio) && !constraints.video) {
+                    pcastExpress.subscribeToScreen(subscribeOptions, subscribeCallback);
+                } else {
+                    pcastExpress.subscribe(subscribeOptions, subscribeCallback);
+                }
+            } catch (e) {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse publishToken'
+                });
+            }
+
+            function subscribeCallback(error, response) {
+                if (error) {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Subscribe</strong>',
+                        message: 'Failed to subscribe to stream (' + error.message + ')'
+                    });
+                }
+
+                if (response.status === 'offline') {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Offline</strong>',
+                        message: 'Disconnected from PCast'
+                    });
+                }
+
+                if (response.status === 'ended') {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publishing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
+                if (response.status !== 'ok') {
+                    return app.createNotification('danger', {
+                        icon: 'glyphicon glyphicon-remove-sign',
+                        title: '<strong>Subscribe</strong>',
+                        message: 'Failed to subscribe to stream (' + response.status + ')'
+                    });
+                }
+
+                subscriberMediaStream = response.mediaStream;
+                subscriberPlayer = new Player('remoteVideo');
+                subscriberPlayer.start(subscriberMediaStream, response.renderer);
+
+                subscriberMediaStream.addBitRateThreshold([0, .2, .4, .6, .8], function(event) {
+                    app.createNotification(event.isIncreasing ? 'success' : 'danger', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Subscriber BitRate</strong>',
+                        message: event.message
+                    });
+                });
+
+                app.createNotification('success', {
+                    icon: 'glyphicon glyphicon-film',
+                    title: '<strong>Stream</strong>',
+                    message: 'Starting stream'
+                });
+
+                $('#subscribe').addClass('disabled');
+                $('#stopSubscriber').removeClass('disabled');
+            }
+        };
+
+        var stopSubscriber = function stopSubscriber(reason) {
+            $('#subscribe').removeClass('disabled');
+            $('#stopSubscriber').addClass('disabled');
+
+            if (subscriberPlayer) {
+                subscriberPlayer.stop();
+                subscriberPlayer = null;
+            }
+
+            if (subscriberMediaStream) {
+                subscriberMediaStream.stop(reason);
+                subscriberMediaStream = null;
+            }
+        };
+
+        // ----------------------------------------
 
         app.setOnReset(function() {
-            createPCastExpress();
+            createChannelExpress();
         });
 
-        $('#publish').click(publish);
-        $('#stopPublisher').click(stopPublisher);
-        $('#subscribe').click(subscribe);
+        $('#authToken').change(function() {
+            stopSubscriber('stopped-by-user');
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#publishToken').change(function() {
+            stopSubscriber('stopped-by-user');
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#publish').click(function() {
+            $('#publish').addClass('disabled');
+            publish();
+        });
+
+        $('#stopPublisher').click(function(){
+            stopSubscriber('stopped-by-user');
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#subscribe').click(function() {
+            $('#subscribe').addClass('disabled');
+            subscribe();
+        });
+
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
-
-        createPCastExpress();
     };
-
-    var stopPublisher = function() {
-        if (publisher) {
-            publisher.stop();
-            publisher = null;
-            $('#stopPublisher').addClass('disabled');
-        }
-
-        if (publisherPlayer) {
-            publisherPlayer.stop();
-        }
-    };
-
-    var stopSubscriber = function(reason) {
-        if (subscriberMediaStream) {
-            subscriberMediaStream.stop(reason);
-            subscriberMediaStream = null;
-            $('#stopSubscriber').addClass('disabled');
-        }
-
-        if (subscriberPlayer) {
-            subscriberPlayer.stop();
-        }
-    };
-
-    $('#applicationId').change(function() {
-        stopPublisher();
-        stopSubscriber();
-        init();
-    });
-
-    $('#secret').change(function() {
-        stopPublisher();
-        stopSubscriber();
-        init();
-    });
 
     $(function() {
         app.init();

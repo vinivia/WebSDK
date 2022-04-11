@@ -31,7 +31,6 @@ requirejs.config({
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',
-        'protobuf': 'protobuf/dist/ProtoBuf.min',
         'bootstrap-notify': 'bootstrap-notify/bootstrap-notify.min',
         'fingerprintjs2': 'fingerprintjs2/dist/fingerprint2.min',
         'webrtc-adapter': 'webrtc-adapter/out/adapter',
@@ -60,58 +59,92 @@ requirejs([
     'jquery',
     'lodash',
     'phenix-web-sdk',
+    'video-player',
     'app-setup'
-], function($, _, sdk, app) {
-    var channelExpress;
-    var channelPublisher;
-    var authToken;
-    var publishToken;
-
-    var mediaConstraints = {
-        video: true, // Include camera
-        audio: true // Include microphone
-    };
-
+], function($, _, sdk, Player, app) {
     var init = function init() {
-        if (app.getUrlParameter('authToken')) {
-            authToken = $('#authToken').val() || app.getUrlParameter('authToken');
-        }
+        var channelExpress = null;
+        var channelService = null;
+        var publisher = null;
+        var publisherPlayer = null;
 
-        if (app.getUrlParameter('publishToken')) {
-            publishToken = $('#publishToken').val() || app.getUrlParameter('publishToken');
-        }
+        var createChannelExpress = function createChannelExpress() {
+            if (!$('#authToken').val() || !$('#publishToken').val()) {
+                stopPublisher();
 
-        var createChannelExpress = function createPCastExpress() {
-            var expressOptions = {authToken: authToken};
-
-            channelExpress = new sdk.express.ChannelExpress(expressOptions);
-        };
-
-        var publishToChannel = function publishToChannel() {
-            var videoElement = $('#channelVideo')[0];
-
-            var publishOptions = {
-                publishToken: publishToken,
-                channel: {},
-                mediaConstraints: mediaConstraints,
-                videoElement: videoElement
-            };
-
-            if (!authToken || !publishToken) {
                 return;
             }
 
-            channelExpress.publishToChannel(publishOptions, function publishToChannelCallback(error, response) {
+            try {
+                channelExpress = new sdk.express.ChannelExpress({
+                    authToken: $('#authToken').val(),
+                    shakaLoader: function(callback) {
+                        if (!app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['shaka-player'], function(shaka) {
+                            callback(shaka);
+                        });
+                    },
+                    webPlayerLoader: function(callback) {
+                        if (app.getUrlParameter('shaka')) {
+                            return callback(null);
+                        }
+
+                        requirejs(['phenix-web-player'], function(webPlayer) {
+                            callback(webPlayer);
+                        });
+                    },
+                    onError: function() {
+                        app.createNotification('danger', {
+                            icon: 'glyphicon glyphicon-remove-sign',
+                            title: '<strong>Unauthorized</strong>',
+                            message: 'Failed to authenticate'
+                        });
+                        $('#publish').addClass('disabled');
+                    }
+                });
+                $('#publish').removeClass('disabled');
+            } catch (e) {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse authToken'
+                });
+                $('#publish').addClass('disabled');
+            }
+        };
+
+        var publish = function publish() {
+            var publishOptions = {
+                channel: {},
+                publishToken: $('#publishToken').val(),
+                mediaConstraints: {
+                    video: true,
+                    audio: true
+                },
+                videoElement: $('#localVideo')[0],
+                screenName: 'primary' + _.random(1000000)
+            };
+
+            try {
+                channelExpress.publishToChannel(publishOptions, publishToChannelCallback);
+            } catch (e) {
+                app.createNotification('danger', {
+                    icon: 'glyphicon glyphicon-remove-sign',
+                    title: '<strong>Invalid Token</strong>',
+                    message: 'Failed to parse publishToken'
+                });
+            }
+
+            function publishToChannelCallback(error, response) {
                 if (error) {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Subscribe</strong>',
-                        message: 'Unable to join Channel (' + error.message + ')'
+                        title: '<strong>Publish</strong>',
+                        message: 'Unable to publish to channel (' + error.message + ')'
                     });
-                }
-
-                if (response.status === 'ended') {
-                    return;
                 }
 
                 if (response.status === 'offline') {
@@ -122,53 +155,105 @@ requirejs([
                     });
                 }
 
+                if (response.status === 'ended') {
+                    return app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Publishing to Channel</strong>',
+                        message: 'Ended'
+                    });
+                }
+
                 if (response.status !== 'ok') {
                     return app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
-                        title: '<strong>Subscribe</strong>',
-                        message: 'Failed to join channel (' + response.status + ')'
+                        title: '<strong>Publish</strong>',
+                        message: 'Failed to publish to channel (' + response.status + ')'
                     });
                 }
+
+                channelService = response.channelService;
+                publisher = response.publisher;
+                publisherPlayer = new Player('localVideo');
+                publisherPlayer.start(publisher);
+
+                publisher.addBitRateThreshold([0, .5, .75, .82, .95], function(event) {
+                    app.createNotification('success', {
+                        icon: 'glyphicon glyphicon-film',
+                        title: '<strong>Bitrate change</strong>',
+                        message: 'Bitrate changed (' + event.message + ')'
+                    });
+                });
 
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Viewing Channel</strong>',
-                    message: 'Successfully published to Channel'
+                    message: 'Successfully published to Channel "' + channelService.getSelf().toString() + '"'
                 });
 
-                channelPublisher = response.publisher;
-
-                $('#leaveChannel').removeClass('disabled');
-            });
+                $('#stopPublisher').removeClass('disabled');
+            }
         };
+
+        var stopPublisher = function stopPublisher() {
+            $('#publish').addClass('disabled');
+            $('#stopPublisher').addClass('disabled');
+
+            if (publisherPlayer) {
+                publisherPlayer.stop();
+                publisherPlayer = null;
+            }
+
+            if (channelService) {
+                channelService.leaveChannel(function(error, response) {
+                    if (error) {
+                        throw error;
+                    }
+
+                    if (response.status !== 'ok') {
+                        throw new Error(response.status);
+                    }
+
+                    channelService = null;
+                });
+            }
+
+            if (publisher) {
+                publisher.stop();
+                publisher = null;
+            }
+
+            if (channelExpress) {
+                channelExpress.dispose();
+                channelExpress = null;
+            }
+        };
+
+        // ----------------------------------------
 
         app.setOnReset(function() {
             createChannelExpress();
         });
 
-        $('#publishToChannel').click(publishToChannel);
-        $('#leaveChannel').click(leaveChannel);
-        //
-        createChannelExpress();
+        $('#authToken').change(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#publishToken').change(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
+
+        $('#publish').click(function() {
+            $('#publish').addClass('disabled');
+            publish();
+        });
+
+        $('#stopPublisher').click(function() {
+            stopPublisher();
+            createChannelExpress();
+        });
     };
-
-    var leaveChannel = function leaveChannel() {
-        if (channelPublisher) {
-            channelPublisher.stop();
-            channelPublisher = null;
-            $('#leaveChannel').addClass('disabled');
-        }
-    };
-
-    $('#authToken').change(function() {
-        leaveChannel();
-        init();
-    });
-
-    $('#publishToken').change(function() {
-        leaveChannel();
-        init();
-    });
 
     $(function() {
         app.init();
