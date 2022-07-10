@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,52 +15,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const pcastLoggerFactory = require('../logging/pcastLoggerFactory');
+const PCastEndPoint = require('../PCastEndPoint');
+const PublisherBandwidthAdjuster = require('./PublisherBandwidthAdjuster');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    '../logging/pcastLoggerFactory',
-    '../PCastEndPoint',
-    './PublisherBandwidthAdjuster'
-], function(_, assert, pcastLoggerFactory, PCastEndPoint, PublisherBandwidthAdjuster) {
-    'use strict';
+function BandwidthMonitor(publishers, options) {
+    assert.isArray(publishers, 'userMediaStreams');
 
-    function BandwidthMonitor(publishers, options) {
-        assert.isArray(publishers, 'userMediaStreams');
+    options = options || {};
 
-        options = options || {};
+    this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+    this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+    this._publisherAdjusters = [];
+    this._publishers = publishers;
+}
 
-        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
-        this._publisherAdjusters = [];
-        this._publishers = publishers;
-    }
+BandwidthMonitor.prototype.start = function start(roomService, options) {
+    options = options || {};
 
-    BandwidthMonitor.prototype.start = function start(roomService, options) {
-        options = options || {};
+    _.forEach(this._publishers, _.bind(setupPublisherAdjusters, this, roomService, options));
+};
 
-        _.forEach(this._publishers, _.bind(setupPublisherAdjusters, this, roomService, options));
-    };
+BandwidthMonitor.prototype.stop = function stop() {
+    _.forEach(this._publisherAdjusters, function closePublisherAdjusters(adjuster) {
+        adjuster.close();
+    });
 
-    BandwidthMonitor.prototype.stop = function stop() {
-        _.forEach(this._publisherAdjusters, function closePublisherAdjusters(adjuster) {
-            adjuster.close();
-        });
+    this._publisherAdjusters = [];
+};
 
-        this._publisherAdjusters = [];
-    };
+BandwidthMonitor.prototype.toString = function toString() {
+    return 'BandwidthMonitor';
+};
 
-    BandwidthMonitor.prototype.toString = function toString() {
-        return 'BandwidthMonitor';
-    };
+function setupPublisherAdjusters(roomService, options, publisher) {
+    var publisherAdjuster = new PublisherBandwidthAdjuster(publisher);
 
-    function setupPublisherAdjusters(roomService, options, publisher) {
-        var publisherAdjuster = new PublisherBandwidthAdjuster(publisher);
+    publisherAdjuster.connect(roomService, options);
 
-        publisherAdjuster.connect(roomService, options);
+    this._publisherAdjusters.push(publisherAdjuster);
+}
 
-        this._publisherAdjusters.push(publisherAdjuster);
-    }
-
-    return BandwidthMonitor;
-});
+module.exports = BandwidthMonitor;

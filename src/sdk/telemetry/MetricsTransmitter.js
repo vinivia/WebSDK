@@ -13,89 +13,85 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const proto = require('phenix-web-proto');
+const rtc = require('phenix-rtc');
+const telemetryProto = require('../protocol/telemetryProto.json');
+var metricsUrl = '/metrics';
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-web-proto',
-    'phenix-rtc',
-    '../protocol/telemetryProto.json'
-], function(_, assert, proto, rtc, telemetryProto) {
-    var metricsUrl = '/metrics';
+function MetricsTransmitter(uri, environment) {
+    assert.isString(uri, 'uri');
 
-    function MetricsTransmitter(uri, environment) {
-        assert.isString(uri, 'uri');
+    this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
+    this._isEnabled = true;
+    this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+    this._batchHttpProtocol = new proto.BatchHttpProto(uri + metricsUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
+        maxAttempts: 3,
+        maxBufferedRecords: 1000,
+        maxBatchSize: 512
+    });
 
-        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
-        this._isEnabled = true;
-        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + metricsUrl, [telemetryProto], 'telemetry.SubmitMetricRecords', {
-            maxAttempts: 3,
-            maxBufferedRecords: 1000,
-            maxBatchSize: 512
-        });
+    this._mostRecentEnvironment = environment;
 
-        this._mostRecentEnvironment = environment;
+    this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+}
 
-        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+MetricsTransmitter.prototype.isEnabled = function isEnabled() {
+    return this._isEnabled;
+};
+
+MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
+    assert.isBoolean(enabled, 'enabled');
+
+    this._isEnabled = enabled;
+};
+
+MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, version, value) {
+    if (!this._isEnabled) {
+        return;
     }
 
-    MetricsTransmitter.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
+    assert.isStringNotEmpty(metric, 'metric');
+    assert.isObject(value, 'value');
 
-    MetricsTransmitter.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled, 'enabled');
+    this._mostRecentRuntime = since;
+    this._mostRecentSessionId = sessionId;
+    this._mostRecentStreamId = streamId;
+    this._mostRecentVersion = version;
 
-        this._isEnabled = enabled;
-    };
+    addMetricToRecords.call(this, metric, value);
+};
 
-    MetricsTransmitter.prototype.submitMetric = function submit(metric, since, sessionId, streamId, version, value) {
-        if (!this._isEnabled) {
-            return;
-        }
+function addMetricToRecords(metric, value) {
+    var record = _.assign({}, value, {
+        metric: metric,
+        timestamp: _.isoString(),
+        sessionId: this._mostRecentSessionId,
+        streamId: this._mostRecentStreamId,
+        source: this._browser,
+        fullQualifiedName: this._domain,
+        environment: this._mostRecentEnvironment,
+        version: this._mostRecentVersion,
+        runtime: this._mostRecentRuntime
+    });
 
-        assert.isStringNotEmpty(metric, 'metric');
-        assert.isObject(value, 'value');
+    this._batchHttpProtocol.addRecord(record);
+}
 
-        this._mostRecentRuntime = since;
-        this._mostRecentSessionId = sessionId;
-        this._mostRecentStreamId = streamId;
-        this._mostRecentVersion = version;
+function onCapacity(deleteRecords) {
+    this._batchHttpProtocol.addRecordToBeginning({
+        metric: 'MetricDropped',
+        value: {uint64: deleteRecords},
+        timestamp: _.isoString(),
+        sessionId: this._mostRecentSessionId,
+        streamId: this._mostRecentStreamId,
+        source: this._browser,
+        fullQualifiedName: this._domain,
+        environment: this._mostRecentEnvironment,
+        version: this._mostRecentVersion,
+        runtime: this._mostRecentRuntime
+    });
+}
 
-        addMetricToRecords.call(this, metric, value);
-    };
-
-    function addMetricToRecords(metric, value) {
-        var record = _.assign({}, value, {
-            metric: metric,
-            timestamp: _.isoString(),
-            sessionId: this._mostRecentSessionId,
-            streamId: this._mostRecentStreamId,
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-
-        this._batchHttpProtocol.addRecord(record);
-    }
-
-    function onCapacity(deleteRecords) {
-        this._batchHttpProtocol.addRecordToBeginning({
-            metric: 'MetricDropped',
-            value: {uint64: deleteRecords},
-            timestamp: _.isoString(),
-            sessionId: this._mostRecentSessionId,
-            streamId: this._mostRecentStreamId,
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    return MetricsTransmitter;
-});
+module.exports = MetricsTransmitter;

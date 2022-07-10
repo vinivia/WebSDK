@@ -13,38 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const environment = require('../environment');
+const MetricsTransmitter = require('./MetricsTransmitter');
+function MetricsTransmitterFactory() {
+    this._metricsTransmitters = {};
+}
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    '../environment',
-    './MetricsTransmitter'
-], function(_, assert, environment, MetricsTransmitter) {
-    function MetricsTransmitterFactory() {
-        this._metricsTransmitters = {};
+MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
+    var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
+
+    var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
+
+    if (!this._metricsTransmitters[env]) {
+        this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl, env);
     }
 
-    MetricsTransmitterFactory.prototype.createMetricsTransmitter = function createMetricsTransmitter(pcastBaseUri) {
-        var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
+    return this._metricsTransmitters[env];
+};
 
-        var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
+function createNewTransmitter(uri, env) {
+    var transmitter = new MetricsTransmitter(uri, env);
 
-        if (!this._metricsTransmitters[env]) {
-            this._metricsTransmitters[env] = createNewTransmitter.call(this, telemetryServerUrl, env);
-        }
-
-        return this._metricsTransmitters[env];
-    };
-
-    function createNewTransmitter(uri, env) {
-        var transmitter = new MetricsTransmitter(uri, env);
-
-        if (!uri) {
-            transmitter.setEnabled(false);
-        }
-
-        return transmitter;
+    if (!uri) {
+        transmitter.setEnabled(false);
     }
 
-    return new MetricsTransmitterFactory();
-});
+    return transmitter;
+}
+
+module.exports = new MetricsTransmitterFactory();

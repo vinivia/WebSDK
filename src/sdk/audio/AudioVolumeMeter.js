@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,125 +15,120 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert'
-], function(_, assert) {
-    'use strict';
+var defaultAlpha = 1 / 16;
 
-    var defaultAlpha = 1 / 16;
+function AudioVolumeMeter(logger) {
+    assert.isObject(logger, 'logger');
 
-    function AudioVolumeMeter(logger) {
-        assert.isObject(logger, 'logger');
+    this._logger = logger;
+}
 
-        this._logger = logger;
-    }
+AudioVolumeMeter.prototype.init = function init(context, alpha) {
+    assert.isObject(context, 'context');
+    assert.isFunction(context.createScriptProcessor, 'context.createScriptProcessor');
 
-    AudioVolumeMeter.prototype.init = function init(context, alpha) {
-        assert.isObject(context, 'context');
-        assert.isFunction(context.createScriptProcessor, 'context.createScriptProcessor');
+    alpha = parseFloat(alpha || defaultAlpha);
+    assert.isNumber(alpha, 'alpha');
 
-        alpha = parseFloat(alpha || defaultAlpha);
-        assert.isNumber(alpha, 'alpha');
+    this._context = context;
+    this._alpha = alpha;
+    this._value = 0.;
+    this._smoothedValue = 0.;
+    this._smoothedPeakValue = 0.;
+    this._clipped = 0.;
+    this._scriptProcessor = context.createScriptProcessor(4096, 1, 1);
 
-        this._context = context;
-        this._alpha = alpha;
-        this._value = 0.;
-        this._smoothedValue = 0.;
-        this._smoothedPeakValue = 0.;
-        this._clipped = 0.;
-        this._scriptProcessor = context.createScriptProcessor(4096, 1, 1);
+    _.addEventListener(this._scriptProcessor, 'audioprocess', _.bind(onAudioProcess, this));
+};
 
-        _.addEventListener(this._scriptProcessor, 'audioprocess', _.bind(onAudioProcess, this));
-    };
+AudioVolumeMeter.prototype.onValue = function onValue(callback) {
+    this._callback = callback;
+};
 
-    AudioVolumeMeter.prototype.onValue = function onValue(callback) {
-        this._callback = callback;
-    };
+AudioVolumeMeter.prototype.getValue = function getValue() {
+    return this._value;
+};
 
-    AudioVolumeMeter.prototype.getValue = function getValue() {
-        return this._value;
-    };
+AudioVolumeMeter.prototype.getSmoothedValue = function getSmoothedValue() {
+    return this._smoothedValue;
+};
 
-    AudioVolumeMeter.prototype.getSmoothedValue = function getSmoothedValue() {
-        return this._smoothedValue;
-    };
+AudioVolumeMeter.prototype.getSmoothedPeakValue = function getSmoothedPeakValue() {
+    return this._smoothedPeakValue;
+};
 
-    AudioVolumeMeter.prototype.getSmoothedPeakValue = function getSmoothedPeakValue() {
-        return this._smoothedPeakValue;
-    };
+AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
+    assert.isNumber(alpha, 'alpha');
 
-    AudioVolumeMeter.prototype.setAlpha = function setAlpha(alpha) {
-        assert.isNumber(alpha, 'alpha');
+    this._alpha = parseFloat(alpha);
+};
 
-        this._alpha = parseFloat(alpha);
-    };
+AudioVolumeMeter.prototype.connect = function connect(stream) {
+    var that = this;
 
-    AudioVolumeMeter.prototype.connect = function connect(stream) {
-        var that = this;
+    return connectToStream.call(that, stream);
+};
 
-        return connectToStream.call(that, stream);
-    };
+AudioVolumeMeter.prototype.stop = function stop() {
+    return stopConnections.call(this);
+};
 
-    AudioVolumeMeter.prototype.stop = function stop() {
-        return stopConnections.call(this);
-    };
+AudioVolumeMeter.prototype.toString = function toString() {
+    return 'AudioVolumeMeter';
+};
 
-    AudioVolumeMeter.prototype.toString = function toString() {
-        return 'AudioVolumeMeter';
-    };
+function onAudioProcess(event) {
+    var input = event.inputBuffer.getChannelData(0);
+    var sum = 0.;
+    var clipped = 0;
 
-    function onAudioProcess(event) {
-        var input = event.inputBuffer.getChannelData(0);
-        var sum = 0.;
-        var clipped = 0;
+    for (var i = 0; i < input.length; i++) {
+        sum += input[i] * input[i];
 
-        for (var i = 0; i < input.length; i++) {
-            sum += input[i] * input[i];
-
-            if (Math.abs(input[i]) > 0.99) {
-                clipped++;
-            }
-        }
-
-        this._value = Math.sqrt(sum / input.length);
-        this._smoothedValue = this._alpha * this._value + (1. - this._alpha) * this._smoothedValue;
-        this._smoothedPeakValue = Math.max(this._value, this._alpha * this._value + (1. - this._alpha) * this._smoothedPeakValue);
-        this._clipped = clipped;
-
-        if (this._callback) {
-            this._callback.call(this, {
-                date: _.now(),
-                value: this._value,
-                smoothedValue: this._smoothedValue,
-                smoothedPeakValue: this._smoothedPeakValue,
-                clipped: this._clipped
-            });
+        if (Math.abs(input[i]) > 0.99) {
+            clipped++;
         }
     }
 
-    function connectToStream(stream) {
-        assert.isObject(stream, 'stream');
+    this._value = Math.sqrt(sum / input.length);
+    this._smoothedValue = this._alpha * this._value + (1. - this._alpha) * this._smoothedValue;
+    this._smoothedPeakValue = Math.max(this._value, this._alpha * this._value + (1. - this._alpha) * this._smoothedPeakValue);
+    this._clipped = clipped;
 
-        var that = this;
+    if (this._callback) {
+        this._callback.call(this, {
+            date: _.now(),
+            value: this._value,
+            smoothedValue: this._smoothedValue,
+            smoothedPeakValue: this._smoothedPeakValue,
+            clipped: this._clipped
+        });
+    }
+}
 
-        if (stream.getAudioTracks().length > 0) {
-            that._mediaStreamSource = that._context.createMediaStreamSource(stream);
-            that._mediaStreamSource.connect(that._scriptProcessor);
-            that._scriptProcessor.connect(that._context.destination);
-        } else {
-            that._logger.info('Stream has no audio tracks');
-        }
+function connectToStream(stream) {
+    assert.isObject(stream, 'stream');
+
+    var that = this;
+
+    if (stream.getAudioTracks().length > 0) {
+        that._mediaStreamSource = that._context.createMediaStreamSource(stream);
+        that._mediaStreamSource.connect(that._scriptProcessor);
+        that._scriptProcessor.connect(that._context.destination);
+    } else {
+        that._logger.info('Stream has no audio tracks');
+    }
+}
+
+function stopConnections() {
+    if (this._mediaStreamSource) {
+        this._mediaStreamSource.disconnect();
     }
 
-    function stopConnections() {
-        if (this._mediaStreamSource) {
-            this._mediaStreamSource.disconnect();
-        }
+    this._scriptProcessor.disconnect();
+}
 
-        this._scriptProcessor.disconnect();
-    }
-
-    return AudioVolumeMeter;
-});
+module.exports = AudioVolumeMeter;

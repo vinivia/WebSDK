@@ -13,91 +13,87 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const event = require('phenix-web-event');
+const disposable = require('phenix-web-disposable');
+const rtc = require('phenix-rtc');
+function NetworkMonitor(logger) {
+    assert.isObject(logger, 'logger');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-web-event',
-    'phenix-web-disposable',
-    'phenix-rtc'
-], function(_, assert, event, disposable, rtc) {
-    function NetworkMonitor(logger) {
-        assert.isObject(logger, 'logger');
+    this._logger = logger;
+    this._namedEvents = new event.NamedEvents();
+    this._disposables = new disposable.DisposableList();
 
-        this._logger = logger;
-        this._namedEvents = new event.NamedEvents();
-        this._disposables = new disposable.DisposableList();
+    this._disposables.add(this._namedEvents);
 
-        this._disposables.add(this._namedEvents);
-
-        if (!this.isSupported()) {
-            return this._logger.info('Network monitor is not supported.');
-        }
-
-        this._lastNetworkStats = getStats.call(this);
-
-        detectNetworkTypeChange.call(this);
+    if (!this.isSupported()) {
+        return this._logger.info('Network monitor is not supported.');
     }
 
-    NetworkMonitor.prototype.isSupported = function() {
-        return rtc.global.navigator && rtc.global.navigator.connection;
-    };
+    this._lastNetworkStats = getStats.call(this);
 
-    NetworkMonitor.prototype.getDownlinkThroughputCapacity = function() {
-        if (!this.isSupported()) {
-            return -1;
-        }
+    detectNetworkTypeChange.call(this);
+}
 
-        return rtc.global.navigator.connection.downlink || rtc.global.navigator.connection.downlinkMax;
-    };
+NetworkMonitor.prototype.isSupported = function() {
+    return rtc.global.navigator && rtc.global.navigator.connection;
+};
 
-    NetworkMonitor.prototype.getEffectiveType = function() {
-        if (!this.isSupported()) {
-            return 'Unknown';
-        }
-
-        return rtc.global.navigator.connection.effectiveType || rtc.global.navigator.connection.type;
-    };
-
-    NetworkMonitor.prototype.getRoundTripTime = function() {
-        if (!this.isSupported()) {
-            return -1;
-        }
-
-        return rtc.global.navigator.connection.rtt || rtc.global.navigator.connection.type;
-    };
-
-    NetworkMonitor.prototype.onNetworkChange = function(callback) {
-        if (!this.isSupported()) {
-            return;
-        }
-
-        assert.isFunction(callback, 'callback');
-
-        return this._namedEvents.listen('NetworkChange', callback);
-    };
-
-    NetworkMonitor.prototype.dispose = function() {
-        this._disposables.dispose();
-    };
-
-    function getStats() {
-        return {
-            downlinkThroughputCapacity: this.getDownlinkThroughputCapacity(),
-            effectiveType: this.getEffectiveType(),
-            rtt: this.getRoundTripTime()
-        };
+NetworkMonitor.prototype.getDownlinkThroughputCapacity = function() {
+    if (!this.isSupported()) {
+        return -1;
     }
 
-    function detectNetworkTypeChange() {
-        var that = this;
+    return rtc.global.navigator.connection.downlink || rtc.global.navigator.connection.downlinkMax;
+};
 
-        navigator.connection.addEventListener('change', function() {
-            that._namedEvents.fireAsync('NetworkChange', [getStats.call(that), that._lastNetworkStats]);
-
-            that._lastNetworkStats = getStats.call(that);
-        });
+NetworkMonitor.prototype.getEffectiveType = function() {
+    if (!this.isSupported()) {
+        return 'Unknown';
     }
 
-    return NetworkMonitor;
-});
+    return rtc.global.navigator.connection.effectiveType || rtc.global.navigator.connection.type;
+};
+
+NetworkMonitor.prototype.getRoundTripTime = function() {
+    if (!this.isSupported()) {
+        return -1;
+    }
+
+    return rtc.global.navigator.connection.rtt || rtc.global.navigator.connection.type;
+};
+
+NetworkMonitor.prototype.onNetworkChange = function(callback) {
+    if (!this.isSupported()) {
+        return;
+    }
+
+    assert.isFunction(callback, 'callback');
+
+    return this._namedEvents.listen('NetworkChange', callback);
+};
+
+NetworkMonitor.prototype.dispose = function() {
+    this._disposables.dispose();
+};
+
+function getStats() {
+    return {
+        downlinkThroughputCapacity: this.getDownlinkThroughputCapacity(),
+        effectiveType: this.getEffectiveType(),
+        rtt: this.getRoundTripTime()
+    };
+}
+
+function detectNetworkTypeChange() {
+    var that = this;
+
+    navigator.connection.addEventListener('change', function() {
+        that._namedEvents.fireAsync('NetworkChange', [getStats.call(that), that._lastNetworkStats]);
+
+        that._lastNetworkStats = getStats.call(that);
+    });
+}
+
+module.exports = NetworkMonitor;

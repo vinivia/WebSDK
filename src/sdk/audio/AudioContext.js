@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,31 +15,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const rtc = require('phenix-rtc');
 
-define([
-    'phenix-rtc'
-], function(rtc) {
-    'use strict';
+function AudioContext() {
+    this.init();
+}
 
-    function AudioContext() {
-        this.init();
+AudioContext.prototype.init = function init() {
+    if (!rtc.global.AudioContext && !rtc.global.webkitAudioContext) {
+        throw new Error('Browser does not support AudioContext');
     }
 
-    AudioContext.prototype.init = function init() {
-        if (!rtc.global.AudioContext && !rtc.global.webkitAudioContext) {
-            throw new Error('Browser does not support AudioContext');
-        }
+    this._audioContext = new (rtc.global.AudioContext || rtc.global.webkitAudioContext)();
+};
 
-        this._audioContext = new (rtc.global.AudioContext || rtc.global.webkitAudioContext)();
-    };
+AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {
+    return this._audioContext;
+};
 
-    AudioContext.prototype.getNativeAudioContext = function getNativeAudioContext() {
-        return this._audioContext;
-    };
+AudioContext.prototype.toString = function toString() {
+    return 'AudioContext';
+};
 
-    AudioContext.prototype.toString = function toString() {
-        return 'AudioContext';
-    };
-
-    return AudioContext;
-});
+module.exports = AudioContext;

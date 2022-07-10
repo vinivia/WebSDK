@@ -1,3 +1,4 @@
+'use strict';
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,188 +14,183 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const observable = require('phenix-web-observable');
+const Stream = require('./Stream');
+const member = require('./member.json');
+var memberRoles = member.roles;
+var memberStates = member.states;
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-web-observable',
-    './Stream',
-    './member.json'
-], function(_, assert, observable, Stream, member) {
-    'use strict';
-    var memberRoles = member.roles;
-    var memberStates = member.states;
+function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+    this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
+}
 
-    function Member(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
-        this.init(roomService, state, sessionId, screenName, role, streams, lastUpdate);
+Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
+    assert.isObject(roomService, 'roomService');
+    assert.isString(sessionId, 'sessionId');
+    assert.isString(screenName, 'screenName');
+    assert.isArray(streams, 'streams');
+    assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
+
+    this._sessionId = new observable.Observable(sessionId);
+    this._screenName = new observable.Observable(screenName);
+    this._streams = new observable.ObservableArray([]);
+
+    this._state = new observable.Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
+    this._role = new observable.Observable(role, assertIsValidMemberRole);
+    this._lastUpdate = new observable.Observable(lastUpdate, _.utc);
+    this._roomService = roomService;
+
+    this.setStreams(streams);
+};
+
+Member.prototype.getObservableState = function getObservableState() {
+    return this._state;
+};
+
+Member.prototype.getSessionId = function getSessionId() {
+    return this._sessionId.getValue();
+};
+
+Member.prototype.getObservableScreenName = function getObservableScreenName() {
+    return this._screenName;
+};
+
+Member.prototype.getObservableRole = function getObservableRole() {
+    return this._role;
+};
+
+Member.prototype.getObservableStreams = function getObservableStreams() {
+    return this._streams;
+};
+
+Member.prototype.getObservableLastUpdate = function getObservableLastUpdate() {
+    return this._lastUpdate;
+};
+
+Member.prototype.getLastUpdate = function getLastUpdate() {
+    return this._lastUpdate.getValue();
+};
+
+Member.prototype.getStreams = function getStreams() {
+    return _.map(this._streams.getValue(), function mapToJson(stream) {
+        return stream.toJson();
+    });
+};
+
+Member.prototype.getRoomService = function getRoomService() {
+    return this._roomService;
+};
+
+Member.prototype.commitChanges = function commitChanges(callback) {
+    assert.isObject(this._roomService, 'this._roomService');
+
+    this._roomService.updateMember(this, callback);
+};
+
+Member.prototype.reload = function reload() {
+    assert.isObject(this._roomService, 'this._roomService');
+
+    this._roomService.revertMemberChanges(this);
+};
+
+Member.prototype.setStreams = function setStreams(streams) {
+    var newStreams = _.map(streams, function(stream) {
+        return createNewObservableStream(stream);
+    });
+
+    this._streams.setValue(newStreams);
+};
+
+Member.prototype.toString = function toString() {
+    return this.getObservableRole().getValue() + '[' + this.getObservableScreenName().getValue() + ',' + this.getSessionId() + ']';
+};
+
+Member.prototype.toJson = function toJson() {
+    var member = {
+        sessionId: this._sessionId.getValue(),
+        screenName: this._screenName.getValue(),
+        role: this._role.getValue(),
+        state: this._state.getValue(),
+        streams: [],
+        lastUpdate: this._lastUpdate.getValue()
+    };
+
+    _.forEach(this._streams.getValue(), function(stream) {
+        member.streams.push(stream.toJson());
+    });
+
+    return member;
+};
+
+Member.prototype._update = function update(member) {
+    if (!_.isObject(member)) {
+        return;
     }
 
-    Member.prototype.init = function init(roomService, state, sessionId, screenName, role, streams, lastUpdate) {
-        assert.isObject(roomService, 'roomService');
-        assert.isString(sessionId, 'sessionId');
-        assert.isString(screenName, 'screenName');
-        assert.isArray(streams, 'streams');
-        assert.isNumber(_.utc(lastUpdate), 'lastUpdate');
-
-        this._sessionId = new observable.Observable(sessionId);
-        this._screenName = new observable.Observable(screenName);
-        this._streams = new observable.ObservableArray([]);
-
-        this._state = new observable.Observable(state, assertIsValidMemberState).extend({rateLimit: 500});
-        this._role = new observable.Observable(role, assertIsValidMemberRole);
-        this._lastUpdate = new observable.Observable(lastUpdate, _.utc);
-        this._roomService = roomService;
-
-        this.setStreams(streams);
-    };
-
-    Member.prototype.getObservableState = function getObservableState() {
-        return this._state;
-    };
-
-    Member.prototype.getSessionId = function getSessionId() {
-        return this._sessionId.getValue();
-    };
-
-    Member.prototype.getObservableScreenName = function getObservableScreenName() {
-        return this._screenName;
-    };
-
-    Member.prototype.getObservableRole = function getObservableRole() {
-        return this._role;
-    };
-
-    Member.prototype.getObservableStreams = function getObservableStreams() {
-        return this._streams;
-    };
-
-    Member.prototype.getObservableLastUpdate = function getObservableLastUpdate() {
-        return this._lastUpdate;
-    };
-
-    Member.prototype.getLastUpdate = function getLastUpdate() {
-        return this._lastUpdate.getValue();
-    };
-
-    Member.prototype.getStreams = function getStreams() {
-        return _.map(this._streams.getValue(), function mapToJson(stream) {
-            return stream.toJson();
-        });
-    };
-
-    Member.prototype.getRoomService = function getRoomService() {
-        return this._roomService;
-    };
-
-    Member.prototype.commitChanges = function commitChanges(callback) {
-        assert.isObject(this._roomService, 'this._roomService');
-
-        this._roomService.updateMember(this, callback);
-    };
-
-    Member.prototype.reload = function reload() {
-        assert.isObject(this._roomService, 'this._roomService');
-
-        this._roomService.revertMemberChanges(this);
-    };
-
-    Member.prototype.setStreams = function setStreams(streams) {
-        var newStreams = _.map(streams, function(stream) {
-            return createNewObservableStream(stream);
-        });
-
-        this._streams.setValue(newStreams);
-    };
-
-    Member.prototype.toString = function toString() {
-        return this.getObservableRole().getValue() + '[' + this.getObservableScreenName().getValue() + ',' + this.getSessionId() + ']';
-    };
-
-    Member.prototype.toJson = function toJson() {
-        var member = {
-            sessionId: this._sessionId.getValue(),
-            screenName: this._screenName.getValue(),
-            role: this._role.getValue(),
-            state: this._state.getValue(),
-            streams: [],
-            lastUpdate: this._lastUpdate.getValue()
-        };
-
-        _.forEach(this._streams.getValue(), function(stream) {
-            member.streams.push(stream.toJson());
-        });
-
-        return member;
-    };
-
-    Member.prototype._update = function update(member) {
-        if (!_.isObject(member)) {
-            return;
-        }
-
-        if (Object.prototype.hasOwnProperty.call(member, 'state')) {
-            this._state.setValue(member.state);
-        }
-
-        if (Object.prototype.hasOwnProperty.call(member, 'screenName')) {
-            this._screenName.setValue(member.screenName);
-        }
-
-        if (Object.prototype.hasOwnProperty.call(member, 'role')) {
-            this._role.setValue(member.role);
-        }
-
-        if (Object.prototype.hasOwnProperty.call(member, 'lastUpdate')) {
-            this._lastUpdate.setValue(member.lastUpdate);
-        }
-
-        if (Object.prototype.hasOwnProperty.call(member, 'streams')) {
-            updateStreams.call(this, member.streams);
-        }
-    };
-
-    function createNewObservableStream(stream) {
-        return new Stream(stream.uri, stream.type, stream.audioState, stream.videoState);
+    if (Object.prototype.hasOwnProperty.call(member, 'state')) {
+        this._state.setValue(member.state);
     }
 
-    function updateStreams(streams) {
-        // Iterate through new streams object, update those that have changed, push new ones, remove old ones
-        var oldObservableStreams = this._streams.getValue();
-        var newObservableStreams = [];
+    if (Object.prototype.hasOwnProperty.call(member, 'screenName')) {
+        this._screenName.setValue(member.screenName);
+    }
 
-        _.forEach(streams, function(stream) {
-            var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
-            var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
-                var hasSameUri = observableStream.getUri() === stream.uri;
-                var hasSamePCastStreamId = observableStream.isPCastStream() && observableStream.getPCastStreamId() === pcastStreamId;
-                var hasSameIdentifier = hasSameUri || hasSamePCastStreamId;
+    if (Object.prototype.hasOwnProperty.call(member, 'role')) {
+        this._role.setValue(member.role);
+    }
 
-                return observableStream.getType() === stream.type && hasSameIdentifier;
-            });
+    if (Object.prototype.hasOwnProperty.call(member, 'lastUpdate')) {
+        this._lastUpdate.setValue(member.lastUpdate);
+    }
 
-            if (streamToUpdate) {
-                streamToUpdate._update(stream);
-            } else {
-                streamToUpdate = createNewObservableStream(stream);
-            }
+    if (Object.prototype.hasOwnProperty.call(member, 'streams')) {
+        updateStreams.call(this, member.streams);
+    }
+};
 
-            newObservableStreams.push(streamToUpdate);
+function createNewObservableStream(stream) {
+    return new Stream(stream.uri, stream.type, stream.audioState, stream.videoState);
+}
+
+function updateStreams(streams) {
+    // Iterate through new streams object, update those that have changed, push new ones, remove old ones
+    var oldObservableStreams = this._streams.getValue();
+    var newObservableStreams = [];
+
+    _.forEach(streams, function(stream) {
+        var pcastStreamId = Stream.parsePCastStreamIdFromStreamUri(stream.uri);
+        var streamToUpdate = _.find(oldObservableStreams, function(observableStream) {
+            var hasSameUri = observableStream.getUri() === stream.uri;
+            var hasSamePCastStreamId = observableStream.isPCastStream() && observableStream.getPCastStreamId() === pcastStreamId;
+            var hasSameIdentifier = hasSameUri || hasSamePCastStreamId;
+
+            return observableStream.getType() === stream.type && hasSameIdentifier;
         });
 
-        this._streams.setValue(newObservableStreams);
-    }
+        if (streamToUpdate) {
+            streamToUpdate._update(stream);
+        } else {
+            streamToUpdate = createNewObservableStream(stream);
+        }
 
-    function assertIsValidMemberRole(role) {
-        assert.isValidType(role, memberRoles, 'memberRole');
+        newObservableStreams.push(streamToUpdate);
+    });
 
-        return _.getEnumName(memberRoles, role);
-    }
+    this._streams.setValue(newObservableStreams);
+}
 
-    function assertIsValidMemberState(state) {
-        assert.isValidType(state, memberStates, 'memberState');
+function assertIsValidMemberRole(role) {
+    assert.isValidType(role, memberRoles, 'memberRole');
 
-        return _.getEnumName(memberStates, state);
-    }
+    return _.getEnumName(memberRoles, role);
+}
 
-    return Member;
-});
+function assertIsValidMemberState(state) {
+    assert.isValidType(state, memberStates, 'memberState');
+
+    return _.getEnumName(memberStates, state);
+}
+
+module.exports = Member;

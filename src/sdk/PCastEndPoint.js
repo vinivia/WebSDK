@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,174 +15,169 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const assert = require('phenix-web-assert');
+const _ = require('phenix-web-lodash-light');
+const disposable = require('phenix-web-disposable');
+const ClosestEndPointResolver = require('phenix-web-closest-endpoint-resolver');
 
-define([
-    'phenix-web-assert',
-    'phenix-web-lodash-light',
-    'phenix-web-disposable',
-    'phenix-web-closest-endpoint-resolver'
-], function(assert, _, disposable, ClosestEndPointResolver) {
-    'use strict';
+function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
+    assert.isStringNotEmpty(version, 'version');
+    assert.isStringNotEmpty(baseUri, 'baseUri');
+    assert.isObject(logger, 'logger');
 
-    function PCastEndPoint(version, baseUri, logger, sessionTelemetry) {
-        assert.isStringNotEmpty(version, 'version');
-        assert.isStringNotEmpty(baseUri, 'baseUri');
-        assert.isObject(logger, 'logger');
+    this._version = version;
+    this._baseUri = baseUri;
+    this._logger = logger;
+    this._disposables = new disposable.DisposableList();
+    this._sessionTelemetry = sessionTelemetry;
+}
 
-        this._version = version;
-        this._baseUri = baseUri;
-        this._logger = logger;
-        this._disposables = new disposable.DisposableList();
-        this._sessionTelemetry = sessionTelemetry;
-    }
+PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixrts.com';
 
-    PCastEndPoint.DefaultPCastUri = 'https://pcast.phenixrts.com';
+PCastEndPoint.prototype.getBaseUri = function() {
+    return this._baseUri;
+};
 
-    PCastEndPoint.prototype.getBaseUri = function() {
-        return this._baseUri;
-    };
+PCastEndPoint.prototype.resolveUri = function(callback /* (error, {uri, roundTripTime}) */) {
+    return resolveUri.call(this, this._baseUri, callback);
+};
 
-    PCastEndPoint.prototype.resolveUri = function(callback /* (error, {uri, roundTripTime}) */) {
-        return resolveUri.call(this, this._baseUri, callback);
-    };
+PCastEndPoint.prototype.dispose = function() {
+    this._disposables.dispose();
+};
 
-    PCastEndPoint.prototype.dispose = function() {
-        this._disposables.dispose();
-    };
+PCastEndPoint.prototype.toString = function() {
+    return 'PCastEndPoint[' + this._baseUri + ']';
+};
 
-    PCastEndPoint.prototype.toString = function() {
-        return 'PCastEndPoint[' + this._baseUri + ']';
-    };
+function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
+    var isWss = baseUri.lastIndexOf('wss:', 0) === 0;
+    var isWs = baseUri.lastIndexOf('ws:', 0) === 0;
+    var isHttps = baseUri.lastIndexOf('https:', 0) === 0;
+    var isHttp = baseUri.lastIndexOf('http:', 0) === 0;
 
-    function resolveUri(baseUri, callback /* (error, {uri, roundTripTime}) */) {
-        var isWss = baseUri.lastIndexOf('wss:', 0) === 0;
-        var isWs = baseUri.lastIndexOf('ws:', 0) === 0;
-        var isHttps = baseUri.lastIndexOf('https:', 0) === 0;
-        var isHttp = baseUri.lastIndexOf('http:', 0) === 0;
+    if (isWss || isWs) {
+        // WS - Specific web socket end point
+        callback(undefined, {
+            uri: baseUri + '/ws',
+            roundTripTime: 0
+        });
+    } else if (isHttps || isHttp) {
+        // HTTP - Resolve closest end point
+        var that = this;
 
-        if (isWss || isWs) {
-            // WS - Specific web socket end point
-            callback(undefined, {
-                uri: baseUri + '/ws',
-                roundTripTime: 0
-            });
-        } else if (isHttps || isHttp) {
-            // HTTP - Resolve closest end point
-            var that = this;
+        getEndpoints.call(that, baseUri, function(err, endPoints) {
+            if (err) {
+                return callback(err);
+            }
 
-            getEndpoints.call(that, baseUri, function(err, endPoints) {
+            var closestEndPointResolver = new ClosestEndPointResolver({
+                logger: that._logger,
+                version: that._version
+            }, callback, function(err, response) {
                 if (err) {
-                    return callback(err);
-                }
-
-                var closestEndPointResolver = new ClosestEndPointResolver({
-                    logger: that._logger,
-                    version: that._version
-                }, callback, function(err, response) {
-                    if (err) {
-                        if (err.code === 503) {
-                            that._logger.debug('The end point [%s] is temporarily disabled', _.get(response, ['endPoint']));
-                        } else {
-                            that._logger.warn('An error occurred in resolving an endpoint [%s]', _.get(response, ['endPoint']), err);
-                        }
-
-                        return;
+                    if (err.code === 503) {
+                        that._logger.debug('The end point [%s] is temporarily disabled', _.get(response, ['endPoint']));
+                    } else {
+                        that._logger.warn('An error occurred in resolving an endpoint [%s]', _.get(response, ['endPoint']), err);
                     }
 
-                    var isHttpsEndPoint = response.endPoint.lastIndexOf('https:', 0) === 0;
+                    return;
+                }
 
-                    that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: response.time}, null, {
-                        resource: response.endPoint,
-                        kind: isHttpsEndPoint ? 'https' : 'http'
-                    });
+                var isHttpsEndPoint = response.endPoint.lastIndexOf('https:', 0) === 0;
+
+                that._sessionTelemetry.recordMetric('RoundTripTime', {uint64: response.time}, null, {
+                    resource: response.endPoint,
+                    kind: isHttpsEndPoint ? 'https' : 'http'
                 });
-
-                closestEndPointResolver.resolveAll(endPoints);
-
-                that._disposables.add(closestEndPointResolver);
             });
+
+            closestEndPointResolver.resolveAll(endPoints);
+
+            that._disposables.add(closestEndPointResolver);
+        });
+    } else {
+        // Not supported
+        callback(new Error('Uri not supported [' + baseUri + ']'));
+    }
+}
+
+function getEndpoints(baseUri, callback) {
+    var version = '%SDKVERSION%';
+    var requestUrl = baseUri + '/pcast/endPoints?version=' + version + '&_=' + _.now();
+    var xhr = getAndOpenVendorSpecificXmlHttpMethod('GET', requestUrl);
+
+    xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, function(err, response) {
+        if (err) {
+            return callback(new Error('Failed to resolve an end point', err));
+        }
+
+        var endPoints = response.data.split(',');
+
+        if (endPoints.length < 1) {
+            callback(new Error('Failed to discover end points'));
+        }
+
+        callback(undefined, endPoints);
+    }));
+    xhr.timeout = 15000;
+    xhr.send(null);
+}
+
+function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
+    var xhr = new XMLHttpRequest();
+
+    if ('withCredentials' in xhr) {
+        // Most browsers.
+        xhr.open(requestMethod, requestUrl, true);
+    } else if (typeof XDomainRequest !== 'undefined') {
+        // IE8 & IE9
+        // eslint-disable-next-line no-undef
+        xhr = new XDomainRequest();
+        xhr.open(requestMethod, requestUrl);
+    } else {
+        return;
+    }
+
+    return xhr;
+}
+
+function handleReadyStateChange(xhr, callback) {
+    if (xhr.readyState === 4 /* DONE */) {
+        if (xhr.status === 200) {
+            var responseHeaders = getXhrResponseHeaders(xhr);
+            var response = {
+                data: xhr.response || xhr.responseText,
+                headers: responseHeaders,
+                rawXhr: xhr
+            };
+
+            callback(null, response);
         } else {
-            // Not supported
-            callback(new Error('Uri not supported [' + baseUri + ']'));
+            var err = new Error(xhr.status === 0 ? 'timeout' : 'Status=[' + xhr.status + ']');
+
+            err.code = xhr.status;
+
+            callback(err);
         }
     }
+}
 
-    function getEndpoints(baseUri, callback) {
-        var version = '%SDKVERSION%';
-        var requestUrl = baseUri + '/pcast/endPoints?version=' + version + '&_=' + _.now();
-        var xhr = getAndOpenVendorSpecificXmlHttpMethod('GET', requestUrl);
+function getXhrResponseHeaders(xhr) {
+    var responseHeadersString = xhr.getAllResponseHeaders();
 
-        xhr.addEventListener('readystatechange', _.bind(handleReadyStateChange, this, xhr, function(err, response) {
-            if (err) {
-                return callback(new Error('Failed to resolve an end point', err));
-            }
+    return _.reduce(responseHeadersString.trim().split(/[\r\n]+/), function(headers, header) {
+        var parts = header.split(': ');
+        var headerName = parts.shift();
+        var headerValue = parts.join(': ');
 
-            var endPoints = response.data.split(',');
-
-            if (endPoints.length < 1) {
-                callback(new Error('Failed to discover end points'));
-            }
-
-            callback(undefined, endPoints);
-        }));
-        xhr.timeout = 15000;
-        xhr.send(null);
-    }
-
-    function getAndOpenVendorSpecificXmlHttpMethod(requestMethod, requestUrl) {
-        var xhr = new XMLHttpRequest();
-
-        if ('withCredentials' in xhr) {
-            // Most browsers.
-            xhr.open(requestMethod, requestUrl, true);
-        } else if (typeof XDomainRequest !== 'undefined') {
-            // IE8 & IE9
-            // eslint-disable-next-line no-undef
-            xhr = new XDomainRequest();
-            xhr.open(requestMethod, requestUrl);
-        } else {
-            return;
+        if (headerName) {
+            headers[headerName] = headerValue;
         }
 
-        return xhr;
-    }
+        return headers;
+    }, {});
+}
 
-    function handleReadyStateChange(xhr, callback) {
-        if (xhr.readyState === 4 /* DONE */) {
-            if (xhr.status === 200) {
-                var responseHeaders = getXhrResponseHeaders(xhr);
-                var response = {
-                    data: xhr.response || xhr.responseText,
-                    headers: responseHeaders,
-                    rawXhr: xhr
-                };
-
-                callback(null, response);
-            } else {
-                var err = new Error(xhr.status === 0 ? 'timeout' : 'Status=[' + xhr.status + ']');
-
-                err.code = xhr.status;
-
-                callback(err);
-            }
-        }
-    }
-
-    function getXhrResponseHeaders(xhr) {
-        var responseHeadersString = xhr.getAllResponseHeaders();
-
-        return _.reduce(responseHeadersString.trim().split(/[\r\n]+/), function(headers, header) {
-            var parts = header.split(': ');
-            var headerName = parts.shift();
-            var headerValue = parts.join(': ');
-
-            if (headerName) {
-                headers[headerName] = headerValue;
-            }
-
-            return headers;
-        }, {});
-    }
-
-    return PCastEndPoint;
-});
+module.exports = PCastEndPoint;
