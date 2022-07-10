@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,101 +15,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const pcastLoggerFactory = require('../logging/pcastLoggerFactory');
+const PCastEndPoint = require('../PCastEndPoint');
+const AudioContext = require('./AudioContext');
+const AudioVolumeMeterFactory = require('./AudioVolumeMeterFactory');
+const AudioSpeakerDetectionAlgorithm = require('./AudioSpeakerDetectionAlgorithm');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    '../logging/pcastLoggerFactory',
-    '../PCastEndPoint',
-    './AudioContext',
-    './AudioVolumeMeterFactory',
-    './AudioSpeakerDetectionAlgorithm'
-], function(_, assert, pcastLoggerFactory, PCastEndPoint, AudioContext, AudioVolumeMeterFactory, AudioSpeakerDetectionAlgorithm) {
-    'use strict';
+function AudioSpeakerDetector(userMediaStreams, options) {
+    assert.isArray(userMediaStreams, 'userMediaStreams');
 
-    function AudioSpeakerDetector(userMediaStreams, options) {
-        assert.isArray(userMediaStreams, 'userMediaStreams');
+    options = options || {};
 
-        options = options || {};
+    this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
+    this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
+    this._audioContext = options.audioContext || new AudioContext();
+    this._nativeAudioContext = this._audioContext.getNativeAudioContext();
+    this._onSpeakingChanged = null;
+    this._userMediaStreams = userMediaStreams;
+    this._disposeOfAudioContext = !_.isObject(options.audioContext);
+    this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
 
-        this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
-        this._logger = options.logger || pcastLoggerFactory.createPCastLogger(this._baseUri);
-        this._audioContext = options.audioContext || new AudioContext();
-        this._nativeAudioContext = this._audioContext.getNativeAudioContext();
-        this._onSpeakingChanged = null;
-        this._userMediaStreams = userMediaStreams;
-        this._disposeOfAudioContext = !_.isObject(options.audioContext);
-        this._audioVolumeMeterFactory = new AudioVolumeMeterFactory(this._logger);
+    _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
+}
 
-        _.forEach(this._userMediaStreams, _.bind(setupAudioVolumeMeter, this, options));
+AudioSpeakerDetector.prototype.start = function start(options, callback) {
+    assert.isFunction(callback, 'callback');
+
+    this._onSpeakingChanged = callback;
+
+    options = options || {};
+
+    _.forEach(this._userMediaStreams, _.bind(setupSpeakingDetection, this, options));
+};
+
+AudioSpeakerDetector.prototype.stop = function stop() {
+    _.forEach(this.getAudioVolumeMeters(), function(meter) {
+        meter.onValue(function() {});
+    });
+
+    this._onSpeakingChanged = null;
+};
+
+AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
+    assert.isObject(stream, 'stream');
+
+    return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+};
+
+AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
+    return this._audioVolumeMeterFactory.getAudioVolumeMeters();
+};
+
+AudioSpeakerDetector.prototype.dispose = function dispose() {
+    if (this._disposeOfAudioContext) {
+        this._nativeAudioContext.close();
     }
 
-    AudioSpeakerDetector.prototype.start = function start(options, callback) {
-        assert.isFunction(callback, 'callback');
+    this._audioVolumeMeterFactory.stopAllMeters();
 
-        this._onSpeakingChanged = callback;
+    this._userMediaStreams = null;
+};
 
-        options = options || {};
+AudioSpeakerDetector.prototype.toString = function toString() {
+    return 'AudioSpeakerDetector';
+};
 
-        _.forEach(this._userMediaStreams, _.bind(setupSpeakingDetection, this, options));
-    };
+function setupAudioVolumeMeter(options, stream) {
+    assert.isObject(stream, 'stream');
+    assert.isObject(options, 'options');
 
-    AudioSpeakerDetector.prototype.stop = function stop() {
-        _.forEach(this.getAudioVolumeMeters(), function(meter) {
-            meter.onValue(function() {});
-        });
+    var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
 
-        this._onSpeakingChanged = null;
-    };
+    audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
+    audioVolumeMeter.connect(stream);
+}
 
-    AudioSpeakerDetector.prototype.getAudioVolumeMeter = function getAudioVolumeMeter(stream) {
-        assert.isObject(stream, 'stream');
+function setupSpeakingDetection(options, stream) {
+    assert.isObject(stream, 'stream');
+    assert.isObject(options, 'options');
 
-        return this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-    };
+    var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
+    var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
 
-    AudioSpeakerDetector.prototype.getAudioVolumeMeters = function getAudioVolumeMeters() {
-        return this._audioVolumeMeterFactory.getAudioVolumeMeters();
-    };
-
-    AudioSpeakerDetector.prototype.dispose = function dispose() {
-        if (this._disposeOfAudioContext) {
-            this._nativeAudioContext.close();
-        }
-
-        this._audioVolumeMeterFactory.stopAllMeters();
-
-        this._userMediaStreams = null;
-    };
-
-    AudioSpeakerDetector.prototype.toString = function toString() {
-        return 'AudioSpeakerDetector';
-    };
-
-    function setupAudioVolumeMeter(options, stream) {
-        assert.isObject(stream, 'stream');
-        assert.isObject(options, 'options');
-
-        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-
-        audioVolumeMeter.init(this._nativeAudioContext, options.alpha);
-        audioVolumeMeter.connect(stream);
+    if (options.alpha) {
+        audioVolumeMeter.setAlpha(options.alpha);
     }
 
-    function setupSpeakingDetection(options, stream) {
-        assert.isObject(stream, 'stream');
-        assert.isObject(options, 'options');
+    audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
+    audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
+}
 
-        var audioVolumeMeter = this._audioVolumeMeterFactory.getAudioVolumeMeter(stream);
-        var audioSpeakerDetectionAlgorithm = new AudioSpeakerDetectionAlgorithm(this._logger);
-
-        if (options.alpha) {
-            audioVolumeMeter.setAlpha(options.alpha);
-        }
-
-        audioSpeakerDetectionAlgorithm.onValue(this._onSpeakingChanged);
-        audioSpeakerDetectionAlgorithm.startDetection(audioVolumeMeter, options);
-    }
-
-    return AudioSpeakerDetector;
-});
+module.exports = AudioSpeakerDetector;

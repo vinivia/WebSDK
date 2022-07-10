@@ -13,101 +13,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const rtc = require('phenix-rtc');
+const logging = require('phenix-web-logging');
+const proto = require('phenix-web-proto');
+const telemetryProto = require('../protocol/telemetryProto.json');
+var loggingUrl = '/logs';
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-rtc',
-    'phenix-web-logging',
-    'phenix-web-proto',
-    '../protocol/telemetryProto.json'
-], function(_, assert, rtc, logging, proto, telemetryProto) {
-    var loggingUrl = '/logs';
+function TelemetryAppender(uri) {
+    assert.isString(uri, 'uri');
 
-    function TelemetryAppender(uri) {
-        assert.isString(uri, 'uri');
+    this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
+    this._minLevel = logging.level.TRACE;
+    this._isEnabled = true;
+    this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
+    this._mostRecentRuntime = 0;
+    this._batchHttpProtocol = new proto.BatchHttpProto(uri + loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
+        maxAttempts: 3,
+        maxBufferedRecords: 1000,
+        maxBatchSize: 512
+    });
 
-        this._domain = typeof location === 'object' ? location.hostname : rtc.browser + '-' + rtc.browserVersion + '-unknown';
-        this._minLevel = logging.level.TRACE;
-        this._isEnabled = true;
-        this._browser = (rtc.browser || 'Browser') + '/' + (rtc.browserVersion || '?');
-        this._mostRecentRuntime = 0;
-        this._batchHttpProtocol = new proto.BatchHttpProto(uri + loggingUrl, [telemetryProto], 'telemetry.StoreLogRecords', {
-            maxAttempts: 3,
-            maxBufferedRecords: 1000,
-            maxBatchSize: 512
-        });
+    this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+}
 
-        this._batchHttpProtocol.on('capacity', _.bind(onCapacity, this));
+TelemetryAppender.prototype.setThreshold = function setThreshold(level) {
+    assert.isNumber(level, 'level');
+
+    this._minLevel = level;
+};
+
+TelemetryAppender.prototype.getThreshold = function getThreshold() {
+    return this._minLevel;
+};
+
+TelemetryAppender.prototype.isEnabled = function isEnabled() {
+    return this._isEnabled;
+};
+
+TelemetryAppender.prototype.setEnabled = function setEnabled(enabled) {
+    assert.isBoolean(enabled, 'enabled');
+
+    this._isEnabled = enabled;
+};
+
+TelemetryAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
+    if (context.level < this._minLevel || !this._isEnabled) {
+        return;
     }
 
-    TelemetryAppender.prototype.setThreshold = function setThreshold(level) {
-        assert.isNumber(level, 'level');
+    assert.isArray(messages, 'messages');
 
-        this._minLevel = level;
-    };
+    this._mostRecentRuntime = since;
+    this._mostRecentSessionId = sessionId;
+    this._mostRecentUserId = userId;
+    this._mostRecentVersion = version;
+    this._mostRecentEnvironment = environment;
 
-    TelemetryAppender.prototype.getThreshold = function getThreshold() {
-        return this._minLevel;
-    };
+    addMessagesToRecords.call(this, level, category, messages);
+};
 
-    TelemetryAppender.prototype.isEnabled = function isEnabled() {
-        return this._isEnabled;
-    };
+function addMessagesToRecords(level, category, messages) {
+    this._batchHttpProtocol.addRecord({
+        level: level,
+        timestamp: _.isoString(),
+        category: category,
+        message: messages.join(' '),
+        source: this._browser,
+        fullQualifiedName: this._domain,
+        sessionId: this._mostRecentSessionId,
+        userId: this._mostRecentUserId,
+        environment: this._mostRecentEnvironment,
+        version: this._mostRecentVersion,
+        runtime: this._mostRecentRuntime
+    });
+}
 
-    TelemetryAppender.prototype.setEnabled = function setEnabled(enabled) {
-        assert.isBoolean(enabled, 'enabled');
+function onCapacity(deleteRecords) {
+    this._batchHttpProtocol.addRecordToBeginning({
+        level: 'Warn',
+        timestamp: _.isoString(),
+        category: 'websdk/telemetryLogger',
+        message: 'Deleted ' + deleteRecords + ' records',
+        source: this._browser,
+        fullQualifiedName: this._domain,
+        sessionId: this._mostRecentSessionId,
+        userId: this._mostRecentUserId,
+        environment: this._mostRecentEnvironment,
+        version: this._mostRecentVersion,
+        runtime: this._mostRecentRuntime
+    });
+}
 
-        this._isEnabled = enabled;
-    };
-
-    TelemetryAppender.prototype.log = function log(since, level, category, messages, sessionId, userId, environment, version, context) {
-        if (context.level < this._minLevel || !this._isEnabled) {
-            return;
-        }
-
-        assert.isArray(messages, 'messages');
-
-        this._mostRecentRuntime = since;
-        this._mostRecentSessionId = sessionId;
-        this._mostRecentUserId = userId;
-        this._mostRecentVersion = version;
-        this._mostRecentEnvironment = environment;
-
-        addMessagesToRecords.call(this, level, category, messages);
-    };
-
-    function addMessagesToRecords(level, category, messages) {
-        this._batchHttpProtocol.addRecord({
-            level: level,
-            timestamp: _.isoString(),
-            category: category,
-            message: messages.join(' '),
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    function onCapacity(deleteRecords) {
-        this._batchHttpProtocol.addRecordToBeginning({
-            level: 'Warn',
-            timestamp: _.isoString(),
-            category: 'websdk/telemetryLogger',
-            message: 'Deleted ' + deleteRecords + ' records',
-            source: this._browser,
-            fullQualifiedName: this._domain,
-            sessionId: this._mostRecentSessionId,
-            userId: this._mostRecentUserId,
-            environment: this._mostRecentEnvironment,
-            version: this._mostRecentVersion,
-            runtime: this._mostRecentRuntime
-        });
-    }
-
-    return TelemetryAppender;
-});
+module.exports = TelemetryAppender;

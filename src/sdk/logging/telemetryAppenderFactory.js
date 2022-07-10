@@ -13,37 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const environment = require('../environment');
+const TelemetryAppender = require('./TelemetryAppender');
+function TelemetryAppenderFactory() {
+    this._telemetryAppenders = {};
+}
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    '../environment',
-    './TelemetryAppender'
-], function(_, assert, environment, TelemetryAppender) {
-    function TelemetryAppenderFactory() {
-        this._telemetryAppenders = {};
+TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
+    var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
+    var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
+
+    if (!this._telemetryAppenders[env]) {
+        this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);
     }
 
-    TelemetryAppenderFactory.prototype.getAppender = function getAppender(pcastBaseUri) {
-        var env = environment.getEnvironmentFromUrl(pcastBaseUri || '');
-        var telemetryServerUrl = environment.getTelemetryServerUri(pcastBaseUri);
+    return this._telemetryAppenders[env];
+};
 
-        if (!this._telemetryAppenders[env]) {
-            this._telemetryAppenders[env] = createNewAppender.call(this, telemetryServerUrl);
-        }
+function createNewAppender(uri) {
+    var appender = new TelemetryAppender(uri);
 
-        return this._telemetryAppenders[env];
-    };
-
-    function createNewAppender(uri) {
-        var appender = new TelemetryAppender(uri);
-
-        if (!uri) {
-            appender.setEnabled(false);
-        }
-
-        return appender;
+    if (!uri) {
+        appender.setEnabled(false);
     }
 
-    return new TelemetryAppenderFactory();
-});
+    return appender;
+}
+
+module.exports = new TelemetryAppenderFactory();

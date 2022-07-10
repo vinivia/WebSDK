@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,47 +15,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
+const logging = require('phenix-web-logging');
+const environment = require('../environment');
+const telemetryAppenderFactory = require('./telemetryAppenderFactory');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert',
-    'phenix-web-logging',
-    '../environment',
-    './telemetryAppenderFactory'
-], function(_, assert, logging, environment, telemetryAppenderFactory) {
-    'use strict';
+function PCastLoggerFactory() {
 
-    function PCastLoggerFactory() {
+}
 
+PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole, loggingLevel) {
+    if (baseUri) {
+        assert.isStringNotEmpty(baseUri, 'baseUri');
     }
 
-    PCastLoggerFactory.prototype.createPCastLogger = function createPCastLogger(baseUri, disableConsole, loggingLevel) {
-        if (baseUri) {
-            assert.isStringNotEmpty(baseUri, 'baseUri');
-        }
+    var logger = new logging.Logger();
+    var env = environment.getEnvironmentFromUrl(baseUri);
+    var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
 
-        var logger = new logging.Logger();
-        var env = environment.getEnvironmentFromUrl(baseUri);
-        var telemetryAppender = telemetryAppenderFactory.getAppender(baseUri);
+    logger.setEnvironment(env);
 
-        logger.setEnvironment(env);
+    if (loggingLevel) {
+        telemetryAppender.setThreshold(loggingLevel);
+    } else {
+        telemetryAppender.setThreshold(logging.level.INFO);
+    }
 
-        if (loggingLevel) {
-            telemetryAppender.setThreshold(loggingLevel);
-        } else {
-            telemetryAppender.setThreshold(logging.level.INFO);
-        }
+    if (!disableConsole) {
+        logger.addAppender(new logging.ConsoleAppender());
+    }
 
-        if (!disableConsole) {
-            logger.addAppender(new logging.ConsoleAppender());
-        }
+    logger.addAppender(telemetryAppender);
 
-        logger.addAppender(telemetryAppender);
+    logger.isPCastLogger = true;
 
-        logger.isPCastLogger = true;
+    return logger;
+};
 
-        return logger;
-    };
-
-    return new PCastLoggerFactory();
-});
+module.exports = new PCastLoggerFactory();

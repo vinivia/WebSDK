@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,103 +15,98 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert'
-], function(_, assert) {
-    'use strict';
+var defaultSpeakingHysteresisInterval = 50;
+var defaultSilenceHysteresisInterval = 1500;
 
-    var defaultSpeakingHysteresisInterval = 50;
-    var defaultSilenceHysteresisInterval = 1500;
+function AudioSpeakerDetectionAlgorithm(logger) {
+    assert.isObject(logger, 'logger');
 
-    function AudioSpeakerDetectionAlgorithm(logger) {
-        assert.isObject(logger, 'logger');
+    this._logger = logger;
 
-        this._logger = logger;
+    this.init();
+}
 
-        this.init();
-    }
+AudioSpeakerDetectionAlgorithm.prototype.init = function init() {
 
-    AudioSpeakerDetectionAlgorithm.prototype.init = function init() {
+};
 
-    };
+AudioSpeakerDetectionAlgorithm.prototype.onValue = function onValue(callback) {
+    this._callback = callback;
+};
 
-    AudioSpeakerDetectionAlgorithm.prototype.onValue = function onValue(callback) {
-        this._callback = callback;
-    };
+AudioSpeakerDetectionAlgorithm.prototype.startDetection = function startDetection(audioVolumeMeter, options) {
+    var that = this;
 
-    AudioSpeakerDetectionAlgorithm.prototype.startDetection = function startDetection(audioVolumeMeter, options) {
-        var that = this;
+    return startAudioDetection.call(that, audioVolumeMeter, options);
+};
 
-        return startAudioDetection.call(that, audioVolumeMeter, options);
-    };
+AudioSpeakerDetectionAlgorithm.prototype.toString = function toString() {
+    return 'AudioSpeakerDetection';
+};
 
-    AudioSpeakerDetectionAlgorithm.prototype.toString = function toString() {
-        return 'AudioSpeakerDetection';
-    };
+function startAudioDetection(audioVolumeMeter, options) {
+    assert.isObject(audioVolumeMeter, 'audioVolumeMeter');
 
-    function startAudioDetection(audioVolumeMeter, options) {
+    options = options || {};
+
+    var that = this;
+    var stopped = false;
+    var speakingHysteresisInterval = options.speakingHysteresisInterval || defaultSpeakingHysteresisInterval;
+    var silenceHysteresisInterval = options.silenceHysteresisInterval || defaultSilenceHysteresisInterval;
+
+    assert.isNumber(speakingHysteresisInterval, 'options.speakingHysteresisInterval');
+    assert.isNumber(silenceHysteresisInterval, 'options.silenceHysteresisInterval');
+
+    var speaking = false;
+    var nextSpeakingDeadline = _.now() + speakingHysteresisInterval;
+    var nextSilenceDeadline = _.now() + silenceHysteresisInterval;
+
+    audioVolumeMeter.onValue(function(value) {
+        if (stopped) {
+            return;
+        }
+
         assert.isObject(audioVolumeMeter, 'audioVolumeMeter');
+        assert.isNumber(value.date, 'value.date');
+        assert.isNumber(value.value, 'value.value');
+        assert.isNumber(value.smoothedValue, 'value.smoothedValue');
+        assert.isNumber(value.smoothedPeakValue, 'value.smoothedPeakValue');
+        assert.isNumber(value.clipped, 'value.clipped');
 
-        options = options || {};
+        var speakingThreshold = value.value > 0.01 && value.value > 2 * value.smoothedValue && value.value > 0.25 * value.smoothedPeakValue;
+        var speakingContinuationThreshold = value.value > 0.8 * value.smoothedValue;
+        var notSpeakingThreshold = value.value < 0.5 * value.smoothedValue;
+        var notSpeakingContinuationThreshold = !speakingThreshold;
 
-        var that = this;
-        var stopped = false;
-        var speakingHysteresisInterval = options.speakingHysteresisInterval || defaultSpeakingHysteresisInterval;
-        var silenceHysteresisInterval = options.silenceHysteresisInterval || defaultSilenceHysteresisInterval;
+        if ((speakingThreshold || (speaking && speakingContinuationThreshold)) && nextSpeakingDeadline < value.date) {
+            nextSilenceDeadline = _.utc(value.date) + silenceHysteresisInterval;
 
-        assert.isNumber(speakingHysteresisInterval, 'options.speakingHysteresisInterval');
-        assert.isNumber(silenceHysteresisInterval, 'options.silenceHysteresisInterval');
+            if (!speaking) {
+                speaking = true;
 
-        var speaking = false;
-        var nextSpeakingDeadline = _.now() + speakingHysteresisInterval;
-        var nextSilenceDeadline = _.now() + silenceHysteresisInterval;
+                that._logger.info('Speaking detected');
 
-        audioVolumeMeter.onValue(function(value) {
-            if (stopped) {
-                return;
-            }
-
-            assert.isObject(audioVolumeMeter, 'audioVolumeMeter');
-            assert.isNumber(value.date, 'value.date');
-            assert.isNumber(value.value, 'value.value');
-            assert.isNumber(value.smoothedValue, 'value.smoothedValue');
-            assert.isNumber(value.smoothedPeakValue, 'value.smoothedPeakValue');
-            assert.isNumber(value.clipped, 'value.clipped');
-
-            var speakingThreshold = value.value > 0.01 && value.value > 2 * value.smoothedValue && value.value > 0.25 * value.smoothedPeakValue;
-            var speakingContinuationThreshold = value.value > 0.8 * value.smoothedValue;
-            var notSpeakingThreshold = value.value < 0.5 * value.smoothedValue;
-            var notSpeakingContinuationThreshold = !speakingThreshold;
-
-            if ((speakingThreshold || (speaking && speakingContinuationThreshold)) && nextSpeakingDeadline < value.date) {
-                nextSilenceDeadline = _.utc(value.date) + silenceHysteresisInterval;
-
-                if (!speaking) {
-                    speaking = true;
-
-                    that._logger.info('Speaking detected');
-
-                    if (that._callback) {
-                        that._callback('speaking');
-                    }
-                }
-            } else if ((notSpeakingThreshold || (!speaking && notSpeakingContinuationThreshold)) && nextSilenceDeadline < value.date) {
-                nextSpeakingDeadline = _.utc(value.date) + speakingHysteresisInterval;
-
-                if (speaking) {
-                    speaking = false;
-
-                    that._logger.info('Silence detected');
-
-                    if (that._callback) {
-                        that._callback('silence');
-                    }
+                if (that._callback) {
+                    that._callback('speaking');
                 }
             }
-        });
-    }
+        } else if ((notSpeakingThreshold || (!speaking && notSpeakingContinuationThreshold)) && nextSilenceDeadline < value.date) {
+            nextSpeakingDeadline = _.utc(value.date) + speakingHysteresisInterval;
 
-    return AudioSpeakerDetectionAlgorithm;
-});
+            if (speaking) {
+                speaking = false;
+
+                that._logger.info('Silence detected');
+
+                if (that._callback) {
+                    that._callback('silence');
+                }
+            }
+        }
+    });
+}
+
+module.exports = AudioSpeakerDetectionAlgorithm;

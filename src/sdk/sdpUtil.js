@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
  *
@@ -13,204 +15,199 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const _ = require('phenix-web-lodash-light');
+const assert = require('phenix-web-assert');
 
-define([
-    'phenix-web-lodash-light',
-    'phenix-web-assert'
-], function(_, assert) {
-    'use strict';
+var h264ProfileIdRegex = /profile-level-id=[^;\n]*/;
+var vp8Regex = /vp8/i;
+var vp9Regex = /vp9/i;
+var h264Regex = /h264/i;
+var h265Regex = /h265/i;
 
-    var h264ProfileIdRegex = /profile-level-id=[^;\n]*/;
-    var vp8Regex = /vp8/i;
-    var vp9Regex = /vp9/i;
-    var h264Regex = /h264/i;
-    var h265Regex = /h265/i;
+function sdpUtil() {
 
-    function sdpUtil() {
+}
 
+sdpUtil.prototype.getH264ProfileIds = function getH264ProfileIds(offerSdp) {
+    assert.isStringNotEmpty(offerSdp, 'offerSdp');
+
+    var h264ProfileIds = [];
+    var h264ProfileIdMatch = offerSdp.match(h264ProfileIdRegex);
+    var restOfOffer = offerSdp;
+
+    while (h264ProfileIdMatch) {
+        var h264ProfileId = _.get(h264ProfileIdMatch, '0', '');
+
+        h264ProfileIds.push(h264ProfileId.split('=')[1]);
+
+        restOfOffer = restOfOffer.substring(h264ProfileIdMatch.index + h264ProfileId.length, offerSdp.length);
+        h264ProfileIdMatch = restOfOffer.match(h264ProfileIdRegex);
     }
 
-    sdpUtil.prototype.getH264ProfileIds = function getH264ProfileIds(offerSdp) {
-        assert.isStringNotEmpty(offerSdp, 'offerSdp');
+    return h264ProfileIds;
+};
 
-        var h264ProfileIds = [];
-        var h264ProfileIdMatch = offerSdp.match(h264ProfileIdRegex);
-        var restOfOffer = offerSdp;
+sdpUtil.prototype.replaceH264ProfileId = function replaceH264ProfileId(offerSdp, profileIdToReplace, newProfileId) {
+    assert.isStringNotEmpty(offerSdp, 'offerSdp');
+    assert.isStringNotEmpty(newProfileId, 'newProfileId');
 
-        while (h264ProfileIdMatch) {
-            var h264ProfileId = _.get(h264ProfileIdMatch, '0', '');
+    var profileIds = this.getH264ProfileIds(offerSdp);
 
-            h264ProfileIds.push(h264ProfileId.split('=')[1]);
+    if (!_.includes(profileIds, profileIdToReplace)) {
+        return offerSdp;
+    }
 
-            restOfOffer = restOfOffer.substring(h264ProfileIdMatch.index + h264ProfileId.length, offerSdp.length);
-            h264ProfileIdMatch = restOfOffer.match(h264ProfileIdRegex);
+    return offerSdp.replace('profile-level-id=' + profileIdToReplace, 'profile-level-id=' + newProfileId);
+};
+
+sdpUtil.prototype.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
+    if (_.includes(profileIds, replaceProfileId)) {
+        return replaceProfileId;
+    }
+
+    var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
+        var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
+        var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
+        var profile = parseInt(profileId.substring(0, 2), 16);
+        var level = parseInt(profileId.substring(4, 6), 16);
+
+        // We prefer the profile that we are replacing
+        if (selectedProfile !== profile) {
+            return selectedProfileId;
         }
 
-        return h264ProfileIds;
-    };
+        return selectedLevel >= level ? selectedProfileId : profileId;
+    }, replaceProfileId);
 
-    sdpUtil.prototype.replaceH264ProfileId = function replaceH264ProfileId(offerSdp, profileIdToReplace, newProfileId) {
-        assert.isStringNotEmpty(offerSdp, 'offerSdp');
-        assert.isStringNotEmpty(newProfileId, 'newProfileId');
+    return nextProfileId === replaceProfileId ? null : nextProfileId;
+};
 
-        var profileIds = this.getH264ProfileIds(offerSdp);
+sdpUtil.prototype.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
+    var matchingProfile = this.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(profileIds, replaceProfileId);
 
-        if (!_.includes(profileIds, profileIdToReplace)) {
-            return offerSdp;
+    if (matchingProfile) {
+        return matchingProfile;
+    }
+
+    var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
+        var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
+        var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
+        var profile = parseInt(profileId.substring(0, 2), 16);
+        var level = parseInt(profileId.substring(4, 6), 16);
+
+        // We prefer the profile that we are replacing
+        if (selectedProfile < profile) {
+            return profileId;
+        } else if (profile < selectedProfile) {
+            return selectedProfileId;
         }
 
-        return offerSdp.replace('profile-level-id=' + profileIdToReplace, 'profile-level-id=' + newProfileId);
-    };
+        return selectedLevel > level ? selectedProfileId : profileId;
+    }, replaceProfileId);
 
-    sdpUtil.prototype.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
-        if (_.includes(profileIds, replaceProfileId)) {
-            return replaceProfileId;
+    return nextProfileId === replaceProfileId ? null : nextProfileId;
+};
+
+sdpUtil.prototype.getSupportedCodecs = function getSupportedCodecs(offerSdp) {
+    assert.isStringNotEmpty(offerSdp, 'offerSdp');
+
+    var codecs = [];
+
+    if (vp8Regex.test(offerSdp)) {
+        codecs.push('VP8');
+    }
+
+    if (vp9Regex.test(offerSdp)) {
+        codecs.push('VP9');
+    }
+
+    if (h264Regex.test(offerSdp)) {
+        codecs.push('H264');
+    }
+
+    if (h265Regex.test(offerSdp)) {
+        codecs.push('H265');
+    }
+
+    return codecs;
+};
+
+sdpUtil.prototype.hasMediaSectionsInLocalSdp = function hasMediaSectionsInLocalSdp(peerConnection) {
+    var indexOfSection = this.findInSdpSections(peerConnection, function(section) {
+        return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
+    });
+
+    return indexOfSection < 0;
+};
+
+sdpUtil.prototype.hasActiveAudio = function hasActiveAudio(peerConnection) {
+    var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
+        if (_.startsWith(section, 'audio')) {
+            return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
         }
 
-        var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
-            var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
-            var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
-            var profile = parseInt(profileId.substring(0, 2), 16);
-            var level = parseInt(profileId.substring(4, 6), 16);
+        return false;
+    });
 
-            // We prefer the profile that we are replacing
-            if (selectedProfile !== profile) {
-                return selectedProfileId;
-            }
+    return indexOfActiveVideo < 0;
+};
 
-            return selectedLevel >= level ? selectedProfileId : profileId;
-        }, replaceProfileId);
-
-        return nextProfileId === replaceProfileId ? null : nextProfileId;
-    };
-
-    sdpUtil.prototype.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel = function(profileIds, replaceProfileId) {
-        var matchingProfile = this.getH264ProfileIdWithSameProfileAndEqualToOrHigherLevel(profileIds, replaceProfileId);
-
-        if (matchingProfile) {
-            return matchingProfile;
+sdpUtil.prototype.hasActiveVideo = function hasActiveVideo(peerConnection) {
+    var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
+        if (_.startsWith(section, 'video')) {
+            return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
         }
 
-        var nextProfileId = _.reduce(profileIds, function(selectedProfileId, profileId) {
-            var selectedProfile = parseInt(selectedProfileId.substring(0, 2), 16);
-            var selectedLevel = parseInt(selectedProfileId.substring(4, 6), 16);
-            var profile = parseInt(profileId.substring(0, 2), 16);
-            var level = parseInt(profileId.substring(4, 6), 16);
+        return false;
+    });
 
-            // We prefer the profile that we are replacing
-            if (selectedProfile < profile) {
-                return profileId;
-            } else if (profile < selectedProfile) {
-                return selectedProfileId;
-            }
+    return indexOfActiveVideo < 0;
+};
 
-            return selectedLevel > level ? selectedProfileId : profileId;
-        }, replaceProfileId);
+sdpUtil.prototype.findInSdpSections = function findInSdpSections(peerConnection, callback) {
+    var localSections = this.getLocalSdp(peerConnection).split('m=');
+    var remoteSections = this.getRemoteSdp(peerConnection).split('m=');
 
-        return nextProfileId === replaceProfileId ? null : nextProfileId;
-    };
+    if (localSections.length !== remoteSections.length) {
+        return false;
+    }
 
-    sdpUtil.prototype.getSupportedCodecs = function getSupportedCodecs(offerSdp) {
-        assert.isStringNotEmpty(offerSdp, 'offerSdp');
+    return _.findIndex(localSections, function(section, index) {
+        return callback(section, index, remoteSections);
+    });
+};
 
-        var codecs = [];
+sdpUtil.prototype.getNumberOfActiveSections = function getNumberOfActiveSections(peerConnection) {
+    var sdp = this.getLocalSdp(peerConnection) || this.getRemoteSdp(peerConnection);
+    var sections = sdp.split('m=');
 
-        if (vp8Regex.test(offerSdp)) {
-            codecs.push('VP8');
-        }
+    return _.filter(sections, function(section) {
+        return !_.includes(section, 'a=inactive') && (_.startsWith(section, 'audio') || _.startsWith(section, 'video'));
+    }).length;
+};
 
-        if (vp9Regex.test(offerSdp)) {
-            codecs.push('VP9');
-        }
+sdpUtil.prototype.getLocalSdp = function getLocalSdp(peerConnection) {
+    return _.get(peerConnection, ['localDescription', 'sdp'], '');
+};
 
-        if (h264Regex.test(offerSdp)) {
-            codecs.push('H264');
-        }
+sdpUtil.prototype.getRemoteSdp = function getLocalSdp(peerConnection) {
+    return _.get(peerConnection, ['remoteDescription', 'sdp'], '');
+};
 
-        if (h265Regex.test(offerSdp)) {
-            codecs.push('H265');
-        }
+sdpUtil.prototype.setGroupLineOrderToMatchMediaSectionOrder = function setGroupLineOrderToMatchMediaSectionOrder(sdp) {
+    var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
+    var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
+    var mediaSegmentNames = mediaSegmentNamesString.split(' ');
 
-        return codecs;
-    };
+    var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
+        return sdp.indexOf('m=' + nameA) - sdp.indexOf('m=' + nameB);
+    });
 
-    sdpUtil.prototype.hasMediaSectionsInLocalSdp = function hasMediaSectionsInLocalSdp(peerConnection) {
-        var indexOfSection = this.findInSdpSections(peerConnection, function(section) {
-            return _.startsWith(section, 'video') || _.startsWith(section, 'audio');
-        });
+    if (sortedMediaSegmentNames.length > 0) {
+        sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
+    }
 
-        return indexOfSection < 0;
-    };
+    return sdp;
+};
 
-    sdpUtil.prototype.hasActiveAudio = function hasActiveAudio(peerConnection) {
-        var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'audio')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return indexOfActiveVideo < 0;
-    };
-
-    sdpUtil.prototype.hasActiveVideo = function hasActiveVideo(peerConnection) {
-        var indexOfActiveVideo = this.findInSdpSections(peerConnection, function(section, index, remoteSections) {
-            if (_.startsWith(section, 'video')) {
-                return !_.includes(section, 'a=inactive') && !_.includes(remoteSections[index], 'a=inactive');
-            }
-
-            return false;
-        });
-
-        return indexOfActiveVideo < 0;
-    };
-
-    sdpUtil.prototype.findInSdpSections = function findInSdpSections(peerConnection, callback) {
-        var localSections = this.getLocalSdp(peerConnection).split('m=');
-        var remoteSections = this.getRemoteSdp(peerConnection).split('m=');
-
-        if (localSections.length !== remoteSections.length) {
-            return false;
-        }
-
-        return _.findIndex(localSections, function(section, index) {
-            return callback(section, index, remoteSections);
-        });
-    };
-
-    sdpUtil.prototype.getNumberOfActiveSections = function getNumberOfActiveSections(peerConnection) {
-        var sdp = this.getLocalSdp(peerConnection) || this.getRemoteSdp(peerConnection);
-        var sections = sdp.split('m=');
-
-        return _.filter(sections, function(section) {
-            return !_.includes(section, 'a=inactive') && (_.startsWith(section, 'audio') || _.startsWith(section, 'video'));
-        }).length;
-    };
-
-    sdpUtil.prototype.getLocalSdp = function getLocalSdp(peerConnection) {
-        return _.get(peerConnection, ['localDescription', 'sdp'], '');
-    };
-
-    sdpUtil.prototype.getRemoteSdp = function getLocalSdp(peerConnection) {
-        return _.get(peerConnection, ['remoteDescription', 'sdp'], '');
-    };
-
-    sdpUtil.prototype.setGroupLineOrderToMatchMediaSectionOrder = function setGroupLineOrderToMatchMediaSectionOrder(sdp) {
-        var groupLineSegment = sdp.match(/(?=a=group:BUNDLE).*/);
-        var mediaSegmentNamesString = _.get(_.get(groupLineSegment, [0], '').split('a=group:BUNDLE '), [1], '');
-        var mediaSegmentNames = mediaSegmentNamesString.split(' ');
-
-        var sortedMediaSegmentNames = mediaSegmentNames.sort(function(nameA, nameB) {
-            return sdp.indexOf('m=' + nameA) - sdp.indexOf('m=' + nameB);
-        });
-
-        if (sortedMediaSegmentNames.length > 0) {
-            sdp = sdp.replace(mediaSegmentNamesString, sortedMediaSegmentNames.join(' '));
-        }
-
-        return sdp;
-    };
-
-    return new sdpUtil();
-});
+module.exports = new sdpUtil();
