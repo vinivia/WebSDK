@@ -18,7 +18,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-disposable',
-    'phenix-rtc'
+    '../PhenixRTC'
 ], function(_, assert, disposable, phenixRTC) {
     'use strict';
 

@@ -16,7 +16,7 @@
 
 define([
     'sdk/audio/AudioContext',
-    'phenix-rtc'
+    'sdk/PhenixRTC'
 ], function(AudioContext, rtc) {
     describe('When Instantiating An Audio Context on WebRTC supported browsers', function() {
         before(function() {

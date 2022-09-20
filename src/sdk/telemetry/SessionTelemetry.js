@@ -19,9 +19,9 @@ define([
     'phenix-web-assert',
     'phenix-web-disposable',
     'phenix-web-application-activity-detector',
-    './NetworkMonitor',
-    'phenix-rtc'
-], function(_, assert, disposable, applicationActivityDetector, NetworkMonitor, phenixRTC) {
+    '../PhenixRTC',
+    './NetworkMonitor'
+], function(_, assert, disposable, applicationActivityDetector, phenixRTC, NetworkMonitor) {
     'use strict';
 
     var start = phenixRTC.global['__phenixPageLoadTime'] || phenixRTC.global['__pageLoadTime'] || _.now();

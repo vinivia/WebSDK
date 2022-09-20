@@ -17,11 +17,11 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc',
     'phenix-web-logging',
     'phenix-web-proto',
+    '../PhenixRTC',
     '../protocol/telemetryProto.json'
-], function(_, assert, rtc, logging, proto, telemetryProto) {
+], function(_, assert, logging, proto, rtc, telemetryProto) {
     var loggingUrl = '/logs';
 
     function TelemetryAppender(uri) {

@@ -17,11 +17,11 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc',
     'phenix-web-global',
+    '../PhenixRTC',
     './PhenixLiveStream',
     './stream.json'
-], function(_, assert, rtc, global, PhenixLiveStream, streamEnums) {
+], function(_, assert, global, rtc, PhenixLiveStream, streamEnums) {
     'use strict';
 
     var defaultFeatures = [

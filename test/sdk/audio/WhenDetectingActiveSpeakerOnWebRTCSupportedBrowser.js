@@ -18,7 +18,7 @@ define([
     'phenix-web-logging',
     'sdk/audio/AudioSpeakerDetector',
     'sdk/audio/AudioVolumeMeter',
-    'phenix-rtc'
+    'sdk/PhenixRTC'
 ], function(logging, AudioSpeakerDetector, AudioVolumeMeter, rtc) {
     describe('When Detecting Active Speaker on WebRTC Supported Browser', function() {
         var audioSpeakerDetector;

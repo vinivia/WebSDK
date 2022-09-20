@@ -17,7 +17,7 @@
 define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
-    'phenix-rtc',
+    '../PhenixRTC',
     './ResolutionProvider'
 ], function(_, assert, RTC, ResolutionProvider) {
     'use strict';

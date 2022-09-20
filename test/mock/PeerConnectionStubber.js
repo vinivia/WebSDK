@@ -18,7 +18,7 @@
 
 define([
     'phenix-web-lodash-light',
-    'phenix-rtc',
+    'sdk/PhenixRTC',
     './UserMediaStubber'
 ], function(_, phenixRTC, UserMediaStubber) {
     function PeerConnectionStubber() {

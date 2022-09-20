@@ -16,7 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
-    'phenix-rtc',
+    'sdk/PhenixRTC',
     'sdk/userMedia/UserMediaResolver',
     'sdk/PCast',
     '../../../test/mock/UserMediaStubber',

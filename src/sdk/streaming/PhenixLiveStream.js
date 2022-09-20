@@ -18,7 +18,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-event',
-    'phenix-rtc',
+    '../PhenixRTC',
     './ShakaRenderer',
     './PhenixPlayerRenderer',
     './FlashRenderer',

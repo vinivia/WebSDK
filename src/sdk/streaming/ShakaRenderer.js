@@ -20,10 +20,10 @@ define([
     'phenix-web-event',
     'phenix-web-http',
     'phenix-web-disposable',
-    'phenix-rtc',
     '../DimensionsChangedMonitor',
+    '../PhenixRTC',
     './stream.json'
-], function(_, assert, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, event, http, disposable, DimensionsChangedMonitor, rtc, streamEnums) {
     'use strict';
 
     var widevineServiceCertificate = null;

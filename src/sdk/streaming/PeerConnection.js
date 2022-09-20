@@ -16,7 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
-    'phenix-rtc'
+    '../PhenixRTC'
 ], function(_, rtc) {
     'use strict';
 

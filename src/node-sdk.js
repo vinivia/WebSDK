@@ -23,9 +23,9 @@ global.XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest; // External de
 global.WebSocket = require('ws'); // External dependency https://www.npmjs.com/package/ws
 
 define('phenix-web-sdk', [
-    'phenix-rtc',
     'phenix-web-logging',
     './sdk/PCast',
+    './sdk/PhenixRTC',
     './sdk/room/RoomService',
     './sdk/audio/AudioSpeakerDetector',
     './sdk/bandwidth/BandwidthMonitor',
@@ -34,7 +34,7 @@ define('phenix-web-sdk', [
     './sdk/express/RoomExpress',
     './sdk/express/ChannelExpress',
     './sdk/AdminApiProxyClient'
-], function(rtc, logging, PCast, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
+], function(logging, PCast, rtc, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
     rtc.global.atob = function(parameter) {
         // eslint-disable-next-line no-undef
         return new Buffer.from(parameter, 'base64').toString('binary');

@@ -18,16 +18,16 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-event',
-    'phenix-rtc',
     'phenix-web-disposable',
     'phenix-web-application-activity-detector',
+    '../PhenixRTC',
     './PeerConnection',
     './PeerConnectionMonitor',
     './BitRateMonitor',
     './PhenixRealTimeRenderer',
     './FeatureDetector',
     './stream.json'
-], function(_, assert, event, rtc, disposable, applicationActivityDetector, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
+], function(_, assert, event, disposable, applicationActivityDetector, rtc, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
     'use strict';
 
     var defaultIceConnectionTimeout = 12000;

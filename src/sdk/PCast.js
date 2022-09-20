@@ -40,7 +40,7 @@ define([
     './streaming/FeatureDetector',
     './streaming/stream.json',
     './streaming/BitRateMonitor',
-    'phenix-rtc',
+    './PhenixRTC',
     './sdpUtil'
 ], function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';

@@ -19,7 +19,7 @@ define([
     'sdk/audio/AudioContext',
     'sdk/audio/AudioSpeakerDetectionAlgorithm',
     'sdk/audio/AudioVolumeMeter',
-    'phenix-rtc',
+    'sdk/PhenixRTC',
     '../../../test/mock/HttpStubber'
 ], function(logging, AudioContext, AudioSpeakerDetectionAlgorithm, AudioVolumeMeter, rtc, HttpStubber) {
     describe('When Using Active Speaker Detection Algorithm on WebRTC Supported Browser', function() {

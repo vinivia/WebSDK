@@ -19,7 +19,7 @@ define([
     'phenix-web-assert',
     'phenix-web-observable',
     'phenix-web-proto',
-    'phenix-rtc',
+    './PhenixRTC',
     './protocol/pcastProto.json',
     './protocol/chatProto.json'
 ], function(_, assert, observable, proto, phenixRTC, pcastProto, chatProto) {

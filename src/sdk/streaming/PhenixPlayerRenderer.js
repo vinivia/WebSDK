@@ -21,10 +21,10 @@ define([
     'phenix-web-event',
     'phenix-web-http',
     'phenix-web-disposable',
-    'phenix-rtc',
     '../DimensionsChangedMonitor',
+    '../PhenixRTC',
     './stream.json'
-], function(_, assert, logging, event, http, disposable, rtc, DimensionsChangedMonitor, streamEnums) {
+], function(_, assert, logging, event, http, disposable, DimensionsChangedMonitor, rtc, streamEnums) {
     'use strict';
 
     var bandwidthAt720 = 3000000;

@@ -16,7 +16,7 @@
 
 define([
     'phenix-web-lodash-light',
-    'phenix-rtc'
+    'sdk/PhenixRTC'
 ], function(_, phenixRTC) {
     function UserMediaStubber() {
         phenixRTC.getUserMedia = phenixRTC.getUserMedia || _.noop;

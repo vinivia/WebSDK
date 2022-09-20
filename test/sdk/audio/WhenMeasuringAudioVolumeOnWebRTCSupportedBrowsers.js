@@ -18,7 +18,7 @@ define([
     'phenix-web-logging',
     'sdk/audio/AudioContext',
     'sdk/audio/AudioVolumeMeter',
-    'phenix-rtc'
+    'sdk/PhenixRTC'
 ], function(logging, AudioContext, AudioVolumeMeter, rtc) {
     describe('When Measuring the Audio Volume Using WebRTC supported Browsers', function() {
         var audioVolumeMeter;

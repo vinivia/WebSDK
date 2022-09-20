@@ -18,7 +18,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-proto',
-    'phenix-rtc',
+    '../PhenixRTC',
     '../protocol/telemetryProto.json'
 ], function(_, assert, proto, rtc, telemetryProto) {
     var metricsUrl = '/metrics';

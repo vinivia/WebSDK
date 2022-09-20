@@ -15,7 +15,7 @@
  */
 
 define([
-    'phenix-rtc'
+    '../PhenixRTC'
 ], function(rtc) {
     'use strict';
 

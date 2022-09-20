@@ -20,14 +20,14 @@ define([
     'phenix-web-event',
     'phenix-web-http',
     'phenix-web-disposable',
-    'phenix-rtc',
     'phenix-web-application-activity-detector',
     'phenix-web-detect-browser',
     'phenix-web-global',
     '../DimensionsChangedMonitor',
+    '../PhenixRTC',
     './stream.json',
     './FeatureDetector'
-], function(_, assert, event, http, disposable, rtc, applicationActivityDetector, DetectBrowser, global, DimensionsChangedMonitor, streamEnums, FeatureDetector) {
+], function(_, assert, event, http, disposable, applicationActivityDetector, DetectBrowser, global, DimensionsChangedMonitor, rtc, streamEnums, FeatureDetector) {
     'use strict';
 
     var listenForPauseChangeAfterForegroundInterval = 1000;

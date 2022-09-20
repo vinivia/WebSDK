@@ -21,7 +21,7 @@ define([
     '../AdminApiProxyClient',
     '../userMedia/UserMediaResolver',
     '../PCast',
-    'phenix-rtc',
+    '../PhenixRTC',
     '../streaming/shaka.json'
 ], function(_, assert, observable, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';

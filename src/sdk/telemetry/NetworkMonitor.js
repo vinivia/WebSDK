@@ -19,7 +19,7 @@ define([
     'phenix-web-assert',
     'phenix-web-event',
     'phenix-web-disposable',
-    'phenix-rtc'
+    '../PhenixRTC'
 ], function(_, assert, event, disposable, rtc) {
     function NetworkMonitor(logger) {
         assert.isObject(logger, 'logger');

@@ -19,7 +19,7 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
-    'phenix-rtc'
+    '../PhenixRTC'
 ], function(_, assert, observable, phenixRTC) {
     'use strict';
 
