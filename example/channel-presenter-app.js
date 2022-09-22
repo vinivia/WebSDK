@@ -27,7 +27,6 @@ for (var i = 0; i < params.length; i++) {
 requirejs.config({
     paths: {
         'phenix-web-sdk': phenixWebSdk,
-        'phenix-rtc': 'phenix-rtc/dist/phenix-rtc',
         'jquery': 'jquery/dist/jquery.min',
         'lodash': 'lodash/lodash.min',
         'bootstrap': 'bootstrap/dist/js/bootstrap.min',

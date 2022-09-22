@@ -17,9 +17,8 @@
 define('video-player', [
     'jquery',
     'phenix-web-lodash-light',
-    'phenix-web-sdk',
-    'phenix-rtc'
-], function($, _, sdk, rtc) {
+    'phenix-web-sdk'
+], function($, _, sdk) {
     var userAgent = window.navigator.userAgent;
     var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
     var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
@@ -46,13 +45,13 @@ define('video-player', [
         this.video.parentNode.insertBefore(this.videoControls, this.video.nextElementSibling);
 
         // Disable audio for autoplay
-        if ((isIOS || isMobile || (rtc.browser === 'Safari' && rtc.browserVersion >= 11)) && !this.stream) {
+        if ((isIOS || isMobile || (sdk.utils.rtc.browser === 'Safari' && sdk.utils.rtc.browserVersion >= 11)) && !this.stream) {
             this.video.muted = true;
             this.video.autoplay = true;
             this.video.attributes.playsinline = "";
             this.video.attributes['webkit-playsinline'] = "";
 
-            if (!(rtc.browser === 'Safari' && rtc.browserVersion >= 11)) {
+            if (!(sdk.utils.rtc.browser === 'Safari' && sdk.utils.rtc.browserVersion >= 11)) {
                 this.video.play();
             }
         }
@@ -247,7 +246,7 @@ define('video-player', [
     }
 
     var setVideoWidthAndHeight = function setVideoWithAndHeight(dimensions, options) {
-        if (rtc.browser === 'Edge') {
+        if (sdk.utils.rtc.browser === 'Edge') {
             return;
         }
 
