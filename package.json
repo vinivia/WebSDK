@@ -1,6 +1,6 @@
 {
   "name": "phenix-web-sdk",
-  "version": "2022.0.4",
+  "version": "2022.0.5",
   "license": "Apache-2.0",
   "private": false,
   "main": "dist/phenix-web-sdk.js",
@@ -38,7 +38,7 @@
     "dist/"
   ],
   "engines": {
-    "node": "16.15.0"
+    "node": "^16.15.0"
   },
   "devDependencies": {
     "animate.css": "4.1.0",
