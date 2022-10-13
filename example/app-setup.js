@@ -368,6 +368,7 @@ define('app-setup', [
     var getPublisherCapabilities = function() {
         return [
             'prefer-vp8',
+            'prefer-vp9',
             'prefer-h264',
             'archive',
             'archive-audio-only',
@@ -460,6 +461,8 @@ define('app-setup', [
             'real-time',
             'prefer-vp8',
             'prefer-vp8=force',
+            'prefer-vp9',
+            'prefer-vp9=force',
             'prefer-h264',
             'prefer-h264=force',
             'single-bitrate',
