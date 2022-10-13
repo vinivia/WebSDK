@@ -74,8 +74,8 @@ define('app-setup', [
         }
 
         if (document.getElementById('publish-capabilities')) {
-            _.forOwn(getPublisherCapabilities(), function(title, capability) {
-                addButton('#publish-capabilities', title, capability);
+            _.forEach(getPublisherCapabilities(), function(capability) {
+                addButton('#publish-capabilities', capability, capability);
             });
         }
 
@@ -84,7 +84,7 @@ define('app-setup', [
         if (rawPublisherCapabilities) {
             var publisherCapabilities = _.trim(rawPublisherCapabilities, ',').split(',');
 
-            _.forOwn(_.difference(publisherCapabilities, _.keys(getPublisherCapabilities())), function(capability) {
+            _.forEach(_.difference(publisherCapabilities, getPublisherCapabilities()), function(capability) {
                 addButton('#publish-capabilities', '[Custom] ' + capability, capability);
             });
 
@@ -92,30 +92,30 @@ define('app-setup', [
         }
 
         if (document.getElementById('subscriber-mode')) {
-            _.forOwn(getSubscriberCapabilities(), function(title, capability) {
-                addButton('#subscriber-mode', title, capability);
+            _.forEach(getSubscriberCapabilities(), function(capability) {
+                addButton('#subscriber-mode', capability, capability);
             });
         }
 
         if (document.getElementById('publish-audio-quality')) {
-            _.forOwn(getPublisherAudioQualities(), function(title, quality) {
+            _.forEach(getPublisherAudioQualities(), function(capability) {
                 var isSelected = false;
 
-                addButton('#publish-audio-quality', title, quality, isSelected);
+                addButton('#publish-audio-quality', capability, capability, isSelected);
             });
         }
 
         if (document.getElementById('publish-video-quality')) {
-            _.forOwn(getPublisherVideoQualities(), function(title, quality) {
-                var isSelected = quality === defaultPublisherQuality;
+            _.forEach(getPublisherVideoQualities(), function(capability) {
+                var isSelected = capability === defaultPublisherQuality;
 
-                addButton('#publish-video-quality', title, quality, isSelected);
+                addButton('#publish-video-quality', capability, capability, isSelected);
             });
         }
 
         if (document.getElementById('subscriber-drm-capabilities')) {
-            _.forOwn(getDrmModifiers(), function(title, capability) {
-                addButton('#subscriber-drm-capabilities', title, capability);
+            _.forEach(getDrmModifiers(), function(capability) {
+                addButton('#subscriber-drm-capabilities', capability, capability);
             });
         }
 
@@ -125,7 +125,7 @@ define('app-setup', [
             var subscriberCapabilities = _.trim(rawSubscriberCapabilities, ',').split(',');
             var defaultSubscriberCapabilities = _.merge(getSubscriberCapabilities(), getDrmModifiers());
 
-            _.forOwn(_.difference(subscriberCapabilities, _.keys(defaultSubscriberCapabilities)), function(capability) {
+            _.forEach(_.difference(subscriberCapabilities, defaultSubscriberCapabilities), function(capability) {
                 addButton('#subscriber-mode', '[Custom] ' + capability, capability);
             });
 
@@ -366,145 +366,145 @@ define('app-setup', [
     };
 
     var getPublisherCapabilities = function() {
-        return {
-            'prefer-vp8': 'VP8',
-            'prefer-h264': 'H264',
-            'archive': 'Archive',
-            'archive-audio-only': 'Archive Audio Only',
-            'streaming': 'Live',
-            'on-demand': 'VOD',
-            'streaming-lite': 'Lite for Live',
-            'on-demand-lite': 'Lite for VOD',
-            'time-shift-manifest': 'Time Shift',
-            'low-latency': 'Low Latency for DASH+HLS',
-            'cdn-domain=cdn.phenixrts.com': 'Alternate CDN',
-            'cdn-domain=cdn-stg.phenixrts.com': 'Alternate CDN STG',
-            'mpegts-streaming': 'MP2T for DASH+HLS',
-            'webm-streaming': 'WebM for DASH+HLS',
-            'token-auth': 'Token Auth',
-            'drm': 'DRM',
-            'rtmp': 'RTMP',
-            'mpegts-rtmp': 'MP2T for RTMP',
-            'webm-rtmp': 'WebM for RTMP',
-            'multi-bitrate': 'multi-bitrate',
-            'multi-bitrate-contribution': 'multi-bitrate-contribution',
-            'multi-bitrate-codec=vp8': 'VP8 MBR Codec',
-            'multi-bitrate-codec=h264': 'H264 MBR Codec',
-            'multi-bitrate-encoding=offload': 'Offload MBR Encoding',
-            'multi-bitrate-encoding=inline': 'Inline MBR Encoding',
-            'constant-gop-size': 'Constant GOP',
-            'dynamic-gop-size': 'Dynamic GOP',
-            'uniform-gop-size': 'Uniform GOP',
-            'constant-resolution': 'Constant Resolution',
-            'aspect-ratio=16x9': '16x9',
-            'aspect-ratio=4x3': '4x3',
-            'aspect-ratio=9x16': '9x16',
-            'aspect-ratio=3x4': '3x4',
-            'aspect-ratio=1x1': '1x1',
-            'scale-aspect-ratio=16x9': 'scale-aspect-ratio=16x9',
-            'scale-aspect-ratio=4x3': 'scale-aspect-ratio=4x3',
-            'scale-aspect-ratio=1x1': 'scale-aspect-ratio=1x1',
-            'resolution-limit=480': '480p',
-            'resolution-limit=720': '720p',
-            'bitrate-limit=150000': '150kbps',
-            'bitrate-limit=280000': '280kbps',
-            'bitrate-limit=500000': '500kbps',
-            'bitrate-limit=650000': '650kbps',
-            'bitrate-limit=1100000': '1.1Mbps',
-            'resample=2/1': '2/1',
-            'resample=3/2': '3/2',
-            'encoding-profile=phenix-2019': 'Legacy Ladder',
-            'encoding-profile=phenix-2020': 'New Ladder',
-            'encoding-profile=phenix-2020-60fps': '60fps Ladder',
-            'encoding-jitter-buffer=PT0.1S': '0.1s',
-            'encoding-jitter-buffer=PT0.5S': '0.5s',
-            'encoding-jitter-buffer=PT1.0S': '1.0s',
-            'encoding-jitter-buffer=PT2.0S': '2.0s',
-            'encoding-jitter-buffer=PT20S': '20s',
-            'playout-buffer=PT0.1S': 'PB 0.1s',
-            'playout-buffer=PT0.3S': 'PB 0.3s',
-            'playout-buffer=PT0.5S': 'PB 0.5s',
-            'playout-buffer=PT0.8S': 'PB 0.8s',
-            'playout-buffer=PT1.0S': 'PB 1.0s',
-            'playout-buffer=PT2.0S': 'PB 2.0s',
-            'origin-shield': 'Origin Shield',
-            'scale-wide': 'Scale Wide',
-            'scale-elastic': 'Scale Elastic',
-            'prefer-edge=origin': 'Edge Origin',
-            'prefer-edge=origin-disallow': 'Disallow Edge Origin',
-            'prefer-edge': 'Prefer Edge',
-            'prefer-edge=avoid': 'Avoid Edge',
-            'prefer-edge=disallow': 'Disallow Edge',
-            'disable-nack': 'No NACKs',
-            'disable-pli': 'No PLIs',
-            'disable-fec': 'No FEC',
-            'on-demand-archive=PT1M': 'VOD Archive (1 minute)',
-            'on-demand-archive=PT1H': 'VOD Archive (1 hour)',
-            'on-demand-archive=PT1D': 'VOD Archive (1 day)',
-            'transcoding={"selectedQualities":["hd"]}': 'HD DASH+HLS only',
-            'transcoding={"selectedQualities":["sd"]}': 'SD DASH+HLS only',
-            'transcoding={"maxPlaylistPlaybackTime":"PT4M"}': '4m DASH+HLS playlists',
-            'transcoding={"playlistStartOffset":"-PT10M"}': '10m playlist offset',
-            'monitor-tracks': 'Monitor Tracks',
-            'kill-session-on-stream-failure': 'Kill Session on Failure',
-            'kill-session-on-stream-ended': 'Kill Session on Ended',
-            'setup-deadline=PT5S': 'Setup in 5s or fail',
-            'abandon-deadline=PT15S': 'Data in 15s or fail'
-        };
+        return [
+            'prefer-vp8',
+            'prefer-h264',
+            'archive',
+            'archive-audio-only',
+            'streaming',
+            'on-demand',
+            'streaming-lite',
+            'on-demand-lite',
+            'time-shift-manifest',
+            'low-latency',
+            'cdn-domain=cdn.phenixrts.com',
+            'cdn-domain=cdn-stg.phenixrts.com',
+            'mpegts-streaming',
+            'webm-streaming',
+            'token-auth',
+            'drm',
+            'rtmp',
+            'mpegts-rtmp',
+            'webm-rtmp',
+            'multi-bitrate',
+            'multi-bitrate-contribution',
+            'multi-bitrate-codec=vp8',
+            'multi-bitrate-codec=h264',
+            'multi-bitrate-encoding=offload',
+            'multi-bitrate-encoding=inline',
+            'constant-gop-size',
+            'dynamic-gop-size',
+            'uniform-gop-size',
+            'constant-resolution',
+            'aspect-ratio=16x9',
+            'aspect-ratio=4x3',
+            'aspect-ratio=9x16',
+            'aspect-ratio=3x4',
+            'aspect-ratio=1x1',
+            'scale-aspect-ratio=16x9',
+            'scale-aspect-ratio=4x3',
+            'scale-aspect-ratio=1x1',
+            'resolution-limit=480',
+            'resolution-limit=720',
+            'bitrate-limit=150000',
+            'bitrate-limit=280000',
+            'bitrate-limit=500000',
+            'bitrate-limit=650000',
+            'bitrate-limit=1100000',
+            'resample=2/1',
+            'resample=3/2',
+            'encoding-profile=phenix-2019',
+            'encoding-profile=phenix-2020',
+            'encoding-profile=phenix-2020-60fps',
+            'encoding-jitter-buffer=PT0.1S',
+            'encoding-jitter-buffer=PT0.5S',
+            'encoding-jitter-buffer=PT1.0S',
+            'encoding-jitter-buffer=PT2.0S',
+            'encoding-jitter-buffer=PT20S',
+            'playout-buffer=PT0.1S',
+            'playout-buffer=PT0.3S',
+            'playout-buffer=PT0.5S',
+            'playout-buffer=PT0.8S',
+            'playout-buffer=PT1.0S',
+            'playout-buffer=PT2.0S',
+            'origin-shield',
+            'scale-wide',
+            'scale-elastic',
+            'prefer-edge=origin',
+            'prefer-edge=origin-disallow',
+            'prefer-edge',
+            'prefer-edge=avoid',
+            'prefer-edge=disallow',
+            'disable-nack',
+            'disable-pli',
+            'disable-fec',
+            'on-demand-archive=PT1M',
+            'on-demand-archive=PT1H',
+            'on-demand-archive=PT1D',
+            'transcoding={"selectedQualities":["hd"]}',
+            'transcoding={"selectedQualities":["sd"]}',
+            'transcoding={"maxPlaylistPlaybackTime":"PT4M"}',
+            'transcoding={"playlistStartOffset":"-PT10M"}',
+            'monitor-tracks',
+            'kill-session-on-stream-failure',
+            'kill-session-on-stream-ended',
+            'setup-deadline=PT5S',
+            'abandon-deadline=PT15S'
+        ];
     };
 
     var getSubscriberCapabilities = function() {
-        return {
-            'audio-only': 'Audio Only',
-            'video-only': 'Video Only',
-            'real-time': 'Real-time',
-            'prefer-vp8': 'Real-time VP8 (Prefer)',
-            'prefer-vp8=force': 'Real-time VP8 (Force)',
-            'prefer-h264': 'Real-time H264 (Prefer)',
-            'prefer-h264=force': 'Real-time H264 (Force)',
-            'single-bitrate': 'Real-time SBR',
-            'disable-nack': 'No NACKs',
-            'disable-pli': 'No PLIs',
-            'disable-fec': 'No FEC',
-            'broadcast': 'Broadcast',
-            'streaming': 'Live',
-            'on-demand': 'On Demand',
-            'rtmp': 'Rtmp',
-            'time-shift': 'DVR',
-            'cdn-domain=cdn.phenixrts.com': 'Alternate CDN',
-            'cdn-domain=cdn-stg.phenixrts.com': 'Alternate CDN STG',
-            'any-stream': 'Any Stream'
-        };
+        return [
+            'audio-only',
+            'video-only',
+            'real-time',
+            'prefer-vp8',
+            'prefer-vp8=force',
+            'prefer-h264',
+            'prefer-h264=force',
+            'single-bitrate',
+            'disable-nack',
+            'disable-pli',
+            'disable-fec',
+            'broadcast',
+            'streaming',
+            'on-demand',
+            'rtmp',
+            'time-shift',
+            'cdn-domain=cdn.phenixrts.com',
+            'cdn-domain=cdn-stg.phenixrts.com',
+            'any-stream'
+        ];
     };
 
     var getPublisherAudioQualities = function() {
-        return {
-            'video-only': 'Video Only',
-            'default-fidelity': 'Default Fidelity',
-            'high-fidelity': 'High Fidelity'
-        };
+        return [
+            'video-only',
+            'default-fidelity',
+            'high-fidelity'
+        ];
     };
 
     var getPublisherVideoQualities = function() {
-        return {
-            'audio-only': 'Audio Only',
-            'uld': 'ULD',
-            'vvld': 'VVLD',
-            'vld': 'VLD',
-            'ld': 'LD',
-            'sd': 'SD',
-            'hd': 'HD',
-            'fhd': 'FHD',
-            'xhd': 'XHD',
-            'uhd': 'UHD'
-        };
+        return [
+            'audio-only',
+            'uld',
+            'vvld',
+            'vld',
+            'ld',
+            'sd',
+            'hd',
+            'fhd',
+            'xhd',
+            'uhd'
+        ];
     };
 
     var getDrmModifiers = function() {
-        return {
-            'drm-open-access': 'DRM - Open Access',
-            'drm-hollywood': 'DRM - Hollywood'
-        };
+        return [
+            'drm-open-access',
+            'drm-hollywood'
+        ];
     };
 
     var addButton = function(containerSelector, caption, value, isSelected) {
