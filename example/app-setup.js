@@ -519,7 +519,7 @@ define('app-setup', [
 
     var addClassByValues = function(containerSelector, values, clazz) {
         _.forEach(values, function(value) {
-            var elements = $(containerSelector + ' [value=' + value + ']');
+            var elements = $(containerSelector + ' [value="' + value + '"]');
 
             elements.addClass(clazz);
         });
