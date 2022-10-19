@@ -40,7 +40,7 @@
     "dist/"
   ],
   "engines": {
-    "node": "^16.15.0"
+    "node": ">=14.15 || >=16.14.2 || 18.x"
   },
   "devDependencies": {
     "animate.css": "4.1.0",
@@ -100,7 +100,7 @@
     "phenix-web-player": "2020.0.2",
     "phenix-web-proto": "2020.0.3",
     "phenix-web-reconnecting-websocket": "2020.0.2",
-    "puppeteer": "5.1.0",
+    "puppeteer": "19.0.0",
     "requirejs": "2.3.6",
     "shaka-player": "2.5.13",
     "sinon": "9.0.2",
