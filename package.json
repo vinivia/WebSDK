@@ -1,5 +1,5 @@
 {
-  "name": "phenix-web-sdk",
+  "name": "@vinivia/phenix-web-sdk",
   "version": "2022.0.5",
   "license": "Apache-2.0",
   "private": false,
