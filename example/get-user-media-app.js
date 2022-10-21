@@ -102,6 +102,28 @@ requirejs([
             9: 'Storage'
         };
 
+        var updateVideoSources = function updateVideoSources() {
+            sdk.utils.rtc.getSources(function(sources) {
+                var videoSources = sources.filter(function(source) {
+                    return source.kind === 'video';
+                });
+
+                var gumVideoSourcesSelector = $('#gum-video-sources');
+
+                gumVideoSourcesSelector.empty();
+
+                if (videoSources.length > 0) {
+                    gumVideoSourcesSelector.append($('<option></option>').attr('value', '').text('Default Camera'));
+
+                    _.forEach(videoSources, function(videoSource) {
+                        gumVideoSourcesSelector.append($('<option></option>').attr('value', videoSource.id).text(videoSource.label));
+                    });
+                } else {
+                    gumVideoSourcesSelector.append($('<option></option>').attr('value', '').text('No cameras available'));
+                }
+            });
+        };
+
         var createPCast = function createPCast() {
             window.onerror = function(e) {
                 pcast.getLogger().error('Window Error', e);
@@ -357,6 +379,12 @@ requirejs([
 
                 if (source === 'user' || source === 'environment') {
                     deviceOptions = {video: {facingMode: source}};
+                }
+
+                if (_.includes(source.toLowerCase(), 'camera') && $('#gum-video-sources option:selected').val() !== '') {
+                    var deviceId = $('#gum-video-sources option:selected').val();
+
+                    deviceOptions = {video: {deviceId: deviceId}};
                 }
 
                 userMediaResolver.getUserMedia(deviceOptions, userMediaCallback);
@@ -786,6 +814,7 @@ requirejs([
             createPCast();
             app.setLoggerEnvironment(pcast);
             listStreams();
+            updateVideoSources();
         });
 
         $('#applicationId').change(function() {
@@ -814,6 +843,7 @@ requirejs([
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
         createPCast();
+        updateVideoSources();
     };
 
     $(function() {
