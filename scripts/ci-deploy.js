@@ -1,28 +1,22 @@
 /**
- * Copyright 2022 Phenix Real Time Solutions, Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2022 Phenix Real Time Solutions, Inc. Confidential and Proprietary. All Rights Reserved.
  */
-
-var runner = require('./runner');
-var packageJson = require('../package.json');
-var version = packageJson.version;
+const {createHash} = require('crypto');
+const runner = require('./runner');
+const packageJson = require('../package.json');
+const name = packageJson.name;
+const version = packageJson.version;
+const isBeta = !!version.match(/beta/g);
+const publishDate = new Date().toISOString();
+const publishId = createHash('md5').update(publishDate).digest('hex').slice(0, 5);
+const latestVersion = version.match(/^[0-9]*[.][0-9]*/)[0] + (isBeta ? '.beta' : '.latest');
 
 runner.runCommands([
     'node --version',
     'npm --version',
-    version.match(/beta/g) ? 'npm publish --tag beta' : 'npm publish',
-    'scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/' + version,
-    'git tag -am "v' + version + '" v' + version,
-    'git push --tags'
+    isBeta ? `npm run publish --tag beta -- --temp-dir publish-working-directory-${publishId}` : `npm run publish -- --temp-dir publish-working-directory-${publishId}`,
+    `node ./scripts/publish-check.js name=${name} version=${version}`,
+    `scp -r dist/ repo@repository.phenixrts.com:dist/WebSDK/${version}`,
+    `ssh repo@repository.phenixrts.com rm -f dist/WebSDK/${latestVersion}`,
+    `ssh repo@repository.phenixrts.com ln -s ~/dist/WebSDK/${version} dist/WebSDK/${latestVersion}`
 ]);

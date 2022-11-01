@@ -23,6 +23,7 @@
     "ci-bundle": "node scripts/ci-bundle.js",
     "ci-coverage": "node scripts/ci-coverage.js",
     "ci-deploy": "node scripts/ci-deploy.js",
+    "preci-deploy": "npm run ci-bundle",
     "start": "node example/httpserver.js",
     "lint": "eslint --cache ./",
     "lint:fix": "eslint --fix ./",
@@ -32,7 +33,8 @@
     "check-ecma-version": "eslint --no-eslintrc --no-ignore --parser-options=ecmaVersion:5 --parser-options=sourceType:script ./dist/*-web-*.js",
     "deploy-examples:production": "node scripts/deploy-examples-production.js",
     "deploy-examples:staging": "node scripts/deploy-examples-staging.js",
-    "version": "node scripts/version.js"
+    "version": "node scripts/version.js",
+    "publish": "clean-publish"
   },
   "files": [
     "dist/"
@@ -46,6 +48,7 @@
     "bootstrap-notify": "3.1.3",
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "chai": "4.2.0",
+    "clean-publish": "4.0.1",
     "del": "5.1.0",
     "eslint": "7.4.0",
     "eslint-plugin-mocha": "7.0.1",
