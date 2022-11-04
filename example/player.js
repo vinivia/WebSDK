@@ -20,8 +20,6 @@ define('video-player', [
     'phenix-web-sdk'
 ], function($, _, sdk) {
     var userAgent = window.navigator.userAgent;
-    var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-    var isMobile = isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
 
     var Player = function(elementId, options) {
         this.videoId = elementId;
@@ -45,7 +43,7 @@ define('video-player', [
         this.video.parentNode.insertBefore(this.videoControls, this.video.nextElementSibling);
 
         // Disable audio for autoplay
-        if ((isIOS || isMobile || (sdk.utils.rtc.browser === 'Safari' && sdk.utils.rtc.browserVersion >= 11)) && !this.stream) {
+        if ((sdk.utils.rtc.isMobile || (sdk.utils.rtc.browser === 'Safari' && sdk.utils.rtc.browserVersion >= 11)) && !this.stream) {
             this.video.muted = true;
             this.video.autoplay = true;
             this.video.attributes.playsinline = "";

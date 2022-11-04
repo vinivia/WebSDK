@@ -397,6 +397,34 @@ define([
     }
 
     // ----------------------------------------
+    // FeatureDetector.js
+
+    function isAndroid() {
+        var userAgent = _.get(envGlobal, ['navigator', 'userAgent'], '');
+
+        return /(android)/i.test(userAgent);
+    }
+
+    function isIOS() {
+        var userAgent = _.get(envGlobal, ['navigator', 'userAgent'], '');
+
+        return /iPad|iPhone|iPod/.test(userAgent) && !envGlobal.MSStream;
+    }
+
+    function isMobile() {
+        var userAgent = _.get(envGlobal, ['navigator', 'userAgent'], '');
+
+        return isIOS() || /Android|webOS|BlackBerry|IEMobile|Opera Mini|mobile|CriOS/i.test(userAgent);
+    }
+
+    function shouldUseNativeHls() {
+        var userAgent = _.get(envGlobal, ['navigator', 'userAgent'], '');
+        var isSamsungBrowser = /SamsungBrowser/.test(userAgent);
+
+        return isIOS() || browser.browser === 'Safari' || isSamsungBrowser;
+    }
+
+    // ----------------------------------------
 
     var phenixRTC = {
         global: envGlobal,
@@ -413,6 +441,10 @@ define([
         attachUriStream: attachUriStream || attachUriStreamToElement,
         reattachMediaStream: reattachMediaStream,
         webrtcSupported: webrtcSupported,
+        isAndroid: isAndroid(),
+        isIOS: isIOS(),
+        isMobile: isMobile(),
+        shouldUseNativeHls: shouldUseNativeHls(),
         PhenixFlashVideo: PhenixVideo
     };
 

@@ -25,9 +25,8 @@ define([
     'phenix-web-global',
     '../DimensionsChangedMonitor',
     '../PhenixRTC',
-    './stream.json',
-    './FeatureDetector'
-], function(_, assert, event, http, disposable, applicationActivityDetector, DetectBrowser, global, DimensionsChangedMonitor, rtc, streamEnums, FeatureDetector) {
+    './stream.json'
+], function(_, assert, event, http, disposable, applicationActivityDetector, DetectBrowser, global, DimensionsChangedMonitor, rtc, streamEnums) {
     'use strict';
 
     var listenForPauseChangeAfterForegroundInterval = 1000;
@@ -267,7 +266,7 @@ define([
 
         this._logger.info('[%s] Resume playing after entering foreground [%s]', this._streamId, this._browser.browser);
 
-        if (this._browser.browser === 'Safari' && FeatureDetector.isIOS()) {
+        if (this._browser.browser === 'Safari' && rtc.isIOS) {
             // 2020-08-19 Observed on iOS Safari/13
             var pausing = function pausing() {
                 that._logger.info('Renderer was paused after entering foreground');

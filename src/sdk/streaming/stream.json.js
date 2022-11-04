@@ -51,7 +51,7 @@ define([
                 name: 'hls'
             },
             rtmp: {
-                id: 0,
+                id: 3,
                 name: 'rtmp'
             }
         },

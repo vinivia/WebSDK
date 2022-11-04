@@ -61,7 +61,6 @@ requirejs([
     'video-player',
     'app-setup'
 ], function($, _, sdk, Player, app) {
-    var isMobileAppleDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     var publishAndJoinRoomButton = document.getElementById('publishAndJoinRoomButton');
     var stopButton = document.getElementById('stopButton');
     var muteAudio = false;
@@ -94,7 +93,7 @@ requirejs([
             adminApiProxyClient.setAuthenticationData(app.getAuthData());
 
             roomExpress = new sdk.express.RoomExpress({
-                treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true' || isMobileAppleDevice,
+                treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true' || sdk.utils.rtc.isIOS,
                 adminApiProxyClient: adminApiProxyClient,
                 uri: app.getUri(),
                 shakaLoader: function(callback) {

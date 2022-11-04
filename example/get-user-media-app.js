@@ -75,7 +75,7 @@ requirejs([
             $('#originStreamId').val(app.getUrlParameter('streamId'));
         }
 
-        if (app.isMobile()) {
+        if (sdk.utils.rtc.isMobile) {
             var frontOption = document.createElement('option');
             var backOption = document.createElement('option');
 

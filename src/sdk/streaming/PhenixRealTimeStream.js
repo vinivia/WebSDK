@@ -25,9 +25,8 @@ define([
     './PeerConnectionMonitor',
     './BitRateMonitor',
     './PhenixRealTimeRenderer',
-    './FeatureDetector',
     './stream.json'
-], function(_, assert, event, disposable, applicationActivityDetector, rtc, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, FeatureDetector, streamEnums) {
+], function(_, assert, event, disposable, applicationActivityDetector, rtc, PeerConnection, PeerConnectionMonitor, BitRateMonitor, PhenixRealTimeRenderer, streamEnums) {
     'use strict';
 
     var defaultIceConnectionTimeout = 12000;
@@ -208,7 +207,7 @@ define([
                 that._logger.warn('[%s] Media stream monitor triggered unrecoverable error [%s]', that._streamId, error);
             }
 
-            if (FeatureDetector.isIOS() && !applicationActivityDetector.isForeground()) {
+            if (rtc.isIOS && !applicationActivityDetector.isForeground()) {
                 that._logger.info('[%s] Media stream monitor triggered event while app is in the background. Waiting until foreground to trigger event.', that._streamId);
 
                 return that._backgroundMonitorEventCallback = monitorCallback.bind(null, error, monitorEvent);

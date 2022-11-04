@@ -37,12 +37,11 @@ define([
     './streaming/StreamWrapper',
     './streaming/PhenixLiveStream',
     './streaming/PhenixRealTimeStream',
-    './streaming/FeatureDetector',
     './streaming/stream.json',
     './streaming/BitRateMonitor',
     './PhenixRTC',
     './sdpUtil'
-], function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, FeatureDetector, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
+], function(_, assert, observable, disposable, pcastLoggerFactory, http, applicationActivityDetector, environment, AudioContext, PCastProtocol, PCastEndPoint, ScreenShareExtensionManager, UserMediaProvider, PeerConnectionMonitor, DimensionsChangedMonitor, metricsTransmitterFactory, StreamTelemetry, SessionTelemetry, PeerConnection, StreamWrapper, PhenixLiveStream, PhenixRealTimeStream, streamEnums, BitRateMonitor, phenixRTC, sdpUtil) {
     'use strict';
 
     var sdkVersion = '%SDKVERSION%';
@@ -151,18 +150,14 @@ define([
         this._canPlaybackAudio = true;
         this._h264ProfileIds = [];
         this._supportedWebrtcCodecs = [];
-        this._featureDetector = new FeatureDetector(options.features);
         this._pendingIceCandidates = {};
         this._addIceCandidatesTimeoutScheduled = {};
 
         var that = this;
-        var supportedFeatures = _.filter(this._featureDetector.getFeatures(), FeatureDetector.isFeatureSupported);
         var logGlobalError = function logGlobalError(event) {
             var errorToLog = event ? event.error : 'Unknown Error';
             that._logger.error('Window Error Event Triggered with pcast in [%s] state [%s]', that._observableStatus.getValue(), /* Once for browsers that don't show stack traces */ errorToLog, errorToLog);
         };
-
-        this._logger.info('Device supports features [%s], user selected [%s]', supportedFeatures, this._featureDetector.getFeatures());
 
         _.addEventListener(phenixRTC.global, 'unload', function() {
             that._logger.info('Window Unload Event Triggered');
@@ -593,7 +588,7 @@ define([
 
                 createViewerOptions.originStartTime = _.now() - response.createStreamResponse.offset + that._networkOneWayLatency;
 
-                if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && FeatureDetector.isMobile()) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
+                if (!isNotRealTime && ((phenixRTC.browser === 'Chrome' && phenixRTC.browserVersion >= 62 && phenixRTC.isMobile) || phenixRTC.browser === 'Opera') && that._h264ProfileIds.length > 0) {
                     // For subscribing we need any profile and level that is equal to or greater than the offer's profile and level
                     var profileLevelIdToReplace = _.get(sdpUtil.getH264ProfileIds(offerSdp), [0]);
                     var preferredLevelId = sdpUtil.getH264ProfileIdWithSameOrHigherProfileAndEqualToOrHigherLevel(that._h264ProfileIds, profileLevelIdToReplace);
@@ -661,6 +656,85 @@ define([
         var aliasMatch = requiredTag.match(roomOrChannelAliasRegex);
 
         return aliasMatch ? aliasMatch[1] : null;
+    };
+
+    PCast.prototype.getSupportedFeatureAndCapabilityFromCapabilities = function(capabilities, excludeRealTime) {
+        assert.isArray(capabilities, 'capabilities');
+
+        var requestedTransmissionCapabilities = [];
+        var transmissionCapabilityTypes = [
+            'real-time',
+            'streaming',
+            'on-demand',
+            'rtmp'
+        ];
+        var result = {
+            status: null,
+            capability: '',
+            feature: null
+        };
+
+        _.forEach(capabilities, function(capability) {
+            if (_.includes(transmissionCapabilityTypes, capability)) {
+                result.capability = capability;
+                requestedTransmissionCapabilities.push(capability);
+            }
+        });
+
+        if (requestedTransmissionCapabilities.length > 1) {
+            this._logger.warn('Multiple conflicting capabilities encountered: [%s]', requestedTransmissionCapabilities);
+
+            return {status: 'conflicting-capability'};
+        }
+
+        switch(result.capability) {
+        case 'real-time':
+            result.feature = !excludeRealTime ? streamEnums.types.realTime.name : null;
+
+            break;
+        case 'streaming':
+        case 'on-demand':
+            result.feature = phenixRTC.shouldUseNativeHls ? streamEnums.types.hls.name : streamEnums.types.dash.name;
+
+            break;
+        case 'rtmp':
+            result.feature = streamEnums.types.rtmp.name;
+
+            break;
+        default:
+            result.capability = 'real-time';
+            result.feature = !excludeRealTime ? streamEnums.types.realTime.name : null;
+
+            break;
+        }
+
+        if (!this.isFeatureSupported(result.feature)) {
+            this._logger.warn('Device does not support [%s] playback.', result.capability);
+            result.status = 'unsupported-features';
+        } else {
+            result.status = 'ok';
+        }
+
+        return result;
+    };
+
+    PCast.prototype.isFeatureSupported = function(feature) {
+        if (feature) {
+            assert.isStringNotEmpty(feature, 'feature');
+        }
+
+        var featureName = _.getEnumName(streamEnums.types, feature);
+
+        switch (featureName) {
+        case streamEnums.types.realTime.name:
+            return phenixRTC.webrtcSupported;
+        case streamEnums.types.dash.name:
+        case streamEnums.types.hls.name:
+        case streamEnums.types.rtmp.name:
+            return PhenixLiveStream.canPlaybackType(feature);
+        default:
+            return false;
+        }
     };
 
     function setupPcastLoggerAndMetrics(options) {
@@ -1716,12 +1790,10 @@ define([
 
             var localSdp = response.sessionDescription.sdp;
 
-            if (FeatureDetector.isIOS()) {
-                var version = _.get(FeatureDetector.getIOSVersion(), ['major']);
+            if (phenixRTC.isIOS) {
+                that._logger.info('iOS Version is [%s]', phenixRTC.browserVersion);
 
-                that._logger.info('iOS Version is [%s]', version);
-
-                if (version < 11) {
+                if (phenixRTC.browserVersion < 11) {
                     localSdp = localSdp.replace('BUNDLE audio video', 'BUNDLE video audio'); // Without this only video-only streams work on iOS 10
                 }
             }
@@ -1817,24 +1889,30 @@ define([
         var dashManifestOffered = dashMatch && dashMatch.length === 2;
         var hlsPlaylistOffered = hlsMatch && hlsMatch.length === 2;
         var rtmpOffered = !!rtmpMatch;
-        var publisherCapabilities = [];
+        var capabilities = [];
 
         if (dashManifestOffered || hlsPlaylistOffered) {
-            publisherCapabilities.push('streaming');
+            capabilities.push('streaming');
         }
 
         if (rtmpOffered) {
-            publisherCapabilities.push('rtmp');
+            capabilities.push('rtmp');
         }
 
-        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities, true);
+        var featureAndCapability = this.getSupportedFeatureAndCapabilityFromCapabilities(capabilities, true);
+
+        if (featureAndCapability.status !== 'ok') {
+            that._logger.warn('[%s] Creating live viewer stream failed: [%s].', streamId, featureAndCapability.status);
+
+            return callback.call(that, undefined, 'failed');
+        }
 
         if (this._streamingSourceMapping) {
             manifestUrl = manifestUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
             playlistUrl = playlistUrl.replace(this._streamingSourceMapping.patternToReplace, this._streamingSourceMapping.replacement);
         }
 
-        switch (preferredFeature) {
+        switch (featureAndCapability.feature) {
         case streamEnums.types.rtmp.name:
             var rtmpUris = [];
             var env = environment.parseEnvFromPcastBaseUri(this._baseUri);
@@ -1883,12 +1961,12 @@ define([
                 playlistUrl = playlistUrl + (playlistUrl.indexOf('?') > -1 ? '&' : '?') + 'targetDuration=' + options.hlsTargetDuration;
             }
 
-            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: FeatureDetector.shouldUseNativeHls}, options));
+            return createLiveViewerOfKind.call(that, streamId, playlistUrl, streamEnums.types.hls.name, streamTelemetry, callback, _.assign({preferNative: phenixRTC.shouldUseNativeHls}, options));
         default:
             break;
         }
 
-        that._logger.warn('[%s] Device does not support [%s] playback. Creating live viewer stream failed.', streamId, FeatureDetector.mapPCastCapabilitiesToFeatures(publisherCapabilities));
+        that._logger.warn('[%s] Unhandled stream type encountered: [%s]. Creating live viewer stream failed.', streamId, featureAndCapability.feature);
 
         return callback.call(that, undefined, 'failed');
     }

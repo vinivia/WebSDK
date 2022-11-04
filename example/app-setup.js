@@ -312,13 +312,6 @@ define('app-setup', [
         }
     };
 
-    var isMobile = function() {
-        var userAgent = window.navigator.userAgent;
-        var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-
-        return isIOS || /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i.test(userAgent);
-    };
-
     var getDefaultReplaceUrl = function() {
         if (getBaseUri().indexOf('stg') > -1) {
             return 'https://stg.phenixrts.com/video';
@@ -563,7 +556,6 @@ define('app-setup', [
         setLoggerEnvironment: setLoggerEnvironment,
         setLoggerVersion: setLoggerVersion,
         getModeFromAbbreviation: getModeFromAbbreviation,
-        isMobile: isMobile,
         getDefaultReplaceUrl: getDefaultReplaceUrl,
         getSwfFilePath: getSwfFilePath,
         addDebugAppender: addDebugAppender

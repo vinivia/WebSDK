@@ -26,9 +26,8 @@ define([
     '../room/room.json',
     '../room/member.json',
     '../room/stream.json',
-    '../room/track.json',
-    '../streaming/FeatureDetector'
-], function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums, FeatureDetector) {
+    '../room/track.json'
+], function(_, assert, observable, disposable, PCastExpress, RoomService, MemberSelector, Stream, roomEnums, memberEnums, memberStreamEnums, trackEnums) {
     'use strict';
 
     var defaultStreamWildcardTokenRefreshInterval = 300000;
@@ -51,7 +50,6 @@ define([
         this._logger = this._pcastExpress.getPCast().getLogger();
         this._disposables = new disposable.DisposableList();
         this._disposed = false;
-        this._featureDetector = new FeatureDetector(options.features);
         this._isHandlingTrackChange = false;
         this._handleStateChangeTimeOut = null;
 
@@ -389,15 +387,13 @@ define([
         this.publishToRoom(publishScreenOptions, callback);
     };
 
-    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback, defaultFeatureIndex) {
-        var capabilitiesFromStreamToken;
+    RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
+        var capabilitiesFromStreamToken = [];
         var that = this;
 
         assert.isObject(memberStream, 'memberStream');
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
-
-        defaultFeatureIndex = _.isNumber(defaultFeatureIndex) ? defaultFeatureIndex : 0;
 
         if (options.capabilities) {
             throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
@@ -413,18 +409,7 @@ define([
             }
         }
 
-        var streamUri = memberStream.getUri();
         var streamId = memberStream.getPCastStreamId();
-        var streamInfo = memberStream.getInfo();
-        var isScreen = _.get(streamInfo, ['isScreen'], false);
-        var streamToken = null;
-        var capabilities = streamInfo.capabilities || buildCapabilitiesFromPublisherWildcardTokens(streamUri) || [];
-        var publisherCapabilities = capabilitiesFromStreamToken || capabilities;
-        var preferredFeature = this._featureDetector.getPreferredFeatureFromPublisherCapabilities(publisherCapabilities);
-        var preferredFeatureCapability = FeatureDetector.mapFeatureToPCastCapability(preferredFeature);
-        var subscriberCapabilities = preferredFeatureCapability ? [preferredFeatureCapability] : [];
-        var featureCapabilities = this._featureDetector.getFeaturePCastCapabilities();
-        var isUsingDeprecatedSdk = false;
 
         if (!streamId) {
             this._logger.error('Invalid Member Stream. Unable to parse streamId from uri');
@@ -432,44 +417,27 @@ define([
             throw new Error('Invalid Member Stream. Unable to parse streamId from uri');
         }
 
-        // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
-        if (!_.hasIndexOrKey(streamInfo, 'capabilities')) {
-            if (!preferredFeature) {
-                var capability = _.get(featureCapabilities, [defaultFeatureIndex]);
+        var featureAndCapability = that._pcastExpress.getPCast().getSupportedFeatureAndCapabilityFromCapabilities(capabilitiesFromStreamToken);
 
-                if (!capability && defaultFeatureIndex >= featureCapabilities.length) {
-                    return callback(null, {status: 'no-supported-features'});
-                }
+        if (featureAndCapability.status !== 'ok') {
+            that._logger.warn('[%s] Subscribing to member stream failed: [%s].', streamId, featureAndCapability.status);
 
-                subscriberCapabilities = capability ? [capability] : [];
-                preferredFeature = capability ? _.get(FeatureDetector.mapPCastCapabilityToFeatures(capability), [0]) : null;
-            }
-
-            if (!streamInfo.streamTokenForLiveStream && preferredFeatureCapability === 'streaming') {
-                this._logger.warn('Streaming is not available for stream [%].', streamId);
-
-                return callback(null, {status: 'streaming-not-available'});
-            }
-
-            streamToken = parseStreamTokenFromStreamUri(streamUri, subscriberCapabilities);
-            isUsingDeprecatedSdk = true;
-        } else {
-            if (!preferredFeature) {
-                this._logger.warn('Unable to find supported feature. Publisher capabilities [%s]. Requested feature capabilities [%s]', streamInfo.capabilities, featureCapabilities);
-
-                return callback(null, {status: 'unsupported-features'});
-            }
-
-            streamToken = getStreamTokenForFeature(streamUri, preferredFeature);
+            return callback(null, {status: featureAndCapability.status});
         }
 
-        this._logger.info('Subscribing to member stream with feature [%s] and pre-generated token [%s]', preferredFeature, !!streamToken);
+        var streamUri = memberStream.getUri();
+        var streamToken = getStreamTokenForFeature(streamUri, featureAndCapability.feature);
+        var subscriberCapabilities = featureAndCapability.capability !== '' ? [featureAndCapability.capability] : [];
+
+        this._logger.info('Subscribing to member stream with feature [%s] and pre-generated token [%s]', featureAndCapability.feature, !!streamToken);
 
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
             streamToken: streamToken,
             capabilities: subscriberCapabilities
         }, options);
+        var streamInfo = memberStream.getInfo();
+        var isScreen = _.get(streamInfo, ['isScreen'], false);
         var disposables = new disposable.DisposableList();
 
         subscribeToMemberStream.call(this, subscribeOptions, isScreen, function(error, response) {
@@ -496,13 +464,6 @@ define([
 
             if (error && parseInt(error.category) === 6) {
                 return callback(error, {status: 'device-insecure'});
-            }
-
-            // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
-            if (response && (response.status === 'failed' || response.status === 'streaming-not-available') && isUsingDeprecatedSdk && defaultFeatureIndex < featureCapabilities.length) {
-                that._logger.info('Attempting to subscribe to member stream with next available feature after failure');
-
-                return that.subscribeToMemberStream(memberStream, options, callback, defaultFeatureIndex + 1);
             }
 
             var responseWithOriginStreamId = _.assign({originStreamId: streamId}, response);
@@ -1335,18 +1296,6 @@ define([
         }
     }
 
-    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
-    function buildCapabilitiesFromPublisherWildcardTokens(uri) {
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-        var capabilities = [];
-
-        if (streamInfo.streamTokenForLiveStream) {
-            capabilities.push('streaming');
-        }
-
-        return capabilities;
-    }
-
     function getStreamTokenForFeature(uri, feature) {
         var streamInfo = Stream.getInfoFromStreamUri(uri);
 
@@ -1359,38 +1308,6 @@ define([
             return streamInfo.streamToken;
         default:
             return;
-        }
-    }
-
-    // TODO(dy) Remove backward compatibility when all publisher clients adapt to providing capabilities.
-    function parseStreamTokenFromStreamUri(uri, capabilities) {
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-        var isStreaming = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'streaming');
-        var isRtmp = streamInfo.streamTokenForLiveStream && _.includes(capabilities, 'rtmp');
-
-        // Token for both not generated.
-        if (_.includes(capabilities, 'drm-open-access') && _.includes(capabilities, 'drm-hollywood')) {
-            return;
-        }
-
-        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmOpenAccess && (_.includes(capabilities, 'drm-open-access') || FeatureDetector.isAndroid())) {
-            return streamInfo.streamTokenForLiveStreamWithDrmOpenAccess;
-        }
-
-        if (isStreaming && streamInfo.streamTokenForLiveStreamWithDrmHollywood && _.includes(capabilities, 'drm-hollywood')) {
-            return streamInfo.streamTokenForLiveStreamWithDrmHollywood;
-        }
-
-        if (isStreaming || isRtmp) {
-            return streamInfo.streamTokenForLiveStream;
-        }
-
-        if (streamInfo.streamTokenForBroadcastStream && _.includes(capabilities, 'broadcast')) {
-            return streamInfo.streamTokenForBroadcastStream;
-        }
-
-        if (!_.includes(capabilities, 'streaming') && !_.includes(capabilities, 'broadcast') && !_.includes(capabilities, 'rtmp')) {
-            return streamInfo.streamToken;
         }
     }
 
