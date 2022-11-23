@@ -384,7 +384,7 @@ requirejs([
                 if (_.includes(source.toLowerCase(), 'camera') && $('#gum-video-sources option:selected').val() !== '') {
                     var deviceId = $('#gum-video-sources option:selected').val();
 
-                    deviceOptions = {video: {deviceId: deviceId}};
+                    _.set(deviceOptions, 'video', {deviceId: deviceId});
                 }
 
                 userMediaResolver.getUserMedia(deviceOptions, userMediaCallback);
