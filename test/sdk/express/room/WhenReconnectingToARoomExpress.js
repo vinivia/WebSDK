@@ -108,7 +108,6 @@ define([
         it('successfully publishes to a room', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -131,7 +130,6 @@ define([
 
                 roomExpress.publishToRoom({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     room: {
                         alias: roomAlias,
@@ -170,7 +168,6 @@ define([
             it('successfully publishes to a room', function(done) {
                 roomExpress.publishToRoom({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     room: {
                         alias: roomAlias,

@@ -108,7 +108,6 @@ define([
         it('returns publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -131,7 +130,6 @@ define([
         it('returns remote publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
                 capabilities: [],
-                enableWildcardCapability: true,
                 streamUri: 'streamUri',
                 room: {
                     alias: roomAlias,
@@ -165,7 +163,6 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamInfo: streamInfo,
                 room: {
@@ -201,7 +198,6 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -235,7 +231,6 @@ define([
 
             roomExpress.publishToRoom({
                 capabilities: ['streaming'],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,

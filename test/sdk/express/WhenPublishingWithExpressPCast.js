@@ -210,7 +210,6 @@ define([
 
             pcastExpress.publish({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 monitor: {
                     conditionCountForNotificationThreshold: 0,

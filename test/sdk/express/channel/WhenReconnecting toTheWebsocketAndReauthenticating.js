@@ -114,7 +114,6 @@ define([
 
                 pcastExpress.subscribe({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     streamId: 'MockStreamId',
                     monitor: {
                         callback: function(error, response) {
@@ -161,7 +160,6 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     monitor: {
                         callback: function(error, response) {
@@ -209,7 +207,6 @@ define([
 
                 pcastExpress.publish({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     userMediaStream: UserMediaStubber.getMockMediaStream(),
                     monitor: {
                         callback: function(error, response) {

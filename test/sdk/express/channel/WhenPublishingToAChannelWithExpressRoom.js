@@ -101,7 +101,6 @@ define([
         it('returns a publisher and no channelService when publishing remotely', function(done) {
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -139,7 +138,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name,
@@ -165,7 +163,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -197,7 +194,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'

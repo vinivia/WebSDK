@@ -103,7 +103,6 @@ define([
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -130,7 +129,6 @@ define([
             }, _.noop, function(){
                 channelExpressPublisher.publishToChannel({
                     capabilities: [],
-                    enableWildcardCapability: true,
                     room: {
                         alias: 'ChannelAlias',
                         name: 'Channel'

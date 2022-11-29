@@ -115,7 +115,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -159,7 +158,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -216,7 +214,6 @@ define([
 
             channelExpress.publishToChannel({
                 capabilities: [],
-                enableWildcardCapability: true,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
