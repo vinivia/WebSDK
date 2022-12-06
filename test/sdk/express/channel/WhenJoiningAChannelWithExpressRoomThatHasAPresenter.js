@@ -17,7 +17,6 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -28,19 +27,14 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When joining a channel with ExpressRoom that has a presenter', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
-
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
+        var streamToken = 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -79,15 +73,7 @@ define([
                 }]
             });
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
-
-            channelExpress = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI'
-            });
+            channelExpress = new ChannelExpress({authToken: streamToken});
         });
 
         after(function() {
@@ -111,7 +97,10 @@ define([
                 }, 3);
             };
 
-            channelExpress.joinChannel({alias: 'ChannelAlias'}, function() {}, function(error, response) {
+            channelExpress.joinChannel({
+                alias: 'ChannelAlias',
+                streamToken
+            }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
                 }
@@ -128,7 +117,10 @@ define([
         it('triggers a callback with reason ended when the stream terminated with reason ended', function(done) {
             var subscribeCount = 0;
 
-            channelExpress.joinChannel({alias: 'ChannelAlias'}, function() {}, function(error, response) {
+            channelExpress.joinChannel({
+                alias: 'ChannelAlias',
+                streamToken
+            }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
 

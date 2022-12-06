@@ -17,7 +17,6 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -28,19 +27,15 @@ define([
     'sdk/room/stream.json',
     'sdk/room/track.json',
     'sdk/streaming/PeerConnectionMonitor'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track, PeerConnectionMonitor) {
     describe('When joining a channel with high availability stream selection strategy', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
         var pcastPrefix = Stream.getPCastPrefix();
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
         var streamModel = {
             uri: pcastPrefix + 'streamId',
             type: stream.types.presentation.name,
@@ -86,13 +81,8 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', joinRoomResponse);
             websocketStubber.stubSetupStream();
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
             channelExpress = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI',
+                authToken: streamToken,
                 onlineTimeout: 600000
             });
         });
@@ -139,7 +129,8 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                streamToken
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -180,7 +171,8 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                streamToken
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -221,7 +213,8 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                streamToken
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -257,7 +250,8 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                streamToken
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
@@ -304,7 +298,8 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                failureCountForBanningAMember: 2
+                failureCountForBanningAMember: 2,
+                streamToken
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     return subscribeCount++;
@@ -318,42 +313,10 @@ define([
             });
         });
 
-        it('fails if all members trigger more than the allowed capacity failures', function(done) {
-            this.timeout(30000);
-
-            var attemptCount = 0;
-            var primaryMember = createMember('primary', '1');
-            var alternateMember = createMember('alternate', '1');
-
-            var setTimeoutClone = setTimeout;
-
-            window.setTimeout = function(callback, timeout) {
-                return setTimeoutClone(callback, timeout / 100);
-            };
-
-            joinRoomResponse.members = [primaryMember, alternateMember];
-
-            httpStubber.stubStreamRequestWithStatus('capacity', function() {
-                attemptCount++;
-            });
-
-            channelExpress.joinChannel({
-                alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability',
-                banMemberOnCapacityFailureCount: 2
-            }, function() {}, function(error, response) {
-                window.setTimeout = setTimeoutClone;
-                expect(response.status).to.be.equal('capacity');
-                expect(attemptCount).to.be.equal(4);
-                done();
-            });
-        });
-
         it('fails if all members ended', function(done) {
             this.timeout(30000);
 
             var notificationCount = 0;
-            var attemptCount = 0;
             var subscribeCount = 0;
             var primaryMember = createMember('primary', '1');
             var alternateMember = createMember('alternate', '1');
@@ -366,13 +329,10 @@ define([
 
             joinRoomResponse.members = [primaryMember, alternateMember];
 
-            httpStubber.stubStreamRequest(function() {
-                attemptCount++;
-            });
-
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamSelectionStrategy: 'high-availability'
+                streamSelectionStrategy: 'high-availability',
+                streamToken
             }, function() {}, function(error, response) {
                 notificationCount++;
 
@@ -388,7 +348,6 @@ define([
 
                 window.setTimeout = setTimeoutClone;
                 expect(response.status).to.be.equal('ended');
-                expect(subscribeCount).to.be.equal(attemptCount);
                 expect(subscribeCount).to.be.at.most(2);
                 expect(notificationCount).to.be.at.most(3);
 

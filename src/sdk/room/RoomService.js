@@ -711,15 +711,15 @@ define([
 
         this._isLeavingRoom = true;
 
-        setTimeout(function() {
-            that._activeRoom.setValue(null);
-            that._cachedRoom.setValue(null);
+        this._activeRoom.setValue(null);
+        this._cachedRoom.setValue(null);
 
-            if (isForceLeaveRoom) {
+        if (isForceLeaveRoom) {
+            setTimeout(function() {
                 that._isLeavingRoom = false;
                 callback(null, {status: 'ok'});
-            }
-        });
+            });
+        }
 
         this._protocol.leaveRoom(roomId, timestamp,
             function handleLeaveRoomResponse(error, response) {

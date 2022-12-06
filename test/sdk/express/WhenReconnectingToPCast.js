@@ -16,27 +16,22 @@
 
 define([
     'phenix-web-lodash-light',
-    'sdk/AdminApiProxyClient',
     'sdk/express/PCastExpress',
     '../../../test/mock/HttpStubber',
     '../../../test/mock/WebSocketStubber',
     '../../../test/mock/ChromeRuntimeStubber',
     '../../../test/mock/PeerConnectionStubber',
     '../../../test/mock/UserMediaStubber'
-], function(_, AdminApiProxyClient, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
+], function(_, PCastExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber) {
     describe('When Reconnecting to PCast', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
-
         var setTimeoutClone = setTimeout;
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcastExpress;
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJleXVudzBhanNJZkRPbTRFdXVER0kxWmZ6WGoweWlLTW5ZdHpKNDhzaVJXZTNFNThiY1cxanhIMHlyTUVsY09jSVR0SjZOMVUwN0NkSjA2MFJJVWI0Zz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTMwOTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -44,10 +39,6 @@ define([
         });
 
         beforeEach(function(done) {
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
             window.setTimeout = function(callback, timeout) {
                 return setTimeoutClone(callback, timeout / 100);
             };
@@ -60,8 +51,7 @@ define([
             websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI',
+                authToken: streamToken,
                 onError: _.noop,
                 onlineTimeout: 60000
             });
@@ -88,7 +78,7 @@ define([
 
         it('successfully subscribes to stream', function(done) {
             pcastExpress.subscribe({
-                capabilities: [],
+                streamToken,
                 streamId: 'MockStreamId'
             }, function(error, response) {
                 expect(error).to.not.exist;
@@ -99,101 +89,11 @@ define([
 
         it('successfully publishes a stream', function(done) {
             pcastExpress.publish({
-                capabilities: [],
+                publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 expect(response.publisher).to.be.a('object');
                 done();
-            });
-        });
-
-        describe('When auth fails with status unauthorized and then successfully reconnects with a new session id after getting a new auth token', function() {
-            var reauthTokenSpy = null;
-
-            beforeEach(function(done) {
-                reauthTokenSpy = sinon.spy();
-
-                websocketStubber.stubAuthRequestFailure('unauthorized');
-                httpStubber.stubAuthRequest(function() {
-                    websocketStubber.stubAuthRequest('NewSessionId');
-                    reauthTokenSpy();
-                });
-                websocketStubber.triggerReconnected();
-
-                pcastExpress.waitForOnline(function() {
-                    sinon.assert.calledOnce(reauthTokenSpy);
-                    done();
-                });
-            });
-
-            it('successfully subscribes to stream', function(done) {
-                pcastExpress.subscribe({
-                    capabilities: [],
-                    streamId: 'MockStreamId'
-                }, function(error, response) {
-                    expect(error).to.not.exist;
-                    expect(response.mediaStream).to.be.a('object');
-                    done();
-                });
-            });
-
-            it('successfully publishes a stream', function(done) {
-                pcastExpress.publish({
-                    capabilities: [],
-                    userMediaStream: UserMediaStubber.getMockMediaStream()
-                }, function(error, response) {
-                    expect(response.publisher).to.be.a('object');
-                    done();
-                });
-            });
-        });
-
-        describe('When auth fails with status unauthorized while publishing and then successfully reconnects with a new session id after getting a new auth token', function() {
-            var reauthTokenSpy = null;
-
-            beforeEach(function(done) {
-                reauthTokenSpy = sinon.spy();
-
-                pcastExpress.publish({
-                    capabilities: [],
-                    userMediaStream: UserMediaStubber.getMockMediaStream()
-                }, function(error, response) {
-                    expect(response.publisher).to.be.a('object');
-
-                    websocketStubber.stubAuthRequestFailure('unauthorized');
-                    httpStubber.stubAuthRequest(function() {
-                        websocketStubber.stubAuthRequest('NewSessionId');
-                        reauthTokenSpy();
-                    });
-                    websocketStubber.triggerReconnected();
-
-                    pcastExpress.waitForOnline(function() {
-                        expect(response.publisher.isActive()).to.be.true;
-                        sinon.assert.calledOnce(reauthTokenSpy);
-                        done();
-                    });
-                });
-            });
-
-            it('successfully subscribes to stream', function(done) {
-                pcastExpress.subscribe({
-                    capabilities: [],
-                    streamId: 'MockStreamId'
-                }, function(error, response) {
-                    expect(error).to.not.exist;
-                    expect(response.mediaStream).to.be.a('object');
-                    done();
-                });
-            });
-
-            it('successfully publishes a stream', function(done) {
-                pcastExpress.publish({
-                    capabilities: [],
-                    userMediaStream: UserMediaStubber.getMockMediaStream()
-                }, function(error, response) {
-                    expect(response.publisher).to.be.a('object');
-                    done();
-                });
             });
         });
 
@@ -207,7 +107,7 @@ define([
                 var start = _.now();
 
                 pcastExpress.subscribe({
-                    capabilities: [],
+                    streamToken,
                     streamId: 'MockStreamId'
                 }, function(error) {
                     expect(error.message).to.be.equal('timeout');
@@ -220,7 +120,7 @@ define([
                 var start = _.now();
 
                 pcastExpress.publish({
-                    capabilities: [],
+                    publishToken,
                     userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error) {
                     expect(error.message).to.be.equal('timeout');
@@ -242,7 +142,7 @@ define([
 
             it('successfully subscribes to stream', function(done) {
                 pcastExpress.subscribe({
-                    capabilities: [],
+                    streamToken,
                     streamId: 'MockStreamId'
                 }, function(error, response) {
                     expect(error).to.not.exist;
@@ -253,7 +153,7 @@ define([
 
             it('successfully publishes a stream', function(done) {
                 pcastExpress.publish({
-                    capabilities: [],
+                    publishToken,
                     userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');

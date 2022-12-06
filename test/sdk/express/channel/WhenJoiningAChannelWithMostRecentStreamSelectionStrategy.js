@@ -17,7 +17,6 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -27,19 +26,15 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, Stream, room, member, stream, track) {
     describe('When joining a channel with most recent stream selection strategy', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
         var pcastPrefix = Stream.getPCastPrefix();
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
         var streamModel = {
             uri: pcastPrefix + 'streamId',
             type: stream.types.presentation.name,
@@ -80,14 +75,7 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', joinRoomResponse);
             websocketStubber.stubSetupStream();
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
-            channelExpress = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI'
-            });
+            channelExpress = new ChannelExpress({authToken: streamToken});
         });
 
         after(function() {
@@ -133,6 +121,7 @@ define([
             });
 
             channelExpress.joinChannel({
+                streamToken,
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'most-recent'
             }, function() {}, function(error, response) {

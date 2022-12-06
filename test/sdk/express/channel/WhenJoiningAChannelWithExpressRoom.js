@@ -17,7 +17,6 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     'sdk/room/Member',
@@ -26,14 +25,9 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, Member, Stream, room, member, stream, track) {
     describe('When joining a channel with ExpressRoom', function() {
-        var mockBackendUri = 'https://mockUri';
         var mockStreamId = 'mystreamId';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
         var mockRoom = {
             roomId: 'TestRoom123',
             alias: 'TestRoom123Alias',
@@ -44,6 +38,7 @@ define([
             type: room.types.multiPartyChat.name,
             members: []
         };
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
         var mockTrack = {enabled: 'true'};
         var mockStream = {
             type: stream.types.user.name,
@@ -77,11 +72,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
-            channelExpress = new ChannelExpress({adminApiProxyClient: adminApiProxyClient});
+            channelExpress = new ChannelExpress({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
 
             response = {
                 status: 'ok',
@@ -129,7 +120,8 @@ define([
         it('Expect joinChannel members subscription event with presenter with no streams playing to return no-streams-playing', function(done) {
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias
+                alias: mockRoom.alias,
+                streamToken
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [], 123);
 
@@ -145,7 +137,8 @@ define([
         it('Expect joinChannel members subscription event with participant with streams to return no streams playing status', function(done) {
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias
+                alias: mockRoom.alias,
+                streamToken
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [mockStream], 123);
 
@@ -167,7 +160,8 @@ define([
 
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias
+                alias: mockRoom.alias,
+                streamToken
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
 
@@ -185,7 +179,8 @@ define([
 
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias
+                alias: mockRoom.alias,
+                streamToken
             }, function(error, response) {
                 expect(response.channelService).to.be.an('object');
 

@@ -17,7 +17,6 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
@@ -26,19 +25,14 @@ define([
     'sdk/room/room.json',
     'sdk/room/member.json',
     'sdk/room/stream.json'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member, stream) {
     describe('When publishing to a channel with ExpressRoom', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
-
         var httpStubber;
         var websocketStubber;
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
+        var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJEUzBjQzVwQ3pJMGNtRHVEVm1xcHR0Rm5oWHhpZzFzYkpEVjV3Vi95ZEQyTnJKckR1NUxWVzhtK3hEQ0tKa3JFbE04OVUrRVR3akMzK1lvejlEdEVOdz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDU1Nzc5OTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -77,14 +71,7 @@ define([
                 }
             });
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
-            channelExpress = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI'
-            });
+            channelExpress = new ChannelExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9'});
         });
 
         after(function() {
@@ -100,7 +87,7 @@ define([
 
         it('returns a publisher and no channelService when publishing remotely', function(done) {
             channelExpress.publishToChannel({
-                capabilities: [],
+                publishToken,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -137,7 +124,7 @@ define([
             websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             channelExpress.publishToChannel({
-                capabilities: [],
+                publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name,
@@ -162,7 +149,7 @@ define([
             var publishCount = 0;
 
             channelExpress.publishToChannel({
-                capabilities: [],
+                publishToken,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -193,7 +180,7 @@ define([
             var publishCount = 0;
 
             channelExpress.publishToChannel({
-                capabilities: [],
+                publishToken,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'

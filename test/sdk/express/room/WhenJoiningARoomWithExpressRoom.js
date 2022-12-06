@@ -16,7 +16,6 @@
 
 define([
     'phenix-web-lodash-light',
-    'sdk/AdminApiProxyClient',
     'sdk/express/RoomExpress',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
@@ -24,13 +23,8 @@ define([
     'sdk/room/member.json',
     'sdk/room/stream.json',
     'sdk/room/track.json'
-], function(_, AdminApiProxyClient, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
+], function(_, RoomExpress, HttpStubber, WebSocketStubber, room, member, stream, track) {
     describe('When Joining a Room with ExpressRoom', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
         var mockRoom = {
             roomId: 'TestRoom123',
             alias: 'TestRoom123Alias',
@@ -41,6 +35,7 @@ define([
             type: room.types.multiPartyChat.name,
             members: []
         };
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
 
         var httpStubber;
         var websocketStubber;
@@ -48,18 +43,16 @@ define([
         var response;
 
         beforeEach(function(done) {
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
             httpStubber = new HttpStubber();
-            httpStubber.stubAuthRequest();
+            httpStubber.stubAuthRequest('MockSessionId#' + Math.floor(1000 + Math.random() * 9000));
             httpStubber.stubStreamRequest();
+            self.sessionId = 'MockSessionId';
 
             websocketStubber = new WebSocketStubber();
-            websocketStubber.stubAuthRequest();
+            websocketStubber.stubAuthRequest('MockSessionId#' + Math.floor(1000 + Math.random() * 9000));
+            websocketStubber.stubSetupStream();
 
-            roomExpress = new RoomExpress({adminApiProxyClient: adminApiProxyClient});
+            roomExpress = new RoomExpress({authToken: streamToken});
 
             response = {
                 status: 'ok',
@@ -88,6 +81,7 @@ define([
             });
 
             roomExpress.joinRoom({
+                streamToken,
                 roomId: mockRoom.roomId,
                 role: member.roles.participant.name
             }, function() {}, function(){});
@@ -99,6 +93,7 @@ define([
             });
 
             roomExpress.joinRoom({
+                streamToken,
                 alias: mockRoom.alias,
                 role: member.roles.participant.name
             }, function() {}, function(){});
@@ -110,12 +105,16 @@ define([
             });
 
             expect(function() {
-                roomExpress.joinRoom({role: member.roles.participant.name}, function() {}, function(){});
+                roomExpress.joinRoom({
+                    role: member.roles.participant.name,
+                    streamToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJad1pZQm5MdmxFWFFSK0s4ajI3MWdJQm80ckgxS0EwZXFWcGUyajZJWjZqT3JpMHFsaFJRaVJQMFlaN3JwYTlWY0htaHJmK0tHVFhTZjh6em5ZZW5hZz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODU2OTcyMzc1ODd9In0='
+                }, function() {}, function(){});
             }).to.throw(Error);
         });
 
         it('returns response object with a roomService and active room from joinRoom callback', function() {
             roomExpress.joinRoom({
+                streamToken,
                 role: member.roles.participant.name,
                 alias: 'roomAlias'
             }, function(error, response) {
@@ -127,7 +126,8 @@ define([
         it('triggers member subscription callback when members changed after successfully joining a room', function(done) {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias'
+                alias: 'roomAlias',
+                streamToken
             }, function(error, response) {
                 response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([{}]);
             }, function(members){
@@ -161,6 +161,7 @@ define([
             response.members = [member1];
 
             roomExpress.joinRoom({
+                streamToken,
                 role: member.roles.participant.name,
                 alias: 'roomAlias'
             }, function() {}, function(members){

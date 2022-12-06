@@ -17,20 +17,20 @@
 define([
     'phenix-web-lodash-light',
     'sdk/express/ChannelExpress',
-    'sdk/AdminApiProxyClient',
     '../../../../test/mock/HttpStubber',
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function(_, ChannelExpress, AdminApiProxyClient, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
     describe('When using two ChannelExpress instances', function() {
-        var mockBackendUri = 'https://mockUri';
-        var mockAuthData = {
-            name: 'mockUser',
-            password: 'somePassword'
-        };
+        var httpStubber;
+        var websocketStubber;
+        var chromeRuntimeStubber = new ChromeRuntimeStubber();
+        var peerConnectionStubber = new PeerConnectionStubber();
+        var channelExpressPublisher;
+        var channelExpressSubscriber;
         var mockRoom = {
             roomId: 'ChannelId',
             alias: 'ChannelAlias',
@@ -41,13 +41,8 @@ define([
             type: room.types.channel.name,
             members: []
         };
-
-        var httpStubber;
-        var websocketStubber;
-        var chromeRuntimeStubber = new ChromeRuntimeStubber();
-        var peerConnectionStubber = new PeerConnectionStubber();
-        var channelExpressPublisher;
-        var channelExpressSubscriber;
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJoaExsSnJsYjJQOFFWL3hZcjk2MUxNb3lzS3l3Sk1XNzI5MFlvTU1WWVJBMkZSQklkUDhMOWJEcytMVGdJVVIrWnhIcmlTTmtoakVwVlVqTFg0OUtVUT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxODA2MDk2MzQsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJEUzBjQzVwQ3pJMGNtRHVEVm1xcHR0Rm5oWHhpZzFzYkpEVjV3Vi95ZEQyTnJKckR1NUxWVzhtK3hEQ0tKa3JFbE04OVUrRVR3akMzK1lvejlEdEVOdz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDU1Nzc5OTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -56,6 +51,7 @@ define([
 
         beforeEach(function() {
             httpStubber = new HttpStubber();
+
             httpStubber.stubAuthRequest();
             httpStubber.stubStreamRequest();
 
@@ -73,19 +69,9 @@ define([
                 members: []
             });
 
-            var adminApiProxyClient = new AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(mockBackendUri);
-            adminApiProxyClient.setAuthenticationData(mockAuthData);
-
-            channelExpressPublisher = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI'
-            });
-            channelExpressSubscriber = new ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: 'wss://mockURI'
-            });
+            const initChannaleExpress = () => new ChannelExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJvNk04cDBvMEYyK2ZNV0dLZ09sQmNKUU1oN0pmWWhnRFcwU1hXZHJnM3VwVlBpTEJXa2wvTnZMRUE4Y3Rnb0VRNUs2SEI0OENHMWxpMTRHcDJ4cWNIQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxODA1Nzg5MDIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9'});
+            channelExpressPublisher = initChannaleExpress();
+            channelExpressSubscriber = initChannaleExpress();
         });
 
         after(function() {
@@ -100,9 +86,10 @@ define([
             channelExpressSubscriber.dispose();
         });
 
+        // TODO (IS) understand why this test is breaking the flow of other tests (other tests get sessionId undefined on init)
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
-                capabilities: [],
+                publishToken,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -111,7 +98,8 @@ define([
             }, function() {
                 channelExpressSubscriber.joinChannel({
                     role: member.roles.participant.name,
-                    alias: 'ChannelAlias'
+                    alias: 'ChannelAlias',
+                    streamToken
                 }, _.noop, function(error, response){
                     expect(response.status).to.be.equal('no-stream-playing');
 
@@ -119,16 +107,16 @@ define([
                 });
             });
         });
-
         it('successfully joins a channel then publishes to another', function(done) {
             var responseCount = 0;
 
             channelExpressSubscriber.joinChannel({
                 role: member.roles.participant.name,
-                alias: 'ChannelAlias'
-            }, _.noop, function(){
+                streamToken
+            }, _.noop, function(error, response){
+                expect(response.status).to.be.equal('no-stream-playing');
                 channelExpressPublisher.publishToChannel({
-                    capabilities: [],
+                    publishToken,
                     room: {
                         alias: 'ChannelAlias',
                         name: 'Channel'
