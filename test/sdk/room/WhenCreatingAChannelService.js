@@ -142,10 +142,6 @@ define([
             self.sessionId = 'MockSessionId';
         });
 
-        it('Has property createRoom that is a function', function() {
-            expect(channelService.createChannel).to.be.a('function');
-        });
-
         it('Has property enterRoom that is a function', function() {
             expect(channelService.enterChannel).to.be.a('function');
         });
@@ -176,15 +172,6 @@ define([
                     expect(response.channel).to.be.not.ok;
                     expect(response.status).to.not.be.equal('ok');
                 });
-            });
-
-            it('Expect created room to be an immutable room', function() {
-                channelService.start(role, screenName);
-
-                channelService.createChannel(mockRoom, function(error, response) {
-                    expect(response.channel).to.be.an('object');
-                    expect(response.status).to.be.equal('ok');
-                }, screenName);
             });
 
             it('Expect enter room callback to return null for room and status', function() {

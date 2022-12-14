@@ -252,40 +252,6 @@ define([
                 ]
             },
             {
-                "name": "CreateRoom",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "sessionId",
-                        "id": 1
-                    },
-                    {
-                        "rule": "required",
-                        "type": "Room",
-                        "name": "room",
-                        "id": 2
-                    }
-                ]
-            },
-            {
-                "name": "CreateRoomResponse",
-                "fields": [
-                    {
-                        "rule": "required",
-                        "type": "string",
-                        "name": "status",
-                        "id": 1
-                    },
-                    {
-                        "rule": "optional",
-                        "type": "Room",
-                        "name": "room",
-                        "id": 2
-                    }
-                ]
-            },
-            {
                 "name": "JoinRoom",
                 "fields": [
                     {

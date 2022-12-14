@@ -43,16 +43,6 @@ define([
         return this._roomService.getRoomInfo(channelId, alias, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
     };
 
-    ChannelService.prototype.createChannel = function createChannel(channel, callback) {
-        assert.isObject(channel, 'channel');
-        assert.isStringNotEmpty(channel.name, 'channel.name');
-        assert.isStringNotEmpty(channel.type, 'channel.type');
-        assert.isString(channel.description, 'channel.description');
-        assert.isFunction(callback, 'callback');
-
-        return this._roomService.createRoom(channel, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
-    };
-
     ChannelService.prototype.enterChannel = function enterChannel(channelId, alias, callback) {
         if (channelId) {
             assert.isStringNotEmpty(channelId, 'roomId');

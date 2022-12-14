@@ -38,6 +38,7 @@ define([
         var websocketStubber;
         var roomExpress;
         var response;
+        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9';
 
         beforeEach(function(done) {
             httpStubber = new HttpStubber();
@@ -47,7 +48,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9'});
+            roomExpress = new RoomExpress({authToken: streamToken});
 
             response = {
                 status: 'ok',
@@ -66,28 +67,11 @@ define([
             roomExpress.dispose();
         });
 
-        it('only has one listener for room events when creating and then joining a room', function(done) {
-            websocketStubber.stubResponse('chat.CreateRoom', response);
-            websocketStubber.stubResponse('chat.JoinRoom', response);
-
-            roomExpress.createRoom({room: mockRoom}, function(error, createRoomResponse) {
-                roomExpress.joinRoom({
-                    roomId: mockRoom.roomId,
-                    role: member.roles.participant.name
-                }, function(error, response) {
-                    expect(createRoomResponse.roomService).to.not.exist;
-                    expect(response.roomService).to.exist;
-                    expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(1);
-                    done();
-                }, function(){});
-            });
-        });
-
         it('has two listeners for room events when joining two different rooms', function(done) {
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
             roomExpress.joinRoom({
-                roomId: mockRoom.roomId,
+                streamToken,
                 role: member.roles.participant.name
             }, function() {
                 response.room.roomId = 'DifferentRoomId';
@@ -95,27 +79,10 @@ define([
                 websocketStubber.stubResponse('chat.JoinRoom', response);
 
                 roomExpress.joinRoom({
-                    roomId: response.room.roomId,
+                    streamToken,
                     role: member.roles.participant.name
                 }, function() {
                     expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(2);
-                    done();
-                }, function(){});
-            }, function(){});
-        });
-
-        it('has one listeners for room events when joining the same room twice', function(done) {
-            websocketStubber.stubResponse('chat.JoinRoom', response);
-
-            roomExpress.joinRoom({
-                roomId: mockRoom.roomId,
-                role: member.roles.participant.name
-            }, function() {
-                roomExpress.joinRoom({
-                    roomId: mockRoom.roomId,
-                    role: member.roles.participant.name
-                }, function() {
-                    expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(1);
                     done();
                 }, function(){});
             }, function(){});

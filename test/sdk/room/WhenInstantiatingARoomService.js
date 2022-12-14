@@ -142,10 +142,6 @@ define([
             cleanUp();
         });
 
-        it('Has property createRoom that is a function', function() {
-            expect(roomService.createRoom).to.be.a('function');
-        });
-
         it('Has property enterRoom that is a function', function() {
             expect(roomService.enterRoom).to.be.a('function');
         });
@@ -182,38 +178,6 @@ define([
                 websocketStubber.stubResponseError('chat.GetRoomInfo', new Error('Error'));
 
                 roomService.getRoomInfo('', 'alias', function(error, response) {
-                    expect(response).to.be.not.ok;
-                    expect(error).to.be.ok;
-                });
-            });
-
-            it('Expect created room to be an immutable room', function() {
-                roomService.start(role, screenName);
-
-                roomService.createRoom(mockRoom, function(error, response) {
-                    expect(response.room).to.be.an.instanceof(ImmutableRoom);
-                    expect(response.status).to.be.equal('ok');
-                }, screenName);
-            });
-
-            it('Expect room to be undefined when protocol returns error status', function() {
-                response.status = 'error';
-                response.reason = 'Error creating room';
-
-                websocketStubber.stubResponse('chat.CreateRoom', response);
-
-                roomService.start(role, screenName);
-
-                roomService.createRoom(mockRoom, function(error, response) {
-                    expect(response.status).to.not.be.equal('ok');
-                    expect(response.room).to.be.not.ok;
-                }, screenName);
-            });
-
-            it('Expect createRoom to return an error when error returned from protocol', function() {
-                websocketStubber.stubResponseError('chat.CreateRoom', new Error('Error'));
-
-                roomService.createRoom(mockRoom, function(error, response) {
                     expect(response).to.be.not.ok;
                     expect(error).to.be.ok;
                 });
@@ -278,39 +242,6 @@ define([
                     expect(response.room).to.be.an.instanceof(ImmutableRoom);
                     expect(response.status).to.be.equal('ok');
                 });
-            });
-
-            it('Expect createRoom to return status other than "ok"', function() {
-                response.status = 'already-exists';
-                websocketStubber.stubResponse('chat.CreateRoom', response);
-
-                roomService.start(role, screenName);
-
-                roomService.createRoom(mockRoom, function(error, response) {
-                    expect(response.status).to.not.be.equal('ok');
-                });
-            });
-
-            it('Expect createRoom to have all valid values (no members, and no roomId) passed to protocol', function() {
-                var roomToCreate = _.assign({}, mockRoom, {invalidProp: 'myInvalidValue'});
-
-                websocketStubber.stubResponse('chat.CreateRoom', response, function(type, message) {
-                    var room = message.room;
-
-                    expect(room.roomId).to.be.empty;
-                    expect(room.alias).to.be.equal(roomToCreate.alias);
-                    expect(room.roomType).to.be.equal(roomToCreate.roomType);
-                    expect(room.name).to.be.equal(roomToCreate.name);
-                    expect(room.description).to.be.equal(roomToCreate.description);
-                    expect(room.bridgeId).to.be.equal(roomToCreate.bridgeId);
-                    expect(room.pin).to.be.equal(roomToCreate.pin);
-                    expect(room.members).to.not.exist;
-                    expect(room.invalidProp).to.not.exist;
-                });
-
-                roomService.start(role, screenName);
-
-                roomService.createRoom(roomToCreate, function() {});
             });
 
             it('Return new Room model with response.room values', function() {

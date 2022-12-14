@@ -24,9 +24,8 @@ define('phenix-web-sdk', [
     './sdk/userMedia/UserMediaResolver',
     './sdk/express/PCastExpress',
     './sdk/express/RoomExpress',
-    './sdk/express/ChannelExpress',
-    './sdk/AdminApiProxyClient'
-], function(logging, PCast, rtc, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
+    './sdk/express/ChannelExpress'
+], function(logging, PCast, rtc, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
     'use strict';
 
     rtc.global.PhenixPCast = PCast;
@@ -45,7 +44,6 @@ define('phenix-web-sdk', [
             AudioSpeakerDetector: AudioSpeakerDetector,
             UserMediaResolver: UserMediaResolver
         },
-        net: {AdminApiProxyClient: AdminApiProxyClient},
         utils: {
             BandwidthMonitor: BandwidthMonitor,
             logging: logging,

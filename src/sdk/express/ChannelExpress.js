@@ -74,19 +74,6 @@ define([
         return this._roomExpress.getPCastExpress();
     };
 
-    ChannelExpress.prototype.createChannel = function createChannel(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isObject(options.channel, 'options.channel');
-
-        var createRoomOptions = _.assign({room: options.channel}, options);
-
-        createRoomOptions.room.type = roomEnums.types.channel.name;
-
-        delete createRoomOptions.channel;
-
-        this._roomExpress.createRoom(createRoomOptions, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
-    };
-
     ChannelExpress.prototype.joinChannel = function joinChannel(options, joinChannelCallback, subscriberCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(joinChannelCallback, 'joinChannelCallback');
@@ -379,14 +366,6 @@ define([
             this._logger.warn('[%s] Trying to publish with both `publishToken` and `capabilities` set. Only use one of the two options');
 
             callback(new Error('Publishing with both `publishToken` and `capabilities` defined'), {status: 'conflicting-options'});
-
-            return;
-        }
-
-        if (options.streamToken && options.capabilities) {
-            this._logger.warn('[%s] Trying to publish with both `streamToken` and `capabilities` set. Only use one of the two options');
-
-            callback(new Error('Publishing with both `streamToken` and `capabilities` defined'), {status: 'conflicting-options'});
 
             return;
         }

@@ -18,12 +18,11 @@ define([
     'phenix-web-lodash-light',
     'phenix-web-assert',
     'phenix-web-observable',
-    '../AdminApiProxyClient',
     '../userMedia/UserMediaResolver',
     '../PCast',
     '../PhenixRTC',
     '../streaming/shaka.json'
-], function(_, assert, observable, AdminApiProxyClient, UserMediaResolver, PCast, rtc, shakaEnums) {
+], function(_, assert, observable, UserMediaResolver, PCast, rtc, shakaEnums) {
     'use strict';
 
     var instanceCounter = 0;
@@ -43,8 +42,8 @@ define([
             assert.isStringNotEmpty(options.authToken, 'options.authToken');
         }
 
-        if (options.authToken && options.adminApiProxyClient) {
-            throw new Error('Do not pass "options.adminApiProxyClient" if you are using "options.authToken"');
+        if ('adminApiProxyClient' in options) {
+            throw new Error('"options.adminApiProxyClient" is no longer supported. Please use "options.authToken" instead.');
         }
 
         if (options.onError) {
@@ -65,16 +64,10 @@ define([
             assert.isNumber(options.reconnectOptions.maxReconnectFrequency, 'options.reconnectOptions.maxReconnectFrequency');
         }
 
-        if (options.adminApiProxyClient) {
-            assert.isObject(options.adminApiProxyClient, 'options.adminApiProxyClient');
-            assert.isFunction(options.adminApiProxyClient.createAuthenticationToken, 'options.adminApiProxyClient.createAuthenticationToken');
-        }
-
         this._instanceId = ++instanceCounter;
         this._pcastObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._sessionIdObservable = new observable.Observable(null).extend({rateLimit: 0});
         this._publishers = {};
-        this._adminApiProxyClient = options.adminApiProxyClient;
         this._isInstantiated = false;
         this._reconnectCount = 0;
         this._reauthCount = 0;
@@ -88,17 +81,6 @@ define([
         this._ignoredStreamEnds = {};
 
         instantiatePCast.call(this);
-
-        // After logger is instantiated
-        if (!options.adminApiProxyClient) {
-            if (options.backendUri || _.isString(options.backendUri)) {
-                this._logger.warn('Passing options.backendUri is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
-            }
-
-            if (options.authenticationData) {
-                this._logger.warn('Passing options.authenticationData is deprecated. Please create an instance of the sdk.net.AdminApiProxyClient and pass that instead');
-            }
-        }
     }
 
     PCastExpress.prototype.toString = function toString() {
@@ -123,10 +105,6 @@ define([
         if (_.isNumber(this._instantiatePCastTimeoutId)) {
             clearTimeout(this._instantiatePCastTimeoutId);
             this._instantiatePCastTimeoutId = null;
-        }
-
-        if (this._adminApiProxyClient) {
-            this._adminApiProxyClient.dispose();
         }
 
         if (this.sessionIdSubscription) {
@@ -154,10 +132,6 @@ define([
 
     PCastExpress.prototype.getSessionIdObservable = function() {
         return this._sessionIdObservable;
-    };
-
-    PCastExpress.prototype.getAdminAPI = function getAdminAPI() {
-        return this._adminApiProxyClient;
     };
 
     PCastExpress.prototype.getUserMedia = function(options, callback) {
@@ -232,17 +206,15 @@ define([
             }
         }
 
-        if (options.publishToken) {
-            assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        if ('streamToken' in options) {
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
         }
 
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        if (!options.publishToken) {
+            throw new Error('Cannot publish. Please use "options.publishToken".');
         }
 
-        if (options.publishToken && options.streamToken) {
-            throw new Error('Do not pass streamToken with publishToken. Please use publishToken.');
-        }
+        assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
 
         var that = this;
 
@@ -252,7 +224,7 @@ define([
             }
 
             if (options.userMediaStream) {
-                return getStreamingTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
+                return getCapabilitiesFromPublishTokenAndPublish.call(that, options.userMediaStream, options, false, callback);
             }
 
             that.getUserMedia(options, function(error, response) {
@@ -264,7 +236,7 @@ define([
                     return callback(null, response);
                 }
 
-                getStreamingTokenAndPublish.call(that, response.userMedia, options, true, callback);
+                getCapabilitiesFromPublishTokenAndPublish.call(that, response.userMedia, options, true, callback);
             });
         }, options.isContinuation);
     };
@@ -317,17 +289,15 @@ define([
             }
         }
 
-        if (options.publishToken) {
-            assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        if ('streamToken' in options) {
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
         }
 
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        if (!options.publishToken) {
+            throw new Error('Cannot publish. Please use "options.publishToken".');
         }
 
-        if (options.publishToken && options.streamToken) {
-            throw new Error('Do not pass streamToken with publishToken. Please use publishToken.');
-        }
+        assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
 
         var that = this;
 
@@ -361,66 +331,7 @@ define([
 
             remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
 
-            getStreamingTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
-        });
-    };
-
-    PCastExpress.prototype.publishStreamToExternal = function publishStreamToExternal(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-        assert.isStringNotEmpty(options.streamId, 'options.streamId');
-        assert.isStringNotEmpty(options.externalUri, 'options.externalUri');
-
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
-        }
-
-        if (options.connectOptions) {
-            assert.isArray(options.connectOptions, 'options.connectOptions');
-        }
-
-        if (options.mediaConstraints) {
-            throw new Error('Invalid argument: mediaConstraints, passed on publishStreamToExternal. Local media not allowed when publishing remote content.');
-        }
-
-        if (options.videoElement) {
-            throw new Error('May not preview external stream. Please subscribe to view.');
-        }
-
-        if (options.monitor) {
-            assert.isObject(options.monitor, 'options.monitor');
-            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
-
-            if (options.monitor.options) {
-                assert.isObject(options.monitor.options, 'options.monitor.options');
-            }
-        }
-
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
-        }
-
-        var that = this;
-
-        this.waitForOnline(function(error) {
-            if (error) {
-                return callback(error);
-            }
-
-            var remoteOptions = _.assign({
-                connectOptions: [],
-                capabilities: []
-            }, options);
-
-            if (!_.includes(remoteOptions.capabilities, 'egress')) {
-                remoteOptions.capabilities.push('egress');
-            }
-
-            if (!_.includes(remoteOptions.capabilities, 'egress-own-stream')) {
-                remoteOptions.capabilities.push('egress-own-stream');
-            }
-
-            getStreamingTokenAndPublish.call(that, remoteOptions.externalUri, remoteOptions, false, callback);
+            getCapabilitiesFromPublishTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
         });
     };
 
@@ -454,10 +365,10 @@ define([
             }
         }
 
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        if (!options.streamToken) {
+            throw new Error('Cannot subscribe. Please use "options.streamToken".');
         } else {
-            assert.isObject(options.capabilities, 'options.capabilities');
+            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
         }
 
         if (options.subscriberOptions) {
@@ -473,31 +384,7 @@ define([
                 return callback(error);
             }
 
-            if (options.streamToken) {
-                return subscribeToStream.call(that, options.streamToken, options, callback);
-            }
-
-            if (!options.streamToken && !that._adminApiProxyClient) {
-                throw new Error('Use stream token, or set adminApiProxyClient');
-            }
-
-            that._logger.info('[%s] [%s] Generating stream token for subscribing to origin [%s]', this, that._pcastObservable.getValue().getProtocol().getSessionId(), options.streamId);
-
-            that._adminApiProxyClient.createStreamTokenForSubscribing(that._pcastObservable.getValue().getProtocol().getSessionId(), options.capabilities, options.streamId, null, function(error, response) {
-                if (error) {
-                    that._logger.error('[%s] Failed to create stream token for subscribing', this, error);
-
-                    return callback(error);
-                }
-
-                if (response.status !== 'ok') {
-                    that._logger.warn('[%s] Failed to create stream token for subscribing with status [%s]', this, response.status);
-
-                    return callback(null, response);
-                }
-
-                subscribeToStream.call(that, response.streamToken, options, callback);
-            });
+            return subscribeToStream.call(that, options.streamToken, options, callback);
         }, options.isContinuation);
     };
 
@@ -634,35 +521,7 @@ define([
 
         this.sessionIdSubscription = this._pcastObservable.getValue().getObservableSessionId().subscribe(_.bind(handleSessionIdChange, this));
 
-        if (this._authToken) {
-            return this._pcastObservable.getValue().start(this._authToken, authenticationCallback, _.noop, _.noop);
-        }
-
-        if (!this._authToken && !that._adminApiProxyClient) {
-            throw new Error('Use auth token, or set adminApiProxyClient');
-        }
-
-        this._adminApiProxyClient.createAuthenticationToken(function(error, response) {
-            if (error && error.message === 'timeout') {
-                return onPCastStatusChange.call(that, error.message);
-            }
-
-            if (error) {
-                return handleError.call(that, error);
-            }
-
-            if (response.status !== 'ok') {
-                return onPCastStatusChange.call(that, response.status);
-            }
-
-            if (!that._pcastObservable.getValue()) {
-                that._logger.warn('[%s] Unable to authenticate. PCast not instantiated.', this);
-
-                return;
-            }
-
-            that._pcastObservable.getValue().start(response.authenticationToken, _.noop, _.noop, _.noop);
-        });
+        return this._pcastObservable.getValue().start(this._authToken, authenticationCallback, _.noop, _.noop);
     }
 
     function onPCastStatusChange(status) {
@@ -690,19 +549,7 @@ define([
         case 'unauthorized':
             delete this._authToken;
 
-            if (!this._adminApiProxyClient) {
-                return handleError.call(this, new Error(status));
-            }
-
-            this._reauthCount++;
-
-            if (this._reauthCount > 1) {
-                return handleError.call(this, new Error(status));
-            }
-
-            this._logger.info('[%s] Attempting to create new authToken and re-connect after [%s] response', this, unauthorizedStatus);
-
-            return getAuthTokenAndReAuthenticate.call(this);
+            return handleError.call(this, new Error(status));
         case 'capacity':
         case 'network-unavailable':
             this._reconnectCount++;
@@ -745,35 +592,7 @@ define([
             if (!that._pcastObservable.getValue() || !that._pcastObservable.getValue().isStarted()) {
                 return instantiatePCast.call(that);
             }
-
-            return getAuthTokenAndReAuthenticate.call(that);
         }, timeoutWithRandomOffset);
-    }
-
-    function getAuthTokenAndReAuthenticate() {
-        var that = this;
-
-        this._adminApiProxyClient.createAuthenticationToken(function(error, response) {
-            if (error && error.message === 'timeout') {
-                return onPCastStatusChange.call(that, error.message);
-            }
-
-            if (error) {
-                return handleError.call(that, error);
-            }
-
-            if (response.status !== 'ok') {
-                return onPCastStatusChange.call(that, response.status);
-            }
-
-            if (!that._pcastObservable.getValue()) {
-                that._logger.warn('[%s] Unable to authenticate. PCast not instantiated.', this);
-
-                return;
-            }
-
-            that._pcastObservable.getValue().reAuthenticate(response.authenticationToken);
-        });
     }
 
     function handleError(e) {
@@ -822,70 +641,17 @@ define([
         });
     }
 
-    function getStreamingTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
+    function getCapabilitiesFromPublishTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
+        try {
+            var capabilitiesFromPublishToken = that.parseCapabilitiesFromToken(options.publishToken);
 
-        if (options.publishToken) {
-            try {
-                var capabilitiesFromPublishToken = that.parseCapabilitiesFromToken(options.publishToken);
-
-                options.capabilities = capabilitiesFromPublishToken;
-            } catch (e) {
-                return callback(new Error('Bad `publishToken`', e), {status: 'bad-token'});
-            }
-
-            return publishUserMediaOrUri.call(that, options.publishToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+            options.capabilities = capabilitiesFromPublishToken;
+        } catch (e) {
+            return callback(new Error('Bad `publishToken`', e), {status: 'bad-token'});
         }
 
-        if (options.streamToken) {
-            try {
-                var capabilitiesFromStreamToken = that.parseCapabilitiesFromToken(options.streamToken);
-
-                options.capabilities = capabilitiesFromStreamToken;
-            } catch (e) {
-                return callback(new Error('Bad `streamToken`', e), {status: 'bad-token'});
-            }
-
-            return publishUserMediaOrUri.call(that, options.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
-        }
-
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
-        }
-
-        that.waitForOnline(function(error) {
-            if (error) {
-                that._logger.error('[%s] Failed to create stream token for publishing after waiting for online status', this, error);
-
-                return callback(error);
-            }
-
-            var sessionId = that._pcastObservable.getValue().getProtocol().getSessionId();
-            var isEgress = _.includes(options.capabilities, 'egress');
-            var generateStreamToken = _.bind(that._adminApiProxyClient.createStreamTokenForPublishing, that._adminApiProxyClient, sessionId, options.capabilities);
-
-            if (isEgress) {
-                generateStreamToken = _.bind(that._adminApiProxyClient.createStreamTokenForPublishingToExternal, that._adminApiProxyClient, sessionId, options.capabilities, options.streamId);
-            }
-
-            that._logger.info('[%s] [%s] Creating stream token for publishing', this, sessionId);
-
-            generateStreamToken(function(error, response) {
-                if (error) {
-                    that._logger.error('[%s] [%s] Failed to create stream token for publishing', this, sessionId, error);
-
-                    return callback(error);
-                }
-
-                if (response.status !== 'ok') {
-                    that._logger.warn('[%s] [%s] Failed to create stream token for publishing with status [%s]', this, sessionId, response.status);
-
-                    return callback(null, response);
-                }
-
-                publishUserMediaOrUri.call(that, response.streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
-            });
-        }, options.isContinuation);
+        return publishUserMediaOrUri.call(that, options.publishToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
     }
 
     function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
@@ -917,7 +683,7 @@ define([
                     that.publish(options, callback);
                 } else {
                     publisher.stop(reason, true);
-                    getStreamingTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
+                    getCapabilitiesFromPublishTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
                 }
             };
 
@@ -932,7 +698,7 @@ define([
                 delete reAuthOptions.streamToken;
                 delete reAuthOptions.publishToken;
 
-                return getStreamingTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
+                return getCapabilitiesFromPublishTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
             }
 
             if (status !== 'ok') {
@@ -1011,19 +777,6 @@ define([
 
                 subscribeToStream.call(that, streamToken, retryOptions, callback);
             };
-
-            if (((!options.skipRetryOnUnauthorized && status === unauthorizedStatus && (options.streamToken || !options.authFailure)) || status === 'timeout') && that._adminApiProxyClient) {
-                that._logger.info('[%s] [%s] Attempting to create new streamToken and re-subscribe after [%s] response', this, options.streamId, unauthorizedStatus);
-
-                var reAuthOptions = _.assign({
-                    isContinuation: true,
-                    authFailure: true
-                }, options);
-
-                delete reAuthOptions.streamToken;
-
-                return that.subscribe(reAuthOptions, callback);
-            }
 
             if (status === 'streaming-not-ready') {
                 that._logger.warn('[%s] Failure to subscribe with status [%s]. Try again in a few seconds.', this, status);

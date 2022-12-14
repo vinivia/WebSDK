@@ -102,18 +102,9 @@ define([
             });
 
             channelExpress.joinChannel({
-                alias: mockRoom.alias,
+                streamToken: streamToken,
                 role: member.roles.participant.name
             }, function() {}, function(){});
-        });
-
-        it('Expect joinChannel protocol to be called with just alias and default audience role', function() {
-            websocketStubber.stubResponse('chat.JoinRoom', response, function(type, message) {
-                expect(message.alias).to.be.equal(mockRoom.alias);
-                expect(message.member.role).to.be.equal(member.roles.audience.name);
-            });
-
-            channelExpress.joinChannel({alias: mockRoom.alias}, function() {}, function(){});
         });
 
         // Write member joined logic -

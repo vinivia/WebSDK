@@ -114,16 +114,6 @@ define([
         getRoomInfoRequest.call(this, roomId, alias, callback);
     };
 
-    RoomService.prototype.createRoom = function createRoom(room, callback) {
-        assert.isObject(room, 'room');
-        assert.isStringNotEmpty(room.name, 'room.name');
-        assert.isStringNotEmpty(room.type, 'room.type');
-        assert.isString(room.description, 'room.description');
-        assert.isFunction(callback, 'callback');
-
-        createRoomRequest.call(this, room, callback);
-    };
-
     RoomService.prototype.enterRoom = function enterRoom(roomId, alias, callback) {
         if (roomId) {
             assert.isStringNotEmpty(roomId, 'roomId');
@@ -570,40 +560,6 @@ define([
                 callback(null, result);
             }
         );
-    }
-
-    function createRoomRequest(room, callback) {
-        this._authenticationService.assertAuthorized();
-
-        var that = this;
-
-        var validatedRoom = getValidRoomObject.call(that, room);
-
-        this._protocol.createRoom(validatedRoom, function handleCreateRoomResponse(error, response) {
-            if (error) {
-                that._logger.error('Creating room failed with error [%s]', error);
-
-                return callback(error, null);
-            }
-
-            var result = {status: response.status};
-
-            if (response.status !== 'ok' && response.status !== 'already-exists') {
-                that._logger.warn('Creating room failed with status [%s]', response.status);
-
-                return callback(null, result);
-            }
-
-            result.room = _.freeze(createImmutableRoomFromResponse.call(that, response));
-
-            callback(null, result);
-        });
-    }
-
-    function getValidRoomObject(room) {
-        var roomService = this;
-
-        return (new Room(roomService, '', room.alias, room.name, room.description, room.type, [], room.bridgeId, room.pin)).toJson();
     }
 
     function enterRoomRequest(roomId, alias, callback, options) {

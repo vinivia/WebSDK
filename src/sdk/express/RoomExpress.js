@@ -95,52 +95,14 @@ define([
         return this._pcastExpress;
     };
 
-    // Responsible for creating room. Returns immutable room
-    RoomExpress.prototype.createRoom = function createRoom(options, callback) {
-        assert.isFunction(callback, 'callback');
-        assert.isObject(options.room, 'options.room');
-        assert.isStringNotEmpty(options.room.name, 'options.room.name');
-        assert.isStringNotEmpty(options.room.type, 'options.room.type');
-
-        if (options.room.description) {
-            assert.isStringNotEmpty(options.room.description, 'options.room.description');
-        }
-
-        var roomDescription = options.room.description || getDefaultRoomDescription(options.room.type);
-
-        createRoomService.call(this, null, null, function(error, roomServiceResponse) {
-            if (error) {
-                return callback(error);
-            }
-
-            if (roomServiceResponse.status !== 'ok') {
-                return callback(null, roomServiceResponse);
-            }
-
-            var roomService = roomServiceResponse.roomService;
-            var roomToCreate = _.assign({}, options.room);
-
-            if (!roomToCreate.description) {
-                roomToCreate.description = roomDescription;
-            }
-
-            roomService.createRoom(roomToCreate, function(error, roomResponse) {
-                if (error) {
-                    return callback(error);
-                }
-
-                // Don't return room service. Not in room. Room returned is immutable
-                roomService.stop('create');
-
-                return callback(null, roomResponse);
-            });
-        });
-    };
-
     RoomExpress.prototype.joinRoom = function joinRoom(options, joinRoomCallback, membersChangedCallback) {
         assert.isObject(options, 'options');
         assert.isFunction(joinRoomCallback, 'joinRoomCallback');
         assert.isStringNotEmpty(options.role, 'options.role');
+
+        if (!options.streamToken) {
+            throw new Error('Cannot join room. Please use "options.streamToken".');
+        }
 
         if (membersChangedCallback) {
             assert.isFunction(membersChangedCallback, 'membersChangedCallback');
@@ -162,29 +124,27 @@ define([
             assert.isArray(options.streams, 'options.streams');
         }
 
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
 
-            if (options.roomId) {
-                this._logger.warn('Trying to join room with both streamToken and roomId. Please only use streamToken.');
-            }
+        if (options.roomId) {
+            this._logger.warn('Trying to join room with both streamToken and roomId. Please only use streamToken.');
+        }
 
-            if (options.alias) {
-                this._logger.warn('Trying to join room with both streamToken and alias. Please only use streamToken.');
-            }
+        if (options.alias) {
+            this._logger.warn('Trying to join room with both streamToken and alias. Please only use streamToken.');
+        }
 
-            var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.streamToken);
-            var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.streamToken);
+        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.streamToken);
+        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.streamToken);
 
-            if (roomId) {
-                options.roomId = roomId;
-                this._logger.info('Room ID is set to [%s] from streamToken [%s]', roomId, options.streamToken);
-            }
+        if (roomId) {
+            options.roomId = roomId;
+            this._logger.info('Room ID is set to [%s] from streamToken [%s]', roomId, options.streamToken);
+        }
 
-            if (alias) {
-                options.alias = alias;
-                this._logger.info('Alias is set to [%s] from streamToken [%s]', alias, options.streamToken);
-            }
+        if (alias) {
+            options.alias = alias;
+            this._logger.info('Alias is set to [%s] from streamToken [%s]', alias, options.streamToken);
         }
 
         var that = this;
@@ -224,8 +184,6 @@ define([
         assert.isFunction(callback, 'callback');
         assert.isObject(options.room, 'options.room');
 
-        var adminApi = this._pcastExpress.getAdminAPI();
-
         if (options.streamUri) {
             assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
         } else if (options.mediaConstraints) {
@@ -250,25 +208,16 @@ define([
             assert.isObject(options.streamInfo, 'options.streamInfo');
         }
 
-        if (options.streamToken) {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
-            this._logger.warn('`options.streamToken` is deprecated please use `options.publishToken`.');
+        if ('streamToken' in options) {
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
+        }
+
+        if (!options.publishToken) {
+            throw new Error('Cannot publish. Please use "options.publishToken".');
         }
 
         if (options.publishToken && options.capabilities) {
             throw new Error('Do not pass `options.capabilities` with `options.publishToken`. `options.publishToken` should include capabilities in the token.');
-        }
-
-        if (options.publishToken && options.streamToken) {
-            throw new Error('Do not pass `options.streamToken` with `options.publishToken`. Please use `options.publishToken`.');
-        }
-
-        if (options.streamToken && options.capabilities) {
-            throw new Error('Do not pass `options.capabilities` with `options.streamToken`. `options.streamToken` should include capabilities in the token.');
-        }
-
-        if (!options.streamToken && !options.publishToken && !adminApi) {
-            throw new Error('Pass `options.publishToken`, or set adminApiProxyClient on initiating room express');
         }
 
         if (options.viewerStreamSelectionStrategy) {
@@ -284,15 +233,10 @@ define([
 
         var that = this;
         var screenName = options.screenName || _.uniqueId();
-        var roomId = options.room.roomId;
-        var alias = options.room.alias;
+        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.publishToken);
+        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.publishToken);
 
-        if (options.publishToken || options.streamToken) {
-            roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.publishToken || options.streamToken);
-            alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.publishToken || options.streamToken);
-
-            this._logger.info('[%s] [%s] RoomId and Alias read from token [%s]', roomId, alias, options.publishToken || options.streamToken);
-        }
+        this._logger.info('[%s] [%s] RoomId and Alias read from token [%s]', roomId, alias, options.publishToken);
 
         var activeRoomService = findActiveRoom.call(that, roomId, alias);
 
@@ -1029,23 +973,6 @@ define([
         }
 
         callback(error, response);
-    }
-
-    function getDefaultRoomDescription(type) {
-        switch(type) {
-        case roomEnums.types.channel.name:
-            return 'Room Channel';
-        case roomEnums.types.moderatedChat.name:
-            return 'Moderated Chat';
-        case roomEnums.types.multiPartyChat.name:
-            return 'Multi Party Chat';
-        case roomEnums.types.townHall.name:
-            return 'Town Hall';
-        case roomEnums.types.directChat.name:
-            return 'Direct Chat';
-        default:
-            throw new Error('Unsupported Room Type');
-        }
     }
 
     function getStreamTokenForFeature(uri, feature) {

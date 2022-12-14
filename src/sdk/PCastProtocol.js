@@ -246,21 +246,6 @@ define([
         return this._mqWebSocket.sendRequest('chat.GetRoomInfo', getRoomInfo, callback);
     };
 
-    PCastProtocol.prototype.createRoom = function(room, callback) {
-        assert.isObject(room, 'room');
-        assert.isStringNotEmpty(room.name, 'room.name');
-        assert.isStringNotEmpty(room.type, 'room.type');
-        assert.isStringNotEmpty(room.description, 'room.description');
-        assert.isFunction(callback, 'callback');
-
-        var createRoom = {
-            sessionId: this.getSessionId(),
-            room: room
-        };
-
-        return this._mqWebSocket.sendRequest('chat.CreateRoom', createRoom, callback);
-    };
-
     PCastProtocol.prototype.enterRoom = function(roomId, alias, member, options, timestamp, callback) {
         if (roomId) {
             assert.isString(roomId, 'roomId');

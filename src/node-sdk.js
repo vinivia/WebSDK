@@ -32,9 +32,8 @@ define('phenix-web-sdk', [
     './sdk/userMedia/UserMediaResolver',
     './sdk/express/PCastExpress',
     './sdk/express/RoomExpress',
-    './sdk/express/ChannelExpress',
-    './sdk/AdminApiProxyClient'
-], function(logging, PCast, rtc, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress, AdminApiProxyClient) {
+    './sdk/express/ChannelExpress'
+], function(logging, PCast, rtc, RoomService, AudioSpeakerDetector, BandwidthMonitor, UserMediaResolver, PCastExpress, RoomExpress, ChannelExpress) {
     rtc.global.atob = function(parameter) {
         // eslint-disable-next-line no-undef
         return new Buffer.from(parameter, 'base64').toString('binary');
@@ -54,7 +53,6 @@ define('phenix-web-sdk', [
             AudioSpeakerDetector: AudioSpeakerDetector,
             UserMediaResolver: UserMediaResolver
         },
-        net: {AdminApiProxyClient: AdminApiProxyClient},
         utils: {
             BandwidthMonitor: BandwidthMonitor,
             logging: logging,
