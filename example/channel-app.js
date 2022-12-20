@@ -62,26 +62,20 @@ requirejs([
     'app-setup'
 ], function($, _, sdk, Player, app) {
     var init = function init() {
-        var adminApiProxyClient = null;
         var channelExpress = null;
         var channelService = null;
         var subscriberMediaStream = null;
         var subscriberPlayer = null;
 
         var createChannelExpress = function createChannelExpress() {
-            if (!$('#applicationId').val() || !$('#secret').val() || !$('#alias').val()) {
+            if (!$('#token').val()) {
                 stopSubscriber();
 
                 return;
             }
 
-            adminApiProxyClient = new sdk.net.AdminApiProxyClient();
-            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
-            adminApiProxyClient.setAuthenticationData(app.getAuthData());
-
             channelExpress = new sdk.express.ChannelExpress({
-                adminApiProxyClient: adminApiProxyClient,
-                uri: app.getUri(),
+                authToken: $('#token').val(),
                 shakaLoader: function(callback) {
                     if (!app.getUrlParameter('shaka')) {
                         return callback(null);
@@ -110,12 +104,16 @@ requirejs([
             channelExpress.getPCastExpress().getPCast().getLogger().info('BROWSER', sdk.utils.rtc.browser, sdk.utils.rtc.browserVersion);
         };
 
+        if ($('#token').val()) {
+            $('#subscribe').removeClass('disabled');
+            createChannelExpress();
+        }
+
         var subscribe = function subscribe() {
-            var channelAlias = $('#alias').val();
             var subscriberOptions = {};
 
             channelExpress.joinChannel({
-                alias: channelAlias,
+                streamToken: $('#token').val(),
                 videoElement: $('#remoteVideo')[0],
                 subscriberOptions: subscriberOptions
             }, function joinChannelCallback(error, response) {
@@ -146,7 +144,7 @@ requirejs([
                 app.createNotification('success', {
                     icon: 'glyphicon glyphicon-film',
                     title: '<strong>Viewing Channel</strong>',
-                    message: 'Successfully joined Channel "' + channelAlias + '"'
+                    message: 'Successfully joined Channel'
                 });
 
                 channelService = response.channelService;
@@ -267,11 +265,6 @@ requirejs([
                 channelExpress.dispose();
                 channelExpress = null;
             }
-
-            if (adminApiProxyClient) {
-                adminApiProxyClient.dispose();
-                adminApiProxyClient = null;
-            }
         };
 
         // ----------------------------------------
@@ -280,17 +273,7 @@ requirejs([
             createChannelExpress();
         });
 
-        $('#applicationId').change(function() {
-            stopSubscriber('stopped-by-user');
-            createChannelExpress();
-        });
-
-        $('#secret').change(function() {
-            stopSubscriber('stopped-by-user');
-            createChannelExpress();
-        });
-
-        $('#alias').change(function() {
+        $('#token').change(function() {
             stopSubscriber('stopped-by-user');
             createChannelExpress();
         });

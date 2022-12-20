@@ -68,7 +68,7 @@ requirejs([
         var subscriberPlayer = null;
 
         var createChannelExpress = function createChannelExpress() {
-            if (!$('#viewingToken').val()) {
+            if (!$('#token').val()) {
                 stopSubscriber();
 
                 return;
@@ -76,7 +76,7 @@ requirejs([
 
             try {
                 channelExpress = new sdk.express.ChannelExpress({
-                    authToken: $('#viewingToken').val(),
+                    authToken: $('#token').val(),
                     shakaLoader: function(callback) {
                         if (!app.getUrlParameter('shaka')) {
                             return callback(null);
@@ -117,7 +117,7 @@ requirejs([
 
         var subscribe = function subscribe() {
             var subscribeOptions = {
-                streamToken: $('#viewingToken').val(),
+                streamToken: $('#token').val(),
                 videoElement: $('#remoteVideo')[0]
             };
 
@@ -127,7 +127,7 @@ requirejs([
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-remove-sign',
                     title: '<strong>Invalid Token</strong>',
-                    message: 'Failed to parse viewingToken'
+                    message: 'Failed to parse token'
                 });
             }
 
@@ -281,7 +281,12 @@ requirejs([
             createChannelExpress();
         });
 
-        $('#viewingToken').change(function() {
+        if ($('#token').val()) {
+            $('#subscribe').removeClass('disabled');
+            createChannelExpress();
+        }
+
+        $('#token').change(function() {
             stopSubscriber('stopped-by-user');
             createChannelExpress();
         });

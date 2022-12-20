@@ -172,6 +172,8 @@ requirejs([
 
                 channelService = response.channelService;
                 publisher = response.publisher;
+                $('#stopPublisher').removeClass('disabled');
+
                 publisherPlayer = new Player('localVideo');
                 publisherPlayer.start(publisher);
 
@@ -188,8 +190,6 @@ requirejs([
                     title: '<strong>Viewing Channel</strong>',
                     message: 'Successfully published to Channel "' + channelService.getSelf().toString() + '"'
                 });
-
-                $('#stopPublisher').removeClass('disabled');
             }
         };
 
@@ -232,6 +232,11 @@ requirejs([
         app.setOnReset(function() {
             createChannelExpress();
         });
+
+        if($('#authToken').val() && $('#publishToken').val()) {
+            stopPublisher();
+            createChannelExpress();
+        }
 
         $('#authToken').change(function() {
             stopPublisher();

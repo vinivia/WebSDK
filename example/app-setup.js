@@ -73,6 +73,18 @@ define('app-setup', [
             $('#alias').val(getUrlParameter('alias'));
         }
 
+        if (getUrlParameter('token')) {
+            $('#token').val(getUrlParameter('token'));
+        }
+
+        if (getUrlParameter('authToken')) {
+            $('#authToken').val(getUrlParameter('authToken'));
+        }
+
+        if (getUrlParameter('publishToken')) {
+            $('#publishToken').val(getUrlParameter('publishToken'));
+        }
+
         if (document.getElementById('publish-capabilities')) {
             _.forEach(getPublisherCapabilities(), function(capability) {
                 addButton('#publish-capabilities', capability, capability);
@@ -225,6 +237,10 @@ define('app-setup', [
 
     var setLoggerEnvironment = function setLoggerEnvironment(pcast) {
         if (!pcast) {
+            return;
+        }
+
+        if (!$('#environment').val()) {
             return;
         }
 

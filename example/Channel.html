@@ -32,31 +32,32 @@
             </tr>
         </table>
     </div>
-    <div class="row text-center">
-        <div class="col-md-2 col-md-offset-5 text-center">
-            <div class="form-group">
-                <label for="environment">PCast&trade;</label>
-                <select class="form-control" id="environment"></select>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 server">
+            <div class="col-md-12">
+                Generate <strong>EdgeAuth</strong> token in <strong>Portal</strong>:
+                <ul>
+                    <li> In: <strong>Channel -&gt; EdgeAuth -&gt; Create Token</strong></li>
+                        <ul>
+                            <li> Link Type: <strong>Viewing</strong></li>
+                            <li> Copy the <strong>Token</strong></li>
+                        </ul>
+                </ul>
             </div>
         </div>
     </div>
-    <div class="row text-center">
-        <div class="col-md-4 col-md-offset-4 text-center">
-            <div class="form-group">
-                <input id="applicationId" type="text" placeholder="applicationId"/>
-                <input id="secret" type="password" placeholder="secret"/>
-            </div>
-        </div>
-    </div>
+
     <div class="row text-center step step-1">
         <div class="col-md-1 text-center">
             <span class="badge">1</span>
         </div>
         <div class="col-md-4 col-md-offset-3 text-center client">
             <div class="form-group">
+                <div class="col-md-10 col-md-offset-1 text-center form-select-control">
+                    <p>Enter the <strong>Token</strong>, and then click on <strong>Join Channel</strong>. </p>
+                    <input class="col-md-10 col-md-offset-1" id="token" />
+                </div>
                 <div class="col-md-10 col-md-offset-1 text-center">
-                    <p>Enter the <strong>Channel Alias</strong> then join the channel. </p>
-                    <input id="alias" />
                     <input id="subscribe" class="disabled" type="button" value="Join Channel"/>
                     <input id="stopSubscriber" class="disabled" type="button" value="Leave Channel"/>
                 </div>

@@ -75,6 +75,7 @@ requirejs([
     var screenPublisher = null;
     var lowQualityPublisher = null;
     var roomService = null;
+    var authToken = null;
     var screenName = 'ScreenName' + Math.floor(Math.random() * 10000) + 1; // Helpful if unique but we don't enforce this. You might set this to be an email or a nickname, or both. Then parse it when joining the room.
     var memberRole = 'Participant';
     var membersStore = [];
@@ -84,18 +85,16 @@ requirejs([
     var sendMessageIntervalId;
 
     var init = function init() {
-        var roomExpress;
+        var roomExpress = null;
 
         var createPCastExpress = function createPCastExpress() {
-            var adminApiProxyClient = new sdk.net.AdminApiProxyClient();
-
-            adminApiProxyClient.setBackendUri(app.getBaseUri() + '/pcast');
-            adminApiProxyClient.setAuthenticationData(app.getAuthData());
+            if(!$('#authToken').val()) {
+                return;
+            }
 
             roomExpress = new sdk.express.RoomExpress({
                 treatBackgroundAsOffline: app.getUrlParameter('treatBackgroundAsOffline') === 'true' || sdk.utils.rtc.isIOS,
-                adminApiProxyClient: adminApiProxyClient,
-                uri: app.getUri(),
+                authToken: $('#authToken').val(),
                 shakaLoader: function(callback) {
                     if (!app.getUrlParameter('shaka')) {
                         return callback(null);
@@ -142,15 +141,10 @@ requirejs([
             hideElement(publishAndJoinRoomButton);
             displayElement(stopButton);
 
-            var roomAlias = $('#alias').val();
             var videoElement = createVideo();
             var publishOptions = {
-                capabilities: ['fhd', 'prefer-h264'], // Add other capabilities if you like. Prefer-h264 allows publishing/viewing on Safari/IOS 11
-                room: {
-                    alias: roomAlias,
-                    name: app.getUrlParameter('roomName', roomAlias),
-                    type: app.getUrlParameter('roomType', 'MultiPartyChat')
-                }, // Set alias so that you can always uniquely identify room without accessing the return value
+                publishToken: $('#publishToken').val(),
+                room: {type: app.getUrlParameter('roomType', 'MultiPartyChat')},
                 mediaConstraints: {
                     audio: {deviceId: audioSources[0].id},
                     video: {deviceId: videoSources[0].id}
@@ -226,10 +220,8 @@ requirejs([
         }
 
         function joinRoom() {
-            var roomAlias = $('#alias').val();
-
             roomExpress.joinRoom({
-                alias: roomAlias,
+                streamToken: $('#authToken').val(),
                 role: 'Participant' // Set your role for yourself. Participant will view and interact with other members (must have streams)
             }, function joinRoomCallback(error, response) {
                 if (error) {
@@ -406,6 +398,7 @@ requirejs([
             }
 
             var subscribeOptions = {
+                streamToken: $('#token').val(),
                 videoElement: videoElement,
                 monitor: {callback: onMonitorEvent}
             };
@@ -512,15 +505,10 @@ requirejs([
             hideElement(publishScreenShareButton);
             displayElement(stopScreenShareButton);
 
-            var roomAlias = $('#alias').val();
             var videoElement = createVideo();
             var publishOptions = {
-                capabilities: ['fhd', 'prefer-h264'], // Add other capabilities if you like. Prefer-h264 allows publishing/viewing on Safari/IOS 11
-                room: {
-                    alias: roomAlias,
-                    name: roomAlias,
-                    type: 'MultiPartyChat'
-                }, // Set alias so that you can always uniquely identify room without accessing the return value
+                publishToken: $('#publishToken').val(),
+                room: {type: 'MultiPartyChat'},
                 screenName: screenName,
                 streamType: 'Presentation', // Distinguish from normal publisher
                 memberRole: memberRole,
@@ -573,6 +561,13 @@ requirejs([
         stopButton.onclick = leaveRoomAndStopPublisher;
         publishScreenShareButton.onclick = publishScreen;
         stopScreenShareButton.onclick = stopPublishScreen;
+
+        $('#authToken').change(function() {
+            if (authToken !== $('#authToken').val()) {
+                authToken = $('#authToken').val();
+                createPCastExpress();
+            }
+        });
 
         app.setOnReset(function() {
             createPCastExpress();

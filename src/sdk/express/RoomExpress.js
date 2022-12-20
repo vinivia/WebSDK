@@ -37,6 +37,10 @@ define([
             assert.isObject(options.pcastExpress, 'options.pcastExpress');
         }
 
+        if ('enableWildcardCapability' in options) {
+            throw new Error('"options.enableWildcardCapability" is no longer supported.');
+        }
+
         this._pcastExpress = options.pcastExpress || new PCastExpress(options);
         this._shouldDisposeOfPCastExpress = !options.pcastExpress;
         this._roomServices = {};

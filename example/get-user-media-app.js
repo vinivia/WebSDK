@@ -432,9 +432,9 @@ requirejs([
                 return;
             }
 
-            var streamToken = $('#streamTokenForPublishing').val();
+            var token = $('#tokenForPublishing').val();
 
-            if (!streamToken) {
+            if (!token) {
                 app.createNotification('danger', {
                     icon: 'glyphicon glyphicon-facetime-video',
                     title: '<strong>Stream Token</strong>',
@@ -508,7 +508,7 @@ requirejs([
                 }, 1500);
             };
 
-            pcast.publish(streamToken, userMediaStream, publishCallback, tags);
+            pcast.publish(token, userMediaStream, publishCallback, tags);
         };
 
         var stopPublisher = function() {
@@ -578,7 +578,7 @@ requirejs([
             });
         };
 
-        var createStreamToken = function createStreamToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, capabilities, applyTags, callback) {
+        var createToken = function createToken(targetElementSelector, applicationId, secret, sessionId, originStreamId, capabilities, applyTags, callback) {
             var data = {
                 type: originStreamId ? 'Stream' : 'Publish',
                 expiresInSeconds: 30,
@@ -615,7 +615,7 @@ requirejs([
             });
         };
 
-        var createStreamTokenForPublishing = function createStreamTokenForPublishing() {
+        var createTokenForPublishing = function createTokenForPublishing() {
             var applicationId = $('#applicationId').val();
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForPublishing').val();
@@ -639,7 +639,7 @@ requirejs([
                 capabilities.push(videoQuality);
             }
 
-            return createStreamToken('.streamTokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
+            return createToken('.tokenForPublishing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
                 app.activateStep('step-5-3');
                 setTimeout(function() {
                     app.activateStep('step-5-4');
@@ -647,7 +647,7 @@ requirejs([
             });
         };
 
-        var createStreamTokenForViewing = function createStreamTokenForViewing() {
+        var createTokenForViewing = function createTokenForViewing() {
             var applicationId = $('#applicationId').val();
             var secret = $('#secret').val();
             var sessionId = $('#sessionIdForViewing').val();
@@ -663,7 +663,7 @@ requirejs([
                 capabilities.push($(this).val());
             });
 
-            return createStreamToken('.streamTokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
+            return createToken('.tokenForViewing', applicationId, secret, sessionId, originStreamId, capabilities, tags, function() {
                 app.activateStep('step-7');
                 setTimeout(function() {
                     app.activateStep('step-8');
@@ -674,7 +674,7 @@ requirejs([
         var subscriberMediaStream = null;
 
         var subscribe = function subscribe() {
-            var streamToken = $('#streamTokenForViewing').val();
+            var token = $('#tokenForViewing').val();
             var subscriberOptions = {};
 
             if (app.getUrlParameter('targetLatency')) {
@@ -689,7 +689,7 @@ requirejs([
                 subscriberOptions.preferNative = app.getUrlParameter('preferNative') === 'true';
             }
 
-            pcast.subscribe(streamToken, function subscribeCallback(pcast, status, mediaStream) {
+            pcast.subscribe(token, function subscribeCallback(pcast, status, mediaStream) {
                 if (status !== 'ok') {
                     app.createNotification('danger', {
                         icon: 'glyphicon glyphicon-remove-sign',
@@ -831,14 +831,14 @@ requirejs([
         $('#getUserMedia').click(getUserMedia);
         $('#stopUserMedia').click(stopUserMedia);
 
-        $('#createStreamTokenForPublishing').click(createStreamTokenForPublishing);
+        $('#createTokenForPublishing').click(createTokenForPublishing);
         $('#publish').click(publish);
         $('#stopPublisher').click(stopPublisher);
 
         $('#stream').change(onStreamSelected);
         $('#stream-refresh').click(listStreams);
 
-        $('#createStreamTokenForViewing').click(createStreamTokenForViewing);
+        $('#createTokenForViewing').click(createTokenForViewing);
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
