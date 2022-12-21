@@ -34,7 +34,7 @@ define([
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
-        var streamToken = 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9';
+        var token = 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -73,7 +73,7 @@ define([
                 }]
             });
 
-            channelExpress = new ChannelExpress({authToken: streamToken});
+            channelExpress = new ChannelExpress({authToken: token});
         });
 
         after(function() {
@@ -99,7 +99,7 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamToken
+                token: token
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
@@ -119,7 +119,7 @@ define([
 
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
-                streamToken
+                token: token
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;

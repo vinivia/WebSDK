@@ -133,9 +133,8 @@ requirejs([
                 pcast.stop();
             }
 
-            var uri = app.getUri();
             var pcastOptions = {
-                uri: uri,
+                authToken: $('.authToken').val(),
                 shakaLoader: function(callback) {
                     if (!app.getUrlParameter('shaka')) {
                         return callback(null);
@@ -163,8 +162,6 @@ requirejs([
                 rtmp: {swfSrc: app.getSwfFilePath()},
                 eagerlyCheckScreenSharingCapabilities: app.getUrlParameter('screenSharing') ? true : false
             };
-
-            adminBaseUri = app.getBaseUri();
 
             if (app.getUrlParameter('ssmr')) {
                 pcastOptions.streamingSourceMapping = {
@@ -212,8 +209,10 @@ requirejs([
 
         var createAuthToken = function createAuthToken() {
             var credentials = app.getAuthData();
+            var uri = app.getUri();
             var data = {
                 type: 'Auth',
+                uri: uri,
                 expiresInSeconds: 30,
                 capabilities: []
             };
@@ -226,6 +225,8 @@ requirejs([
                 data.capabilities.push('geo-country-deny=' + $('#geoCountryDeny').val());
             }
 
+            adminBaseUri = app.getBaseUri();
+
             $.ajax({
                 url: adminBaseUri + '/pcast/edgeAuth',
                 accepts: 'application/json',
@@ -237,6 +238,7 @@ requirejs([
                 }
             }).done(function(result) {
                 $('.authToken').val(result.edgeAuthToken);
+                createPCast();
                 app.activateStep('step-2');
                 setTimeout(function() {
                     app.activateStep('step-3');
@@ -253,7 +255,7 @@ requirejs([
         };
 
         var start = function start() {
-            pcast.start($('#authToken').val(), function authenticateCallback(pcast, status, sessionId) {
+            pcast.start(function authenticateCallback(pcast, status, sessionId) {
                 $('#start').addClass('disabled');
                 $('#stop').removeClass('disabled');
                 $('.sessionId').val(sessionId);
@@ -811,7 +813,6 @@ requirejs([
         // ----------------------------------------
 
         app.setOnReset(function() {
-            createPCast();
             app.setLoggerEnvironment(pcast);
             listStreams();
             updateVideoSources();
@@ -822,7 +823,6 @@ requirejs([
             app.setLoggerUserId(pcast);
         });
 
-        $('#secret').change(listStreams);
         $('#createAuthToken').click(createAuthToken);
 
         $('#start').click(start);
@@ -842,7 +842,6 @@ requirejs([
         $('#subscribe').click(subscribe);
         $('#stopSubscriber').click(_.bind(stopSubscriber, null, 'stopped-by-user'));
 
-        createPCast();
         updateVideoSources();
     };
 

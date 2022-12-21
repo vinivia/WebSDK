@@ -67,7 +67,7 @@ define([
             it('returns conflicting-capability', function(done) {
                 var roomExpress = new RoomExpress({authToken: streamingAndRtmpToken});
 
-                roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: streamingAndRtmpToken}, function(error, response) {
+                roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: streamingAndRtmpToken}, function(error, response) {
                     expect(error).to.not.exist;
                     expect(response).to.be.an('object');
                     expect(response.status).to.be.equal('conflicting-capability');
@@ -85,7 +85,7 @@ define([
                         return feature === 'real-time';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: realTimeToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: realTimeToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('ok');
@@ -103,7 +103,7 @@ define([
                         return feature !== 'real-time';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: realTimeToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: realTimeToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('unsupported-features');
@@ -122,7 +122,7 @@ define([
                         return feature === 'dash' || feature === 'hls';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: streamingToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: streamingToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('ok');
@@ -140,7 +140,7 @@ define([
                         return feature !== 'dash' && feature !== 'hls';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: streamingToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: streamingToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('unsupported-features');
@@ -159,7 +159,7 @@ define([
                         return feature === 'dash' || feature === 'hls';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: ondemandToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: ondemandToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('ok');
@@ -177,7 +177,7 @@ define([
                         return feature !== 'dash' && feature !== 'hls';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: ondemandToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: ondemandToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('unsupported-features');
@@ -196,7 +196,7 @@ define([
                         return feature === 'rtmp';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: rtmpToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: rtmpToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('ok');
@@ -214,7 +214,7 @@ define([
                         return feature !== 'rtmp';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: rtmpToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: rtmpToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('unsupported-features');
@@ -233,7 +233,7 @@ define([
                         return feature === 'real-time';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: audioOnlyToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: audioOnlyToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('ok');
@@ -251,7 +251,7 @@ define([
                         return feature !== 'real-time';
                     };
 
-                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {streamToken: audioOnlyToken}, function(error, response) {
+                    roomExpress.subscribeToMemberStream(new Stream(stream.uri, stream.type, stream.audioState, stream.videoState), {token: audioOnlyToken}, function(error, response) {
                         expect(error).to.not.exist;
                         expect(response).to.be.an('object');
                         expect(response.status).to.be.equal('unsupported-features');

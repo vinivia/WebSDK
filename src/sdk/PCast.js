@@ -109,31 +109,24 @@ define([
         this._deviceId = options.deviceId || '';
         this._version = sdkVersion;
 
-        if (!options.authToken) {
+        var tokenType = this.parseTypeFromToken.call(this, options.authToken);
+
+        if (tokenType === 'publish' || tokenType === 'stream') {
+            throw new Error('Cannot authorize. Please use token without type or token with type "auth".');
+        }
+
+        this._authToken = options.authToken;
+
+        var baseUri = this.parseUriFromToken.call(this, options.authToken);
+
+        if (baseUri) {
+            this._baseUri = baseUri;
+            setupPcastLoggerAndMetrics.call(this, options);
+
+            this._logger.info('Base uri is set to [%s] from authToken [%s]', baseUri, options.authToken);
+        } else {
             this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
             setupPcastLoggerAndMetrics.call(this, options);
-        } else {
-            var baseUri = this.parseUriFromToken.call(this, options.authToken);
-
-            if (baseUri) {
-                this._baseUri = baseUri;
-                setupPcastLoggerAndMetrics.call(this, options);
-
-                if (options.uri) {
-                    this._logger.warn('Trying to join room with both authToken and uri. Please only use authToken.');
-                }
-
-                this._logger.info('Base uri is set to [%s] from authToken [%s]', baseUri, options.authToken);
-            } else {
-                this._baseUri = options.uri || PCastEndPoint.DefaultPCastUri;
-                setupPcastLoggerAndMetrics.call(this, options);
-
-                if (options.uri) {
-                    this._logger.warn('Trying to join room with options uri. Please use authToken.');
-
-                    this._logger.info('Base uri is set to [%s] from options uri', options.uri);
-                }
-            }
         }
 
         this._screenShareExtensionManager = new ScreenShareExtensionManager(options, this._logger);
@@ -236,8 +229,7 @@ define([
         reconnected.call(this);
     };
 
-    PCast.prototype.start = function(authToken, authenticationCallback, onlineCallback, offlineCallback) {
-        assert.isStringNotEmpty(authToken, 'authToken');
+    PCast.prototype.start = function(authenticationCallback, onlineCallback, offlineCallback) {
         assert.isFunction(authenticationCallback, 'authenticationCallback');
         assert.isFunction(onlineCallback, 'onlineCallback');
         assert.isFunction(offlineCallback, 'offlineCallback');
@@ -259,7 +251,6 @@ define([
 
         this._stopped = false;
         this._started = true;
-        this._authToken = authToken;
         this._authenticationCallback = authenticationCallback;
         this._onlineCallback = onlineCallback;
         this._offlineCallback = offlineCallback;
@@ -412,7 +403,7 @@ define([
         return userMediaProvider.getUserMedia(options, callback);
     };
 
-    PCast.prototype.publish = function(streamToken, streamToPublish, callback, tags, options) {
+    PCast.prototype.publish = function(token, streamToPublish, callback, tags, options) {
         if (phenixRTC.browser === 'IE') {
             throw new Error('Publishing not supported on IE');
         }
@@ -424,7 +415,7 @@ define([
         tags = tags || [];
         options = options || {};
 
-        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isStringNotEmpty(token, 'token');
         assert.isFunction(callback, 'callback');
         assert.isArray(tags, 'tags');
         assert.isObject(options, 'options');
@@ -451,7 +442,7 @@ define([
         var streamTelemetry = new StreamTelemetry(this.getProtocol().getSessionId(), this._logger, this._metricsTransmitter);
 
         streamTelemetry.setProperty('resource', streamType);
-        this._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
+        this._protocol.setupStream(streamType, token, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
             if (error) {
                 that._logger.error('Failed to create uploader [%s]', error);
 
@@ -522,14 +513,14 @@ define([
         });
     };
 
-    PCast.prototype.subscribe = function(streamToken, callback, options) {
+    PCast.prototype.subscribe = function(token, callback, options) {
         if (!this._started) {
             throw new Error('PCast not started. Unable to subscribe. Please start pcast first.');
         }
 
         options = options || {};
 
-        assert.isStringNotEmpty(streamToken, 'streamToken');
+        assert.isStringNotEmpty(token, 'token');
         assert.isFunction(callback, 'callback');
         assert.isObject(options, 'options');
 
@@ -543,7 +534,7 @@ define([
 
             createViewerOptions.canPlaybackAudio = that._canPlaybackAudio;
 
-            createViewerOptions.capabilities = that.parseCapabilitiesFromToken(streamToken);
+            createViewerOptions.capabilities = that.parseCapabilitiesFromToken(token);
 
             if (!that._canPlaybackAudio && options.disableAudioIfNoOutputFound && options.receiveAudio !== false) {
                 setupStreamOptions.receiveAudio = false;
@@ -557,7 +548,7 @@ define([
 
             streamTelemetry.setProperty('resource', streamType);
 
-            that._protocol.setupStream(streamType, streamToken, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
+            that._protocol.setupStream(streamType, token, setupStreamOptions, that._networkOneWayLatency * 2, function(error, response) {
                 if (error) {
                     that._logger.error('Failed to create downloader [%s]', error);
 
@@ -636,23 +627,27 @@ define([
         return 'PCast[' + sessionId || 'unauthenticated' + ',' + (protocol ? protocol.toString() : 'uninitialized') + ']';
     };
 
-    PCast.prototype.parseCapabilitiesFromToken = function(streamToken) {
-        return _.get(parseToken.call(this, streamToken), ['capabilities'], []);
+    PCast.prototype.parseTypeFromToken = function(token) {
+        return _.get(parseToken.call(this, token), ['type'], '');
     };
 
-    PCast.prototype.parseUriFromToken = function(streamToken) {
-        return _.get(parseToken.call(this, streamToken), ['uri'], '');
+    PCast.prototype.parseCapabilitiesFromToken = function(token) {
+        return _.get(parseToken.call(this, token), ['capabilities'], []);
     };
 
-    PCast.prototype.parseRoomOrChannelIdFromToken = function(streamToken) {
-        var requiredTag = _.get(parseToken.call(this, streamToken), ['requiredTag'], '');
+    PCast.prototype.parseUriFromToken = function(token) {
+        return _.get(parseToken.call(this, token), ['uri'], '');
+    };
+
+    PCast.prototype.parseRoomOrChannelIdFromToken = function(token) {
+        var requiredTag = _.get(parseToken.call(this, token), ['requiredTag'], '');
         var idMatch = requiredTag.match(roomOrChannelIdRegex);
 
         return idMatch ? idMatch[1] : null;
     };
 
-    PCast.prototype.parseRoomOrChannelAliasFromToken = function(streamToken) {
-        var requiredTag = _.get(parseToken.call(this, streamToken), ['requiredTag'], '');
+    PCast.prototype.parseRoomOrChannelAliasFromToken = function(token) {
+        var requiredTag = _.get(parseToken.call(this, token), ['requiredTag'], '');
         var aliasMatch = requiredTag.match(roomOrChannelAliasRegex);
 
         return aliasMatch ? aliasMatch[1] : null;
@@ -742,23 +737,23 @@ define([
         this._metricsTransmitter = options.metricsTransmitter || metricsTransmitterFactory.createMetricsTransmitter(this._baseUri);
     }
 
-    function parseToken(streamToken) {
-        if (!_.startsWith(streamToken, 'DIGEST:')) {
-            this._logger.warn('Failed to parse the `streamToken` [%s]', streamToken);
+    function parseToken(token) {
+        if (!_.startsWith(token, 'DIGEST:')) {
+            this._logger.warn('Failed to parse the `token` [%s]', token);
 
-            throw new Error('Bad `streamToken`');
+            throw new Error('Bad `token`');
         }
 
         try {
-            var base64Token = streamToken.split(':')[1];
+            var base64Token = token.split(':')[1];
             var decodedToken = phenixRTC.global.atob(base64Token);
-            var token = JSON.parse(decodedToken).token;
-            var tokenOptions = JSON.parse(token);
+            var parsedToken = JSON.parse(decodedToken).token;
+            var tokenOptions = JSON.parse(parsedToken);
 
             return tokenOptions;
         } catch (e) {
             var sessionId = this.getProtocol().getSessionId();
-            this._logger.warn('[%s] Failed to parse the `streamToken` [%s]', sessionId, streamToken);
+            this._logger.warn('[%s] Failed to parse the `token` [%s]', sessionId, token);
 
             throw new Error(e);
         }

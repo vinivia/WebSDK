@@ -35,7 +35,7 @@ define([
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
         var streamModel = {
             uri: pcastPrefix + 'streamId',
             type: stream.types.presentation.name,
@@ -82,7 +82,7 @@ define([
             websocketStubber.stubSetupStream();
 
             channelExpress = new ChannelExpress({
-                authToken: streamToken,
+                authToken: token,
                 onlineTimeout: 600000
             });
         });
@@ -130,7 +130,7 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                streamToken
+                token: token
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -172,7 +172,7 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                streamToken
+                token: token
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -214,7 +214,7 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                streamToken
+                token: token
             }, function() {}, function() {
                 subscribeCount++;
 
@@ -251,7 +251,7 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                streamToken
+                token: token
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
@@ -299,7 +299,7 @@ define([
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 failureCountForBanningAMember: 2,
-                streamToken
+                token: token
             }, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     return subscribeCount++;
@@ -332,7 +332,7 @@ define([
             channelExpress.joinChannel({
                 alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
-                streamToken
+                token: token
             }, function() {}, function(error, response) {
                 notificationCount++;
 

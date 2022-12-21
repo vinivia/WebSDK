@@ -143,7 +143,7 @@ requirejs([
 
             var videoElement = createVideo();
             var publishOptions = {
-                publishToken: $('#publishToken').val(),
+                token: $('#publishToken').val(),
                 room: {type: app.getUrlParameter('roomType', 'MultiPartyChat')},
                 mediaConstraints: {
                     audio: {deviceId: audioSources[0].id},
@@ -221,7 +221,7 @@ requirejs([
 
         function joinRoom() {
             roomExpress.joinRoom({
-                streamToken: $('#authToken').val(),
+                token: $('#authToken').val(),
                 role: 'Participant' // Set your role for yourself. Participant will view and interact with other members (must have streams)
             }, function joinRoomCallback(error, response) {
                 if (error) {
@@ -398,7 +398,7 @@ requirejs([
             }
 
             var subscribeOptions = {
-                streamToken: $('#token').val(),
+                token: $('#token').val(),
                 videoElement: videoElement,
                 monitor: {callback: onMonitorEvent}
             };
@@ -507,7 +507,7 @@ requirejs([
 
             var videoElement = createVideo();
             var publishOptions = {
-                publishToken: $('#publishToken').val(),
+                token: $('#publishToken').val(),
                 room: {type: 'MultiPartyChat'},
                 screenName: screenName,
                 streamType: 'Presentation', // Distinguish from normal publisher

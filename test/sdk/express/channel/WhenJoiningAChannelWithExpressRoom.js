@@ -38,7 +38,7 @@ define([
             type: room.types.multiPartyChat.name,
             members: []
         };
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
         var mockTrack = {enabled: 'true'};
         var mockStream = {
             type: stream.types.user.name,
@@ -102,7 +102,7 @@ define([
             });
 
             channelExpress.joinChannel({
-                streamToken: streamToken,
+                token: token,
                 role: member.roles.participant.name
             }, function() {}, function(){});
         });
@@ -112,7 +112,7 @@ define([
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias,
-                streamToken
+                token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [], 123);
 
@@ -129,7 +129,7 @@ define([
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias,
-                streamToken
+                token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [mockStream], 123);
 
@@ -152,7 +152,7 @@ define([
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias,
-                streamToken
+                token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
 
@@ -171,7 +171,7 @@ define([
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
                 alias: mockRoom.alias,
-                streamToken
+                token: token
             }, function(error, response) {
                 expect(response.channelService).to.be.an('object');
 

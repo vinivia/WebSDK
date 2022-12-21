@@ -32,7 +32,7 @@ define([
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
-        var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJEUzBjQzVwQ3pJMGNtRHVEVm1xcHR0Rm5oWHhpZzFzYkpEVjV3Vi95ZEQyTnJKckR1NUxWVzhtK3hEQ0tKa3JFbE04OVUrRVR3akMzK1lvejlEdEVOdz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDU1Nzc5OTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJEUzBjQzVwQ3pJMGNtRHVEVm1xcHR0Rm5oWHhpZzFzYkpEVjV3Vi95ZEQyTnJKckR1NUxWVzhtK3hEQ0tKa3JFbE04OVUrRVR3akMzK1lvejlEdEVOdz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDU1Nzc5OTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -87,7 +87,7 @@ define([
 
         it('returns a publisher and no channelService when publishing remotely', function(done) {
             channelExpress.publishToChannel({
-                publishToken,
+                token: token,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -124,7 +124,7 @@ define([
             websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             channelExpress.publishToChannel({
-                publishToken,
+                token: token,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name,
@@ -149,7 +149,7 @@ define([
             var publishCount = 0;
 
             channelExpress.publishToChannel({
-                publishToken,
+                token: token,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -180,7 +180,7 @@ define([
             var publishCount = 0;
 
             channelExpress.publishToChannel({
-                publishToken,
+                token: token,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'

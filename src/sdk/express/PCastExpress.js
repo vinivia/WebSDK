@@ -26,7 +26,6 @@ define([
     'use strict';
 
     var instanceCounter = 0;
-    var unauthorizedStatus = 'unauthorized';
     var capacityBackoffTimeout = 1000;
     var defaultPrerollSkipDuration = 500;
     var defaultUserActionOnlineTimeout = 20000;
@@ -37,10 +36,7 @@ define([
 
     function PCastExpress(options) {
         assert.isObject(options, 'options');
-
-        if (options.authToken) {
-            assert.isStringNotEmpty(options.authToken, 'options.authToken');
-        }
+        assert.isStringNotEmpty(options.authToken, 'options.authToken');
 
         if ('adminApiProxyClient' in options) {
             throw new Error('"options.adminApiProxyClient" is no longer supported. Please use "options.authToken" instead.');
@@ -207,14 +203,24 @@ define([
         }
 
         if ('streamToken' in options) {
-            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
         }
 
-        if (!options.publishToken) {
-            throw new Error('Cannot publish. Please use "options.publishToken".');
+        if ('publishToken' in options) {
+            throw new Error('"options.publishToken" is no longer supported. Please use "options.token" instead.');
         }
 
-        assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        if (!options.token) {
+            throw new Error('Cannot publish. Please use "options.token".');
+        }
+
+        assert.isStringNotEmpty(options.token, 'options.token');
+
+        var tokenType = this._pcastObservable.getValue().parseTypeFromToken(options.token);
+
+        if (tokenType !== 'publish') {
+            throw new Error('Cannot publish. Please use a token of type "publish".');
+        }
 
         var that = this;
 
@@ -290,14 +296,24 @@ define([
         }
 
         if ('streamToken' in options) {
-            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
         }
 
-        if (!options.publishToken) {
-            throw new Error('Cannot publish. Please use "options.publishToken".');
+        if ('publishToken' in options) {
+            throw new Error('"options.publishToken" is no longer supported. Please use "options.token" instead.');
         }
 
-        assert.isStringNotEmpty(options.publishToken, 'options.publishToken');
+        if (!options.token) {
+            throw new Error('Cannot publish. Please use "options.token".');
+        }
+
+        assert.isStringNotEmpty(options.token, 'options.token');
+
+        var tokenType = this._pcastObservable.getValue().parseTypeFromToken(options.token);
+
+        if (tokenType !== 'publish') {
+            throw new Error('Cannot publish. Please use a token of type "publish".');
+        }
 
         var that = this;
 
@@ -365,10 +381,24 @@ define([
             }
         }
 
-        if (!options.streamToken) {
-            throw new Error('Cannot subscribe. Please use "options.streamToken".');
-        } else {
-            assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        if ('streamToken' in options) {
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if ('publishToken' in options) {
+            throw new Error('"options.publishToken" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if (!options.token) {
+            throw new Error('Cannot subscribe. Please use "options.token".');
+        }
+
+        assert.isStringNotEmpty(options.token, 'options.token');
+
+        var tokenType = this._pcastObservable.getValue().parseTypeFromToken(options.token);
+
+        if (tokenType === 'publish' || tokenType === 'auth') {
+            throw new Error('Cannot subscribe. Please use token without type or with type "stream".');
         }
 
         if (options.subscriberOptions) {
@@ -384,7 +414,7 @@ define([
                 return callback(error);
             }
 
-            return subscribeToStream.call(that, options.streamToken, options, callback);
+            return subscribeToStream.call(that, options.token, options, callback);
         }, options.isContinuation);
     };
 
@@ -470,22 +500,22 @@ define([
         pcastSubscription = this._pcastObservable.subscribe(subscribeToStatusChange, {initial: 'notify'});
     };
 
-    PCastExpress.prototype.parseCapabilitiesFromToken = function parseCapabilitiesFromToken(streamToken) {
+    PCastExpress.prototype.parseCapabilitiesFromToken = function parseCapabilitiesFromToken(token) {
         var pcast = this._pcastObservable.getValue();
 
-        return pcast.parseCapabilitiesFromToken(streamToken);
+        return pcast.parseCapabilitiesFromToken(token);
     };
 
-    PCastExpress.prototype.parseRoomOrChannelIdFromToken = function parseRoomOrChannelIdFromToken(streamToken) {
+    PCastExpress.prototype.parseRoomOrChannelIdFromToken = function parseRoomOrChannelIdFromToken(token) {
         var pcast = this._pcastObservable.getValue();
 
-        return pcast.parseRoomOrChannelIdFromToken(streamToken);
+        return pcast.parseRoomOrChannelIdFromToken(token);
     };
 
-    PCastExpress.prototype.parseRoomOrChannelAliasFromToken = function parseRoomOrChannelAliasFromToken(streamToken) {
+    PCastExpress.prototype.parseRoomOrChannelAliasFromToken = function parseRoomOrChannelAliasFromToken(token) {
         var pcast = this._pcastObservable.getValue();
 
-        return pcast.parseRoomOrChannelAliasFromToken(streamToken);
+        return pcast.parseRoomOrChannelAliasFromToken(token);
     };
 
     function instantiatePCast() {
@@ -521,7 +551,7 @@ define([
 
         this.sessionIdSubscription = this._pcastObservable.getValue().getObservableSessionId().subscribe(_.bind(handleSessionIdChange, this));
 
-        return this._pcastObservable.getValue().start(this._authToken, authenticationCallback, _.noop, _.noop);
+        return this._pcastObservable.getValue().start(authenticationCallback, _.noop, _.noop);
     }
 
     function onPCastStatusChange(status) {
@@ -644,17 +674,17 @@ define([
     function getCapabilitiesFromPublishTokenAndPublish(userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
         try {
-            var capabilitiesFromPublishToken = that.parseCapabilitiesFromToken(options.publishToken);
+            var capabilitiesFromPublishToken = that.parseCapabilitiesFromToken(options.token);
 
             options.capabilities = capabilitiesFromPublishToken;
         } catch (e) {
-            return callback(new Error('Bad `publishToken`', e), {status: 'bad-token'});
+            return callback(new Error('Bad `token`', e), {status: 'bad-token'});
         }
 
-        return publishUserMediaOrUri.call(that, options.publishToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
+        return publishUserMediaOrUri.call(that, options.token, userMediaOrUri, options, cleanUpUserMediaOnStop, callback);
     }
 
-    function publishUserMediaOrUri(streamToken, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
+    function publishUserMediaOrUri(token, userMediaOrUri, options, cleanUpUserMediaOnStop, callback) {
         var that = this;
         var hasAlreadyAttachedMedia = false;
         var cachedPublisher = null;
@@ -670,7 +700,7 @@ define([
         var publishCallback = function publishCallback(pcast, status, publisher) {
             var retryPublisher = function retryPublisher(reason) {
                 var optionsWithToken = _.assign({
-                    streamToken: streamToken,
+                    token: token,
                     isContinuation: true
                 }, options);
 
@@ -686,20 +716,6 @@ define([
                     getCapabilitiesFromPublishTokenAndPublish.call(that, userMediaOrUri, optionsWithToken, cleanUpUserMediaOnStop, callback);
                 }
             };
-
-            if ((status === unauthorizedStatus && ((options.streamToken || options.publishToken) || !options.authFailure)) || status === 'timeout') {
-                that._logger.info('[%s] Attempting to create new streamToken and re-publish after [%s] response', this, unauthorizedStatus);
-
-                var reAuthOptions = _.assign({
-                    isContinuation: true,
-                    authFailure: true
-                }, options);
-
-                delete reAuthOptions.streamToken;
-                delete reAuthOptions.publishToken;
-
-                return getCapabilitiesFromPublishTokenAndPublish.call(that, userMediaOrUri, reAuthOptions, cleanUpUserMediaOnStop, callback);
-            }
 
             if (status !== 'ok') {
                 that._logger.warn('[%s] Failure to publish with status [%s]', this, status);
@@ -757,11 +773,11 @@ define([
                 return callback(error);
             }
 
-            that._pcastObservable.getValue().publish(streamToken, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
+            that._pcastObservable.getValue().publish(token, userMediaOrUri, publishCallback, options.tags, {connectOptions: options.connectOptions});
         }, options.isContinuation);
     }
 
-    function subscribeToStream(streamToken, options, callback) {
+    function subscribeToStream(token, options, callback) {
         var that = this;
         var cachedSubsciber = null;
 
@@ -775,7 +791,7 @@ define([
 
                 that._logger.warn('[%s] [%s] Stream failure occurred with reason [%s]. Attempting to recover from failure.', this, options.streamId, reason);
 
-                subscribeToStream.call(that, streamToken, retryOptions, callback);
+                subscribeToStream.call(that, token, retryOptions, callback);
             };
 
             if (status === 'streaming-not-ready') {
@@ -845,8 +861,6 @@ define([
 
                     var reAuthOptions = _.assign({isContinuation: true}, options);
 
-                    delete reAuthOptions.streamToken;
-
                     return that.subscribe(reAuthOptions, callback);
                 }
 
@@ -875,7 +889,7 @@ define([
                 subscriberOptions.originStreamId = options.streamId;
             }
 
-            that._pcastObservable.getValue().subscribe(streamToken, handleSubscribe, subscriberOptions);
+            that._pcastObservable.getValue().subscribe(token, handleSubscribe, subscriberOptions);
         }, options.isContinuation);
     }
 

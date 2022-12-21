@@ -41,7 +41,7 @@ define([
             type: room.types.channel.name,
             members: []
         };
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJoaExsSnJsYjJQOFFWL3hZcjk2MUxNb3lzS3l3Sk1XNzI5MFlvTU1WWVJBMkZSQklkUDhMOWJEcytMVGdJVVIrWnhIcmlTTmtoakVwVlVqTFg0OUtVUT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxODA2MDk2MzQsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJoaExsSnJsYjJQOFFWL3hZcjk2MUxNb3lzS3l3Sk1XNzI5MFlvTU1WWVJBMkZSQklkUDhMOWJEcytMVGdJVVIrWnhIcmlTTmtoakVwVlVqTFg0OUtVUT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxODA2MDk2MzQsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
         var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJEUzBjQzVwQ3pJMGNtRHVEVm1xcHR0Rm5oWHhpZzFzYkpEVjV3Vi95ZEQyTnJKckR1NUxWVzhtK3hEQ0tKa3JFbE04OVUrRVR3akMzK1lvejlEdEVOdz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDU1Nzc5OTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
@@ -89,7 +89,7 @@ define([
         // TODO (IS) understand why this test is breaking the flow of other tests (other tests get sessionId undefined on init)
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
-                publishToken,
+                token: publishToken,
                 room: {
                     alias: 'ChannelAlias',
                     name: 'Channel'
@@ -99,7 +99,7 @@ define([
                 channelExpressSubscriber.joinChannel({
                     role: member.roles.participant.name,
                     alias: 'ChannelAlias',
-                    streamToken
+                    token: token
                 }, _.noop, function(error, response){
                     expect(response.status).to.be.equal('no-stream-playing');
 
@@ -112,11 +112,11 @@ define([
 
             channelExpressSubscriber.joinChannel({
                 role: member.roles.participant.name,
-                streamToken
+                token: token
             }, _.noop, function(error, response){
                 expect(response.status).to.be.equal('no-stream-playing');
                 channelExpressPublisher.publishToChannel({
-                    publishToken,
+                    token: publishToken,
                     room: {
                         alias: 'ChannelAlias',
                         name: 'Channel'

@@ -41,7 +41,7 @@ define([
             type: roomType,
             members: []
         };
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJLNk43K2MxTWRKWXRoQkpkN1VxaFVnSXZGVVB6aHJlMkxLcFpxOENhcFNHcnhyRHZpN1ovc3dPbWFZMllFRDNjWVpJMzlPeXhabzVGckwvWHNST3ZvQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxNjE1NTUsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
         var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJQMXh4aVp2ZVhNQStQSFRqR1B6cjJuNW93UzhRaERScXR2ZTQ2TWxXb1JSVUhnTjBLUmF1RUkwNXNZb0VYcmdzSUgxTjBwTjFCK00yaUJIQ0h5VFRDQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcwMzg3MDksXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==';
         var httpStubber;
         var websocketStubber;
@@ -94,7 +94,7 @@ define([
 
         it('returns publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
-                publishToken,
+                token: publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -116,7 +116,7 @@ define([
 
         it('returns remote publisher from publishToRoom callback', function(done) {
             roomExpress.publishToRoom({
-                publishToken,
+                token: publishToken,
                 streamUri: 'streamUri',
                 room: {
                     alias: roomAlias,
@@ -149,7 +149,7 @@ define([
             websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
-                publishToken,
+                token: publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamInfo: streamInfo,
                 room: {
@@ -162,7 +162,7 @@ define([
             }, function() {});
 
             roomExpress.joinRoom({
-                streamToken,
+                token: token,
                 role: member.roles.participant.name,
                 alias: roomAlias,
                 name: roomName
@@ -181,11 +181,11 @@ define([
             });
         });
 
-        it('results in new member with real-time streamToken if no capability passed in', function(done) {
+        it('results in new member with real-time token if no capability passed in', function(done) {
             websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
-                publishToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
+                token: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -197,7 +197,7 @@ define([
             }, function() {});
 
             roomExpress.joinRoom({
-                streamToken,
+                token: token,
                 role: member.roles.participant.name,
                 alias: roomAlias,
                 name: roomName
@@ -216,11 +216,11 @@ define([
             });
         });
 
-        it('results in new member with streaming and real-time streamToken if streaming capability passed in', function(done) {
+        it('results in new member with streaming and real-time token if streaming capability passed in', function(done) {
             websocketStubber.stubJoinRoomResponse(response.room, response.members);
 
             roomExpress.publishToRoom({
-                publishToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
+                token: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 room: {
                     alias: roomAlias,
@@ -232,7 +232,7 @@ define([
             }, function() {});
 
             roomExpress.joinRoom({
-                streamToken,
+                token: token,
                 role: member.roles.participant.name,
                 alias: roomAlias,
                 name: roomName

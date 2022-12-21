@@ -30,7 +30,7 @@ define([
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var pcastExpress;
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
         var publishToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJleXVudzBhanNJZkRPbTRFdXVER0kxWmZ6WGoweWlLTW5ZdHpKNDhzaVJXZTNFNThiY1cxanhIMHlyTUVsY09jSVR0SjZOMVUwN0NkSjA2MFJJVWI0Zz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTMwOTEsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
@@ -51,7 +51,7 @@ define([
             websocketStubber.stubAuthRequest();
 
             pcastExpress = new PCastExpress({
-                authToken: streamToken,
+                authToken: token,
                 onError: _.noop,
                 onlineTimeout: 60000
             });
@@ -78,7 +78,7 @@ define([
 
         it('successfully subscribes to stream', function(done) {
             pcastExpress.subscribe({
-                streamToken,
+                token: token,
                 streamId: 'MockStreamId'
             }, function(error, response) {
                 expect(error).to.not.exist;
@@ -89,7 +89,7 @@ define([
 
         it('successfully publishes a stream', function(done) {
             pcastExpress.publish({
-                publishToken,
+                token: publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 expect(response.publisher).to.be.a('object');
@@ -107,7 +107,7 @@ define([
                 var start = _.now();
 
                 pcastExpress.subscribe({
-                    streamToken,
+                    token: token,
                     streamId: 'MockStreamId'
                 }, function(error) {
                     expect(error.message).to.be.equal('timeout');
@@ -120,7 +120,7 @@ define([
                 var start = _.now();
 
                 pcastExpress.publish({
-                    publishToken,
+                    token: publishToken,
                     userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error) {
                     expect(error.message).to.be.equal('timeout');
@@ -142,7 +142,7 @@ define([
 
             it('successfully subscribes to stream', function(done) {
                 pcastExpress.subscribe({
-                    streamToken,
+                    token: token,
                     streamId: 'MockStreamId'
                 }, function(error, response) {
                     expect(error).to.not.exist;
@@ -153,7 +153,7 @@ define([
 
             it('successfully publishes a stream', function(done) {
                 pcastExpress.publish({
-                    publishToken,
+                    token: publishToken,
                     userMediaStream: UserMediaStubber.getMockMediaStream()
                 }, function(error, response) {
                     expect(response.publisher).to.be.a('object');

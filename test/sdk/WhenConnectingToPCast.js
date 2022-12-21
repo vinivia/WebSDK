@@ -41,8 +41,6 @@ define([
                 return sinon.createStubInstance(logging.Logger);
             }); // Disable requests to external source
 
-            pcast = new PCast();
-
             var data = {};
 
             http.postWithRetry('https://' + customBackend + '/pcast/auth', JSON.stringify(data), {retryOptions: {maxAttempts: 1}}, function(error, response) {
@@ -53,7 +51,7 @@ define([
                 }
 
                 authToken = JSON.parse(response.data).authenticationToken;
-
+                pcast = new PCast({authToken});
                 expect(authToken).to.be.a('string');
                 done();
             });
@@ -80,7 +78,7 @@ define([
 
                 startCount++;
 
-                pcast.start(authToken, function authenticateCallback(pcast, status, sessionId) {
+                pcast.start(function authenticateCallback(pcast, status, sessionId) {
                     theSessionId = sessionId;
 
                     if (status !== 'ok') {

@@ -117,7 +117,7 @@ requirejs([
 
         var subscribe = function subscribe() {
             var subscribeOptions = {
-                streamToken: $('#token').val(),
+                token: $('#token').val(),
                 videoElement: $('#remoteVideo')[0]
             };
 

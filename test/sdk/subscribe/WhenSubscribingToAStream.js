@@ -37,7 +37,7 @@ define([
         beforeEach(function() {
             websocketStubber = new WebSocketStubber();
 
-            pcast = new PCast({uri: 'wss://mockURI'});
+            pcast = new PCast({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
         });
 
         after(function() {
@@ -65,7 +65,7 @@ define([
             beforeEach(function(done) {
                 websocketStubber.stubAuthRequest();
 
-                pcast.start('mockAuthToken', function(){}, function(){
+                pcast.start(function(){}, function(){
                     done();
                 }, function(){});
             });

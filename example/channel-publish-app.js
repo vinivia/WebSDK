@@ -118,7 +118,7 @@ requirejs([
         var publish = function publish() {
             var publishOptions = {
                 channel: {},
-                publishToken: $('#publishToken').val(),
+                token: $('#publishToken').val(),
                 mediaConstraints: {
                     video: true,
                     audio: true

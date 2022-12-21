@@ -39,9 +39,9 @@ define([
 
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
-            pcast = new PCast();
+            pcast = new PCast({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJnWHllRUlIdHZiZERQOU90Y0d5Q1E3WkVITHNsejc3eUsvZXB1aU00UUVxOVd6Qm12akwrdUtYR1JKK003QXhPK0JFM3dJeE13WHlzREdETnRCY2M1UT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODY0NTY3NjgwNDksXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9'});
 
-            pcast.start('AuthToken', function() {}, function onlineCallback() {
+            pcast.start(function() {}, function onlineCallback() {
                 authenticationService = new AuthenticationService(pcast);
                 done();
             }, function offlineCallback() {});

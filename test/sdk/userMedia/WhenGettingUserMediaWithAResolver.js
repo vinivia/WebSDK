@@ -50,7 +50,7 @@ define([
         });
 
         beforeEach(function() {
-            pcast = new PCast({uri: 'wss://mockURI'});
+            pcast = new PCast({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
             userMediaResolver = new UserMediaResolver(pcast);
         });
 

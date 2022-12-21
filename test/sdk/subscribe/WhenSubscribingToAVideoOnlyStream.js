@@ -33,12 +33,12 @@ define([
         });
 
         beforeEach(function(done) {
-            pcast = new PCast({uri: 'wss://mockURI'});
+            pcast = new PCast({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
 
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            pcast.start('mockAuthToken', function(){}, function(){}, function(){});
+            pcast.start(function(){}, function(){}, function(){});
 
             pcast.getObservableStatus().subscribe(function(status) {
                 if (status === 'online') {

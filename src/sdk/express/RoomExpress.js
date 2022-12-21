@@ -100,8 +100,12 @@ define([
         assert.isFunction(joinRoomCallback, 'joinRoomCallback');
         assert.isStringNotEmpty(options.role, 'options.role');
 
-        if (!options.streamToken) {
-            throw new Error('Cannot join room. Please use "options.streamToken".');
+        if ('streamToken' in options) {
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if (!options.token) {
+            throw new Error('Cannot join room. Please use "options.token".');
         }
 
         if (membersChangedCallback) {
@@ -124,27 +128,27 @@ define([
             assert.isArray(options.streams, 'options.streams');
         }
 
-        assert.isStringNotEmpty(options.streamToken, 'options.streamToken');
+        assert.isStringNotEmpty(options.token, 'options.token');
 
         if (options.roomId) {
-            this._logger.warn('Trying to join room with both streamToken and roomId. Please only use streamToken.');
+            this._logger.warn('Trying to join room with both token and roomId. Please only use token.');
         }
 
         if (options.alias) {
-            this._logger.warn('Trying to join room with both streamToken and alias. Please only use streamToken.');
+            this._logger.warn('Trying to join room with both token and alias. Please only use token.');
         }
 
-        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.streamToken);
-        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.streamToken);
+        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.token);
+        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.token);
 
         if (roomId) {
             options.roomId = roomId;
-            this._logger.info('Room ID is set to [%s] from streamToken [%s]', roomId, options.streamToken);
+            this._logger.info('Room ID is set to [%s] from token [%s]', roomId, options.token);
         }
 
         if (alias) {
             options.alias = alias;
-            this._logger.info('Alias is set to [%s] from streamToken [%s]', alias, options.streamToken);
+            this._logger.info('Alias is set to [%s] from token [%s]', alias, options.token);
         }
 
         var that = this;
@@ -209,15 +213,15 @@ define([
         }
 
         if ('streamToken' in options) {
-            throw new Error('"options.streamToken" is no longer supported. Please use "options.publishToken" instead.');
+            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
         }
 
-        if (!options.publishToken) {
-            throw new Error('Cannot publish. Please use "options.publishToken".');
+        if (!options.token) {
+            throw new Error('Cannot publish. Please use "options.token".');
         }
 
-        if (options.publishToken && options.capabilities) {
-            throw new Error('Do not pass `options.capabilities` with `options.publishToken`. `options.publishToken` should include capabilities in the token.');
+        if (options.token && options.capabilities) {
+            throw new Error('Do not pass `options.capabilities` with `options.token`. `options.token` should include capabilities in the token.');
         }
 
         if (options.viewerStreamSelectionStrategy) {
@@ -233,10 +237,10 @@ define([
 
         var that = this;
         var screenName = options.screenName || _.uniqueId();
-        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.publishToken);
-        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.publishToken);
+        var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.token);
+        var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.token);
 
-        this._logger.info('[%s] [%s] RoomId and Alias read from token [%s]', roomId, alias, options.publishToken);
+        this._logger.info('[%s] [%s] RoomId and Alias read from token [%s]', roomId, alias, options.token);
 
         var activeRoomService = findActiveRoom.call(that, roomId, alias);
 
@@ -321,7 +325,7 @@ define([
     };
 
     RoomExpress.prototype.subscribeToMemberStream = function(memberStream, options, callback) {
-        var capabilitiesFromStreamToken = [];
+        var capabilitiesFromToken = [];
         var that = this;
 
         assert.isObject(memberStream, 'memberStream');
@@ -332,14 +336,12 @@ define([
             throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
         }
 
-        if (options.streamToken) {
-            capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
+        capabilitiesFromToken = getCapabilitiesFromTokenIfAble.call(that, options.token);
 
-            if (!capabilitiesFromStreamToken) {
-                that._logger.warn('Failed to parse the `streamToken` [%s]', options.streamToken);
+        if (!capabilitiesFromToken) {
+            that._logger.warn('Failed to parse the `token` [%s]', options.token);
 
-                return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
-            }
+            return callback(new Error('Bad `token`'), {status: 'bad-token'});
         }
 
         var streamId = memberStream.getPCastStreamId();
@@ -350,7 +352,7 @@ define([
             throw new Error('Invalid Member Stream. Unable to parse streamId from uri');
         }
 
-        var featureAndCapability = that._pcastExpress.getPCast().getSupportedFeatureAndCapabilityFromCapabilities(capabilitiesFromStreamToken);
+        var featureAndCapability = that._pcastExpress.getPCast().getSupportedFeatureAndCapabilityFromCapabilities(capabilitiesFromToken);
 
         if (featureAndCapability.status !== 'ok') {
             that._logger.warn('[%s] Subscribing to member stream failed: [%s].', streamId, featureAndCapability.status);
@@ -358,15 +360,13 @@ define([
             return callback(null, {status: featureAndCapability.status});
         }
 
-        var streamUri = memberStream.getUri();
-        var streamToken = getStreamTokenForFeature(streamUri, featureAndCapability.feature);
         var subscriberCapabilities = featureAndCapability.capability !== '' ? [featureAndCapability.capability] : [];
 
-        this._logger.info('Subscribing to member stream with feature [%s] and pre-generated token [%s]', featureAndCapability.feature, !!streamToken);
+        this._logger.info('Subscribing to member stream with feature [%s] and token [%s]', featureAndCapability.feature, !!options.token);
 
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
-            streamToken: streamToken,
+            token: options.token,
             capabilities: subscriberCapabilities
         }, options);
         var streamInfo = memberStream.getInfo();
@@ -405,13 +405,13 @@ define([
         });
     };
 
-    function getCapabilitiesFromTokenIfAble(streamToken) {
+    function getCapabilitiesFromTokenIfAble(token) {
         var that = this;
 
         try {
-            var capabilitiesFromStreamToken = that._pcastExpress.parseCapabilitiesFromToken(streamToken);
+            var capabilitiesFromToken = that._pcastExpress.parseCapabilitiesFromToken(token);
 
-            return capabilitiesFromStreamToken;
+            return capabilitiesFromToken;
         } catch (e) {
             return;
         }
@@ -766,17 +766,13 @@ define([
         var streamInfo = options.streamInfo;
         var capabilities = [];
 
-        if (options.streamToken) {
-            var capabilitiesFromStreamToken = getCapabilitiesFromTokenIfAble.call(that, options.streamToken);
+        var capabilitiesFromToken = getCapabilitiesFromTokenIfAble.call(that, options.token);
 
-            if (!capabilitiesFromStreamToken) {
-                return callback(new Error('Bad `streamToken`'), {status: 'bad-token'});
-            }
-
-            capabilities = capabilitiesFromStreamToken;
-        } else {
-            capabilities = options.capabilities;
+        if (!capabilitiesFromToken) {
+            return callback(new Error('Bad `token`'), {status: 'bad-token'});
         }
+
+        capabilities = capabilitiesFromToken;
 
         var publisherStream = mapStreamToMemberStream(publisher, streamType, streamInfo, capabilities);
 
@@ -973,21 +969,6 @@ define([
         }
 
         callback(error, response);
-    }
-
-    function getStreamTokenForFeature(uri, feature) {
-        var streamInfo = Stream.getInfoFromStreamUri(uri);
-
-        switch(feature) {
-        case 'rtmp':
-        case 'hls':
-        case 'dash':
-            return streamInfo.streamTokenForLiveStream;
-        case 'real-time':
-            return streamInfo.streamToken;
-        default:
-            return;
-        }
     }
 
     function mapStreamToMemberStream(publisher, type, streamInfo, capabilities, viewerStreamToken, viewerStreamTokenForBroadcastStream, viewerStreamTokenForLiveStream, drmStreamTokens) {

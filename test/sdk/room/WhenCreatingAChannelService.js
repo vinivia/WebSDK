@@ -100,9 +100,9 @@ define([
                 screenName: 'self'
             };
 
-            pcast = new PCast();
+            pcast = new PCast({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJyRmxMVG5EQ2lSZVhvQXZPUWU3Nm15T01XOGFiaUJYdkdWODNFSzVBUU5oZjk2b3hqOG8ySlc5OTJsZCsrOTdWajVOaVRId3ByNkRTSTV5VmlIT0M2dz09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODY0NTk0ODk0ODYsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ=='});
 
-            pcast.start('AuthToken', _.noop, function onlineCallback() {
+            pcast.start(_.noop, function onlineCallback() {
                 roomService = new RoomService(pcast);
                 channelService = new ChannelService(roomService);
                 done();

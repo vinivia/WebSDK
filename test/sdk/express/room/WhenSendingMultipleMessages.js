@@ -38,7 +38,7 @@ define([
         var websocketStubber;
         var roomExpress;
         var response;
-        var streamToken = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoiZGVtbyIsImRpZ2VzdCI6IjZ3ODQ3S3N2ZFh5WjhRNnlyNWNzMnh0YjMxdFQ0TFR3bHAyeUZyZ0t2K0pDUEJyYkI4Qnd5a3dyT2NIWE52OXQ5eU5qYkFNT2tuQ1N1VnE5eGdBZjdRPT0iLCJ0b2tlbiI6IntcImV4cGlyZXNcIjoxOTI5NjA5NjcwMjI1LFwiY2FwYWJpbGl0aWVzXCI6W1wiYXVkaW8tb25seVwiXSxcInJlcXVpcmVkVGFnXCI6XCJyb29tSWQ6ZXVyb3BlLWNlbnRyYWwjZGVtbyNtdWx0aXBhcnR5Q2hhdERlbW9Sb29tLlpwcWJKNG1Oa2g2dVwifSJ9';
 
         beforeEach(function(done) {
             httpStubber = new HttpStubber();
@@ -48,7 +48,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            roomExpress = new RoomExpress({authToken: streamToken});
+            roomExpress = new RoomExpress({authToken: token});
 
             response = {
                 status: 'ok',
@@ -71,7 +71,7 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', response);
 
             roomExpress.joinRoom({
-                streamToken,
+                token: token,
                 role: member.roles.participant.name
             }, function() {
                 response.room.roomId = 'DifferentRoomId';
@@ -79,7 +79,7 @@ define([
                 websocketStubber.stubResponse('chat.JoinRoom', response);
 
                 roomExpress.joinRoom({
-                    streamToken,
+                    token: token,
                     role: member.roles.participant.name
                 }, function() {
                     expect(websocketStubber.getNumberOfListeners('chat.RoomEvent')).to.be.equal(2);

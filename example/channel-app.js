@@ -113,7 +113,7 @@ requirejs([
             var subscriberOptions = {};
 
             channelExpress.joinChannel({
-                streamToken: $('#token').val(),
+                token: $('#token').val(),
                 videoElement: $('#remoteVideo')[0],
                 subscriberOptions: subscriberOptions
             }, function joinChannelCallback(error, response) {
