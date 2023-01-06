@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Phenix Real Time Solutions, Inc. Confidential and Proprietary. All Rights Reserved.
+ * Copyright 2023 Phenix Real Time Solutions, Inc. Confidential and Proprietary. All Rights Reserved.
  */
 const spawn = require('child_process').spawn;
 const args = process.argv.slice(2);
