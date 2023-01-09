@@ -88,10 +88,6 @@ define([
         it('returns a publisher and no channelService when publishing remotely', function(done) {
             channelExpress.publishToChannel({
                 token: token,
-                room: {
-                    alias: 'ChannelAlias',
-                    name: 'Channel'
-                },
                 streamUri: 'StreamUri'
             }, function(error, response) {
                 if (response.status !== 'ok') {
@@ -127,11 +123,7 @@ define([
                 token: token,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamType: stream.types.user.name,
-                memberRole: member.roles.participant.name,
-                room: {
-                    alias: 'ChannelAlias',
-                    name: 'Channel'
-                }
+                memberRole: member.roles.participant.name
             }, function(error, response) {
                 if (response.status !== 'ok') {
                     return;
@@ -150,10 +142,6 @@ define([
 
             channelExpress.publishToChannel({
                 token: token,
-                room: {
-                    alias: 'ChannelAlias',
-                    name: 'Channel'
-                },
                 streamUri: 'StreamUri'
             }, function(error, response) {
                 if (response.status === 'ok') {
@@ -181,10 +169,6 @@ define([
 
             channelExpress.publishToChannel({
                 token: token,
-                room: {
-                    alias: 'ChannelAlias',
-                    name: 'Channel'
-                },
                 streamUri: 'StreamUri'
             }, function(error, response) {
                 if (response.status === 'ok') {

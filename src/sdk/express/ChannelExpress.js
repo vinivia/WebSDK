@@ -370,15 +370,14 @@ define([
             return;
         }
 
+        if ('channel' in options) {
+            throw new Error('"options.channel" is no longer supported.');
+        }
+
         var channelOptions = _.assign({
             memberRole: memberEnums.roles.presenter.name,
-            streamType: streamEnums.types.presentation.name,
-            room: options.channel
+            streamType: streamEnums.types.presentation.name
         }, options);
-
-        channelOptions.room.type = roomEnums.types.channel.name;
-
-        delete channelOptions.channel;
 
         this._roomExpress.publishToRoom(channelOptions, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
     };
@@ -387,15 +386,14 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
+        if ('channel' in options) {
+            throw new Error('"options.channel" is no longer supported.');
+        }
+
         var channelOptions = _.assign({
             memberRole: memberEnums.roles.presenter.name,
-            streamType: streamEnums.types.presentation.name,
-            room: options.channel
+            streamType: streamEnums.types.presentation.name
         }, options);
-
-        channelOptions.room.type = roomEnums.types.channel.name;
-
-        delete channelOptions.channel;
 
         this._roomExpress.publishScreenToRoom(channelOptions, _.bind(wrapResponseWithChannelPrefixesAndContinue, null, callback));
     };

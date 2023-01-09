@@ -90,10 +90,6 @@ define([
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
                 token: publishToken,
-                room: {
-                    alias: 'ChannelAlias',
-                    name: 'Channel'
-                },
                 streamUri: 'StreamUri'
             }, function() {
                 channelExpressSubscriber.joinChannel({
@@ -117,10 +113,6 @@ define([
                 expect(response.status).to.be.equal('no-stream-playing');
                 channelExpressPublisher.publishToChannel({
                     token: publishToken,
-                    room: {
-                        alias: 'ChannelAlias',
-                        name: 'Channel'
-                    },
                     streamUri: 'StreamUri'
                 }, function(error, response) {
                     responseCount++;

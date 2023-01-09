@@ -96,11 +96,6 @@ define([
             roomExpress.publishToRoom({
                 token: publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function(error, response) {
@@ -118,11 +113,6 @@ define([
             roomExpress.publishToRoom({
                 token: publishToken,
                 streamUri: 'streamUri',
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function(error, response) {
@@ -152,11 +142,6 @@ define([
                 token: publishToken,
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
                 streamInfo: streamInfo,
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function() {});
@@ -187,11 +172,6 @@ define([
             roomExpress.publishToRoom({
                 token: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function() {});
@@ -222,11 +202,6 @@ define([
             roomExpress.publishToRoom({
                 token: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ4S29ZYlozVEIvNHBSQ2Z2aTBpRHRuNVN0VkxLK3dvTWxadGNCVXZqR21qOTBiNzVZaENlQUZoMlJlTkM4NHFIOXYvZWlnMkdPaGRoYitEUEdDZzBLQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxMDcxMTEzMjgsXCJ0eXBlXCI6XCJwdWJsaXNoXCIsXCJjYXBhYmlsaXRpZXNcIjpbXCJzdHJlYW1pbmdcIl0sXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUFsaWFzOlRlc3RSb29tMTIzQWxpYXNcIn0ifQ==',
                 userMediaStream: UserMediaStubber.getMockMediaStream(),
-                room: {
-                    alias: roomAlias,
-                    type: roomType,
-                    name: roomName
-                },
                 streamType: stream.types.user.name,
                 memberRole: member.roles.participant.name
             }, function() {});

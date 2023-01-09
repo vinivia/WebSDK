@@ -186,7 +186,10 @@ define([
     RoomExpress.prototype.publishToRoom = function publishToRoom(options, callback) {
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
-        assert.isObject(options.room, 'options.room');
+
+        if ('room' in options) {
+            throw new Error('"options.room" is no longer supported.');
+        }
 
         if (options.streamUri) {
             assert.isStringNotEmpty(options.streamUri, 'options.streamUri');

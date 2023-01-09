@@ -144,7 +144,6 @@ requirejs([
             var videoElement = createVideo();
             var publishOptions = {
                 token: $('#publishToken').val(),
-                room: {type: app.getUrlParameter('roomType', 'MultiPartyChat')},
                 mediaConstraints: {
                     audio: {deviceId: audioSources[0].id},
                     video: {deviceId: videoSources[0].id}
@@ -508,7 +507,6 @@ requirejs([
             var videoElement = createVideo();
             var publishOptions = {
                 token: $('#publishToken').val(),
-                room: {type: 'MultiPartyChat'},
                 screenName: screenName,
                 streamType: 'Presentation', // Distinguish from normal publisher
                 memberRole: memberRole,
