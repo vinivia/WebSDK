@@ -128,7 +128,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 token: token
             }, function() {}, function() {
@@ -170,7 +169,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 token: token
             }, function() {}, function() {
@@ -212,7 +210,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 token: token
             }, function() {}, function() {
@@ -249,7 +246,6 @@ define([
             });
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 token: token
             }, function() {}, function(error, response) {
@@ -296,7 +292,6 @@ define([
             httpStubber.stubStreamRequest();
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 failureCountForBanningAMember: 2,
                 token: token
@@ -330,7 +325,6 @@ define([
             joinRoomResponse.members = [primaryMember, alternateMember];
 
             channelExpress.joinChannel({
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'high-availability',
                 token: token
             }, function() {}, function(error, response) {

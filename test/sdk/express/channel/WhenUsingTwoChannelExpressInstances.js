@@ -94,7 +94,6 @@ define([
             }, function() {
                 channelExpressSubscriber.joinChannel({
                     role: member.roles.participant.name,
-                    alias: 'ChannelAlias',
                     token: token
                 }, _.noop, function(error, response){
                     expect(response.status).to.be.equal('no-stream-playing');

@@ -122,7 +122,6 @@ define([
 
             channelExpress.joinChannel({
                 token: token,
-                alias: 'ChannelAlias',
                 streamSelectionStrategy: 'most-recent'
             }, function() {}, function(error, response) {
                 if (response.status !== 'ok') {

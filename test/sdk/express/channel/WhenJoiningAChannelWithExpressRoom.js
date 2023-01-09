@@ -72,7 +72,7 @@ define([
             websocketStubber = new WebSocketStubber();
             websocketStubber.stubAuthRequest();
 
-            channelExpress = new ChannelExpress({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
+            channelExpress = new ChannelExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9'});
 
             response = {
                 status: 'ok',
@@ -111,7 +111,6 @@ define([
         it('Expect joinChannel members subscription event with presenter with no streams playing to return no-streams-playing', function(done) {
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias,
                 token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [], 123);
@@ -128,7 +127,6 @@ define([
         it('Expect joinChannel members subscription event with participant with streams to return no streams playing status', function(done) {
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias,
                 token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.participant.name, [mockStream], 123);
@@ -151,7 +149,6 @@ define([
 
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias,
                 token: token
             }, function(error, response) {
                 var presenter = new Member(response.channelService, member.states.passive.name, 'member1', 'MyName', member.roles.presenter.name, [mockStream], 123);
@@ -170,7 +167,6 @@ define([
 
             channelExpress.joinChannel({
                 role: member.roles.participant.name,
-                alias: mockRoom.alias,
                 token: token
             }, function(error, response) {
                 expect(response.channelService).to.be.an('object');

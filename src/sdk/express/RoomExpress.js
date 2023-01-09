@@ -108,6 +108,14 @@ define([
             throw new Error('Cannot join room. Please use "options.token".');
         }
 
+        if ('roomId' in options) {
+            throw new Error('"options.roomId" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if ('alias' in options) {
+            throw new Error('"options.alias" is no longer supported. Please use "options.token" instead.');
+        }
+
         if (membersChangedCallback) {
             assert.isFunction(membersChangedCallback, 'membersChangedCallback');
         }
@@ -116,27 +124,11 @@ define([
             assert.isStringNotEmpty(options.screenName, 'options.screenName');
         }
 
-        if (options.roomId) {
-            assert.isStringNotEmpty(options.roomId, 'options.roomId');
-        }
-
-        if (options.alias) {
-            assert.isStringNotEmpty(options.alias, 'options.alias');
-        }
-
         if (options.streams) {
             assert.isArray(options.streams, 'options.streams');
         }
 
         assert.isStringNotEmpty(options.token, 'options.token');
-
-        if (options.roomId) {
-            this._logger.warn('Trying to join room with both token and roomId. Please only use token.');
-        }
-
-        if (options.alias) {
-            this._logger.warn('Trying to join room with both token and alias. Please only use token.');
-        }
 
         var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.token);
         var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.token);

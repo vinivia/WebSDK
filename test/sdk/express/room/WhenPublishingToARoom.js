@@ -72,7 +72,7 @@ define([
             websocketStubber.stubResponse('chat.JoinRoom', response);
             websocketStubber.stubResponse('chat.CreateRoom', response);
 
-            roomExpress = new RoomExpress({authToken: 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9'});
+            roomExpress = new RoomExpress({authToken: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9'});
 
             websocketStubber.stubSetupStream();
         });
@@ -149,7 +149,6 @@ define([
             roomExpress.joinRoom({
                 token: token,
                 role: member.roles.participant.name,
-                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 if (members.length === 0) {
@@ -179,7 +178,6 @@ define([
             roomExpress.joinRoom({
                 token: token,
                 role: member.roles.participant.name,
-                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 if (members.length === 0) {
@@ -209,7 +207,6 @@ define([
             roomExpress.joinRoom({
                 token: token,
                 role: member.roles.participant.name,
-                alias: roomAlias,
                 name: roomName
             }, function() {}, function(members){
                 if (members.length === 0) {

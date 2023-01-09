@@ -81,8 +81,7 @@ define([
             });
 
             roomExpress.joinRoom({
-                token: token,
-                roomId: mockRoom.roomId,
+                token: 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJ6UVJkUnN4c1BiRzNKdDRua2hTbDFJRXE0TjIzamdEUFpPZlhhN3pMbVZTY0gwWFJ2WFhQU3lvTUdUdWJBRlRsdVEvS3BqSDdGNEZlWE5VQzFuOUVWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODg2Mjc5OTExMDEsXCJyZXF1aXJlZFRhZ1wiOlwicm9vbUlkOlRlc3RSb29tMTIzXCJ9In0=',
                 role: member.roles.participant.name
             }, function() {}, function(){});
         });
@@ -94,7 +93,6 @@ define([
 
             roomExpress.joinRoom({
                 token: token,
-                alias: mockRoom.alias,
                 role: member.roles.participant.name
             }, function() {}, function(){});
         });
@@ -115,8 +113,7 @@ define([
         it('returns response object with a roomService and active room from joinRoom callback', function() {
             roomExpress.joinRoom({
                 token: token,
-                role: member.roles.participant.name,
-                alias: 'roomAlias'
+                role: member.roles.participant.name
             }, function(error, response) {
                 expect(response.roomService).to.exist;
                 expect(response.roomService.getObservableActiveRoom().getValue()).to.exist;
@@ -126,7 +123,6 @@ define([
         it('triggers member subscription callback when members changed after successfully joining a room', function(done) {
             roomExpress.joinRoom({
                 role: member.roles.participant.name,
-                alias: 'roomAlias',
                 token: token
             }, function(error, response) {
                 response.roomService.getObservableActiveRoom().getValue().getObservableMembers().setValue([{}]);
@@ -162,8 +158,7 @@ define([
 
             roomExpress.joinRoom({
                 token: token,
-                role: member.roles.participant.name,
-                alias: 'roomAlias'
+                role: member.roles.participant.name
             }, function() {}, function(members){
                 expect(members.length).to.be.equal(1);
 

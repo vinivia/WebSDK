@@ -79,6 +79,14 @@ define([
         assert.isFunction(joinChannelCallback, 'joinChannelCallback');
         assert.isFunction(subscriberCallback, 'subscriberCallback');
 
+        if ('channelId' in options) {
+            throw new Error('"options.channelId" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if ('alias' in options) {
+            throw new Error('"options.alias" is no longer supported. Please use "options.token" instead.');
+        }
+
         if (options.videoElement) {
             assert.isObject(options.videoElement, 'options.videoElement');
         }
@@ -104,12 +112,6 @@ define([
         var channelId = '';
         var that = this;
         var memberSelectionBackoffTimeoutId = null;
-
-        if (channelOptions.channelId) {
-            channelOptions.roomId = channelOptions.channelId;
-        }
-
-        delete channelOptions.channelId;
 
         var resetListeners = function() {
             if (memberSelectionBackoffTimeoutId !== null) {

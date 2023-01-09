@@ -34,7 +34,7 @@ define([
         var chromeRuntimeStubber = new ChromeRuntimeStubber();
         var peerConnectionStubber = new PeerConnectionStubber();
         var channelExpress;
-        var token = 'DIGEST:eyJ0b2tlbiI6IntcImNhcGFiaWxpdGllc1wiOltdfSJ9';
+        var token = 'DIGEST:eyJhcHBsaWNhdGlvbklkIjoibW9ja1VzZXIiLCJkaWdlc3QiOiJKb1lYTDVYOEMrNmt0L2YxbXhJUGlYaVZPdzRlb004TEkzb28rcFFqUzZKNW85TWdHeDlHRmJCT3JlSWg3ZURvOTNhazdHdWZIV1NLL0hPYmRIMGZWQT09IiwidG9rZW4iOiJ7XCJ1cmlcIjpcImh0dHBzOi8vbW9ja1VyaVwiLFwiZXhwaXJlc1wiOjE5ODUxNjM4NTYzMjgsXCJyZXF1aXJlZFRhZ1wiOlwiY2hhbm5lbEFsaWFzOkNoYW5uZWxBbGlhc1wifSJ9';
 
         before(function() {
             chromeRuntimeStubber.stub();
@@ -97,10 +97,7 @@ define([
                 }, 3);
             };
 
-            channelExpress.joinChannel({
-                alias: 'ChannelAlias',
-                token: token
-            }, function() {}, function(error, response) {
+            channelExpress.joinChannel({token: token}, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
                 }
@@ -117,10 +114,7 @@ define([
         it('triggers a callback with reason ended when the stream terminated with reason ended', function(done) {
             var subscribeCount = 0;
 
-            channelExpress.joinChannel({
-                alias: 'ChannelAlias',
-                token: token
-            }, function() {}, function(error, response) {
+            channelExpress.joinChannel({token: token}, function() {}, function(error, response) {
                 if (response.status === 'ok') {
                     subscribeCount++;
 
