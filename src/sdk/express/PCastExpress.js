@@ -27,7 +27,6 @@ define([
 
     var instanceCounter = 0;
     var capacityBackoffTimeout = 1000;
-    var defaultPrerollSkipDuration = 500;
     var defaultUserActionOnlineTimeout = 20000;
     var defaultReconnectOptions = {
         maxOfflineTime: 3 * 60 * 1000,
@@ -245,110 +244,6 @@ define([
                 getCapabilitiesFromPublishTokenAndPublish.call(that, response.userMedia, options, true, callback);
             });
         }, options.isContinuation);
-    };
-
-    var connectOptionCapabilities = ['streaming', 'low-latency', 'on-demand', 'uld', 'vvld', 'vld', 'ld', 'sd', 'hd', 'fhd', 'uhd'];
-
-    PCastExpress.prototype.publishRemote = function publishRemote(options, callback) {
-        assert.isObject(options, 'options');
-        assert.isFunction(callback, 'callback');
-        assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
-
-        if ('capabilities' in options) {
-            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
-        }
-
-        if (options.connectOptions) {
-            assert.isArray(options.connectOptions, 'options.connectOptions');
-        }
-
-        if (options.mediaConstraints) {
-            throw new Error('Invalid argument: mediaConstraints, passed on publishRemote. Local media not allowed when publishing remote content.');
-        }
-
-        if (options.videoElement) {
-            throw new Error('May not preview remote stream. Please subscribe to view.');
-        }
-
-        if (options.prerollSkipDuration) {
-            assert.isNumber(options.prerollSkipDuration, 'options.prerollSkipDuration');
-        }
-
-        if (options.monitor) {
-            assert.isObject(options.monitor, 'options.monitor');
-            assert.isFunction(options.monitor.callback, 'options.monitor.callback');
-
-            if (options.monitor.options) {
-                assert.isObject(options.monitor.options, 'options.monitor.options');
-            }
-        }
-
-        if (options.frameRate) {
-            assert.isObject(options.frameRate, 'options.frameRate');
-
-            if (options.frameRate.exact) {
-                assert.isNumber(options.frameRate.exact, 'options.frameRate.exact');
-            }
-
-            if (options.frameRate.max) {
-                assert.isNumber(options.frameRate.max, 'options.frameRate.max');
-            }
-        }
-
-        if ('streamToken' in options) {
-            throw new Error('"options.streamToken" is no longer supported. Please use "options.token" instead.');
-        }
-
-        if ('publishToken' in options) {
-            throw new Error('"options.publishToken" is no longer supported. Please use "options.token" instead.');
-        }
-
-        if (!options.token) {
-            throw new Error('Cannot publish. Please use "options.token".');
-        }
-
-        assert.isStringNotEmpty(options.token, 'options.token');
-
-        var tokenType = this._pcastObservable.getValue().parseTypeFromToken(options.token);
-
-        if (tokenType !== 'publish') {
-            throw new Error('Cannot publish. Please use a token of type "publish".');
-        }
-
-        var that = this;
-
-        this.waitForOnline(function(error) {
-            if (error) {
-                return callback(error);
-            }
-
-            var remoteOptions = _.assign({
-                connectOptions: [],
-                capabilities: []
-            }, options);
-
-            if (!_.includes(remoteOptions.capabilities, 'publish-uri')) {
-                remoteOptions.capabilities.push('publish-uri');
-            }
-
-            _.forEach(connectOptionCapabilities, function(capability) {
-                if (_.includes(remoteOptions.capabilities, capability)) {
-                    remoteOptions.connectOptions.push('publisher-capability=' + capability);
-                }
-            });
-
-            if (options.frameRate && options.frameRate.exact) {
-                remoteOptions.connectOptions.push('source-uri-video-fps=' + options.frameRate.exact);
-            }
-
-            if (options.frameRate && options.frameRate.max) {
-                remoteOptions.connectOptions.push('source-uri-video-fps-max=' + options.frameRate.max);
-            }
-
-            remoteOptions.connectOptions.push('source-uri-preroll-skip-duration=' + (_.isNumber(options.prerollSkipDuration) ? options.prerollSkipDuration : defaultPrerollSkipDuration).toString());
-
-            getCapabilitiesFromPublishTokenAndPublish.call(that, remoteOptions.streamUri, remoteOptions, false, callback);
-        });
     };
 
     PCastExpress.prototype.publishScreen = function publishScreen(options, callback) {

@@ -191,9 +191,11 @@ define([
             throw new Error('"options.tags" is no longer supported. Please use "options.token" instead.');
         }
 
-        if (options.streamUri) {
-            assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
-        } else if (options.mediaConstraints) {
+        if ('streamUri' in options) {
+            throw new Error('"options.streamUri" is no longer supported. Please use REST API to publish an URI instead.');
+        }
+
+        if (options.mediaConstraints) {
             assert.isObject(options.mediaConstraints, 'options.mediaConstraints');
         } else {
             assert.isObject(options.userMediaStream, 'options.userMediaStream');
@@ -227,7 +229,6 @@ define([
         assert.isValidType(options.memberRole, memberEnums.roles, 'options.memberRole');
 
         var that = this;
-        var screenName = options.screenName || _.uniqueId();
         var roomId = this._pcastExpress.parseRoomOrChannelIdFromToken(options.token);
         var alias = this._pcastExpress.parseRoomOrChannelAliasFromToken(options.token);
 
@@ -248,28 +249,6 @@ define([
                 publishOptions.tags = ['channelId:' + room.getRoomId(), 'channelAlias:' + room.getObservableAlias().getValue()].concat(publishOptions.tags || []);
             } else {
                 publishOptions.tags = ['roomId:' + room.getRoomId(), 'roomAlias:' + room.getObservableAlias().getValue()].concat(publishOptions.tags || []);
-            }
-
-            if (options.streamUri) {
-                var remoteOptions = _.assign({connectOptions: []}, publishOptions);
-                var hasRoomConnectOptions = _.find(remoteOptions.connectOptions, function(option) {
-                    return _.startsWith(option, 'room-id');
-                });
-
-                if (!hasRoomConnectOptions) {
-                    remoteOptions.connectOptions = remoteOptions.connectOptions.concat([
-                        'room-id=' + room.getRoomId(),
-                        'member-role=' + options.memberRole,
-                        'member-stream-type=' + options.streamType,
-                        'screen-name=' + screenName
-                    ]);
-                }
-
-                var callbackWithNoRoomService = function(error, response) {
-                    callback(error, response ? _.assign({roomService: null}, response) : response);
-                };
-
-                return that._pcastExpress.publishRemote(remoteOptions, callbackWithNoRoomService);
             }
 
             var callbackWithRoomService = function(error, response) {

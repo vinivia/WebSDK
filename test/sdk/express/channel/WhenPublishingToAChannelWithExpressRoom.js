@@ -85,21 +85,6 @@ define([
             channelExpress.dispose();
         });
 
-        it('returns a publisher and no channelService when publishing remotely', function(done) {
-            channelExpress.publishToChannel({
-                token: token,
-                streamUri: 'StreamUri'
-            }, function(error, response) {
-                if (response.status !== 'ok') {
-                    return;
-                }
-
-                expect(response.publisher, 'publisher').to.be.an('object');
-                expect(response.channelService, 'channelService').to.be.null;
-                done();
-            });
-        });
-
         it('returns a publisher and a channelService when publishing locally', function(done) {
             var mockRoom = {
                 roomId: 'TestRoom123',
@@ -142,7 +127,7 @@ define([
 
             channelExpress.publishToChannel({
                 token: token,
-                streamUri: 'StreamUri'
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 if (response.status === 'ok') {
                     expect(response.publisher).to.be.an('object');
@@ -169,7 +154,7 @@ define([
 
             channelExpress.publishToChannel({
                 token: token,
-                streamUri: 'StreamUri'
+                userMediaStream: UserMediaStubber.getMockMediaStream()
             }, function(error, response) {
                 if (response.status === 'ok') {
                     publishCount++;

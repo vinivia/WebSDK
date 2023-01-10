@@ -109,23 +109,6 @@ define([
             });
         });
 
-        it('returns remote publisher from publishToRoom callback', function(done) {
-            roomExpress.publishToRoom({
-                token: publishToken,
-                streamUri: 'streamUri',
-                streamType: stream.types.user.name,
-                memberRole: member.roles.participant.name
-            }, function(error, response) {
-                if (response.status !== 'ok') {
-                    return;
-                }
-
-                expect(response.publisher).to.be.a('object');
-                expect(response.roomService).to.be.null;
-                done();
-            });
-        });
-
         it('results in new member with the same stream info as passed argument', function(done) {
             var infoKey1 = 'infoKey1';
             var infoValue1 = 'infoValue1';

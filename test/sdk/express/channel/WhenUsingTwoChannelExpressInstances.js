@@ -21,9 +21,10 @@ define([
     '../../../../test/mock/WebSocketStubber',
     '../../../../test/mock/ChromeRuntimeStubber',
     '../../../../test/mock/PeerConnectionStubber',
+    '../../../../test/mock/UserMediaStubber',
     'sdk/room/room.json',
     'sdk/room/member.json'
-], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, room, member) {
+], function(_, ChannelExpress, HttpStubber, WebSocketStubber, ChromeRuntimeStubber, PeerConnectionStubber, UserMediaStubber, room, member) {
     describe('When using two ChannelExpress instances', function() {
         var httpStubber;
         var websocketStubber;
@@ -90,7 +91,8 @@ define([
         it('successfully publishes to a channel then joins in another', function(done) {
             channelExpressPublisher.publishToChannel({
                 token: publishToken,
-                streamUri: 'StreamUri'
+                userMediaStream: UserMediaStubber.getMockMediaStream()
+
             }, function() {
                 channelExpressSubscriber.joinChannel({
                     role: member.roles.participant.name,
@@ -112,7 +114,8 @@ define([
                 expect(response.status).to.be.equal('no-stream-playing');
                 channelExpressPublisher.publishToChannel({
                     token: publishToken,
-                    streamUri: 'StreamUri'
+                    userMediaStream: UserMediaStubber.getMockMediaStream()
+
                 }, function(error, response) {
                     responseCount++;
 
