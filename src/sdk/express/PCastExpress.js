@@ -175,8 +175,8 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
         }
 
         if (options.connectOptions) {
@@ -254,8 +254,8 @@ define([
         assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
 
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
         }
 
         if (options.connectOptions) {
@@ -367,6 +367,10 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
         assert.isStringNotEmpty(options.streamId, 'options.streamId');
+
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
+        }
 
         if (options.videoElement) {
             assert.isObject(options.videoElement, 'options.videoElement');

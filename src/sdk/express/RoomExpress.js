@@ -183,6 +183,14 @@ define([
             throw new Error('"options.room" is no longer supported.');
         }
 
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
+        }
+
+        if ('tags' in options) {
+            throw new Error('"options.tags" is no longer supported. Please use "options.token" instead.');
+        }
+
         if (options.streamUri) {
             assert.isStringNotEmpty(options.streamUri, 'options.streamUri');
         } else if (options.mediaConstraints) {
@@ -199,10 +207,6 @@ define([
             assert.isStringNotEmpty(options.screenName, 'options.screenName');
         }
 
-        if (options.tags) {
-            assert.isArray(options.tags, 'options.tags');
-        }
-
         if (options.streamInfo) {
             assert.isObject(options.streamInfo, 'options.streamInfo');
         }
@@ -215,16 +219,8 @@ define([
             throw new Error('Cannot publish. Please use "options.token".');
         }
 
-        if (options.token && options.capabilities) {
-            throw new Error('Do not pass `options.capabilities` with `options.token`. `options.token` should include capabilities in the token.');
-        }
-
         if (options.viewerStreamSelectionStrategy) {
             assert.isStringNotEmpty(options.viewerStreamSelectionStrategy, 'options.viewerStreamSelectionStrategy');
-        }
-
-        if (options.capabilities) {
-            assert.isArray(options.capabilities, 'options.capabilities');
         }
 
         assert.isValidType(options.streamType, memberStreamEnums.types, 'options.streamType');
@@ -327,8 +323,8 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
-        if (options.capabilities) {
-            throw new Error('subscribeToMemberStream options.capabilities is deprecated. Please use the constructor features option');
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
         }
 
         capabilitiesFromToken = getCapabilitiesFromTokenIfAble.call(that, options.token);
@@ -355,14 +351,11 @@ define([
             return callback(null, {status: featureAndCapability.status});
         }
 
-        var subscriberCapabilities = featureAndCapability.capability !== '' ? [featureAndCapability.capability] : [];
-
         this._logger.info('Subscribing to member stream with feature [%s] and token [%s]', featureAndCapability.feature, !!options.token);
 
         var subscribeOptions = _.assign({}, {
             streamId: streamId,
-            token: options.token,
-            capabilities: subscriberCapabilities
+            token: options.token
         }, options);
         var streamInfo = memberStream.getInfo();
         var isScreen = _.get(streamInfo, ['isScreen'], false);

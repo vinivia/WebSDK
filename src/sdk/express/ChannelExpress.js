@@ -79,6 +79,10 @@ define([
         assert.isFunction(joinChannelCallback, 'joinChannelCallback');
         assert.isFunction(subscriberCallback, 'subscriberCallback');
 
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
+        }
+
         if ('channelId' in options) {
             throw new Error('"options.channelId" is no longer supported. Please use "options.token" instead.');
         }
@@ -364,12 +368,8 @@ define([
         assert.isObject(options, 'options');
         assert.isFunction(callback, 'callback');
 
-        if (options.token && options.capabilities) {
-            this._logger.warn('[%s] Trying to publish with both `token` and `capabilities` set. Only use one of the two options');
-
-            callback(new Error('Publishing with both `token` and `capabilities` defined'), {status: 'conflicting-options'});
-
-            return;
+        if ('capabilities' in options) {
+            throw new Error('"options.capabilities" is no longer supported. Please use "options.token" instead.');
         }
 
         if ('channel' in options) {
